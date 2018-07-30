@@ -2,148 +2,174 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA35DC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF743C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D29C20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D29C20894
+	by mail.kernel.org (Postfix) with ESMTP id 7C1FE20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1FE20894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732023AbeGaBIn (ORCPT
+        id S1731852AbeGaBKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 21:08:43 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36764 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729575AbeGaBIn (ORCPT
+        Mon, 30 Jul 2018 21:10:11 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:58831 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729575AbeGaBKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 21:08:43 -0400
-Received: by mail-it0-f65.google.com with SMTP id p81-v6so1769590itp.1;
-        Mon, 30 Jul 2018 16:31:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1IyIAOezTVfUfddF0x8fR5pEtn7TI307eDxseeQq4/0=;
-        b=jeIz1qohYKjQYhJg65ZWSGztl/CzBqQ4Rk/Fop4EYCqXEoW1t4dyvqww5y1cg+TElq
-         qVrqLb/0BQTJE4ahHMuNf0yvofIpTNvKFRpdJpyVIycrUAO2PkGge+gW38nkaf/L3x2h
-         rFbVZm8TJxTjgIjvORzLDcNo/dHh3ly4FDPz/49iEzxpNY00gshFEkgMdNbMQeaDSZE9
-         Px2eeffFJl/E/KoaDN7Q+3YKaNF5JxnkNan0o2MjTz+eRO81J3lPiv7li8EbiEkPofzq
-         TaZ+AKT6bl/leH9w15sybakSaPsXidu840MP3UJv7Q5dYoCjqOMkQqY+lWejPMLOdDYp
-         KI4Q==
-X-Gm-Message-State: AOUpUlHhtZCOSOligwsMofCMidaUwnhvicZhN4LM1PfhRm4670uQ4YTF
-        9kQ2gOa+MyTEMmk/rJOHDQ==
-X-Google-Smtp-Source: AAOMgpfFLMxTmqvS5tBbZWkrT/TC+dulRniARezsMXMfp9KfWGTeRqAGXpA91cEFsegQFkHGnJR10A==
-X-Received: by 2002:a24:d2:: with SMTP id 201-v6mr1164949ita.60.1532993482321;
-        Mon, 30 Jul 2018 16:31:22 -0700 (PDT)
-Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id e11-v6sm3833345iog.56.2018.07.30.16.31.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 16:31:21 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 17:31:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] dt-bindings: Add Tegra SDHCI pad pdpu offset
- bindings
-Message-ID: <20180730233121.GA21962@rob-hp-laptop>
-References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
- <1532608016-14319-6-git-send-email-avienamo@nvidia.com>
+        Mon, 30 Jul 2018 21:10:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id DC6F94171A;
+        Mon, 30 Jul 2018 23:32:48 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id AadnshP2r_YA; Mon, 30 Jul 2018 23:32:48 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 24415418AC;
+        Mon, 30 Jul 2018 23:32:36 +0000 (UTC)
+Subject: Re: [PATCH] selftests: membarrier: fix test by checking supported
+ commands
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-kselftest@vger.kernel.org, gregkh@linuxfoundation.org,
+        mathieu.desnoyers@efficios.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de,
+        Shuah Khan <shuah@kernel.org>
+References: <20180730160543.19056-1-rafael.tinoco@linaro.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <9edf8459-aea1-c59e-5d73-112e986777e1@kernel.org>
+Date:   Mon, 30 Jul 2018 17:32:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532608016-14319-6-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180730160543.19056-1-rafael.tinoco@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 03:26:51PM +0300, Aapo Vienamo wrote:
-> Add bindings documentation for pad pull up and pull down offset values to be
-> programmed before executing automatic pad drive strength calibration.
+Hi Rafael,
+
+On 07/30/2018 10:05 AM, Rafael David Tinoco wrote:
+> Makes membarrier_test compatible with older kernels (LTS) by checking if
+> the membarrier features exist before running the tests.
 > 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Link: https://bugs.linaro.org/show_bug.cgi?id=3771
+> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+> Cc: <stable@vger.kernel.org> #v4.17
 > ---
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt          | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+>  .../selftests/membarrier/membarrier_test.c    | 69 +++++++++++--------
+>  1 file changed, 41 insertions(+), 28 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 95010cf..c3d8a15 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -24,6 +24,7 @@ Required properties:
->  Optional properties:
->  - power-gpios : Specify GPIOs for power control
+> diff --git a/tools/testing/selftests/membarrier/membarrier_test.c b/tools/testing/selftests/membarrier/membarrier_test.c
+> index 6793f8ecc8e7..b96caa096e2f 100644
+> --- a/tools/testing/selftests/membarrier/membarrier_test.c
+> +++ b/tools/testing/selftests/membarrier/membarrier_test.c
+> @@ -225,7 +225,14 @@ static int test_membarrier_global_expedited_success(void)
 >  
-> +Optional properties for Tegra210 and Tegra186:
->  Example:
->  
->  sdhci@c8000200 {
-> @@ -47,6 +48,35 @@ Optional properties for Tegra210 and Tegra186:
->    pinctrl-1.
->  - nvidia,only-1-8-v : The presence of this property indicates that the
->    controller operates at a 1.8 V fixed I/O voltage.
-
-> +- nvidia,pad-autocal-pull-up-offset-3v3,
-> +  nvidia,pad-autocal-pull-down-offset-3v3 : Specify drive strength
-> +  calibration offsets for 3.3 V signaling modes.
-
-Perhaps a single property with 2 values?
-
-> +- nvidia,pad-autocal-pull-up-offset-1v8,
-> +  nvidia,pad-autocal-pull-down-offset-1v8 : Specify drive strength
-> +  calibration offsets for 1.8 V signaling modes.
-> +- nvidia,pad-autocal-pull-up-offset-3v3-timeout,
-> +  nvidia,pad-autocal-pull-down-offset-3v3-timeout : Specify drive
-> +  strength used as a fallback in case the automatic calibration times
-> +  out on a 3.3 V signaling mode.
-> +- nvidia,pad-autocal-pull-up-offset-1v8-timeout,
-> +  nvidia,pad-autocal-pull-down-offset-1v8-timeout : Specify drive
-> +  strength used as a fallback in case the automatic calibration times
-> +  out on a 1.8 V signaling mode.
-> +- nvidia,pad-autocal-pull-up-offset-sdr104,
-> +  nvidia,pad-autocal-pull-down-offset-sdr104 : Specify drive strength
-> +  calibration offsets for SDR104 mode.
-> +- nvidia,pad-autocal-pull-up-offset-hs400,
-> +  nvidia,pad-autocal-pull-down-offset-hs400 : Specify drive strength
-> +  calibration offsets for HS400 mode.
+>  static int test_membarrier(void)
+>  {
+> -	int status;
+> +	int supported, status;
 > +
-> +  Notes on the pad calibration pull up and pulldown offset values:
-> +    - The property values are drive codes which are programmed into the
-> +      PD_OFFSET and PU_OFFSET sections of the
-> +      SDHCI_TEGRA_AUTO_CAL_CONFIG register.
-> +    - A higher value corresponds to higher drive strength. Please refer
-> +      to the reference manual of the SoC for correct values.
-> +    - The SDR104 and HS400 timing specific values are used in
-> +      corresponding modes if specified.
+> +	supported = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
+> +	if (supported < 0) {
+> +		ksft_test_result_fail(
+> +			"sys_membarrier() failed to query supported cmds\n");
+> +		return supported;
+> +	}
 >  
->  Example:
->  sdhci@700b0000 {
-> @@ -60,5 +90,9 @@ sdhci@700b0000 {
->  	pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
->  	pinctrl-0 = <&sdmmc1_3v3>;
->  	pinctrl-1 = <&sdmmc1_1v8>;
-> +	pad-autocal-pull-up-offset-3v3 = <0x00>;
-> +	pad-autocal-pull-down-offset-3v3 = <0x7d>;
-> +	pad-autocal-pull-up-offset-1v8 = <0x7b>;
-> +	pad-autocal-pull-down-offset-1v8 = <0x7b>;
 
-Doesn't match the doc.
+ksft_exit_skip() is the right interface to use here. If feature isn't supported,
+it should exit skip as opposed fail.
 
->  	status = "disabled";
->  };
-> -- 
-> 2.7.4
+>  	status = test_membarrier_cmd_fail();
+>  	if (status)
+> @@ -236,21 +243,22 @@ static int test_membarrier(void)
+>  	status = test_membarrier_global_success();
+>  	if (status)
+>  		return status;
+> -	status = test_membarrier_private_expedited_fail();
+> -	if (status)
+> -		return status;
+> -	status = test_membarrier_register_private_expedited_success();
+> -	if (status)
+> -		return status;
+> -	status = test_membarrier_private_expedited_success();
+> -	if (status)
+> -		return status;
+> -	status = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
+> -	if (status < 0) {
+> -		ksft_test_result_fail("sys_membarrier() failed\n");
+> -		return status;
+> +
+> +	/* commit 22e4ebb975822833b083533035233d128b30e98f added this feature */
+> +	if (supported & MEMBARRIER_CMD_PRIVATE_EXPEDITED) {
+> +		status = test_membarrier_private_expedited_fail();
+> +		if (status)
+> +			return status;
+> +		status = test_membarrier_register_private_expedited_success();
+> +		if (status)
+> +			return status;
+> +		status = test_membarrier_private_expedited_success();
+> +		if (status)
+> +			return status;
+>  	}
+> -	if (status & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
+> +
+> +	/* commit 70216e18e519a54a2f13569e8caff99a092a92d6 added this feature */
+> +	if (supported & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
+>  		status = test_membarrier_private_expedited_sync_core_fail();
+>  		if (status)
+>  			return status;
+> @@ -261,19 +269,24 @@ static int test_membarrier(void)
+>  		if (status)
+>  			return status;
+>  	}
+> -	/*
+> -	 * It is valid to send a global membarrier from a non-registered
+> -	 * process.
+> -	 */
+> -	status = test_membarrier_global_expedited_success();
+> -	if (status)
+> -		return status;
+> -	status = test_membarrier_register_global_expedited_success();
+> -	if (status)
+> -		return status;
+> -	status = test_membarrier_global_expedited_success();
+> -	if (status)
+> -		return status;
+> +
+> +	/* commit c5f58bd58f432be5d92df33c5458e0bcbee3aadf added this feature */
+> +	if (supported & MEMBARRIER_CMD_GLOBAL_EXPEDITED) {
+> +		/*
+> +		 * It is valid to send a global membarrier from a non-registered
+> +		 * process.
+> +		 */
+> +		status = test_membarrier_global_expedited_success();
+> +		if (status)
+> +			return status;
+> +		status = test_membarrier_register_global_expedited_success();
+> +		if (status)
+> +			return status;
+> +		status = test_membarrier_global_expedited_success();
+> +		if (status)
+> +			return status;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
 > 
+
+thanks,
+-- Shuah
