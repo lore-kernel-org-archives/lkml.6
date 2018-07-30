@@ -2,203 +2,116 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECACC46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D1BFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BDF220873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:13:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gmbf5nup"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BDF220873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id D373520873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D373520873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeG3Hq7 (ORCPT
+        id S1726535AbeG3HsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:46:59 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39650 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeG3Hq7 (ORCPT
+        Mon, 30 Jul 2018 03:48:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51430 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726344AbeG3HsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:46:59 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d189-v6so19148755oib.6
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 23:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=c6j8yCR2N6uEggzQr7SQCzZD+jwZGoNGikiZ3VoNnfg=;
-        b=gmbf5nupVR0I60lI+LtA5+6KUJsi2kwuSzhNnulEPr6bjXmTRw1k+ip+exzrtcikgG
-         /eusNl+VedzhOIa8QhOlBz1XS/nYj8nJKKxsRWSXxi1xQj+rN6ozFDurmF0lBBChfEcp
-         ujJBLnSnNygDxau5YwevqUY+NE07PLB5eO2TA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=c6j8yCR2N6uEggzQr7SQCzZD+jwZGoNGikiZ3VoNnfg=;
-        b=IaKtpwcNLWX/vx8ylzO+VCNuQhhEia1MfKdi4Rfs8ueXnFjCXrcftqXH2UL4apbt3I
-         OKVS8d+PlTjymqUM38i/pFk41zTlp774gM8zRzEuA0aQSzaIZ2pl2665n5D5S/0c1B3R
-         Qup60x87vkgbmDtXuH9JFg4n6T9uW2y2Bg8EZwMFY8RzMdvBUdI/XE9IwLI9/Mj2HmBU
-         9uNcJdo7fSjZBHlpq41kv10Gf0DepTPMC1Pr0MjVGGaCWfnkGYOficTb8Wk5XAWh2NC2
-         9acWDVaPTv714PoQhjnY1axI8If0rAv+FniGr44zjscOp421rKHX6dc3xDYvCS8AsVsp
-         g+vQ==
-X-Gm-Message-State: AOUpUlH/wsNpqvNTaKuSh7Wd8E5CBcGfsc5LB9ahQVh0NwOijuEE89Vv
-        6DK1j5jrlDcjCWlXFfP7k7aCoO5sWD+QCNqhMQdVsQ==
-X-Google-Smtp-Source: AAOMgpcr/6Snp/LNkbsJ9MYM+wuremVEfj5sqLqSkADh31/BgTw3CYzF4/VRWIhfUd1gVzOk7wVGzbMAAqgvjPju8Bo=
-X-Received: by 2002:aca:42:: with SMTP id 63-v6mr15158470oia.154.1532931215716;
- Sun, 29 Jul 2018 23:13:35 -0700 (PDT)
+        Mon, 30 Jul 2018 03:48:12 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6U69atW017213
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:14:48 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2khqwdh8dq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:14:48 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Mon, 30 Jul 2018 07:14:47 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Jul 2018 07:14:44 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6U6Eh4V33554654
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 06:14:43 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67BD14C04E;
+        Mon, 30 Jul 2018 09:14:56 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73B1C4C040;
+        Mon, 30 Jul 2018 09:14:55 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.125])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 30 Jul 2018 09:14:55 +0100 (BST)
+Date:   Mon, 30 Jul 2018 09:14:40 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Ley Foon Tan <lftan@altera.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        nios2-dev@lists.rocketboards.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] nios2: switch to NO_BOOTMEM
+References: <1530710295-10774-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 23:13:34
- -0700 (PDT)
-In-Reply-To: <0c1215a2-b8b3-e315-71e1-04501d02ba42@intel.com>
-References: <1532794529-30137-1-git-send-email-srinath.mannam@broadcom.com>
- <201807290127.DcHKtABy%fengguang.wu@intel.com> <CABe79T5o431_XkKzh=zEfoPzs6pfMHrrTZGPW7218tekLkk=vw@mail.gmail.com>
- <0c1215a2-b8b3-e315-71e1-04501d02ba42@intel.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Mon, 30 Jul 2018 11:43:34 +0530
-Message-ID: <CABe79T59J0sSyFqbrPoD0vK03HXO9_3XcByLK5DXe2RGxN8nCA@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: host: iproc: Add ACPI support to IPROC SDHCI
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530710295-10774-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18073006-0008-0000-0000-00000259BA1E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073006-0009-0000-0000-000021C046C6
+Message-Id: <20180730061439.GB15948@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=660 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian Hunter,
+Any updates on this?
 
-Thank you for the confirmation.
+On Wed, Jul 04, 2018 at 04:18:12PM +0300, Mike Rapoport wrote:
+> These patches switch nios2 boot time memory allocators from bootmem to
+> memblock + no_bootmem.
+> 
+> As nios2 uses fdt, the conversion is pretty much about actually using the
+> existing fdt infrastructure for the early memory management.
+> 
+> The first patch in the series is not strictly related to nios2. It's just
+> I've got really interesting memory layout without it because of 1K long
+> memory ranges defined in arch/nios2/boot/dts/10m50_devboard.dts.
+> 
+> Mike Rapoport (3):
+>   of: ignore sub-page memory regions
+>   nios2: use generic early_init_dt_add_memory_arch
+>   nios2: switch to NO_BOOTMEM
+> 
+>  arch/nios2/Kconfig        |  3 +++
+>  arch/nios2/kernel/prom.c  | 17 -----------------
+>  arch/nios2/kernel/setup.c | 39 +++++++--------------------------------
+>  drivers/of/fdt.c          | 11 ++++++-----
+>  4 files changed, 16 insertions(+), 54 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-I will send patch series now.
+-- 
+Sincerely yours,
+Mike.
 
-Regards,
-Srinath.
-
-On Mon, Jul 30, 2018 at 11:40 AM, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 30/07/18 09:02, Srinath Mannam wrote:
->> Hi Adrian Hunter,
->>
->> Auto build error came to this patch, because it is depend on the
->> patch "mmc: sdhci-pltfm: Convert DT properties to generic device properties"
->> you have given to me.
->>
->> Can I send my patch along with your patch in a single patch series?
->
-> Yes, that is normally how it is done.
->
->> Please advice.
->>
->> Regards,
->> Srinath.
->>
->>
->> On Sat, Jul 28, 2018 at 11:02 PM, kbuild test robot <lkp@intel.com> wrote:
->>> Hi Srinath,
->>>
->>> Thank you for the patch! Yet something to improve:
->>>
->>> [auto build test ERROR on ulf.hansson-mmc/next]
->>> [also build test ERROR on v4.18-rc6 next-20180727]
->>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>>
->>> url:    https://github.com/0day-ci/linux/commits/Srinath-Mannam/mmc-host-iproc-Add-ACPI-support-to-IPROC-SDHCI/20180729-003026
->>> base:   git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
->>> config: ia64-allmodconfig (attached as .config)
->>> compiler: ia64-linux-gcc (GCC) 8.1.0
->>> reproduce:
->>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>>         chmod +x ~/bin/make.cross
->>>         # save the attached .config to linux build tree
->>>         GCC_VERSION=8.1.0 make.cross ARCH=ia64
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    drivers/mmc/host/sdhci-iproc.c: In function 'sdhci_iproc_probe':
->>>>> drivers/mmc/host/sdhci-iproc.c:304:2: error: implicit declaration of function 'sdhci_get_property'; did you mean 'sdhci_get_of_property'? [-Werror=implicit-function-declaration]
->>>      sdhci_get_property(pdev);
->>>      ^~~~~~~~~~~~~~~~~~
->>>      sdhci_get_of_property
->>>    cc1: some warnings being treated as errors
->>>
->>> vim +304 drivers/mmc/host/sdhci-iproc.c
->>>
->>>    276
->>>    277  static int sdhci_iproc_probe(struct platform_device *pdev)
->>>    278  {
->>>    279          struct device *dev = &pdev->dev;
->>>    280          const struct sdhci_iproc_data *iproc_data = NULL;
->>>    281          struct sdhci_host *host;
->>>    282          struct sdhci_iproc_host *iproc_host;
->>>    283          struct sdhci_pltfm_host *pltfm_host;
->>>    284          int ret;
->>>    285
->>>    286          if (dev->of_node)
->>>    287                  iproc_data = of_device_get_match_data(dev);
->>>    288          else if (has_acpi_companion(dev))
->>>    289                  iproc_data = acpi_device_get_match_data(dev);
->>>    290
->>>    291          if (!iproc_data)
->>>    292                  return -ENODEV;
->>>    293
->>>    294          host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
->>>    295          if (IS_ERR(host))
->>>    296                  return PTR_ERR(host);
->>>    297
->>>    298          pltfm_host = sdhci_priv(host);
->>>    299          iproc_host = sdhci_pltfm_priv(pltfm_host);
->>>    300
->>>    301          iproc_host->data = iproc_data;
->>>    302
->>>    303          mmc_of_parse(host->mmc);
->>>  > 304          sdhci_get_property(pdev);
->>>    305
->>>    306          host->mmc->caps |= iproc_host->data->mmc_caps;
->>>    307
->>>    308          if (dev->of_node) {
->>>    309                  pltfm_host->clk = devm_clk_get(dev, NULL);
->>>    310                  if (IS_ERR(pltfm_host->clk)) {
->>>    311                          ret = PTR_ERR(pltfm_host->clk);
->>>    312                          goto err;
->>>    313                  }
->>>    314                  ret = clk_prepare_enable(pltfm_host->clk);
->>>    315                  if (ret) {
->>>    316                          dev_err(dev, "failed to enable host clk\n");
->>>    317                          goto err;
->>>    318                  }
->>>    319          }
->>>    320
->>>    321          if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
->>>    322                  host->caps = iproc_host->data->caps;
->>>    323                  host->caps1 = iproc_host->data->caps1;
->>>    324          }
->>>    325
->>>    326          ret = sdhci_add_host(host);
->>>    327          if (ret)
->>>    328                  goto err_clk;
->>>    329
->>>    330          return 0;
->>>    331
->>>    332  err_clk:
->>>    333          if (dev->of_node)
->>>    334                  clk_disable_unprepare(pltfm_host->clk);
->>>    335  err:
->>>    336          sdhci_pltfm_free(pdev);
->>>    337          return ret;
->>>    338  }
->>>    339
->>>
->>> ---
->>> 0-DAY kernel test infrastructure                Open Source Technology Center
->>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->>
->
