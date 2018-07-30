@@ -2,98 +2,111 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3627C1625709
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90A51625709
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6AD020892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AD020892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D7D620892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:51:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oRnNB8aP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7D620892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731766AbeG3T0J (ORCPT
+        id S1731906AbeG3T13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 15:26:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36374 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728672AbeG3T0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 15:26:09 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7696D40201A3;
-        Mon, 30 Jul 2018 17:50:03 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 086C62156701;
-        Mon, 30 Jul 2018 17:50:03 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     bp@alien8.de
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sironi@amazon.de, tony.luck@intel.com,
-        Prarit Bhargava <prarit@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH] arch/x86: Fix boot_cpu_data.microcode version output
-Date:   Mon, 30 Jul 2018 13:49:11 -0400
-Message-Id: <20180730174911.26238-1-prarit@redhat.com>
-In-Reply-To: <20180601121939.GA23298@nazgul.tnic>
-References: <20180601121939.GA23298@nazgul.tnic>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 30 Jul 2018 17:50:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 30 Jul 2018 17:50:03 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        Mon, 30 Jul 2018 15:27:29 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:46263 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbeG3T13 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 15:27:29 -0400
+Received: by mail-yw0-f196.google.com with SMTP id e23-v6so4686611ywe.13;
+        Mon, 30 Jul 2018 10:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2GUU2NQxPe+c5GHCdzu0ZJwdHlbVGMaZie+kRtpGjyI=;
+        b=oRnNB8aPWbfW1sKOERCxwdKy5HH738RdZ7KEXB7jauHElr680EK9s5FGpqz/2JejVN
+         5/3I2hyM2gQp4PJ5CsOwwnOZqDd7JMsRMV2uakaab5DcDfUACwAe3/qIjt7RzGd+gVH2
+         i5hEOS1UBX40YdQVb5cg/M0crv88ahLVdAXWhQ88uTBoDxYG6QMOIim77tL4xSadgghz
+         bmRd4Segi+pMkuh+HevNormpOAV/kDSIUoRUH9OprFzY1s2qkeJWg5XcOXlIDX+v1v63
+         ZUoWJyEELZSMYR7HCT1N3tiK3gfFauiRUwNErxaAoW2rrzCqbQM3fISqRUpTlTDOgPH/
+         7VmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2GUU2NQxPe+c5GHCdzu0ZJwdHlbVGMaZie+kRtpGjyI=;
+        b=hupcZC0mA0h6KMvQn5c8ndigm7WqdH3C3IcrzVbNCQnpyHzwHzxr9Y1uUT63BdF6tO
+         d/gf5LacI8sFUgqXgKHT07SQK0VQhTLQG8TMRaLfBLTs04fgBOe0z5KfOSaKZPB4iWaa
+         pi+BEYhZJ3ezIZqxUMyoNbpEb0nmFvoKhmlXNsfjkjg++HTEWRtCIt+5OxXV9BqOZqs6
+         DHZv67T6P8pcQHF72DUECjZIU2ry4XV5dqX3RI7Kk+m22VcdjNI3Bw4kDXpy+hbHOvSQ
+         TaImOF2IsmSTYIrHsDAmIYNI8q2W3spbebdt8l6rd3Pwub3EAtrqkN685p4I6Vvdeesw
+         GAIA==
+X-Gm-Message-State: AOUpUlFAcEWEahQoT9Wofey/SR5IEeqa292bYtBkpRyzjriOC8jmIWE4
+        q21QT1IbfKe7iOCUJPSUy7M=
+X-Google-Smtp-Source: AAOMgpcYeCVHmVoJsk64cuoQwZl8VvBnMCYITgIlSd2nteztBMD4h4nG3X5vlHvl79arFG46qP1bfQ==
+X-Received: by 2002:a81:502:: with SMTP id 2-v6mr9644734ywf.139.1532973083360;
+        Mon, 30 Jul 2018 10:51:23 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2:4bfe])
+        by smtp.gmail.com with ESMTPSA id w199-v6sm4768474ywd.104.2018.07.30.10.51.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 10:51:22 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 10:51:20 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory,
+ and IO v2
+Message-ID: <20180730175120.GJ1206094@devbig004.ftw2.facebook.com>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180727220123.GB18879@amd>
+ <20180730154035.GC4567@cmpxchg.org>
+ <20180730173940.GB881@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730173940.GB881@amd>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems where a runtime microcode update has occurred the microcode
-version output in a MCE log record is wrong because
-boot_cpu_data.microcode is not updated during runtime.
+Hello,
 
-Update boot_cpu_data.microcode when the BSP's microcode is updated.
+On Mon, Jul 30, 2018 at 07:39:40PM +0200, Pavel Machek wrote:
+> > I'd rather have the internal config symbol match the naming scheme in
+> > the code, where psi is a shorter, unique token as copmared to e.g.
+> > pressure, press, prsr, etc.
+> 
+> I'd do "pressure", really. Yes, psi is shorter, but I'd say that
+> length is not really important there.
 
-Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
-Suggested-by: Borislav Petkov <bp@alien8.com>
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: stable@vger.kernel.org
-Cc: sironi@amazon.de
-Cc: tony.luck@intel.com
----
- arch/x86/kernel/cpu/microcode/amd.c   | 4 ++++
- arch/x86/kernel/cpu/microcode/intel.c | 4 ++++
- 2 files changed, 8 insertions(+)
+This is an extreme bikeshedding without any relevance.  You can make
+suggestions but please lay it to the rest.  There isn't any general
+consensus against the current name and you're just trying to push your
+favorite name without proper justifications after contributing nothing
+to the project.  Please stop.
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 0624957aa068..7f5b32535ac7 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_amd(int cpu)
- 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
- 	c->microcode = mc_amd->hdr.patch_id;
- 
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode = rev;
-+
- 	return UCODE_UPDATED;
- }
- 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 97ccf4c3b45b..256d336cbc04 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode = rev;
-+
- 	return UCODE_UPDATED;
- }
- 
+Thanks.
+
 -- 
-2.17.0
-
+tejun
