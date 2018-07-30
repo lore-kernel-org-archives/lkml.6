@@ -2,243 +2,118 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667DDFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A1DFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD8420881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CD8420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 629C520881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:33:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abWD5YAg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629C520881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbeG3LHJ (ORCPT
+        id S1726961AbeG3LHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:07:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43672 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726705AbeG3LHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:07:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9E41B01D;
-        Mon, 30 Jul 2018 09:32:58 +0000 (UTC)
-Date:   Mon, 30 Jul 2018 11:32:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-Message-ID: <20180730093257.GG24267@dhcp22.suse.cz>
-References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
- <20180726113958.GE28386@dhcp22.suse.cz>
- <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 30 Jul 2018 07:07:38 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41223 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbeG3LHi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 07:07:38 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y10-v6so4275656pfn.8;
+        Mon, 30 Jul 2018 02:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C0qdcMQ4xD0ood1tgWz95bY+LNq+sNtaiH+ZmrcF3Io=;
+        b=abWD5YAg1HWjw9UJ4GtFiFNWgpXVwT2qp37azHW86k9zu9IrQjlZ+GKtTKOdiuXCcj
+         K1gH471u3gkIGYWI2vVGRDhlWoPEGJLlCIiOCHHTYyoYGPco/sqjbv2pUQtp5fS6BRsj
+         S4ur9QlWL2x+bimT+iEJjFt88RhsZ6dl2S666zSwJ1SONoi3CPgcYnkgDf811qi3Jyin
+         jAA+umWsehFfB6Tctnq8kWuat7iyjyT4rRLgHZrqjHWR8sfZcgVKcmubulRWHLKW5YC5
+         2AimQhF1VDRd7DbkX9bkncGU+qkxMclL47CsYfKTd4/ZvpApLyqgkl/F1F7LGx8SY4zv
+         +yDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C0qdcMQ4xD0ood1tgWz95bY+LNq+sNtaiH+ZmrcF3Io=;
+        b=Lv3XXVIMbMRuGCesEpTrfcUNeb/ptFRgIFgqBhfdnjynPPwF8mColF4Qct/QFFUdOt
+         MSe6U1DK65Hv7oRlbz5/T0hs+jaZhn25e9s6XUEjx5QioJ+K/DsE6Hx9GZDZzHrtyZhR
+         Hm+4Y3CMwVKCNOU11oiSuWlM4OcjdY3O7Ex1wOtEyVl9qMqUUAIYWWv5ve8fK+A4zrFj
+         DIU/qILP2eQ9QG7oRkIcFzBobCuRWGoJTwQpFLZ81V3SpDXf76DyrwrRDPEtX+eBUh0O
+         655ZeA6qrmuBCLWU8l9UR9nIUj7e8nI0iUAHraMxZ4uHPvXOyygYXlgSpeFHU50VDYis
+         g7FQ==
+X-Gm-Message-State: AOUpUlE/N30W8nJL8l1CV8+ZaLOnOaUcBJuTOoMVCNIsQgdmR/SWtwca
+        LJl0tvmh4p9bnxvgFZAr8mI=
+X-Google-Smtp-Source: AAOMgpdnWWd4PClpJ0QpfXiRzvVWzvxYpO8GXxH1UqXq3N0D9QQTx9MUVlhqCZ9gUX0d3qZpzxJ80w==
+X-Received: by 2002:a62:1756:: with SMTP id 83-v6mr1089883pfx.217.1532943210759;
+        Mon, 30 Jul 2018 02:33:30 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id v22-v6sm27419868pfi.60.2018.07.30.02.33.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 02:33:30 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     crope@iki.fi, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] media: usb: hackrf: Replace GFP_ATOMIC with GFP_KERNEL
+Date:   Mon, 30 Jul 2018 17:33:20 +0800
+Message-Id: <20180730093320.8007-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 28-07-18 00:47:40, Tetsuo Handa wrote:
-> On 2018/07/26 20:39, Michal Hocko wrote:
-> > On Thu 26-07-18 20:06:24, Tetsuo Handa wrote:
-> >> Before applying "an OOM lockup mitigation patch", I want to apply this
-> >> "another OOM lockup avoidance" patch.
-> > 
-> > I do not really see why. All these are borderline interesting as the
-> > system is basically dead by the time you reach this state.
-> 
-> I don't like your "borderline interesting". We still don't have a watchdog
-> which tells something went wrong. Thus, "borderline interesting" has to be
-> examined and fixed.
+hackrf_submit_urbs(), hackrf_alloc_stream_bufs() and hackrf_alloc_urbs() 
+are never called in atomic context.
+They call usb_submit_urb(), usb_alloc_coherent() and usb_alloc_urb() 
+with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-No question about that. Bugs should be fixed. But this doesn't look like
-something we should panic about and rush a half baked or not fully
-understood fixes.
+This is found by a static analysis tool named DCNS written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/media/usb/hackrf/hackrf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index 7eb53517a82f..520a3c6dee43 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -597,7 +597,7 @@ static int hackrf_submit_urbs(struct hackrf_dev *dev)
  
-> >> Complete log is at http://I-love.SAKURA.ne.jp/tmp/serial-20180726.txt.xz
-> >> (which was captured with
-> >>
-> >>   --- a/mm/oom_kill.c
-> >>   +++ b/mm/oom_kill.c
-> >>   @@ -1071,6 +1071,12 @@ bool out_of_memory(struct oom_control *oc)
-> >>    {
-> >>    	unsigned long freed = 0;
-> >>    	bool delay = false; /* if set, delay next allocation attempt */
-> >>   +	static unsigned long last_warned;
-> >>   +	if (!last_warned || time_after(jiffies, last_warned + 10 * HZ)) {
-> >>   +		pr_warn("%s(%d) gfp_mask=%#x(%pGg), order=%d\n", current->comm,
-> >>   +			current->pid, oc->gfp_mask, &oc->gfp_mask, oc->order);
-> >>   +		last_warned = jiffies;
-> >>   +	}
-> >>    
-> >>    	oc->constraint = CONSTRAINT_NONE;
-> >>    	if (oom_killer_disabled)
-> >>
-> >> in order to demonstrate that the GFP_NOIO allocation from disk_events_workfn() is
-> >> calling out_of_memory() rather than by error failing to give up direct reclaim).
-> >>
-> >> [  258.619119] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> >> [  268.622732] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> >> [  278.635344] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> >> [  288.639360] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> >> [  298.642715] kworker/0:0(5) gfp_mask=0x600000(GFP_NOIO), order=0
-> > 
-> > Hmm, so there is no other memory allocation to trigger the oom or they
-> > all just back off on the oom_lock trylock? In other words what is
-> > preventing from the oom killer invocation?
-> 
-> All __GFP_FS allocations got stuck at direct reclaim or workqueue.
-
-OK, I see. This is important information which was missing in the
-previous examination.
-
-[...]
-
-> >> Since the patch shown below was suggested by Michal Hocko at
-> >> https://marc.info/?l=linux-mm&m=152723708623015 , it is from Michal Hocko.
-> >>
-> >> >From cd8095242de13ace61eefca0c3d6f2a5a7b40032 Mon Sep 17 00:00:00 2001
-> >> From: Michal Hocko <mhocko@suse.com>
-> >> Date: Thu, 26 Jul 2018 14:40:03 +0900
-> >> Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
-> >>
-> >> Tetsuo Handa has reported that it is possible to bypass the short sleep
-> >> for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
-> >> ("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
-> >> any progress") and moved by commit ede37713737834d9 ("mm: throttle on IO
-> >> only when there are too many dirty and writeback pages") and lock up the
-> >> system if OOM.
-> >>
-> >> This is because we are implicitly counting on falling back to
-> >> schedule_timeout_uninterruptible() in __alloc_pages_may_oom() when
-> >> schedule_timeout_uninterruptible() in should_reclaim_retry() was not
-> >> called due to __zone_watermark_ok() == false.
-> > 
-> > How do we rely on that?
-> 
-> Unless disk_events_workfn() (PID=5) sleeps at schedule_timeout_uninterruptible()
-> in __alloc_pages_may_oom(), drain_local_pages_wq() which a thread doing __GFP_FS
-> allocation (PID=498) is waiting for cannot be started.
-
-Now you are losing me again. What is going on about
-drain_local_pages_wq? I can see that all __GFP_FS allocations are
-waiting for a completion which depends on the kworker context to run but
-I fail to see why drain_local_pages_wq matters. The memory on the pcp
-lists is not accounted to NR_FREE_PAGES IIRC but that should be a
-relatively small amount of memory so this cannot be a fundamental
-problem here.
-
-> >> However, schedule_timeout_uninterruptible() in __alloc_pages_may_oom() is
-> >> not called if all allocating threads but a PF_WQ_WORKER thread got stuck at
-> >> __GFP_FS direct reclaim, for mutex_trylock(&oom_lock) by that PF_WQ_WORKER
-> >> thread succeeds and out_of_memory() remains no-op unless that PF_WQ_WORKER
-> >> thread is doing __GFP_FS allocation.
-> > 
-> > I have really hard time to parse and understand this.
-> 
-> You can write as you like.
-
-I can as soon as I understand what is going on.
-
-> >> Tetsuo is observing that GFP_NOIO
-> >> allocation request from disk_events_workfn() is preventing other pending
-> >> works from starting.
-> > 
-> > What about any other allocation from !PF_WQ_WORKER context? Why those do
-> > not jump in?
-> 
-> All __GFP_FS allocations got stuck at direct reclaim or workqueue.
-> 
-> > 
-> >> Since should_reclaim_retry() should be a natural reschedule point,
-> >> let's do the short sleep for PF_WQ_WORKER threads unconditionally
-> >> in order to guarantee that other pending works are started.
-> > 
-> > OK, this is finally makes some sense. But it doesn't explain why it
-> > handles the live lock.
-> 
-> As explained above, if disk_events_workfn() (PID=5) explicitly sleeps,
-> vmstat_update and drain_local_pages_wq from WQ_MEM_RECLAIM workqueue will
-> start, and unblock PID=498 which is waiting for drain_local_pages_wq and
-> allow PID=498 to invoke the OOM killer.
-
-[  313.714537] systemd-journal D12600   498      1 0x00000000
-[  313.716538] Call Trace:
-[  313.717683]  ? __schedule+0x245/0x7f0
-[  313.719221]  schedule+0x23/0x80
-[  313.720586]  schedule_timeout+0x21f/0x400
-[  313.722163]  wait_for_completion+0xb2/0x130
-[  313.723750]  ? wake_up_q+0x70/0x70
-[  313.725134]  flush_work+0x1db/0x2b0
-[  313.726535]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
-[  313.728336]  ? page_alloc_cpu_dead+0x30/0x30
-[  313.729936]  drain_all_pages+0x174/0x1e0
-[  313.731446]  __alloc_pages_slowpath+0x428/0xc50
-[  313.733120]  __alloc_pages_nodemask+0x2a6/0x2c0
-[  313.734826]  filemap_fault+0x437/0x8e0
-[  313.736296]  ? lock_acquire+0x51/0x70
-[  313.737769]  ? xfs_ilock+0x86/0x190 [xfs]
-[  313.739309]  __xfs_filemap_fault.constprop.21+0x37/0xc0 [xfs]
-[  313.741291]  __do_fault+0x13/0x126
-[  313.742667]  __handle_mm_fault+0xc8d/0x11c0
-[  313.744245]  handle_mm_fault+0x17a/0x390
-[  313.745755]  __do_page_fault+0x24c/0x4d0
-[  313.747290]  do_page_fault+0x2a/0x70
-[  313.748728]  ? page_fault+0x8/0x30
-[  313.750148]  page_fault+0x1e/0x30
-
-This one is waiting for draining and we are in mm_percpu_wq WQ context
-which has its rescuer so no other activity can block us for ever. So
-this certainly shouldn't deadlock. It can be dead slow but well, this is
-what you will get when your shoot your system to death.
-
-So there must be something more going on...
+ 	for (i = 0; i < dev->urbs_initialized; i++) {
+ 		dev_dbg(dev->dev, "submit urb=%d\n", i);
+-		ret = usb_submit_urb(dev->urb_list[i], GFP_ATOMIC);
++		ret = usb_submit_urb(dev->urb_list[i], GFP_KERNEL);
+ 		if (ret) {
+ 			dev_err(dev->dev, "Could not submit URB no. %d - get them all back\n",
+ 					i);
+@@ -636,7 +636,7 @@ static int hackrf_alloc_stream_bufs(struct hackrf_dev *dev)
  
-> >> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > 
-> > Your s-o-b is missing again. I have already told you that previously
-> > when you were posting the patch.
-> 
-> I'm waiting for you to post this change with your wording.
-> 
-> > 
-> > I do not mind this change per se but I am not happy about _your_ changelog.
-> > It doesn't explain the underlying problem IMHO. Having a natural and
-> > unconditional scheduling point in should_reclaim_retry is a reasonable
-> > thing. But how the hack it relates to the livelock you are seeing. So
-> > namely the changelog should explain
-> > 1) why nobody is able to make forward progress during direct reclaim
-> 
-> Because GFP_NOIO allocation from one workqueue prevented WQ_MEM_RECLAIM
-> workqueues from starting, for it did not call schedule_timeout_*() because
-> mutex_trylock(&oom_lock) did not fail because nobody else could call
-> __alloc_pages_may_oom().
-
-Why hasn't the rescuer helped here?
-
-> > 2) why nobody is able to trigger oom killer as the last resort
-> 
-> Because only one !__GFP_FS allocating thread which did not get stuck at
-> direct reclaim was able to call __alloc_pages_may_oom().
-
-All the remaining allocations got stuck waiting for completion which
-depends on !WQ_MEM_RECLAIM workers right?
-
+ 	for (dev->buf_num = 0; dev->buf_num < MAX_BULK_BUFS; dev->buf_num++) {
+ 		dev->buf_list[dev->buf_num] = usb_alloc_coherent(dev->udev,
+-				BULK_BUFFER_SIZE, GFP_ATOMIC,
++				BULK_BUFFER_SIZE, GFP_KERNEL,
+ 				&dev->dma_addr[dev->buf_num]);
+ 		if (!dev->buf_list[dev->buf_num]) {
+ 			dev_dbg(dev->dev, "alloc buf=%d failed\n",
+@@ -689,7 +689,7 @@ static int hackrf_alloc_urbs(struct hackrf_dev *dev, bool rcv)
+ 	/* allocate the URBs */
+ 	for (i = 0; i < MAX_BULK_BUFS; i++) {
+ 		dev_dbg(dev->dev, "alloc urb=%d\n", i);
+-		dev->urb_list[i] = usb_alloc_urb(0, GFP_ATOMIC);
++		dev->urb_list[i] = usb_alloc_urb(0, GFP_KERNEL);
+ 		if (!dev->urb_list[i]) {
+ 			for (j = 0; j < i; j++)
+ 				usb_free_urb(dev->urb_list[j]);
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
+
