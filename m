@@ -2,141 +2,126 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C418C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ED9C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33AC720894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VpEExwqg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AC720894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A355F208A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A355F208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbeG3V0O (ORCPT
+        id S1732065AbeG3V07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 17:26:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48846 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbeG3V0O (ORCPT
+        Mon, 30 Jul 2018 17:26:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57355 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728769AbeG3V06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 17:26:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IHoVBTpFqQn7X9RtLhUsvLGUpv7IPz/8PsXByKxVTZ8=; b=VpEExwqgmE3iDSOyT2YTtNQJko
-        5XOgNdGDPb8YUMYBc/Ttkc0Zrd6M2mkNtsLdEJ1G0z0VUTTz/10HIrWypcQ86TeYRmCpoxGe57IMq
-        S0a5zvmh3KF6Z/jGQEzFEp+ocBXXzNzWVOD8nNkdQMcwMvCndfmU8nNvR5Kr3OX3BQ3STPbcDTHY+
-        31SPjvIMMo78f7SfG+q2xw5Ub19GxPMwZezuAJM/x4dpvSR6+cX2mSsmSc49qhpLhsCWh7osJgNEl
-        5x308HGB0wNBCFEI6ZmMVfPjtGhJIoCMDXtziKVHJYcIxmS6FNCdXTssB/85P4aRNQ0co/Na4s/Bp
-        PvdeeMDA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkEAl-00032z-47; Mon, 30 Jul 2018 19:49:39 +0000
-Date:   Mon, 30 Jul 2018 12:49:38 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
- [ver #10]
-Message-ID: <20180730194938.GA12962@bombadil.infradead.org>
-References: <20180729113749.GA7333@amd>
- <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
- <25489.1532953411@warthog.procyon.org.uk>
- <20180730143104.GB24051@amd>
- <20180730180842.GA5544@bombadil.infradead.org>
- <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com>
- <20180730183847.GB5544@bombadil.infradead.org>
- <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
+        Mon, 30 Jul 2018 17:26:58 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fkEAu-0006AY-Sw; Mon, 30 Jul 2018 21:49:49 +0200
+Date:   Mon, 30 Jul 2018 21:49:48 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Eduardo Valentin <eduval@amazon.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Rajvi Jingar <rajvi.jingar@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/1] x86: tsc: avoid system instability in
+ hibernation
+In-Reply-To: <20180730164100.GD15414@u40b0340c692b58f6553c.ant.amazon.com>
+Message-ID: <alpine.DEB.2.21.1807302140390.1725@nanos.tec.linutronix.de>
+References: <20180726155656.14873-1-eduval@amazon.com> <20180730085354.GA2494@hirez.programming.kicks-ass.net> <20180730164100.GD15414@u40b0340c692b58f6553c.ant.amazon.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 11:59:13AM -0700, Linus Torvalds wrote:
-> On Mon, Jul 30, 2018 at 11:38 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > I wasn't proposing putting gettext in the kernel.  I was reacting to
-> > Pavel saying "You can't return English strings from the kernel, you have
-> > to translate numbers into any language's strings".
+On Mon, 30 Jul 2018, Eduardo Valentin wrote:
+> On Mon, Jul 30, 2018 at 10:53:54AM +0200, Peter Zijlstra wrote:
+> > On Thu, Jul 26, 2018 at 08:56:56AM -0700, Eduardo Valentin wrote:
+> > > System instability are seen during resume from hibernation when system
+> > > is under heavy CPU load. This is due to the lack of update of sched
+> > > clock data
+> > 
+> > Which would suggest you're already running with unstable sched clock.
+> > Otherwise nobody would care about the scd stuff.
 > 
-> The problem with gettext() is that if you *don't* have the strings
-> marked for translated at the source, you're going to have a hard time
-> with anything but the simplest fixed strings.
-> 
-> When the kernel does something like
-> 
->      mntinfo("Option %s can not take value %d", opt->name, opt->value);
-> 
-> a gettext() interface inside the kernel (which really would be nasty)
-> would have seen the format string and the values independently and
-> would have generated the translation database from that.
-> 
-> But once the string has been generated, it can now be thousands of
-> different strings, and you can't just look them up from a table any
-> more.
-> 
-> Real examples from David's patch-series:
-> 
->                 errorf(fc, "%s: Lookup failure for '%s'",
->                        desc->name, param->key);
-> 
->                 errorf(fc, "%s: Non-blockdev passed to '%s'",
->                        desc->name, param->key);
-> 
-> which means that by the time user space sees it, you can't just "look
-> up the string". The string will have various random key names etc in
-> it.
+> Yes.
 
-That's fair, it becomes a good deal more complex than gettext() can
-cope with.  Someone sufficiently determined could regex-match the
-"Non-blockdev passed to", and translate that.  If they really want to
-sell a computer system to the Office québécois de la langue française.
+I doubt that...
 
-> But the alternative to pass things as format strings and raw data, and
-> having all the rules for a "good gettext interface" are worse. It gets
-> very ugly very quickly.
-
-Yes, catching all the corner cases gets ridiculously hard, particularly
-plurals.
-https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms
-really makes my brain hurt, and makes me glad I work on simple things
-like OS kernels.
-
-> So I really think the best option is "Ignore the problem". The system
-> calls will still continue to report the basic error numbers (EINVAL
-> etc), and the extended error strings will be just that: extended error
-> strings. Ignore them if you can't understand them.
+> > 
+> > What kind of machine are you running? What does:
+> > 
+> >   dmesg | grep -i tsc
+> > 
+> > say?
 > 
-> That said, people have wanted these kinds of extended error
-> descriptors forever, and the reason we haven't added them is that it
-> generally is more pain than it is necessarily worth. I'm not actually
-> at all convinced that has magically changed with the mount
-> configuration thing.
+> Here:
+> [    0.000000] tsc: Fast TSC calibration using PIT
+> [    0.004005] tsc: Detected 3000.000 MHz processor
+> [    0.066796] TSC deadline timer enabled
+> [    3.904269] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b3e459bf4c, max_idle_ns: 440795289890 ns
+>
 
-I'm not convinced we want to do this either, but if there's anywhere we
-do want to do it then mount seems like one of the few places it might be
-worth doing.  The reasons that a mount failed are many, and it doesn't
-seem like a good idea to introduce a new errno every time a network
-filesystem finds a new failure mode.
+... because if the sched clock would be unstable then you'd have something
+like 'TSC unstable' in dmesg, which you obviously do not.
 
-I do think it might be worth marking the strings specially to indicate
-"This is returned to userspace, do not adjust the spelling lightly".
-I mean, we haven't even put the 'e' back on creat yet, so we're clearly
-willing to live with bad spelling.
+'sched_clock: Marking unstable' is the other message which would be
+emitted.
+
+> > > The fix for this situation is to mark the sched clock as unstable
+> > > as early as possible in the resume path, leaving it unstable
+> > > for the duration of the resume process. This will force the
+> > > scheduler to attempt to align the sched clock across CPUs using
+> > > the delta with time of day, updating sched clock data. In a post
+> > > hibernation event, we can then mark the sched clock as stable
+> > > again, avoiding unnecessary syncs with time of day on systems
+> > > in which TSC is reliable.
+> > 
+> > None of this makes any sense. Either you were already unstable and it
+> > should already have worked and them marking it stable is an outright
+> > bug, or your sched clock was stable but then your initial diagnosis of
+> > lack of scd updates is complete garbage.
+> > 
+> 
+> I see, or it is just a workaround for the underling issue. I, for sure, see no
+> lockups anymore after forcing the scd updates. The other thing which are not
+> super clear is that this happens during the unfreezing of tasks. If I get a
+> set of cpu hog tasks while unfreezing, I see the system throwing worqueue lockup
+> detectors in hibernation restore.
+
+Yes, it pretty much papers over something else. Can you please provide a
+full dmesg from boot to failure case?
+
+Another question: Does the system recover after issuing the lockup messages
+or is it hosed completely?
+
+Thanks,
+
+	tglx
