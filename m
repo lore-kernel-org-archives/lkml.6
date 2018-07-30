@@ -2,217 +2,127 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E56A5C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC2DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDC820857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:20:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BDC820857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 63E0020857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:20:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FB5nHPAQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E0020857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731994AbeG3U43 (ORCPT
+        id S1732033AbeG3U5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 16:56:29 -0400
-Received: from mga14.intel.com ([192.55.52.115]:19052 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731016AbeG3U43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 16:56:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 12:20:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,424,1526367600"; 
-   d="scan'208";a="244596209"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga005.jf.intel.com with ESMTP; 30 Jul 2018 12:20:03 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Tim C Chen <tim.c.chen@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH V2] x86/speculation: Support Enhanced IBRS on future CPUs
-Date:   Mon, 30 Jul 2018 12:19:56 -0700
-Message-Id: <1532978396-2197-1-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 30 Jul 2018 16:57:09 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44417 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731016AbeG3U5I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 16:57:08 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m16-v6so5977585pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 12:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=RqWBkqg5mznyg3giKKdCfIBjtALZN2rZ/TFq05RAwIk=;
+        b=FB5nHPAQH2pM0ZRI4BmjR2MewLZeHGWatf4h/+YBlhudpLpNNJo+NCQ3BjzPgbow2t
+         kdLGI81Fe/gBSTfNNtWITmk7MfQw2RvZn2so/5pFgqE2dfBbHnMCAUetHiBVdtG1Cb5R
+         wHGW7jaZl6LhDnr9At7v11VpmcWeecpjtO8N2e2gqJ6QYXcPkH0oSGGa9JIj+R2vs+wy
+         5pLYgspQV4Xf1w9i7RqaDBOaZqfOOMUwdJUMFt+enOB/BoLLxDkqTwGSt8X7/h/CAFEe
+         EUai+uJ/a/6iZPz+v9VL9W6oic+5iJ5cbHp06U9yUiVhZXAHOhV+Ye7p0pnmzFo9HE7n
+         FgZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=RqWBkqg5mznyg3giKKdCfIBjtALZN2rZ/TFq05RAwIk=;
+        b=dy+S4QJBj4O45KLzfAK1wJa5arEtDhFmmwGyVxQTIP0lLhw/+RdBg5HQTkBBUjrLDR
+         3olJBQ1yTpty9hBCgbP15NiJxiApMMjPmtCzZmbeqFIbO2jCPGI/hJoa3w+jdX7te+o8
+         D5wzwlPOKpNO+A6gwWR3Dbf8U4veACfVblNQ46C1FYHN0TEWSj+RCXaYNgg000ECmH9K
+         0Pxzh3ffP3WOKucceYU83TeZblR01Pf60TT80xFaK+i4WPp774IytZYm8airPrkzptiI
+         vh3qpofhJE+XPEKVHAuv08CepW4h7SVBGhBxvfYfgSNej3hY7dfKqJU7dA3Nn1KjkVC9
+         +ZJw==
+X-Gm-Message-State: AOUpUlEHwaBNwz2kCjJbuhm1yDZx0mgK84BmIWPru1/0g4P/d4wshzIJ
+        PPOVv4JaxgCQcqAqmipO7MozFtWL
+X-Google-Smtp-Source: AAOMgpdf8xblMeUZVAyzR03LILoIt7fNfVC7itGpr1X+3E4xnh6+/GhWvegW5JlkQk60z0NO9Lp/qg==
+X-Received: by 2002:a17:902:9348:: with SMTP id g8-v6mr17474180plp.302.1532978441643;
+        Mon, 30 Jul 2018 12:20:41 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.216.188])
+        by smtp.gmail.com with ESMTPSA id i6-v6sm17144326pfo.107.2018.07.30.12.20.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 30 Jul 2018 12:20:40 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 00:53:26 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: Remove drm_fbdev_cma_set_suspend()
+Message-ID: <20180730192326.GA31354@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+drm_fbdev_cma_set_suspend() is not getting called from
+any other places. If there is no plan to use it in future
+we can remove this API.
 
-Some future Intel processors may support "Enhanced IBRS" which is an
-"always on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and
-never disabled.
-
-[With enhanced IBRS, the predicted targets of indirect branches executed
-cannot be controlled by software that was executed in a less privileged
-predictor mode or on another logical processor. As a result, software
-operating on a processor with enhanced IBRS need not use WRMSR to set
-IA32_SPEC_CTRL.IBRS after every transition to a more privileged
-predictor mode. Software can isolate predictor modes effectively simply
-by setting the bit once. Software need not disable enhanced IBRS prior
-to entering a sleep state such as MWAIT or HLT.] - Specification [1]
-
-Even with enhanced IBRS, we still need to make sure that IBRS bit in
-SPEC_CTRL MSR is always set i.e. while booting, if we detect support for
-Enhanced IBRS, we enable IBRS bit in SPEC_CTRL MSR and we should also
-make sure that it remains set always. In other words, if the guest has
-cleared IBRS bit, upon VMEXIT the bit should still be set.
-
-Fortunately, kernel already has the infrastructure ready. kvm/vmx.c does
-x86_spec_ctrl_set_guest() before entering guest and
-x86_spec_ctrl_restore_host() after leaving guest. So, the guest view of
-SPEC_CTRL MSR is restored before entering guest and the host view of
-SPEC_CTRL MSR is restored before entering host and hence IBRS will be
-set after VMEXIT.
-
-Intel's white paper on Retpoline [2] says that "Retpoline is known to be
-an effective branch target injection (Spectre variant 2) mitigation on
-Intel processors belonging to family 6 (enumerated by the CPUID
-instruction) that do not have support for enhanced IBRS. On processors
-that support enhanced IBRS, it should be used for mitigation instead of
-retpoline."
-
-This means, Intel recommends using Enhanced IBRS over Retpoline where
-available and it also means that retpoline provides less mitigation on
-processors with enhanced IBRS compared to those without. Hence, on
-processors that support Enhanced IBRS, this patch makes Enhanced IBRS as
-the default Spectre V2 mitigation technique instead of retpoline. Also,
-we still need IBPB even with enhanced IBRS.
-
-[1] https://software.intel.com/sites/default/files/managed/c5/63/336996-Speculative-Execution-Side-Channel-Mitigations.pdf
-[2] https://software.intel.com/sites/default/files/managed/1d/46/Retpoline-A-Branch-Target-Injection-Mitigation.pdf
-
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Originally-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim C Chen <tim.c.chen@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- arch/x86/include/asm/cpufeatures.h   |  1 +
- arch/x86/include/asm/nospec-branch.h |  2 +-
- arch/x86/kernel/cpu/bugs.c           | 29 +++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/common.c         |  3 +++
- 4 files changed, 32 insertions(+), 3 deletions(-)
- 
- Changes from V1 to V2:
- 1. Explicitly spell out in the change log, the reason for using Enhanced
-     IBRS as the default Spectre V2 mitigation technique instead of Retpoline.
+ drivers/gpu/drm/drm_fb_cma_helper.c | 15 ---------------
+ include/drm/drm_fb_cma_helper.h     |  1 -
+ 2 files changed, 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 5701f5cecd31..f75815b1dbee 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -219,6 +219,7 @@
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-+#define X86_FEATURE_IBRS_ENHANCED		( 7*32+29) /* "ibrs_enhanced" Use Enhanced IBRS in kernel */
+diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
+index 186d00a..4c283d9 100644
+--- a/drivers/gpu/drm/drm_fb_cma_helper.c
++++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+@@ -516,21 +516,6 @@ void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma)
+ EXPORT_SYMBOL_GPL(drm_fbdev_cma_hotplug_event);
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index f6f6c63da62f..fd2a8c1b88bc 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -214,7 +214,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
--	SPECTRE_V2_IBRS,
-+	SPECTRE_V2_IBRS_ENHANCED,
- };
+ /**
+- * drm_fbdev_cma_set_suspend - wrapper around drm_fb_helper_set_suspend
+- * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+- * @state: desired state, zero to resume, non-zero to suspend
+- *
+- * Calls drm_fb_helper_set_suspend, which is a wrapper around
+- * fb_set_suspend implemented by fbdev core.
+- */
+-void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool state)
+-{
+-	if (fbdev_cma)
+-		drm_fb_helper_set_suspend(&fbdev_cma->fb_helper, state);
+-}
+-EXPORT_SYMBOL(drm_fbdev_cma_set_suspend);
+-
+-/**
+  * drm_fbdev_cma_set_suspend_unlocked - wrapper around
+  *                                      drm_fb_helper_set_suspend_unlocked
+  * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+diff --git a/include/drm/drm_fb_cma_helper.h b/include/drm/drm_fb_cma_helper.h
+index d532f88a..52f09dc 100644
+--- a/include/drm/drm_fb_cma_helper.h
++++ b/include/drm/drm_fb_cma_helper.h
+@@ -32,7 +32,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_device *dev,
  
- /* The Speculative Store Bypass disable variants */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 5c0ea39311fe..a66517de1301 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -130,6 +130,7 @@ static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
- };
- 
- #undef pr_fmt
-@@ -349,6 +350,8 @@ static void __init spectre_v2_select_mitigation(void)
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED))
-+			goto skip_retpoline_enable_ibrs;
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -385,7 +388,22 @@ static void __init spectre_v2_select_mitigation(void)
- 					 SPECTRE_V2_RETPOLINE_MINIMAL;
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
-+	goto enable_other_mitigations;
- 
-+skip_retpoline_enable_ibrs:
-+	mode = SPECTRE_V2_IBRS_ENHANCED;
-+
-+	/*
-+	 * As we don't use IBRS in kernel, nobody should have set
-+	 * SPEC_CTRL_IBRS until now. Shout loud if somebody did enable
-+	 * SPEC_CTRL_IBRS before us.
-+	 */
-+	WARN_ON_ONCE(x86_spec_ctrl_base & SPEC_CTRL_IBRS);
-+
-+	/* Ensure SPEC_CTRL_IBRS is set after VMEXIT from a guest */
-+	x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
-+
-+enable_other_mitigations:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -415,9 +433,16 @@ static void __init spectre_v2_select_mitigation(void)
- 
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
--	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-+	 * speculation around firmware calls only when Enhanced IBRS isn't
-+	 * supported.
-+	 *
-+	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
-+	 * user might select retpoline on command line and if CPU supports
-+	 * Enhanced IBRS, we might un-intentionally not enable IBRS around
-+	 * firmware calls.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index eb4cb3efd20e..8ed73a46511f 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1005,6 +1005,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
-+	if (ia32_cap & ARCH_CAP_IBRS_ALL)
-+		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
-+
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
+ void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
+ void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
+-void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool state);
+ void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma,
+ 					bool state);
  
 -- 
-2.7.4
+1.9.1
 
