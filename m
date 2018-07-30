@@ -3,125 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFD213F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D9913F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179EC20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:45:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179EC20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B37E20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B37E20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbeG3QVH (ORCPT
+        id S1731969AbeG3QWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:21:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55978 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeG3QVH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:21:07 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fk9Qh-0004K3-0x; Mon, 30 Jul 2018 14:45:47 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: omap2-mcspi: remove several redundant variables
-Date:   Mon, 30 Jul 2018 15:45:46 +0100
-Message-Id: <20180730144546.10699-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 30 Jul 2018 12:22:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42178 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731783AbeG3QWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 12:22:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0787BAD87;
+        Mon, 30 Jul 2018 14:46:45 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 91EBCA0BE8; Mon, 30 Jul 2018 16:46:44 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 16:46:44 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [RFC PATCH net-next v2 09/17] ethtool: implement GET_DRVINFO
+ message
+Message-ID: <20180730144644.r3utyf4toqkjcxwd@unicorn.suse.cz>
+References: <cover.1532953989.git.mkubecek@suse.cz>
+ <4dcd60f25efe368ada4e0c035dc1d7612ab59132.1532953989.git.mkubecek@suse.cz>
+ <20180730142825.GL13198@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730142825.GL13198@lunn.ch>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Jul 30, 2018 at 04:28:25PM +0200, Andrew Lunn wrote:
+> On Mon, Jul 30, 2018 at 02:53:27PM +0200, Michal Kubecek wrote:
+> 
+> > +    ETHA_DRVINFO_FWVERSION	(string)	firmware version
+> > +    ETHA_DRVINFO_BUSINFO	(string)	device bus address
+> > +    ETHA_DRVINFO_EROM_VER	(string)	expansion ROM version
+> > +    ETHA_DRVINFO_N_PRIV_FLAGS	(u32)		number of private flags
+> > +    ETHA_DRVINFO_N_STATS	(u32)		number of device stats
+> 
+> I know there is at least one driver that has somewhat dynamic number
+> of statistics. It would be better to have the strings and the values
+> in the same message, so there is no need to first get the number of
+> strings, allocate the memory, get the strings, then get the values.
+> 
+> > +    ETHA_DRVINFO_TESTINFO_LEN	(u32)		number of test results
+> 
+> In theory, this also does not need to be fixed. 
 
-Variable count, l, mcspi and spi_cntrl are being assigned but are
-never used hence they are redundant and can be removed.
+This is interesting. It would mean current (ioctl) ethtool approach with
+string set may not work correctly either. On the other hand, this should
+not be a problem for netlink interface. Statistics are unlikely to
+appear in notifications and daemons collecting them periodically will
+have to learn with it. Adding test name to notification "test started"
+or "test finished" seems quite natural.
 
-Cleans up clang warnings:
-warning: variable 'count' set but not used [-Wunused-but-set-variable]
-warning: variable 'l' set but not used [-Wunused-but-set-variable]
-warning: variable 'mcspi' set but not used [-Wunused-but-set-variable]
-warning: variable 'spi_cntrl' set but not used [-Wunused-but-set-variable]
+> > +    ETHA_DRVINFO_EEDUMP_LEN	(u32)		EEPROM dump size
+> > +    ETHA_DRVINFO_REGDUMP_LEN	(u32)		register dump size
+> 
+> I would suggest removing all these _LEN properties, and let netlink
+> return what it needs to return.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-omap2-mcspi.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Agreed.
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 6c628a54e946..508c61c669e7 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -398,11 +398,9 @@ static void omap2_mcspi_tx_dma(struct spi_device *spi,
- {
- 	struct omap2_mcspi	*mcspi;
- 	struct omap2_mcspi_dma  *mcspi_dma;
--	unsigned int		count;
- 
- 	mcspi = spi_master_get_devdata(spi->master);
- 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
--	count = xfer->len;
- 
- 	if (mcspi_dma->dma_tx) {
- 		struct dma_async_tx_descriptor *tx;
-@@ -582,7 +580,6 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	struct omap2_mcspi_cs	*cs = spi->controller_state;
- 	struct omap2_mcspi_dma  *mcspi_dma;
- 	unsigned int		count;
--	u32			l;
- 	u8			*rx;
- 	const u8		*tx;
- 	struct dma_slave_config	cfg;
-@@ -595,8 +592,6 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 
- 	mcspi = spi_master_get_devdata(spi->master);
- 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
--	l = mcspi_cached_chconf0(spi);
--
- 
- 	if (cs->word_len <= 8) {
- 		width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-@@ -676,7 +671,6 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- static unsigned
- omap2_mcspi_txrx_pio(struct spi_device *spi, struct spi_transfer *xfer)
- {
--	struct omap2_mcspi	*mcspi;
- 	struct omap2_mcspi_cs	*cs = spi->controller_state;
- 	unsigned int		count, c;
- 	u32			l;
-@@ -686,7 +680,6 @@ omap2_mcspi_txrx_pio(struct spi_device *spi, struct spi_transfer *xfer)
- 	void __iomem		*chstat_reg;
- 	int			word_len;
- 
--	mcspi = spi_master_get_devdata(spi->master);
- 	count = xfer->len;
- 	c = count;
- 	word_len = cs->word_len;
-@@ -883,13 +876,11 @@ static int omap2_mcspi_setup_transfer(struct spi_device *spi,
- {
- 	struct omap2_mcspi_cs *cs = spi->controller_state;
- 	struct omap2_mcspi *mcspi;
--	struct spi_master *spi_cntrl;
- 	u32 l = 0, clkd = 0, div, extclk = 0, clkg = 0;
- 	u8 word_len = spi->bits_per_word;
- 	u32 speed_hz = spi->max_speed_hz;
- 
- 	mcspi = spi_master_get_devdata(spi->master);
--	spi_cntrl = mcspi->master;
- 
- 	if (t != NULL && t->bits_per_word)
- 		word_len = t->bits_per_word;
--- 
-2.17.1
-
+Michal Kubecek
