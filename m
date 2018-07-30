@@ -2,133 +2,89 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D4EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C29C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E2820894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F5F720857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:36:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ttUwhsgI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4E2820894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CKSNLCWC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5F720857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731971AbeG3XLe (ORCPT
+        id S1731803AbeG3XND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:11:34 -0400
-Received: from mail-io0-f201.google.com ([209.85.223.201]:33078 "EHLO
-        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeG3XLd (ORCPT
+        Mon, 30 Jul 2018 19:13:03 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:34863 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbeG3XNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:11:33 -0400
-Received: by mail-io0-f201.google.com with SMTP id s14-v6so9891257ioc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:34:39 -0700 (PDT)
+        Mon, 30 Jul 2018 19:13:02 -0400
+Received: by mail-io0-f182.google.com with SMTP id w11-v6so11187723iob.2;
+        Mon, 30 Jul 2018 14:36:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc:content-transfer-encoding;
-        bh=GSFhJJjXAKzwslV2aojDI50z4s/ItifdXUjanLyszkw=;
-        b=ttUwhsgIUMC/pNurY8Q95D/T9JgNxVEFdxw5WmQj8pxw9cPi+6tJDJihkShWRv3Q4x
-         jBQA0jODT73b1/N+glRBqP3xZMlgnH2nQ/9vaEGw+Q4DNb46JD14Q0oYxmKWMxujME0k
-         9GthLRRAD0lmtrwb/HsPWVuq8l+ix/JqrxMLR91H4L735xjBGQzrDPJ7P3+gcC/1wD0Z
-         NonJj/h8VSDjQbzsTX506c/rqbunXXUmXtBzyUV1Bh36Hym77cHLhVVvQVr7uLwNNmnw
-         m3ODUU1HZACxEfbxNVDqwYDzigs28nqkhac619+z7vHxsMF5uT+tBlJJ7qpEaASRF/EY
-         y8vA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0JOgEOjCmg99sfN8iOfftmv0bGK5aijQRPJvVlw1qVs=;
+        b=CKSNLCWCFsOvOr323VVmAU77pbEDYTABM+sbQarX76u1C4vFsGQxj0xv2nff6/Yrvs
+         ElF92XqpIJj/RiO9urr/sxDjLvkefuONVeqvtpl9lBBT4eNFNFgIIbqKsNyvp2sckDZD
+         K5LslnoqyoTTswqQQ7vfeV9ha6/kKSqtGW0Pg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc:content-transfer-encoding;
-        bh=GSFhJJjXAKzwslV2aojDI50z4s/ItifdXUjanLyszkw=;
-        b=MvaNYqgyS2qgppyK2HWR/7sSFRKjXvtEuDJ8JbFCyDNPrsntE89/i/EXRtbpGaF3G/
-         eFTZdSKEWKJqqOAGsqVZvajZvGOEuDbbSqXv8SvJLwo70aMVt2sRJJ5FwrW/+symZ8o+
-         T+WzNs4T9knUL1yobhfmX3eJuzpbLNsSq7h789Zpx5ShfadhW4pTh8s78ZvRjZoVL1z+
-         wgxwPe5gJMO5lcb0UGCTRmqvpoqpofENVlrPHQv6ctIjy/TF/Yne1VWEsnPB2WtkgySc
-         5W0NiKSOTFlxPw8szNG+gyh+ylKMZuZOVKMhZmPtyeL9qaOMbJLhoH/gd89zwGXVU1cR
-         N3BA==
-X-Gm-Message-State: AOUpUlESEu3SMYnj8Iwne+tTCn6FIIjaDNh4TjrJMgfngHspNoTBSyZ+
-        sSo7PFQHF87kQXvwp/xpflXPkzRIDH39szPzWK8=
-X-Google-Smtp-Source: AAOMgpeZUMlCjsaH4mZlkR2Mnawsc3nzrQEMMQ8P3nheOcu/J4EpJs9j6CGTR8+x5yfarJSwakQIb148mvXS2OtnSH8=
-X-Received: by 2002:a24:7a51:: with SMTP id a78-v6mr461560itc.8.1532986478540;
- Mon, 30 Jul 2018 14:34:38 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 14:34:12 -0700
-In-Reply-To: <20180730213412.242849-1-ndesaulniers@google.com>
-Message-Id: <20180730213412.242849-3-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <20180730213412.242849-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
-Subject: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     akpm@linux-foundation.org, natechancellor@gmail.com
-Cc:     arnd@arndb.de, paul.burton@mips.com, christophe.leroy@c-s.fr,
-        shorne@gmail.com, yamada.masahiro@socionext.com,
-        keescook@chromium.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        rdunlap@infradead.org, bp@suse.de, neilb@suse.com,
-        linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
-        dwmw@amazon.co.uk, sandipan@linux.vnet.ibm.com,
-        linux@rasmusvillemoes.dk, paullawrence@google.com,
-        andreyknvl@google.com, will.deacon@arm.com, ghackmann@android.com,
-        stable@vger.kernel.org, ghackmann@google.com, mka@chromium.org,
-        jpoimboe@redhat.com, wvw@google.com, avagin@openvz.org,
-        Nick Desaulniers <ndesaulniers@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0JOgEOjCmg99sfN8iOfftmv0bGK5aijQRPJvVlw1qVs=;
+        b=jFXVuhGZ2/AGnggVROCn7l9g4H1NOc86m3YwOOpWhV+tjbN2IcdSgkQfRHDiFaxICy
+         TH8FFUeosc7Q2WSwKZwvy4VNi9kjStKLwTDfEhrYRIX/7Vy6VgobICN6TObLkq7z+TxG
+         VGv1bmMTSFoKfwnk/qcl7yP5WbHO3mVAMpSqsbAxPxhgVnXa2mG/E/hA1CeDZNK44rMo
+         +dbMq96Y0UOCQsqt9qv7oR8KMCBF17PKsOVqeyThlTfdVol2LFCMW+cXtw77Tlhxdtpa
+         L/ZVZs5yXDt46YRZ40/746ZjmY5Qc0BiebOX43S7wjLV1oOudwsKZmh8ttrgTBnhy25i
+         gvUQ==
+X-Gm-Message-State: AOUpUlETN3UZtJ6yfS+12+34HYetR1GU64Q57jpMXGPgllzh/8WPDO13
+        h3shDfj0aHjLQVkTwfDrW0kJh1ZYrn4O0s4FGgrL6g==
+X-Google-Smtp-Source: AAOMgpeHdYSYVldfdUMDE1hTdVA3+OeU8ToCHjVZmgfMPU1QQpDGSLMDJpdKtiP81PlBir2f5nl9KqGC/NZFPly8ItI=
+X-Received: by 2002:a6b:f612:: with SMTP id n18-v6mr15791208ioh.259.1532986567297;
+ Mon, 30 Jul 2018 14:36:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180729220317.GB30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180729220317.GB30522@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 30 Jul 2018 14:35:56 -0700
+Message-ID: <CA+55aFxeLRE3mXK=6JEPF4gpj+eb81mPyDd4KPQtqDd4=RdLNg@mail.gmail.com>
+Subject: Re: [PATCHES][RFC] icache-related stuff
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting with Clang-7.0, _THIS_IP_ generates -Wreturn-stack-address
-warnings for almost every translation unit. In general, I'd prefer to
-leave this on (returning the address of a stack allocated variable is in
-general a bad idea) and disable it only at whitelisted call sites.
+On Sun, Jul 29, 2018 at 3:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Assorted icache-related fixes for the next window; some of that is -stable
+> fodder.
 
-We can't do something like:
- #pragma clang diagnostic push
- #pragma clang diagnostic ignored "-Wreturn-stack-address"
- <code>
- #pragma clang diagnostic pop
+I don't see anything alarming in the patches, but "some of it is
+-stable fodder" looks wrong.
 
-in a GNU Statement Expression or macro, hence we use _Pragma, which is
-its raison d'=C3=AAtre: https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html
+The only one that is marked for stable is 03/16, and that seems to fix
+something that came in during this merge window.
 
-We also can't use compiler specific pragma's without triggering
--Werror=3Dunknown-pragmas in other compilers, so use __diag.
+It shouldn't be stable, because as far as I can tell, it should  just
+be fixed before the 4.18 release. No?
 
-Cc: stable@vger.kernel.org # 4.17, 4.14, 4.9, 4.4
-Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- include/linux/kernel.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+The rest looks like fine cleanups, but not stable (and certainly for
+the next merge window)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 941dc0a5a877..909bb771c0ca 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -168,7 +168,15 @@
-=20
-=20
- #define _RET_IP_		(unsigned long)__builtin_return_address(0)
--#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; }=
-)
-+#define _THIS_IP_  (							\
-+{									\
-+	__label__ __here;						\
-+	__diag_push()							\
-+	__diag_ignore(CLANG, 7, "-Wreturn-stack-address", "")		\
-+__here: (unsigned long)&&__here;					\
-+	__diag_pop()							\
-+}									\
-+)
-=20
- #ifdef CONFIG_LBDAF
- # include <asm/div64.h>
---=20
-2.18.0.345.g5c9ce644c3-goog
+Am I missing something?
 
+             Linus
