@@ -2,180 +2,168 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4935EC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7927C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1AF520890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D22E20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:07:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EpeC+yyT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AF520890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="Dmj2LMPs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D22E20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=riseup.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeG3Xmp (ORCPT
+        id S1731962AbeG3Xo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:42:45 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33349 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeG3Xmp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:42:45 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so11882352ljj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 15:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=e/5Df3GfYNL2NR37dOp8MdMESR5yMsZb7sZ0YNOIllA=;
-        b=EpeC+yyTrMSQJpDSc29JHwWNINnNmEIlQ6ozw7fNwxAMGzgpmGNEOPEZr8td58Mczb
-         /NmGaxykojG5ocyxBDO8105F9eBUjov9kOMEg90bYRLB053AgECA4wMphdTGqat4OZxu
-         Pz7RJh1iLTHyIKJOTOfl2BOaCLsY8sTfDczlU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e/5Df3GfYNL2NR37dOp8MdMESR5yMsZb7sZ0YNOIllA=;
-        b=FnmT9t7/rga/ZOl7S3oGlV/Q4F0rQD/nebV4FCS4OdZ32IMs9hjMD5t4ItPp4bKjA9
-         zVjTZwB89srv90BajJAxmRNBQ6jeg0YTi4IHt+RyZYjmuYbXHKyF6+eSZbQprtW093dt
-         mXeOSbrchPjBSr3fvOUCRmKTSbsKfiJR2AaqnlJhTIhitmgCViy4eCbh99n6IHsiW4oY
-         iQjwWwXTpvU+OWukdH+xiF49MkePjA+araS/8SL6cNawBBDmgXZg3klQmS6uA4LGhwZ6
-         +u0xwQavCvXYPQYk1kMZ0VS75x0nxTu2dFyrjXZa2aOK082Frq7bAyl7/DsbA+KTltxc
-         Gzbg==
-X-Gm-Message-State: AOUpUlHE4+Mx1bkqfOIYWP5yBR1xeH35WuuSM5QNt91wq9Ttx1JDUGER
-        o0t0lLPKXycASVso9ePTTE/D8g==
-X-Google-Smtp-Source: AAOMgpcHubtPGB0pXFGOUS8m5vYFef+EvtucQ5pbiSwhxRUnJkj1Gm4tVuAschOPbtTckEN6SDQ/og==
-X-Received: by 2002:a2e:2067:: with SMTP id g100-v6mr2767227ljg.138.1532988342793;
-        Mon, 30 Jul 2018 15:05:42 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm1696499lfg.22.2018.07.30.15.05.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 15:05:41 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joe@perches.com, andrew@lunn.ch,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v4 net-next] net: ethernet: ti: cpsw: replace unnecessarily macroses on functions
-Date:   Tue, 31 Jul 2018 01:05:39 +0300
-Message-Id: <20180730220539.12319-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 30 Jul 2018 19:44:26 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:44691 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726622AbeG3Xo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 19:44:26 -0400
+Received: from piha.riseup.net (piha-pn.riseup.net [10.0.1.163])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id AA6011A0E3B;
+        Mon, 30 Jul 2018 15:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1532988444; bh=7kWiIejmS/yRQ0lJNOT4RpwS2WZOGwgHnPBrac1L70g=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Dmj2LMPsHRVX4OYqtFQ8M3v2yjmAjNKYs9PENwqJBRDekDpeQ8YUb1Ohu9FoL311S
+         LHE9gRdibs23Yq3VVjJyg3JwfkF6aomy8avNSUNw6mb8bDyr7gTXMsgMag9sTb/bMI
+         MxYTs2SHbadoVOCPvbx5qWiP72YsU8V+au1yCM+k=
+X-Riseup-User-ID: 3351028C486B2D49F92EA71C3D9B17ED06D97C2DB9C482CAD89A72D895C59DD2
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by piha.riseup.net with ESMTPSA id 67FE845D94;
+        Mon, 30 Jul 2018 15:07:23 -0700 (PDT)
+From:   Francisco Jerez <currojerez@riseup.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        lenb@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eero.t.tamminen@intel.com, ggherdovich@suse.cz,
+        mgorman@techsingularity.net,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Limit the scope of HWP dynamic boost platforms
+In-Reply-To: <20180730220029.81983-1-srinivas.pandruvada@linux.intel.com>
+References: <20180730220029.81983-1-srinivas.pandruvada@linux.intel.com>
+Date:   Mon, 30 Jul 2018 14:50:30 -0700
+Message-ID: <87va8wcs0p.fsf@riseup.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="==-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace ugly macroses on functions.
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
-Based on net-next/master
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v4..v3:
- - use directly code instead of cpsw_src_port_detect()
+Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
 
-v3..v2:
- - comment corrections
+> Dynamic boosting of HWP performance on IO wake showed significant
+> improvement to IO workloads. This series was intended for Skylake Xeon
+> platforms only and feature was enabled by default based on CPU model
+> number.
+>
+> But some Xeon platforms reused the Skylake desktop CPU model number. This
+> caused some undesirable side effects to some graphics workloads. Since
+> they are heavily IO bound, the increase in CPU performance decreased the
+> power available for GPU to do its computing and hence decrease in graphics
+> benchmark performance.
+>
+> For example on a Skylake desktop, GpuTest benchmark showed average FPS
+> reduction from 529 to 506.
+>
+> This change makes sure that HWP boost feature is only enabled for Skylake
+> server platforms by using ACPI FADT preferred PM Profile. If some desktop
+> users wants to get benefit of boost, they can still enable boost from
+> intel_pstate sysfs attribute "hwp_dynamic_boost".
+>
+> Fixes: 41ab43c9c89e (cpufreq: intel_pstate: enable boost for Skylake Xeon)
+> Link: https://bugs.freedesktop.org/show_bug.cgi?id=3D107410
+> Reported-by: Eero Tamminen <eero.t.tamminen@intel.com>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-v2..v1:
- - removed inline for cpsw_src_port_detect()
+Reviewed-by: Francisco Jerez <currojerez@riseup.net>
 
- drivers/net/ethernet/ti/cpsw.c | 58 +++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 32 deletions(-)
+> ---
+>  drivers/cpufreq/intel_pstate.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 3c3971256130..d4ed0022b0dd 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -311,12 +311,20 @@ static DEFINE_MUTEX(intel_pstate_limits_lock);
+>=20=20
+>  #ifdef CONFIG_ACPI
+>=20=20
+> -static bool intel_pstate_get_ppc_enable_status(void)
+> +static bool intel_pstate_acpi_pm_profile_server(void)
+>  {
+>  	if (acpi_gbl_FADT.preferred_profile =3D=3D PM_ENTERPRISE_SERVER ||
+>  	    acpi_gbl_FADT.preferred_profile =3D=3D PM_PERFORMANCE_SERVER)
+>  		return true;
+>=20=20
+> +	return false;
+> +}
+> +
+> +static bool intel_pstate_get_ppc_enable_status(void)
+> +{
+> +	if (intel_pstate_acpi_pm_profile_server())
+> +		return true;
+> +
+>  	return acpi_ppc;
+>  }
+>=20=20
+> @@ -459,6 +467,11 @@ static inline void intel_pstate_init_acpi_perf_limit=
+s(struct cpufreq_policy *pol
+>  static inline void intel_pstate_exit_perf_limits(struct cpufreq_policy *=
+policy)
+>  {
+>  }
+> +
+> +static inline bool intel_pstate_acpi_pm_profile_server(void)
+> +{
+> +	return false;
+> +}
+>  #endif
+>=20=20
+>  static inline void update_turbo_state(void)
+> @@ -1841,7 +1854,7 @@ static int intel_pstate_init_cpu(unsigned int cpunu=
+m)
+>  		intel_pstate_hwp_enable(cpu);
+>=20=20
+>  		id =3D x86_match_cpu(intel_pstate_hwp_boost_ids);
+> -		if (id)
+> +		if (id && intel_pstate_acpi_pm_profile_server())
+>  			hwp_boost =3D true;
+>  	}
+>=20=20
+> --=20
+> 2.17.1
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 1b54c26c2bec..f051ce35a440 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -565,40 +565,28 @@ static const struct cpsw_stats cpsw_gstrings_ch_stats[] = {
- 				(func)(slave++, ##arg);			\
- 	} while (0)
- 
--#define cpsw_dual_emac_src_port_detect(cpsw, status, ndev, skb)		\
--	do {								\
--		if (!cpsw->data.dual_emac)				\
--			break;						\
--		if (CPDMA_RX_SOURCE_PORT(status) == 1) {		\
--			ndev = cpsw->slaves[0].ndev;			\
--			skb->dev = ndev;				\
--		} else if (CPDMA_RX_SOURCE_PORT(status) == 2) {		\
--			ndev = cpsw->slaves[1].ndev;			\
--			skb->dev = ndev;				\
--		}							\
--	} while (0)
--#define cpsw_add_mcast(cpsw, priv, addr)				\
--	do {								\
--		if (cpsw->data.dual_emac) {				\
--			struct cpsw_slave *slave = cpsw->slaves +	\
--						priv->emac_port;	\
--			int slave_port = cpsw_get_slave_port(		\
--						slave->slave_num);	\
--			cpsw_ale_add_mcast(cpsw->ale, addr,		\
--				1 << slave_port | ALE_PORT_HOST,	\
--				ALE_VLAN, slave->port_vlan, 0);		\
--		} else {						\
--			cpsw_ale_add_mcast(cpsw->ale, addr,		\
--				ALE_ALL_PORTS,				\
--				0, 0, 0);				\
--		}							\
--	} while (0)
--
- static inline int cpsw_get_slave_port(u32 slave_num)
- {
- 	return slave_num + 1;
- }
- 
-+static void cpsw_add_mcast(struct cpsw_priv *priv, u8 *addr)
-+{
-+	struct cpsw_common *cpsw = priv->cpsw;
-+
-+	if (cpsw->data.dual_emac) {
-+		struct cpsw_slave *slave = cpsw->slaves + priv->emac_port;
-+		int slave_port = cpsw_get_slave_port(slave->slave_num);
-+
-+		cpsw_ale_add_mcast(cpsw->ale, addr,
-+				   1 << slave_port | ALE_PORT_HOST,
-+				   ALE_VLAN, slave->port_vlan, 0);
-+		return;
-+	}
-+
-+	cpsw_ale_add_mcast(cpsw->ale, addr, ALE_ALL_PORTS, 0, 0, 0);
-+}
-+
- static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
- {
- 	struct cpsw_common *cpsw = ndev_to_cpsw(ndev);
-@@ -706,7 +694,7 @@ static void cpsw_ndo_set_rx_mode(struct net_device *ndev)
- 
- 		/* program multicast address list into ALE register */
- 		netdev_for_each_mc_addr(ha, ndev) {
--			cpsw_add_mcast(cpsw, priv, (u8 *)ha->addr);
-+			cpsw_add_mcast(priv, ha->addr);
- 		}
- 	}
- }
-@@ -798,10 +786,16 @@ static void cpsw_rx_handler(void *token, int len, int status)
- 	struct sk_buff		*skb = token;
- 	struct sk_buff		*new_skb;
- 	struct net_device	*ndev = skb->dev;
--	int			ret = 0;
-+	int			ret = 0, port;
- 	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
- 
--	cpsw_dual_emac_src_port_detect(cpsw, status, ndev, skb);
-+	if (cpsw->data.dual_emac) {
-+		port = CPDMA_RX_SOURCE_PORT(status);
-+		if (port) {
-+			ndev = cpsw->slaves[--port].ndev;
-+			skb->dev = ndev;
-+		}
-+	}
- 
- 	if (unlikely(status < 0) || unlikely(!netif_running(ndev))) {
- 		/* In dual emac mode check for all interfaces */
--- 
-2.17.1
+--=-=-=--
 
+--==-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCW1+IJgAKCRCDmTidfVK/
+W3khAP0YpHQlG/h0QWGEj+Zl1xSpqquyGWdOLDtRCokhiMks2QD/UNC1lfcXFVXu
+BnJkDXstqBlAEWdp59VgcpYPjFQEnkw=
+=efVI
+-----END PGP SIGNATURE-----
+--==-=-=--
