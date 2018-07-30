@@ -5,98 +5,126 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229B5C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADECBC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B9E20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:37:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B9E20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3DF3820894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF3820894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731827AbeGaAOK (ORCPT
+        id S1731953AbeGaARW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:14:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57846 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeGaAOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:14:10 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fkGmg-0008DK-8N; Tue, 31 Jul 2018 00:36:58 +0200
-Date:   Tue, 31 Jul 2018 00:36:57 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] PCI: let pci_request_irq properly deal with threaded
- interrupts
-In-Reply-To: <20180730213028.GC45322@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807310015170.1725@nanos.tec.linutronix.de>
-References: <d004975f-03a8-59f5-56ef-f4e1f8e12dfb@gmail.com> <20180730213028.GC45322@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 30 Jul 2018 20:17:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726966AbeGaARW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 20:17:22 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CABC20890;
+        Mon, 30 Jul 2018 22:40:12 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 18:40:10 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Francis Deslauriers <francis.deslauriers@efficios.com>,
+        peterz@infradead.org, Shuah Khan <shuah@kernel.org>,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] tracing: kprobes: Prohibit probing on notrace
+ function
+Message-ID: <20180730184010.0d5597a1@gandalf.local.home>
+In-Reply-To: <153294601436.32740.10557881188933661239.stgit@devbox>
+References: <153294598465.32740.17737878083872427008.stgit@devbox>
+        <153294601436.32740.10557881188933661239.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018, Bjorn Helgaas wrote:
+On Mon, 30 Jul 2018 19:20:14 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> [+cc Thomas, Christoph, LKML]
-
-+ Marc
-
-> On Mon, Jul 30, 2018 at 12:03:42AM +0200, Heiner Kallweit wrote:
-> > If we have a threaded interrupt with the handler being NULL, then
-> > request_threaded_irq() -> __setup_irq() will complain and bail out
-> > if the IRQF_ONESHOT flag isn't set. Therefore check for the handler
-> > being NULL and set IRQF_ONESHOT in this case.
-> > 
-> > This change is needed to migrate the mei_me driver to
-> > pci_alloc_irq_vectors() and pci_request_irq().
-> > 
-> > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Prohibit kprobe-events probing on notrace function.
+> Since probing on the notrace function can cause recursive
+> event call. In most case those are just skipped, but
+> in some case it falls into infinit recursive call.
 > 
-> I'd like an ack from Thomas because this requirement about IRQF_ONESHOT
-> usage isn't mentioned in the request_threaded_irq() function doc or
-> Documentation/
+> This protection can be disabled by the kconfig
+> CONFIG_KPROBE_EVENTS_ON_NOTRACE=y, but it is highly
+> recommended to keep it "n" for normal kernel.
+> Note that this is only available if "kprobes on ftrace"
+> has been implemented on target arch and
+> CONFIG_KPROBES_ON_FTRACE=y.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+>
 
-Right. The documentation really needs some love and care. :(
+Hi Masami,
 
-Yes, request for pure threaded interrupts are rejected if the oneshot flag
-is not set. The reason is that this would be deadly especially with level
-triggered interrupts because the primary default handler just wakes the
-thread and then reenables interrupts, which will make the interrupt come
-back immediately and the thread won't have a chance to actually shut it up
-in the device.
+Note, I made the following changes for grammar. For the Change log I
+have this:
 
-That made me look into that code again and I found that we added a flag for
-irq chips to tell the core that the interrupt is one shot safe, i.e. that
-it can be requested w/o IRQF_ONESHOT. That was initially added to optimize
-MSI based interrupts which are oneshot safe by implementation.
+    tracing: kprobes: Prohibit probing on notrace function
+    
+    Prohibit kprobe-events probing on notrace functions.  Since probing on a
+    notrace function can cause a recursive event call. In most cases those are just
+    skipped, but in some cases it falls into an infinite recursive call.
+    
+    This protection can be disabled by the kconfig
+    CONFIG_KPROBE_EVENTS_ON_NOTRACE=y, but it is highly recommended to keep it
+    "n" for normal kernel builds.  Note that this is only available if "kprobes on
+    ftrace" has been implemented on the target arch and CONFIG_KPROBES_ON_FTRACE=y.
+    
+    Link: http://lkml.kernel.org/r/153294601436.32740.10557881188933661239.stgit@devbox
+    
+    Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+    Tested-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+    [ Slight grammar and spelling fixes ]
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-  dc9b229a58dc ("genirq: Allow irq chips to mark themself oneshot safe")
 
-The original patch added that flag to the x86 MSI irqchip code, but that
-part was not applied for reasons which slipped from memory. It might be
-worthwhile to revisit that in order to avoid the mask/unmask overhead for
-such cases.
+And this change to the patch:
 
-Anyway for the patch in question:
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 4d4eb15cc7fd..23fc7c9abedb 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -457,7 +457,7 @@ config KPROBE_EVENTS
+ 	  If you want to use perf tools, this option is strongly recommended.
+ 
+ config KPROBE_EVENTS_ON_NOTRACE
+-	bool "Do NOT protect notrace function from kprobe events"
++	bool "Do NOT protect notrace functions from kprobe events"
+ 	depends on KPROBE_EVENTS
+ 	depends on KPROBES_ON_FTRACE
+ 	default n
+@@ -465,13 +465,13 @@ config KPROBE_EVENTS_ON_NOTRACE
+ 	  This is only for the developers who want to debug ftrace itself
+ 	  using kprobe events.
+ 
+-	  If kprobes can use ftrace instead of breakpoint, ftrace related
+-	  functions are protected from kprobe-events to prevent an infinit
+-	  recursion or any unexpected execution path which leads to a kernel
+-	  crash.
++	  If kprobes is using ftrace to hook to a function instead of a
++	  breakpoint, ftrace related functions are protected from
++	  kprobe-events to prevent an infinite recursion or any unexpected
++	  execution path which would lead to a kernel crash.
+ 
+ 	  This option disables such protection and allows you to put kprobe
+-	  events on ftrace functions for debugging ftrace by itself.
++	  events on ftrace functions for debugging ftrace itself.
+ 	  Note that this might let you shoot yourself in the foot.
+ 
+ 	  If unsure, say N.
 
-       Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-Thanks,
+Are you OK with this?
 
-	tglx
+-- Steve
