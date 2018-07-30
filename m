@@ -6,392 +6,243 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CD5FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D097D13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCC520893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCC520893
+	by mail.kernel.org (Postfix) with ESMTP id 8AAAE20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AAAE20893
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbeG3Obe (ORCPT
+        id S1732391AbeG3Obk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:31:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50388 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:31:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50410 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729138AbeG3Obd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:31:33 -0400
+        id S1729138AbeG3Obj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:31:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D2DEBAF5B;
-        Mon, 30 Jul 2018 12:56:39 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id DACC9AF5F;
+        Mon, 30 Jul 2018 12:56:44 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 8720CA0BE8; Mon, 30 Jul 2018 14:56:39 +0200 (CEST)
-Message-Id: <72e0ca806f24935c068f0da8b0dcd909042285e2.1532954671.git.mkubecek@suse.cz>
+        id 8D639A0BE8; Mon, 30 Jul 2018 14:56:44 +0200 (CEST)
+Message-Id: <a1c5e9a354780b3d5fca5d448e6c35f6313bc0d9.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 11/23] netlink: add netlink handler for
- sfeatures (-K)
+Subject: [RFC PATCH ethtool v2 12/23] netlink: add netlink handler for
+ gcoalesce (-c)
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:56:39 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:44 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement "ethtool -K <dev>" subcommand using netlink interface command
-ETHNL_CMD_SET_SETTINGS.
-
-The implementation tries to emulate legacy flags but the result is not
-exactly equal to the ioctl code. In particular, we map netdev features to
-legacy flags based on name patterns in off_flag_def[] but this mapping is
-slightly different from mapping used by kernel ioctl code. It also does not
-try to emulate legacy flags in "actual changes" output show when actual
-change of device features does not match userspace request exactly.
+Implement "ethtool -c <dev>" subcommand using netlink interface command
+ETHNL_CMD_GET_PARAMS with ETH_PARAMS_IM_COALESCE mask.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- ethtool.c          |   3 +-
- netlink/extapi.h   |   1 +
- netlink/settings.c | 292 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 295 insertions(+), 1 deletion(-)
+ Makefile.am       |   2 +-
+ ethtool.c         |   3 +-
+ netlink/extapi.h  |   1 +
+ netlink/monitor.c |  10 +++++
+ netlink/params.c  | 101 ++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 115 insertions(+), 2 deletions(-)
+ create mode 100644 netlink/params.c
 
+diff --git a/Makefile.am b/Makefile.am
+index 7cc4adc53c59..bedf9edaac47 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -24,7 +24,7 @@ ethtool_SOURCES += \
+ 		  netlink/netlink.c netlink/netlink.h netlink/extapi.h \
+ 		  netlink/strset.c netlink/strset.h netlink/monitor.c \
+ 		  netlink/parser.c netlink/parser.h \
+-		  netlink/drvinfo.c netlink/settings.c \
++		  netlink/drvinfo.c netlink/settings.c netlink/params.c \
+ 		  uapi/linux/ethtool_netlink.h \
+ 		  uapi/linux/netlink.h uapi/linux/genetlink.h
+ ethtool_CFLAGS += @MNL_CFLAGS@
 diff --git a/ethtool.c b/ethtool.c
-index b29086bbabde..b2f93a331098 100644
+index b2f93a331098..24c70c372914 100644
 --- a/ethtool.c
 +++ b/ethtool.c
-@@ -4878,6 +4878,7 @@ static int show_usage(struct cmd_context *ctx);
- #define nl_gset		NULL
+@@ -4879,6 +4879,7 @@ static int show_usage(struct cmd_context *ctx);
  #define nl_sset		NULL
  #define nl_gfeatures	NULL
-+#define nl_sfeatures	NULL
+ #define nl_sfeatures	NULL
++#define nl_gcoalesce	NULL
  #endif
  
  static const struct option {
-@@ -4944,7 +4945,7 @@ static const struct option {
- 	  "		[ tx N ]\n" },
- 	{ "-k|--show-features|--show-offload", 1, do_gfeatures, nl_gfeatures,
- 	  "Get state of protocol offload and other features" },
--	{ "-K|--features|--offload", 1, do_sfeatures, NULL,
-+	{ "-K|--features|--offload", 1, do_sfeatures, nl_sfeatures,
- 	  "Set protocol offload and other features",
- 	  "		FEATURE on|off ...\n" },
- 	{ "-i|--driver", 1, do_gdrv, nl_gdrv,
+@@ -4909,7 +4910,7 @@ static const struct option {
+ 	  "		[ autoneg on|off ]\n"
+ 	  "		[ rx on|off ]\n"
+ 	  "		[ tx on|off ]\n" },
+-	{ "-c|--show-coalesce", 1, do_gcoalesce, NULL,
++	{ "-c|--show-coalesce", 1, do_gcoalesce, nl_gcoalesce,
+ 	  "Show coalesce options" },
+ 	{ "-C|--coalesce", 1, do_scoalesce, NULL,
+ 	  "Set coalesce options",
 diff --git a/netlink/extapi.h b/netlink/extapi.h
-index c656ff862687..ad67e81449ba 100644
+index ad67e81449ba..8030bda4cbc9 100644
 --- a/netlink/extapi.h
 +++ b/netlink/extapi.h
-@@ -17,6 +17,7 @@ int nl_gdrv(struct cmd_context *ctx);
- int nl_gset(struct cmd_context *ctx);
+@@ -18,6 +18,7 @@ int nl_gset(struct cmd_context *ctx);
  int nl_sset(struct cmd_context *ctx);
  int nl_gfeatures(struct cmd_context *ctx);
-+int nl_sfeatures(struct cmd_context *ctx);
+ int nl_sfeatures(struct cmd_context *ctx);
++int nl_gcoalesce(struct cmd_context *ctx);
  int nl_monitor(struct cmd_context *ctx);
  
  void monitor_usage();
-diff --git a/netlink/settings.c b/netlink/settings.c
-index 51a01b400224..b7bfe14668df 100644
---- a/netlink/settings.c
-+++ b/netlink/settings.c
-@@ -741,3 +741,295 @@ int nl_sset(struct cmd_context *ctx)
- 		return 0;
- 	return nlctx->exit_code ?: 75;
- }
+diff --git a/netlink/monitor.c b/netlink/monitor.c
+index e3b8bb46f561..5d494ba43923 100644
+--- a/netlink/monitor.c
++++ b/netlink/monitor.c
+@@ -68,6 +68,7 @@ static int monitor_event_cb(const struct nlmsghdr *nlhdr, void *data)
+ 
+ int drvinfo_reply_cb(const struct nlmsghdr *nlhdr, void *data);
+ int settings_reply_cb(const struct nlmsghdr *nlhdr, void *data);
++int params_reply_cb(const struct nlmsghdr *nlhdr, void *data);
+ 
+ static struct {
+ 	uint8_t		cmd;
+@@ -85,6 +86,10 @@ static struct {
+ 		.cmd	= ETHNL_CMD_SET_SETTINGS,
+ 		.cb	= settings_reply_cb,
+ 	},
++	{
++		.cmd	= ETHNL_CMD_SET_PARAMS,
++		.cb	= params_reply_cb,
++	},
+ };
+ 
+ static int monitor_any_cb(const struct nlmsghdr *nlhdr, void *data)
+@@ -133,6 +138,11 @@ static struct monitor_option monitor_opts[] = {
+ 		.cmd		= ETHNL_CMD_SET_SETTINGS,
+ 		.info_mask	= ETH_SETTINGS_IM_FEATURES,
+ 	},
++	{
++		.pattern	= "-c|--show-coalesce|-C|--coalesce",
++		.cmd		= ETHNL_CMD_SET_PARAMS,
++		.info_mask	= ETH_PARAMS_IM_COALESCE,
++	},
+ };
+ 
+ static bool pattern_match(const char *s, const char *pattern)
+diff --git a/netlink/params.c b/netlink/params.c
+new file mode 100644
+index 000000000000..30aee5758c42
+--- /dev/null
++++ b/netlink/params.c
+@@ -0,0 +1,101 @@
++#include <errno.h>
++#include <string.h>
++#include <stdio.h>
 +
-+/* features */
++#include "../internal.h"
++#include "../common.h"
++#include "netlink.h"
++#include "strset.h"
++#include "parser.h"
 +
-+struct sfeatures_context {
-+	uint32_t		req_mask[0];
-+};
++/* GET_PARAMS */
 +
-+static void show_feature_changes(struct nl_context *nlctx,
-+				 const struct nlattr *feat_attr)
++static int show_coalesce(struct nl_context *nlctx, const struct nlattr *nest)
 +{
-+	struct sfeatures_context *sfctx = nlctx->cmd_private;
-+	const struct stringset *feature_names =
-+		global_stringset(ETH_SS_FEATURES);
-+	const unsigned int count = get_count(feature_names);
-+	const unsigned int words = (count + 31) / 32;
-+	const struct nlattr *tb[ETHA_FEATURES_MAX + 1] = {};
++	const struct nlattr *tb[ETHA_COALESCE_MAX + 1] = {};
 +	DECLARE_ATTR_TB_INFO(tb);
-+	const uint32_t *wanted_val;
-+	const uint32_t *wanted_mask;
-+	const uint32_t *active_val;
-+	const uint32_t *active_mask;
-+	unsigned int i;
-+	bool diff;
 +	int ret;
 +
-+	ret = mnl_attr_parse_nested(feat_attr, attr_cb, &tb_info);
++	if (!nest)
++		return -EOPNOTSUPP;
++	ret = mnl_attr_parse_nested(nest, attr_cb, &tb_info);
 +	if (ret < 0)
-+		goto err;
-+	if (!tb[ETHA_FEATURES_WANTED] || !tb[ETHA_FEATURES_ACTIVE])
-+		goto err;
-+	if (bitset_get_count(tb[ETHA_FEATURES_WANTED], &ret) != count ||
-+	    ret < 0)
-+		goto err;
-+	if (bitset_get_count(tb[ETHA_FEATURES_ACTIVE], &ret) != count ||
-+	    ret < 0)
-+		goto err;
-+	wanted_val = get_compact_bitset_value(tb[ETHA_FEATURES_WANTED]);
-+	wanted_mask = get_compact_bitset_mask(tb[ETHA_FEATURES_WANTED]);
-+	active_val = get_compact_bitset_value(tb[ETHA_FEATURES_ACTIVE]);
-+	active_mask = get_compact_bitset_mask(tb[ETHA_FEATURES_ACTIVE]);
-+	if (!wanted_val || !wanted_mask || !active_val || !active_mask)
-+		goto err;
++		return ret;
 +
-+	diff = false;
-+	for (i = 0; i < words; i++)
-+		if (wanted_mask[i] || active_mask[i])
-+			diff = true;
-+	if (!diff)
-+		return;
-+
-+	/* result is not exactly as requested, show differences */
-+	printf("Actual changes:\n");
-+	for (i = 0; i < count; i++) {
-+		const char *name = get_string(feature_names, i);
-+
-+		if (!name)
-+			continue;
-+		if (!feature_on(wanted_mask, i) && !feature_on(active_mask, i))
-+			continue;
-+		printf("%s: ", name);
-+		if (feature_on(wanted_mask, i))
-+			/* we requested a value but result is different */
-+			printf("%s [requested %s]",
-+			       feature_on(wanted_val, i) ? "off" : "on",
-+			       feature_on(wanted_val, i) ? "on" : "off");
-+		else if (!feature_on(sfctx->req_mask, i))
-+			/* not requested but changed anyway */
-+			printf("%s [not requested]",
-+			       feature_on(active_val, i) ? "on" : "off");
-+		else
-+			printf("%s", feature_on(active_val, i) ? "on" : "off");
-+		fputc('\n', stdout);
-+	}
-+
-+	return;
-+err:
-+	fprintf(stderr, "malformed diff info from kernel\n");
-+}
-+
-+static int find_feature(const char *name)
-+{
-+	const struct stringset *feature_names =
-+		global_stringset(ETH_SS_FEATURES);
-+	const unsigned int count = get_count(feature_names);
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (!strcmp(name, get_string(feature_names, i)))
-+			return i;
-+
-+	return -1;
-+}
-+
-+static int fill_feature(struct nl_context *nlctx, const char *name, bool val)
-+{
-+	struct nlattr *bit_attr;
-+
-+	bit_attr = ethnla_nest_start(nlctx, ETHA_BITS_BIT);
-+	if (!bit_attr)
-+		return -EMSGSIZE;
-+	if (ethnla_put_strz(nlctx, ETHA_BIT_NAME, name))
-+		return -EMSGSIZE;
-+	if (ethnla_put_flag(nlctx, ETHA_BIT_VALUE, val))
-+		return -EMSGSIZE;
-+	mnl_attr_nest_end(nlctx->nlhdr, bit_attr);
++	printf("Coalesce parameters for %s:\n", nlctx->devname);
++	printf("Adaptive RX: %s  TX: %s\n",
++	       u8_to_bool(tb[ETHA_COALESCE_RX_USE_ADAPTIVE]),
++	       u8_to_bool(tb[ETHA_COALESCE_TX_USE_ADAPTIVE]));
++	show_u32(tb[ETHA_COALESCE_STATS_BLOCK_USECS], "stats-block-usecs: ");
++	show_u32(tb[ETHA_COALESCE_RATE_SAMPLE_INTERVAL], "sample-interval: ");
++	show_u32(tb[ETHA_COALESCE_PKT_RATE_LOW], "pkt-rate-low: ");
++	show_u32(tb[ETHA_COALESCE_PKT_RATE_HIGH], "pkt-rate-high: ");
++	putchar('\n');
++	show_u32(tb[ETHA_COALESCE_RX_USECS], "rx-usecs: ");
++	show_u32(tb[ETHA_COALESCE_RX_MAXFRM], "rx-frames: ");
++	show_u32(tb[ETHA_COALESCE_RX_USECS_IRQ], "rx-usecs-irq: ");
++	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_IRQ], "rx-frames-irq: ");
++	putchar('\n');
++	show_u32(tb[ETHA_COALESCE_TX_USECS], "tx-usecs: ");
++	show_u32(tb[ETHA_COALESCE_TX_MAXFRM], "tx-frames: ");
++	show_u32(tb[ETHA_COALESCE_TX_USECS_IRQ], "tx-usecs-irq: ");
++	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_IRQ], "tx-frames-irq: ");
++	putchar('\n');
++	show_u32(tb[ETHA_COALESCE_RX_USECS_LOW], "rx-usecs-low: ");
++	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_LOW], "rx-frame-low: ");
++	show_u32(tb[ETHA_COALESCE_TX_USECS_LOW], "tx-usecs-low: ");
++	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_LOW], "tx-frame-low: ");
++	putchar('\n');
++	show_u32(tb[ETHA_COALESCE_RX_USECS_HIGH], "rx-usecs-high: ");
++	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_HIGH], "rx-frame-high: ");
++	show_u32(tb[ETHA_COALESCE_TX_USECS_HIGH], "tx-usecs-high: ");
++	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_HIGH], "tx-frame-high: ");
++	putchar('\n');
 +
 +	return 0;
 +}
 +
-+static void set_sf_req_mask(struct nl_context *nlctx, unsigned int idx)
++int params_reply_cb(const struct nlmsghdr *nlhdr, void *data)
 +{
-+	struct sfeatures_context *sfctx = nlctx->cmd_private;
-+
-+	sfctx->req_mask[idx / 32] |= (1 << (idx % 32));
-+}
-+
-+static int fill_legacy_flag(struct nl_context *nlctx, const char *flag_name,
-+			    bool val)
-+{
-+	const struct stringset *feature_names =
-+		global_stringset(ETH_SS_FEATURES);
-+	const unsigned int count = get_count(feature_names);
-+	unsigned int i, j;
-+	int ret;
-+
-+	for (i = 0; i < OFF_FLAG_DEF_SIZE; i++) {
-+		const char *pattern;
-+
-+		if (strcmp(flag_name, off_flag_def[i].short_name) &&
-+		    strcmp(flag_name, off_flag_def[i].long_name))
-+			continue;
-+		pattern = off_flag_def[i].kernel_name;
-+
-+		for (j = 0; j < count; j++) {
-+			const char *name = get_string(feature_names, j);
-+
-+			if (flag_pattern_match(name, pattern)) {
-+				ret = fill_feature(nlctx, name, val);
-+				if (ret < 0)
-+					return ret;
-+				set_sf_req_mask(nlctx, j);
-+			}
-+		}
-+
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+int sfeatures_reply_cb(const struct nlmsghdr *nlhdr, void *data)
-+{
-+	const struct genlmsghdr *ghdr = (const struct genlmsghdr *)(nlhdr + 1);
-+	const struct nlattr *tb[ETHA_SETTINGS_MAX + 1] = {};
++	const struct nlattr *tb[ETHA_PARAMS_MAX + 1] = {};
 +	DECLARE_ATTR_TB_INFO(tb);
 +	struct nl_context *nlctx = data;
-+	const char *devname;
 +	int ret;
 +
-+	if (ghdr->cmd != ETHNL_CMD_SET_SETTINGS) {
-+		fprintf(stderr, "warning: unexpected reply message type %u\n",
-+			ghdr->cmd);
-+		return MNL_CB_OK;
-+	}
 +	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
 +	if (ret < 0)
 +		return ret;
-+	devname = get_dev_name(tb[ETHA_SETTINGS_DEV]);
-+	if (strcmp(devname, nlctx->devname)) {
-+		fprintf(stderr, "warning: unexpected message for device %s\n",
-+			devname);
-+		return MNL_CB_OK;
-+	}
-+	if (!tb[ETHA_SETTINGS_FEATURES])
++	nlctx->devname = get_dev_name(tb[ETHA_PARAMS_DEV]);
++	if (!dev_ok(nlctx))
 +		return MNL_CB_OK;
 +
-+	show_feature_changes(nlctx, tb[ETHA_SETTINGS_FEATURES]);
++	if (mask_ok(nlctx, ETH_PARAMS_IM_COALESCE)) {
++		ret = show_coalesce(nlctx, tb[ETHA_PARAMS_COALESCE]);
++		if ((ret < 0) && show_only(nlctx, ETH_PARAMS_IM_COALESCE)) {
++			nlctx->exit_code = 82;
++			errno = -ret;
++			perror("Cannot get device coalesce settings");
++			return MNL_CB_ERROR;
++		}
++	}
++
 +	return MNL_CB_OK;
 +}
 +
-+int fill_sfeatures_bitmap(struct nl_context *nlctx)
++static int params_request(struct cmd_context *ctx, uint32_t info_mask)
 +{
-+	struct nlmsghdr *nlhdr = nlctx->nlhdr;
-+	struct nlattr *bitset_attr;
-+	struct nlattr *bits_attr;
 +	int ret;
 +
-+	ret = -EMSGSIZE;
-+	bitset_attr = ethnla_nest_start(nlctx, ETHA_FEATURES_WANTED);
-+	if (!bitset_attr)
++	ret = ethnl_prep_get_request(ctx, ETHNL_CMD_GET_PARAMS,
++				     ETHA_PARAMS_DEV);
++	if (ret < 0)
 +		return ret;
-+	bits_attr = ethnla_nest_start(nlctx, ETHA_BITSET_BITS);
-+	if (!bits_attr)
-+		goto err;
-+
-+	while (nlctx->argc > 0) {
-+		bool val;
-+
-+		if (!strcmp(*nlctx->argp, "--")) {
-+			nlctx->argp++;
-+			nlctx->argc--;
-+			break;
-+		}
-+		ret = -EINVAL;
-+		if (nlctx->argc < 2 ||
-+		    (strcmp(nlctx->argp[1], "on") &&
-+		     strcmp(nlctx->argp[1], "off"))) {
-+			fprintf(stderr,
-+				"ethtool (%s): flag '%s' for parameter '%s' is"
-+				" not followed by 'on' or 'off'\n",
-+				nlctx->cmd, nlctx->argp[1], nlctx->param);
-+			goto err;
-+		}
-+
-+		val = !strcmp(nlctx->argp[1], "on");
-+		ret = fill_legacy_flag(nlctx, nlctx->argp[0], val);
-+		if (ret > 0) {
-+			ret = fill_feature(nlctx, nlctx->argp[0], val);
-+			if (ret == 0) {
-+				int idx = find_feature(nlctx->argp[0]);
-+
-+				if (idx >= 0)
-+					set_sf_req_mask(nlctx, idx);
-+			}
-+		}
-+		if (ret < 0)
-+			goto err;
-+
-+		nlctx->argp += 2;
-+		nlctx->argc -= 2;
-+	}
-+
-+	mnl_attr_nest_end(nlhdr, bits_attr);
-+	mnl_attr_nest_end(nlhdr, bitset_attr);
-+	return 0;
-+err:
-+	mnl_attr_nest_cancel(nlhdr, bitset_attr);
-+	return ret;
++	if (ethnla_put_u32(ctx->nlctx, ETHA_PARAMS_INFOMASK, info_mask))
++		return -EMSGSIZE;
++	return ethnl_send_get_request(ctx->nlctx, params_reply_cb);
 +}
 +
-+int nl_sfeatures(struct cmd_context *ctx)
++int nl_gcoalesce(struct cmd_context *ctx)
 +{
-+	const struct stringset *feature_names;
-+	struct sfeatures_context *sfctx;
-+	struct nl_context *nlctx = ctx->nlctx;
-+	struct nlattr *feat_attr;
-+	unsigned int words;
-+	int ret;
-+
-+	nlctx->cmd = "-K";
-+	nlctx->argp = ctx->argp;
-+	nlctx->argc = ctx->argc;
-+	nlctx->cmd_private = &sfctx;
-+
-+	load_global_strings(nlctx);
-+	feature_names = global_stringset(ETH_SS_FEATURES);
-+	words = (get_count(feature_names) + 31) / 32;
-+	sfctx = malloc(sizeof(*sfctx) + words * sizeof(sfctx->req_mask[0]));
-+	if (!sfctx)
-+		return -ENOMEM;
-+	memset(sfctx, '\0',
-+	       sizeof(*sfctx) + words * sizeof(sfctx->req_mask[0]));
-+	nlctx->cmd_private = sfctx;
-+
-+	nlctx->devname = ctx->devname;
-+	ret = msg_init(nlctx, ETHNL_CMD_SET_SETTINGS,
-+		       NLM_F_REQUEST | NLM_F_ACK);
-+	if (ret < 0)
-+		return 2;
-+	if (ethnla_put_dev(nlctx, ETHA_SETTINGS_DEV, ctx->devname))
-+		return -EMSGSIZE;
-+	if (ethnla_put_flag(nlctx, ETHA_SETTINGS_COMPACT, true))
-+		return -EMSGSIZE;
-+
-+	feat_attr = ethnla_nest_start(nlctx, ETHA_SETTINGS_FEATURES);
-+	if (!feat_attr)
-+		return -EMSGSIZE;
-+	ret = fill_sfeatures_bitmap(nlctx);
-+	if (ret < 0)
-+		return ret;
-+	if (ethnla_put_flag(nlctx, ETHA_FEATURES_WANT_DIFF, true))
-+		return -EMSGSIZE;
-+	mnl_attr_nest_end(nlctx->nlhdr, feat_attr);
-+
-+	ret = ethnl_sendmsg(nlctx);
-+	if (ret < 0)
-+		return 92;
-+	ret = ethnl_process_reply(nlctx, sfeatures_reply_cb);
-+	if (ret == 0)
-+		return 0;
-+	return nlctx->exit_code ?: 92;
++	return params_request(ctx, ETH_PARAMS_IM_COALESCE);
 +}
 -- 
 2.18.0
