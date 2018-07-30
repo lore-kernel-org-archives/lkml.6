@@ -1,167 +1,158 @@
 Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLACK,URIBL_SBL,URIBL_SBL_A autolearn=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562A8FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F351A13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8B120892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:00:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8B120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A5D3A20892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:01:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D3A20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731801AbeG3Of3 (ORCPT
+        id S1731904AbeG3OgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:35:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40604 "EHLO mx1.redhat.com"
+        Mon, 30 Jul 2018 10:36:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59839 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730482AbeG3Of3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:35:29 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D64F930E6877;
-        Mon, 30 Jul 2018 13:00:35 +0000 (UTC)
-Received: from t460s.bristot.redhat.com (ovpn-116-109.phx2.redhat.com [10.3.116.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F6FA61F2B;
-        Mon, 30 Jul 2018 13:00:08 +0000 (UTC)
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-To:     linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Clark Williams <williams@redhat.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@sssup.it>,
-        Romulo da Silva de Oliveira <romulo.deoliveira@ufsc.br>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH RT] sched/core: Avoid__schedule() being called twice, the second in vain
-Date:   Mon, 30 Jul 2018 15:00:00 +0200
-Message-Id: <ad2b29b5715f970bffc1a7026cabd6ff0b24076a.1532952814.git.bristot@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 30 Jul 2018 13:00:36 +0000 (UTC)
+        id S1730482AbeG3OgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:36:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EFB3C207AC; Mon, 30 Jul 2018 15:01:10 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 933ED20712;
+        Mon, 30 Jul 2018 15:01:10 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 15:01:10 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net
+Cc:     kishon@ti.com, andrew@lunn.ch, f.fainelli@gmail.com,
+        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        allan.nielsen@microsemi.com, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 00/10] mscc: ocelot: add support for SerDes muxing
+ configuration
+Message-ID: <20180730130110.eyyegxxkxbpzx3fz@qschulz>
+References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ldprstlc3p4e3hrl"
+Content-Disposition: inline
+In-Reply-To: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before calling __schedule() to cause a context switch, the schedule()
-function runs sched_submit_work() to dispatch deferred work that was
-postponed to the point that the thread is leaving the processor.
-The function sched_submit_work() checks for the need to wake up a
-kworker; if needed, a kworker thread is awakened. In this context,
-the following behavior takes place.
 
-A kworker (let's call it kworker_1) is running and enqueue a postponed
-work (this is possible). kworker_1 then set its state as "sleepable" and
-calls schedule() to leave the processor.
+--ldprstlc3p4e3hrl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-At this point, the kworker_1 is in line 1 of the pseudo-code like
-bellow.
+Hi again,
 
------------------------------ %< ----------------------------------------
-  1 void schedule(void)
-  2 {
-  3	sched_submit_work(){
-  4		wq_worker_sleeping() {
-  5			preempt_disable();
-  6			wakeup(kworker_2);
-  7			preempt_enable() {
-  8				should_resched() {
-  9					__schedule() {
- 10						context_switch
- 11					}
- 12				}
- 13			}
- 14		}
- 15	}
- 16	do {
- 17		preempt_disable();
- 18		__schedule();
- 19		sched_preempt_enable_no_resched();
- 20	} while (need_resched());
- 21	sched_update_worker();
- 22 }
------------------------------ >% ----------------------------------------
+On Mon, Jul 30, 2018 at 02:43:45PM +0200, Quentin Schulz wrote:
+> The Ocelot switch has currently a hardcoded SerDes muxing that suits only
+> a particular use case. Any other board setup will fail to work.
+>=20
+> To prepare for upcoming boards' support that do not have the same muxing,
+> create a PHY driver that will handle all possible cases.
+>=20
+> A SerDes can work in SGMII, QSGMII or PCIe and is also muxed to use a
+> given port depending on the selected mode or board design.
+>=20
+> The SerDes configuration is in the middle of an address space (HSIO) that
+> is used to configure some parts in the MAC controller driver, that is why
+> we need to use a syscon so that we can write to the same address space fr=
+om
+> different drivers safely using regmap.
+>=20
+> Patches from generic PHY and net should be safe to be merged separately.
+>=20
+> I suggest patches 1 to 5 and 10 go through net while the others (6 to 9)
+> go through the generic PHY subsystem.
+>=20
 
-Then sched_subimit_work() is called. During the execution of
-sched_subimit_work(), the preemption is disabled, a second kworker is
-awakened (let's call it kworker_2) and then preemption is enabled again.
+Actually more like the following:
+1 and 8 through MIPS tree, 2 to 5 and 10 through net, 6, 7 and 9 through
+PHY.
 
-While in the preempt_enable(), after enabling the preemption, the system
-checks if it needs to resched. As a kthread_1 is in sleepable and the
-kthread_2 was just awakenedi, this is the case of re-scheduling.
-Then the __schedule() is called  at line 9, and a context switch happens
-at line 10.
+Quentin
 
-While other threads run, kthread_1 is awakened, is scheduled and return
-to the execution at line 11. Continuing the execution, the code return to
-the schedule() execution at line 15. Preemption is then disabled and
-__schedule() called again at line 18. As the __schedule() just returned
-at line 11, there is nothing to schedule, and so the __schedule() at
-line 18 is called in vain.
+> Thanks,
+> Quentin
+>=20
+> Quentin Schulz (10):
+>   MIPS: mscc: ocelot: make HSIO registers address range a syscon
+>   dt-bindings: net: ocelot: remove hsio from the list of register address=
+ spaces
+>   net: mscc: ocelot: get HSIO regmap from syscon
+>   net: mscc: ocelot: move the HSIO header to include/soc
+>   net: mscc: ocelot: simplify register access for PLL5 configuration
+>   phy: add QSGMII and PCIE modes
+>   dt-bindings: phy: add DT binding for Microsemi Ocelot SerDes muxing
+>   MIPS: mscc: ocelot: add SerDes mux DT node
+>   phy: add driver for Microsemi Ocelot SerDes muxing
+>   net: mscc: ocelot: make use of SerDes PHYs for handling their configura=
+tion
+>=20
+>  Documentation/devicetree/bindings/mips/mscc.txt             |  16 +-
+>  Documentation/devicetree/bindings/net/mscc-ocelot.txt       |   9 +-
+>  Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt |  42 +-
+>  arch/mips/boot/dts/mscc/ocelot.dtsi                         |  19 +-
+>  drivers/net/ethernet/mscc/Kconfig                           |   2 +-
+>  drivers/net/ethernet/mscc/ocelot.c                          |  16 +-
+>  drivers/net/ethernet/mscc/ocelot.h                          |  79 +-
+>  drivers/net/ethernet/mscc/ocelot_board.c                    |  54 +-
+>  drivers/net/ethernet/mscc/ocelot_hsio.h                     | 785 +------
+>  drivers/net/ethernet/mscc/ocelot_regs.c                     |  93 +-
+>  drivers/phy/Kconfig                                         |   1 +-
+>  drivers/phy/Makefile                                        |   1 +-
+>  drivers/phy/mscc/Kconfig                                    |  11 +-
+>  drivers/phy/mscc/Makefile                                   |   5 +-
+>  drivers/phy/mscc/phy-ocelot-serdes.c                        | 314 +++-
+>  include/linux/phy/phy.h                                     |   2 +-
+>  include/soc/mscc/ocelot_hsio.h                              | 859 ++++++=
++-
+>  17 files changed, 1343 insertions(+), 965 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-serd=
+es.txt
+>  delete mode 100644 drivers/net/ethernet/mscc/ocelot_hsio.h
+>  create mode 100644 drivers/phy/mscc/Kconfig
+>  create mode 100644 drivers/phy/mscc/Makefile
+>  create mode 100644 drivers/phy/mscc/phy-ocelot-serdes.c
+>  create mode 100644 include/soc/mscc/ocelot_hsio.h
+>=20
+> base-commit: d6e74c71c4de5222f147b64bf747e8a3c523c690
+> --=20
+> git-series 0.9.1
 
-A trace with details of this execution can be found here:
-  http://bristot.me/__schedule-being-called-twice-the-second-in-vain/
+--ldprstlc3p4e3hrl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Knowing that sched_submit_work() is called only inside schedule(), and
-that it does not suspend or block, one way to avoid the first schedule is
-to disable the preemption before calling wq_worker_sleeping(), and
-then use sched_preempt_enable_no_resched() to enable the preemption again
-after the return of wq_worker_sleeping().
+-----BEGIN PGP SIGNATURE-----
 
-This patch is RT specific because wq_worker_sleeping() is called with
-preemption disabled on non-rt, see -rt patch:
-  sched: Distangle worker accounting from rqlock
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAltfDBYACgkQhLiadT7g
+8aMxHQ/+PPE/fK7CA51pMkW8CKUXuRFyIRBTul4o/vVrIqyIOdLuJd67WRQ0yyzT
++BnPbTY0RRlm3+lUN2BKIXdvZUzubfUcN/UCqp0i8eqoiKfqCkxqscH3K+Uun0wK
+25+nfTrn2taDcvVBkT8kx0gLj07aEt1cf7mEhqrZzXPDihfMn/UzxeGhZPspmEu5
+ylr/IdzBjHldSBG4jau+GiMiWPUDJDitnW0TaGoMXMwkvRFaTkboCBMXr44dR1Vv
+KtUn77zOz5zh+4T8a7fgfEBvmvA1TnMxRBsv2tkKb3LLQNmuytFFCFvEI6FnhN1S
+05nG1dM1xspND5yY3D7+SUFuZZBr/ASMmsOlJe/W3WV7y24RSOiFziwAB0jCz6ap
+Yz9DBrmm/Z2bI1cU4nZXIsPnzhk6iIZYljhG2UiWLX9d6519/8rBECw8l/56d0AL
+gfk6o0F29D2A8XTQAinnE0VkY+fMao+jvRdvQy2sNRQieBx1nFX5NGJ6GMYrPSmO
+Z0WVbGIGoCnLwzbbPFKumur0uIaDL8b3cWaZxVGvCCPRU5FA8SRRyVEunruDSGKE
+17+2fe8IoJl5noU+VW+SXEZO4rR9AuXFzVvqzOiIaFO2Xl1uH8zW7B/tyYLx3n03
+3rlZvk35oUZfW0gtp42v6lIqo4Cl3D5xfgchLPx6ARhl52P7wow=
+=Eyzn
+-----END PGP SIGNATURE-----
 
-Note: A "similar" behavior can happen in the blk_schedule_flush_plug(),
-but that is different. There, the problem can occur because of
-rt_spin_lock(), but we cannot convert them to raw_spin_lock because it
-will potentially cause latency spikes.
-
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@sssup.it>
-Cc: Romulo da Silva de Oliveira <romulo.deoliveira@ufsc.br>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-rt-users <linux-rt-users@vger.kernel.org>
----
- kernel/sched/core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 70641e8f3c89..7a48619af3e4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3545,9 +3545,16 @@ static inline void sched_submit_work(struct task_struct *tsk)
- 	/*
- 	 * If a worker went to sleep, notify and ask workqueue whether
- 	 * it wants to wake up a task to maintain concurrency.
-+	 *
-+	 * As this function is called inside the schedule() context,
-+	 * we disable preemption to avoid it calling schedule() again
-+	 * in the possible wakeup of a kworker.
- 	 */
--	if (tsk->flags & PF_WQ_WORKER)
-+	if (tsk->flags & PF_WQ_WORKER) {
-+		preempt_disable();
- 		wq_worker_sleeping(tsk);
-+		preempt_enable_no_resched();
-+	}
- 
- 
- 	if (tsk_is_pi_blocked(tsk))
--- 
-2.17.1
-
+--ldprstlc3p4e3hrl--
