@@ -2,101 +2,133 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B4BC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E5EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBFE208A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD6320894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:01:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="PiEx1+i1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BBFE208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDn0kxVS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD6320894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbeGaAhT (ORCPT
+        id S1732080AbeGaAiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:37:19 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41568 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730983AbeGaAhT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:37:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NAaF4WPJu8rWInIdetYTuraNJevDc/hKTOdQbZCr8E8=; b=PiEx1+i1EHuOKd0roppo38AQ3
-        sD0eeJ5F71bTLmL4X9DXHGnzB9qqPy/OaYn9SjwyuXFOG53vNAlpc6pJiEqtNhb0ZYc8uyaKxTsMr
-        WvofwvaaeXn017Hz+ihKNEK/KTS5JVC2SvV2AozNtQgBEVveZhUYTa9mMFVW+DJVRFzgw=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:33316)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fkH8Q-0002pm-6e; Mon, 30 Jul 2018 23:59:26 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fkH8N-0005Gk-GO; Mon, 30 Jul 2018 23:59:23 +0100
-Date:   Mon, 30 Jul 2018 23:59:22 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Anvin <hpa@zytor.com>,
-        Matt Porter <mporter@kernel.crashing.org>, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] rapidio: move Kconfig menu definition to subsystem
-Message-ID: <20180730225921.GE17271@n2100.armlinux.org.uk>
-References: <20180730225035.28365-1-acolin@isi.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730225035.28365-1-acolin@isi.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 30 Jul 2018 20:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbeGaAiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 20:38:17 -0400
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE0AB20857;
+        Mon, 30 Jul 2018 23:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532991662;
+        bh=tiwP4lReZ8TSnrX668rpTS713acX/8BuOKAyEXyHJ5k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uDn0kxVSDHv3qebQ6GLCnfQKVBBorfhPSTWOLJeDgG4TbVkggSsKAsuUq0JZsyQdx
+         vIwAyfKeIAbzIlPPqfcAaiEnjIhE7YB1tCA6QNrgHx4WkLQfBcO0RJ7Vplk7MB1qX7
+         lVhvO0udK74Q5rPV0CaBBYJAh88+iKjRRYJMaz3Q=
+Date:   Tue, 31 Jul 2018 08:00:59 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, shuah@kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/3] tracing: kprobes: Prohibit probing on notrace
+ functions
+Message-Id: <20180731080059.be34e021d6758925c70dbc6b@kernel.org>
+In-Reply-To: <CADcCL0hWtn=r-AjpKgB_JKeL1aTbeZPpoKeVXH8Z_FnJYyaTbA@mail.gmail.com>
+References: <153294598465.32740.17737878083872427008.stgit@devbox>
+        <CADcCL0hWtn=r-AjpKgB_JKeL1aTbeZPpoKeVXH8Z_FnJYyaTbA@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I only have this message, and patches 5 and 6.  This is meaningless
-for me to review - I can't tell what you've done as far as my comments
-on your previous iteration.
+On Mon, 30 Jul 2018 12:06:17 -0400
+Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
 
-Please arrange to _at least_ copy all patches the appropriate mailing
-lists for the set with your complete patch set if you aren't going to
-copy everyone on all patches in the set.
+> Hi Masami,
+> I just tested the patch-set and it still prevents the crash I was witnessing.
+> You can add my tested-by.
+> Tested-by: Francis Deslauriers <francis.deslauriers@efficios.com>
 
-On Mon, Jul 30, 2018 at 06:50:28PM -0400, Alexei Colin wrote:
-> In the current patchset, I took the approach of adding '|| PCI' to the
-> depends in the subsystem. I did try the alterantive approach mentioned
-> in the reviews for v1 of this patch, where the subsystem Kconfig does
-> not add a '|| PCI' and each per-architecture Kconfig has to add a
-> 'select HAS_RAPIDIO if PCI' and SoCs with IP blocks have to also add
-> 'select HAS_RAPIDIO'. This works too but requires each architecture's
-> Kconfig to add the line for RapidIO (whereas current approach does not
-> require that involvement) and also may create a false impression that
-> the dependency on PCI is strict.
+Thanks Francis!
 
-... which means, as it stands, I've no idea what you actually came up
-with for this.
+
+> 
+> Thank you for pushing this forward!
+> Francis
+> Le lun. 30 juill. 2018, à 06 h 20, Masami Hiramatsu
+> <mhiramat@kernel.org> a écrit :
+> >
+> > Hi,
+> >
+> > This is the 5th version of the series to prohibit kprobe
+> > on notrace functions.
+> >
+> > This fixes a build error when CONFIG_FUNCTION_TRACER=y but
+> > DYNAMIC_FTRACE=n. Finally I decided to recover the approach
+> > in the 1st version, made it depends on CONFIG_KPROBES_ON_FTRACE=y.
+> > It is the simplest and enough to prohibiting kernel crash.
+> >
+> > So, in summary, if CONFIG_KPROBES_ON_FTRACE=y (which depends
+> > on CONFIG_DYNAMIC_FTRACE=y, so ftrace_location_range must be
+> > there) && CONFIG_KPROBE_EVENTS_ON_NOTRACE=n (default),
+> > kprobe events can not be defined on notrace function.
+> > Otherwides (means CONFIG_KPROBES_ON_FTRACE=n or
+> > CONFIG_KPROBE_EVENTS_ON_NOTRACE=y), we can put kprobe events
+> > on notrace functions.
+> >
+> > Francis, I dropped your tested-by because I got many kbuild
+> > errors and fixed it. If you can, could you test it again?
+> >
+> > Thank you,
+> >
+> > ---
+> >
+> > Francis Deslauriers (1):
+> >       selftest/ftrace: Move kprobe selftest function to separate compile unit
+> >
+> > Masami Hiramatsu (2):
+> >       tracing: kprobes: Prohibit probing on notrace function
+> >       selftests/ftrace: Fix kprobe string testcase to not probe notrace function
+> >
+> >
+> >  kernel/trace/Kconfig                               |   20 +++++++
+> >  kernel/trace/Makefile                              |    5 ++
+> >  kernel/trace/trace_kprobe.c                        |   59 +++++++++++++-------
+> >  kernel/trace/trace_kprobe_selftest.c               |   10 +++
+> >  kernel/trace/trace_kprobe_selftest.h               |    7 ++
+> >  .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++------
+> >  .../selftests/ftrace/test.d/kprobe/probepoint.tc   |    2 -
+> >  7 files changed, 94 insertions(+), 39 deletions(-)
+> >  create mode 100644 kernel/trace/trace_kprobe_selftest.c
+> >  create mode 100644 kernel/trace/trace_kprobe_selftest.h
+> >
+> > --
+> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+> 
+> 
+> 
+> --
+> Francis Deslauriers
+> Software developer
+> EfficiOS inc.
+
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+Masami Hiramatsu <mhiramat@kernel.org>
