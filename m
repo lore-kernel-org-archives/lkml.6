@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9120BFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03304FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5326D20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5326D20873
+	by mail.kernel.org (Postfix) with ESMTP id B143020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B143020873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeG3KK0 (ORCPT
+        id S1726703AbeG3KKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:10:26 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:57931 "EHLO
+        Mon, 30 Jul 2018 06:10:36 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:50706 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726520AbeG3KK0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726344AbeG3KKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:10:26 -0400
+        Mon, 30 Jul 2018 06:10:36 -0400
 Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie2.idc.renesas.com with ESMTP; 30 Jul 2018 17:36:31 +0900
+  by relmlie2.idc.renesas.com with ESMTP; 30 Jul 2018 17:36:41 +0900
 Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id BD09784630;
-        Mon, 30 Jul 2018 17:36:28 +0900 (JST)
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id DC20C8464A;
+        Mon, 30 Jul 2018 17:36:40 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.51,422,1526310000"; 
-   d="scan'208";a="288300616"
+   d="scan'208";a="288300644"
 Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 30 Jul 2018 17:36:25 +0900
+  by relmlii2.idc.renesas.com with ESMTP; 30 Jul 2018 17:36:37 +0900
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -42,9 +42,9 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
-Date:   Mon, 30 Jul 2018 09:36:07 +0100
-Message-Id: <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+Subject: [PATCH v2 2/2] clk: Add functions to get optional clocks
+Date:   Mon, 30 Jul 2018 09:36:08 +0100
+Message-Id: <1532939768-7018-3-git-send-email-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
 References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
@@ -53,106 +53,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quite a few drivers get an optional clock, e.g. a clock required
-to access peripheral's registers that is always enabled on some
-devices.
-
-This function behaves the same as of_clk_get_by_name() except that
-it will return NULL instead of -ENOENT. This makes error checking
-for users easier and allows clk_prepare_enable, etc to be called
-on the returned reference without additional checks.
+Behaves the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/clk/clkdev.c | 34 ++++++++++++++++++++++++++++++----
- include/linux/clk.h  |  1 +
- 2 files changed, 31 insertions(+), 4 deletions(-)
+ drivers/clk/clk-devres.c | 18 ++++++++++++++++--
+ drivers/clk/clkdev.c     | 17 +++++++++++++++--
+ include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..a2bb01a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
+ 	clk_put(*(struct clk **)res);
+ }
+ 
+-struct clk *devm_clk_get(struct device *dev, const char *id)
++static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
+ {
+ 	struct clk **ptr, *clk;
+ 
+@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk = clk_get(dev, id);
++	if (!optional)
++		clk = clk_get(dev, id);
++	else
++		clk = clk_get_optional(dev, id);
+ 	if (!IS_ERR(clk)) {
+ 		*ptr = clk;
+ 		devres_add(dev, ptr);
+@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 
+ 	return clk;
+ }
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, false);
++}
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, true);
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
 diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8..c1b7262 100644
+index c1b7262..484a444 100644
 --- a/drivers/clk/clkdev.c
 +++ b/drivers/clk/clkdev.c
-@@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	struct clk *clk = ERR_PTR(-ENOENT);
- 
-@@ -73,6 +74,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
- 		if (!IS_ERR(clk)) {
- 			break;
- 		} else if (name && index >= 0) {
-+			if (optional && PTR_ERR(clk) == -ENOENT)
-+				clk = NULL;
- 			if (PTR_ERR(clk) != -EPROBE_DEFER)
- 				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
- 					np, name ? name : "", index);
-@@ -106,15 +109,38 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get_by_name(np, np->full_name, name, false);
+@@ -217,21 +217,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
  }
- EXPORT_SYMBOL(of_clk_get_by_name);
+ EXPORT_SYMBOL(clk_get_sys);
  
-+/**
-+ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
-+ * by a device node
-+ * @np: pointer to clock consumer node
-+ * @name: name of consumer's clock input, or NULL for the first clock reference
-+ *
-+ * This function parses the clocks and clock-names properties,
-+ * and uses them to look up the struct clk from the registered list of clock
-+ * providers.
-+ * It behaves the same as of_clk_get_by_name(), except when no clock is found.
-+ * In this case, instead of returning -ENOENT, it returns NULL.
-+ */
-+struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+					const char *name)
-+{
-+	if (!np)
-+		return ERR_PTR(-ENOENT);
-+
-+	return __of_clk_get_by_name(np, np->full_name, name, true);
-+}
-+EXPORT_SYMBOL(of_clk_get_by_name_optional);
-+
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
+-struct clk *clk_get(struct device *dev, const char *con_id)
++static struct clk *internal_clk_get(struct device *dev, const char *con_id,
++				    bool optional)
  {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -197,7 +223,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
  	struct clk *clk;
  
  	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
++					   optional);
  		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
  			return clk;
  	}
+ 
+ 	return clk_get_sys(dev_id, con_id);
+ }
++
++struct clk *clk_get(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, false);
++}
+ EXPORT_SYMBOL(clk_get);
+ 
++struct clk *clk_get_optional(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, true);
++}
++EXPORT_SYMBOL(clk_get_optional);
++
+ void clk_put(struct clk *clk)
+ {
+ 	__clk_put(clk);
 diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..8cb5455 100644
+index 8cb5455..22040ea 100644
 --- a/include/linux/clk.h
 +++ b/include/linux/clk.h
-@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-+struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
- #else
- static inline struct clk *of_clk_get(struct device_node *np, int index)
+@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+ struct clk *clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * clk_get_optional - lookup and obtain a reference to optional clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as clk_get except where there is no clock producer. In this
++ * case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * clk_bulk_get - lookup and obtain a number of references to clock producer.
+  * @dev: device for clock "consumer"
+  * @num_clks: the number of clk_bulk_data
+@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+  * @dev: device for clock "consumer"
+@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 					    struct clk_bulk_data *clks)
+ {
+@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
 -- 
 2.7.4
 
