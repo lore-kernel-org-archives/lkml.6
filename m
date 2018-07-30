@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB823FC6121
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A966CFC6122
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6952A208A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 450A820894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:01:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Zc+blTtw";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="WUl7pWTa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6952A208A1
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Ji6nxeAN";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="YSYF4zns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450A820894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbeG3TiD (ORCPT
+        id S1732089AbeG3TiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 15:38:03 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56232 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728666AbeG3TiD (ORCPT
+        Mon, 30 Jul 2018 15:38:05 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50296 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730671AbeG3TiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 15:38:03 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UHoupf014230;
-        Mon, 30 Jul 2018 11:01:38 -0700
+        Mon, 30 Jul 2018 15:38:04 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UHpdtS030163;
+        Mon, 30 Jul 2018 11:01:40 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=U3IAqHuTQI5+fGwBjPHzcpkTcIvEn3WUFGPMfJBQWoY=;
- b=Zc+blTtwIAB0+Dv3QcOYzni3BSOW2ON3h3xV+cZo8aYAPbd5PHRH0R1MHExdy8emw1te
- mJ1Se4Fv0VGrWxAAIg2914g7n8ydelqZLj7/Sy9zbh2LQXJtwHCsZxyBK/hBWZx2CiGl
- mXMVR4MNZmABP9Q0raCrDJrJ4/vMt81dZqI= 
+ content-type; s=facebook; bh=jjQDxH19kVIiM6W25t2mvZ6lYn+GWixHhSdAj2O35o0=;
+ b=Ji6nxeANwQld9btMYdAobQsibRZfxY6qHjnm9Ufdcq1/eZu1qjOddNGeJ9hGWkVgcfYc
+ /W18QdI79CIH93dKh1D+NTx7mUXywfBQuLR4mOJGknJtanNZSn7dwnIlJ2+MOlRdry7Q
+ CRAohNxbVVUP0cv3suki6+ZAqHeA2UIlIgs= 
 Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2kj57p0fjb-1
+        by mx0b-00082601.pphosted.com with ESMTP id 2kj6yy040v-2
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 30 Jul 2018 11:01:38 -0700
+        Mon, 30 Jul 2018 11:01:39 -0700
 Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.33) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Mon, 30 Jul 2018 14:01:35 -0400
+ by o365-in.thefacebook.com (192.168.177.25) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Mon, 30 Jul 2018 14:01:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U3IAqHuTQI5+fGwBjPHzcpkTcIvEn3WUFGPMfJBQWoY=;
- b=WUl7pWTa5r8TCrsLyLwpl8uDC6y7rQRy838H+06bVMk2xkAlGRECYzxMfVf12qwkF64IFQqSv+JnedMQTXaLV4L++Sj/wgyj7xntP6sgOjTE73aPMV0wyc8agULVuZf2cLOjXz2Ib5ErrR1QS3BFEQv/6RsX8+YgHM+2Oek+h98=
+ bh=jjQDxH19kVIiM6W25t2mvZ6lYn+GWixHhSdAj2O35o0=;
+ b=YSYF4znsOJXSuq6eb7RA3Z9R+qDHczs8/3N/oGH2FP3kHmXSDhjlxBuSQS6nM8Xtglteo2kFjaOTBg1UM9D2QD2vHbbpLw0l22CIFuIYqWFLD7eenVfcDyu6wQ6L7GDKjGLV/AqWR/ZBV4AFtBHat2Xzzy9bHIC62/12afdmZAc=
 Received: from castle.thefacebook.com (2620:10d:c090:200::6:484b) by
  SN1PR15MB0175.namprd15.prod.outlook.com (2a01:111:e400:58cf::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.21; Mon, 30 Jul
- 2018 18:01:27 +0000
+ 2018 18:01:33 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     <linux-mm@kvack.org>
 CC:     Michal Hocko <mhocko@suse.com>,
@@ -60,13 +60,10 @@ CC:     Michal Hocko <mhocko@suse.com>,
         David Rientjes <rientjes@google.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
-        <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/3] mm, oom: refactor oom_kill_process()
-Date:   Mon, 30 Jul 2018 11:00:59 -0700
-Message-ID: <20180730180100.25079-3-guro@fb.com>
+        <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>
+Subject: [PATCH 3/3] mm, oom: introduce memory.oom.group
+Date:   Mon, 30 Jul 2018 11:01:00 -0700
+Message-ID: <20180730180100.25079-4-guro@fb.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180730180100.25079-1-guro@fb.com>
 References: <20180730180100.25079-1-guro@fb.com>
@@ -77,51 +74,49 @@ X-ClientProxiedBy: MWHPR15CA0060.namprd15.prod.outlook.com
  (2603:10b6:301:4c::22) To SN1PR15MB0175.namprd15.prod.outlook.com
  (2a01:111:e400:58cf::14)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3a521c10-fc15-4dc1-9807-08d5f64679de
+X-MS-Office365-Filtering-Correlation-Id: 547c7b7a-b56c-418b-65aa-08d5f6467d74
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR15MB0175;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;3:jhpNDoFxuGd2IoyjH20yxjr41KXDy3SpfgItPY71HpQjFhObS0Zzl5WMMFCkWR8T+RxEkOWFohEcvi/YSlckHrFHrBNVS+xaLbOnF2etN+oA3lgxyaimiGKHIO0j78HhW0HSBOD/aY+j/cN0m/gIkfdosaLtse4+AINvyyhTkWapidIJQKZQtj3JtQouW3b+h1+6sNmUb9Gd+vTEvSj3AxwyTxtjyiPgKLfFAVb9QzXhEbPbR5rP2T9/nQ6xxqUM;25:yPfb8+huXZUytdDHzE4zYsvvENAVs75vI7t9DPygbbRpwrGRi0eirP2QOuPjlDMG/fuEqupAE9eai2XUSnSo5qEND5FJLaG0xiyDt131qch/VjTWgMi7zURoowGxmDswUsCHAryIu09PjK+ucp1Jg8poA3bFNUqnnha0JkXQgIgjEGFIp9Kh4oi4uMGL2WTxNZuh9fJBPmQoNXvXzMSnlnQFDLtlafBBNI7dgW0pgTAnyitmt7QkugedOTWl9VTYQQyxbEOA4OGJxnRp9CDdsF8zxI8DLAkXxbpe9D3D3/no6ZxioGJLeftGRqbEFzoT7DWVmzv/AewfbdQwk1UFxw==;31:l+WyYchJoSbY/e20qu706z5WvrFLEqf9oInKcp8UuDDtXrS9+DQ7DD8/uor8/HtA6xi7mxqHtCBXyy1qgc91o38Qz+GxmKgJnb6X+eqi2FEWZcGBBl0BRFLdFS60ejA2APcZT9c25CnABB5+aOKowrI5VD3PkREr0gsSnRwgREUf0n/aaUN7J2M2NWeLVTQZqSdXKThFeCOl3EHP3zHaDEs1q+VgIH0w11Gjhro68Vc=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;3:zgufgtInyxTjXDizR5/h+XZLEgl3EU3Pb0uCd4ESW+otWBrKVje91k8pwK+gD2riOagTVbfPVUVSi+WEWbtKH/7ln6OU0ZVu4GvCW/2iyCy/HCi721nfXdxHIslR+N+ojrpG3c9Ttl3xPLxvd04BF8ZxgofYGwt0c7LAkXqfQTNhkyGXdXIt7fVG/ouIBDILxB6Z9W10aN4/foBELOvJe5Py9eEgBV9iJAaUvkoykeaBHqmmzHoRGM+vSlngtVCN;25:I0+w+loOR+hPinGuoYmHtZ3xB5rzrvvzSpI6jng+TWLZ4qEWs9fpHigezXF91D+NTYwRJPVO1FmJmrBIcwBeY4FVEOTnUwzr0tMJVNTcdGbQX1CsaIK72A/cE8L1mzGpnuGKDAOboNhkGwMRKfISQMZEEWyWd7uhFFADz21GtzJ6BgDfrNs4/CnWUVGB41sAKkS3fD4enyUBIRQ1meCwcob5GyScIsj+1vu0S4lO8YQo4cfQJVrMrbavbwWgz9w1fJQ9Ghl9rPgvXaxtKLEMLcTvahPsA71hgXAlbvn9HhfEIQ1BtjDtWp4D6V94YBWVWxcooKHuAmtnJta4HVCwlg==;31:VCn1kUOzk8Lb/9N/uNcF+SnFDjqz0EVng4gQE7ED3Tbjvf8+d14oI3w1s9ozQZj2W8CMU4R0nlvPCCDMZAOGY3QWgQ8xDI+QtnyKDenvVUYBD2wygpDUlAi0Lp8ee0ScngM/eaRAV0C0xmFxt7e1u5qPsAk+qfojKcGKGdDKWacPW2zrd3HXw+EB7XJ+bNcHDgQziYVvEjUG6LT4RqoJv6uPL3wB0b24ij1T1vasqIY=
 X-MS-TrafficTypeDiagnostic: SN1PR15MB0175:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;20:1JTUl+yH6TDkJhtSZBh/pdwZ7FHLRdvvgx29AuY/1sztE2tBI9ZGo2Cn7egVridBM4Qnq1K+FLj/Q5w2JOia3l8t8VpjMlLwn7vJPz3tqAT7Z3nYIRIHATEApTKrrJl6F9pN0GVLGvnnoBBPYqglsdZYl0E+FotYvWL4vx0Z7TcaKfzm61n0nQxe4BlYKEF05krIuHaASUz//yPdPvB9HCu2ZXcsPR6mzIvizp5J4WQGFAY27wRb34hcmM8bPz+o1/anxFC4IFm0FvfgJzZX/GnDSbM2yiWV8e8KlyHIJAeSsV+W5rvLPRdBC56QF5TsKknOCI6LnmiE4jGvFn51mDKka5qdMFsynkrUJnbXKgzu6yipgh5rrFdgp5Jg+QbYkDVefn13etJXxjETG3q7TNEfCmxPY62bqXJSKNtWGtg09Y7aIEB7681UNpaxKp65Rs8TfeXc5nu/4oLC4RjN4m8jhtmAhXuhyma56NPMdPIvn68/X9JnNSxvUV3MxTU2
-X-Microsoft-Antispam-PRVS: <SN1PR15MB0175129777F3A200FA3D2C79BE2F0@SN1PR15MB0175.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(274141268393343)(85827821059158)(67672495146484)(211936372134217)(42068640409301)(153496737603132);
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;20:860WIDtG/UpAZLKw0+6k8sh+bLUBegcQmNM8ougELaVT9j9CjcEE7OGviVlxPwMtpDHa9n0Id5wE4OHYyj7GnYcPmtRLkprFMW835Yu+j6B61+wb5fw2MgcKkpoRMUokmcOqLcbfdCZIAn/d9MWeeSHyrcmCMeZhlqZrAihEQDVmhIIH/gr9Q6FiyIyCSWbIxaDLW8fDHp1JjuFHtdRIJy1xKKTTVhUEG/MNbVwxWlodk8Y080MDa6p/h8LNiyvws/iCQWoSb3u/f8sAXfU/I1lj4ZQA1U9uIS81s0fHkFP14QUAyZUmGRfpP3BLhVgRX64tDcrpuzC2F6nS8AY63N0Zb++zy5YW6qrQQ90EzDE4p/hqAj5j5mHl1Wa25fIEBhkjxZ4GqvliNmfdtTgwzLVR9zUbr/VUldln9U0A372rkt79ZppmaX9LGmyqPzeDgCVZyrb9M7A2LNo43pEacYAz5Nnv2YQsrSlkLilZnnPqV5ngMiZ2qPCuvByjTpfJ;4:Kjowog2MJ/a5HzVF1nIbjZZnoMbE9zdMXMdciyGk4RKmvjT/hwQJ+V5PIiWkA5yiDDO7hrk4wsY2kIacwh8x++QYDzHKquTMSKHC2MkuMfJuR4ePy1BZX/aPHOHovBh7KuUDVNQ7OLmxDGiufgIMy7E37TC2kTpQYVhAgy6BVor2RfWOZj0bhMg43cKQVQTphSonap37HctTGU8vs9WT5I7vUcJJ77jSzm7E3TTMheLssQt40/+BaR+R/BPKpUEYZUoZpGPiWWMa2JMqeC6Th9Fd/EV1eI5WssPf8CGzpG06Ac1wPMhW3A61CHOWCA+0nWcLd0aVRERVX9pC+4ly2Qg8Ag74nyeo13yiz+t4nb3N2J5Yzn8w1Rf1sjDowd8HVqqJizsW9+a3uuwnJt5vGp2VL1Qn5bVHDUN4sZ6SGZM=
+X-Microsoft-Antispam-PRVS: <SN1PR15MB0175F444769D2FA0ED0732E7BE2F0@SN1PR15MB0175.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(274141268393343)(67672495146484)(211936372134217)(153496737603132);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(11241501184)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:SN1PR15MB0175;BCL:0;PCL:0;RULEID:;SRVR:SN1PR15MB0175;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;4:JYaptTCExKK1T1+XGXN7b+b2CT+TYsY4WBpkaUnuwi8crFmr8Yr8n4TDkg8+FcGhQ1H5icnrSFj4aXBRH89hGCmx7qXd5hz+ouroTcCvKTAtSLxv7t9mA/do/P9WmVV7eNdkAfkXJqIoEW+iPnZSij2brYudGBYWhYfSIDqmgC32i6c7A8qXjHKX0+NUiLD0Oqwj6xai/JUuU+EVTyqKTJsHqLiHF4y0Isu6VMUi5sVznCn9ksYQAs7vyRRIL4WXbkfhJBIXJ8nL0XJnXgB0voDMKOqSo4EOihzWvBP4nWCpPdtJZqfqffAZ0WGlkjZN0VPffreAlubWzb6S4bVFl+Kw57muxlhicLX5c7Gt2ue2YaaA8dT+U5vejTi7LQi2WUO4Q2cDqGN/nH33+RvoPBmvHRyvdYmGyI1vqczkQxo8kyKGUCcZhwT+AOyimmugABUjzPooJEocfYkX483LUoZehoSNe7Uwya+jur7m+Ko=
 X-Forefront-PRVS: 0749DC2CE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(376002)(366004)(136003)(189003)(199004)(36756003)(6116002)(8676002)(6486002)(16526019)(6506007)(386003)(186003)(1076002)(86362001)(69596002)(76176011)(52116002)(51416003)(52396003)(81156014)(106356001)(966005)(2351001)(105586002)(97736004)(8936002)(81166006)(305945005)(7736002)(53936002)(6666003)(39060400002)(50226002)(25786009)(53416004)(478600001)(6512007)(6306002)(7416002)(5660300001)(2906002)(6916009)(14444005)(54906003)(2361001)(16586007)(316002)(11346002)(446003)(48376002)(50466002)(47776003)(476003)(4326008)(46003)(68736007)(2616005)(486006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0175;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(376002)(366004)(136003)(189003)(199004)(57704003)(36756003)(6116002)(8676002)(6486002)(16526019)(6506007)(386003)(186003)(1076002)(86362001)(69596002)(76176011)(52116002)(51416003)(52396003)(81156014)(106356001)(2351001)(105586002)(97736004)(8936002)(81166006)(305945005)(7736002)(53936002)(6666003)(50226002)(25786009)(53416004)(478600001)(6512007)(5660300001)(2906002)(6916009)(14444005)(54906003)(2361001)(16586007)(316002)(11346002)(446003)(48376002)(50466002)(47776003)(476003)(4326008)(46003)(68736007)(2616005)(486006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0175;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0175;23:mCU3/R42/l/IAvx5XrFX/h2rLO466sG7zxKa+CEAn?=
- =?us-ascii?Q?zF2GX9QzPFebBFk+EjiCLQ0m4nvtugk9m2EI+p3s3AAkiXUKqcfdpRvIxvvS?=
- =?us-ascii?Q?84oxeZkj9usaKn29cu06EMjDazGGHUgQ62hA1YiyG0qt6zcFo4pPCGcumbqz?=
- =?us-ascii?Q?J6PtPyz1gtDqI7lBs7+vLBMV1h/j6dQQ3AwdMoRvmJVKmqKMtaX04t78jYK6?=
- =?us-ascii?Q?Hz9sMQ7ggL6vXsyNby0edr0Jrz4ZVnztIrbb+NfXybksXYD5TRyRNKd/ZPZn?=
- =?us-ascii?Q?aY6ZWYOAMXlifwhqwJQ9T4IgcjfDaT4lIjFaLE9yZ2e7nz2zzZWA63khTNiF?=
- =?us-ascii?Q?MvpCh7JOU1/eH0k8y62e77h8mgKgXk428NKfEFwKYKE/kaQFqgLx3WuS0TOl?=
- =?us-ascii?Q?+O++mG1Yu7xhRyUa4dmgSib3P4rWuW9e8vGlctI/rZTpcXWRHDlBYkJ58f4/?=
- =?us-ascii?Q?V955qNOD6Mgd7UQcbr0Lbr0G6I/BNnbSoACZSKUPAeZuoZhAWYs2FwCevE2W?=
- =?us-ascii?Q?Wev73i7jvR3pXpEgsu3za2gtOIPre4ci0tHZXpLQ4CbTmCqOFak7N2Htig1K?=
- =?us-ascii?Q?lo/rlocHwSt9a2KFaHqOkMw2FgV3o/f/bORaTl3Ll3S7D4pE+8xto/7XmzUh?=
- =?us-ascii?Q?3CtlbQ/MtejddtVIWRw6aSor9TYqLc+nv9eKTqK0/hcuNW9y1wbEiC1kjxGQ?=
- =?us-ascii?Q?aSBXRAwfDK5PAXLIPkeTIp8vG9P6qoNq+42g8XYpdDLKHb/j4YX8oREMoj16?=
- =?us-ascii?Q?IzkUoIQMSS1TuxDtBsDnqtaHovqu2A/aPxXtqako/WQrRf2KMHJFBU7wJ5Ty?=
- =?us-ascii?Q?udcbJny0ByOZ2YuFXP/ozAK3hFnj6TOl85Ue0srs/WDXG/2p7Yvn9m6o15R8?=
- =?us-ascii?Q?hrUmd8xIFjXZC2F46xP0t1k/N2uqqW+o+kPsFV9tjQ279RFpySwg112bH5Ce?=
- =?us-ascii?Q?4WM3zwQFLyO+kDE21AAKdIjiLL4AKuqaSzYCNO6MGKHCCG6+np0Xq+BpbBQQ?=
- =?us-ascii?Q?fjlEZ2njwSdn3dcQD03Zxkz2B+7kPnTeE9gKpv+wYodKabqkrzggd4PVZME5?=
- =?us-ascii?Q?VhBKRekx6sn0fJtS/5sfa1Qcx07upZpfs36hxbj9sGjYUdP/Bu1+QgPh54Qe?=
- =?us-ascii?Q?yI/lOyqCEconOedRxOAKkagtOGFhvhid7bC3u3XkDkHCHYv7+8eVNcwjTd5h?=
- =?us-ascii?Q?Hqadpm+K89WyqYxXkuh+WlebssKhUXMNDmRTKrNwGPphCKTHaQ+bhm0X8kIk?=
- =?us-ascii?Q?4eSewA7MfgzHP3xNZU79TmZ1kTmAa+c8EA91tFIQ9Ayi9B0Es7yJQq66JtyX?=
- =?us-ascii?Q?/dZoigJCmD8CcJ97MOuIozAsaAgXyflFsGCT4Jx7q7MXnZ5AbMVkzDGg42mr?=
- =?us-ascii?Q?OznohM6LqTDsru0p5qHpcpeQNg=3D?=
-X-Microsoft-Antispam-Message-Info: rFufKv6swHrhYJ3IgN63qj/KEttKENqaty8CM/LrXsgK7vlQB+TKH2a5LWDX27SNUY+wDmec7Pw6qK0z67KfDspetqSinxc4hF/B6s+oD8yGnwkcmIvKiJlI+7FIy8sJqtyGSJXRw6GHobmtxU+MIZBzrJMrCX7KrZJinMJvHkdrTzY3D+HVaiJBDi+pE6F4lNRcopYGoHWP9Heowuq3uSeKVa509A0pRH1D3qrlfvZluYk9ctp83l9Jfi57kbTRZ2vaPKfL6tHjObPmRtuU9mDK3kMNWTbFZ+qj677lmOxvX1zi3tVxctQqvsIweeE65QnStLpiTDapv6wvU8V4JtrtmeyXgNC2Hohq7WJEbho=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;6:HNaDsjIX7o9hWPXQ2InWRK4seMVxBuKPlJSXxT/hDYPR85NEC/XxO01aNv1rw871nnaFXF8GDdO+Y5DE5SZtLiLEzNL9FpVzvlCNkChnEVNGqlWSEtgKTD3Y4fv7QVov95BcwpwOPrcSth+iwtixonGBZzrFGnWJ7ru8t2W+T5ZdzrL31OrM7gdZl4xs8rD4d7w5g5id3SY7fWaHqWqzOZ/no6tJFPpzHf0AZsVoHVTHwgAfjQzRW2wX8K1G0LcVvSuciwKXxwh1xQlP1x7F9aubJP6qD+Rdsw9imcqkgWsZzieLRkNLgSTwWtt/e/NjYK+iHuet0iRiz9XPW3p1rl4X/bZafxOnnmLzYmu1fvStNoA9EWaUkUByGjBSjvwDu3KoXtPEs6DDVRAGtRILrDnMMhadjzR7KAoOgNGTfZMN8uk+KqrJalIhqpYZyE6zWyraBbEmyXVfqimRsb1tLw==;5:7mGK7oLAmeFvuBM/u+exkn4hwpMe08VahAmjlrCLuv+A5pY9u4impWErvYRP37jNAZ9XGBPBwWfVo6Rn9K52IxV3DsW1EwnXYFAZnQTj+I3ehWP7bK39jIMDd1pAMs67IG6DvdvlO2GEJOola5IN2wXkvpyDD6CDbLtoARmHugE=;7:FMmb1PaIhh7bczH/01hrYcPChk1s2ooa42Z1AdB1lLMZ8zT4i6fwMZXI+IQh9RLekoa1yRfjbiArIIA87S4QZiBLqFFtipzXnfMVxQ5oa0CpjGH/DUXHyMEKJ2GOCqUcQcFrGd2CTjpunEyUSX7GsOLOouLcmrylDQAaybkPSQqTQHb1TNz2SG5BDVCb6MZP7aXoxo6NhGlEBgZP119HPTacUOGCY6Kfbu0JRhF96lAuRSsOfZeWI9c6eIZdHvK/
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0175;23:o4r5UjjHWzzC695YOvuCiEuK8UK7ZY942zzLMKiyu?=
+ =?us-ascii?Q?5bHuENhV/VzUrdiue4TBnFW+sPyDsjzo4BYMSVuPHZjJTa8w7+fzozgddgQB?=
+ =?us-ascii?Q?7UxEkHTaT2CIg4PAyjiIsM51AjovMwuceX5N5lJ7oX2HwCc5zVlUsXFfwjH3?=
+ =?us-ascii?Q?kP+yxmedyFgNMSpBB9c1o3kBqcEwug47vMz0+lpROh2ImeFCNtS8aoDikald?=
+ =?us-ascii?Q?MguUsIuj1gH1IN7M4rLICqD2FWwq/RE5dBeleIw1hgReBH7Swc0veDo/Mc3z?=
+ =?us-ascii?Q?wwn0Krk2kihD/R7K51Q1nb3HP9jQzDqlTYEDtKgw3Ft2ZY27iOORGFmRuL78?=
+ =?us-ascii?Q?HaPnsO5ia/3seiEN/21xbNFuQgN9NOTuxHHw4l+LDovcTGoI5ecp6KKHeGGb?=
+ =?us-ascii?Q?EPVIDDQyZVJeM3bxnWAGyij0rghBDXY8vCuTkam8zd6iZfP4sSLkvxhyOdJR?=
+ =?us-ascii?Q?TP3kVqLK9Qttf9rv/OCuSnoIifqsWeSobPPT6O+haq65UptPwz1hsNFgTHQ1?=
+ =?us-ascii?Q?nJb4/K07XnkqxMA/LAtO7vyTYJiXUW7gZ+WB3v9ELQX6zCCaxfDfYI3nrlZH?=
+ =?us-ascii?Q?D3lL7qlItUgDWA7LpMwOrZOwQ5IB8Ga/ESm2NlSGYMFyCmwyB7eGif+L9kfE?=
+ =?us-ascii?Q?htcsjavSkQJ+1QmZGG6EvgBt3Bf/XA5Wn8PDWO1o/A2AIJp2OXUaddpI9jHp?=
+ =?us-ascii?Q?Khpwk2Apd0iDw/jek5TyRtT3VOgZfA79LPysPKfv7dKOLUkDS2lO0+YgXdFK?=
+ =?us-ascii?Q?pAaxu6UTzHcspDJwmBvNteosOf5o0oLKHlI7VziWk8Dtei9QmQUq2ZZsdwDx?=
+ =?us-ascii?Q?XfFSX93DdV0BpJE/Uz1WHHl1awl3/p72RNMKd1rT4KGEEUrhikOb6yQ5Q6Qq?=
+ =?us-ascii?Q?wmetbfkhJpTOl1oAOehotvVRtiL1DcD+iGP3DrbOtIb+1+UbkY8mDNxLZOMN?=
+ =?us-ascii?Q?ApJPPvU4w2eFDiZzs53UOQwRSYfry2+opoXvQWaHJFxucbKOWQHcJBwBSagC?=
+ =?us-ascii?Q?SuW+Qh5EdIFJKozDytYo+XDukWxxauRrB/03PWZHBo7iNlWjwTIIubJvf18E?=
+ =?us-ascii?Q?bfN0WVoKYv5X2vuhzahc3tHaIGshLueTmARxR2/zRWaixvs+8spudEFJyLB/?=
+ =?us-ascii?Q?lFdzmMWI6pVFiCkRF9/lwwBXck5rcUUJEgIBbeOBEMuTi6ghi/riGep74clH?=
+ =?us-ascii?Q?ZatZ8rMHiQiFjnvAwj9Hv7FK0S6QD6z/FiImIgAfgNwnVUuvTp61GdihNiZo?=
+ =?us-ascii?Q?BQefsmmL7evwNc1r5ULnyfhDusmGtb/A38Lu0L+q7zCGLfLG9qmS+miKrriE?=
+ =?us-ascii?Q?6fi4/w/E6J4y73fCUHKFOQ=3D?=
+X-Microsoft-Antispam-Message-Info: B9ZZjynnytnsdY7VwfTOysbM+FZkB2VwexVrtw+GiSW5iH3EpMvP2GG2uzyFiUNZlHCIdjbgH08WG1u1UnaCFZeIZqdHPBTzUp0+r+17C+PEnsYNlvkejWUHL78A+wx69udziLd+3nzMiiL9trXKupH+zwiaBxd2ErHoUlCv+GysJBQxKz/wW/rDWLcFskrlUKyJRn90/r5wJeTe6mZU2O4G1XOGyWh5yyAwOqJRZJgCHtoB1rU3nKSkS8DottqZtSWV2yzxUET+9WfWoYx8dQMvrqkken6YZEZR/QtkFRG0xuTLYbWpOP9WoIyX1JsinrQq8HWBx5vx1jVGL+be7YcSm8Ro3QDQ84TBjlBo0FA=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;6:ulQYMdMpJ9kroD9t1jj7z49To33EMupnzKLSQbs8YwR3k99bUeM3Sv8Gep1LWAJ3LXjdrjAH8n9KMmwYT0VlzWjRmflgQiUKfomA1KvEjz5aN+/AvjbpX/4ToSMuLkltjVFp9zXm3Ddehz5NoL1rFxiet2VvanjMky4UMaIXP6XNXk9Ts5f94qVAs7TiPI4Oixngf405LdVTYoZB2trqStmiAAFJcvc3bfOAnwhz/n/DrevzNQoyM2qWGQ53GYS0Q1AoyEXzNsQjPsCieCchNs7sHJY8Z/yUwVA1E/G1lzfOmkAsnOCVTpI0+EynJNHLURTJyoOy/M5A/kQTQnEtbU1yRAveormN7+yrZO5C5cLrBC8B0CjujKDHjk7rc/nT05o2Tg9uwTYPc9KfFsTt6SmL1/4k43B+/LX89+wAEeeJVtKrMxQc6AzZ14d6NBP4vcFEIQq+/FtWKdRHmnVY2g==;5:8GWXatIc8OUazawSDWjWp0Tm9YFEhwaweTYB0j8ES8IgPkId5Fp2o5QXH9lz7v2sh3IYzB8rumgYFsks6Fskej3q7zzrDq+0qbNcb9WJUjvm7L6OsXMU7b3bhCgp+L/XG+pyJ25jr78Dt64IX4/NfoATm+mmHqCDhdild1iBlFU=;7:ZWSqt2W1PfwlUJxwbbf/5tDRLLSiIZdmyKbABoZiYzuEd+rlcCf8FKgEJ9FtgRPug2u53wrDFZ41h38XQGxCS+c9VuPIfvlSuaFuqmMQS6pSAULRJCsP6W7eCGDpELNteJzlumhb0bT4TFRMx/RwxVNb/dkzzpl9BipWJ2n9/zxr1XJjyRl45thGCs7IzpfoJsbdSwk8DwunHU3bO7M2pdoukEFy0Xqei7G71Pg2IxDCyBQgsgbN/qvoLwWcTSLD
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;20:VMhAl2E0iIj9Dw+dDdjB//j9etbi6PAhdE4Jr/wc6nd1nAmNpzx2QnVIl+x+E+KBF/zmOhXnkr0VgcUtqci7dXXDT+v+4mZqMsseiMaoFmAqKVKsAQyh0ChLUePNTaoFfTqCuuaFdWNyz52q+2SrhqPOIb7yzKqXUa29fL2hN64=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2018 18:01:27.9244 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a521c10-fc15-4dc1-9807-08d5f64679de
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0175;20:13HiqwHM4zJxqVcU5T/02cMpCKodW5WqmYC0nghDV1p96OkU8tYWv0dDE9W4N3WdKXaRPZUEl7NnqHIcIkwHCa1Oxe704SBLVUoM59EtrHwfEjxwdCZUVXUSnBq0sxHKPlS4dmg8uRM2o0TXaii/TRSo1I2k1uPdwX+3Lzp3Hn4=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2018 18:01:33.6401 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 547c7b7a-b56c-418b-65aa-08d5f6467d74
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR15MB0175
@@ -135,179 +130,285 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-oom_kill_process() consists of two logical parts: the first one is
-responsible for considering task's children as a potential victim and
-printing the debug information.  The second half is responsible for
-sending SIGKILL to all tasks sharing the mm struct with the given victim.
+For some workloads an intervention from the OOM killer
+can be painful. Killing a random task can bring
+the workload into an inconsistent state.
 
-This commit splits oom_kill_process() with an intention to re-use the the
-second half: __oom_kill_process().
+Historically, there are two common solutions for this
+problem:
+1) enabling panic_on_oom,
+2) using a userspace daemon to monitor OOMs and kill
+   all outstanding processes.
 
-The cgroup-aware OOM killer will kill multiple tasks belonging to the
-victim cgroup.  We don't need to print the debug information for the each
-task, as well as play with task selection (considering task's children),
-so we can't use the existing oom_kill_process().
+Both approaches have their downsides:
+rebooting on each OOM is an obvious waste of capacity,
+and handling all in userspace is tricky and requires
+a userspace agent, which will monitor all cgroups
+for OOMs.
 
-Link: http://lkml.kernel.org/r/20171130152824.1591-2-guro@fb.com
+In most cases an in-kernel after-OOM cleaning-up
+mechanism can eliminate the necessity of enabling
+panic_on_oom. Also, it can simplify the cgroup
+management for userspace applications.
+
+This commit introduces a new knob for cgroup v2 memory
+controller: memory.oom.group. The knob determines
+whether the cgroup should be treated as a single
+unit by the OOM killer. If set, the cgroup and its
+descendants are killed together or not at all.
+
+To determine which cgroup has to be killed, we do
+traverse the cgroup hierarchy from the victim task's
+cgroup up to the OOMing cgroup (or root) and looking
+for the highest-level cgroup  with memory.oom.group set.
+
+Tasks with the OOM protection (oom_score_adj set to -1000)
+are treated as an exception and are never killed.
+
+This patch doesn't change the OOM victim selection algorithm.
+
 Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: David Rientjes <rientjes@google.com>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: David Rientjes <rientjes@google.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Cc: Tejun Heo <tj@kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- mm/oom_kill.c | 123 +++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 65 insertions(+), 58 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 16 +++++++
+ include/linux/memcontrol.h              | 13 +++++
+ mm/memcontrol.c                         | 84 +++++++++++++++++++++++++++++++++
+ mm/oom_kill.c                           | 29 ++++++++++++
+ 4 files changed, 142 insertions(+)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 84081e77bc51..8bded6b3205b 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -835,68 +835,12 @@ static bool task_will_free_mem(struct task_struct *task)
- 	return ret;
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 8a2c52d5c53b..f11de1b78cfc 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1069,6 +1069,22 @@ PAGE_SIZE multiple when read back.
+ 	high limit is used and monitored properly, this limit's
+ 	utility is limited to providing the final safety net.
+ 
++  memory.oom.group
++	A read-write single value file which exists on non-root
++	cgroups.  The default value is "0".
++
++	Determines whether the cgroup should be treated as a single
++	unit by the OOM killer. If set, the cgroup and its descendants
++	are killed together or not at all. This can be used to avoid
++	partial kills to guarantee workload integrity.
++
++	Tasks with the OOM protection (oom_score_adj set to -1000)
++	are treated as an exception and are never killed.
++
++	If the OOM killer is invoked in a cgroup, it's not going
++	to kill any tasks outside of this cgroup, regardless
++	memory.oom.group values of ancestor cgroups.
++
+   memory.events
+ 	A read-only flat-keyed file which exists on non-root cgroups.
+ 	The following entries are defined.  Unless specified
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index e53e00cdbe3f..05c9c867a3ab 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -213,6 +213,11 @@ struct mem_cgroup {
+ 	 */
+ 	bool use_hierarchy;
+ 
++	/*
++	 * Should the OOM killer kill all belonging tasks, had it kill one?
++	 */
++	bool oom_group;
++
+ 	/* protected by memcg_oom_lock */
+ 	bool		oom_lock;
+ 	int		under_oom;
+@@ -517,6 +522,8 @@ static inline bool task_in_memcg_oom(struct task_struct *p)
  }
  
--static void oom_kill_process(struct oom_control *oc, const char *message)
-+static void __oom_kill_process(struct task_struct *victim)
- {
--	struct task_struct *p = oc->chosen;
--	unsigned int points = oc->chosen_points;
--	struct task_struct *victim = p;
--	struct task_struct *child;
--	struct task_struct *t;
-+	struct task_struct *p;
- 	struct mm_struct *mm;
--	unsigned int victim_points = 0;
--	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
--					      DEFAULT_RATELIMIT_BURST);
- 	bool can_oom_reap = true;
+ bool mem_cgroup_oom_synchronize(bool wait);
++struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
++					    struct mem_cgroup *oom_domain);
  
--	/*
--	 * If the task is already exiting, don't alarm the sysadmin or kill
--	 * its children or threads, just give it access to memory reserves
--	 * so it can die quickly
--	 */
--	task_lock(p);
--	if (task_will_free_mem(p)) {
--		mark_oom_victim(p);
--		wake_oom_reaper(p);
--		task_unlock(p);
--		put_task_struct(p);
--		return;
--	}
--	task_unlock(p);
--
--	if (__ratelimit(&oom_rs))
--		dump_header(oc, p);
--
--	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
--		message, task_pid_nr(p), p->comm, points);
--
--	/*
--	 * If any of p's children has a different mm and is eligible for kill,
--	 * the one with the highest oom_badness() score is sacrificed for its
--	 * parent.  This attempts to lose the minimal amount of work done while
--	 * still freeing memory.
--	 */
--	read_lock(&tasklist_lock);
--	for_each_thread(p, t) {
--		list_for_each_entry(child, &t->children, sibling) {
--			unsigned int child_points;
--
--			if (process_shares_mm(child, p->mm))
--				continue;
--			/*
--			 * oom_badness() returns 0 if the thread is unkillable
--			 */
--			child_points = oom_badness(child,
--				oc->memcg, oc->nodemask, oc->totalpages);
--			if (child_points > victim_points) {
--				put_task_struct(victim);
--				victim = child;
--				victim_points = child_points;
--				get_task_struct(victim);
--			}
--		}
--	}
--	read_unlock(&tasklist_lock);
--
- 	p = find_lock_task_mm(victim);
- 	if (!p) {
- 		put_task_struct(victim);
-@@ -970,6 +914,69 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ #ifdef CONFIG_MEMCG_SWAP
+ extern int do_swap_account;
+@@ -951,6 +958,12 @@ static inline bool mem_cgroup_oom_synchronize(bool wait)
+ 	return false;
+ }
+ 
++static inline struct mem_cgroup *mem_cgroup_get_oom_group(
++	struct task_struct *victim, struct mem_cgroup *oom_domain)
++{
++	return NULL;
++}
++
+ static inline unsigned long memcg_page_state(struct mem_cgroup *memcg,
+ 					     int idx)
+ {
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8c0280b3143e..ade832571091 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1577,6 +1577,53 @@ bool mem_cgroup_oom_synchronize(bool handle)
+ 	return true;
+ }
+ 
++/**
++ * mem_cgroup_get_oom_group - get a memory cgroup to clean up after OOM
++ * @victim: task to be killed by the OOM killer
++ * @oom_domain: memcg in case of memcg OOM, NULL in case of system-wide OOM
++ *
++ * Returns a pointer to a memory cgroup, which has to be cleaned up
++ * by killing all belonging OOM-killable tasks.
++ */
++struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
++					    struct mem_cgroup *oom_domain)
++{
++	struct mem_cgroup *oom_group = NULL;
++	struct mem_cgroup *memcg;
++
++	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
++		return NULL;
++
++	if (!oom_domain)
++		oom_domain = root_mem_cgroup;
++
++	rcu_read_lock();
++
++	memcg = mem_cgroup_from_task(victim);
++	if (!memcg || memcg == root_mem_cgroup)
++		goto out;
++
++	/*
++	 * Traverse the memory cgroup hierarchy from the victim task's
++	 * cgroup up to the OOMing cgroup (or root) to find the
++	 * highest-level memory cgroup with oom.group set.
++	 */
++	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
++		if (memcg->oom_group)
++			oom_group = memcg;
++
++		if (memcg == oom_domain)
++			break;
++	}
++
++	if (oom_group)
++		css_get(&oom_group->css);
++out:
++	rcu_read_unlock();
++
++	return oom_group;
++}
++
+ /**
+  * lock_page_memcg - lock a page->mem_cgroup binding
+  * @page: the page
+@@ -5328,6 +5375,37 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
++static int memory_oom_group_show(struct seq_file *m, void *v)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
++
++	seq_printf(m, "%d\n", memcg->oom_group);
++
++	return 0;
++}
++
++static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
++				      char *buf, size_t nbytes, loff_t off)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	int ret, oom_group;
++
++	buf = strstrip(buf);
++	if (!buf)
++		return -EINVAL;
++
++	ret = kstrtoint(buf, 0, &oom_group);
++	if (ret)
++		return ret;
++
++	if (oom_group != 0 && oom_group != 1)
++		return -EINVAL;
++
++	memcg->oom_group = oom_group;
++
++	return nbytes;
++}
++
+ static struct cftype memory_files[] = {
+ 	{
+ 		.name = "current",
+@@ -5369,6 +5447,12 @@ static struct cftype memory_files[] = {
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 		.seq_show = memory_stat_show,
+ 	},
++	{
++		.name = "oom.group",
++		.flags = CFTYPE_NOT_ON_ROOT | CFTYPE_NS_DELEGATABLE,
++		.seq_show = memory_oom_group_show,
++		.write = memory_oom_group_write,
++	},
+ 	{ }	/* terminate */
+ };
+ 
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 8bded6b3205b..08f30ed5abed 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -914,6 +914,19 @@ static void __oom_kill_process(struct task_struct *victim)
  }
  #undef K
  
-+static void oom_kill_process(struct oom_control *oc, const char *message)
++/*
++ * Kill provided task unless it's secured by setting
++ * oom_score_adj to OOM_SCORE_ADJ_MIN.
++ */
++static int oom_kill_memcg_member(struct task_struct *task, void *unused)
 +{
-+	struct task_struct *p = oc->chosen;
-+	unsigned int points = oc->chosen_points;
-+	struct task_struct *victim = p;
-+	struct task_struct *child;
-+	struct task_struct *t;
-+	unsigned int victim_points = 0;
-+	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
-+					      DEFAULT_RATELIMIT_BURST);
-+
-+	/*
-+	 * If the task is already exiting, don't alarm the sysadmin or kill
-+	 * its children or threads, just give it access to memory reserves
-+	 * so it can die quickly
-+	 */
-+	task_lock(p);
-+	if (task_will_free_mem(p)) {
-+		mark_oom_victim(p);
-+		wake_oom_reaper(p);
-+		task_unlock(p);
-+		put_task_struct(p);
-+		return;
++	if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN) {
++		get_task_struct(task);
++		__oom_kill_process(task);
 +	}
-+	task_unlock(p);
-+
-+	if (__ratelimit(&oom_rs))
-+		dump_header(oc, p);
-+
-+	pr_err("%s: Kill process %d (%s) score %u or sacrifice child\n",
-+		message, task_pid_nr(p), p->comm, points);
-+
-+	/*
-+	 * If any of p's children has a different mm and is eligible for kill,
-+	 * the one with the highest oom_badness() score is sacrificed for its
-+	 * parent.  This attempts to lose the minimal amount of work done while
-+	 * still freeing memory.
-+	 */
-+	read_lock(&tasklist_lock);
-+	for_each_thread(p, t) {
-+		list_for_each_entry(child, &t->children, sibling) {
-+			unsigned int child_points;
-+
-+			if (process_shares_mm(child, p->mm))
-+				continue;
-+			/*
-+			 * oom_badness() returns 0 if the thread is unkillable
-+			 */
-+			child_points = oom_badness(child,
-+				oc->memcg, oc->nodemask, oc->totalpages);
-+			if (child_points > victim_points) {
-+				put_task_struct(victim);
-+				victim = child;
-+				victim_points = child_points;
-+				get_task_struct(victim);
-+			}
-+		}
-+	}
-+	read_unlock(&tasklist_lock);
-+
-+	__oom_kill_process(victim);
++	return 0;
 +}
 +
+ static void oom_kill_process(struct oom_control *oc, const char *message)
+ {
+ 	struct task_struct *p = oc->chosen;
+@@ -921,6 +934,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	struct task_struct *victim = p;
+ 	struct task_struct *child;
+ 	struct task_struct *t;
++	struct mem_cgroup *oom_group;
+ 	unsigned int victim_points = 0;
+ 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+ 					      DEFAULT_RATELIMIT_BURST);
+@@ -974,7 +988,22 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	}
+ 	read_unlock(&tasklist_lock);
+ 
++	/*
++	 * Do we need to kill the entire memory cgroup?
++	 * Or even one of the ancestor memory cgroups?
++	 * Check this out before killing the victim task.
++	 */
++	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
++
+ 	__oom_kill_process(victim);
++
++	/*
++	 * If necessary, kill all tasks in the selected memory cgroup.
++	 */
++	if (oom_group) {
++		mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
++		mem_cgroup_put(oom_group);
++	}
+ }
+ 
  /*
-  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
-  */
 -- 
 2.14.4
 
