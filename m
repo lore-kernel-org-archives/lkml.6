@@ -2,133 +2,123 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3977FFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7C9FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F40205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:42:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F40205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B1EB20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:42:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mxaqkg/e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1EB20893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbeG3SSK (ORCPT
+        id S1732039AbeG3SSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:18:10 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54966 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729331AbeG3SSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:18:10 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fkBEy-0005mn-3t; Mon, 30 Jul 2018 10:41:48 -0600
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180730161840.13733-1-logang@deltatee.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <1b911d4b-d8e4-d44d-af1b-8ec1a39983e6@deltatee.com>
-Date:   Mon, 30 Jul 2018 10:41:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 14:18:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45686 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729523AbeG3SSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 14:18:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iX5VfYj1WB/RK77CfZFURQK/gLIX2bWiFWlZCZ9lfPk=; b=Mxaqkg/eRSNrNmkcTgPqrt6gq
+        w8e1WCp6JctE6vIk4hArim46ACAO/sfWkMPpdY5mbuAYwVBYTUSACS6+Cn5+AxyYrN9WZU3ADs10i
+        5pQFVhj0dcFP9+QN0FiYk/Rm4Gk5OnpYKYd8OIgGn4SNN1namORBM2Hl/8ZL8FOMbnKPOxhB5e/Jd
+        RsKmczcSZn1WaEmAwmnib0lz89jCHslEoMJwN6ldqX7NDVmVVPH5x7hekM8sWCMyzK9082WmBlA3e
+        hPo7paptoXASIWkUPqmjdMnpSOElmXqsd2sUQkkctzfQmCH5xl3r5fO6eEXFOnti/VhOA4NAOCfo1
+        DVUYVso+A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkBFw-0003OL-Ta; Mon, 30 Jul 2018 16:42:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4F5DE20275F3E; Mon, 30 Jul 2018 18:42:47 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 18:42:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC tip/core/rcu] Avoid resched_cpu() when rescheduling
+ the current CPU
+Message-ID: <20180730164247.GN2494@hirez.programming.kicks-ass.net>
+References: <20180727154931.GA12106@linux.vnet.ibm.com>
+ <20180730092513.GD2494@hirez.programming.kicks-ass.net>
+ <20180730145933.GX24813@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: willy@infradead.org, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v8 0/4] Add parameter for disabling ACS redirection for
- P2P
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730145933.GX24813@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+On Mon, Jul 30, 2018 at 07:59:33AM -0700, Paul E. McKenney wrote:
 
-Oops, I missed finishing this up before sending it sorry:
+> > Something that might be more in line with
+> > resched_curr(smp_processor_id()) would be:
+> > 
+> > 	preempt_disable();
+> > 	if (!test_tsk_need_resched(current)) {
+> > 		set_tsk_need_resched(current);
+> > 		set_preempt_need_resched();
+> > 	}
+> > 	preempt_enable();
+> > 
+> > Where the preempt_enable() could of course instantly trigger the
+> > reschedule if it was the outer most one.
+> 
+> Ah.  So should I use resched_curr() from rcu_check_callbacks(), which
+> is invoked from the scheduling-clock interrupt?  Right now I have calls
+> to set_tsk_need_resched() and set_preempt_need_resched().
+> 
+> > > @@ -2674,10 +2675,12 @@ static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused
+> > 
+> > > -		resched_cpu(rdp->cpu); /* Provoke future context switch. */
+> > 
+> > > +		set_tsk_need_resched(current);
+> > > +		set_preempt_need_resched();
+> > 
+> > That's not obviously correct. rdp->cpu had better be smp_processor_id().
+> 
+> At the beginning of the function, we have:
+> 
+> 	struct rcu_data *rdp = raw_cpu_ptr(&rcu_data);
+> 
+> And this is in a softirq handler, so we are OK.
 
-This is mostly a resend with Alex's tags collected. Bjorn, can you
-please consider merging this? All patches have been reviewed and
-accepted by Alex.
+Agreed.
 
-Thanks,
+> > > @@ -672,7 +672,8 @@ static void sync_rcu_exp_handler(void *unused)
+> > >  			rcu_report_exp_rdp(rdp);
+> > >  		} else {
+> > >  			rdp->deferred_qs = true;
+> > > -			resched_cpu(rdp->cpu);
+> > > +			set_tsk_need_resched(t);
+> > > +			set_preempt_need_resched();
+> > 
+> > That only works if @t == current.
+> 
+> At the beginning of the function, we have:
+> 
+> 	struct task_struct *t = current;
+> 
+> So we should be OK.
 
-Logan
-
---
-
-Changes since v7:
-* Collected Alex's Reviewed-by Tags
-* Rebased onto v4.18-rc7 (no conflicts)
+Ah, the scheduler and locking code typically use to call that curr, to
+be more explicit that it is the current task.
 
 
-On 30/07/18 10:18 AM, Logan Gunthorpe wrote:
-> Changes since v6:
-> * Fixed order of operations for device specific disable function as
->   noticed by Alex
-> * Rebased onto v4.18-rc5 (no conflicts)
-> 
-> Changes since v5:
-> * Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
-> * Warn in the case that we try to disable ACS redirect on a device
->   that doesn't have the ACS capability (also suggested by Alex)
-> * Collect reviewed-by tag from Alex
-> * Rebased onto v4.18-rc4 (no conflicts)
-> 
-> Changes since v4:
-> * Fixed a couple documentation mistakes spotted by Randy
-> 
-> Changes since v3:
-> * Removed some of the cruft that was copied from the resource_alignment
->   paramater (per Alex)
-> * A number of docuemntation fixes as noticed by Alex and Willy
-> 
-> Changes since v2:
-> * Rebased onto v4.18-rc1 (no conflicts)
-> * Minor tweaks to the documentation per Andy
-> * Removed the "path:" prefix and use the path parsing code
->   for simple devices (as it works the same). Per a suggestion from Alex
-> 
-> Changes since v1:
-> * Reworked pci_dev_str_match_path using strrchr as suggested by Alex
-> * Collected Christian's Acks
-> 
-> 
-> Logan Gunthorpe (4):
->   PCI: Make specifying PCI devices in kernel parameters reusable
->   PCI: Allow specifying devices using a base bus and path of devfns
->   PCI: Introduce disable_acs_redir quirk
->   PCI: Introduce the disable_acs_redir parameter
-> 
->  Documentation/admin-guide/kernel-parameters.txt |  41 +++-
->  drivers/pci/pci.c                               | 310 +++++++++++++++++++-----
->  drivers/pci/quirks.c                            |  78 +++++-
->  include/linux/pci.h                             |   5 +
->  4 files changed, 361 insertions(+), 73 deletions(-)
-> 
-> --
-> 2.11.0
-> 
+> Should I be instead using resched_curr() on some or all of these?
+
+If, as it seems is the case, they are all targeting the current cpu and
+have (soft) interrupts disabled, then what you propose is indeed fine.
