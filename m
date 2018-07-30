@@ -2,123 +2,125 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A048160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2847BFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CCDC20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D429320870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:55:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="keGh3Bvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CCDC20893
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kfSViWBP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D429320870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbeG3Q3u (ORCPT
+        id S1731906AbeG3Qas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:29:50 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:37738 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727474AbeG3Q3u (ORCPT
+        Mon, 30 Jul 2018 12:30:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40080 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbeG3Qas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:29:50 -0400
-Received: by mail-yb0-f195.google.com with SMTP id r3-v6so4845506ybo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 07:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ojuTHsLBxhIuoIq1BfGa9lBzfoAegDCEyU9zfL2a5QE=;
-        b=keGh3BvoN3BvvLHnfxl43/+LkM0heeZ4S+khckqdvMxDA+/qtQIucdg9sQy293U6+8
-         B7/tWvTYws/1byLvGRRHEHsP04BHRlDWg7PXWuVMY67mE9DCSN3eg5/mzh6nQMTTGWn8
-         bXjDQmqVTEfKXqvjPKolV6fDHsNC3kzrm2jrkzISUN4Dn9UhovXeHnwAvlW8z+d5wp8m
-         vUZ79Sdm2JwgzZmyJTL+7y3dHcss63+eg8vJm89PuHcUiZcDjnNcRIQrjqClUlWOExqb
-         Z4CrQdtbEps05FkRwDOHRjG400KU8cqy2KhzKbwyTmNFmYcpzKTlzIXEW/TDmUv+ea7r
-         u2Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ojuTHsLBxhIuoIq1BfGa9lBzfoAegDCEyU9zfL2a5QE=;
-        b=uD7S8sPqiMSjRWA+G+dPifYhepNxbe/hd7m7lSIzFEPeBBGlfzTJ6jQ1EIcph0y7GY
-         30zEuEwMHUZHgXti5/IjsyPZD9xASryciWSYeWXFfdPzBvVVGN3iYKy/cpi8H3yrPR9d
-         WBPbpfmjB48544d2nT3ua3H83LaWGFfxhpFlI6H26Ywp51bF4buYUL0fo7ODCXw/mphs
-         K8/XM9R2263uSGHLIBTwKXWk41MnYkzE3IC3aREJkAtX6Fqv5zi6Nj76mqd2EzorREg4
-         2Un3llNOd7b0uxlTChXp6uUSVlE6I4NxluBztzu2vZg73dXJBdFGuDJ2sRsQCw+EVSdo
-         41vA==
-X-Gm-Message-State: AOUpUlGeRSee+bAK4d+LJ03WeVHC9XF+UTGKrSQkEFfKTcRc0Wp5Np8w
-        oTwEWAGhKEi02s35rFPrNv4=
-X-Google-Smtp-Source: AAOMgpcmA7BztyQSHt+t82eXMkGJcDrtMSeCHKtc/0a2P/3Gttxb+h2nPc6EuApalJUy1LHqiXJ8oQ==
-X-Received: by 2002:a25:2803:: with SMTP id o3-v6mr9529676ybo.138.1532962468124;
-        Mon, 30 Jul 2018 07:54:28 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:4bfe])
-        by smtp.gmail.com with ESMTPSA id s63-v6sm841134ywd.63.2018.07.30.07.54.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 07:54:27 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 07:54:25 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-Message-ID: <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
-References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
- <20180726113958.GE28386@dhcp22.suse.cz>
- <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
- <20180730093257.GG24267@dhcp22.suse.cz>
- <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
+        Mon, 30 Jul 2018 12:30:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=v+OLD6G4z9ltQBOF2eK6j9TFvIbGB1hYnBrzR92BR24=; b=kfSViWBPCYxeInO1O0OSbw1n2
+        uHGzejo3fbOSeU88hCGThc5Ne8KnQ2Vuypsiak4e8+jjeovNuH6KEJ2pINshBlRvw8V1+k1bk4bhz
+        TKr28sL7SKodGcYBnmLrDMTgmbT0kZ9ComCazPz6kLhYr/7g73FHRtdP5GMrIEwOE90gvAGCOiV6z
+        ZWQMw5wOdm2YV9orbsHEcMOBNtMuqC5Bqowtx9lXmMr9pqTiMi1waV1mAyds/gPUZ4gbpD4507oiF
+        MFFIeFw3GZbox4k+3jK/wQbYflMOse8bL3yHBf8qpYFLPABmFO1Xa02dH6ksF+5z1z7uUyzGG8H1a
+        f2AF2XFTw==;
+Received: from [179.95.0.119] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fk9a0-0002YJ-Ua; Mon, 30 Jul 2018 14:55:25 +0000
+Date:   Mon, 30 Jul 2018 11:55:21 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 14/26] media: Convert entity ID allocation to new IDA
+ API
+Message-ID: <20180730115521.23f7afa9@coco.lan>
+In-Reply-To: <20180724110507.idyjc3vbbivwbxtb@valkosipuli.retiisi.org.uk>
+References: <20180621212835.5636-1-willy@infradead.org>
+        <20180621212835.5636-15-willy@infradead.org>
+        <20180724110507.idyjc3vbbivwbxtb@valkosipuli.retiisi.org.uk>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730144647.GX24267@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Em Tue, 24 Jul 2018 14:05:07 +0300
+Sakari Ailus <sakari.ailus@iki.fi> escreveu:
 
-On Mon, Jul 30, 2018 at 04:46:47PM +0200, Michal Hocko wrote:
-> On Mon 30-07-18 23:34:23, Tetsuo Handa wrote:
-> > On 2018/07/30 18:32, Michal Hocko wrote:
-> [...]
-> > > This one is waiting for draining and we are in mm_percpu_wq WQ context
-> > > which has its rescuer so no other activity can block us for ever. So
-> > > this certainly shouldn't deadlock. It can be dead slow but well, this is
-> > > what you will get when your shoot your system to death.
+> On Thu, Jun 21, 2018 at 02:28:23PM -0700, Matthew Wilcox wrote:
+> > Removes a call to ida_pre_get().
 > > 
-> > We need schedule_timeout_*() to allow such WQ_MEM_RECLAIM workqueues to wake up. (Tejun,
-> > is my understanding correct?) Lack of schedule_timeout_*() does block WQ_MEM_RECLAIM
-> > workqueues forever.
+> > Signed-off-by: Matthew Wilcox <willy@infradead.org>  
 > 
-> Hmm. This doesn't match my understanding of what WQ_MEM_RECLAIM actually
-> guarantees. If you are right then the whole thing sounds quite fragile
-> to me TBH.
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Workqueue doesn't think the cpu is stalled as long as one of the
-per-cpu kworkers is running.  The assumption is that kernel threads
-are not supposed to be busy-looping indefinitely (and they really
-shouldn't).  We can add timeout mechanism to workqueue so that it
-kicks off other kworkers if one of them is in running state for too
-long, but idk, if there's an indefinite busy loop condition in kernel
-threads, we really should get rid of them and hung task watchdog is
-pretty effective at finding these cases (at least with preemption
-disabled).
+I'm assuming that the entire series will be applied together via some
+other tree. So:
 
-Thanks.
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
--- 
-tejun
+> 
+> > ---
+> >  drivers/media/media-device.c | 16 +++++-----------
+> >  1 file changed, 5 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> > index ae59c3177555..d51088bcd735 100644
+> > --- a/drivers/media/media-device.c
+> > +++ b/drivers/media/media-device.c
+> > @@ -575,18 +575,12 @@ int __must_check media_device_register_entity(struct media_device *mdev,
+> >  	entity->num_links = 0;
+> >  	entity->num_backlinks = 0;
+> >  
+> > -	if (!ida_pre_get(&mdev->entity_internal_idx, GFP_KERNEL))
+> > -		return -ENOMEM;
+> > -
+> > -	mutex_lock(&mdev->graph_mutex);
+> > -
+> > -	ret = ida_get_new_above(&mdev->entity_internal_idx, 1,
+> > -				&entity->internal_idx);
+> > -	if (ret < 0) {
+> > -		mutex_unlock(&mdev->graph_mutex);
+> > +	ret = ida_alloc_min(&mdev->entity_internal_idx, 1, GFP_KERNEL);
+> > +	if (ret < 0)
+> >  		return ret;
+> > -	}
+> > +	entity->internal_idx = ret;
+> >  
+> > +	mutex_lock(&mdev->graph_mutex);
+> >  	mdev->entity_internal_idx_max =
+> >  		max(mdev->entity_internal_idx_max, entity->internal_idx);
+> >  
+> > @@ -632,7 +626,7 @@ static void __media_device_unregister_entity(struct media_entity *entity)
+> >  	struct media_interface *intf;
+> >  	unsigned int i;
+> >  
+> > -	ida_simple_remove(&mdev->entity_internal_idx, entity->internal_idx);
+> > +	ida_free(&mdev->entity_internal_idx, entity->internal_idx);
+> >  
+> >  	/* Remove all interface links pointing to this entity */
+> >  	list_for_each_entry(intf, &mdev->interfaces, graph_obj.list) {  
+> 
+
+
+
+Thanks,
+Mauro
