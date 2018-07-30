@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B411C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C7DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9956C20890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 120AA20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMCKL7h/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9956C20890
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/M5ibQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120AA20894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732049AbeGaAZ4 (ORCPT
+        id S1732067AbeGaA1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:25:56 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44228 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeGaAZ4 (ORCPT
+        Mon, 30 Jul 2018 20:27:22 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46022 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeGaA1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:25:56 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r16-v6so14535833wrt.11;
-        Mon, 30 Jul 2018 15:48:45 -0700 (PDT)
+        Mon, 30 Jul 2018 20:27:22 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f12-v6so4632629wrv.12;
+        Mon, 30 Jul 2018 15:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8Hr4Wz3tEhf4ahXhsnvqscRaiMP8MfABLMq+U8/dyfc=;
-        b=TMCKL7h/hbQdXnlo/qxEOhd5gQBICnw6zKKOHEel7x4wl51fDpnOgRhWqUkvn7umC6
-         TObd0a6z6vGapY/3HLlPZC49NTP0dBSPq1O5N50oHqymZ1O/APYOSfshRNgZBWg91hJM
-         Mh3Cks+Uw/qsTrddcJI4VP0LUzPuzVpq8ZdSxexqRfr/RMHTWb/2ieLYFMdYx0puGrG2
-         Xkziq92oNqBCqDmo3avLA4ymHjLpO2TVHh2ubcXe0OCxz7qPfoe47U1jtsxqr5BBY2vF
-         yj1iHUjI8pG0dEkf5kucc6BMT8IXHmMfJbtf7L5Id5Thz17X69FDmm/YkKJnh1oLdfQl
-         egUw==
+        bh=x3YanNvs3YqVMoeJa+OzidGw0OW48hMbDYKfroA+/Nk=;
+        b=g/M5ibQGmA8bSd1GIpHigwSN6rsdwV5b4dcabFU4lsUR+2HxnYPOTvCytqyZ+/2GbL
+         VlHWpr2pGRtsZ6Z3J5rXN8ukQghX8Kwp7zutdHTZDi2PVFmzYy+zYFg0PRXLGLbR4wfT
+         NXE47lIr6ByULNK6ZAkM9PgiYUHTTaB4qy63NaAVgqgILUTpE2XOKEzzOmxeE+Jb/F/7
+         MsPFdfsZoFcMeO/++LCgk5QyIoZBdOglV28CWPYZ+w16o1XzAAb662f81cjzHIF0hUPr
+         ksZR6VHVVO7JQ8hMvJsZIdxK0vFt6FZSjfDjqYz1WByl+xsDGuWLf05fdhmqLwU8Fv2g
+         t3EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=8Hr4Wz3tEhf4ahXhsnvqscRaiMP8MfABLMq+U8/dyfc=;
-        b=E9FeBrJioV/l0l71QxfagQm7YEGkk21kFghX86z0pN0hjY+g77H+Bx9yRiAhA5jBAj
-         xrP2wsm7ogLwek/tbXj9nHOGlvK/IUJgbqpzwLJTI9N6vzuRUoVNezGDTghHdMz6KOGx
-         WR28DbF0vCClJEpvofQkZYjo8ebRKbGe6Vn/wZBWhm+sekYZeVcKdkeW2csF97k2Crsr
-         0mEM+7gP3CIdRms9WnXBymR03L+UIdVi60ENbVvHRZQx5j0sKh7/Ce1WPp3Rgtw3SJtj
-         hfXwWDZSn8TxzxH4qStsMAxKgKr1SVqBsqMvz3cJdtHzOX9gGfOSTgMk1wKdE/HxwOEh
-         Dg5g==
-X-Gm-Message-State: AOUpUlGRz+YgU2Cez+zWbp2fRLtvoy2aXc4zXlfJaME0DzuRkOG59mmO
-        MnVY6v4u5WEQsUaiBSqgS/s=
-X-Google-Smtp-Source: AAOMgpdJ/QsO5VFam2rGZMhizNJMyLV4u4gO+iZUyJxQ6LsYzzli58xzn70WKcCoplhKFXWz53yINg==
-X-Received: by 2002:adf:f342:: with SMTP id e2-v6mr19036546wrp.161.1532990924656;
-        Mon, 30 Jul 2018 15:48:44 -0700 (PDT)
+        bh=x3YanNvs3YqVMoeJa+OzidGw0OW48hMbDYKfroA+/Nk=;
+        b=ku6ipG+XktnZBcJI5EMN1pbPQXfPt/iqN5H4o4oTDSGtaUVggxEBQhajnrfMvGoXTm
+         E6O2dT3l3lvtwNkGvh9rXltEC3m2HU8+fIj+4uHQNsDBLPj2pvmMzo78HpCMEoRmoIIW
+         +TbUa9tthF749FEWCwjaAZWmQlm259N9vOYcaZj5LRwZjWGR85UoEMKKIPPod629iUBH
+         vFqndmsQUDkYGb5N5+5lTXa8ojPArtrSfH5To++KEq7LlKt17l7p9uHmwA7GktLd2Q4C
+         31O+9uM/x3GYlVw8jqYefFlqpfKRnvipzksdM8D+WOn+b7/NZkQF/DwNxwz6qFzMX7RH
+         IB3w==
+X-Gm-Message-State: AOUpUlEmDBLFUVXhoMvOSShwE7hHaJWUYjOVW3/maEXFrpsH6ZIPu2GG
+        WmMg0mh1d60esjRCZqv1tFA=
+X-Google-Smtp-Source: AAOMgpf4GQHAltf2sezkcg0zCGurLkkp/+4PwMH4hqvkzewsilCBlgtmYXUOM2mpxpGArWLWXZZ9Hw==
+X-Received: by 2002:adf:b69c:: with SMTP id j28-v6mr19561932wre.200.1532991010448;
+        Mon, 30 Jul 2018 15:50:10 -0700 (PDT)
 Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id w4-v6sm10764811wrl.46.2018.07.30.15.48.40
+        by smtp.googlemail.com with ESMTPSA id 71-v6sm1146948wmq.17.2018.07.30.15.50.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 15:48:43 -0700 (PDT)
-Subject: Re: [PATCH v2 1/7] dt-bindings: net: Fix Broadcom iProc mdio mux
- driver base address
+        Mon, 30 Jul 2018 15:50:09 -0700 (PDT)
+Subject: Re: [PATCH v2 2/7] net: phy: Fix the register offsets in Broadcom
+ iProc mdio mux driver
 To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -76,7 +76,7 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com
 References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-3-git-send-email-arun.parameswaran@broadcom.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -112,12 +112,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <a0968023-297f-c2c8-76f8-fa0911f29a17@gmail.com>
-Date:   Mon, 30 Jul 2018 15:48:33 -0700
+Message-ID: <eac0f689-a7b6-69f2-2f96-e7a959b283ce@gmail.com>
+Date:   Mon, 30 Jul 2018 15:50:04 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
+In-Reply-To: <1532726613-6483-3-git-send-email-arun.parameswaran@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,13 +127,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/27/2018 02:23 PM, Arun Parameswaran wrote:
-> Modify the base address of the Broadcom iProc MDIO mux driver to
-> point to the start of the block's register address space.
+> Modify the register offsets in the Broadcom iProc mdio mux to start
+> from the top of the register address space.
+> 
+> Earlier, the base address pointed to the end of the block's register
+> space. The base address will now point to the start of the mdio's
+> address space. The offsets have been fixed to match this.
 > 
 > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
-
 -- 
 Florian
