@@ -3,145 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4414C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71649FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3118720873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:29:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3118720873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E75F20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E75F20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbeG3HC3 (ORCPT
+        id S1726497AbeG3HDp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:02:29 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:33534 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725858AbeG3HC3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:02:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0T5bsOPs_1532928531;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T5bsOPs_1532928531)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 30 Jul 2018 13:28:52 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH] sched/fair: sync expires_seq in distribute_cfs_runtime()
-To:     Cong Wang <xiyou.wangcong@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Ben Segall <bsegall@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180728002409.5781-1-xiyou.wangcong@gmail.com>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <ef0e1185-51d6-0707-cda4-6f2ea987b651@linux.alibaba.com>
-Date:   Mon, 30 Jul 2018 13:28:51 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Mon, 30 Jul 2018 03:03:45 -0400
+Received: from mx.socionext.com ([202.248.49.38]:57521 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725858AbeG3HDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 03:03:45 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 30 Jul 2018 14:30:29 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id AFFF318011F;
+        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 30 Jul 2018 14:30:29 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 71DDE40385;
+        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
+Received: from DESKTOP0FARE34 (unknown [10.213.134.218])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 35486120448;
+        Mon, 30 Jul 2018 14:30:29 +0900 (JST)
+From:   "Keiji Hayashibara" <hayashibara.keiji@socionext.com>
+To:     "'Trent Piepho'" <tpiepho@impinj.com>, <andy.shevchenko@gmail.com>
+Cc:     <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <masami.hiramatsu@linaro.org>,
+        =?utf-8?Q?Hayashi=2C_Kunihiko/=E6=9E=97_=E9=82=A6=E5=BD=A6?= 
+        <hayashi.kunihiko@socionext.com>, <broonie@kernel.org>,
+        <mark.rutland@arm.com>, <linux-spi@vger.kernel.org>,
+        =?utf-8?B?WWFtYWRhLCBNYXNhaGlyby/lsbHnlLAg55yf5byY?= 
+        <yamada.masahiro@socionext.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <jaswinder.singh@linaro.org>
+References: <1532588943-19481-1-git-send-email-hayashibara.keiji@socionext.com>  <1532588943-19481-3-git-send-email-hayashibara.keiji@socionext.com>     <CAHp75VcEdxDEo0T5_9BzOPaeaqjbmbrWmaE9+ZuUDYhjh6jpVw@mail.gmail.com> <1532624495.2283.197.camel@impinj.com>
+In-Reply-To: <1532624495.2283.197.camel@impinj.com>
+Subject: RE: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
+Date:   Mon, 30 Jul 2018 14:30:25 +0900
+Message-ID: <002901d427c6$6b9a4ff0$42ceefd0$@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20180728002409.5781-1-xiyou.wangcong@gmail.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHUJK+Lb4PtBS+ckEWxak8O5zFtw6SgmfYAgACKagCABh0EkA==
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Cong,
+Hello Trent and Andy,
 
-On 7/28/18 8:24 AM, Cong Wang wrote:
-> Each time we sync cfs_rq->runtime_expires with cfs_b->runtime_expires,
-> we should sync its ->expires_seq too. However it is missing
-> for distribute_cfs_runtime(), especially the slack timer call path.
-
-I don't think it's a problem, as expires_seq will get synced in
-assign_cfs_rq_runtime().
-
-Thanks,
-Xunlei
-
+> From: Trent Piepho [mailto:tpiepho@impinj.com]
+> Sent: Friday, July 27, 2018 2:02 AM
+> To: andy.shevchenko@gmail.com; Hayashibara, Keiji/林原 啓二 <hayashibara.keiji@socionext.com>
+> Subject: Re: [PATCH v2 2/2] spi: add SPI controller driver for UniPhier SoC
 > 
-> Fixes: 512ac999d275 ("sched/fair: Fix bandwidth timer clock drift condition")
-> Cc: Xunlei Pang <xlpang@linux.alibaba.com>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-> ---
->  kernel/sched/fair.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+> On Thu, 2018-07-26 at 11:46 +0300, Andy Shevchenko wrote:
+> > > +
+> > > +       /*
+> > > +        * the supported rates are even numbers from 4 to 254. (4,6,8...254)
+> > > +        * round up as we look for equal or less speed
+> > > +        */
+> > > +       ckrat = DIV_ROUND_UP(clk_get_rate(priv->clk), speed);
+> > > +       ckrat = roundup(ckrat, 2);
+> >
+> > ckrat += ckrat & 1;
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 2f0a0be4d344..910c50db3d74 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4857,7 +4857,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
->  }
->  
->  static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
-> -		u64 remaining, u64 expires)
-> +		u64 remaining, u64 expires, int expires_seq)
->  {
->  	struct cfs_rq *cfs_rq;
->  	u64 runtime;
-> @@ -4880,6 +4880,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
->  
->  		cfs_rq->runtime_remaining += runtime;
->  		cfs_rq->runtime_expires = expires;
-> +		cfs_rq->expires_seq = expires_seq;
->  
->  		/* we check whether we're throttled above */
->  		if (cfs_rq->runtime_remaining > 0)
-> @@ -4905,7 +4906,7 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
->  static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
->  {
->  	u64 runtime, runtime_expires;
-> -	int throttled;
-> +	int throttled, expires_seq;
->  
->  	/* no need to continue the timer with no bandwidth constraint */
->  	if (cfs_b->quota == RUNTIME_INF)
-> @@ -4933,6 +4934,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
->  	cfs_b->nr_throttled += overrun;
->  
->  	runtime_expires = cfs_b->runtime_expires;
-> +	expires_seq = cfs_b->expires_seq;
->  
->  	/*
->  	 * This check is repeated as we are holding onto the new bandwidth while
-> @@ -4946,7 +4948,7 @@ static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
->  		raw_spin_unlock(&cfs_b->lock);
->  		/* we can't nest cfs_b->lock while distributing bandwidth */
->  		runtime = distribute_cfs_runtime(cfs_b, runtime,
-> -						 runtime_expires);
-> +						 runtime_expires, expires_seq);
->  		raw_spin_lock(&cfs_b->lock);
->  
->  		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
-> @@ -5055,6 +5057,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
->  {
->  	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-> +	int expires_seq;
->  	u64 expires;
->  
->  	/* confirm we're still not at a refresh boundary */
-> @@ -5068,12 +5071,13 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
->  		runtime = cfs_b->runtime;
->  
->  	expires = cfs_b->runtime_expires;
-> +	expires_seq = cfs_b->expires_seq;
->  	raw_spin_unlock(&cfs_b->lock);
->  
->  	if (!runtime)
->  		return;
->  
-> -	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
-> +	runtime = distribute_cfs_runtime(cfs_b, runtime, expires, expires_seq);
->  
->  	raw_spin_lock(&cfs_b->lock);
->  	if (expires == cfs_b->runtime_expires)
+> Either way, the compiler produces the same code:
 > 
+>  add r0, r0, #1 
+>  bic r0, r0, #1
+> 
+> I.e., ckrat = (ckrat + 1) & ~1, one "add" and one "and".
+> 
+> Might as well use the macro so it's clear. There is also round_up(x,y), which I believe is intended to be used
+> only with power of 2 values of y.
+
+I confirmed round_up() macro.
+This macro is optimized to power of 2 argument,
+and it matches to this case and clear.
+
+I will replace to round_up() macro.
+
+Thank you.
+
+-----------------
+Best Regards,
+Keiji Hayashibara
+
+
