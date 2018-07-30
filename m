@@ -2,233 +2,209 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5526FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796C816256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C04F20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mjx/EXsR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C04F20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D798204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D798204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731760AbeG3RyD (ORCPT
+        id S1731991AbeG3Ryh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:54:03 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:32844 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbeG3RyC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:54:02 -0400
-Received: by mail-ua0-f196.google.com with SMTP id i4-v6so8221915uak.0;
-        Mon, 30 Jul 2018 09:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=XuR6BpGdsi095ZZBxLTUf2gLq1bAbazxjEGOQF+aMKY=;
-        b=Mjx/EXsRMLNhisNcUBhXiowoTEwzqC2T8Rw/AAtWU7sugKHY/G2CTZiqzwR8RooF+t
-         maVmoNDKdINOHoBpOp+xIkCBAvdbMbhRoXK2+7/03DHmP3PIEgKOkE/dOP4cXDCWJmmk
-         SmQWX4QZwpeJrQuzmrQr2Z455RqztG+Vlz/Y+/wQAKh4tX+IIrd203Cr6uYZadAJX9lh
-         zc1GW6lEq0qelzcFR3up8ms/CMqSY/lifweBrwa9LbvZulaWDpjV7T90uC2WU9mWico2
-         2Gk85WhwO6ttjngnqV0osRbg0yTgI6SPd1hDMZoGZ7wJNoh78YC4MPU62IO9lIBtktrT
-         DZCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=XuR6BpGdsi095ZZBxLTUf2gLq1bAbazxjEGOQF+aMKY=;
-        b=LFIWsBioqbzBCu5kr8QKNvHGRTU0TxgBx+WCzl4NQhToXhusEhzJHUfJbAJKv+8+Gt
-         uJBdBaSOFrlNqBNzZ9rRiQ5zpQbQHFzYgC/qfY5s8vLQg762i08CYs7dgndnVGr1O4ry
-         W3Jnve0IBDYC19r7pcL0mzS2VSvkO9akj7OG8oVVSSCA0FzhR+4HWEXWG12/CT5Atku7
-         NYq4BsaSbYx0x6y4Hj9guwa2QU0BIJ14LEALYIUd45b1DNYxyMzpbymxemsNO+z9h656
-         01JHs6bEg+W+pirMGHhe6EOR6bBy89emZYTsaqKi8BUvrGhARrN7yDgi9hpYQ53Stijc
-         rq4Q==
-X-Gm-Message-State: AOUpUlFQUdDkjnGKrKZE+REkPawz8d433NGDnvR4HilJdHl8LORR2QRS
-        CgzOmWZZRgaDDnYcEmmJYeuU+la40p4gdrScPNs=
-X-Google-Smtp-Source: AAOMgpeOuZQy9PmZ+I1iTPmw5Lo08C+Dwt3yO8t8p35MWIE/CBYuBptt6KWF+DkqwZR+Z+2jNSmZwLglZFmwSwdkn/Y=
-X-Received: by 2002:ab0:1861:: with SMTP id j33-v6mr12555191uag.119.1532967499289;
- Mon, 30 Jul 2018 09:18:19 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:1e86:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 09:18:18
- -0700 (PDT)
-Reply-To: rajatxjain@gmail.com
-In-Reply-To: <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180508230148.121852-1-rajatja@google.com> <20180510233912.96454-1-rajatja@google.com>
- <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
-From:   Rajat Jain <rajatxjain@gmail.com>
-Date:   Mon, 30 Jul 2018 09:18:18 -0700
-Message-ID: <CAA93t1rqJM1S6M+Prjup_93Z-Y2dbuF3tpKCS5c_SCf9hU9Upg@mail.gmail.com>
-Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Rajat Jain <rajatja@google.com>,
+        Mon, 30 Jul 2018 13:54:37 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54574 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731576AbeG3Ryg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 13:54:36 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fkAsk-0005Yy-7y; Mon, 30 Jul 2018 10:18:53 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fkAsc-0003aO-Aq; Mon, 30 Jul 2018 10:18:42 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mayurkumar.patel@intel.com, Richard Hughes <rhughes@redhat.com>,
-        Carlos Garnacho <cgarnach@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pali Rohar <pali.rohar@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Colin Ian King <colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Mon, 30 Jul 2018 10:18:39 -0600
+Message-Id: <20180730161840.13733-4-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
+References: <20180730161840.13733-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v8 3/4] PCI: Introduce disable_acs_redir quirk
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 1:26 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> [+cc Rafael, Richard, Carlos, Pali, Takashi, Andy, Colin for question
-> about how to expose ASPM power management in sysfs]
->
-> On Thu, May 10, 2018 at 04:39:12PM -0700, Rajat Jain wrote:
->> ...
->> And some suggestions from Bjorn here:
->> https://www.spinics.net/lists/linux-pci/msg60541.html
->>
->> This patch picks up one of the suggestion, to remove the
->> CONFIG_PCIEASPM_DEBUG and thus make the code always
->> avilable. This provides control to userspace to control
->> ASPM on a per slot / device basis using sysfs interface.
->
-> TL;DR: When CONFIG_PCIEASPM_DEBUG=y, Linux makes ASPM control files
->        visible in sysfs, associated with the upstream end (e.g., Root
->        Port) of a link.  Should these files be associated with the
->        downstream end (e.g., NIC, GPU, etc) instead?
->
-> I think we do need to make ASPM control files visible in sysfs, as
-> this patch does.  But I have a question about exactly *how* we want to
-> do this.  I had planned to merge this patch for v4.19, but I think
-> I'll postpone it until we figure this out.
+Intel SPT PCH hardware has an implementation of the ACS bits that
+does not comply with the PCI express standard. To deal with this
+the existing code has an enable_acs() quirk for the hardware.
 
+In order to be able to correctly disable the ACS redirect bits for
+all hardware we need an analagous quirk to disable those bits.
 
-Hi Bjorn,
+This adds the function pci_dev_specific_disable_acs_redir() which
+behaves similarly to pci_dev_specific_enable_acs() but uses a new
+function pointer for quirks which disables the ACS redirect bits.
 
-Just a side note FYI, it is OK if you want to drop this, because we
-anyway have this today as a config option so anyone who wants to use
-these files can enable that config anyway.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ drivers/pci/quirks.c | 78 ++++++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/pci.h  |  5 ++++
+ 2 files changed, 71 insertions(+), 12 deletions(-)
 
-Thanks,
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index f439de848658..414b22dc06b8 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4553,27 +4553,81 @@ static int pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
+ 	return 0;
+ }
+ 
+-static const struct pci_dev_enable_acs {
++static int pci_quirk_disable_intel_spt_pch_acs_redir(struct pci_dev *dev)
++{
++	int pos;
++	u32 cap, ctrl;
++
++	if (!pci_quirk_intel_spt_pch_acs_match(dev))
++		return -ENOTTY;
++
++	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
++	if (!pos)
++		return -ENOTTY;
++
++	pci_read_config_dword(dev, pos + PCI_ACS_CAP, &cap);
++	pci_read_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, &ctrl);
++
++	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
++
++	pci_write_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, ctrl);
++
++	pci_info(dev, "Intel SPT PCH root port workaround: disabled ACS redirect\n");
++
++	return 0;
++}
++
++static const struct pci_dev_acs_ops {
+ 	u16 vendor;
+ 	u16 device;
+ 	int (*enable_acs)(struct pci_dev *dev);
+-} pci_dev_enable_acs[] = {
+-	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_pch_acs },
+-	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_spt_pch_acs },
+-	{ 0 }
++	int (*disable_acs_redir)(struct pci_dev *dev);
++} pci_dev_acs_ops[] = {
++	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
++	  .enable_acs = pci_quirk_enable_intel_pch_acs,
++	},
++	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
++	  .enable_acs = pci_quirk_enable_intel_spt_pch_acs,
++	  .disable_acs_redir = pci_quirk_disable_intel_spt_pch_acs_redir
++	},
+ };
+ 
+ int pci_dev_specific_enable_acs(struct pci_dev *dev)
+ {
+-	const struct pci_dev_enable_acs *i;
++	const struct pci_dev_acs_ops *p;
++	int i;
+ 	int ret;
+ 
+-	for (i = pci_dev_enable_acs; i->enable_acs; i++) {
+-		if ((i->vendor == dev->vendor ||
+-		     i->vendor == (u16)PCI_ANY_ID) &&
+-		    (i->device == dev->device ||
+-		     i->device == (u16)PCI_ANY_ID)) {
+-			ret = i->enable_acs(dev);
++	for (i = 0; i < ARRAY_SIZE(pci_dev_acs_ops); i++) {
++		p = &pci_dev_acs_ops[i];
++		if ((p->vendor == dev->vendor ||
++		     p->vendor == (u16)PCI_ANY_ID) &&
++		    (p->device == dev->device ||
++		     p->device == (u16)PCI_ANY_ID) &&
++		    p->enable_acs) {
++			ret = p->enable_acs(dev);
++			if (ret >= 0)
++				return ret;
++		}
++	}
++
++	return -ENOTTY;
++}
++
++int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
++{
++	const struct pci_dev_acs_ops *p;
++	int i;
++	int ret;
++
++	for (i = 0; i < ARRAY_SIZE(pci_dev_acs_ops); i++) {
++		p = &pci_dev_acs_ops[i];
++		if ((p->vendor == dev->vendor ||
++		     p->vendor == (u16)PCI_ANY_ID) &&
++		    (p->device == dev->device ||
++		     p->device == (u16)PCI_ANY_ID) &&
++		    p->disable_acs_redir) {
++			ret = p->disable_acs_redir(dev);
+ 			if (ret >= 0)
+ 				return ret;
+ 		}
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index abd5d5e17aee..0a436ec4fef5 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1880,6 +1880,7 @@ enum pci_fixup_pass {
+ void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev);
+ int pci_dev_specific_acs_enabled(struct pci_dev *dev, u16 acs_flags);
+ int pci_dev_specific_enable_acs(struct pci_dev *dev);
++int pci_dev_specific_disable_acs_redir(struct pci_dev *dev);
+ #else
+ static inline void pci_fixup_device(enum pci_fixup_pass pass,
+ 				    struct pci_dev *dev) { }
+@@ -1892,6 +1893,10 @@ static inline int pci_dev_specific_enable_acs(struct pci_dev *dev)
+ {
+ 	return -ENOTTY;
+ }
++static inline int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
++{
++	return -ENOTTY;
++}
+ #endif
+ 
+ void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
+-- 
+2.11.0
 
-Rajat
-
->
-> ASPM is a power management feature of a PCIe link, and it affects the
-> devices on both ends of that link.  The upstream end (closest to the
-> CPU) is typically a Root Port, and the downstream end is typically an
-> Endpoint (e.g., a GPU, NIC, or NVMe device).  For example, my laptop
-> has these devices:
->
->   00:1c.2 Intel Root Port to [bus 04]
->   04:00.0 Intel 8260 Wireless NIC
->
-> There's a PCIe link between these two devices, and if both ends
-> support it, ASPM reduces power usage when the NIC is idle.  The
-> hardware reduces power usage automatically; the kernel only needs to
-> configure ASPM.
->
-> ASPM affects performance as well as power, so we have knobs to control
-> the tradeoff.  Starting with the big hammers, we currently have:
->
->   - Kernel build-time setting (CONFIG_PCIEASPM_PERFORMANCE, etc).
->     Requires kernel rebuild and reboot.
->
->   - "pcie_aspm=X" kernel boot parameter.  Can only enable/disable and
->     requires a reboot.
->
->   - /sys/module/pcie_aspm/parameters/policy file.  At any time, root
->     can set the system-wide ASPM policy to one of these settings:
->
->       + highest performance, highest power consumption
->       + moderate power saving at cost of some performance
->       + aggressive power saving at cost of more performance
->       + use whatever setting BIOS configured
->
->   - Many /sys/devices/pci0000:00/0000:00:1c.2/power/link_state files.
->     At any time, root can set the ASPM policy to one of the above
->     settings, but for individual devices.  Currently these files are
->     only available when CONFIG_PCIEASPM_DEBUG=y (Red Hat does not
->     enable this, but Ubuntu does).
->
-> The patch below changes it so these /sys/devices/.../link_state files
-> *always* exist, regardless of CONFIG_PCIEASPM_DEBUG.
->
-> The question is where those sysfs files should be.  Currently they are
-> associated with the device at the *upstream* end of the link.  In the
-> example above, they're associated with the Root Port:
->
->   /sys/devices/pci0000:00/0000:00:1c.2/power/link_state
->
-> I don't know if that's the right place, or if they should be
-> associated with the device at the *downstream* end of the link, i.e.,
-> 04:00.0.  The downstream end might be better because:
->
->   - It's easier to associate the downstream end with a device the user
->     cares about, e.g., a NIC, GPU, etc.  This is mostly a user-
->     interface issue.
->
->   - A link can lead to a multi-function device, and the spec allows
->     those functions to have different ASPM settings (see PCIe r4.0,
->     sec 5.4.1).  With the sysfs files at the upstream end of the link,
->     we have no way to configure those functions individually.
->
-> Any thoughts?
->
->> ...
->> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
->> index b12e28b3d8f9..089b9f559d88 100644
->> --- a/drivers/pci/pcie/Kconfig
->> +++ b/drivers/pci/pcie/Kconfig
->> @@ -46,14 +46,6 @@ config PCIEASPM
->>
->>         When in doubt, say Y.
->>
->> -config PCIEASPM_DEBUG
->> -     bool "Debug PCI Express ASPM"
->> -     depends on PCIEASPM
->> -     default n
->> -     help
->> -       This enables PCI Express ASPM debug support. It will add per-device
->> -       interface to control ASPM.
->> -
->>  choice
->>       prompt "Default ASPM policy"
->>       default PCIEASPM_DEFAULT
->> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
->> index c687c817b47d..8ffc13d42baa 100644
->> --- a/drivers/pci/pcie/aspm.c
->> +++ b/drivers/pci/pcie/aspm.c
->> @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
->>  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
->>       NULL, 0644);
->>
->> -#ifdef CONFIG_PCIEASPM_DEBUG
->>  static ssize_t link_state_show(struct device *dev,
->>               struct device_attribute *attr,
->>               char *buf)
->> @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
->>               sysfs_remove_file_from_group(&pdev->dev.kobj,
->>                       &dev_attr_clk_ctl.attr, power_group);
->>  }
->> -#endif
->>
->>  static int __init pcie_aspm_disable(char *str)
->>  {
->> --
->> 2.17.0.441.gb46fe60e1d-goog
->>
