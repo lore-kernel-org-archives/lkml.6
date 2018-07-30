@@ -2,131 +2,196 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A87C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 01:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D7EC46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 01:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D9720873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 01:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D9720873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D8BC20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 01:38:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhfRzcAj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8BC20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbeG3DIr (ORCPT
+        id S1728801AbeG3DKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 29 Jul 2018 23:08:47 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11835 "EHLO mga12.intel.com"
+        Sun, 29 Jul 2018 23:10:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728628AbeG3DIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Jul 2018 23:08:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2018 18:36:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,420,1526367600"; 
-   d="scan'208";a="78869862"
-Received: from jalaryea-mobl5.amr.corp.intel.com (HELO spandruv-mobl.amr.corp.intel.com) ([10.254.15.88])
-  by orsmga002.jf.intel.com with ESMTP; 29 Jul 2018 18:36:12 -0700
-Message-ID: <a43b252b84196087d523c97a162461e6883be1ab.camel@linux.intel.com>
-Subject: Re: [PATCH] HID: intel_ish-hid: tx_buf memory leak on probe/remove
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Even Xu <even.xu@intel.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Date:   Sun, 29 Jul 2018 18:36:12 -0700
-In-Reply-To: <20180724143455.13770-1-vasilyev@ispras.ru>
-References: <20180724143455.13770-1-vasilyev@ispras.ru>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728628AbeG3DKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Jul 2018 23:10:52 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09FBE20873;
+        Mon, 30 Jul 2018 01:38:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532914697;
+        bh=Cke4JUXL27dk3AQKmfLNhnABuTQubcUwRqeJsBMqEiY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UhfRzcAjxldv9iSFm6U6a/9Irh34x79TWF2wcBNPJwszFbQFXPBeDb8aqPBBeP4P/
+         XbMLcMOFxuOl0w87kkkd0b4aTZJjtSHC8ovqxFa8sztmgRiI1uDb2siTDXGGLFY5pg
+         9jtfW4p+73qZ4BZoW/em8fg65vURszllijDwgTqM=
+Date:   Sun, 29 Jul 2018 18:38:16 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid race between zero_range and
+ background GC
+Message-ID: <20180730013816.GA15708@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180726104536.114340-1-yuchao0@huawei.com>
+ <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+ <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
+ <20180729020254.GH83620@jaegeuk-macbookpro.roam.corp.google.com>
+ <6d86bad1-52fa-2309-9403-47490345e372@kernel.org>
+ <20180729025930.GA95148@jaegeuk-macbookpro.roam.corp.google.com>
+ <d6e6a1c0-c56a-aac8-a210-945cce17f5b3@kernel.org>
+ <20180729051459.GB97518@jaegeuk-macbookpro.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180729051459.GB97518@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-24 at 17:34 +0300, Anton Vasilyev wrote:
-> ish_dev_init() allocates 512*176 bytes memory for tx_buf and stores
-> it at
-> &dev->wr_free_list_head.link list on ish_probe().
-> But there is no deallocation of this memory in ish_remove() and in
-> ish_probe() error path.
-> So current intel-ish-ipc provides 88 KB memory leak for each
-> probe/release.
+On 07/28, Jaegeuk Kim wrote:
+> On 07/29, Chao Yu wrote:
+> > On 2018/7/29 10:59, Jaegeuk Kim wrote:
+> > > On 07/29, Chao Yu wrote:
+> > >> On 2018/7/29 10:02, Jaegeuk Kim wrote:
+> > >>> On 07/27, Chao Yu wrote:
+> > >>>> On 2018/7/27 18:29, Jaegeuk Kim wrote:
+> > >>>>> On 07/26, Chao Yu wrote:
+> > >>>>>> Thread A				Background GC
+> > >>>>>> - f2fs_zero_range
+> > >>>>>>  - truncate_pagecache_range
+> > >>>>>> 					- gc_data_segment
+> > >>>>>> 					 - get_read_data_page
+> > >>>>>> 					  - move_data_page
+> > >>>>>> 					   - set_page_dirty
+> > >>>>>> 					   - set_cold_data
+> > >>>>>>  - f2fs_do_zero_range
+> > >>>>>>   - dn->data_blkaddr = NEW_ADDR;
+> > >>>>>>   - f2fs_set_data_blkaddr
+> > >>>>>>
+> > >>>>>> Actually, we don't need to set dirty & checked flag on the page, since
+> > >>>>>> all valid data in the page should be zeroed by zero_range().
+> > >>>>>
+> > >>>>> But, it doesn't matter too much, right?
+> > >>>>
+> > >>>> No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
+> > >>>> zero_range() should be wrong, as zeroed page contains valid user data.
+> > >>>
+> > >>> How about truncating page caches after block address change or doing it twice
+> > >>> before and after?
+> > >>
+> > >> Thread A				Background GC
+> > >> - f2fs_zero_range
+> > >>  - truncate_pagecache_range
+> > >> 					- gc_data_segment
+> > >> 					 - get_read_data_page
+> > >> 					  - move_data_page
+> > >> 					   - set_page_dirty
+> > >> 					   - set_cold_data
+> > >>  - f2fs_do_zero_range
+> > >>   - dn->data_blkaddr = NEW_ADDR;
+> > >>   - f2fs_set_data_blkaddr
+> > >> 					bdi-flusher
+> > >> 					- __write_data_page
+> > >> 					 - f2fs_update_data_blkaddr
+> > >> 					 : data_blkaddr has been updated here.
+> > >>  - truncate_pagecache_range
+> > >>  : data & dnode has been writebacked before page cache truncation?
+> > >>
+> > >> How about this case?
+> > > 
+> > > So, truncating pages under dnode lock can address it?
+> > 
+> > Normally, our lock dependency is
+> > 
+> > ->writepage()
+> > lock data page -> lock dnode page
+> > 
+> > here
+> > lock dnode page -> truncate_pagecache_range::lock data page
+> > 
+> > Will easily cause deadlock?
 > 
-> The patch replaces kzalloc allocation by devm_kzalloc and removes
-> ishtp_device *dev deallocation by kfree.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-I prefer align with "(" for the next line for multi line statements
-even if character /line > slightly over 80. If you can do that resubmit
- with my ACK below.
+> Yeah. Can we add an inode flag to bypass GC in this case, then?
 
-> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Hmm, BTW, how about using i_gc_rwsem[WRITE] in a very narrow scope?
 
-> ---
->  drivers/hid/intel-ish-hid/ipc/ipc.c     | 7 +++++--
->  drivers/hid/intel-ish-hid/ipc/pci-ish.c | 2 --
->  2 files changed, 5 insertions(+), 4 deletions(-)
+for (index = pg_start; index < pg_end;) {
+	f2fs_lock_op();
+	down_write(i_gc_rwsem[WRITE]);
+	truncate_page_cache_range(index, index + 4k);
+	f2fs_do_zero_range(&dn, index, end);
+	up_write(i_gc_rwsem[WRITE]);
+	f2fs_unlock_op();
+	f2fs_balance_fs();
+}
+
 > 
-> diff --git a/drivers/hid/intel-ish-hid/ipc/ipc.c b/drivers/hid/intel-
-> ish-hid/ipc/ipc.c
-> index 9a60ec13cb10..2f8e5402b450 100644
-> --- a/drivers/hid/intel-ish-hid/ipc/ipc.c
-> +++ b/drivers/hid/intel-ish-hid/ipc/ipc.c
-> @@ -907,7 +907,8 @@ struct ishtp_device *ish_dev_init(struct pci_dev
-> *pdev)
->  	struct ishtp_device *dev;
->  	int	i;
->  
-> -	dev = kzalloc(sizeof(struct ishtp_device) + sizeof(struct
-> ish_hw),
-> +	dev = devm_kzalloc(&pdev->dev,
-> +		sizeof(struct ishtp_device) + sizeof(struct ish_hw),
->  		GFP_KERNEL);
->  	if (!dev)
->  		return NULL;
-> @@ -925,7 +926,9 @@ struct ishtp_device *ish_dev_init(struct pci_dev
-> *pdev)
->  	for (i = 0; i < IPC_TX_FIFO_SIZE; ++i) {
->  		struct wr_msg_ctl_info	*tx_buf;
->  
-> -		tx_buf = kzalloc(sizeof(struct wr_msg_ctl_info),
-> GFP_KERNEL);
-> +		tx_buf = devm_kzalloc(&pdev->dev,
-> +			sizeof(struct wr_msg_ctl_info),
-> +			GFP_KERNEL);
->  		if (!tx_buf) {
->  			/*
->  			 * IPC buffers may be limited or not
-> available
-> diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> index a2c53ea3b5ed..81d035a480bc 100644
-> --- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> +++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> @@ -172,7 +172,6 @@ static int ish_probe(struct pci_dev *pdev, const
-> struct pci_device_id *ent)
->  	free_irq(pdev->irq, dev);
->  free_device:
->  	pci_iounmap(pdev, hw->mem_addr);
-> -	kfree(dev);
->  release_regions:
->  	pci_release_regions(pdev);
->  disable_device:
-> @@ -202,7 +201,6 @@ static void ish_remove(struct pci_dev *pdev)
->  	pci_release_regions(pdev);
->  	pci_clear_master(pdev);
->  	pci_disable_device(pdev);
-> -	kfree(ishtp_dev);
->  }
->  
->  static struct device __maybe_unused *ish_resume_device;
+> > 
+> > Thanks,
+> > 
+> > > 
+> > >>
+> > >> Thanks,
+> > >>
+> > >>>
+> > >>>>
+> > >>>>>
+> > >>>>>> Use i_gc_rwsem[WRITE] to avoid such race condition.
+> > >>>>>
+> > >>>>> Hope to avoid abusing i_gc_rwsem[] tho.
+> > >>>>
+> > >>>> Agreed, let's try avoiding until we have to use it.
+> > >>>>
+> > >>>> Thanks,
+> > >>>>
+> > >>>>>
+> > >>>>>>
+> > >>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > >>>>>> ---
+> > >>>>>>  fs/f2fs/file.c | 2 ++
+> > >>>>>>  1 file changed, 2 insertions(+)
+> > >>>>>>
+> > >>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > >>>>>> index 267ec3794e1e..7bd2412a8c37 100644
+> > >>>>>> --- a/fs/f2fs/file.c
+> > >>>>>> +++ b/fs/f2fs/file.c
+> > >>>>>> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+> > >>>>>>  	if (ret)
+> > >>>>>>  		return ret;
+> > >>>>>>  
+> > >>>>>> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > >>>>>>  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> > >>>>>>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+> > >>>>>>  	if (ret)
+> > >>>>>> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+> > >>>>>>  	}
+> > >>>>>>  out_sem:
+> > >>>>>>  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > >>>>>> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > >>>>>>  
+> > >>>>>>  	return ret;
+> > >>>>>>  }
+> > >>>>>> -- 
+> > >>>>>> 2.18.0.rc1
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
