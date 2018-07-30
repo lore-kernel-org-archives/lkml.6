@@ -2,118 +2,189 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD22C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07847FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A32F20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh7F0v1A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A32F20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A97E220881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97E220881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeG3Fpd (ORCPT
+        id S1726395AbeG3FsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 01:45:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbeG3Fpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 01:45:33 -0400
-Received: from localhost (unknown [171.76.121.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A32620873;
-        Mon, 30 Jul 2018 04:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532923952;
-        bh=Vet0cQPbZ4Ylyrs9pn/Y3a/6N6sMsWBO3c2sFNAplU0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lh7F0v1APWSkrR5pi8yTYHRfGtTwOSYeStQRwOjKzwgRR8amF5G8Ld0MwDQ3HTeY8
-         ewaYAM2qInO9c9TV4XHpv/uOuM42ttuvINbzCxvOlxMo8kOHUuiO7Z85a69vp00nEQ
-         NJjZ/5oARP1bMA1SsbiodaiDQ64Srawkx8R7q+8w=
-Date:   Mon, 30 Jul 2018 09:42:23 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
-        bgoswami@codeaurora.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 02/10] mfd: wcd9335: add support to wcd9335 core
-Message-ID: <20180730041223.GD3661@vkoul-mobl>
-References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
- <20180727121806.18209-3-srinivas.kandagatla@linaro.org>
+        Mon, 30 Jul 2018 01:48:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35182 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725845AbeG3FsZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 01:48:25 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6U4Dno0071869
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 00:15:23 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2khtnds9r2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 00:15:23 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Mon, 30 Jul 2018 05:15:20 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Jul 2018 05:15:15 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6U4FEN631326382
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 04:15:14 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 718F74C044;
+        Mon, 30 Jul 2018 07:15:27 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1B244C046;
+        Mon, 30 Jul 2018 07:15:24 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.124.35.53])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 30 Jul 2018 07:15:24 +0100 (BST)
+Subject: Re: [RFC 2/4] virtio: Override device's DMA OPS with
+ virtio_direct_dma_ops selectively
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-3-khandual@linux.vnet.ibm.com>
+ <c443ad8c-fb81-302d-edb2-5521831d38da@linux.vnet.ibm.com>
+ <20180729001344-mutt-send-email-mst@kernel.org>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        hch@infradead.org, linuxram@us.ibm.com, haren@linux.vnet.ibm.com,
+        paulus@samba.org, srikar@linux.vnet.ibm.com
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Mon, 30 Jul 2018 09:45:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727121806.18209-3-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180729001344-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18073004-0008-0000-0000-00000259AF55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073004-0009-0000-0000-000021C03BA7
+Message-Id: <1932ff74-dab8-853d-256c-40045e7ad2d9@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27-07-18, 13:17, Srinivas Kandagatla wrote:
-> +obj-$(CONFIG_MFD_WCD9335)	+= wcd9335.o
-> +wcd9335-objs			:= wcd9335-core.o
-> +
+On 07/29/2018 02:46 AM, Michael S. Tsirkin wrote:
+> On Sat, Jul 28, 2018 at 02:26:24PM +0530, Anshuman Khandual wrote:
+>> On 07/20/2018 09:29 AM, Anshuman Khandual wrote:
+>>> Now that virtio core always needs all virtio devices to have DMA OPS, we
+>>> need to make sure that the structure it points is the right one. In the
+>>> absence of VIRTIO_F_IOMMU_PLATFORM flag QEMU expects GPA from guest kernel.
+>>> In such case, virtio device must use default virtio_direct_dma_ops DMA OPS
+>>> structure which transforms scatter gather buffer addresses as GPA. This
+>>> DMA OPS override must happen as early as possible during virtio device
+>>> initializatin sequence before virtio core starts using given device's DMA
+>>> OPS callbacks for I/O transactions. This change detects device's IOMMU flag
+>>> and does the override in case the flag is cleared.
+>>>
+>>> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+>>> ---
+>>>  drivers/virtio/virtio.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+>>> index 7907ad3..6b13987 100644
+>>> --- a/drivers/virtio/virtio.c
+>>> +++ b/drivers/virtio/virtio.c
+>>> @@ -166,6 +166,8 @@ void virtio_add_status(struct virtio_device *dev, unsigned int status)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(virtio_add_status);
+>>>
+>>> +const struct dma_map_ops virtio_direct_dma_ops;
+>>> +
+>>>  int virtio_finalize_features(struct virtio_device *dev)
+>>>  {
+>>>  	int ret = dev->config->finalize_features(dev);
+>>> @@ -174,6 +176,9 @@ int virtio_finalize_features(struct virtio_device *dev)
+>>>  	if (ret)
+>>>  		return ret;
+>>
+>>
+>> The previous patch removed the code block for XEN guests which forced
+>> the use of DMA API all the time irrespective of VIRTIO_F_IOMMU_PLATFORM
+>> flag on the device. Here is what I have removed with patch 2/4 which
+>> breaks the existing semantics on XEN guests.
+>>
+>> -static bool vring_use_dma_api(struct virtio_device *vdev)
+>> -{
+>> -	if (!virtio_has_iommu_quirk(vdev))
+>> -		return true;
+>> -
+>> -	/* Otherwise, we are left to guess. */
+>> -	/*
+>> -	 * In theory, it's possible to have a buggy QEMU-supposed
+>> -	 * emulated Q35 IOMMU and Xen enabled at the same time.  On
+>> -	 * such a configuration, virtio has never worked and will
+>> -	 * not work without an even larger kludge.  Instead, enable
+>> -	 * the DMA API if we're a Xen guest, which at least allows
+>> -	 * all of the sensible Xen configurations to work correctly.
+>> -	 */
+>> -	if (xen_domain())
+>> -		return true;
+>> -
+>> -	return false;
+>> -}
+>>
+>> XEN guests would not like override with virtio_direct_dma_ops in any
+>> case irrespective of the flag VIRTIO_F_IOMMU_PLATFORM. So the existing
+>> semantics can be preserved with something like this. It just assumes
+>> that dev->dma_ops is non-NULL and a valid one set by the architecture.
+>> If required we can add those tests here before skipping the override.
+>>
+>> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+>> index 7907ad3..6b13987 100644
+>> --- a/drivers/virtio/virtio.c
+>> +++ b/drivers/virtio/virtio.c
+>> @@ -166,6 +166,8 @@ void virtio_add_status(struct virtio_device *dev, unsigned int status)
+>>  }
+>>  EXPORT_SYMBOL_GPL(virtio_add_status);
+>>
+>> +const struct dma_map_ops virtio_direct_dma_ops;
+>> +
+>>  int virtio_finalize_features(struct virtio_device *dev)
+>>  {
+>>  	int ret = dev->config->finalize_features(dev);
+>> @@ -174,6 +176,9 @@ int virtio_finalize_features(struct virtio_device *dev)
+>>  	if (ret)
+>>  		return ret;
+>> +
+>> +	if (xen_domain())
+>> +		goto skip_override;
+>> +
+>> +	if (virtio_has_iommu_quirk(dev))
+>> +		set_dma_ops(dev->dev.parent, &virtio_direct_dma_ops);
+>> +
+>> + skip_override:
+>> +
+> 
+> I prefer normal if scoping as opposed to goto spaghetti pls.
+> Better yet move vring_use_dma_api here and use it.
+> Less of a chance something will break.
 
-no slimbus objs?
+Sure, will move vring_use_dma_api() function in here.
 
-> +static int wcd9335_bring_up(struct wcd9335 *wcd)
-> +{
-> +	struct regmap *rm = wcd->regmap;
-> +	int val, byte0;
-> +	int ret = 0;
-> +
-> +	regmap_read(rm, WCD9335_CHIP_TIER_CTRL_EFUSE_VAL_OUT0, &val);
-> +	regmap_read(rm, WCD9335_CHIP_TIER_CTRL_CHIP_ID_BYTE0, &byte0);
-> +
-> +	if ((val < 0) || (byte0 < 0)) {
-> +		dev_err(wcd->dev, "wcd9335 codec version detection fail!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (byte0 == 0x1) {
-> +		dev_info(wcd->dev, "wcd9335 codec version is v2.0\n");
-> +		wcd->version = WCD9335_VERSION_2_0;
-> +		regmap_write(rm, WCD9335_CODEC_RPM_RST_CTL, 0x01);
-> +		regmap_write(rm, WCD9335_SIDO_SIDO_TEST_2, 0x00);
-> +		regmap_write(rm, WCD9335_SIDO_SIDO_CCL_8, 0x6F);
-> +		regmap_write(rm, WCD9335_BIAS_VBG_FINE_ADJ, 0x65);
-> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x5);
-> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x7);
-> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x3);
-> +		regmap_write(rm, WCD9335_CODEC_RPM_RST_CTL, 0x3);
-> +	} else {
-> +		dev_err(wcd->dev, "wcd9335 codec version not supported\n");
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	return ret;
-
-we can do return 0 and remove the variable as it is not used anywhere
-else.
-
-> +static int wcd9335_slim_probe(struct slim_device *slim)
-> +{
-> +	struct device *dev = &slim->dev;
-> +	struct wcd9335 *wcd;
-> +	int ret = 0;
-> +
-> +	/* Interface device */
-> +	if (slim->e_addr.dev_index == 0)
-> +		return 0;
-> +
-> +	wcd = devm_kzalloc(dev, sizeof(*wcd), GFP_KERNEL);
-> +	if (!wcd)
-> +		return	-ENOMEM;
-                      ^^
-double space
-
--- 
-~Vinod
