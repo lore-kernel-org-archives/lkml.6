@@ -2,88 +2,138 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA1113F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9AB13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAFC20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lBF9v4+b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAFC20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 220F620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220F620881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbeG3LIY (ORCPT
+        id S1728250AbeG3LIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:08:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37852 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbeG3LIY (ORCPT
+        Mon, 30 Jul 2018 07:08:39 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51571 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726723AbeG3LIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:08:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oJ0NUTX86TgKdU19i9RyYhm33mr4nHdA8Q0kxIYlN6E=; b=lBF9v4+bEojlrdIMFsUIndRzG
-        2m7L+b72NtFMUxSridq3IdmOxUhFPlnBrDjQXQK7CzpBuGfxci0/injq9ea0yk849FWKgBVrzDpjS
-        CbUMYPCrRkR0gnEDGZ5/a9PM49rOTmypzHJvJ7+jeP4oL8g6arWktkjbM47Sju+THnd6XRMtyVXUc
-        Wvmio4f06CesPKwMf8qm9fJvzSEyDIh4l00nEsAvhFzziT6b3HhNMvlqaSdPnbMfMuo0njzBSOx76
-        SRxucxP6rrv5QIkYIpPco4HtsDN+RiihwArVqal/mebfAehv/6+HaTxXMazwxY8xXulpbTY6d27ja
-        tKuA/0dCA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fk4ZC-0003XQ-9Y; Mon, 30 Jul 2018 09:34:14 +0000
-Date:   Mon, 30 Jul 2018 02:34:14 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        mst@redhat.com, hch@infradead.org, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180730093414.GD26245@infradead.org>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
- <20180727095804.GA25592@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727095804.GA25592@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 30 Jul 2018 07:08:39 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6U94Mwn004898;
+        Mon, 30 Jul 2018 12:04:22 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 7BB756312A; Mon, 30 Jul 2018 12:34:21 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 1/1] gpio: mmio: add inverted direction get_set io support
+Date:   Mon, 30 Jul 2018 12:34:18 +0300
+Message-Id: <20180730093418.124648-2-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180730093418.124648-1-tmaimon77@gmail.com>
+References: <20180730093418.124648-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 10:58:05AM +0100, Will Deacon wrote:
-> 
-> I just wanted to say that this patch series provides a means for us to
-> force the coherent DMA ops for legacy virtio devices on arm64, which in turn
-> means that we can enable the SMMU with legacy devices in our fastmodel
-> emulation platform (which is slowly being upgraded to virtio 1.0) without
-> hanging during boot. Patch below.
+Add get_set_inv_dir and get_set_multiple_inv_dir I/O functions
+to call the data register when the dirction is input and
+set register when the direction is output.
+the functions will linked to the I/O get functions if the user set
+BGPIOF_INVERTED_REG_DIR flag in the bgpio initialization.
 
-Yikes, this is a nightmare.  That is exactly where I do not want things
-to end up.  We really need to distinguish between legacy virtual crappy
-virtio (and that includes v1) that totally ignores the bus it pretends
-to be on, and sane virtio (to be defined) that sit on a real (or
-properly emulated including iommu and details for dma mapping) bus.
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ drivers/gpio/gpio-mmio.c    | 48 ++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/gpio/driver.h |  1 +
+ 2 files changed, 46 insertions(+), 3 deletions(-)
 
-Having a mumble jumble of arch specific undocumented magic as in
-the powerpc patch replied to or this arm patch is a complete no-go.
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 7b14d6280e44..46f664459853 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -168,6 +168,40 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	return 0;
+ }
+ 
++/* get set function when the direction is inverted */
++static int bgpio_get_set_inv_dir(struct gpio_chip *gc, unsigned int gpio)
++{
++	unsigned long pinmask = bgpio_line2mask(gc, gpio);
++
++	if (gc->bgpio_dir & pinmask)
++		return !!(gc->read_reg(gc->reg_dat) & pinmask);
++	else
++		return !!(gc->read_reg(gc->reg_set) & pinmask);
++}
++
++/* get set multiple function when the direction is inverted */
++static int bgpio_get_set_multiple_inv_dir(struct gpio_chip *gc,
++					  unsigned long *mask,
++					  unsigned long *bits)
++{
++	unsigned long get_mask = 0;
++	unsigned long set_mask = 0;
++
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++
++	/* Exploit the fact that we know which directions are set */
++	set_mask = *mask & ~gc->bgpio_dir;
++	get_mask = *mask & gc->bgpio_dir;
++
++	if (set_mask)
++		*bits |= gc->read_reg(gc->reg_set) & set_mask;
++	if (get_mask)
++		*bits |= gc->read_reg(gc->reg_dat) & get_mask;
++
++	return 0;
++}
++
+ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	return !!(gc->read_reg(gc->reg_dat) & bgpio_line2mask(gc, gpio));
+@@ -525,9 +559,17 @@ static int bgpio_setup_io(struct gpio_chip *gc,
+ 
+ 	if (!(flags & BGPIOF_UNREADABLE_REG_SET) &&
+ 	    (flags & BGPIOF_READ_OUTPUT_REG_SET)) {
+-		gc->get = bgpio_get_set;
+-		if (!gc->be_bits)
+-			gc->get_multiple = bgpio_get_set_multiple;
++		/* if the direction inverted */
++		if (flags & BGPIOF_INVERTED_REG_DIR) {
++			gc->get = bgpio_get_set_inv_dir;
++			if (!gc->be_bits)
++				gc->get_multiple =
++				bgpio_get_set_multiple_inv_dir;
++		} else {
++			gc->get = bgpio_get_set;
++			if (!gc->be_bits)
++				gc->get_multiple = bgpio_get_set_multiple;
++		}
+ 		/*
+ 		 * We deliberately avoid assigning the ->get_multiple() call
+ 		 * for big endian mirrored registers which are ALSO reflecting
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 5382b5183b7e..63570580707c 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -425,6 +425,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ #define BGPIOF_BIG_ENDIAN_BYTE_ORDER	BIT(3)
+ #define BGPIOF_READ_OUTPUT_REG_SET	BIT(4) /* reg_set stores output value */
+ #define BGPIOF_NO_OUTPUT		BIT(5) /* only input */
++#define BGPIOF_INVERTED_REG_DIR		BIT(6) /* reg_dir inverted */
+ 
+ #endif
+ 
+-- 
+2.14.1
 
-Nacked-by: Christoph Hellwig <hch@lst.de>
-
-for both.
