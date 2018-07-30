@@ -3,129 +3,207 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5EBFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A20E13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD96D20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD96D20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id B060420894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B060420894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbeG3O1c (ORCPT
+        id S1731542AbeG3O1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:27:32 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:49945 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729104AbeG3O1b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:27:31 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id k7f6f1WV8EJtck7fAfgCgf; Mon, 30 Jul 2018 14:52:39 +0200
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        ezequiel@collabora.com
-References: <20180724140621.59624-1-tfiga@chromium.org>
- <20180724140621.59624-2-tfiga@chromium.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <318f609c-7a28-ef65-e8be-08107981b623@xs4all.nl>
-Date:   Mon, 30 Jul 2018 14:52:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfHzjWc9vR084+TvcnSBlabLweQhy4aYCOpkGPhUh3Rg+upH9VWkYf7kZspZluhakfxf8Tp9eBpbqsJwo10FnyqT8QNth2Q1B9HeP+pEYqu/22Q4uZYKD
- fpEqYOeHWJj4AZ+XKxH8/W9RLX3RLyihCmGca7YY2tqvdEU9CJTuDf2sGhNSdu4Fvf50sxVM5MYssIYvFUMIJo/DQBg5YjY7ZuJhogwR3HfXmKa8e0aClQOp
- DoUsTH7y/lw/u7cuXe5Cr98uz4t2myPnc8zw2dhP6+Qz9zxU8rpSRdmZ6g7I3xh7h1xBcEtLls6B9Mz5V+SFSrZb/MXmGz0VD4gFkBxXS/cLyH2UfCU5BHxS
- MpMN2SZH9upxDzadCfbblxfGEtbyIlFeoApfiuv4wxLhYETMkJgHPfujp2Nn4BBbzPqoAIpXgtFNDb6TKSyAVI5QiJbtBcCulijA1O9z3AVviq4tzY3MUy68
- i8t+fPzGxEeDYLqD+6NfSfRpkR39uTZSMoVicFMlm+yvPhBi6HtdIH08ZbOk5sXVmDtfgI3mjbRoGpwdb+uqNyZJ1OPklYZIjTpkGb9vg8EODJIkgot2WfA8
- rN47VPerpCYBIcy/Fczby1Wbay4JCCJyMdhBLxiizxfOoA9eSUDZl++WS0x4drYjtWLOuWi3kgPLa5LvbXI1eYlkpW16BzzbvwnNS/1SOiwreSi6SFg3TH6y
- ZC5F7kMbw6I=
+        Mon, 30 Jul 2018 10:27:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48904 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729460AbeG3O1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:27:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5C340AEEB;
+        Mon, 30 Jul 2018 12:52:44 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 5B2A3A0BE8; Mon, 30 Jul 2018 14:52:42 +0200 (CEST)
+Message-Id: <cover.1532953989.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [RFC PATCH net-next v2 00/17] ethtool netlink interface (WiP)
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Date:   Mon, 30 Jul 2018 14:52:42 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24/2018 04:06 PM, Tomasz Figa wrote:
-> Due to complexity of the video decoding process, the V4L2 drivers of
-> stateful decoder hardware require specific sequences of V4L2 API calls
-> to be followed. These include capability enumeration, initialization,
-> decoding, seek, pause, dynamic resolution change, drain and end of
-> stream.
-> 
-> Specifics of the above have been discussed during Media Workshops at
-> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
-> originated at those events was later implemented by the drivers we already
-> have merged in mainline, such as s5p-mfc or coda.
-> 
-> The only thing missing was the real specification included as a part of
-> Linux Media documentation. Fix it now and document the decoder part of
-> the Codec API.
-> 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/dev-decoder.rst | 872 +++++++++++++++++++
->  Documentation/media/uapi/v4l/devices.rst     |   1 +
->  Documentation/media/uapi/v4l/v4l2.rst        |  10 +-
->  3 files changed, 882 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentation/media/uapi/v4l/dev-decoder.rst
-> new file mode 100644
-> index 000000000000..f55d34d2f860
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
-> @@ -0,0 +1,872 @@
+A netlink based interface for ethtool is a recurring discussion theme;
+such discussion happens from time to time but never seems to reach any
+clear conclusion except that netlink interface is desperately needed.
+I'm sending this hoping that having a proposal (even if partial) on the
+table could help move the discussion further.
 
-<snip>
+The interface used for communication between ethtool and kernel is based on
+ioctl() and suffers from many problems. The most pressing seems the be the
+lack of extensibility. While some of the newer commands use structures
+designed to allow future extensions (e.g. GFEATURES or TEST), most either
+allow no extension at all (GPAUSEPARAM, GCOALESCE) or only limited set of
+reserved fields (GDRVINFO, GEEE). Even most of those which support future
+extensions limit the data types that can be used.
 
-> +6.  This step only applies to coded formats that contain resolution
-> +    information in the stream. Continue queuing/dequeuing bitstream
-> +    buffers to/from the ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and
-> +    :c:func:`VIDIOC_DQBUF`. The driver must keep processing and returning
-> +    each buffer to the client until required metadata to configure the
-> +    ``CAPTURE`` queue are found. This is indicated by the driver sending
-> +    a ``V4L2_EVENT_SOURCE_CHANGE`` event with
-> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type. There is no
-> +    requirement to pass enough data for this to occur in the first buffer
-> +    and the driver must be able to process any number.
-> +
-> +    * If data in a buffer that triggers the event is required to decode
-> +      the first frame, the driver must not return it to the client,
-> +      but must retain it for further decoding.
-> +
-> +    * If the client set width and height of ``OUTPUT`` format to 0, calling
-> +      :c:func:`VIDIOC_G_FMT` on the ``CAPTURE`` queue will return -EPERM,
-> +      until the driver configures ``CAPTURE`` format according to stream
-> +      metadata.
+This series aims to provide an alternative interface based on netlink which
+is what other network configuration utilities use. In particular, it uses
+generic netlink (family "ethtool"). The goal is to provide an interface
+which would be extensible, flexible and practical both for ethtool and for
+other network configuration tools (e.g. wicked, systemd-networkd or
+NetworkManager).
 
-What about calling TRY/S_FMT on the capture queue: will this also return -EPERM?
-I assume so.
+The interface is documented in Documentation/networking/ethtool-netlink.txt
 
-Regards,
+A series for ethtool utility will follow shortly.
 
-	Hans
+Basic concepts:
+
+- the interface is based on generic netlink (family name "ethtool")
+
+- the goal is to provide all features of ioctl interface but allow
+  easier future extensions
+
+- inextensibility of ioctl interface resulted in way too many commands,
+  many of them obsoleted by newer ones; reduce the number by  ignoring the
+  obsolete commands and grouping some together
+
+- for "set" type commands, netlink allows providing only the attributes to
+  be changed; therefore we don't need a get-modify-set cycle (which is
+  inherently racy), userspace can simply say what it wants to change
+
+- provide notifications to multicast group "monitor" like rtnetlink
+  does, i.e. in the form of messages close to replies to "get" requests
+
+- allow dump requests to get some information about all network defices
+  providing it
+
+- be less dependent on ethtool and kernel being in sync; allow e.g. saying
+  "ethtool -s eth0 advertise foo off" without ethtool knowing what "foo"
+  means; it's kernel's job to know what mode "xyz" is and if it exists
+  and is supported
+
+Main changes again RFC v1:
+
+- support dumps for all "get" requests
+- provide notifications for changes related to supported request types
+- support getting string sets (both global and per device)
+- support getting/setting device features
+- get rid of family specific header, everything passed as attributes
+- split netlink code into multiple files in net/ethtool/ directory
+
+ToDo / open questions:
+
+- as some comments in discussion on v1 pointed out, some features of
+  ethtool would rather belong to devlink; phy_tunables and phy_stats
+  seem to be candidates, maybe part of drvinfo; are there more?
+
+- another question is where to do the split; should ethtool use devlink
+  API for these or can we provide them in ethtool API as well but with
+  devlink backend (for communication with NIC)
+
+- currently, all communication with drivers via ethtool_ops is done
+  under RTNL as this is what ioctl interface does and I suspect many
+  ethtool_ops rely on that; can we do without RTNL?
+
+- notifications are sent whenever a change is done via netlink API or
+  ioctl API and for netdev features also whenever they are updated using
+  netdev_change_features(); it would be desirable to notify also about
+  link state and negotiation result (speed/duplex and partner link
+  modes) but it would be more tricky
+
+- find reasonable format for data transfers (e.g. eeprom dump or flash);
+  I don't have clear idea how big these can get and if 64 KB limit on
+  attribute size (including nested ones) is a problem; if so, dumps can
+  be an answer for dumps, some kind of multi-message requests would be
+  needed for flashes
+
+- while the netlink interface allows easy future extensions, ethtool_ops
+  interface does not; some settings could be implemented using tunables and
+  accessed via relevant netlink messages (as well as tunables) from
+  userspace but in the long term, something better will be needed
+
+- it would be nice if driver could provide useful error/warning messages to
+  be passed to userspace via extended ACK; example: while testing, I found
+  a driver which only allows values 0, 1, 3 and 10000 for certain parameter
+  but the only way poor user can find out is either by trying all values or
+  by checking driver source
+
+- some of the functions for GET_SETTINGS and GET_PARAMS are quite
+  similar (e.g. ethtool_get_*); it might be beneficial to introduce some
+  "ops", leave only "parse", "prepare", "size" and "fill" handlers and
+  make the rest generic (like ethnl_dumpit()).
+
+- the counts and sizes in GET_DRVINFO reply seem to be a relic of the
+  past and if userspace needs them, there are (or will be) other ways to
+  get them; they should most likely go
+
+
+Michal Kubecek (17):
+  netlink: introduce nla_put_bitfield32()
+  ethtool: move to its own directory
+  ethtool: introduce ethtool netlink interface
+  ethtool: helper functions for netlink interface
+  ethtool: netlink bitset handling
+  ethtool: support for netlink notifications
+  ethtool: implement EVENT notifications
+  ethtool: implement GET_STRSET message
+  ethtool: implement GET_DRVINFO message
+  ethtool: implement GET_SETTINGS message
+  ethtool: implement GET_SETTINGS request for features
+  ethtool: implement SET_SETTINGS notification
+  ethtool: implement SET_SETTINGS message
+  ethtool: implement SET_SETTINGS request for features
+  ethtool: implement GET_PARAMS message
+  ethtool: implement SET_PARAMS notification
+  ethtool: implement SET_PARAMS message
+
+ Documentation/networking/ethtool-netlink.txt |  558 ++++++++
+ include/linux/ethtool_netlink.h              |   17 +
+ include/linux/netdevice.h                    |   25 +
+ include/net/netlink.h                        |   15 +
+ include/uapi/linux/ethtool.h                 |    7 +
+ include/uapi/linux/ethtool_netlink.h         |  325 +++++
+ net/Kconfig                                  |    7 +
+ net/Makefile                                 |    2 +-
+ net/core/Makefile                            |    2 +-
+ net/core/dev.c                               |   27 +-
+ net/ethtool/Makefile                         |    7 +
+ net/ethtool/common.c                         |  242 ++++
+ net/ethtool/common.h                         |   26 +
+ net/ethtool/drvinfo.c                        |  131 ++
+ net/{core/ethtool.c => ethtool/ioctl.c}      |  310 ++---
+ net/ethtool/netlink.c                        |  840 ++++++++++++
+ net/ethtool/netlink.h                        |  169 +++
+ net/ethtool/params.c                         | 1008 ++++++++++++++
+ net/ethtool/settings.c                       | 1230 ++++++++++++++++++
+ net/ethtool/strset.c                         |  552 ++++++++
+ 20 files changed, 5269 insertions(+), 231 deletions(-)
+ create mode 100644 Documentation/networking/ethtool-netlink.txt
+ create mode 100644 include/linux/ethtool_netlink.h
+ create mode 100644 include/uapi/linux/ethtool_netlink.h
+ create mode 100644 net/ethtool/Makefile
+ create mode 100644 net/ethtool/common.c
+ create mode 100644 net/ethtool/common.h
+ create mode 100644 net/ethtool/drvinfo.c
+ rename net/{core/ethtool.c => ethtool/ioctl.c} (88%)
+ create mode 100644 net/ethtool/netlink.c
+ create mode 100644 net/ethtool/netlink.h
+ create mode 100644 net/ethtool/params.c
+ create mode 100644 net/ethtool/settings.c
+ create mode 100644 net/ethtool/strset.c
+
+-- 
+2.18.0
+
