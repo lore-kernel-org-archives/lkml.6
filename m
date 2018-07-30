@@ -3,142 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579FBC46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1E4FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D114120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0AEB20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 04:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="enkzUHbZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D114120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U8SQxIyc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0AEB20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeG3Fzc (ORCPT
+        id S1726481AbeG3GKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 01:55:32 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:39516 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbeG3Fzc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 01:55:32 -0400
-Received: by mail-yb0-f195.google.com with SMTP id k124-v6so4251504ybk.6
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 21:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FhwskOzh+cnqLX4ce0ESOWWEyTVi5P+K+pd2aEMqJTE=;
-        b=enkzUHbZFupzTnHLitLIu8LoeocSXc1MlI7Xe+sS5Z57fQZb1363cIuP8pM25tkCm/
-         Odcs53/wNDUsjb90rUWWgUFRwTaWCVy9zUOAjQ7eQe2WiLUcmNw1lOv96N45vyJ+h34B
-         3816a/nvEYN/r/M4aX/thaOznkFgsKRuXCY38=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FhwskOzh+cnqLX4ce0ESOWWEyTVi5P+K+pd2aEMqJTE=;
-        b=hxiTNZMcBDbtTSir98tpaSYB5/Ojp3mY41FRzQuKGuZ+QUJ/nFGFmopB/xhAKW5lyN
-         vQ5Gd7LFVggrahzgxIK/g6dyoRtAa8pq1XU+YQEOr02Y34CHA2MeP3Zq9IjRh9tPNFec
-         D0U2cRdIAocDy6e66/0Wq+n395ZS0/XfykGCt+9mUEbwZ53VBMe2VsdDsi13TmWRKji0
-         h86BrV8uMJrfAZTKO7VZa/LGD/wTu3Je0qZ0TGc/zJG1kkiJThGsM/+OZFNnUKRI4jrn
-         iNPy7OQQJ0ySsMEsm2UHBYInaPfIzl0WP8R9D+l6MSM6Eluf6xsliMif/PpQzj1iTjdx
-         CFJA==
-X-Gm-Message-State: AOUpUlF9ka3upk28wRTElYTkCCrQuGAbN8P/SS2KouNahDleXMxr5b62
-        J5FVALjPlBKz37gBERoWHNRzSCuWQyQ=
-X-Google-Smtp-Source: AAOMgpeLfdFz6bh6WTo+cglcrLsxrG6TCik5LIKC/cVcMlQ2rUDq5UPP+D4Scuez4OCM7WTKmVXDmQ==
-X-Received: by 2002:a5b:bc5:: with SMTP id c5-v6mr8125468ybr.290.1532924548320;
-        Sun, 29 Jul 2018 21:22:28 -0700 (PDT)
-Received: from mail-yw0-f171.google.com (mail-yw0-f171.google.com. [209.85.161.171])
-        by smtp.gmail.com with ESMTPSA id 139-v6sm5470351ywk.41.2018.07.29.21.22.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 29 Jul 2018 21:22:28 -0700 (PDT)
-Received: by mail-yw0-f171.google.com with SMTP id t18-v6so3907940ywg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 21:22:28 -0700 (PDT)
-X-Received: by 2002:a0d:dcc3:: with SMTP id f186-v6mr7708778ywe.66.1532924083649;
- Sun, 29 Jul 2018 21:14:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
- <Pine.LNX.4.44L0.1807241652550.1311-100000@iolanthe.rowland.org> <CAJs94EZpJgDg0j8sVgOd56OY53mv7VxSODbhtR5MsZnFUoJA+g@mail.gmail.com>
-In-Reply-To: <CAJs94EZpJgDg0j8sVgOd56OY53mv7VxSODbhtR5MsZnFUoJA+g@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 30 Jul 2018 13:14:32 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AKJrCAAFiis-YjKFULPb1zqboPVSgT8Uepg-C561fgeg@mail.gmail.com>
-Message-ID: <CAAFQd5AKJrCAAFiis-YjKFULPb1zqboPVSgT8Uepg-C561fgeg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mon, 30 Jul 2018 02:10:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:52735 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbeG3GKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 02:10:32 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41f6HQ3qBhz9ryt;
+        Mon, 30 Jul 2018 14:37:22 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532925445;
+        bh=OiPNEpMgav7fCurqgX34qz8H2YA4xMU0Ej35zsr1U08=;
+        h=Date:From:To:Cc:Subject:From;
+        b=U8SQxIycEXepc0f8jwck3qYFqVNBsgdUaCwfvK4ar24rBkW21z6uK8cipwScUDW3z
+         f4ERg6ZlYYLQLggTEZKPpw5osZPmZFMcnRx7E5GXmHHLDuCkqsrZVfOhtBXBjnV/rg
+         Hg6ZnGwuqa/p3k6+laIrILVD3MxiEvUbvKLkxGt/rxwukMHVUBMWhWO3+DnE2S03ZN
+         tZsWi5VpReD2UohC89AkQbZCNqkeAvy4DzRoQELEjcMzmpEMImLfJHk9mHYcjVGyQd
+         KK11eLJIlULO8ZXcgY3TMnfbQyYByGbANlgaa8vxUOrR3yjRA9fomCOqYr0BCDnvE3
+         QM8UTtjFJJijw==
+Date:   Mon, 30 Jul 2018 14:37:22 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Rob Herring <robherring2@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+        Anssi Hannula <anssi.hannula@bitwise.fi>
+Subject: linux-next: manual merge of the devicetree tree with the net-next
+ tree
+Message-ID: <20180730143645.7bcd563b@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bvAwNpaLdF0NX7E6RjKubJt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 10:47 PM Matwey V. Kornilov <matwey@sai.msu.ru> wrote:
->
-> 2018-07-24 23:55 GMT+03:00 Alan Stern <stern@rowland.harvard.edu>:
-> > On Tue, 24 Jul 2018, Matwey V. Kornilov wrote:
-> >
-> >> 2018-07-23 21:57 GMT+03:00 Alan Stern <stern@rowland.harvard.edu>:
-> >> > On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
-> >> >
-> >> >> I've tried to strategies:
-> >> >>
-> >> >> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
-> >> >> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
-> >> >
-> >> > Yes.
-> >> >
-> >> >> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
-> >> >> once at memory allocation)
-> >> >>
-> >> >> It is interesting that dma_unmap/dma_map pair leads to the lower
-> >> >> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
-> >> >> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
-> >> >> handler, and sync_cpu/sync_device - ~65 usec.
-> >> >>
-> >> >> However, I am not sure is it mandatory to call
-> >> >> dma_sync_single_for_device for FROM_DEVICE direction?
-> >> >
-> >> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
-> >> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
-> >> > not needed.
-> >>
-> >> Well, I measured the following at armv7l. The handler execution time
-> >> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
-> >>
-> >> 1) coherent DMA: ~3000 usec (pwc is not functional)
-> >> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
-> >> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56 usec
+--Sig_/bvAwNpaLdF0NX7E6RjKubJt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That's very strange because on ARM dma_unmap_single() does exactly the
-same thing as dma_sync_single_for_cpu():
+Hi Rob,
 
-arm_dma_map_page()
-https://elixir.bootlin.com/linux/v4.18-rc7/source/arch/arm/mm/dma-mapping.c#L129
-arm_dma_unmap_page()
-https://elixir.bootlin.com/linux/v4.18-rc7/source/arch/arm/mm/dma-mapping.c#L159
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-arm_dma_sync_single_for_cpu()
-https://elixir.bootlin.com/linux/v4.18-rc7/source/arch/arm/mm/dma-mapping.c#L167
+  Documentation/devicetree/bindings/net/can/xilinx_can.txt
 
-Could you post the code you used for testing of cases 2) and 3)?
+between commit:
 
-Best regards,
-Tomasz
+  7cb0f17f5252 ("dt-bindings: can: xilinx_can: add Xilinx CAN FD bindings")
+
+from the net-next tree and commit:
+
+  791d3ef2e111 ("dt-bindings: remove 'interrupt-parent' from bindings")
+
+from the devicetree tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/devicetree/bindings/net/can/xilinx_can.txt
+index ae5c07e96ad5,9264d2f6a89d..000000000000
+--- a/Documentation/devicetree/bindings/net/can/xilinx_can.txt
++++ b/Documentation/devicetree/bindings/net/can/xilinx_can.txt
+@@@ -2,26 -2,19 +2,25 @@@ Xilinx Axi CAN/Zynq CANPS controller De
+  ---------------------------------------------------------
+ =20
+  Required properties:
+ -- compatible		: Should be "xlnx,zynq-can-1.0" for Zynq CAN
+ -			  controllers and "xlnx,axi-can-1.00.a" for Axi CAN
+ -			  controllers.
+ -- reg			: Physical base address and size of the Axi CAN/Zynq
+ -			  CANPS registers map.
+ +- compatible		: Should be:
+ +			  - "xlnx,zynq-can-1.0" for Zynq CAN controllers
+ +			  - "xlnx,axi-can-1.00.a" for Axi CAN controllers
+ +			  - "xlnx,canfd-1.0" for CAN FD controllers
+ +- reg			: Physical base address and size of the controller
+ +			  registers map.
+  - interrupts		: Property with a value describing the interrupt
+  			  number.
+- - interrupt-parent	: Must be core interrupt controller
+ -- clock-names		: List of input clock names - "can_clk", "pclk"
+ -			  (For CANPS), "can_clk" , "s_axi_aclk"(For AXI CAN)
+ +- clock-names		: List of input clock names
+ +			  - "can_clk", "pclk" (For CANPS),
+ +			  - "can_clk", "s_axi_aclk" (For AXI CAN and CAN FD).
+  			  (See clock bindings for details).
+  - clocks		: Clock phandles (see clock bindings for details).
+ -- tx-fifo-depth		: Can Tx fifo depth.
+ -- rx-fifo-depth		: Can Rx fifo depth.
+ +- tx-fifo-depth		: Can Tx fifo depth (Zynq, Axi CAN).
+ +- rx-fifo-depth		: Can Rx fifo depth (Zynq, Axi CAN, CAN FD in
+ +                          sequential Rx mode).
+ +- tx-mailbox-count	: Can Tx mailbox buffer count (CAN FD).
+ +- rx-mailbox-count	: Can Rx mailbox buffer count (CAN FD in mailbox Rx
+ +			  mode).
+ =20
+ =20
+  Example:
+
+--Sig_/bvAwNpaLdF0NX7E6RjKubJt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltelgIACgkQAVBC80lX
+0Gz2BggAmD+uRdeDhdmU9aBIGayob3Pg4iKHJRCNBE/cXAiogMJOQfivCGL9So05
+9pO7aQ5s5opiCB+jAEPC8yUfGI7CvBaih6zZ2lEvN4pIF4qoEm2NOW55KMFTbbsf
+vag73QmCTnBdcULcOmT3GeL3TNf+rC1VgMvwhoetf6Qi1o2+lL0vZvQ+a3HnAR9n
+NBM6126sSWPTIbVkELdSHWvtd382xVCDYQebeQDfRbgHQWTdklcgKteAA6F9OxEp
+KYjTQ/f2m6/3N9iAkRvt0YnLGKijeVYz3V1gIei+NYm8kGzgE9RU5kWWTZaRy8bt
+z/P+MpJUz7yrr7+sGUuNUyx8SkTkDQ==
+=JtaR
+-----END PGP SIGNATURE-----
+
+--Sig_/bvAwNpaLdF0NX7E6RjKubJt--
