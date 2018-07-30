@@ -2,269 +2,137 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57378FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A21113F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE70F20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE70F20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id B707C20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:18:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kynetics-com.20150623.gappssmtp.com header.i=@kynetics-com.20150623.gappssmtp.com header.b="Q7yEifn3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B707C20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kynetics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbeG3Kvk (ORCPT
+        id S1726765AbeG3KwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:51:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45451 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeG3Kvk (ORCPT
+        Mon, 30 Jul 2018 06:52:08 -0400
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:44044 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbeG3KwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:51:40 -0400
-Received: by mail-wr1-f66.google.com with SMTP id f12-v6so2104532wrv.12;
-        Mon, 30 Jul 2018 02:17:35 -0700 (PDT)
+        Mon, 30 Jul 2018 06:52:08 -0400
+Received: by mail-qt0-f180.google.com with SMTP id b15-v6so11297297qtp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:18:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kynetics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Yb2OfxeJi1s3dsTFHzzft/KwHps7nJy0mu4sdY63Lck=;
+        b=Q7yEifn3NfA5RVsGAYN2fJ8mjnzm/2X9FF+fV8O5iH64b5q0i8Gj6GLAf9J//9+KsZ
+         Mw48ZQAOYdzOboi1abSCF79sQ5y29yOt3McjfzVZXgvfHgxSWGAxCncTVkb5GV8vo7UQ
+         e6mJFRP5WZcQ67c6OGwJR5W2efrp7lPakzUrBTKAe7Z6EGBIWocMEwbV4TkMqj5mCEcy
+         vzPlfk0tCo+5YTK11lngazbedE6NcCra/VFd8Md1ZAh7vB49ry4baF+HP6o1sMMZpDix
+         fmQf95BxY3dSD1BmKpNYiXG8Z4m34jzn01WkZv6XNAbtQuul+A+qmNHNXU5kZATFOq/I
+         RlIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=i9H3ShOvaDIgo3A99Qr04YiLcx8I21okTsLBNRkGo8k=;
-        b=asSBjLHsSYEDJJJ/fa+c87v7w8SBPZl9p0N3UqY0NCRJ4F1VB+uDDWc1B0VXUxvu7u
-         h8EFXJ/UyJ8uTGxM/nkMxpiQTfD3UNEymNLzo5z8vAzF+DQ3RUOfHHM5jHqHon5Ngw+h
-         hlt0d6bSS3ek+lmZVurgEVm675eE/BSa26e2YZMekKptDJ1CtHaxiF6vnaKFPTijLsDt
-         qpRaHCO+DzpML/BvlEVb5+q5X/nfkpImNSteyXsc7Xo7O54fYemPUCj3S0DtADUV8Qm4
-         GggMvVl+Rs1JxkC2OCXMpOTotlmxHy9jG6OeGGRDPlWUATVQ12sy2mfzjOiOXhTUsw4k
-         ZDOQ==
-X-Gm-Message-State: AOUpUlEsMdbDKaIf670yeRE2x0G9nB9zghjbCvsgmGc/2LSm/5CFYCPi
-        OPXHr/8/s1zEW7eziJJtYRBBvA8lq+s=
-X-Google-Smtp-Source: AAOMgpdxBeA0esiW1YIgTXC8o/w3UehCifPs0+kZ9iagYnCMunnnKFssCj7H8mE0Q65E9m8bar20UQ==
-X-Received: by 2002:adf:992d:: with SMTP id x42-v6mr16797855wrb.81.1532942255007;
-        Mon, 30 Jul 2018 02:17:35 -0700 (PDT)
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com. [74.125.82.53])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm10139307wrt.67.2018.07.30.02.17.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 02:17:34 -0700 (PDT)
-Received: by mail-wm0-f53.google.com with SMTP id f21-v6so12300718wmc.5;
-        Mon, 30 Jul 2018 02:17:34 -0700 (PDT)
-X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr14665301wma.143.1532942254179;
- Mon, 30 Jul 2018 02:17:34 -0700 (PDT)
+        bh=Yb2OfxeJi1s3dsTFHzzft/KwHps7nJy0mu4sdY63Lck=;
+        b=lRjmGWlgvf6uLRIAOjM1aUTHsCc9rtDtJ8u4N/ZKJt+3z2HAK6rTL5x3COJM6n3Aav
+         OhDnW4sHkM/aheoSDkGfdLL+l4GeoAtOcE19P4pBJDQa0ZIrKZqTaNSXKD+kXi00bGgA
+         Ss9gR9lbi9w5ElekTXtUmF0PlbaxSkddChw6ypY47HszD2FNrnqzh5/BLqgdpUTZwgyz
+         JYA5oeIvh15H4LpVvrIlx7mvWKA7cxjFzuaZbxS3erTfcutki/Lf51/HfqjDqRlqR0V5
+         Y49pU31WG1WSIJeVfbr6imu5Hc35lG4tjHBEfaDVN2SW8OpkhB6zKvQ9NMpWpwKD3SIC
+         3YMg==
+X-Gm-Message-State: AOUpUlEd5GY6tsZsQEuDM2Wc835Lm+kvJ5zto+tAsASIatDi51pq5WO5
+        qokt7Jg0ex4Qs7EfM+EJPa45QD3lJc2ZH1GFzlGCPA==
+X-Google-Smtp-Source: AAOMgpebmRpe/QE0yvxgIS66QwN2k2dNEg1SDfaXDE4Ft35TQT48+g+l6O3nSncOVt2umONJjrGmQ14GXu2sBx1wYt0=
+X-Received: by 2002:a0c:994c:: with SMTP id i12-v6mr14349309qvd.24.1532942284503;
+ Mon, 30 Jul 2018 02:18:04 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 02:17:13
- -0700 (PDT)
-In-Reply-To: <20180730090048.gl7fkduztjkxacqq@flea>
-References: <20180728182615.20845-1-jagan@amarulasolutions.com> <20180730090048.gl7fkduztjkxacqq@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 30 Jul 2018 17:17:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
-Message-ID: <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: allwinner: h6: Add OrangePi One Plus initial support
+Received: by 2002:ac8:959:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 02:17:44 -0700 (PDT)
+X-Originating-IP: [79.7.224.57]
+In-Reply-To: <20180730084519.iqyhvocxsfuopze7@flea>
+References: <20180727125739.22871-1-diego.rondini@kynetics.com> <20180730084519.iqyhvocxsfuopze7@flea>
+From:   Diego Rondini <diego.rondini@kynetics.com>
+Date:   Mon, 30 Jul 2018 11:17:44 +0200
+Message-ID: <CAMfw5YpH1nbO1eYGoAOEEreboHs3VEY61x8qRO-BYDcGS+DBqg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: sun8i: Add initial Orangepi Zero Plus 2 H3 support
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 5:00 PM, Maxime Ripard
+Hi Maxime,
+
+On Mon, Jul 30, 2018 at 10:45 AM, Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
-> Hi,
->
-> On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
->> OrangePi One Plus is Allwinner H6 based open-source SBC,
->> which support:
->> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
->> - GPU Mali-T720
->> - 1GB LPDDR3 RAM
->> - AXP805 PMIC
->> - 1Gbps GMAC via RTL8211
->> - USB 2.0 Host, OTG
->> - HDMI port
->> - 5V/2A DC power supply
->>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
->>  .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
->>  2 files changed, 151 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
->> index 9ffa7a038791..c38f326e7fec 100644
->> --- a/arch/arm64/boot/dts/allwinner/Makefile
->> +++ b/arch/arm64/boot/dts/allwinner/Makefile
->> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
->>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
->>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
->>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
->> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
->>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->> new file mode 100644
->> index 000000000000..0612c19cd994
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
->> @@ -0,0 +1,150 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
->> +/*
->> + * Copyright (C) 2018 Amarula Solutions
->> + * Author: Jagan Teki <jagan@amarulasolutions.com>
->> + */
->> +
+> On Fri, Jul 27, 2018 at 02:57:39PM +0200, Diego Rondini wrote:
 >> +/dts-v1/;
 >> +
->> +#include "sun50i-h6.dtsi"
+>> +#include "sun8i-h3.dtsi"
 >> +
 >> +#include <dt-bindings/gpio/gpio.h>
 >> +
 >> +/ {
->> +     model = "OrangePi One Plus";
->> +     compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
->> +
->> +     aliases {
->> +             serial0 = &uart0;
->> +     };
->> +
->> +     chosen {
->> +             stdout-path = "serial0:115200n8";
->> +     };
->> +};
->> +
->> +&mmc0 {
+>> +     model = "OrangePi Zero Plus2 H3";
+>> +     compatible = "xunlong,orangepi-zero-plus2", "allwinner,sun8i-h3";
+>
+> The H5 version doesn't make that easy, and it's unfortunate, but we
+> should have a different compatible for the H3 and H5 versions.
+>
+> What about something like xunlong,orangepi-zero-plus2-h3?
+
+Yes, I think this is the only reasonable option. I'll send v2.
+
+>
+>> +&uart1 {
 >> +     pinctrl-names = "default";
->> +     pinctrl-0 = <&mmc0_pins>;
->> +     vmmc-supply = <&reg_cldo1>;
->> +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
->> +     bus-width = <4>;
+>> +     pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
 >> +     status = "okay";
 >> +};
->> +
->> +&r_i2c {
->> +     status = "okay";
->> +
->> +     axp805: pmic@36 {
->> +             compatible = "x-powers,axp805", "x-powers,axp806";
->> +             reg = <0x36>;
->> +             interrupt-parent = <&r_intc>;
->> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->> +             interrupt-controller;
->> +             #interrupt-cells = <1>;
->> +             x-powers,self-working-mode;
->> +
->> +             regulators {
->> +                     reg_aldo1: aldo1 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc-pl";
->> +                     };
->> +
->> +                     reg_aldo2: aldo2 {
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc-ac200";
->> +                     };
->> +
->> +                     reg_aldo3: aldo3 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc25-dram";
->> +                     };
->> +
->> +                     reg_bldo1: bldo1 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <1800000>;
->> +                             regulator-max-microvolt = <1800000>;
->> +                             regulator-name = "vcc-bias-pll";
->> +                     };
->> +
->> +                     reg_bldo2: bldo2 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <1800000>;
->> +                             regulator-max-microvolt = <1800000>;
->> +                             regulator-name = "vcc-efuse-pcie-hdmi-io";
->> +                     };
->> +
->> +                     reg_bldo3: bldo3 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <1800000>;
->> +                             regulator-max-microvolt = <1800000>;
->> +                             regulator-name = "vcc-dcxoio";
->> +                     };
->> +
->> +                     bldo4 {
->> +                             /* unused */
->> +                     };
->> +
->> +                     reg_cldo1: cldo1 {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc-3v3";
->> +                     };
->> +
->> +                     reg_cldo2: cldo2 {
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc-wifi-1";
->> +                     };
->> +
->> +                     reg_cldo3: cldo3 {
->> +                             regulator-min-microvolt = <3300000>;
->> +                             regulator-max-microvolt = <3300000>;
->> +                             regulator-name = "vcc-wifi-2";
->> +                     };
->> +
->> +                     reg_dcdca: dcdca {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <810000>;
->> +                             regulator-max-microvolt = <1080000>;
->> +                             regulator-name = "vdd-cpu";
->> +                     };
->> +
->> +                     reg_dcdcc: dcdcc {
->> +                             regulator-min-microvolt = <810000>;
->> +                             regulator-max-microvolt = <1080000>;
->> +                             regulator-name = "vdd-gpu";
->> +                     };
->> +
->> +                     reg_dcdcd: dcdcd {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <960000>;
->> +                             regulator-max-microvolt = <960000>;
->> +                             regulator-name = "vdd-sys";
->> +                     };
->> +
->> +                     reg_dcdce: dcdce {
->> +                             regulator-always-on;
->> +                             regulator-min-microvolt = <1200000>;
->> +                             regulator-max-microvolt = <1200000>;
->> +                             regulator-name = "vcc-dram";
->> +                     };
->> +
->> +                     sw {
->> +                             /* unused */
->> +                     };
 >
-> Can't we have a DTSI for this PMIC too?
+> I guess it is the BT chip? Which chip is it?
 
-Back when we started adding the regulators, Mark wasn't too happy with
-all the placeholders we put in the dtsi. I think we got away with it
-because we had other things in there as well. That's not true for this
-particular PMIC.
+Yes, according to schematics Bluetooth is on uart1.
+It's an Ampak 6212A with a Broadcom 43438 chip. To my understanding
+it's the same chip in the Raspberry Pi 3 B / B+ and Raspberry Zero W.
 
-ChenYu
+I've tried to integrate support for Bluetooth with the following:
 
-> It looks good otherwise, thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+&uart1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
+    status = "okay";
+
+    bluetooth {
+        compatible = "brcm,bcm43438-bt";
+        max-speed = <2000000>;
+        shutdown-gpios = <&pio 0 10 GPIO_ACTIVE_HIGH>; /* PA10 */
+        device-wakeup-gpios = <&pio 9 2 GPIO_ACTIVE_HIGH>; /* PL2 */
+        host-wakeup-gpios = <&pio 0 20 GPIO_ACTIVE_HIGH>; /* PA20 */
+    };
+};
+
+but the hci_bcm driver doesn't load automatically and doesn't probe
+the device when loaded manually. I haven't investigated further.
+
+
+Diego Rondini
+Sr. Embedded Engineer
+
+Kynetics
+www.kynetics.com
