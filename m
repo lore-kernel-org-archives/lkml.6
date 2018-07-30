@@ -2,188 +2,133 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD9EFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CC713F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877BF20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:35:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4TB3SIa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877BF20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 91E2920870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E2920870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731984AbeG3PK1 (ORCPT
+        id S1731597AbeG3PMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:10:27 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42699 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeG3PK0 (ORCPT
+        Mon, 30 Jul 2018 11:12:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37982 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbeG3PMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:10:26 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f1-v6so10504545ljc.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PPgnd0O8lkOwFB7oeiN1sksCDUDzlMePDRTruanQ3H8=;
-        b=P4TB3SIauBsSDxSdEuOuewQP7YrhtjyMTTBMmEm2qp+rcCVyR2hEVbyaYol9KMUidb
-         DkbmNiOvjBhGg55UT45PzOx1KYGT6OGvrWCAyAAlzTEqZ/POg1arhElNhReXgacyKkKW
-         wNrOLU4c4nKBo6qyMcWPs26r2lEx31oz9Dndg=
+        Mon, 30 Jul 2018 11:12:36 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t25-v6so13770812wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:37:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PPgnd0O8lkOwFB7oeiN1sksCDUDzlMePDRTruanQ3H8=;
-        b=sJcr/tLE1PMX6D9Pq9Q49sxfDs/n9ZfgGUqimTGfGJpJ7tk2UD/4KfhwxH+s+ZPpvd
-         ePxjyWe+BHB3e5oYVsK/WqnS5HfxF7LK63RsJhRS5fsYtpsgfI5JAEuRaRqZ2x0Oe/P5
-         iveOEVeQr4fHlimckCsj+YixE/PLoLTgeN+uIz/YmAz4rdxd4r4g9j1MzHysvBOuJ/R3
-         ylI1bqibXdlIvZX/CNp3Rh2PgG42G+QROUnAM4YIVQC9ZyNeORvfhQ/osLzVmt+glXG9
-         0d032K3KPdiQDbesbQ8Hd4GF8hd1zebWvXoZzCiZw+U2yOW3z8MXfeG/VikUDkx8azUQ
-         m7ww==
-X-Gm-Message-State: AOUpUlGWWML021NY/QdtxIrtbvGybSazgipZMoKXB3NcKuzy+B07caAP
-        aGMbqPikUcziDojAFQSXjFUIiW5WaOMdPrlIcKKXvg==
-X-Google-Smtp-Source: AAOMgpdpUUDftjViDcbs1vRHf/IEs49f4NmlKs1J9KmDyjy+0U4J89QoTDeD/WUdBd1i9YS2QQRFpSXbgBXe9PMngrU=
-X-Received: by 2002:a2e:91d6:: with SMTP id u22-v6mr12496903ljg.64.1532957722817;
- Mon, 30 Jul 2018 06:35:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
- <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com> <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1>
-In-Reply-To: <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1>
-From:   Amit Pundir <amit.pundir@linaro.org>
-Date:   Mon, 30 Jul 2018 19:04:46 +0530
-Message-ID: <CAMi1Hd1o=sXsbYzpxAxXoBOHBenFVOv6i2PGcBR+N+aVdZSk5Q@mail.gmail.com>
-Subject: Re: Linux 4.18-rc7
-To:     kirill@shutemov.name
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>, aarcange@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>, linux-mm@kvack.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        youling 257 <youling257@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fkCL6JOtZhrngp0JXekbTmOa1tN3kWSPglBG2L6jMLs=;
+        b=euQMJhLaB66fEVnZSE47kk/vI4p7NpjgUTRP0tx0CFOWGRDR8XoEqgR20t/CMbNlbw
+         KQmGKRdg7ty0UHu7jmXpt8YN1NX5xpxNGixqmZIololVvjTgm+JYA50FPmv0XSKzQsya
+         fhQLRssA3cHzY8vA9uBgqk9hDwhdY1VtYz02ceq27uVrudn+bh2dEt/8e3HwqQDppWya
+         EJ1NRpIgjzC1F9/ISXm/z7AJ5JqQaULTcUlaoxDWOJtVg0XmuqK81+JZkkCyD+UxEo6l
+         YNtu9bCxzb+iYezsa34AsccuAl59r8K1lYVbpT6HhZwXnGwo0iV8OtqJKMX1CA8xfrhV
+         XfVw==
+X-Gm-Message-State: AOUpUlGwF9dMQD1wfQT6N4PAvO5sElxFMQKr+lTReLEAnKnr24V1bDML
+        hsJP9RUHqsGZflL1JmZwenI=
+X-Google-Smtp-Source: AAOMgpePZ8qLBEX5z+bGz6RB3lKwyyYcDglnY32XamC3REtuAWK+g3gndyxSXvatmgTjz1VyaLamPg==
+X-Received: by 2002:a1c:93d3:: with SMTP id v202-v6mr15507084wmd.57.1532957852659;
+        Mon, 30 Jul 2018 06:37:32 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id v130-v6sm15047532wme.13.2018.07.30.06.37.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 06:37:32 -0700 (PDT)
+Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
+        by techadventures.net (Postfix) with ESMTPA id 35CB112440E;
+        Mon, 30 Jul 2018 15:37:31 +0200 (CEST)
+From:   osalvador@techadventures.net
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, sfr@canb.auug.org.au,
+        rientjes@google.com, pasha.tatashin@oracle.com,
+        kemi.wang@intel.com, jia.he@hxt-semitech.com, ptesarik@suse.com,
+        aryabinin@virtuozzo.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm: Remove zone_id() and make use of zone_idx() in is_dev_zone()
+Date:   Mon, 30 Jul 2018 15:37:18 +0200
+Message-Id: <20180730133718.28683-1-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 at 18:31, Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Mon, Jul 30, 2018 at 12:17:46PM +0530, Amit Pundir wrote:
-> > On Mon, 30 Jul 2018 at 03:39, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > So unless something odd happens, this should be the last rc for 4.18.
-> > >
-> > > Nothing particularly odd happened this last week - we got the usual
-> > > random set of various minor fixes all over. About two thirds of it is
-> > > drivers - networking, staging and usb stands out, but there's a little
-> > > bit of stuff all over (clk, block, gpu, nvme..).
-> > >
-> > > Outside of drivers, the bulk is some core networking stuff, with
-> > > random changes elsewhere (minor arch updates, filesystems, core
-> > > kernel, test scripts).
-> > >
-> > > The appended shortlog gives a flavor of the details.
-> > >
-> > >                   Linus
-> > >
-> > > ---
-> > > Kirill A. Shutemov (3):
-> > >       mm: introduce vma_init()
-> > >       mm: use vma_init() to initialize VMAs on stack and data segments
-> > >       mm: fix vma_is_anonymous() false-positives
-> >
-> > Hi, I have run into AOSP userspace crash with v4.18-rc7, leading to
-> > above mm patches. bfd40eaff5ab ("mm: fix vma_is_anonymous()
-> > false-positives") to be specific. The same userspace is working fine
-> > with v4.18-rc6.
-> >
-> > I didn't yet look into what is going wrong from userspace point of
-> > view, but I just wanted to give you a heads up on this. I'll be happy
-> > to assist in further debugging/diagnosis if required.
->
-> Youling reported basically the same bug with zygote crashing, but on
-> x86-64.
->
-> I think I missed vma_set_anonymous() somewhere, but I fail to see where.
->
-> Could you check if removing 'vma->vm_ops = &dummy_vm_ops;" from vma_init
-> makes the problem go away?
+From: Oscar Salvador <osalvador@suse.de>
 
-Yes removing 'vma->vm_ops = &dummy_vm_ops;" from vma_init() works.
-Crash is gone with that change.
+is_dev_zone() is using zone_id() to check if the zone is ZONE_DEVICE.
+zone_id() looks pretty much the same as zone_idx(), and while the use of
+zone_idx() is quite spread in the kernel, zone_id() is only being
+used by is_dev_zone().
 
->
-> Any chance the code that crashes can be run under strace?
+This patch removes zone_id() and makes is_dev_zone() use zone_idx()
+to check the zone, so we do not have two things with the same
+functionality around.
 
-Running strace on zygote is going to be a pain. I can check logcat
-again and see if any other relatively less complex process is crashing
-with similar backtrace and try to run that with strace if that is
-still required.
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ include/linux/mmzone.h | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
 
-Regards,
-Amit Pundir
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 83b1d11e90eb..dbe7635c33dd 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -755,25 +755,6 @@ static inline bool pgdat_is_empty(pg_data_t *pgdat)
+ 	return !pgdat->node_start_pfn && !pgdat->node_spanned_pages;
+ }
+ 
+-static inline int zone_id(const struct zone *zone)
+-{
+-	struct pglist_data *pgdat = zone->zone_pgdat;
+-
+-	return zone - pgdat->node_zones;
+-}
+-
+-#ifdef CONFIG_ZONE_DEVICE
+-static inline bool is_dev_zone(const struct zone *zone)
+-{
+-	return zone_id(zone) == ZONE_DEVICE;
+-}
+-#else
+-static inline bool is_dev_zone(const struct zone *zone)
+-{
+-	return false;
+-}
+-#endif
+-
+ #include <linux/memory_hotplug.h>
+ 
+ void build_all_zonelists(pg_data_t *pgdat);
+@@ -824,6 +805,18 @@ static inline int local_memory_node(int node_id) { return node_id; };
+  */
+ #define zone_idx(zone)		((zone) - (zone)->zone_pgdat->node_zones)
+ 
++#ifdef CONFIG_ZONE_DEVICE
++static inline bool is_dev_zone(const struct zone *zone)
++{
++	return zone_idx(zone) == ZONE_DEVICE;
++}
++#else
++static inline bool is_dev_zone(const struct zone *zone)
++{
++	return false;
++}
++#endif
++
+ /*
+  * Returns true if a zone has pages managed by the buddy allocator.
+  * All the reclaim decisions have to use this function rather than
+-- 
+2.13.6
 
->
-> > Here is the crash log from logcat, if it helps:
-> > F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-> > F DEBUG   : Build fingerprint:
-> > 'Android/db410c32_only/db410c32_only:Q/OC-MR1/102:userdebug/test-key
-> > F DEBUG   : Revision: '0'
-> > F DEBUG   : ABI: 'arm'
-> > F DEBUG   : pid: 2261, tid: 2261, name: zygote  >>> zygote <<<
-> > F DEBUG   : signal 7 (SIGBUS), code 2 (BUS_ADRERR), fault addr 0xec00008
-> > .. <snip> ..
-> > F DEBUG   : backtrace:
-> > F DEBUG   :     #00 pc 00001c04  /system/lib/libc.so (memset+48)
-> > F DEBUG   :     #01 pc 0010c513  /system/lib/libart.so
-> > (create_mspace_with_base+82)
-> > F DEBUG   :     #02 pc 0015c601  /system/lib/libart.so
-> > (art::gc::space::DlMallocSpace::CreateMspace(void*, unsigned int,
-> > unsigned int)+40)
-> > F DEBUG   :     #03 pc 0015c3ed  /system/lib/libart.so
-> > (art::gc::space::DlMallocSpace::CreateFromMemMap(art::MemMap*,
-> > std::__1::basic_string<char, std::__
-> > 1::char_traits<char>, std::__1::allocator<char>> const&, unsigned int,
-> > unsigned int, unsigned int, unsigned int, bool)+36)
-> > F DEBUG   :     #04 pc 0013c9ab  /system/lib/libart.so
-> > (art::gc::Heap::Heap(unsigned int, unsigned int, unsigned int,
-> > unsigned int, double, double, unsigned int, unsigned int,
-> > std::__1::basic_string<char, std::__1::char_traits<char>,
-> > std::__1::allocator<char>> const&, art::InstructionSet,
-> > art::gc::CollectorType, art::gc::CollectorType,
-> > art::gc::space::LargeObjectSpaceType, unsigned int, unsigned int,
-> > unsigned int, bool, unsigned int, unsigned int, bool, bool, bool,
-> > bool, bool, bool, bool, bool, bool, bool, bool, unsigned long
-> > long)+1674)
-> > DEBUG   :     #05 pc 00318201  /system/lib/libart.so
-> > (art::Runtime::Init(art::RuntimeArgumentMap&&)+7036)
-> > DEBUG   :     #06 pc 0031af19  /system/lib/libart.so
-> > (art::Runtime::Create(std::__1::vector<std::__1::pair<std::__1::basic_string<char,
-> > std::__1::char_traits<char>, std::__1::allocator<char>>, void const*>,
-> > std::__1::allocator<std::__1::pair<std::__1::basic_string<char,
-> > std::__1::char_traits<char>, std::__1::allocator<char>>, void
-> > const*>>> const&, bool)+68)
-> > F DEBUG   :     #07 pc 0023c353  /system/lib/libart.so (JNI_CreateJavaVM+658)
-> > F DEBUG   :     #08 pc 0000205f  /system/lib/libandroid_runtime.so
-> > (android::AndroidRuntime::startVm(_JavaVM**, _JNIEnv**, bool)+5038)
-> > F DEBUG   :     #09 pc 00002381  /system/lib/libandroid_runtime.so
-> > (android::AndroidRuntime::start(char const*,
-> > android::Vector<android::String8> const&, bool)+196)
-> > F DEBUG   :     #10 pc 0000046b  /system/bin/app_process32 (main+702)
-> >
-> > Regards,
-> > Amit Pundir
-> >
->
-> --
->  Kirill A. Shutemov
