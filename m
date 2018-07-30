@@ -2,123 +2,105 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A141BFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12B4FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFF420894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:30:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Ev9QSJAw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFF420894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 65C2C20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C2C20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeG3RGL (ORCPT
+        id S1727447AbeG3RHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:06:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47456 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeG3RGL (ORCPT
+        Mon, 30 Jul 2018 13:07:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52977 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726623AbeG3RHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:06:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=q7ZOYiuQcI/LUrXaZxxC5+oowpzSk6W5ncn5RlliZjE=; b=Ev9QSJAwgWCEfz7b1vnOdZQe9
-        w7QI/n96U1q5ClZ04ukRnhYkWbmvq0MkiRtB4IDgu/B1PSBoyWaVRP8iLtQsKewPEY7pCavX6RH9b
-        MmMttiy/wleEwdYayN8xkyN62LpevA6VuR81P1SYMZIRne3mYa2VcZ6bdjQ1jsNzNNypQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkA83-0005Wt-18; Mon, 30 Jul 2018 15:30:35 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9FC8C1124216; Mon, 30 Jul 2018 16:30:34 +0100 (BST)
-Date:   Mon, 30 Jul 2018 16:30:34 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Ionela Voinescu <ionela.voinescu@imgtec.com>,
-        Ezequiel Garcia <ezequiel.garcia@imgtec.com>,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH 10/15] spi: img-spfi: Implement dual and quad mode
-Message-ID: <20180730153034.GM5789@sirena.org.uk>
-References: <20180722212010.3979-1-afaerber@suse.de>
- <20180722212010.3979-11-afaerber@suse.de>
+        Mon, 30 Jul 2018 13:07:20 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6UFSvpE030452;
+        Mon, 30 Jul 2018 17:31:25 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2kgfcr1rvy-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 30 Jul 2018 17:31:25 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 937F531;
+        Mon, 30 Jul 2018 15:31:23 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 75C465444;
+        Mon, 30 Jul 2018 15:31:23 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
+ 2018 17:31:22 +0200
+Subject: Re: [PATCH 2/2] pinctrl: stm32: check node status before new gpio
+ bank registering
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
+ <1531745857-5561-3-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdaDy5MGPMxh3GYFHL9VqTv44=t6J=xu_0sdXc4OHFo84g@mail.gmail.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <2f76dbc9-16f1-ddb6-be11-bf0c383b83c6@st.com>
+Date:   Mon, 30 Jul 2018 17:31:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="um2V5WpqCyd73IVb"
-Content-Disposition: inline
-In-Reply-To: <20180722212010.3979-11-afaerber@suse.de>
-X-Cookie: But they went to MARS around 1953!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CACRpkdaDy5MGPMxh3GYFHL9VqTv44=t6J=xu_0sdXc4OHFo84g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus
 
---um2V5WpqCyd73IVb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/29/2018 10:11 PM, Linus Walleij wrote:
+> On Mon, Jul 16, 2018 at 2:57 PM Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+> 
+>> Register a new GPIO bank only if GPIO bank node is enabled. This patch also
+>> adds checks on ranges which are defined only if a bank is registered.
+>>
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+> 
+> Patch applied.
+> 
+Thanks
 
-On Sun, Jul 22, 2018 at 11:20:05PM +0200, Andreas F=E4rber wrote:
+> Alexandre can you check the discussion we've had about using
+> GPIOLIB_IRQCHIP for multi-bank GPIOs with several IRQ
+> lines as per drivers/gpio/gpio-tegra186.c?
+> 
+> Is this approach applicable for STM32 so we can pull
+> more stuff in under GPIOLIB_IRQCHIP?
+> 
+Ok. I'm going to check what's possible to do. I let you know soon.
 
->  #define SPFI_CONTROL_GET_DMA			BIT(9)
-> -#define SPFI_CONTROL_SE			BIT(8)
-> +#define SPFI_CONTROL_SE				BIT(8)
-> +#define SPFI_CONTROL_TX_RX			BIT(1)
+regards
+Alex
 
-Random reindent of _SE there?
-
-> +			/*
-> +			 * Disable SPFI for it not to interfere with
-> +			 * pending transactions
-> +			 */
-> +			spfi_writel(spfi, spfi_readl(spfi, SPFI_CONTROL)
-> +			& ~SPFI_CONTROL_SPFI_EN, SPFI_CONTROL);
->  			return 0;
-
-The indentation on the second line of the write is very confusing, it
-should be indented relative to the first line.
-
-> +	if (!list_is_last(&xfer->transfer_list, &master->cur_msg->transfers) &&
-> +		/*
-> +		 * For duplex mode (both the tx and rx buffers are !NULL) the
-> +		 * CMD, ADDR, and DUMMY byte parts of the transaction register
-> +		 * should always be 0 and therefore the pending transfer
-> +		 * technique cannot be used.
-> +		 */
-> +		(xfer->tx_buf) && (!xfer->rx_buf) &&
-> +		(xfer->len <=3D SPFI_DATA_REQUEST_MAX_SIZE) && !is_pending) {
-> +		transact =3D (1 & SPFI_TRANSACTION_CMD_MASK) <<
-
-This is again *really* hard to read - having the comment in the middle
-of the condidional for the if statement, then indenting the code within
-the if statement to the same depth is just super confusing. =20
-
---um2V5WpqCyd73IVb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltfLxkACgkQJNaLcl1U
-h9CRZAf+LLcEEOfRSAY1EH5vz7zDOEnw4gK30aibUvhN9OgRdg3m5MfBShffYGNq
-M7zScjBY9bHhcsyEYdyU8NCPHYEq/VvmpLf+59mekYYcxZ/LxUs92fKF8XV+yMZ2
-b4F0Mczv2DL08wsoeYGoTWioZ+of4nuDgiCm4KAUTHcrZqtUIvj1l5YDDJuyMPQb
-kObK5Ek6i+FZRkq+71IT82fHZbHt01BhGca7CfQWIgxuHvbyCudAyYjMMpPLmcxs
-JVebbmM9Bas6Eqp3FtVLVu5d3Oy1Ut/sq7OqDgWv0QmLMirZ9e31Wkzcl5cfoUQl
-Z65uarkrVQVcxYQt2IHLluaik6StCQ==
-=o2Zn
------END PGP SIGNATURE-----
-
---um2V5WpqCyd73IVb--
+> Yours,
+> Linus Walleij
+> 
