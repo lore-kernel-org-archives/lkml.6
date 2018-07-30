@@ -2,83 +2,102 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C5416256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FC016256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2B9420857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DtcGemKr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B9420857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id DB5222083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5222083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732120AbeG3SXZ (ORCPT
+        id S1728607AbeG3SYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:23:25 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:40649 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbeG3SXZ (ORCPT
+        Mon, 30 Jul 2018 14:24:34 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:44730 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbeG3SYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:23:25 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 93D0C10C05D8;
-        Mon, 30 Jul 2018 09:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532969254; bh=e9Pn6eAKVzcNz8wuIwqGc/8Ik1oaai3lJfLi9R32QdI=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=DtcGemKrWWcmfxsbjS112K23TlZ0VUzg4iZJbTqRFvEUIY4kI8I228a9DTmSFQMcA
-         DsXsl7pMja8mXVMxC4j+CewxLhCdXA6fsxmTeBbOmjrVBcggOIhcE9onncjwBJxQ1P
-         O50Ye0BZOsVytXscJRCRyo4yoln4eaVPx0vrHYm3+VVqFkQ1oT57yiQyHWbgl4oMAg
-         CkNgqSHCVx0j+5nO9+iwN8WR4JpCaCepjAD9mO70R3NXiqoOlXHzFtOFvDDGIk7WFN
-         3zEzXme+4lDwLvj1y8+8pmjK1Os69O2uKl52qiSrjrrdY8hXPqU+Ati/s++fCHBj43
-         m9AjFxZBx3avA==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2F8783A31;
-        Mon, 30 Jul 2018 09:47:34 -0700 (PDT)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0361.001; Mon, 30 Jul 2018 09:47:33 -0700
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Thread-Topic: linux-next: Signed-off-by missing for commit in the
- arc-current tree
-Thread-Index: AQHUJuHSBble61r5mE2spp6XMOEQDw==
-Date:   Mon, 30 Jul 2018 16:47:32 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B08828A@us01wembx1.internal.synopsys.com>
-References: <20180729121351.26912f3c@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 30 Jul 2018 14:24:34 -0400
+Received: from [148.252.241.226] (helo=[10.35.4.113])
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fkBLc-0002Sj-TX; Mon, 30 Jul 2018 17:48:41 +0100
+Subject: Re: [PATCH v2 4/4] ALSA: usb-audio: Operate UAC3 Power Domains in PCM
+ callbacks
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
+ <20180730092336.18741-1-jorge.sanjuan@codethink.co.uk>
+ <20180730092336.18741-5-jorge.sanjuan@codethink.co.uk>
+ <s5h8t5sx3x9.wl-tiwai@suse.de>
+ <95e003a2-0cc2-6ce1-b330-0a4fa3643386@codethink.co.uk>
+ <s5hlg9sr9c8.wl-tiwai@suse.de>
+From:   Jorge <jorge.sanjuan@codethink.co.uk>
+Message-ID: <88a51510-598d-3a95-ab29-138ff317312e@codethink.co.uk>
+Date:   Mon, 30 Jul 2018 17:48:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <s5hlg9sr9c8.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/28/2018 07:14 PM, Stephen Rothwell wrote:=0A=
-> Hi Vineet,=0A=
->=0A=
-> Commit=0A=
->=0A=
->   fa52704e2816 ("ARC: add SMP_CACHE_BYTES value validate")=0A=
->=0A=
-> is missing a Signed-off-by from its committer.=0A=
-=0A=
-Thx for the report Stephen.=0A=
-=0A=
-This is now fixed/pushed.=0A=
-=0A=
--Vineet=0A=
+
+
+On 30/07/18 17:12, Takashi Iwai wrote:
+> On Mon, 30 Jul 2018 18:09:38 +0200,
+> Jorge wrote:
+>>
+>>
+>>
+>> On 30/07/18 14:13, Takashi Iwai wrote:
+>>> On Mon, 30 Jul 2018 11:23:36 +0200,
+>>> Jorge Sanjuan wrote:
+>>>>
+>>>> Make use of UAC3 Power Domains associated to an Audio Streaming
+>>>> path within the PCM's logic. This means, when there is no audio
+>>>> being transferred (pcm is closed), the host will set the Power Domain
+>>>> associated to that substream to state D1. When audio is being transferred
+>>>> (from hw_params onwards), the Power Domain will be set to D0 state.
+>>>>
+>>>> This is the way the host lets the device know which Terminal
+>>>> is going to be actively used and it is for the device to
+>>>> manage its own internal resources on that UAC3 Power Domain.
+>>>>
+>>>> Note the resume method now sets the Power Domain to D1 state as
+>>>> resuming the device doesn't mean audio streaming will occur.
+>>>
+>>> I guess we need the power state transition to D0 also in prepare
+>>> callback.  The recovery from suspend doesn't need hw_params call but
+>>> just prepare -> trigger.
+>>
+>> Right! Shouldn't it then be enough to just go to D0 on .prepare? I,e.
+>> Move the state transition from .hw_params to .prepare.
+> 
+> Does the power domain transition needed for setting the format, EP,
+> etc done in set_format()?  If yes, we need D0 in hw_parmas as well.
+
+Ok. That's a good point. The Power Domain will affect the USB streaming
+terminals so a device may implement this in a way so it is not capable
+to set_formats properly. I'll make sure the Power Domain is always set
+to D0 *before* attempting to set_format.
+
+Thanks!
+
+Jorge
+
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+
