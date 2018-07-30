@@ -2,97 +2,67 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DA3C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81785C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5928C20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ECD920857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0ig1BV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5928C20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d1jkLLOi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ECD920857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731986AbeG3Upm (ORCPT
+        id S1732007AbeG3UqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 16:45:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43320 "EHLO mail.kernel.org"
+        Mon, 30 Jul 2018 16:46:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50799 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730400AbeG3Upm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 16:45:42 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C97820857;
-        Mon, 30 Jul 2018 19:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532977759;
-        bh=iEir1ujIilHpJcTMGIDR6n0a6IxEnLJen5859mfMX6k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h0ig1BV22TlruLzrIIxl55qWKaNNqLFNY3XVDnTdaGzG5y07u1CfFdpEUsiLMKKIS
-         S1Wf2slJP3HnTycIYO0srpb9N4B7ob1MuffA+76E29QKq7Ymd0k7A+GTLnXUUXFjcs
-         wYaSOtswiWnRRgQm5A5lRaQ/EAx8Y/YS/vRlM6T4=
-Date:   Mon, 30 Jul 2018 20:09:14 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: light: fix test for val being not zero or not one.
-Message-ID: <20180730200914.7becfa32@archlinux>
-In-Reply-To: <20180730125918.7100-1-colin.king@canonical.com>
-References: <20180730125918.7100-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731600AbeG3UqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 16:46:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=oIdRcrtxJixbdDtaMxZh3ruy/zY1NQN5G8BZo6ddkoY=;
+        b=d1jkLLOiBWPj7O0938v/l9y6Yt+FsCKz/HZymevtBokaIYHEA9l3jCt5PeyzBcdrQHqXz3uVuKYk+iALm67V4rzs+pRKc/PI2flI345nhRQvBi9pJ0W1gFvdrUZ0Kh37Hjq4TOObd5OZTwDoPh4vwENxr2k4WtguPkp6PdTUQMU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fkDY5-0002Zt-AW; Mon, 30 Jul 2018 21:09:41 +0200
+Date:   Mon, 30 Jul 2018 21:09:41 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [RFC PATCH net-next v2 10/17] ethtool: implement GET_SETTINGS
+ message
+Message-ID: <20180730190941.GL2983@lunn.ch>
+References: <cover.1532953989.git.mkubecek@suse.cz>
+ <67d3b68a50e95db9612cc96e42a52ce332f716a9.1532953989.git.mkubecek@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67d3b68a50e95db9612cc96e42a52ce332f716a9.1532953989.git.mkubecek@suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 13:59:18 +0100
-Colin King <colin.king@canonical.com> wrote:
+> +Response contents:
+> +
+> +    ETHA_SETTINGS_LINK		(u32)		link state
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current check on val always results in true and so the
-> call to sii1133_update_adcsens never gets called. Fix this check
-> so it returns with -EINVAL only when val is not zero and not one.
-> 
-> Detected by CoverityScan, CID#1472099 ("Logically dead code")
-> 
-> Fixes: e01e7eaf37d8 ("iio: light: introduce si1133")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> +	[ETHA_SETTINGS_LINK]		= { .type = NLA_FLAG },
 
-Thanks!,
+Is this correct?
 
-Applied to the fixes-togreg branch of iio.git. Will send upstream after
-the merge window closes now.
+The link is either up or down. So a u32 seems a bit big.
 
-Jonathan
-
-> ---
->  drivers/iio/light/si1133.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/si1133.c b/drivers/iio/light/si1133.c
-> index d3fbeb3bc463..5ac22c46da1f 100644
-> --- a/drivers/iio/light/si1133.c
-> +++ b/drivers/iio/light/si1133.c
-> @@ -838,7 +838,7 @@ static int si1133_write_raw(struct iio_dev *iio_dev,
->  		switch (chan->type) {
->  		case IIO_INTENSITY:
->  		case IIO_UVINDEX:
-> -			if (val != 0 || val != 1)
-> +			if (val != 0 && val != 1)
->  				return -EINVAL;
->  
->  			return si1133_update_adcsens(data,
-
+    Andrew
