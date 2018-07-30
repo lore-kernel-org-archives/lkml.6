@@ -5,54 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721B8FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC8AFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 209D120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:22:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209D120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B48620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B48620870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeG3J4l (ORCPT
+        id S1726597AbeG3J5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:56:41 -0400
-Received: from mga04.intel.com ([192.55.52.120]:28801 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeG3J4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:56:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 01:22:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
-   d="scan'208";a="77109603"
-Received: from speedy.fi.intel.com (HELO [10.237.72.71]) ([10.237.72.71])
-  by orsmga001.jf.intel.com with ESMTP; 30 Jul 2018 01:22:17 -0700
-Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Francisco Jerez <currojerez@riseup.net>, lenb@kernel.org,
-        rjw@rjwysocki.net, mgorman@techsingularity.net
-Cc:     peterz@infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-        viresh.kumar@linaro.org, ggherdovich@suse.cz,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
- <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
- <87bmarhqk4.fsf@riseup.net>
- <3afad4b13370fe0ba6ed5020f86ce1b8ff46c603.camel@linux.intel.com>
-From:   Eero Tamminen <eero.t.tamminen@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Message-ID: <e1dab3e0-3e75-b50d-7e50-13dc752150c4@intel.com>
-Date:   Mon, 30 Jul 2018 11:33:25 +0300
+        Mon, 30 Jul 2018 05:57:09 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16499 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeG3J5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 05:57:09 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b5ecae90000>; Mon, 30 Jul 2018 01:23:05 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 30 Jul 2018 01:23:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 30 Jul 2018 01:23:17 -0700
+Received: from [10.21.132.122] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
+ 2018 08:23:15 +0000
+Subject: Re: [PATCH] ASoC: tegra_alc5632: fix device_node refcounting
+To:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <ldv-project@linuxtesting.org>
+References: <1532725619-8775-1-git-send-email-khoroshilov@ispras.ru>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <8a58db40-13c8-eaf1-85a0-bf6da8224997@nvidia.com>
+Date:   Mon, 30 Jul 2018 09:23:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <3afad4b13370fe0ba6ed5020f86ce1b8ff46c603.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1532725619-8775-1-git-send-email-khoroshilov@ispras.ru>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,112 +58,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 28.07.2018 17:14, Srinivas Pandruvada wrote:
-> On Fri, 2018-07-27 at 22:34 -0700, Francisco Jerez wrote:
->> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
->>
->>> Enable HWP boost on Skylake server and workstations.
->>>
->>
->> Please revert this series, it led to significant energy usage and
->> graphics performance regressions [1].
-> Which SKX platform is targeted to graphics?
-
-Patch that Chris pointed out is this:
-+static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] = {
-+       ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
-+       ICPU(INTEL_FAM6_SKYLAKE_DESKTOP, core_funcs),
-+       {}
-+};
-
-The regressing platforms in our test system were:
-- SKL 6600K i5 / GT2
-- SKL 6770HQ i7 / GT4e
-
-SKL-U i5 / GT3e device wasn't impacted, so I assume U devices don't 
-match INTEL_FAM6_SKYLAKE_DESKTOP.
-
-
-
-	- Eero
-
->>   The reasons are roughly the ones
->> we discussed by e-mail off-list last April: This causes the
->> intel_pstate
->> driver to decrease the EPP to zero
-> No. You didn't check this series. We are not using EPP at all.
-> The boost mechanism used here is not boost to max.
+On 27/07/18 22:06, Alexey Khoroshilov wrote:
+> tegra_alc5632_probe() increments reference count of device nodes
+> with of_parse_phandle(), but there is no code decrementing them
+> in the driver.
 > 
-> Thanks,
-> Srinivas
+> The patch adds of_node_put() to tegra_alc5632_remove() and
+> to error handling paths in the probe.
 > 
->> when the workload blocks on IO
->> frequently enough, which for the regressing benchmarks detailed in
->> [1]
->> is a symptom of the workload being heavily IO-bound, which means they
->> won't benefit at all from the EPP boost since they aren't
->> significantly
->> CPU-bound, and they will suffer a decrease in parallelism due to the
->> active CPU core using a larger fraction of the TDP in order to
->> achieve
->> the same work, causing the GPU to have a lower power budget
->> available,
->> leading to a decrease in system performance.
->>
->> You may want to give a shot to my previous suggestion of using [2] in
->> order to detect whether the system is IO-bound, which you can use as
->> an
->> indicator that the optimization implemented in this series cannot
->> possibly improve performance and can be expected to hurt energy
->> usage.
->>
->> Thanks.
->>
->> [1] https://bugs.freedesktop.org/show_bug.cgi?id=107410
->> [2] https://patchwork.kernel.org/patch/10312259/
->>
->>> Reported-by: Mel Gorman <mgorman@techsingularity.net>
->>> Tested-by: Giovanni Gherdovich <ggherdovich@suse.cz>
->>> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel
->>> .com>
->>> ---
->>>   drivers/cpufreq/intel_pstate.c | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>>
->>> diff --git a/drivers/cpufreq/intel_pstate.c
->>> b/drivers/cpufreq/intel_pstate.c
->>> index 70bf63bb4e0e..01c8da1f99db 100644
->>> --- a/drivers/cpufreq/intel_pstate.c
->>> +++ b/drivers/cpufreq/intel_pstate.c
->>> @@ -1794,6 +1794,12 @@ static const struct x86_cpu_id
->>> intel_pstate_cpu_ee_disable_ids[] = {
->>>   	{}
->>>   };
->>>   
->>> +static const struct x86_cpu_id intel_pstate_hwp_boost_ids[]
->>> __initconst = {
->>> +	ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
->>> +	ICPU(INTEL_FAM6_SKYLAKE_DESKTOP, core_funcs),
->>> +	{}
->>> +};
->>> +
->>>   static int intel_pstate_init_cpu(unsigned int cpunum)
->>>   {
->>>   	struct cpudata *cpu;
->>> @@ -1824,6 +1830,10 @@ static int intel_pstate_init_cpu(unsigned
->>> int cpunum)
->>>   			intel_pstate_disable_ee(cpunum);
->>>   
->>>   		intel_pstate_hwp_enable(cpu);
->>> +
->>> +		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
->>> +		if (id)
->>> +			hwp_boost = true;
->>>   	}
->>>   
->>>   	intel_pstate_get_cpu_pstates(cpu);
->>> -- 
->>> 2.13.6
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
+>  sound/soc/tegra/tegra_alc5632.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+> index 5197d6b18cb6..98d87801d57a 100644
+> --- a/sound/soc/tegra/tegra_alc5632.c
+> +++ b/sound/soc/tegra/tegra_alc5632.c
+> @@ -190,14 +190,14 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
+>  		dev_err(&pdev->dev,
+>  			"Property 'nvidia,i2s-controller' missing or invalid\n");
+>  		ret = -EINVAL;
+> -		goto err;
+> +		goto err_put_codec_of_node;
+>  	}
+>  
+>  	tegra_alc5632_dai.platform_of_node = tegra_alc5632_dai.cpu_of_node;
+>  
+>  	ret = tegra_asoc_utils_init(&alc5632->util_data, &pdev->dev);
+>  	if (ret)
+> -		goto err;
+> +		goto err_put_cpu_of_node;
+>  
+>  	ret = snd_soc_register_card(card);
+>  	if (ret) {
+> @@ -210,6 +210,13 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
+>  
+>  err_fini_utils:
+>  	tegra_asoc_utils_fini(&alc5632->util_data);
+> +err_put_cpu_of_node:
+> +	of_node_put(tegra_alc5632_dai.cpu_of_node);
+> +	tegra_alc5632_dai.cpu_of_node = NULL;
+> +	tegra_alc5632_dai.platform_of_node = NULL;
+> +err_put_codec_of_node:
+> +	of_node_put(tegra_alc5632_dai.codec_of_node);
+> +	tegra_alc5632_dai.codec_of_node = NULL;
+>  err:
+>  	return ret;
+>  }
+> @@ -223,6 +230,12 @@ static int tegra_alc5632_remove(struct platform_device *pdev)
+>  
+>  	tegra_asoc_utils_fini(&machine->util_data);
+>  
+> +	of_node_put(tegra_alc5632_dai.cpu_of_node);
+> +	tegra_alc5632_dai.cpu_of_node = NULL;
+> +	tegra_alc5632_dai.platform_of_node = NULL;
+> +	of_node_put(tegra_alc5632_dai.codec_of_node);
+> +	tegra_alc5632_dai.codec_of_node = NULL;
+> +
+>  	return 0;
+>  }
 
+Thanks!
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
