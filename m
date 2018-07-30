@@ -2,102 +2,82 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FC016256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B3416256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5222083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5222083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id F22942083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MYiGwIfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F22942083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbeG3SYe (ORCPT
+        id S1731930AbeG3SYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:24:34 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:44730 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeG3SYe (ORCPT
+        Mon, 30 Jul 2018 14:24:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbeG3SYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:24:34 -0400
-Received: from [148.252.241.226] (helo=[10.35.4.113])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fkBLc-0002Sj-TX; Mon, 30 Jul 2018 17:48:41 +0100
-Subject: Re: [PATCH v2 4/4] ALSA: usb-audio: Operate UAC3 Power Domains in PCM
- callbacks
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
- <20180730092336.18741-1-jorge.sanjuan@codethink.co.uk>
- <20180730092336.18741-5-jorge.sanjuan@codethink.co.uk>
- <s5h8t5sx3x9.wl-tiwai@suse.de>
- <95e003a2-0cc2-6ce1-b330-0a4fa3643386@codethink.co.uk>
- <s5hlg9sr9c8.wl-tiwai@suse.de>
-From:   Jorge <jorge.sanjuan@codethink.co.uk>
-Message-ID: <88a51510-598d-3a95-ab29-138ff317312e@codethink.co.uk>
-Date:   Mon, 30 Jul 2018 17:48:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 14:24:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KHQDuWksIWgi08qoi1c4oLpN4rL/KTE0sDZyrBqXjVQ=; b=MYiGwIfx2AUF50TnZ/XVwgoDo
+        yfG7WIoHAG908WJofnaIpAmZt1L761Rfwmwwi4A9gPsTh0lMzqbaz0DW8yp4f0D6gra9ei4EaArEj
+        4LYBLsR/rKzRAgyxNWV1GuGo1p/coFcItWjbpISA950HYyCmQYlBJV8PR0zLzwJ8zwCFPU8I7+jYx
+        h9byj+PfdQNVghz/Dk9ZzgiFJDfmGMdFNIb0sbf8puV9EWA9PmMUuvl0tC/Dse1eXFGxmhIdQ7Loe
+        7jY/9U9JBvhWNykC10UP/VjXZn0SQ5onMNSzL2IjcWvV0ETOKzlbsW0cHotGzSaCVW0Wd0kObymZr
+        eSk9GcHAg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkBLd-0000oM-IW; Mon, 30 Jul 2018 16:48:41 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 129AE202883BF; Mon, 30 Jul 2018 18:48:40 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 18:48:40 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jacek Tomaka <jacekt@dug.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jacek Tomaka <jacek.tomaka@poczta.fm>
+Subject: Re: [PATCH v2] perf/x86/intel: Add support for MISPREDICT bit on
+ Knights Landing cpus
+Message-ID: <20180730164839.GP2494@hirez.programming.kicks-ass.net>
+References: <20180730142813.13451-1-jacekt@dugeo.com>
+ <20180730161738.GL2494@hirez.programming.kicks-ass.net>
+ <CAKVxXCVjBaW1kFA48r-bKwrnzR9+SaFXtgaBTb-tr6QHeu1srg@mail.gmail.com>
+ <CAKVxXCVoRb8Hf18AmUF7RcyNy7JACKByj2FsVOSiO31=ZHFHYQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hlg9sr9c8.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKVxXCVoRb8Hf18AmUF7RcyNy7JACKByj2FsVOSiO31=ZHFHYQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?On Tue, Jul 31, 2018 at 12:34:02AM +0800, Jacek Tomaka wrote:
 
-On 30/07/18 17:12, Takashi Iwai wrote:
-> On Mon, 30 Jul 2018 18:09:38 +0200,
-> Jorge wrote:
->>
->>
->>
->> On 30/07/18 14:13, Takashi Iwai wrote:
->>> On Mon, 30 Jul 2018 11:23:36 +0200,
->>> Jorge Sanjuan wrote:
->>>>
->>>> Make use of UAC3 Power Domains associated to an Audio Streaming
->>>> path within the PCM's logic. This means, when there is no audio
->>>> being transferred (pcm is closed), the host will set the Power Domain
->>>> associated to that substream to state D1. When audio is being transferred
->>>> (from hw_params onwards), the Power Domain will be set to D0 state.
->>>>
->>>> This is the way the host lets the device know which Terminal
->>>> is going to be actively used and it is for the device to
->>>> manage its own internal resources on that UAC3 Power Domain.
->>>>
->>>> Note the resume method now sets the Power Domain to D1 state as
->>>> resuming the device doesn't mean audio streaming will occur.
->>>
->>> I guess we need the power state transition to D0 also in prepare
->>> callback.  The recovery from suspend doesn't need hw_params call but
->>> just prepare -> trigger.
->>
->> Right! Shouldn't it then be enough to just go to D0 on .prepare? I,e.
->> Move the state transition from .hw_params to .prepare.
-> 
-> Does the power domain transition needed for setting the format, EP,
-> etc done in set_format()?  If yes, we need D0 in hw_parmas as well.
+> Ah, right:
+> /*
+>  * Due to lack of segmentation in Linux the effective address (offset)
+>  * is the same as the linear address, allowing us to merge the LIP and EIP
+>  * LBR formats.
+>  */
+>
+> Yeah, LBR_FORMAT_EIP_FLAGS is ok as well. Would it be preffered?
 
-Ok. That's a good point. The Power Domain will affect the USB streaming
-terminals so a device may implement this in a way so it is not capable
-to set_formats properly. I'll make sure the Power Domain is always set
-to D0 *before* attempting to set_format.
-
-Thanks!
-
-Jorge
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-
+Yeah, think so, that keeps the lookup table const.
