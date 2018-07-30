@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76418FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6DF160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E5B820890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:25:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5B820890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id C8030208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:26:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8030208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeG3RAj (ORCPT
+        id S1727063AbeG3RCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:00:39 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:42592 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbeG3RAj (ORCPT
+        Mon, 30 Jul 2018 13:02:17 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:39186 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeG3RCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:00:39 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6UFP949000877;
-        Tue, 31 Jul 2018 00:25:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Tue, 31 Jul 2018 00:25:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6UFP8jW000868
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 31 Jul 2018 00:25:08 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
- <20180726113958.GE28386@dhcp22.suse.cz>
- <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
- <20180730093257.GG24267@dhcp22.suse.cz>
- <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
-Date:   Tue, 31 Jul 2018 00:25:04 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 13:02:16 -0400
+Received: by mail-ed1-f49.google.com with SMTP id h4-v6so4317539edi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:26:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TnHFGFu58Z7yUPm88ROb3pfi7Jz6EYmtyqLNLtLx89U=;
+        b=pG4A11zLf0hEXoEknQqS3robkRrWGkeQ1QqxCoKzp+et3uG8PMCUx0GDbeSsbiLXQM
+         2c5KVM78FZv/WdHauWT4Xs5YUghCiiQbEl5qcrqNXJIdgN6g++zWYLow3duZWEBqM+UO
+         4oorv2Iv8Wz4UAXP5G3+P1kh8biilMqeFThamOPecFNtSSmzqUJ0YfrWuuTUO54GqZqW
+         PzCLaXJVuT55KE26N/eLTLiTU/BpM48/yAaf2xYpFDQ72eco6llQmgyID/obgb6wFHZo
+         fEvgfoPxvcDBEK8RUuL4kRtXJO+eOklTykBGhekaLl0CrlpFJOP0KAqyQECkZrxlG0zL
+         5A8Q==
+X-Gm-Message-State: AOUpUlGCUmuRFxk82A5Ds7DhDy+N9RdTn3cmWMGO1Ammblr8u086qZj+
+        WceQ8Ur5RzVrLaXSCbTxGIKokNl8clY=
+X-Google-Smtp-Source: AAOMgpeUUs06x0wY08d6SaudTj7oXDxH5N6/LnXrGMakH/Ajffz+pXwbtg+UGpyiiT7uJc4GK2q6Yw==
+X-Received: by 2002:a50:8406:: with SMTP id 6-v6mr8687203edp.97.1532964406457;
+        Mon, 30 Jul 2018 08:26:46 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id p3-v6sm2453588edp.47.2018.07.30.08.26.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 08:26:45 -0700 (PDT)
+Subject: Re: [PATCH 0/2] ata: libahci: devslp fixes
+To:     Tejun Heo <tj@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     rjw@rjwysocki.net, alan.cox@intel.com, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180702190154.6864-1-srinivas.pandruvada@linux.intel.com>
+ <9712316ab62bef25953c523bce02e260a9ea40fe.camel@linux.intel.com>
+ <20180730152256.GF1206094@devbig004.ftw2.facebook.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <bf4b860c-6f82-4a3f-8b81-5f5c93f4389e@redhat.com>
+Date:   Mon, 30 Jul 2018 17:26:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180730152256.GF1206094@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,50 +68,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/30 23:54, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Jul 30, 2018 at 04:46:47PM +0200, Michal Hocko wrote:
->> On Mon 30-07-18 23:34:23, Tetsuo Handa wrote:
->>> On 2018/07/30 18:32, Michal Hocko wrote:
->> [...]
->>>> This one is waiting for draining and we are in mm_percpu_wq WQ context
->>>> which has its rescuer so no other activity can block us for ever. So
->>>> this certainly shouldn't deadlock. It can be dead slow but well, this is
->>>> what you will get when your shoot your system to death.
->>>
->>> We need schedule_timeout_*() to allow such WQ_MEM_RECLAIM workqueues to wake up. (Tejun,
->>> is my understanding correct?) Lack of schedule_timeout_*() does block WQ_MEM_RECLAIM
->>> workqueues forever.
+Hi,
+
+On 30-07-18 17:22, Tejun Heo wrote:
+> On Mon, Jul 30, 2018 at 08:15:47AM -0700, Srinivas Pandruvada wrote:
+>> Hi Tejan,
 >>
->> Hmm. This doesn't match my understanding of what WQ_MEM_RECLAIM actually
->> guarantees. If you are right then the whole thing sounds quite fragile
->> to me TBH.
+>> On Mon, 2018-07-02 at 12:01 -0700, Srinivas Pandruvada wrote:
+>>> Some minor fixes to be able to correctly set devslp register
+>>> to optimize power.
+>>>
+>>> Srinivas Pandruvada (2):
+>>>    ata: libahci: Correct setting of DEVSLP register
+>>>    ata: libahci: Allow reconfigure of DEVSLP register
+>>>
+>> Are you applying this series?
 > 
-> Workqueue doesn't think the cpu is stalled as long as one of the
-> per-cpu kworkers is running.  The assumption is that kernel threads
-> are not supposed to be busy-looping indefinitely (and they really
-> shouldn't).
+> I was waiting for Hans's reviews.  Hans, what do you think?
 
-WQ_MEM_RECLAIM guarantees that "struct task_struct" is preallocated. But
-WQ_MEM_RECLAIM does not guarantee that the pending work is started as soon
-as an item was queued. Same rule applies to both WQ_MEM_RECLAIM workqueues 
-and !WQ_MEM_RECLAIM workqueues regarding when to start a pending work (i.e.
-when schedule_timeout_*() is called).
+Ah I missed that this was another series. With the caveat that
+I do not really know that much about devslp, both patches
+seem sensible to me, so both are:
 
-Is this correct?
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
->              We can add timeout mechanism to workqueue so that it
-> kicks off other kworkers if one of them is in running state for too
-> long, but idk, if there's an indefinite busy loop condition in kernel
-> threads, we really should get rid of them and hung task watchdog is
-> pretty effective at finding these cases (at least with preemption
-> disabled).
+Regards,
 
-Currently the page allocator has a path which can loop forever with
-only cond_resched().
-
-> 
-> Thanks.
-> 
+Hans
 
