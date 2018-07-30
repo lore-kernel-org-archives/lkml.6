@@ -2,107 +2,140 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A16FFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A959FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2683020873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:48:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WATxpgJ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2683020873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 27EB820873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EB820873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeG3PXv (ORCPT
+        id S1726911AbeG3PZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:23:51 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41033 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbeG3PXu (ORCPT
+        Mon, 30 Jul 2018 11:25:04 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:35854 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbeG3PZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:23:50 -0400
-Received: by mail-pl0-f66.google.com with SMTP id w8-v6so5583769ply.8;
-        Mon, 30 Jul 2018 06:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=kE7PjXU5llRJHB5rk8hyr4gVdBSe3+TpguvSPdwdSwE=;
-        b=WATxpgJ9OhKwqV8ZqmY/VQQ17p64PgGVUfthS6EIPwMHcHgIxiwniYmw0w4yQ3dLL/
-         Ay5tr0+1MEHIB5+s1pHreVDJMwYFYbLj1cpoPZ4LMEZHdmD4n06hyZS44TOqNTQCyCaz
-         UA9BcILbggE45RpE0LtkfCN3bf4Mm1t8MSGO1wZvu6CoujUsN0Nk19vP6q1AZTZSomVx
-         ZYIwZQo3LDMOMfmeBNfnV6h6rdktti9qHw8iqvt8SHrVyVUuna3n5Velhz4MQ+k7NMGF
-         VT1iNmOmycGheiHW1rL0xev1Wq/UOzRqKClEYqbqs9vtJGZ9kzZd4wC7zMCrCKv0AjeY
-         tHYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=kE7PjXU5llRJHB5rk8hyr4gVdBSe3+TpguvSPdwdSwE=;
-        b=rJy/kMNu/NWm3mvE6Qc6assDC5AuMQI7HvLG6GG6rxqx/1nRIWR0b1pWLD19Zu4+UJ
-         zo5/lMH8HPAED2+1AutevFCKGZuoOWWocF2FTOvjSvuSpV85Wt3CKPNC2Ze/0D3Tvr04
-         nz+6VG0M+bE5j8t9ivFw78N3Kn0t+eRBPkbcoza3h95UcmZG/yZBe2Hvs77EADemsO1c
-         4c1XNzL3mT2/j+4ql6c1OrxIki5ECeSK4OO+oxTpBriCoL9Tbn/VHwmV+vSdIgoeclLP
-         kEflz/yLpBM3MMcATLdlIeJitlPJlsgoKYAty/Tt10CRF2NWBgmciVFaSdY6/J+T4jBj
-         7J0Q==
-X-Gm-Message-State: AOUpUlGjPVn4xKCKf03b0fXVz2Zwb3VZ4fdGhouKXQgmrm1pwKUERHmc
-        g0VdjOZDfD3PsDp6gc+/4uk=
-X-Google-Smtp-Source: AAOMgpfTFVnCFruTD9J8HlThCiQNDf0jwHsr8Qeox6khDt2nWaqPCmvQwRBnxuSSRjMynRjz9ZI4CQ==
-X-Received: by 2002:a17:902:28a6:: with SMTP id f35-v6mr5534573plb.240.1532958525668;
-        Mon, 30 Jul 2018 06:48:45 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm25345114pfk.134.2018.07.30.06.48.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 06:48:45 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     sre@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] power: reset: piix4-poweroff: Replace mdelay() with msleep() and usleep_range() in piix4_poweroff()
-Date:   Mon, 30 Jul 2018 21:48:38 +0800
-Message-Id: <20180730134838.9124-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 30 Jul 2018 11:25:04 -0400
+X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
+   d="scan'208";a="14277181"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Jul 2018 06:49:59 -0700
+Received: from [10.145.4.138] (10.10.76.4) by chn-sv-exch03.mchp-main.com
+ (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Mon, 30 Jul 2018
+ 06:49:58 -0700
+Subject: Re: [PATCH v6 3/3] ARM: dts: at91: sama5d2 Xplained: add pin muxing
+ for I2S
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
+CC:     <devicetree@vger.kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        <Cristian.Birsan@microchip.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180730114008.30464-1-codrin.ciubotariu@microchip.com>
+ <20180730114008.30464-4-codrin.ciubotariu@microchip.com>
+From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <2e2bc99e-138e-fbc8-1db0-e37b46637af0@microchip.com>
+Date:   Mon, 30 Jul 2018 16:49:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180730114008.30464-4-codrin.ciubotariu@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-piix4_poweroff() is never called in atomic context.
-It calls mdelay() to busily wait, which is not necessary.
-mdelay() can be replaced with msleep() and usleep_range().
+Hi Codrin,
 
-This is found by a static analysis tool named DCNS written by myself.
+On 30.07.2018 14:40, Codrin Ciubotariu wrote:
+> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> 
+> This patch sets the pin muxing for the I2S controllers
+> 
+> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> [codrin.ciubotariu@microchip.com: added pin muxing for the second
+> controller]
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> ---
+> 
+> Changes in v6:
+> 	- none;
+> 
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 +++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> index fcc85d70f36e..95cbec0f8790 100644
+> --- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> +++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> @@ -281,6 +281,11 @@
+>  				status = "okay";
+>  			};
+>  
+> +			i2s0: i2s@f8050000 {
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&pinctrl_i2s0_default>;
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/power/reset/piix4-poweroff.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The approach with the disabled controllers in board DTS files (for our
+boards) is to use the: status = "disabled" and if there are pin conflicts
+with other controllers to put a mark in there, something like:
+				status = "disabled"; /* Conflict with X */
 
-diff --git a/drivers/power/reset/piix4-poweroff.c b/drivers/power/reset/piix4-poweroff.c
-index 20ce3ff5e039..5d4c72992d2c 100644
---- a/drivers/power/reset/piix4-poweroff.c
-+++ b/drivers/power/reset/piix4-poweroff.c
-@@ -47,7 +47,7 @@ static void piix4_poweroff(void)
- 	     io_offset + PIIX4_FUNC3IO_PMCNTRL);
- 
- 	/* If the special cycle occurs too soon this doesn't work... */
--	mdelay(10);
-+	usleep_range(10000, 11000);
- 
- 	/*
- 	 * The PIIX4 will enter the suspend state only after seeing a special
-@@ -59,7 +59,7 @@ static void piix4_poweroff(void)
- 				   PIIX4_SUSPEND_MAGIC);
- 
- 	/* Give the system some time to power down, then error */
--	mdelay(1000);
-+	msleep(1000);
- 	pr_emerg("Unable to poweroff system\n");
- }
- 
--- 
-2.17.0
+I'm seeing that i2s1 is in conflict with sdmmc1 and spi0.
 
+Thank you,
+Claudiu Beznea
+
+> +			};
+> +
+>  			can0: can@f8054000 {
+>  				pinctrl-names = "default";
+>  				pinctrl-0 = <&pinctrl_can0_default>;
+> @@ -424,6 +429,24 @@
+>  					bias-disable;
+>  				};
+>  
+> +				pinctrl_i2s0_default: i2s0_default {
+> +					pinmux = <PIN_PC1__I2SC0_CK>,
+> +						 <PIN_PC2__I2SC0_MCK>,
+> +						 <PIN_PC3__I2SC0_WS>,
+> +						 <PIN_PC4__I2SC0_DI0>,
+> +						 <PIN_PC5__I2SC0_DO0>;
+> +					bias-disable;
+> +				};
+> +
+> +				pinctrl_i2s1_default: i2s1_default {
+> +					pinmux = <PIN_PA15__I2SC1_CK>,
+> +						 <PIN_PA14__I2SC1_MCK>,
+> +						 <PIN_PA16__I2SC1_WS>,
+> +						 <PIN_PA17__I2SC1_DI0>,
+> +						 <PIN_PA18__I2SC1_DO0>;
+> +					bias-disable;
+> +				};
+> +
+>  				pinctrl_key_gpio_default: key_gpio_default {
+>  					pinmux = <PIN_PB9__GPIO>;
+>  					bias-pull-up;
+> @@ -546,6 +569,11 @@
+>  				status = "okay";
+>  			};
+>  
+> +			i2s1: i2s@fc04c000 {
+> +				pinctrl-names = "default";
+> +				pinctrl-0 = <&pinctrl_i2s1_default>;
+> +			};
+> +
+>  			can1: can@fc050000 {
+>  				pinctrl-names = "default";
+>  				pinctrl-0 = <&pinctrl_can1_default>;
+> 
