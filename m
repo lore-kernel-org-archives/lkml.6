@@ -6,231 +6,146 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC577C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92992C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AFC20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AFC20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4402A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:06:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4402A20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbeG3Jhc (ORCPT
+        id S1726629AbeG3Jkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:37:32 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42163 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbeG3Jhb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:37:31 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1fk39P-0000SY-5q; Mon, 30 Jul 2018 10:03:31 +0200
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-To:     Robin Gong <yibin.gong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
- <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <1532680211.32306.36.camel@pengutronix.de>
- <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-Date:   Mon, 30 Jul 2018 10:03:29 +0200
+        Mon, 30 Jul 2018 05:40:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37450 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726344AbeG3Jkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 05:40:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 91D5CADD8;
+        Mon, 30 Jul 2018 08:06:43 +0000 (UTC)
+Subject: Re: [PATCH 09/16] btrfs: IS_ERR(p) && PTR_ERR(p) == n is a weird way
+ to spell p == ERR_PTR(n)
+To:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <20180729220317.GB30522@ZenIV.linux.org.uk>
+ <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
+ <20180729220453.13431-9-viro@ZenIV.linux.org.uk>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ xsFNBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
+ T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
+ u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
+ bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
+ GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
+ EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
+ TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
+ c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
+ c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
+ k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABzSJOaWtvbGF5IEJv
+ cmlzb3YgPG5ib3Jpc292QHN1c2UuZGU+wsF4BBMBAgAiBQJYijkSAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAAKCRBxvoJG5T8oV/B6D/9a8EcRPdHg8uLEPywuJR8URwXzkofT5bZE
+ IfGF0Z+Lt2ADe+nLOXrwKsamhweUFAvwEUxxnndovRLPOpWerTOAl47lxad08080jXnGfYFS
+ Dc+ew7C3SFI4tFFHln8Y22Q9075saZ2yQS1ywJy+TFPADIprAZXnPbbbNbGtJLoq0LTiESnD
+ w/SUC6sfikYwGRS94Dc9qO4nWyEvBK3Ql8NkoY0Sjky3B0vL572Gq0ytILDDGYuZVo4alUs8
+ LeXS5ukoZIw1QYXVstDJQnYjFxYgoQ5uGVi4t7FsFM/6ykYDzbIPNOx49Rbh9W4uKsLVhTzG
+ BDTzdvX4ARl9La2kCQIjjWRg+XGuBM5rxT/NaTS78PXjhqWNYlGc5OhO0l8e5DIS2tXwYMDY
+ LuHYNkkpMFksBslldvNttSNei7xr5VwjVqW4vASk2Aak5AleXZS+xIq2FADPS/XSgIaepyTV
+ tkfnyreep1pk09cjfXY4A7qpEFwazCRZg9LLvYVc2M2eFQHDMtXsH59nOMstXx2OtNMcx5p8
+ 0a5FHXE/HoXz3p9bD0uIUq6p04VYOHsMasHqHPbsMAq9V2OCytJQPWwe46bBjYZCOwG0+x58
+ fBFreP/NiJNeTQPOa6FoxLOLXMuVtpbcXIqKQDoEte9aMpoj9L24f60G4q+pL/54ql2VRscK
+ d87BTQRYigc+ARAAyJSq9EFk28++SLfg791xOh28tLI6Yr8wwEOvM3wKeTfTZd+caVb9gBBy
+ wxYhIopKlK1zq2YP7ZjTP1aPJGoWvcQZ8fVFdK/1nW+Z8/NTjaOx1mfrrtTGtFxVBdSCgqBB
+ jHTnlDYV1R5plJqK+ggEP1a0mr/rpQ9dFGvgf/5jkVpRnH6BY0aYFPprRL8ZCcdv2DeeicOO
+ YMobD5g7g/poQzHLLeT0+y1qiLIFefNABLN06Lf0GBZC5l8hCM3Rpb4ObyQ4B9PmL/KTn2FV
+ Xq/c0scGMdXD2QeWLePC+yLMhf1fZby1vVJ59pXGq+o7XXfYA7xX0JsTUNxVPx/MgK8aLjYW
+ hX+TRA4bCr4uYt/S3ThDRywSX6Hr1lyp4FJBwgyb8iv42it8KvoeOsHqVbuCIGRCXqGGiaeX
+ Wa0M/oxN1vJjMSIEVzBAPi16tztL/wQtFHJtZAdCnuzFAz8ue6GzvsyBj97pzkBVacwp3/Mw
+ qbiu7sDz7yB0d7J2tFBJYNpVt/Lce6nQhrvon0VqiWeMHxgtQ4k92Eja9u80JDaKnHDdjdwq
+ FUikZirB28UiLPQV6PvCckgIiukmz/5ctAfKpyYRGfez+JbAGl6iCvHYt/wAZ7Oqe/3Cirs5
+ KhaXBcMmJR1qo8QH8eYZ+qhFE3bSPH446+5oEw8A9v5oonKV7zMAEQEAAcLBXwQYAQIACQUC
+ WIoHPgIbDAAKCRBxvoJG5T8oV1pyD/4zdXdOL0lhkSIjJWGqz7Idvo0wjVHSSQCbOwZDWNTN
+ JBTP0BUxHpPu/Z8gRNNP9/k6i63T4eL1xjy4umTwJaej1X15H8Hsh+zakADyWHadbjcUXCkg
+ OJK4NsfqhMuaIYIHbToi9K5pAKnV953xTrK6oYVyd/Rmkmb+wgsbYQJ0Ur1Ficwhp6qU1CaJ
+ mJwFjaWaVgUERoxcejL4ruds66LM9Z1Qqgoer62ZneID6ovmzpCWbi2sfbz98+kW46aA/w8r
+ 7sulgs1KXWhBSv5aWqKU8C4twKjlV2XsztUUsyrjHFj91j31pnHRklBgXHTD/pSRsN0UvM26
+ lPs0g3ryVlG5wiZ9+JbI3sKMfbdfdOeLxtL25ujs443rw1s/PVghphoeadVAKMPINeRCgoJH
+ zZV/2Z/myWPRWWl/79amy/9MfxffZqO9rfugRBORY0ywPHLDdo9Kmzoxoxp9w3uTrTLZaT9M
+ KIuxEcV8wcVjr+Wr9zRl06waOCkgrQbTPp631hToxo+4rA1jiQF2M80HAet65ytBVR2pFGZF
+ zGYYLqiG+mpUZ+FPjxk9kpkRYz61mTLSY7tuFljExfJWMGfgSg1OxfLV631jV1TcdUnx+h3l
+ Sqs2vMhAVt14zT8mpIuu2VNxcontxgVr1kzYA/tQg32fVRbGr449j1gw57BV9i0vww==
+Message-ID: <a15c7158-bc61-e2f2-0904-2cb637238b04@suse.com>
+Date:   Mon, 30 Jul 2018 11:06:42 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180729220453.13431-9-viro@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a
-Content-Type: multipart/mixed; boundary="4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "A.s. Dong" <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Leonard Crestez <leonard.crestez@nxp.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
- <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <1532680211.32306.36.camel@pengutronix.de>
- <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
 
---4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+[ADDED David Sterba and Linux-btrfs mailing list]
 
+On 30.07.2018 01:04, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> Cc: Chris Mason <clm@fb.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 
-On 27.07.2018 10:58, Robin Gong wrote:
->=20
->=20
->> -----Original Message-----
->> From: Lucas Stach [mailto:l.stach@pengutronix.de]
->> Sent: 2018=E5=B9=B47=E6=9C=8827=E6=97=A5 16:30
->> To: Robin Gong <yibin.gong@nxp.com>; Oleksij Rempel
->> <o.rempel@pengutronix.de>; Shawn Guo <shawnguo@kernel.org>; Mark
->> Brown <broonie@kernel.org>; Rafael J. Wysocki <rafael.j.wysocki@intel.=
-com>
->> Cc: Mark Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org;
->> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; linux-kernel@vger.kernel.org; Liam Girdwood
->> <lgirdwood@gmail.com>; Rob Herring <robh+dt@kernel.org>; dl-linux-imx
->> <linux-imx@nxp.com>; kernel@pengutronix.de; A.s. Dong
->> <aisheng.dong@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
+David, yout might want to pull this immediately, it's a nice cleanup.
 
->> King <linux@armlinux.org.uk>; Andrew Morton <akpm@linux-foundation.org=
->;
->> Leonard Crestez <leonard.crestez@nxp.com>; linux-clk@vger.kernel.org;
->> linux-arm-kernel@lists.infradead.org
->> Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
->> fsl,pmic-stby-poweroff property
->>
->> Hi Robin,
->>
->> Am Freitag, den 27.07.2018, 01:51 +0000 schrieb Robin Gong:
->> [...]
->>>>>> ---
->>>>>> =C2=A0Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8
->>>>>> ++++++++
->>>>>> =C2=A01 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> index a45ca67a9d5f..e1308346e00d 100644
->>>>>> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> @@ -6,6 +6,14 @@ Required properties:
->>>>>> =C2=A0- interrupts: Should contain CCM interrupt
->>>>>> =C2=A0- #clock-cells: Should be <1>
->>>>>>
->>>>>> +Optional properties:
->>>>>> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ
->>>>>> +signal
->>>>>> +=C2=A0=C2=A0on power off.
->>>>>> +=C2=A0=C2=A0Use this property if the SoC should be powered off by=
-
->>>>>> +external power
->>>>>> +=C2=A0=C2=A0management IC (PMIC) triggered via PMIC_STBY_REQ sign=
-al.
->>>>>
->>>>> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
->>>>
->>>> No. First, it was only one customer specific issue. After some
->>>> research I found even publicly available boards (for example
->>>> RioTboard) which has same/similar design. After seeing this in imx6
->>>> documentation as valid power off way, I have no doubts - there shoul=
-d be
->> even more devices doin this in the wild.
->>>
->>> Not sure why the customer didn't follow reference design, since
->>> PMIC_ON_REQ can provide power off/on feature by pressing ONOFF key
->>> which connected ONOFF pin of i.mx6(ONOFF will toggle PMIC_ON_REQ to
->>> power off/on PMIC). The official power off/on way (PMIC_ON_REQ) can
->>> also power off all power rails of PFUZE except snvs as your patch did=
-
->>> on PMIC_STBY_REQ.=C2=A0=C2=A0PMIC_STBY_REQ is used to notify pmic swi=
-tch power
->>> mode (PFM/APS) or decrease voltage to save power in kernel suspend, n=
-ot
->> power off....I am not sure if we need this patchset to 'workaround' th=
-e board
->> issue.
->>>
->> Not all boards follow the reference design, that's a fact of life.
->>
->> Please look at the i.MX6Q reference manual. The sequence implemented i=
-n this
->> patchset can be found as a valid way to power off the system in
->> "60.4.3 Power mode transitions" "Normal ON to OFF with external PMIC",=
- so
->> there is hardly any way to argue that this is a board specific quirk. =
-This is one of
->> the Freescale/NXP recommended sequences to turn off the system.
-
-> Okay, but could you add one more comment for this solution? RTC alarm a=
-nd ONOFF
-> Button wakeup feature can't be support in this case.
-
-Enough to add it in to changelog? or should it go to the binding
-documentation?
-
-
---4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx--
-
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltexlEACgkQdQOiSHVI
-77TWfAgAjRB1PciUy1OHomvrxni8EkaYEB80z17EC958utpp0mPJwNuFY56/8HFJ
-oCrfPZ7bn+/N0K5iCATabDyC4ylmjEGboht6je0eOXtoOqlWU/e+wMRp/yNSlRsw
-1/mQAHKWuVIlBopDYuIrNHxR9fYcmJCcOzGEb3u9vFeEJL9G8jda7IgG9ToeKTlm
-YW9F5TmlabqPZ57WLDK9AXzpW+3W1jm57VCUZesIkIyoNRYboKhPbvpS1UOr2NHi
-rZcwhrIG5CIMWnbxgWAlnNhhG2lF+w1D3wQdqURZns6RmNeDQUQ6OL0bIkLZYy+m
-U7/apbmR1x8qalt+rjgpuFFw9CcxoQ==
-=LKCD
------END PGP SIGNATURE-----
-
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a--
+> ---
+>  fs/btrfs/transaction.c | 2 +-
+>  fs/btrfs/tree-log.c    | 5 ++---
+>  2 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+> index ff5f6c719976..feb0348dbcbf 100644
+> --- a/fs/btrfs/transaction.c
+> +++ b/fs/btrfs/transaction.c
+> @@ -680,7 +680,7 @@ btrfs_attach_transaction_barrier(struct btrfs_root *root)
+>  
+>  	trans = start_transaction(root, 0, TRANS_ATTACH,
+>  				  BTRFS_RESERVE_NO_FLUSH, true);
+> -	if (IS_ERR(trans) && PTR_ERR(trans) == -ENOENT)
+> +	if (trans == ERR_PTR(-ENOENT))
+>  		btrfs_wait_for_commit(root->fs_info, 0);
+>  
+>  	return trans;
+> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> index fcfbe1d8584a..2c13e8155ff1 100644
+> --- a/fs/btrfs/tree-log.c
+> +++ b/fs/btrfs/tree-log.c
+> @@ -2116,7 +2116,7 @@ static noinline int check_item_in_log(struct btrfs_trans_handle *trans,
+>  						     dir_key->offset,
+>  						     name, name_len, 0);
+>  		}
+> -		if (!log_di || (IS_ERR(log_di) && PTR_ERR(log_di) == -ENOENT)) {
+> +		if (!log_di || log_di ==  ERR_PTR(-ENOENT)) {
+>  			btrfs_dir_item_key_to_cpu(eb, di, &location);
+>  			btrfs_release_path(path);
+>  			btrfs_release_path(log_path);
+> @@ -5090,8 +5090,7 @@ static int btrfs_log_inode(struct btrfs_trans_handle *trans,
+>  				 * we don't need to do more work nor fallback to
+>  				 * a transaction commit.
+>  				 */
+> -				if (IS_ERR(other_inode) &&
+> -				    PTR_ERR(other_inode) == -ENOENT) {
+> +				if (other_inode == ERR_PTR(-ENOENT)) {
+>  					goto next_key;
+>  				} else if (IS_ERR(other_inode)) {
+>  					err = PTR_ERR(other_inode);
+> 
