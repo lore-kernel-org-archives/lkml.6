@@ -2,82 +2,149 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B3416256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B76516256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22942083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D3562083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:49:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MYiGwIfx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F22942083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="doORg11K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3562083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731930AbeG3SYh (ORCPT
+        id S1731535AbeG3SZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:24:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33484 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeG3SYf (ORCPT
+        Mon, 30 Jul 2018 14:25:21 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36131 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbeG3SZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:24:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KHQDuWksIWgi08qoi1c4oLpN4rL/KTE0sDZyrBqXjVQ=; b=MYiGwIfx2AUF50TnZ/XVwgoDo
-        yfG7WIoHAG908WJofnaIpAmZt1L761Rfwmwwi4A9gPsTh0lMzqbaz0DW8yp4f0D6gra9ei4EaArEj
-        4LYBLsR/rKzRAgyxNWV1GuGo1p/coFcItWjbpISA950HYyCmQYlBJV8PR0zLzwJ8zwCFPU8I7+jYx
-        h9byj+PfdQNVghz/Dk9ZzgiFJDfmGMdFNIb0sbf8puV9EWA9PmMUuvl0tC/Dse1eXFGxmhIdQ7Loe
-        7jY/9U9JBvhWNykC10UP/VjXZn0SQ5onMNSzL2IjcWvV0ETOKzlbsW0cHotGzSaCVW0Wd0kObymZr
-        eSk9GcHAg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkBLd-0000oM-IW; Mon, 30 Jul 2018 16:48:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 129AE202883BF; Mon, 30 Jul 2018 18:48:40 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 18:48:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jacek Tomaka <jacekt@dug.com>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jacek Tomaka <jacek.tomaka@poczta.fm>
-Subject: Re: [PATCH v2] perf/x86/intel: Add support for MISPREDICT bit on
- Knights Landing cpus
-Message-ID: <20180730164839.GP2494@hirez.programming.kicks-ass.net>
-References: <20180730142813.13451-1-jacekt@dugeo.com>
- <20180730161738.GL2494@hirez.programming.kicks-ass.net>
- <CAKVxXCVjBaW1kFA48r-bKwrnzR9+SaFXtgaBTb-tr6QHeu1srg@mail.gmail.com>
- <CAKVxXCVoRb8Hf18AmUF7RcyNy7JACKByj2FsVOSiO31=ZHFHYQ@mail.gmail.com>
+        Mon, 30 Jul 2018 14:25:21 -0400
+Received: by mail-qk0-f195.google.com with SMTP id a132-v6so8244761qkg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 09:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BKk9Q69RwQjWvdHWuxZRr+tH8jq+w3Ah7bWyX8qbHmc=;
+        b=doORg11Kxwok8IzHEkGZu4FXqMT7fUGQdSZEEB3PdceIXtUPvqos5jit2VXcFGSCSu
+         lRFqRy4xTx8bWCBeV9b4NU0S/rbUR1p/qNLB7pAdNtNgB1Z8eGw3tMiDNJxrSYaY1TPV
+         aJtxqeDsd4lQ2RGBfkBC6VYsk0MOR+4liwDoA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BKk9Q69RwQjWvdHWuxZRr+tH8jq+w3Ah7bWyX8qbHmc=;
+        b=sE7ZZy6ju9FYqw148TN/pNlF76qQ53/im/9Mc0321mgGc/lrbHNuEjuBdRntD0QSzZ
+         1QVv5f07DjLK+5vT7ge1eWN8ARdc5HAEhHr1/lk7pWaD+rY3l1Eh74z7hjtkIJFA6Qrp
+         pmsKqsc0ru09Cqtzwk1upQchAh3CcmcLAEd3h7LaoBi3sypw4RisTGDuuobm2qzlsWs7
+         bdArTaozihC94QnWpWYOG1ZacWG5HWheoEYleMdhP7A6ImYtuldafNvAEF3/UMpx157R
+         W4UCbxM7V1fxIQ28bOWfC5qsFxfTAtr1uHNsjO5cgOYBOWomFo2ISq8tqOEsHG/xUZpq
+         SxUw==
+X-Gm-Message-State: AOUpUlHSsnB4nDyL1YBywxQsZlSifVOFe4IvDnbXxUMfMpGvEyZa7hrO
+        KEiV5boShJlYoQnXCkoh+uwjDg==
+X-Google-Smtp-Source: AAOMgpdLEKsiMCAklUislL/kIBIUUGVDi9ExpkGWqKGdN9o5K1B1DmHJ7jPJBShKXK+V16/gfzmm0Q==
+X-Received: by 2002:a37:4fcd:: with SMTP id d196-v6mr16616369qkb.323.1532969369097;
+        Mon, 30 Jul 2018 09:49:29 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id l22-v6sm9501794qkh.72.2018.07.30.09.49.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 09:49:28 -0700 (PDT)
+Subject: Re: [PATCH v2 6/7] net: phy: Add support to configure clock in
+ Broadcom iProc mdio mux
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-7-git-send-email-arun.parameswaran@broadcom.com>
+ <20180728212224.GF4792@lunn.ch>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <d19bb673-9088-bbee-ce9f-f2a4d8f404bf@broadcom.com>
+Date:   Mon, 30 Jul 2018 09:49:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKVxXCVoRb8Hf18AmUF7RcyNy7JACKByj2FsVOSiO31=ZHFHYQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180728212224.GF4792@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?On Tue, Jul 31, 2018 at 12:34:02AM +0800, Jacek Tomaka wrote:
+On 18-07-28 02:22 PM, Andrew Lunn wrote:
+>> @@ -198,10 +219,22 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
+>>  		return PTR_ERR(md->base);
+>>  	}
+>>  
+>> +	md->core_clk = devm_clk_get(&pdev->dev, NULL);
+>> +	if (IS_ERR(md->core_clk)) {
+>> +		md->core_clk = NULL;
+>> +	} else {
+>> +		rc = clk_prepare_enable(md->core_clk);
+>> +		if (rc) {
+>> +			dev_err(&pdev->dev, "failed to enable core clk\n");
+>> +			return rc;
+>> +		}
+>> +	}
+>> +
+>>  	md->mii_bus = mdiobus_alloc();
+>>  	if (!md->mii_bus) {
+>>  		dev_err(&pdev->dev, "mdiomux bus alloc failed\n");
+>> -		return -ENOMEM;
+>> +		rc = -ENOMEM;
+>> +		goto out;
+> 
+> Hi Arun
+> 
+> There is a devm_mdiobus_alloc() which could make the cleanup on error
+> simple.
+> 
+Should I do this as a separate patch ?
 
-> Ah, right:
-> /*
->  * Due to lack of segmentation in Linux the effective address (offset)
->  * is the same as the linear address, allowing us to merge the LIP and EIP
->  * LBR formats.
->  */
->
-> Yeah, LBR_FORMAT_EIP_FLAGS is ok as well. Would it be preffered?
-
-Yeah, think so, that keeps the lookup table const.
+Thanks
+Arun
+>>  	}
+>>  
+>>  	bus = md->mii_bus;
+>> @@ -217,7 +250,7 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
+>>  	rc = mdiobus_register(bus);
+>>  	if (rc) {
+>>  		dev_err(&pdev->dev, "mdiomux registration failed\n");
+>> -		goto out;
+>> +		goto out_alloc;
+>>  	}
+>>  
+>>  	platform_set_drvdata(pdev, md);
+>> @@ -236,8 +269,11 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
+>>  
+>>  out_register:
+>>  	mdiobus_unregister(bus);
+>> -out:
+>> +out_alloc:
+>>  	mdiobus_free(bus);
+>> +out:
+>> +	if (md->core_clk)
+>> +		clk_disable_unprepare(md->core_clk);
+>>  	return rc;
+>>  }
+> 
+>    Andrew
+> 
