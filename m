@@ -2,109 +2,182 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755B7FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA0813F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D79720893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:08:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D79720893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id AB84020870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:09:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vqkYY8pz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB84020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbeG3PnN (ORCPT
+        id S1727474AbeG3Po6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:43:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34312 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726761AbeG3PnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:43:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93817AD35;
-        Mon, 30 Jul 2018 14:08:00 +0000 (UTC)
-Subject: Re: [PATCH] mm: Remove zone_id() and make use of zone_idx() in
- is_dev_zone()
-To:     osalvador@techadventures.net, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, sfr@canb.auug.org.au, rientjes@google.com,
-        pasha.tatashin@oracle.com, kemi.wang@intel.com,
-        jia.he@hxt-semitech.com, ptesarik@suse.com,
-        aryabinin@virtuozzo.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-        Oscar Salvador <osalvador@suse.de>
-References: <20180730133718.28683-1-osalvador@techadventures.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <48a3c91d-14cd-ec1a-dd9f-952cc5e3d5f7@suse.cz>
-Date:   Mon, 30 Jul 2018 16:07:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 11:44:58 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:35370 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbeG3Po5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:44:57 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6UE8wMS014091
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=aEYywBpLuJb06lebWVOkgljrAav/y+L2dQUSu2nsXR0=;
+ b=vqkYY8pzAWi0lT0QFyglPZIUXOtQ7+BXW4DqgfpVA2Sb9nXD2Y++4jO35FrpO6SMvQLy
+ cM60bGVwL8FcPaIVVGQU+LvCD1N6+yBerx+xN7iSEnQivvK3ZEj0UMj/ihxrU/CoyFCT
+ oEF1K+9o875vv9rm+dGq7hEXtdrE2WdUe8hV0/yki5QWEqt0pxFH/0jf0yvx63bE2gT2
+ AUvkvkyVDRYaKWejw4c8v4fNfItlLjRxxsgLHhob2+zI0lw/LXNoV8k5sLjlr3YAhXXj
+ LzTgTHYxtGBH80/Bcw4qENo1bF8D3ysMucxF1mYcJQoPdoZhkjS20UPTITLavzMKXOCo IQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2kge0cvsn0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:46 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6UE9itq018900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:44 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6UE9iD2000320
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 14:09:44 GMT
+Received: from mail-oi0-f44.google.com (/209.85.218.44)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Jul 2018 07:09:44 -0700
+Received: by mail-oi0-f44.google.com with SMTP id s198-v6so21451705oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 07:09:44 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGZ4PNknANq/ZWS1viVCBNXzy/dgH4kg7yGXXU/GJy9JZrEDAfQ
+        9+3YO5mrXDYnzgCyIir8FlEWm2dEPb1g8OFx1pc=
+X-Google-Smtp-Source: AAOMgpfslVkE7C0au497fy4JJ28GzkhAlo5aWdDfA8yyjo0OvGbkNq+2TSuqCkKfFFrCY06ZGcQ0UKoaNdB3+Ct6buM=
+X-Received: by 2002:aca:db09:: with SMTP id s9-v6mr19391498oig.339.1532959783786;
+ Mon, 30 Jul 2018 07:09:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180730133718.28683-1-osalvador@techadventures.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180730075421.22830-1-douly.fnst@cn.fujitsu.com> <20180730075421.22830-2-douly.fnst@cn.fujitsu.com>
+In-Reply-To: <20180730075421.22830-2-douly.fnst@cn.fujitsu.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Mon, 30 Jul 2018 10:09:07 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebgzrPAOSHXq8XY=e6YoHLeg-qhJZy4JJLntV7xLnrPDw@mail.gmail.com>
+Message-ID: <CAGM2rebgzrPAOSHXq8XY=e6YoHLeg-qhJZy4JJLntV7xLnrPDw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/tsc: Avoid a double call if TSC initializes earlier.
+To:     douly.fnst@cn.fujitsu.com
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8969 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807300157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/30/2018 03:37 PM, osalvador@techadventures.net wrote:
-> From: Oscar Salvador <osalvador@suse.de>
-> 
-> is_dev_zone() is using zone_id() to check if the zone is ZONE_DEVICE.
-> zone_id() looks pretty much the same as zone_idx(), and while the use of
-> zone_idx() is quite spread in the kernel, zone_id() is only being
-> used by is_dev_zone().
-> 
-> This patch removes zone_id() and makes is_dev_zone() use zone_idx()
-> to check the zone, so we do not have two things with the same
-> functionality around.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On Mon, Jul 30, 2018 at 3:55 AM Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+>
+> static_branch_enable(&__use_tsc) may be called twice in common case, that
+> is redundant. And there are also some common functions both in
+> tsc_early_init() and tsc_init().
+>
+> Move them into a separate helper function, only call it once.
+> Also fix comments:
+>  -s/authorative/authoritative
+>  -s/cyc2ns_init/tsc_init
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-Agreed.
+Hi Dou,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Nice cleanup.
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+
+Thank you,
+Pavel
+
+> ---
+>  arch/x86/kernel/tsc.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+> index 02e416b87ac1..ba0a6b6e0726 100644
+> --- a/arch/x86/kernel/tsc.c
+> +++ b/arch/x86/kernel/tsc.c
+> @@ -182,7 +182,7 @@ static void __init cyc2ns_init_boot_cpu(void)
+>  }
+>
+>  /*
+> - * Secondary CPUs do not run through cyc2ns_init(), so set up
+> + * Secondary CPUs do not run through tsc_init(), so set up
+>   * all the scale factors for all CPUs, assuming the same
+>   * speed as the bootup CPU. (cpufreq notifiers will fix this
+>   * up if their speed diverges)
+> @@ -1389,7 +1389,7 @@ static bool __init determine_cpu_tsc_frequencies(bool early)
+>         }
+>
+>         /*
+> -        * Trust non-zero tsc_khz as authorative,
+> +        * Trust non-zero tsc_khz as authoritative,
+>          * and use it to sanity check cpu_khz,
+>          * which will be off if system timer is off.
+>          */
+> @@ -1421,6 +1421,14 @@ static unsigned long __init get_loops_per_jiffy(void)
+>         return lpj;
+>  }
+>
+> +static void __init enable_use_tsc(void)
+> +{
+> +       /* Sanitize TSC ADJUST before cyc2ns gets initialized */
+> +       tsc_store_and_check_tsc_adjust(true);
+> +       cyc2ns_init_boot_cpu();
+> +       static_branch_enable(&__use_tsc);
+> +}
+> +
+>  void __init tsc_early_init(void)
+>  {
+>         if (!boot_cpu_has(X86_FEATURE_TSC))
+> @@ -1429,10 +1437,7 @@ void __init tsc_early_init(void)
+>                 return;
+>         loops_per_jiffy = get_loops_per_jiffy();
+>
+> -       /* Sanitize TSC ADJUST before cyc2ns gets initialized */
+> -       tsc_store_and_check_tsc_adjust(true);
+> -       cyc2ns_init_boot_cpu();
+> -       static_branch_enable(&__use_tsc);
+> +       enable_use_tsc();
+>  }
+>
+>  void __init tsc_init(void)
+> @@ -1456,13 +1461,10 @@ void __init tsc_init(void)
+>                         setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+>                         return;
+>                 }
+> -               /* Sanitize TSC ADJUST before cyc2ns gets initialized */
+> -               tsc_store_and_check_tsc_adjust(true);
+> -               cyc2ns_init_boot_cpu();
+> +               enable_use_tsc();
+>         }
+>
+>         cyc2ns_init_secondary_cpus();
+> -       static_branch_enable(&__use_tsc);
+>
+>         if (!no_sched_irq_time)
+>                 enable_sched_clock_irqtime();
+> --
+> 2.14.3
+>
+>
+>
