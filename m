@@ -2,112 +2,202 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF421FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF1EFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EF820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EF820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 22C3C20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:44:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MNUp+46d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C3C20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbeG3RTd convert rfc822-to-8bit (ORCPT
+        id S1731557AbeG3RUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:19:33 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16316 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbeG3RTd (ORCPT
+        Mon, 30 Jul 2018 13:20:00 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40854 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbeG3RUA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:19:33 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b5f32330001>; Mon, 30 Jul 2018 08:43:47 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 30 Jul 2018 08:43:59 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 30 Jul 2018 08:43:59 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 30 Jul
- 2018 15:43:56 +0000
-Date:   Mon, 30 Jul 2018 18:43:51 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Mon, 30 Jul 2018 13:20:00 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD0C41AC2;
+        Mon, 30 Jul 2018 17:44:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1532965464;
+        bh=XoDmzvRvDitoyRYwPEkPnrJqNqJ+FTjXBnoQvA5Mak0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MNUp+46dEbLJX/16saSUSv2+XJJ7ybfZ/GC8bwCx5x8EjQpQD+AB+UK8p6UeylOql
+         93EGvZA4z3WVO4ABvkfDhV3cQabIAnsnduiNks3b3RtOmNBmzQNW4JtNmB7OTl0eFJ
+         +kciO6gr43HJ3pCZKNT2udt764TaUfiD9zxrgjxM=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     airlied@linux.ie, Daniel Vetter <daniel@ffwll.ch>,
+        Vaishali Thakkar <vthakkar@vaishalithakkar.in>,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 00/10] Tegra SDHCI update the pad autocal procedure
-Message-ID: <20180730184351.5044cb6e@dhcp-10-21-25-168>
-In-Reply-To: <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
-References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
-        <CAPDyKFo+nv+9qYV=J5k-63cDhQO=L==87RLMj_7BnjEjUf5iEQ@mail.gmail.com>
-X-NVConfidentiality: public
+Subject: Re: [PATCH] drm/rcar-du: Convert drm_atomic_helper_suspend/resume()
+Date:   Mon, 30 Jul 2018 18:45:03 +0300
+Message-ID: <1691790.jmkE8kBUkl@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAFqt6zb_8a8G1DRRVpYDEjvzhgOzOK-O4K+oFzhVE-ELyX8Djw@mail.gmail.com>
+References: <20180728154007.GA28426@jordon-HP-15-Notebook-PC> <2566982.Bc5DNITNHH@avalon> <CAFqt6zb_8a8G1DRRVpYDEjvzhgOzOK-O4K+oFzhVE-ELyX8Djw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 17:07:59 +0200
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
+Hi Souptick,
 
-> On 26 July 2018 at 14:26, Aapo Vienamo <avienamo@nvidia.com> wrote:
-> > Hi all,
-> >
-> > Update the tegra_sdhci_pad_autocalib() pad drive strength calibration
-> > procedure to match the ones specified in the TRMs of the more recent
-> > SoCs. This was tested on Tegra186, Tegra210, and Tegra124, although it
-> > should not break things older generations either.
-> >
-> > This series depends on the "Tegra SDHCI enable 1.8 V signaling on
-> > Tegar210 and Tegra186" series posted earlier.  
+On Monday, 30 July 2018 18:13:13 EEST Souptick Joarder wrote:
+> On Mon, Jul 30, 2018 at 7:54 PM, Laurent Pinchart wrote:
+> > On Monday, 30 July 2018 16:58:09 EEST Souptick Joarder wrote:
+> >> On Sun, Jul 29, 2018 at 1:50 AM, Laurent Pinchart wrote:
+> >>> On Saturday, 28 July 2018 21:50:58 EEST Souptick Joarder wrote:
+> >>>> On Sat, Jul 28, 2018 at 11:20 PM, Vaishali Thakkar wrote:
+> >>>>> On Sat, Jul 28, 2018 at 9:10 PM, Souptick Joarder wrote:
+> >>>>>> convert drm_atomic_helper_suspend/resume() to use
+> >>>>>> drm_mode_config_helper_suspend/resume().
+> >>>>> 
+> >>>>> Hi Souptick,
+> >>>>> 
+> >>>>> Thanks for your patch.
+> >>>>> 
+> >>>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >>>>>> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> >>>>>> ---
+> >>>>>> 
+> >>>>>>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
+> >>>>>>  1 file changed, 2 insertions(+), 19 deletions(-)
+> >>>>>> 
+> >>>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >>>>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 02aee6c..288220f
+> >>>>>> 100644
+> >>>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >>>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >>>>>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct
+> >>>>>> drm_device *dev)
+> >>>>>> 
+> >>>>>>  static int rcar_du_pm_suspend(struct device *dev)
+> >>>>>>  {
+> >>>>>>  
+> >>>>>>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> >>>>>> 
+> >>>>>> -       struct drm_atomic_state *state;
+> >>>>>> 
+> >>>>>> -       drm_kms_helper_poll_disable(rcdu->ddev);
+> >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+> >>>>>> -
+> >>>>>> -       state = drm_atomic_helper_suspend(rcdu->ddev);
+> >>>>>> -       if (IS_ERR(state)) {
+> >>>>>> -               drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev,
+> >>>>>> false);
+> >>>>> 
+> >>>>> I don't think we can use drm_mode_config_helper_(suspend/resume)
+> >>>>> API here as this file uses CMA functions.
+> >>>> 
+> >>>> drm_fbdev_cma_set_suspend_unlocked() is wrapper function which
+> >>>> invokes drm_fb_helper_set_suspend_unlocked().
+> >>>> 
+> >>>> Where the new API drm_mode_config_helper_suspend/resume() directly
+> >>>> invokes drm_fb_helper_set_suspend_unlocked(). So it is safe to replace
+> >>>> exiting code with API drm_mode_config_helper_suspend/resume().
+> >>> 
+> >>> I agree that they're functionally equivalent for now, but what if
+> >>> drm_fbdev_cma_set_suspend_unlocked() gets extended later ? This change
+> >>> risks introducing a breakage that could could unnoticed at that point.
+> >> 
+> >> No, any extention of drm_fbdev_cma_set_suspend_unlocked() will not have
+> >> any impact on driver because with this patch we will be retaining the
+> >> original suspend/resume logic of the rcar-du driver and further this
+> >> driver is not going to use drm_fbdev_cma_set_suspend_unlocked().
+> > 
+> > My point is that if the fb cma helpers gets later extended with a feature
+> > that need special handling and suspend/resume time, with the
+> > drm_fbdev_cma_set_suspend_unlocked() function properly updated to take
+> > that feature into account, driver using those helpers but converted to
+> > drm_atomic_helper_suspend/resume() will break.
+> > 
+> >>> At the very
+> >>> least you should add a comment in drm_fbdev_cma_set_suspend_unlocked()
+> >>> to explain that any extension of the function should also address all
+> >>> drivers using drm_mode_config_helper_suspend() and
+> >>> drm_mode_config_helper_resume().
+> >> 
+> >> The consumers of drm_fbdev_cma_set_suspend_unlocked() are -
+> >> drivers/gpu/drm/arm/hdlcd_drv.c
+> >> drivers/gpu/drm/drm_fb_cma_helper.c
+> >> 
+> >> and both will be converted to use API
+> >> drm_mode_config_helper_suspend/resume(). As there will be no more
+> >> consumer of drm_fbdev_cma_set_suspend_unlocked() , we can remove this
+> >> wrapper API forever :)
+> > 
+> > OK, if you remove the function completely then anyone wanting to extend
+> > the fbdev cma helpers in the way described above will notice that
+> > something will need to be done, so it's fine. Please thus make sure that
+> > you go all the way to removing that function.
 > 
-> According to the cover letter of the above series, it states that it
-> depends on $subject series. A circular dependency. :-)
+> Sure, once both the drivers are converted to use
+> drm_mode_config_helper_suspend/resume()
+> and goes into linus's tree, then we can remove it.
 
-The dependency chain goes like this: "Tegra SDHCI update the pad
-autocal procedure" -> "Tegra SDHCI enable 1.8 V signaling on Tegar210
-and Tegra186" -> "Tegra PMC pinctrl pad configuration".
+Could we get the two driver changes and the function removal merged all 
+together ?
 
-> In fact, there should be no dependency at all or else there seems to
-> be a DT compatibility problem here...
+> But will wait for some more feedback before concluding on this.
+> 
+> Dave/ Daniel, Would you like to add any feedback ?
+> 
+> >>>>> And from git grep it seems that there are very few drivers using it
+> >>>>> at the moment, so not sure if introducing new API functions similar to
+> >>>>> drm_mode_config will make sense or not.
+> >>>> 
+> >>>> https://www.kernel.org/doc/html/latest/gpu/todo.html
+> >>>> 
+> >>>> It was picked up from TODO list after discussing with Daniel.
+> >>>> 
+> >>>>>> -               drm_kms_helper_poll_enable(rcdu->ddev);
+> >>>>>> -               return PTR_ERR(state);
+> >>>>>> -       }
+> >>>>>> -
+> >>>>>> -       rcdu->suspend_state = state;
+> >>> 
+> >>> Additionally, I think you can remove the suspend_state field from the
+> >>> rcdu structure.
+> >> 
+> >> Sure, I will remove it in v2.
+> >> 
+> >>>>>> -       return 0;
+> >>>>>> +       return drm_mode_config_helper_suspend(rcdu->ddev);
+> >>>>>>  }
+> >>>>>>  
+> >>>>>>  static int rcar_du_pm_resume(struct device *dev)
+> >>>>>>  {
+> >>>>>>         struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> >>>>>> 
+> >>>>>> -       drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
+> >>>>>> -       drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+> >>>>>> -       drm_kms_helper_poll_enable(rcdu->ddev);
+> >>>>>> -
+> >>>>>> -       return 0;
+> >>>>>> +       return drm_mode_config_helper_resume(rcdu->ddev);
+> >>>>>>  }
+> >>>>>>  #endif
 
-From a functionality perspective there's no strict dependency, however,
-I don't think "[PATCH v2 09/10] mmc: tegra: Perform pad calibration
-after voltage switch" can be applied cleanly without
-"[PATCH v2 03/10] mmc: tegra: Reconfigure pad voltages during voltage
-switching" from the "Tegra SDHCI enable 1.8 V signaling on Tegar210 and
-Tegra186" series.
+-- 
+Regards,
 
-> Anyway, I think it actually makes sense to fold in all changes into
-> one series. Make sure the dt-doc changes comes first, then the driver
-> changes and finally arm64/dts changes. This should make it easy to
-> follow the review and I can pick the mmc parts and the soc maintainer
-> can pick the arm64/dts changes.
+Laurent Pinchart
 
-I've sent the changes in multiple part because I've been working on
-further changes to the driver while the previous parts have been
-getting reviewed. This is still the case and there's still going to be
-at least one more series which adds support for HS200 tuning and some
-smaller changes after it. However, the HS200 work is probably going to
-be ready for review in a day or two. I can send these as a one series
-from now on, although at this point it would be 27 patches in total
-and even more with the HS200 patches.
 
-I can do that if you prefer to do it that way. Makes my life somewhat
-easier too.
 
- -Aapo
