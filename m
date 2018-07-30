@@ -2,122 +2,112 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D43FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDC2FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00DF20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00DF20893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CEEFC20892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEEFC20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbeG3H7y (ORCPT
+        id S1726481AbeG3IF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:59:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbeG3H7x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:59:53 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6U6JXb3103827
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:26:27 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2khv5ejk24-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:26:27 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 30 Jul 2018 07:26:24 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Jul 2018 07:26:20 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6U6QJd936372526
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Jul 2018 06:26:19 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54A4611C058;
-        Mon, 30 Jul 2018 09:26:31 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1EDDF11C066;
-        Mon, 30 Jul 2018 09:26:29 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.125])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 30 Jul 2018 09:26:28 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 30 Jul 2018 09:26:16 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, stable@vger.kernel.org
-Subject: [PATCH RESEND] userfaultfd: remove uffd flags from vma->vm_flags if UFFD_EVENT_FORK fails
-Date:   Mon, 30 Jul 2018 09:26:15 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18073006-0028-0000-0000-000002E23C77
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073006-0029-0000-0000-0000239A3BD6
-Message-Id: <1532931975-25473-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807300073
+        Mon, 30 Jul 2018 04:05:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54604 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726397AbeG3IF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 04:05:56 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EFBA437D6B767;
+        Mon, 30 Jul 2018 14:32:24 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 30 Jul
+ 2018 14:32:19 +0800
+Subject: Re: linux-next: build failure after merge of the staging tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Miao Xie <miaoxie@huawei.com>, Chao Yu <yuchao0@huawei.com>
+References: <20180730161622.3837cb15@canb.auug.org.au>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+Date:   Mon, 30 Jul 2018 14:31:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180730161622.3837cb15@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fix in commit 0cbb4b4f4c44 ("userfaultfd: clear the
-vma->vm_userfaultfd_ctx if UFFD_EVENT_FORK fails") cleared the
-vma->vm_userfaultfd_ctx but kept userfaultfd flags in vma->vm_flags that
-were copied from the parent process VMA.
+Hi Stephen,
 
-As the result, there is an inconsistency between the values of
-vma->vm_userfaultfd_ctx.ctx and vma->vm_flags which triggers BUG_ON in
-userfaultfd_release().
+On 2018/7/30 14:16, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/staging/erofs/super.c: In function 'erofs_read_super':
+> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>                  ^~~~~~~~~
+>                  IS_RDONLY
+> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
+>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>                              ^~~~~~~~~~
+>                              S_NOATIME
+> drivers/staging/erofs/super.c: In function 'erofs_mount':
+> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+>    &priv, erofs_fill_super);
+>           ^~~~~~~~~~~~~~~~
+> In file included from include/linux/buffer_head.h:12:0,
+>                  from drivers/staging/erofs/super.c:14:
+> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>                        ^~~~~~~~~~
+> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+>   return mount_bdev(fs_type, flags, dev_name,
+>          ^~~~~~~~~~
+> In file included from include/linux/buffer_head.h:12:0,
+>                  from drivers/staging/erofs/super.c:14:
+> include/linux/fs.h:2151:23: note: declared here
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>                        ^~~~~~~~~~
+> drivers/staging/erofs/super.c: At top level:
+> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .mount          = erofs_mount,
+>                     ^~~~~~~~~~~
+> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
+> drivers/staging/erofs/super.c: In function 'erofs_remount':
+> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>   *flags |= MS_RDONLY;
+>             ^~~~~~~~~
+>             IS_RDONLY
+> drivers/staging/erofs/super.c: At top level:
+> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .remount_fs = erofs_remount,
+>                 ^~~~~~~~~~~~~
+> 
+> Caused by various commits creating erofs in the staging tree interacting
+> with various commits redoing the mount infrastructure in the vfs tree.
+> 
+> I have disabed CONFIG_EROFS_FS for now:
 
-Clearing the uffd flags from vma->vm_flags in case of UFFD_EVENT_FORK
-failure resolves the issue.
+I will fix them as soon as possible, and test it with the latest linux-next code.
+It seems caused by some vfs changes.
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
-Cc: stable@vger.kernel.org
----
- fs/userfaultfd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 594d192b2331..bad9cea37f12 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -633,8 +633,10 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
- 		/* the various vma->vm_userfaultfd_ctx still points to it */
- 		down_write(&mm->mmap_sem);
- 		for (vma = mm->mmap; vma; vma = vma->vm_next)
--			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx)
-+			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx) {
- 				vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
-+				vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
-+			}
- 		up_write(&mm->mmap_sem);
- 
- 		userfaultfd_ctx_put(release_new_ctx);
--- 
-2.7.4
-
+Thanks,
+Gao Xiang
