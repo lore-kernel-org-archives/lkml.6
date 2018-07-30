@@ -2,220 +2,114 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101A313F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD4813F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98FD20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98FD20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E3FD20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:33:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SQ6KB6o1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oqLnPaqN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3FD20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeG3PHS (ORCPT
+        id S1731953AbeG3PIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:07:18 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:30455 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729283AbeG3PHS (ORCPT
+        Mon, 30 Jul 2018 11:08:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42262 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbeG3PIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:07:18 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 30 Jul 2018 22:32:16 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 102A87CC48;
-        Mon, 30 Jul 2018 22:32:16 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,422,1526310000"; 
-   d="scan'208";a="288321383"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 30 Jul 2018 22:32:13 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3 2/2] clk: Add functions to get optional clocks
-Date:   Mon, 30 Jul 2018 14:31:49 +0100
-Message-Id: <1532957509-14541-3-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
-References: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
+        Mon, 30 Jul 2018 11:08:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5450261D8F; Mon, 30 Jul 2018 13:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532957603;
+        bh=uFXRZDBFj+1KQiT8DzU7AxgLtNURM7oNuXS69CTRXiQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SQ6KB6o1I4aFKOsTd7y84wWqDpMFhBa3qoNeBWpVJYuxQ7NW2TDF/pY8NxzzbHJqd
+         HKqfOFrTd641CJdcVahnGZRnyW9Kaskh9aXxWcNxmC9zIsQyEWFeM4gMaHeXi+O+JV
+         8mA0PeEuGTS7SYQBbGnBpDL3TShsY5q3zPYpKqsY=
+Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3722560117;
+        Mon, 30 Jul 2018 13:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532957602;
+        bh=uFXRZDBFj+1KQiT8DzU7AxgLtNURM7oNuXS69CTRXiQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oqLnPaqNJfCC4vdB6jRefOdmDmxZurik3kRJ1LeDU5lMN4vNWGh7Ei2kqqIqzIonb
+         hMpvMvpDcurXDtY70Vvrb8qjWK6980OVg95NPc7CqilbY3kAEGEcAnhi0PhpJm1xJK
+         Ich8svwuQ/GQKHW94jc7osWJaQL4q688rrm8aVMg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3722560117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH v2] cpu/hotplug: Fix cpuhp_step name for timers
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Brendan Jackman <brendan.jackman@arm.com>,
+        Mathieu Malaterre <malat@debian.org>, gkohli@codeaurora.org,
+        neeraju@codeaurora.org
+References: <1532443668-26810-1-git-send-email-mojha@codeaurora.org>
+ <1cf38a28-e95e-a8e4-9e1f-a83a6973436a@codeaurora.org>
+ <alpine.DEB.2.21.1807301411010.2518@nanos.tec.linutronix.de>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <08c9986e-f774-332e-9838-462921f5486f@codeaurora.org>
+Date:   Mon, 30 Jul 2018 19:03:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1807301411010.2518@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Behaves the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v3:
- - No changes.
----
- drivers/clk/clk-devres.c | 18 ++++++++++++++++--
- drivers/clk/clkdev.c     | 17 +++++++++++++++--
- include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..a2bb01a 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
- 	clk_put(*(struct clk **)res);
- }
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
-+static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
- {
- 	struct clk **ptr, *clk;
- 
-@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk = clk_get(dev, id);
-+	if (!optional)
-+		clk = clk_get(dev, id);
-+	else
-+		clk = clk_get_optional(dev, id);
- 	if (!IS_ERR(clk)) {
- 		*ptr = clk;
- 		devres_add(dev, ptr);
-@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 
- 	return clk;
- }
-+
-+struct clk *devm_clk_get(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, false);
-+}
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, true);
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index a710333..2245ba6 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -219,21 +219,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
--struct clk *clk_get(struct device *dev, const char *con_id)
-+static struct clk *internal_clk_get(struct device *dev, const char *con_id,
-+				    bool optional)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
-+					   optional);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
- 
- 	return clk_get_sys(dev_id, con_id);
- }
-+
-+struct clk *clk_get(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, false);
-+}
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, true);
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index de0e5e0..58ec7bc 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-  * @num_clks: the number of clk_bulk_data
-@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
- /**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-  * @dev: device for clock "consumer"
-@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
--- 
-2.7.4
+On 7/30/2018 5:49 PM, Thomas Gleixner wrote:
+> Mukesh,
+>
+> On Thu, 26 Jul 2018, Mukesh Ojha wrote:
+>
+>> Hi All,
+>>
+>> Can i get input on this ?
+> Sure.
+>
+>> Thanks,
+>> Mukesh
+>> On 7/24/2018 8:17 PM, Mukesh Ojha wrote:
+> The input you get is that it's unprofessional to poke people after TWO days
+> about a patch which is purely cosmetic.
+>
+> It's perfectly fine to send a reminder after a week for important changes
+> and after two for trivial cleanups like this. You really cannot expect that
+> maintainers and other developers permanentely sit there twiddling thumbs
+> and wait for new mail to arrive in order to reply immediately.
+
+Thanks for your patience and time in replying.
+Will keep the patience :-)
+
+Regards,
+Mukesh
+
+>
+> Thanks,
+>
+> 	tglx
+>
 
