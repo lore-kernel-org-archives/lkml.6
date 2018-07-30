@@ -2,261 +2,136 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24E4C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A281C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860D520892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:35:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NTRLfOmP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IH4k0fMC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860D520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BC02720892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC02720892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732124AbeG3VMA (ORCPT
+        id S1732067AbeG3VMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 17:12:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44370 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732108AbeG3VMA (ORCPT
+        Mon, 30 Jul 2018 17:12:45 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50314 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731852AbeG3VMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 17:12:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1D19A60AD8; Mon, 30 Jul 2018 19:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532979330;
-        bh=mJs5q2Fj4RHo3x6kswTiv0uLxtZOBmhO6bZW2VGyhhQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NTRLfOmPxSko1tkhkPuP5QTdNFBjbT9n+jUOOaH7O68w+pGB8scbErZssW4EWfFhx
-         Dl5XiC7gNg9K55iQxt5UyeNbcRYLF0Qu8Dj4ifpluxzHNqKvoEiRSE3HbAoPW1SqtS
-         /TLejg3xTFGftNyCBv1oPT+vGyh8A+dGpy5nVY18=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id CB85D60264;
-        Mon, 30 Jul 2018 19:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532979327;
-        bh=mJs5q2Fj4RHo3x6kswTiv0uLxtZOBmhO6bZW2VGyhhQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IH4k0fMC0Dmm3KvSaI+0CehpwvTpTXQ+/1vPByEQIf8wtt1ghEZnxYXK7XXb83/0e
-         8HanArZeHDGVEFTREUprlvZmzOJ4n90L98fQqa5ojtujAB6Du7PvHqujNxQ1JZ39Z+
-         2QHs6vZv/inydS8V6fWd5tYJCWE7SgehRzl3Vxuo=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 30 Jul 2018 12:35:27 -0700
-From:   skannan@codeaurora.org
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-In-Reply-To: <20180724122521.22109-11-quentin.perret@arm.com>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com>
-Message-ID: <331552975e858911db66bc78c2c8e720@codeaurora.org>
-X-Sender: skannan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Mon, 30 Jul 2018 17:12:44 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fkDxg-0005BY-NM; Mon, 30 Jul 2018 15:36:08 -0400
+Message-ID: <1532979368.28585.33.camel@surriel.com>
+Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
+ refcounting
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date:   Mon, 30 Jul 2018 15:36:08 -0400
+In-Reply-To: <CALCETrXZPN6Lt55siHM__YW4jFfoy5w+Hd2aJtEi8qhsro6RMA@mail.gmail.com>
+References: <20180728215357.3249-1-riel@surriel.com>
+         <20180728215357.3249-11-riel@surriel.com>
+         <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
+         <20180729155452.37eddc11@imladris.surriel.com>
+         <20180730095502.GG2494@hirez.programming.kicks-ass.net>
+         <1532961011.28585.30.camel@surriel.com>
+         <20180730162653.GM2494@hirez.programming.kicks-ass.net>
+         <1532978146.28585.32.camel@surriel.com>
+         <CALCETrXZPN6Lt55siHM__YW4jFfoy5w+Hd2aJtEi8qhsro6RMA@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-TQJ0OGlnMeltqnHFvU/U"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-24 05:25, Quentin Perret wrote:
-> Schedutil aggregates the PELT signals of CFS, RT, DL and IRQ in order
-> to decide which frequency to request. Energy Aware Scheduling (EAS)
-> needs to be able to predict those requests to assess the energy impact
-> of scheduling decisions. However, the PELT signals aggregation is only
-> done in schedutil for now, hence making it hard to synchronize it with
-> EAS.
-> 
-> To address this issue, introduce schedutil_freq_util() to perform the
-> aforementioned aggregation and make it available to other parts of the
-> scheduler. Since frequency selection and energy estimation still need
-> to deal with RT and DL signals slightly differently, 
-> schedutil_freq_util()
-> is called with a different 'type' parameter in those two contexts, and
-> returns an aggregated utilization signal accordingly.
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> ---
->  kernel/sched/cpufreq_schedutil.c | 86 +++++++++++++++++++++-----------
->  kernel/sched/sched.h             | 14 ++++++
->  2 files changed, 72 insertions(+), 28 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c 
-> b/kernel/sched/cpufreq_schedutil.c
-> index 810193c8e4cd..af86050edcf5 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -198,15 +198,15 @@ static unsigned int get_next_freq(struct
-> sugov_policy *sg_policy,
->   * based on the task model parameters and gives the minimal 
-> utilization
->   * required to meet deadlines.
->   */
-> -static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
-> +unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> +				  enum schedutil_type type)
->  {
-> -	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> +	struct rq *rq = cpu_rq(cpu);
->  	unsigned long util, irq, max;
-> 
-> -	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-> -	sg_cpu->bw_dl = cpu_bw_dl(rq);
-> +	max = arch_scale_cpu_capacity(NULL, cpu);
-> 
-> -	if (rt_rq_is_runnable(&rq->rt))
-> +	if (type == frequency_util && rt_rq_is_runnable(&rq->rt))
->  		return max;
-> 
->  	/*
-> @@ -224,20 +224,33 @@ static unsigned long sugov_get_util(struct
-> sugov_cpu *sg_cpu)
->  	 * utilization (PELT windows are synchronized) we can directly add 
-> them
->  	 * to obtain the CPU's actual utilization.
->  	 */
-> -	util = cpu_util_cfs(rq);
-> +	util = util_cfs;
->  	util += cpu_util_rt(rq);
-> 
-> -	/*
-> -	 * We do not make cpu_util_dl() a permanent part of this sum because 
-> we
-> -	 * want to use cpu_bw_dl() later on, but we need to check if the
-> -	 * CFS+RT+DL sum is saturated (ie. no idle time) such that we select
-> -	 * f_max when there is no idle time.
-> -	 *
-> -	 * NOTE: numerical errors or stop class might cause us to not quite 
-> hit
-> -	 * saturation when we should -- something for later.
-> -	 */
-> -	if ((util + cpu_util_dl(rq)) >= max)
-> -		return max;
-> +	if (type == frequency_util) {
-> +		/*
-> +		 * For frequency selection we do not make cpu_util_dl() a
-> +		 * permanent part of this sum because we want to use
-> +		 * cpu_bw_dl() later on, but we need to check if the
-> +		 * CFS+RT+DL sum is saturated (ie. no idle time) such
-> +		 * that we select f_max when there is no idle time.
-> +		 *
-> +		 * NOTE: numerical errors or stop class might cause us
-> +		 * to not quite hit saturation when we should --
-> +		 * something for later.
-> +		 */
-> +
-> +		if ((util + cpu_util_dl(rq)) >= max)
-> +			return max;
-> +	} else {
-> +		/*
-> +		 * OTOH, for energy computation we need the estimated
-> +		 * running time, so include util_dl and ignore dl_bw.
-> +		 */
-> +		util += cpu_util_dl(rq);
-> +		if (util >= max)
-> +			return max;
-> +	}
 
-If it's going to be a different aggregation from what's done for 
-frequency guidance, I don't see the point of having this inside 
-schedutil. Why not keep it inside the scheduler files? Also, it seems 
-weird to use a governor's code when it might not actually be in use. 
-What if someone is using ondemand, conservative, performance, etc?
+--=-TQJ0OGlnMeltqnHFvU/U
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
->  	/*
->  	 * There is still idle time; further improve the number by using the
-> @@ -252,17 +265,34 @@ static unsigned long sugov_get_util(struct
-> sugov_cpu *sg_cpu)
->  	util /= max;
->  	util += irq;
-> 
-> -	/*
-> -	 * Bandwidth required by DEADLINE must always be granted while, for
-> -	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a 
-> mechanism
-> -	 * to gracefully reduce the frequency when no tasks show up for 
-> longer
-> -	 * periods of time.
-> -	 *
-> -	 * Ideally we would like to set bw_dl as min/guaranteed freq and util 
-> +
-> -	 * bw_dl as requested freq. However, cpufreq is not yet ready for 
-> such
-> -	 * an interface. So, we only do the latter for now.
-> -	 */
-> -	return min(max, util + sg_cpu->bw_dl);
-> +	if (type == frequency_util) {
-> +		/*
-> +		 * Bandwidth required by DEADLINE must always be granted
-> +		 * while, for FAIR and RT, we use blocked utilization of
-> +		 * IDLE CPUs as a mechanism to gracefully reduce the
-> +		 * frequency when no tasks show up for longer periods of
-> +		 * time.
-> +		 *
-> +		 * Ideally we would like to set bw_dl as min/guaranteed
-> +		 * freq and util + bw_dl as requested freq. However,
-> +		 * cpufreq is not yet ready for such an interface. So,
-> +		 * we only do the latter for now.
-> +		 */
-> +		util += cpu_bw_dl(rq);
-> +	}
+On Mon, 2018-07-30 at 12:30 -0700, Andy Lutomirski wrote:
+> On Mon, Jul 30, 2018 at 12:15 PM, Rik van Riel <riel@surriel.com>
+> wrote:
+> > On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
+> > > On Mon, Jul 30, 2018 at 10:30:11AM -0400, Rik van Riel wrote:
+> > >=20
+> > > > > What happened to the rework I did there? That not only
+> > > > > avoided
+> > > > > fiddling
+> > > > > with active_mm, but also avoids grab/drop cycles for the
+> > > > > other
+> > > > > architectures when doing task->kthread->kthread->task things.
+> > > >=20
+> > > > I don't think I saw that. I only saw your email from
+> > > > July 20th with this fragment of code, which does not
+> > > > appear to avoid the grab/drop cycles, and still fiddles
+> > > > with active_mm:
+> > >=20
+> > > Yeah, that's it. Note how it doesn't do a grab+drop for kernel-
+> > > > kernel,
+> > >=20
+> > > where the current could would have.
+> > >=20
+> > > And also note that it only fiddles with active_mm if it does the
+> > > grab+drop thing (the below should have s/ifdef/ifndef/ to make
+> > > more
+> > > sense maybe).
+> >=20
+> > I'll kick off a test with your variant. I don't think we
+> > will see any performance difference on x86 (due to not
+> > using a refcount at all any more), but unless Ingo is in
+> > a hurry I guess there's no issue rewriting this part of
+> > the patch series :)
+> >=20
+> > Do the other patches look ok to you and Andy?
+> >=20
+>=20
+> The whole series other than the active_mm stuff looked okay to me.
 
-Instead of all this indentation, can't you just return early without 
-doing the code inside the if?
+Does the active_mm stuff look like a step in the right
+direction with the bugfix, or would you prefer the code
+to go in an entirely different direction?
 
-> +
-> +	return min(max, util);
-> +}
-> +
-> +static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
-> +{
-> +	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> +	unsigned long util = cpu_util_cfs(rq);
-> +
-> +	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-> +	sg_cpu->bw_dl = cpu_bw_dl(rq);
-> +
-> +	return schedutil_freq_util(sg_cpu->cpu, util, frequency_util);
->  }
-> 
->  /**
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 6d08ccd1e7a4..51e7f113ee23 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2185,7 +2185,15 @@ static inline void cpufreq_update_util(struct
-> rq *rq, unsigned int flags) {}
->  # define arch_scale_freq_invariant()	false
->  #endif
-> 
-> +enum schedutil_type {
-> +	frequency_util,
-> +	energy_util,
-> +};
+If this looks like a step in the right direction, it
+may make sense to make this step before the merge window
+opens, and continue with more patches in this direction
+later.
 
-Please don't use lower case for enums. It's extremely confusing.
+--=20
+All Rights Reversed.
+--=-TQJ0OGlnMeltqnHFvU/U
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Thanks,
-Saravana
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltfaKgACgkQznnekoTE
+3oPtRggAuIs0YWwDPWVIsj60RvX4pIOazfD/ytxipbJlBH3ksLL1fRqX/+aUdFMB
+pcFapRCwjY0W5TLBFIUeFBKumoTfvCiz0bwV0Gm8UiBqNptU/8ZzLSUMMRdCwCgK
+Ybtf2nshq3leVtKfqnBPsTDZVZoN+aqbxWXJSLfEsJOqQwE9M/q50CAf9P4penG1
+z4P2balb9uP96zazYwJgcYqVzDR4lFs1TYmn9VUYZLjOODwW0XB8hOD6PITfV9da
+DT11vX7VOUiX94f6VbbS5OvT61rr1UORGzi/NJPBdQaQjP/XhETe/2TbUUL66H4D
+hckch9sbrw5Oo6O3FoA7V/Jb5TK5RA==
+=k4tB
+-----END PGP SIGNATURE-----
+
+--=-TQJ0OGlnMeltqnHFvU/U--
+
