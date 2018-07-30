@@ -2,103 +2,144 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FE2160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58148160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC52E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0192720893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:52:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="nev79Gk0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC52E20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="alhZxdVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0192720893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeG3R0R (ORCPT
+        id S1727447AbeG3R1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:26:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52806 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeG3R0R (ORCPT
+        Mon, 30 Jul 2018 13:27:36 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54445 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbeG3R1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:26:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=39UWZlaENiMVCVW7qWAmuCrsiRZX+MVMWcEajdLTXYU=; b=nev79Gk0A26wS8p5QhnaZhlj4
-        4zpVxVnhZPF5bKNdTWEgG9UPBEoddRW+uf/rVtLaF8q/vXMTkqHeIFHcItYmuitV8OKr1R5VTKBFJ
-        fRRBiMtZKxW1MmwtvBf8MRDwe6LJt8qIQbklOgxGO2h75JhRH/iTp7gw48cE54idUCT34=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkARL-0005Xo-5B; Mon, 30 Jul 2018 15:50:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A542B1124216; Mon, 30 Jul 2018 16:50:30 +0100 (BST)
-Date:   Mon, 30 Jul 2018 16:50:30 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Alexander.Deucher@amd.com,
-        djkurtz@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer
- function
-Message-ID: <20180730155030.GP5789@sirena.org.uk>
-References: <1532686422-1790-1-git-send-email-akshu.agrawal@amd.com>
- <66c8b8c4-bdd0-0129-5e5b-850890cfdb8d@linux.intel.com>
- <e0990b62-897c-6dc7-8ac9-296932c505b7@amd.com>
- <dd4d3dc6-88f3-d53f-cd5c-5035c80be3da@linux.intel.com>
- <s5hy3dsviwq.wl-tiwai@suse.de>
+        Mon, 30 Jul 2018 13:27:36 -0400
+Received: by mail-wm0-f68.google.com with SMTP id c14-v6so218258wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zMcV2pEUxU82PnPrKt6uCMXutcYUkQcb2DXcPuXXXgM=;
+        b=alhZxdVKX3+lP73DfSAAeDkPirWBh4hOv0+tfHF+L/HMdILpBcVQRGOJJcd0O2Uq0Q
+         d2kXskkjXeGiFN7UPhtkW4u+2WfpLzd5IlCFoaIOr83YZyHK0jj7W4RHi7HyvQ8jA5Dy
+         ShjPnLyA8dKwEATJ/uBAjDgAjG0R1ewD4t9G/EseDAeeB8qq7V3AyNSxxnTwBwgZYIKI
+         k5AAouv0LqyR9a3Tksj0ahhTaDg5sQmUs98E4ZzQaPolmBp7NMfzWsymD/r5qaIh2idU
+         GIRqtgQxSTUSzrkxox+9EsN0UjeyIXDUlYoZj1nbnaAjlhlUlGw8RXOQQHa3xJTO9tiT
+         JUAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zMcV2pEUxU82PnPrKt6uCMXutcYUkQcb2DXcPuXXXgM=;
+        b=NdpSTVuQGFKrxW0BnS39UoEBqhIodsgrt4hsQOmiid96aZ6+SIK7EnBSy1Tswyw5uz
+         XUYFOGbsIMlnARl7sg137FQ6wdWoWOkEumqvSRXfF80thcyh6BwVfFm/V8atS5dhjlZn
+         PquF0wq+MjnQjuKkhuEG5IxfqMl+RDUZZNMMQ7wtvfZtgYWR+LuleNR0n/CB4aSJOnNz
+         e91KX5N5kVpKIAzdP6IniJmxWhrxvIO6mA17CnFEn91NLpWfaTuwl1X+XmmGdF3rXVG5
+         Xg22ixwk6529K+phgM1vpyjNkfo6DrLxSQPh+ZYiNPYU4fIZPFNvYtC2N8TB45QqTwIh
+         Vjaw==
+X-Gm-Message-State: AOUpUlFV5D0UpePonwB/6F+nHSvvbr8McY8cWU7Ue+yurDs1GDtPrR6i
+        jhMMcwm1Ezn8AqwNGZ02vjkVYw2p8XzJDR5AKcUTMQ==
+X-Google-Smtp-Source: AAOMgpeWU2FOhQKVIgedCY9MI/e8SJkB0PO4vbFueMZ65yzdy0K0nUG35tmx95Rm6KN42KVGMzE1q1LreT6kUrjvHtI=
+X-Received: by 2002:a1c:ee5d:: with SMTP id m90-v6mr15743175wmh.107.1532965918964;
+ Mon, 30 Jul 2018 08:51:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NDuspjMMC1Ui5ypn"
-Content-Disposition: inline
-In-Reply-To: <s5hy3dsviwq.wl-tiwai@suse.de>
-X-Cookie: But they went to MARS around 1953!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:adf:9dd2:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 08:51:58
+ -0700 (PDT)
+In-Reply-To: <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com>
+References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-8-hch@lst.de>
+ <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 30 Jul 2018 21:21:58 +0530
+Message-ID: <CAAhSdy1rGMqhLDKMipGgP+4sYyNc_ckuHREy+Y8zb-hJeeZPog@mail.gmail.com>
+Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "shorne@gmail.com" <shorne@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat 28 Jul, 2018, 5:34 AM Atish Patra, <atish.patra@wdc.com> wrote:
+>
+> On 7/26/18 7:38 AM, Christoph Hellwig wrote:
+> > This patch adds a driver for the Platform Level Interrupt Controller (PLIC)
+> > specified as part of the RISC-V supervisor level ISA manual, in the memory
+> > layout implemented by SiFive and qemu.
+> >
+> > The PLIC connects global interrupt sources to the local interrupt controller
+> > on each hart.
+> >
+> > This driver is based on the driver in the RISC-V tree from Palmer Dabbelt,
+> > but has been almost entirely rewritten since.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>
+> I tried to boot HighFive Unleashed with the patch series after applying
+> all the patches from riscv-all branch except timer & irq patches. It
+> gets stuck pretty early.
+>
+> Here is my github repo with all the changes:
+> https://github.com/atishp04/riscv-linux/commits/master_chris_cleanup_hifive
+>
+> I am still looking into it.
+> Palmer: Did I miss something?
+>
+> FWIW, here is the boot log.
+> --------- Boot log -------------------------------------------
+> [    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=5
+> [    0.000000] NR_IRQS: 0, nr_irqs: 0, preallocated irqs: 0
+> [    0.000000] plic: mapped 53 interrupts to 4 (out of 9) handlers.
+> [    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff
+> max_cycles: 0x1d854df40, max_idle_ns: 3526361616960 ns
+> [    0.000000] Calibrating delay loop (skipped), value calculated using
+> timer frequency.. 2.00 BogoMIPS (lpj=10000)
+> [    0.010000] pid_max: default: 32768 minimum: 301
+> [    0.010000] Mount-cache hash table entries: 16384 (order: 5, 131072
+> bytes)
+> [    0.020000] Mountpoint-cache hash table entries: 16384 (order: 5,
+> 131072 bytes)
+> [    0.020000] Hierarchical SRCU implementation.
+> [    0.030000] smp: Bringing up secondary CPUs ...
 
---NDuspjMMC1Ui5ypn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have noticed following:
 
-On Mon, Jul 30, 2018 at 05:32:21PM +0200, Takashi Iwai wrote:
+1. plic_irq_toggle() works on all present CPUs which means an
+IRQ will be enabled/disabled for all present CPUs. This further
+imply that whenever an IRQ is triggered, all online CPUs will take
+the interrupt but only one CPU will be successful in claiming the
+IRQ and other CPUs will check for IRQ in vain.
 
-> That said, if delay callback of CPU dai provides the additional delay,
-> the patch does correct thing.  OTOH, if CPU dai provides the base
-> delay instead, we need to clarify that it's rather a must; the delay
-> calculation in pointer callback becomes bogus in this scenario.
+2. irq_set_affinity() is not available which means IRQ balancing
+will not work.
 
-Part of the theory here is that every component might have a delay
-independently of the rest and we need to add them all together to figure
-out what the system as a whole will see.  Personally I'd rather just
-have everything use a callack consistently to avoid confusion.
+3. A PLIC context is for a particular HART+MODE. A HW designer
+can choose to connect PLIC context only for particular MODE of
+HART/CPU whereas this driver assumes that we have context
+available for both M-mode and S-mode of all HARTs/CPUs.
 
---NDuspjMMC1Ui5ypn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltfM8UACgkQJNaLcl1U
-h9DFvgf8CsHe8dwNrqBV/SvhEF+GoCuFHKSytnDQS+PduypJLUCWCUm06M5vZPmP
-BzUOccYZ79pB/dp6jEJuDIk2Ptyz90r0DffH3gWZHJAIofaf7ct15PK7M3ilrLKm
-Nc0vCWubhuBpl1adUR7gCMR+TMNi7tv12uFJX9b6j2UFC1MOHECeYBpKMlyWmELd
-LE3ubFx6Yz/pkP6jhDq5OMxVDH7xQwr+wHNmv/1t6Uh4P+E3fFpk2KL3ak+Q3Rjr
-vaMISlB/JuS15ChTrMnE0eZQxez3LVgCbs3PGC/MFAFnzcvTdnTdI63csSeMUJZB
-q6X5w7EQQhNjESTGh/vnxSwtXLvNSQ==
-=3qh7
------END PGP SIGNATURE-----
-
---NDuspjMMC1Ui5ypn--
+Regards,
+Anup
