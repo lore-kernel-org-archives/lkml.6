@@ -2,140 +2,105 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A959FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D09CC13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EB820873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EB820873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B7B120873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:50:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ekizksp6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7B120873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbeG3PZE (ORCPT
+        id S1727113AbeG3PZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:25:04 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:35854 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeG3PZE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:25:04 -0400
-X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
-   d="scan'208";a="14277181"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Jul 2018 06:49:59 -0700
-Received: from [10.145.4.138] (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Mon, 30 Jul 2018
- 06:49:58 -0700
-Subject: Re: [PATCH v6 3/3] ARM: dts: at91: sama5d2 Xplained: add pin muxing
- for I2S
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <devicetree@vger.kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-        <Cristian.Birsan@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180730114008.30464-1-codrin.ciubotariu@microchip.com>
- <20180730114008.30464-4-codrin.ciubotariu@microchip.com>
-From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <2e2bc99e-138e-fbc8-1db0-e37b46637af0@microchip.com>
-Date:   Mon, 30 Jul 2018 16:49:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 11:25:33 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50431 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbeG3PZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:25:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=U3oipQDuKhWXq1o6qVl/9OolBNXLVPhtpVyoIhKPzuI=;
+        b=Ekizksp68Ckc3otkrt30ClAdVFlQQGHlmssJZyGB6iaNArf1vcx88XX4qTD8IODmPSWBKEsbtQ7bKBCRLGlrqJaxcSod7bXXnFB4ZHRTHQOx+w87pE0/M7p0I+K4mfYknwJkehAGqx3OQqkhbT3QKv1o3JPn+hrXjUN/PV0Vqjw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fk8Z0-0008Ce-0N; Mon, 30 Jul 2018 15:50:18 +0200
+Date:   Mon, 30 Jul 2018 15:50:18 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
+        f.fainelli@gmail.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next 10/10] net: mscc: ocelot: make use of SerDes
+ PHYs for handling their configuration
+Message-ID: <20180730135018.GF13198@lunn.ch>
+References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+ <0ce1b3e8466064741dc6e484f87bbe48542cb978.1532954208.git-series.quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180730114008.30464-4-codrin.ciubotariu@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ce1b3e8466064741dc6e484f87bbe48542cb978.1532954208.git-series.quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Codrin,
+ On Mon, Jul 30, 2018 at 02:43:55PM +0200, Quentin Schulz wrote:
 
-On 30.07.2018 14:40, Codrin Ciubotariu wrote:
-> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> 
-> This patch sets the pin muxing for the I2S controllers
-> 
-> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> [codrin.ciubotariu@microchip.com: added pin muxing for the second
-> controller]
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> ---
-> 
-> Changes in v6:
-> 	- none;
-> 
->  arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 +++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-> index fcc85d70f36e..95cbec0f8790 100644
-> --- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-> +++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-> @@ -281,6 +281,11 @@
->  				status = "okay";
->  			};
+> +		err = of_get_phy_mode(portnp);
+> +		if (err < 0)
+> +			ocelot->ports[port]->phy_mode = PHY_INTERFACE_MODE_NA;
+> +		else
+> +			ocelot->ports[port]->phy_mode = err;
+> +
+> +		if (ocelot->ports[port]->phy_mode == PHY_INTERFACE_MODE_NA)
+> +			continue;
+> +
+> +		if (ocelot->ports[port]->phy_mode == PHY_INTERFACE_MODE_SGMII)
+> +			phy_mode = PHY_MODE_SGMII;
+> +		else
+> +			phy_mode = PHY_MODE_QSGMII;
+
+Hi Quentin
+
+Say somebody puts RGMII as the phy-mode? It would be better to verify
+it is only SGMII or QSGMII and return -EINVAL otherwise.
+
+> +
+> +		serdes = devm_of_phy_get(ocelot->dev, portnp, NULL);
+> +		if (IS_ERR(serdes)) {
+> +			if (PTR_ERR(serdes) == -EPROBE_DEFER) {
+> +				dev_err(ocelot->dev, "deferring probe\n");
+
+dev_dbg() ? It is not really an error.
+
+> +				err = -EPROBE_DEFER;
+> +				goto err_probe_ports;
+> +			}
+> +
+> +			dev_err(ocelot->dev, "missing SerDes phys for port%d\n",
+> +				port);
+> +			err = -ENODEV;
+
+err = PTR_ERR(serdes) so we get the actual error?
+
+>  			goto err_probe_ports;
+>  		}
+> +
+> +		ocelot->ports[port]->serdes = serdes;
+>  	}
 >  
-> +			i2s0: i2s@f8050000 {
-> +				pinctrl-names = "default";
-> +				pinctrl-0 = <&pinctrl_i2s0_default>;
+>  	register_netdevice_notifier(&ocelot_netdevice_nb);
 
-The approach with the disabled controllers in board DTS files (for our
-boards) is to use the: status = "disabled" and if there are pin conflicts
-with other controllers to put a mark in there, something like:
-				status = "disabled"; /* Conflict with X */
 
-I'm seeing that i2s1 is in conflict with sdmmc1 and spi0.
-
-Thank you,
-Claudiu Beznea
-
-> +			};
-> +
->  			can0: can@f8054000 {
->  				pinctrl-names = "default";
->  				pinctrl-0 = <&pinctrl_can0_default>;
-> @@ -424,6 +429,24 @@
->  					bias-disable;
->  				};
->  
-> +				pinctrl_i2s0_default: i2s0_default {
-> +					pinmux = <PIN_PC1__I2SC0_CK>,
-> +						 <PIN_PC2__I2SC0_MCK>,
-> +						 <PIN_PC3__I2SC0_WS>,
-> +						 <PIN_PC4__I2SC0_DI0>,
-> +						 <PIN_PC5__I2SC0_DO0>;
-> +					bias-disable;
-> +				};
-> +
-> +				pinctrl_i2s1_default: i2s1_default {
-> +					pinmux = <PIN_PA15__I2SC1_CK>,
-> +						 <PIN_PA14__I2SC1_MCK>,
-> +						 <PIN_PA16__I2SC1_WS>,
-> +						 <PIN_PA17__I2SC1_DI0>,
-> +						 <PIN_PA18__I2SC1_DO0>;
-> +					bias-disable;
-> +				};
-> +
->  				pinctrl_key_gpio_default: key_gpio_default {
->  					pinmux = <PIN_PB9__GPIO>;
->  					bias-pull-up;
-> @@ -546,6 +569,11 @@
->  				status = "okay";
->  			};
->  
-> +			i2s1: i2s@fc04c000 {
-> +				pinctrl-names = "default";
-> +				pinctrl-0 = <&pinctrl_i2s1_default>;
-> +			};
-> +
->  			can1: can@fc050000 {
->  				pinctrl-names = "default";
->  				pinctrl-0 = <&pinctrl_can1_default>;
-> 
+	Andrew
