@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C863FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B694A13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D213420892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D213420892
+	by mail.kernel.org (Postfix) with ESMTP id 7884220894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7884220894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbeG3O1l (ORCPT
+        id S1731799AbeG3O1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:27:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48926 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:27:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48950 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729460AbeG3O1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:27:39 -0400
+        id S1731700AbeG3O1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:27:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B07F8AF42;
-        Mon, 30 Jul 2018 12:52:47 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B6B98AF49;
+        Mon, 30 Jul 2018 12:52:52 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 5FB3BA0BE8; Mon, 30 Jul 2018 14:52:47 +0200 (CEST)
-Message-Id: <1b860198a5b775d24bb4eba2c917d2c87120ac9e.1532953989.git.mkubecek@suse.cz>
+        id 658D3A0BE8; Mon, 30 Jul 2018 14:52:52 +0200 (CEST)
+Message-Id: <88ed576173e9cb218e3cb93e9fa20a770aa61b4c.1532953989.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532953989.git.mkubecek@suse.cz>
 References: <cover.1532953989.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v2 01/17] netlink: introduce nla_put_bitfield32()
+Subject: [RFC PATCH net-next v2 02/17] ethtool: move to its own directory
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
         David Miller <davem@davemloft.net>,
@@ -40,47 +40,66 @@ Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
         Roopa Prabhu <roopa@cumulusnetworks.com>,
         Jakub Kicinski <kubakici@wp.pl>,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:52:47 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:52:52 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to other data types, this helper puts NLA_BITFIELD32 attribute into
-a netlink message. It takes separate value and selector arguments, if you
-already have struct nla_bitfield32, you can use nla_put().
+With ethtool netlink interface, there is going to be a lot of new files
+so that it seem more convenient to put them into a separate directory
+net/ethtool. Start with moving current file with ioctl implementation
+there and renaming it to ioctl.c.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- include/net/netlink.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/Makefile                            | 2 +-
+ net/core/Makefile                       | 2 +-
+ net/ethtool/Makefile                    | 3 +++
+ net/{core/ethtool.c => ethtool/ioctl.c} | 0
+ 4 files changed, 5 insertions(+), 2 deletions(-)
+ create mode 100644 net/ethtool/Makefile
+ rename net/{core/ethtool.c => ethtool/ioctl.c} (100%)
 
-diff --git a/include/net/netlink.h b/include/net/netlink.h
-index 0c154f98e987..6d4eb6bd9235 100644
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -1064,6 +1064,21 @@ static inline int nla_put_in6_addr(struct sk_buff *skb, int attrtype,
- 	return nla_put(skb, attrtype, sizeof(*addr), addr);
- }
+diff --git a/net/Makefile b/net/Makefile
+index bdaf53925acd..6c68520e5eb9 100644
+--- a/net/Makefile
++++ b/net/Makefile
+@@ -13,7 +13,7 @@ obj-$(CONFIG_NET)		+= $(tmp-y)
  
-+/**
-+ * nla_put_bitfield32 - Add a bitfield32 value/selector attribute to
-+ * a socket buffer
-+ * @skb: socket buffer to add attribute to
-+ * @value: 32-bit value bitmap
-+ * @selector: 32-bit selector bitmap
-+ */
-+static inline int nla_put_bitfield32(struct sk_buff *skb, int attrtype,
-+				     u32 value, u32 selector)
-+{
-+	struct nla_bitfield32 tmp = { .value = value, .selector = selector };
+ # LLC has to be linked before the files in net/802/
+ obj-$(CONFIG_LLC)		+= llc/
+-obj-$(CONFIG_NET)		+= ethernet/ 802/ sched/ netlink/ bpf/
++obj-$(CONFIG_NET)		+= ethernet/ 802/ sched/ netlink/ bpf/ ethtool/
+ obj-$(CONFIG_NETFILTER)		+= netfilter/
+ obj-$(CONFIG_INET)		+= ipv4/
+ obj-$(CONFIG_TLS)		+= tls/
+diff --git a/net/core/Makefile b/net/core/Makefile
+index 80175e6a2eb8..55734d0a1603 100644
+--- a/net/core/Makefile
++++ b/net/core/Makefile
+@@ -8,7 +8,7 @@ obj-y := sock.o request_sock.o skbuff.o datagram.o stream.o scm.o \
+ 
+ obj-$(CONFIG_SYSCTL) += sysctl_net_core.o
+ 
+-obj-y		     += dev.o ethtool.o dev_addr_lists.o dst.o netevent.o \
++obj-y		     += dev.o dev_addr_lists.o dst.o netevent.o \
+ 			neighbour.o rtnetlink.o utils.o link_watch.o filter.o \
+ 			sock_diag.o dev_ioctl.o tso.o sock_reuseport.o \
+ 			fib_notifier.o xdp.o
+diff --git a/net/ethtool/Makefile b/net/ethtool/Makefile
+new file mode 100644
+index 000000000000..3ebfab2bca66
+--- /dev/null
++++ b/net/ethtool/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+	return nla_put(skb, attrtype, sizeof(tmp), &tmp);
-+}
-+
- /**
-  * nla_get_u32 - return payload of u32 attribute
-  * @nla: u32 netlink attribute
++obj-y		+= ioctl.o
+diff --git a/net/core/ethtool.c b/net/ethtool/ioctl.c
+similarity index 100%
+rename from net/core/ethtool.c
+rename to net/ethtool/ioctl.c
 -- 
 2.18.0
 
