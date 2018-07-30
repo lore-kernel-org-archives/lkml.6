@@ -2,117 +2,102 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAACF16256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9386516256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A759120857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A759120857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4563C20857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:54:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z9KQJpFa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4563C20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731864AbeG3T36 (ORCPT
+        id S1731941AbeG3TaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 15:29:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43966 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727077AbeG3T36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 15:29:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01995CFB47;
-        Mon, 30 Jul 2018 17:53:51 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C6952112D189;
-        Mon, 30 Jul 2018 17:53:50 +0000 (UTC)
-Subject: Re: [PATCH] arch/x86: Fix boot_cpu_data.microcode version output
-To:     bp@alien8.de
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sironi@amazon.de, tony.luck@intel.com, stable@vger.kernel.org
-References: <20180601121939.GA23298@nazgul.tnic>
- <20180730174911.26238-1-prarit@redhat.com>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <ee722f10-ea30-56a5-6efa-6b3c82a72d8f@redhat.com>
-Date:   Mon, 30 Jul 2018 13:53:50 -0400
+        Mon, 30 Jul 2018 15:30:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47770 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbeG3TaZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 15:30:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Jijkqbke+KlulpxFU8QfzKm63i1lUXpS4B7IzqkuFCY=; b=z9KQJpFaFByINWmDqFflNs49p4
+        1nzJq4A93NJbv5qHKVaT8uBW77Xr4/stgbn3xw50XHAElz0w+HWPyZT4CMHKc8BrCX92tTkWfk6oU
+        tt7C8p4KUh4122DKWbKT9sYGrbMMzAa1CSK4nZrSSdd60tuano1z5NBl1nCMe/gZAm2napCVS0Tsq
+        fdFC0H7ecOuglOTsBNihKm4MyH8MtRYREi71dklG708YW7rvg+tHSmYuY22MBaJcA2Pcq0A3C35hJ
+        THoDwvS85M27t2I1xGjiBxH/Xl+YCcPRQB4JHEBtBXmOkDEJ1ttrMwf4VjYYZztpluI27J0twTxOX
+        X21V0zqw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkCMy-0008KU-57; Mon, 30 Jul 2018 17:54:08 +0000
+Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory, and
+ IO v2
+To:     Tejun Heo <tj@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180727220123.GB18879@amd> <20180730154035.GC4567@cmpxchg.org>
+ <20180730173940.GB881@amd>
+ <20180730175120.GJ1206094@devbig004.ftw2.facebook.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dfc3c810-8918-add4-b818-8b9c294f5ea4@infradead.org>
+Date:   Mon, 30 Jul 2018 10:54:05 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180730174911.26238-1-prarit@redhat.com>
+In-Reply-To: <20180730175120.GJ1206094@devbig004.ftw2.facebook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 30 Jul 2018 17:53:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 30 Jul 2018 17:53:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/30/2018 01:49 PM, Prarit Bhargava wrote:
-> On systems where a runtime microcode update has occurred the microcode
-> version output in a MCE log record is wrong because
-> boot_cpu_data.microcode is not updated during runtime.
+On 07/30/2018 10:51 AM, Tejun Heo wrote:
+> Hello,
 > 
-> Update boot_cpu_data.microcode when the BSP's microcode is updated.
+> On Mon, Jul 30, 2018 at 07:39:40PM +0200, Pavel Machek wrote:
+>>> I'd rather have the internal config symbol match the naming scheme in
+>>> the code, where psi is a shorter, unique token as copmared to e.g.
+>>> pressure, press, prsr, etc.
+>>
+>> I'd do "pressure", really. Yes, psi is shorter, but I'd say that
+>> length is not really important there.
 > 
-> Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
-> Suggested-by: Borislav Petkov <bp@alien8.com>
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: stable@vger.kernel.org
-> Cc: sironi@amazon.de
-> Cc: tony.luck@intel.com
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c   | 4 ++++
->  arch/x86/kernel/cpu/microcode/intel.c | 4 ++++
->  2 files changed, 8 insertions(+)
+> This is an extreme bikeshedding without any relevance.  You can make
+> suggestions but please lay it to the rest.  There isn't any general
+> consensus against the current name and you're just trying to push your
+> favorite name without proper justifications after contributing nothing
+> to the project.  Please stop.
 > 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 0624957aa068..7f5b32535ac7 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_amd(int cpu)
->  	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
->  	c->microcode = mc_amd->hdr.patch_id;
->  
-> +	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-> +	if (c->cpu_index == boot_cpu_data.cpu_index)
-> +		boot_cpu_data.microcode = rev;
-> +
+> Thanks.
 
-Borislav, hold off on this.  I want to double check something with AMD.
+I'd say he's trying to make something that is readable and easier to
+understand for users.
 
-I think this has to be
+Thanks.
 
-	boot_cpu_data.microcode = mc_amd->hdr.patch_id;
 
-I'm going to grab some old/new microcode and test.  I do know that the Intel
-update below works.
-
-P.
-
->  	return UCODE_UPDATED;
->  }
->  
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index 97ccf4c3b45b..256d336cbc04 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_intel(int cpu)
->  	uci->cpu_sig.rev = rev;
->  	c->microcode = rev;
->  
-> +	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-> +	if (c->cpu_index == boot_cpu_data.cpu_index)
-> +		boot_cpu_data.microcode = rev;
-> +
->  	return UCODE_UPDATED;
->  }
->  
-> 
+-- 
+~Randy
