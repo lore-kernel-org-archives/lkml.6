@@ -2,139 +2,141 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2CDC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C418C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6A120894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33AC720894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:49:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Qtz4jc0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6A120894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VpEExwqg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AC720894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731968AbeG3V0I (ORCPT
+        id S1732024AbeG3V0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 17:26:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727474AbeG3V0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 17:26:08 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0881B208A4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 19:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532980175;
-        bh=SotUQrJOELAFN9wB6Ip+Qb1yHoerjziQ1jLvoClnwf0=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=0Qtz4jc0KwPOxS8sLk6sfshBXWLzO+IDUGrg7p11LZ8XoBTy7OtTqWMCuzS/pbux6
-         jxPnxOpyIhDvH84Q96GBXMR7RT8Pp20pR/Y++LGMsEgpJhyDeMV4dBm1C/7azSlpkR
-         vlSdi+98PkCjldDZsWvpvGzn0cRhIdTYJvPd0Fmw=
-Received: by mail-wr1-f42.google.com with SMTP id e7-v6so14120882wrs.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 12:49:34 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFt6N2ghYpSp1eln8UcfJcH/G76K7kbTa3LJ7f0XppnrLoyTFnp
-        DJ+mAUvvGdDw9/aDxR3RNHwdHYlHZjmPdpFZ8Yktdg==
-X-Google-Smtp-Source: AAOMgpcT28ofYo37cPC8aSgs1BZlDkwKHAyV4pgMxHnzjxQ/II/Adw4uxxDhT+vmgUiqJoKmLWQHPtvVb7X50iPxozA=
-X-Received: by 2002:adf:fe42:: with SMTP id m2-v6mr18214325wrs.171.1532980173491;
- Mon, 30 Jul 2018 12:49:33 -0700 (PDT)
+        Mon, 30 Jul 2018 17:26:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48846 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727474AbeG3V0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 17:26:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IHoVBTpFqQn7X9RtLhUsvLGUpv7IPz/8PsXByKxVTZ8=; b=VpEExwqgmE3iDSOyT2YTtNQJko
+        5XOgNdGDPb8YUMYBc/Ttkc0Zrd6M2mkNtsLdEJ1G0z0VUTTz/10HIrWypcQ86TeYRmCpoxGe57IMq
+        S0a5zvmh3KF6Z/jGQEzFEp+ocBXXzNzWVOD8nNkdQMcwMvCndfmU8nNvR5Kr3OX3BQ3STPbcDTHY+
+        31SPjvIMMo78f7SfG+q2xw5Ub19GxPMwZezuAJM/x4dpvSR6+cX2mSsmSc49qhpLhsCWh7osJgNEl
+        5x308HGB0wNBCFEI6ZmMVfPjtGhJIoCMDXtziKVHJYcIxmS6FNCdXTssB/85P4aRNQ0co/Na4s/Bp
+        PvdeeMDA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkEAl-00032z-47; Mon, 30 Jul 2018 19:49:39 +0000
+Date:   Mon, 30 Jul 2018 12:49:38 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
+ [ver #10]
+Message-ID: <20180730194938.GA12962@bombadil.infradead.org>
+References: <20180729113749.GA7333@amd>
+ <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+ <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
+ <25489.1532953411@warthog.procyon.org.uk>
+ <20180730143104.GB24051@amd>
+ <20180730180842.GA5544@bombadil.infradead.org>
+ <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com>
+ <20180730183847.GB5544@bombadil.infradead.org>
+ <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 12:49:12 -0700 (PDT)
-In-Reply-To: <1532979368.28585.33.camel@surriel.com>
-References: <20180728215357.3249-1-riel@surriel.com> <20180728215357.3249-11-riel@surriel.com>
- <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
- <20180729155452.37eddc11@imladris.surriel.com> <20180730095502.GG2494@hirez.programming.kicks-ass.net>
- <1532961011.28585.30.camel@surriel.com> <20180730162653.GM2494@hirez.programming.kicks-ass.net>
- <1532978146.28585.32.camel@surriel.com> <CALCETrXZPN6Lt55siHM__YW4jFfoy5w+Hd2aJtEi8qhsro6RMA@mail.gmail.com>
- <1532979368.28585.33.camel@surriel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 30 Jul 2018 12:49:12 -0700
-X-Gmail-Original-Message-ID: <CALCETrXnG9nPzJKOtd=65BWeoTs2y=mVUAEvNGmFrD8fvg-EfQ@mail.gmail.com>
-Message-ID: <CALCETrXnG9nPzJKOtd=65BWeoTs2y=mVUAEvNGmFrD8fvg-EfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm refcounting
-To:     Rik van Riel <riel@surriel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 12:36 PM, Rik van Riel <riel@surriel.com> wrote:
-> On Mon, 2018-07-30 at 12:30 -0700, Andy Lutomirski wrote:
->> On Mon, Jul 30, 2018 at 12:15 PM, Rik van Riel <riel@surriel.com>
->> wrote:
->> > On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
->> > > On Mon, Jul 30, 2018 at 10:30:11AM -0400, Rik van Riel wrote:
->> > >
->> > > > > What happened to the rework I did there? That not only
->> > > > > avoided
->> > > > > fiddling
->> > > > > with active_mm, but also avoids grab/drop cycles for the
->> > > > > other
->> > > > > architectures when doing task->kthread->kthread->task things.
->> > > >
->> > > > I don't think I saw that. I only saw your email from
->> > > > July 20th with this fragment of code, which does not
->> > > > appear to avoid the grab/drop cycles, and still fiddles
->> > > > with active_mm:
->> > >
->> > > Yeah, that's it. Note how it doesn't do a grab+drop for kernel-
->> > > > kernel,
->> > >
->> > > where the current could would have.
->> > >
->> > > And also note that it only fiddles with active_mm if it does the
->> > > grab+drop thing (the below should have s/ifdef/ifndef/ to make
->> > > more
->> > > sense maybe).
->> >
->> > I'll kick off a test with your variant. I don't think we
->> > will see any performance difference on x86 (due to not
->> > using a refcount at all any more), but unless Ingo is in
->> > a hurry I guess there's no issue rewriting this part of
->> > the patch series :)
->> >
->> > Do the other patches look ok to you and Andy?
->> >
->>
->> The whole series other than the active_mm stuff looked okay to me.
->
-> Does the active_mm stuff look like a step in the right
-> direction with the bugfix, or would you prefer the code
-> to go in an entirely different direction?
+On Mon, Jul 30, 2018 at 11:59:13AM -0700, Linus Torvalds wrote:
+> On Mon, Jul 30, 2018 at 11:38 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > I wasn't proposing putting gettext in the kernel.  I was reacting to
+> > Pavel saying "You can't return English strings from the kernel, you have
+> > to translate numbers into any language's strings".
+> 
+> The problem with gettext() is that if you *don't* have the strings
+> marked for translated at the source, you're going to have a hard time
+> with anything but the simplest fixed strings.
+> 
+> When the kernel does something like
+> 
+>      mntinfo("Option %s can not take value %d", opt->name, opt->value);
+> 
+> a gettext() interface inside the kernel (which really would be nasty)
+> would have seen the format string and the values independently and
+> would have generated the translation database from that.
+> 
+> But once the string has been generated, it can now be thousands of
+> different strings, and you can't just look them up from a table any
+> more.
+> 
+> Real examples from David's patch-series:
+> 
+>                 errorf(fc, "%s: Lookup failure for '%s'",
+>                        desc->name, param->key);
+> 
+>                 errorf(fc, "%s: Non-blockdev passed to '%s'",
+>                        desc->name, param->key);
+> 
+> which means that by the time user space sees it, you can't just "look
+> up the string". The string will have various random key names etc in
+> it.
 
-I think it's a big step in the right direction, but it still makes be
-nervous.  I'd be more comfortable with it if you at least had a
-functional set of patches that result in active_mm being gone, because
-that will mean that you actually audited the whole mess and fixed
-anything that might rely on active_mm pointing somewhere or that might
-be putting a value you didn't take into account into active_mm.  IOW
-I'm not totally thrilled by applying the patches as is if we're still
-a bit unsure as to what might have gotten missed.
+That's fair, it becomes a good deal more complex than gettext() can
+cope with.  Someone sufficiently determined could regex-match the
+"Non-blockdev passed to", and translate that.  If they really want to
+sell a computer system to the Office québécois de la langue française.
 
-I don't think it's at all necessary to redo the patches.
+> But the alternative to pass things as format strings and raw data, and
+> having all the rules for a "good gettext interface" are worse. It gets
+> very ugly very quickly.
 
-Does that seem reasonable?
+Yes, catching all the corner cases gets ridiculously hard, particularly
+plurals.
+https://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms
+really makes my brain hurt, and makes me glad I work on simple things
+like OS kernels.
 
->
-> If this looks like a step in the right direction, it
-> may make sense to make this step before the merge window
-> opens, and continue with more patches in this direction
-> later.
->
-> --
-> All Rights Reversed.
+> So I really think the best option is "Ignore the problem". The system
+> calls will still continue to report the basic error numbers (EINVAL
+> etc), and the extended error strings will be just that: extended error
+> strings. Ignore them if you can't understand them.
+> 
+> That said, people have wanted these kinds of extended error
+> descriptors forever, and the reason we haven't added them is that it
+> generally is more pain than it is necessarily worth. I'm not actually
+> at all convinced that has magically changed with the mount
+> configuration thing.
+
+I'm not convinced we want to do this either, but if there's anywhere we
+do want to do it then mount seems like one of the few places it might be
+worth doing.  The reasons that a mount failed are many, and it doesn't
+seem like a good idea to introduce a new errno every time a network
+filesystem finds a new failure mode.
+
+I do think it might be worth marking the strings specially to indicate
+"This is returned to userspace, do not adjust the spelling lightly".
+I mean, we haven't even put the 'e' back on creat yet, so we're clearly
+willing to live with bad spelling.
