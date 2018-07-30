@@ -6,216 +6,637 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5030CFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A32D13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C6320892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:54:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C6320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F06F20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F06F20893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbeG3O27 (ORCPT
+        id S1732276AbeG3O3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:28:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59089 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730125AbeG3O26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:28:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 33E75207AC; Mon, 30 Jul 2018 14:54:05 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CB54620703;
-        Mon, 30 Jul 2018 14:54:04 +0200 (CEST)
-Message-ID: <c2c5b43c4ea426a765297fb390752da87df9c55a.camel@bootlin.com>
-Subject: Re: [PATCH 9/9] media: cedrus: Add H264 decoding support
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Mon, 30 Jul 2018 14:54:05 +0200
-In-Reply-To: <20180613140714.1686-10-maxime.ripard@bootlin.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-10-maxime.ripard@bootlin.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-qKX9WeEPvbhhbycnfLR7"
-X-Mailer: Evolution 3.28.4 
-Mime-Version: 1.0
+        Mon, 30 Jul 2018 10:29:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49598 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730645AbeG3O3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:29:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 249AAAED4;
+        Mon, 30 Jul 2018 12:54:08 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id C33F5A0BE8; Mon, 30 Jul 2018 14:54:07 +0200 (CEST)
+Message-Id: <9cdbbd33778aaf7e5e261dc233a7cc53bb9c2540.1532953989.git.mkubecek@suse.cz>
+In-Reply-To: <cover.1532953989.git.mkubecek@suse.cz>
+References: <cover.1532953989.git.mkubecek@suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [RFC PATCH net-next v2 17/17] ethtool: implement SET_PARAMS message
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Date:   Mon, 30 Jul 2018 14:54:07 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sets the information provided by ETHTOOL_SCOALESCE, ETHTOOL_SRINGPARAM,
+ETHTOOL_SPAUSEPARAM, ETHTOOL_SCHANNELS, ETHTOOL_SEEE and ETHTOOL_SFECPARAM.
+Each of these has corresponding nesting attribute containing attributes for
+its settings. This way, userspace can request changes equivalent to one or
+more of the legacy requests (and provide only part of the data to update).
 
---=-qKX9WeEPvbhhbycnfLR7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ Documentation/networking/ethtool-netlink.txt |  71 ++-
+ net/ethtool/netlink.c                        |   6 +
+ net/ethtool/params.c                         | 429 +++++++++++++++++++
+ 3 files changed, 499 insertions(+), 7 deletions(-)
 
-Hi,
-
-On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> Introduce some basic H264 decoding support in cedrus. So far, only the
-> baseline profile videos have been tested, and some more advanced features
-> used in higher profiles are not even implemented.
-
-While working on H265 support, I noticed a few things that should apply
-to H264 as well.
-
-[...]
-
-> +struct sunxi_cedrus_h264_sram_ref_pic {
-> +	__le32	top_field_order_cnt;
-> +	__le32	bottom_field_order_cnt;
-> +	__le32	frame_info;
-> +	__le32	luma_ptr;
-> +	__le32	chroma_ptr;
-> +	__le32	extra_data_ptr;
-> +	__le32	extra_data_end;
-
-These two previous fields represent the top and bottom (field) motion
-vector column buffer addresses, so the second field is not the end of
-the first one. These fields should be frame-specific and they are called
-topmv_coladdr, botmv_coladdr by Allwinner.
-
-> +	__le32	reserved;
-> +} __packed;
-> +
-
-[...]
-
-> +static void sunxi_cedrus_fill_ref_pic(struct sunxi_cedrus_h264_sram_ref_=
-pic *pic,
-> +				      struct vb2_buffer *buf,
-> +				      dma_addr_t extra_buf,
-> +				      size_t extra_buf_len,
-> +				      unsigned int top_field_order_cnt,
-> +				      unsigned int bottom_field_order_cnt,
-> +				      enum sunxi_cedrus_h264_pic_type pic_type)
-> +{
-> +	pic->top_field_order_cnt =3D top_field_order_cnt;
-> +	pic->bottom_field_order_cnt =3D bottom_field_order_cnt;
-> +	pic->frame_info =3D pic_type << 8;
-> +	pic->luma_ptr =3D vb2_dma_contig_plane_dma_addr(buf, 0) - PHYS_OFFSET;
-> +	pic->chroma_ptr =3D vb2_dma_contig_plane_dma_addr(buf, 1) - PHYS_OFFSET=
-;
-> +	pic->extra_data_ptr =3D extra_buf - PHYS_OFFSET;
-> +	pic->extra_data_end =3D (extra_buf - PHYS_OFFSET) + extra_buf_len;
-> +}
-> +
-> +static void sunxi_cedrus_write_frame_list(struct sunxi_cedrus_ctx *ctx,
-> +					  struct sunxi_cedrus_run *run)
-> +{
-> +	struct sunxi_cedrus_h264_sram_ref_pic pic_list[SUNXI_CEDRUS_H264_FRAME_=
-NUM];
-> +	const struct v4l2_ctrl_h264_decode_param *dec_param =3D run->h264.decod=
-e_param;
-> +	const struct v4l2_ctrl_h264_slice_param *slice =3D run->h264.slice_para=
-m;
-> +	const struct v4l2_ctrl_h264_sps *sps =3D run->h264.sps;
-> +	struct sunxi_cedrus_buffer *output_buf;
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> +	unsigned long used_dpbs =3D 0;
-> +	unsigned int position;
-> +	unsigned int output =3D 0;
-> +	unsigned int i;
-> +
-> +	memset(pic_list, 0, sizeof(pic_list));
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(dec_param->dpb); i++) {
-> +		const struct v4l2_h264_dpb_entry *dpb =3D &dec_param->dpb[i];
-> +		const struct sunxi_cedrus_buffer *cedrus_buf;
-> +		struct vb2_buffer *ref_buf;
-> +
-> +		if (!(dpb->flags & V4L2_H264_DPB_ENTRY_FLAG_ACTIVE))
-> +			continue;
-> +
-> +		ref_buf =3D ctx->dst_bufs[dpb->buf_index];
-> +		cedrus_buf =3D vb2_to_cedrus_buffer(ref_buf);
-> +		position =3D cedrus_buf->codec.h264.position;
-> +		used_dpbs |=3D BIT(position);
-> +	=09
-> +		sunxi_cedrus_fill_ref_pic(&pic_list[position], ref_buf,
-> +					  ctx->codec.h264.mv_col_buf_dma,
-> +					  ctx->codec.h264.mv_col_buf_size,
-
-Following up on my previous comment, this should be specific to each
-frame, with 2 buffer chunks per frame (top and bottom fields) as done in
-Allwinner's H264MallocBuffer function.=20
-
-[...]
-
-> +static void sunxi_cedrus_set_params(struct sunxi_cedrus_ctx *ctx,
-> +				    struct sunxi_cedrus_run *run)
-> +{
-> +	const struct v4l2_ctrl_h264_slice_param *slice =3D run->h264.slice_para=
-m;
-> +	const struct v4l2_ctrl_h264_pps *pps =3D run->h264.pps;
-> +	const struct v4l2_ctrl_h264_sps *sps =3D run->h264.sps;
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> +	dma_addr_t src_buf_addr;
-> +	u32 offset =3D slice->header_bit_size;
-> +	u32 len =3D (slice->size * 8) - offset;
-> +	u32 reg;
-> +
-> +	sunxi_cedrus_write(dev, ctx->codec.h264.pic_info_buf_dma - PHYS_OFFSET,=
- 0x250);
-> +	sunxi_cedrus_write(dev, (ctx->codec.h264.pic_info_buf_dma - PHYS_OFFSET=
-) + 0x48000, 0x254);
-> +
-> +	sunxi_cedrus_write(dev, len, VE_H264_VLD_LEN);
-> +	sunxi_cedrus_write(dev, offset, VE_H264_VLD_OFFSET);
-> +
-> +	src_buf_addr =3D vb2_dma_contig_plane_dma_addr(&run->src->vb2_buf, 0);
-> +	src_buf_addr -=3D PHYS_OFFSET;
-> +	sunxi_cedrus_write(dev, VE_H264_VLD_ADDR_VAL(src_buf_addr) |
-> +			   VE_H264_VLD_ADDR_FIRST | VE_H264_VLD_ADDR_VALID | VE_H264_VLD_ADDR=
-_LAST,
-> +			   VE_H264_VLD_ADDR);
-> +	sunxi_cedrus_write(dev, src_buf_addr + VBV_SIZE - 1, VE_H264_VLD_END);
-> +
-> +	sunxi_cedrus_write(dev, VE_H264_TRIGGER_TYPE_INIT_SWDEC,
-> +			   VE_H264_TRIGGER_TYPE);
-
-It seems that this trigger type is only useful when trying
-to subsequently access the bitstream data from the VPU (for easier
-parsing, as done in libvdpau-sunxi), but it should not be required when
-all the parsing was done already and no such access is necessary.
-
-I haven't tested without it so far, but I have a hunch we can spare this
-call.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-qKX9WeEPvbhhbycnfLR7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltfCm0ACgkQ3cLmz3+f
-v9Ffywf/RGeHXXe5Y7+Nd3BhBbU5tyVE87jhcUTuMPA6Hv5455gGaB4mYl8SgUDU
-U0RWpRnZv/hpTrFCTfMzQPZzrPqQNd0SKK4vHvis4/hmaQCLK4LC6hSHp/mBdHhi
-zHZB55cwA3PyC+CCWahXFbRqHE/7q9OVMM9bsYfpXcMx+6p1eBNP+YFdQmGrYU1L
-9eDVhdQK3Nia42f5sx3k2vqyWaqk90K87hxI589AS/8oW6FYdNc9osspbDihTCzM
-2WEdzd8U5bHY5qBYAhbZF0Ijf1pSfO+/VvVLFK4Jj6yrA4DJUkO3nn2pDZIUuY6o
-+wB/yqao497tYvyoLgtRtsnmPXal3A==
-=IEbq
------END PGP SIGNATURE-----
-
---=-qKX9WeEPvbhhbycnfLR7--
+diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
+index 630eebd7e741..2b70736110fe 100644
+--- a/Documentation/networking/ethtool-netlink.txt
++++ b/Documentation/networking/ethtool-netlink.txt
+@@ -126,7 +126,7 @@ List of message types
+     ETHNL_CMD_GET_SETTINGS
+     ETHNL_CMD_SET_SETTINGS
+     ETHNL_CMD_GET_PARAMS
+-    ETHNL_CMD_SET_PARAMS		response only (for now)
++    ETHNL_CMD_SET_PARAMS
+ 
+ All constants use ETHNL_CMD_ prefix, usually followed by "GET", "SET" or "ACT"
+ to indicate the type.
+@@ -408,6 +408,63 @@ to them are broadcasted as notifications on change of these settings using
+ netlink or ioctl ethtool interface.
+ 
+ 
++SET_PARAMS
++----------
++
++SET_PARAMS request modifies the settings retrieved by GET_PARAMS, i.e. it
++replaces ETHTOOL_SCOALESCE, ETHTOOL_SRINGPARAM, ETHTOOL_SPAUSEPARAM,
++ETHTOOL_SCHANNELS, ETHTOOL_SEEE and ETHTOOL_SFECPARAM legacy commands. For
++each of these, relevant data attributes are contained in a corresponding nest
++attribute. Some of the attributes provided by GET_SETPARAMS are read only and
++cannot be set by SET_PARAMS request.
++
++    ETHA_PARAMS_COALESCE	(nest)		coalescing
++        ETHA_COALESCE_RX_USECS			(u32)
++        ETHA_COALESCE_RX_MAXFRM			(u32)
++        ETHA_COALESCE_RX_USECS_IRQ		(u32)
++        ETHA_COALESCE_RX_MAXFRM_IRQ		(u32)
++        ETHA_COALESCE_RX_USECS_LOW		(u32)
++        ETHA_COALESCE_RX_MAXFRM_LOW		(u32)
++        ETHA_COALESCE_RX_USECS_HIGH		(u32)
++        ETHA_COALESCE_RX_MAXFRM_HIGH		(u32)
++        ETHA_COALESCE_TX_USECS			(u32)
++        ETHA_COALESCE_TX_MAXFRM			(u32)
++        ETHA_COALESCE_TX_USECS_IRQ		(u32)
++        ETHA_COALESCE_TX_MAXFRM_IRQ		(u32)
++        ETHA_COALESCE_TX_USECS_LOW		(u32)
++        ETHA_COALESCE_TX_MAXFRM_LOW		(u32)
++        ETHA_COALESCE_TX_USECS_HIGH		(u32)
++        ETHA_COALESCE_TX_MAXFRM_HIGH		(u32)
++        ETHA_COALESCE_PKT_RATE_LOW		(u32)
++        ETHA_COALESCE_PKT_RATE_HIGH		(u32)
++        ETHA_COALESCE_RX_USE_ADAPTIVE		(bool)
++        ETHA_COALESCE_TX_USE_ADAPTIVE		(bool)
++        ETHA_COALESCE_RATE_SAMPLE_INTERVAL	(u32)
++        ETHA_COALESCE_STATS_BLOCK_USECS		(u32)
++    ETHA_PARAMS_RING		(nest)		ring parameters
++        ETHA_RING_RX_PENDING			(u32)
++        ETHA_RING_RX_MINI_PENDING		(u32)
++        ETHA_RING_RX_JUMBO_PENDING		(u32)
++        ETHA_RING_TX_PENDING			(u32)
++    ETHA_PARAMS_PAUSE		(nest)		pause parameters
++        ETHA_PAUSE_AUTONEG			(bool)
++        ETHA_PAUSE_RX				(bool)
++        ETHA_PAUSE_TX				(bool)
++    ETHA_PARAMS_CHANNELS	(nest)		channel settings
++        ETHA_CHANNELS_RX_COUNT			(u32)
++        ETHA_CHANNELS_TX_COUNT			(u32)
++        ETHA_CHANNELS_OTHER_COUNT		(u32)
++        ETHA_CHANNELS_COMBINED_COUNT		(u32)
++    ETHA_PARAMS_EEE		(nest)		EEE settings
++        ETHA_EEE_LINK_MODES			(bitset)
++		- change modes for which EEE is advertised
++        ETHA_EEE_ENABLED			(bool)
++        ETHA_EEE_TX_LPI_ENABLED			(bool)
++        ETHA_EEE_TX_LPI_TIMER			(u32)
++    ETHA_PARAMS_FEC		(nest)		FEC parameters
++        ETHA_FEC_MODES				(bitfield32)
++		- change configured FEC encodings
++
+ 
+ Request translation
+ -------------------
+@@ -431,11 +488,11 @@ ETHTOOL_GLINK			ETHNL_CMD_GET_SETTINGS
+ ETHTOOL_GEEPROM			n/a
+ ETHTOOL_SEEPROM			n/a
+ ETHTOOL_GCOALESCE		ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SCOALESCE		n/a
++ETHTOOL_SCOALESCE		ETHNL_CMD_SET_PARAMS
+ ETHTOOL_GRINGPARAM		ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SRINGPARAM		n/a
++ETHTOOL_SRINGPARAM		ETHNL_CMD_SET_PARAMS
+ ETHTOOL_GPAUSEPARAM		ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SPAUSEPARAM		n/a
++ETHTOOL_SPAUSEPARAM		ETHNL_CMD_SET_PARAMS
+ ETHTOOL_GRXCSUM			ETHNL_CMD_GET_SETTINGS
+ ETHTOOL_SRXCSUM			ETHNL_CMD_SET_SETTINGS
+ ETHTOOL_GTXCSUM			ETHNL_CMD_GET_SETTINGS
+@@ -477,7 +534,7 @@ ETHTOOL_SRXFHINDIR		n/a
+ ETHTOOL_GFEATURES		ETHNL_CMD_GET_SETTINGS
+ ETHTOOL_SFEATURES		n/a
+ ETHTOOL_GCHANNELS		ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SCHANNELS		n/a
++ETHTOOL_SCHANNELS		ETHNL_CMD_SET_PARAMS
+ ETHTOOL_SET_DUMP		n/a
+ ETHTOOL_GET_DUMP_FLAG		n/a
+ ETHTOOL_GET_DUMP_DATA		n/a
+@@ -485,7 +542,7 @@ ETHTOOL_GET_TS_INFO		n/a
+ ETHTOOL_GMODULEINFO		n/a
+ ETHTOOL_GMODULEEEPROM		n/a
+ ETHTOOL_GEEE			ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SEEE			n/a
++ETHTOOL_SEEE			ETHNL_CMD_SET_PARAMS
+ ETHTOOL_GRSSH			n/a
+ ETHTOOL_SRSSH			n/a
+ ETHTOOL_GTUNABLE		n/a
+@@ -497,5 +554,5 @@ ETHTOOL_SLINKSETTINGS		ETHNL_CMD_SET_SETTINGS
+ ETHTOOL_PHY_GTUNABLE		n/a
+ ETHTOOL_PHY_STUNABLE		n/a
+ ETHTOOL_GFECPARAM		ETHNL_CMD_GET_PARAMS
+-ETHTOOL_SFECPARAM		n/a
++ETHTOOL_SFECPARAM		ETHNL_CMD_SET_PARAMS
+ 
+diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+index b24a0e045ec0..17fee1ce077b 100644
+--- a/net/ethtool/netlink.c
++++ b/net/ethtool/netlink.c
+@@ -735,6 +735,7 @@ int ethnl_get_drvinfo(struct sk_buff *skb, struct genl_info *info);
+ int ethnl_get_settings(struct sk_buff *skb, struct genl_info *info);
+ int ethnl_set_settings(struct sk_buff *skb, struct genl_info *info);
+ int ethnl_get_params(struct sk_buff *skb, struct genl_info *info);
++int ethnl_set_params(struct sk_buff *skb, struct genl_info *info);
+ 
+ int ethnl_strset_start(struct netlink_callback *cb);
+ int ethnl_drvinfo_start(struct netlink_callback *cb);
+@@ -778,6 +779,11 @@ static const struct genl_ops ethtool_genl_ops[] = {
+ 		.dumpit	= ethnl_dumpit,
+ 		.done	= ethnl_params_done,
+ 	},
++	{
++		.cmd	= ETHNL_CMD_SET_PARAMS,
++		.flags	= GENL_UNS_ADMIN_PERM,
++		.doit	= ethnl_set_params,
++	},
+ };
+ 
+ static const struct genl_multicast_group ethtool_nl_mcgrps[] = {
+diff --git a/net/ethtool/params.c b/net/ethtool/params.c
+index 773e13fc1ae6..8cbf33ad81b8 100644
+--- a/net/ethtool/params.c
++++ b/net/ethtool/params.c
+@@ -577,3 +577,432 @@ void ethnl_params_notify(struct netdev_notifier_ethtool_info *info)
+ err_skb:
+ 	nlmsg_free(skb);
+ }
++
++static const struct nla_policy coalesce_policy[ETHA_COALESCE_MAX + 1] = {
++	[ETHA_COALESCE_UNSPEC]			= { .type = NLA_UNSPEC },
++	[ETHA_COALESCE_RX_USECS]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_MAXFRM]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_USECS_IRQ]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_MAXFRM_IRQ]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_USECS_LOW]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_MAXFRM_LOW]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_USECS_HIGH]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_MAXFRM_HIGH]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_USECS]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_MAXFRM]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_USECS_IRQ]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_MAXFRM_IRQ]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_USECS_LOW]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_MAXFRM_LOW]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_USECS_HIGH]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_TX_MAXFRM_HIGH]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_PKT_RATE_LOW]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_PKT_RATE_HIGH]		= { .type = NLA_U32 },
++	[ETHA_COALESCE_RX_USE_ADAPTIVE]		= { .type = NLA_U8 },
++	[ETHA_COALESCE_TX_USE_ADAPTIVE]		= { .type = NLA_U8 },
++	[ETHA_COALESCE_RATE_SAMPLE_INTERVAL]	= { .type = NLA_U32 },
++	[ETHA_COALESCE_STATS_BLOCK_USECS]	= { .type = NLA_U32 },
++};
++
++static int update_coalesce(struct genl_info *info, struct net_device *dev,
++			   struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_COALESCE_MAX + 1];
++	struct ethtool_coalesce data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_coalesce || !dev->ethtool_ops->set_coalesce)
++		return -EOPNOTSUPP;
++	ret = dev->ethtool_ops->get_coalesce(dev, &data);
++	if (ret < 0)
++		return ret;
++
++	ret = nla_parse_nested(tb, ETHA_COALESCE_MAX, nest, coalesce_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++
++	if (ethnl_update_u32(&data.rx_coalesce_usecs,
++			     tb[ETHA_COALESCE_RX_USECS]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_max_coalesced_frames,
++			     tb[ETHA_COALESCE_RX_MAXFRM]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_coalesce_usecs_irq,
++			     tb[ETHA_COALESCE_RX_USECS_IRQ]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_max_coalesced_frames_irq,
++			     tb[ETHA_COALESCE_RX_MAXFRM_IRQ]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_coalesce_usecs_low,
++			     tb[ETHA_COALESCE_RX_USECS_LOW]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_max_coalesced_frames_low,
++			     tb[ETHA_COALESCE_RX_MAXFRM_LOW]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_coalesce_usecs_high,
++			     tb[ETHA_COALESCE_RX_USECS_HIGH]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_max_coalesced_frames_high,
++			     tb[ETHA_COALESCE_RX_MAXFRM_HIGH]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_coalesce_usecs,
++			     tb[ETHA_COALESCE_TX_USECS]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_max_coalesced_frames,
++			     tb[ETHA_COALESCE_TX_MAXFRM]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_coalesce_usecs_irq,
++			     tb[ETHA_COALESCE_TX_USECS_IRQ]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_max_coalesced_frames_irq,
++			     tb[ETHA_COALESCE_TX_MAXFRM_IRQ]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_coalesce_usecs_low,
++			     tb[ETHA_COALESCE_TX_USECS_LOW]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_max_coalesced_frames_low,
++			     tb[ETHA_COALESCE_TX_MAXFRM_LOW]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_coalesce_usecs_high,
++			     tb[ETHA_COALESCE_TX_USECS_HIGH]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_max_coalesced_frames_high,
++			     tb[ETHA_COALESCE_TX_MAXFRM_HIGH]))
++		mod = true;
++	if (ethnl_update_u32(&data.pkt_rate_low,
++			     tb[ETHA_COALESCE_PKT_RATE_LOW]))
++		mod = true;
++	if (ethnl_update_u32(&data.pkt_rate_high,
++			     tb[ETHA_COALESCE_PKT_RATE_HIGH]))
++		mod = true;
++	if (ethnl_update_bool32(&data.use_adaptive_rx_coalesce,
++				tb[ETHA_COALESCE_RX_USE_ADAPTIVE]))
++		mod = true;
++	if (ethnl_update_bool32(&data.use_adaptive_tx_coalesce,
++				tb[ETHA_COALESCE_TX_USE_ADAPTIVE]))
++		mod = true;
++	if (ethnl_update_u32(&data.rate_sample_interval,
++			     tb[ETHA_COALESCE_RATE_SAMPLE_INTERVAL]))
++		mod = true;
++	if (ethnl_update_u32(&data.stats_block_coalesce_usecs,
++			     tb[ETHA_COALESCE_STATS_BLOCK_USECS]))
++		mod = true;
++
++	if (!mod)
++		return 0;
++	ret = dev->ethtool_ops->set_coalesce(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++static const struct nla_policy ring_policy[ETHA_RING_MAX + 1] = {
++	[ETHA_RING_UNSPEC]			= { .type = NLA_UNSPEC },
++	[ETHA_RING_RX_MAX_PENDING]		= { .type = NLA_U32 },
++	[ETHA_RING_RX_MINI_MAX_PENDING]		= { .type = NLA_U32 },
++	[ETHA_RING_RX_JUMBO_MAX_PENDING]	= { .type = NLA_U32 },
++	[ETHA_RING_TX_MAX_PENDING]		= { .type = NLA_U32 },
++	[ETHA_RING_RX_PENDING]			= { .type = NLA_U32 },
++	[ETHA_RING_RX_MINI_PENDING]		= { .type = NLA_U32 },
++	[ETHA_RING_RX_JUMBO_PENDING]		= { .type = NLA_U32 },
++	[ETHA_RING_TX_PENDING]			= { .type = NLA_U32 },
++};
++
++static int update_ring(struct genl_info *info, struct net_device *dev,
++		       struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_RING_MAX + 1];
++	struct ethtool_ringparam data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_ringparam ||
++	    !dev->ethtool_ops->set_ringparam)
++		return -EOPNOTSUPP;
++	dev->ethtool_ops->get_ringparam(dev, &data);
++
++	ret = nla_parse_nested(tb, ETHA_RING_MAX, nest, ring_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++	/* read only attributes */
++	if (tb[ETHA_RING_RX_MAX_PENDING] || tb[ETHA_RING_RX_MINI_MAX_PENDING] ||
++	    tb[ETHA_RING_RX_JUMBO_MAX_PENDING] ||
++	    tb[ETHA_RING_TX_MAX_PENDING]) {
++		ETHNL_SET_ERRMSG(info, "attempt to set a read only attribute");
++		return -EINVAL;
++	}
++
++	if (ethnl_update_u32(&data.rx_pending, tb[ETHA_RING_RX_PENDING]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_mini_pending,
++			     tb[ETHA_RING_RX_MINI_PENDING]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_jumbo_pending,
++			     tb[ETHA_RING_RX_JUMBO_PENDING]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_pending, tb[ETHA_RING_TX_PENDING]))
++		mod = true;
++	if (!mod)
++		return 0;
++
++	/* ensure new ring parameters are within the maximums */
++	if (data.rx_pending > data.rx_max_pending ||
++	    data.rx_mini_pending > data.rx_mini_max_pending ||
++	    data.rx_jumbo_pending > data.rx_jumbo_max_pending ||
++	    data.tx_pending > data.tx_max_pending) {
++		ETHNL_SET_ERRMSG(info,
++				 "requested ring param value exceeeds maximum");
++		return -EINVAL;
++	}
++
++	ret = dev->ethtool_ops->set_ringparam(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++static const struct nla_policy pause_policy[ETHA_PAUSE_MAX + 1] = {
++	[ETHA_PAUSE_UNSPEC]	= { .type = NLA_UNSPEC },
++	[ETHA_PAUSE_AUTONEG]	= { .type = NLA_U8 },
++	[ETHA_PAUSE_RX]		= { .type = NLA_U8 },
++	[ETHA_PAUSE_TX]		= { .type = NLA_U8 },
++};
++
++static int update_pause(struct genl_info *info, struct net_device *dev,
++			struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_RING_MAX + 1];
++	struct ethtool_pauseparam data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_pauseparam ||
++	    !dev->ethtool_ops->set_pauseparam)
++		return -EOPNOTSUPP;
++	dev->ethtool_ops->get_pauseparam(dev, &data);
++
++	ret = nla_parse_nested(tb, ETHA_PAUSE_MAX, nest, pause_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++
++	if (ethnl_update_u32(&data.autoneg, tb[ETHA_PAUSE_AUTONEG]))
++		mod = true;
++	if (ethnl_update_u32(&data.rx_pause, tb[ETHA_PAUSE_RX]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_pause, tb[ETHA_PAUSE_TX]))
++		mod = true;
++
++	if (!mod)
++		return 0;
++	ret = dev->ethtool_ops->set_pauseparam(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++static const struct nla_policy channels_policy[ETHA_CHANNELS_MAX + 1] = {
++	[ETHA_CHANNELS_UNSPEC]		= { .type = NLA_UNSPEC },
++	[ETHA_CHANNELS_MAX_RX]		= { .type = NLA_U32 },
++	[ETHA_CHANNELS_MAX_TX]		= { .type = NLA_U32 },
++	[ETHA_CHANNELS_MAX_OTHER]	= { .type = NLA_U32 },
++	[ETHA_CHANNELS_MAX_COMBINED]	= { .type = NLA_U32 },
++	[ETHA_CHANNELS_RX_COUNT]	= { .type = NLA_U32 },
++	[ETHA_CHANNELS_TX_COUNT]	= { .type = NLA_U32 },
++	[ETHA_CHANNELS_OTHER_COUNT]	= { .type = NLA_U32 },
++	[ETHA_CHANNELS_COMBINED_COUNT]	= { .type = NLA_U32 },
++};
++
++static int update_channels(struct genl_info *info, struct net_device *dev,
++			   struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_CHANNELS_MAX + 1];
++	struct ethtool_channels data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_channels ||
++	    !dev->ethtool_ops->set_channels)
++		return -EOPNOTSUPP;
++	dev->ethtool_ops->get_channels(dev, &data);
++
++	ret = nla_parse_nested(tb, ETHA_CHANNELS_MAX, nest, channels_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++	/* read only attributes */
++	if (tb[ETHA_CHANNELS_MAX_RX] || tb[ETHA_CHANNELS_MAX_TX] ||
++	    tb[ETHA_CHANNELS_MAX_OTHER] || tb[ETHA_CHANNELS_MAX_COMBINED]) {
++		ETHNL_SET_ERRMSG(info, "attempt to set a read only attribute");
++		return -EINVAL;
++	}
++
++	if (ethnl_update_u32(&data.rx_count, tb[ETHA_CHANNELS_RX_COUNT]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_count, tb[ETHA_CHANNELS_TX_COUNT]))
++		mod = true;
++	if (ethnl_update_u32(&data.other_count, tb[ETHA_CHANNELS_OTHER_COUNT]))
++		mod = true;
++	if (ethnl_update_u32(&data.combined_count,
++			     tb[ETHA_CHANNELS_COMBINED_COUNT]))
++		mod = true;
++
++	if (!mod)
++		return 0;
++	ret = dev->ethtool_ops->set_channels(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++static const struct nla_policy eee_policy[ETHA_EEE_MAX + 1] = {
++	[ETHA_EEE_UNSPEC]		= { .type = NLA_UNSPEC },
++	[ETHA_EEE_LINK_MODES]		= { .type = NLA_NESTED },
++	[ETHA_EEE_PEER_MODES]		= { .type = NLA_NESTED },
++	[ETHA_EEE_ACTIVE]		= { .type = NLA_U8 },
++	[ETHA_EEE_ENABLED]		= { .type = NLA_U8 },
++	[ETHA_EEE_TX_LPI_ENABLED]	= { .type = NLA_U8 },
++	[ETHA_EEE_TX_LPI_TIMER]		= { .type = NLA_U32 },
++};
++
++static int update_eee(struct genl_info *info, struct net_device *dev,
++		      struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_EEE_MAX + 1];
++	struct ethtool_eee data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_eee ||
++	    !dev->ethtool_ops->set_eee)
++		return -EOPNOTSUPP;
++	ret = dev->ethtool_ops->get_eee(dev, &data);
++	if (ret < 0)
++		return ret;
++
++	ret = nla_parse_nested(tb, ETHA_EEE_MAX, nest, eee_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++	/* read only attributes */
++	if (tb[ETHA_EEE_PEER_MODES] || tb[ETHA_EEE_ACTIVE]) {
++		ETHNL_SET_ERRMSG(info, "attempt to set a read only attribute");
++		return -EINVAL;
++	}
++
++	if (ethnl_update_bitset32(&data.advertised, NULL, 32,
++				  tb[ETHA_EEE_LINK_MODES], &ret,
++				  link_mode_names, info))
++		mod = true;
++	if (ret < 0)
++		return ret;
++	if (ethnl_update_bool32(&data.eee_enabled, tb[ETHA_EEE_ENABLED]))
++		mod = true;
++	if (ethnl_update_bool32(&data.tx_lpi_enabled,
++				tb[ETHA_EEE_TX_LPI_ENABLED]))
++		mod = true;
++	if (ethnl_update_u32(&data.tx_lpi_timer, tb[ETHA_EEE_TX_LPI_TIMER]))
++		mod = true;
++
++	if (!mod)
++		return 0;
++	ret = dev->ethtool_ops->set_eee(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++static const struct nla_policy fec_policy[ETHA_FEC_MAX + 1] = {
++	[ETHA_FEC_UNSPEC]		= { .type = NLA_UNSPEC },
++	[ETHA_FEC_MODES]		= { .type = NLA_U32 },
++};
++
++static int update_fec(struct genl_info *info, struct net_device *dev,
++		      struct nlattr *nest)
++{
++	struct nlattr *tb[ETHA_FEC_MAX + 1];
++	struct ethtool_fecparam data = {};
++	bool mod = false;
++	int ret;
++
++	if (!nest)
++		return 0;
++	if (!dev->ethtool_ops->get_fecparam ||
++	    !dev->ethtool_ops->set_fecparam)
++		return -EOPNOTSUPP;
++	ret = dev->ethtool_ops->get_fecparam(dev, &data);
++	if (ret < 0)
++		return ret;
++
++	ret = nla_parse_nested(tb, ETHA_FEC_MAX, nest, fec_policy,
++			       info->extack);
++	if (ret < 0)
++		return ret;
++
++	if (ethnl_update_bitfield32(&data.fec, tb[ETHA_FEC_MODES]))
++		mod = true;
++
++	if (!mod)
++		return 0;
++	ret = dev->ethtool_ops->set_fecparam(dev, &data);
++	return (ret < 0) ? ret : 1;
++}
++
++int ethnl_set_params(struct sk_buff *skb, struct genl_info *info)
++{
++	struct nlattr *tb[ETHA_PARAMS_MAX + 1];
++	struct net_device *dev;
++	u32 req_mask = 0;
++	int ret;
++
++	ret = genlmsg_parse(info->nlhdr, &ethtool_genl_family, tb,
++			    ETHA_PARAMS_MAX, params_policy, info->extack);
++	if (ret < 0)
++		return ret;
++	dev = ethnl_dev_get(info, tb[ETHA_PARAMS_DEV]);
++	if (IS_ERR(dev))
++		return PTR_ERR(dev);
++	rtnl_lock();
++
++	ret = update_coalesce(info, dev, tb[ETHA_PARAMS_COALESCE]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_COALESCE;
++	ret = update_ring(info, dev, tb[ETHA_PARAMS_RING]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_RING;
++	ret = update_pause(info, dev, tb[ETHA_PARAMS_PAUSE]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_PAUSE;
++	ret = update_channels(info, dev, tb[ETHA_PARAMS_CHANNELS]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_CHANNELS;
++	ret = update_eee(info, dev, tb[ETHA_PARAMS_EEE]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_EEE;
++	ret = update_fec(info, dev, tb[ETHA_PARAMS_FEC]);
++	if (ret < 0)
++		goto out_unlock;
++	if (ret)
++		req_mask |= ETH_PARAMS_IM_FEC;
++
++	ret = 0;
++out_unlock:
++	if (req_mask)
++		ethnl_notify(dev, NULL, ETHNL_CMD_SET_PARAMS, req_mask);
++	rtnl_unlock();
++	dev_put(dev);
++	return ret;
++}
+-- 
+2.18.0
 
