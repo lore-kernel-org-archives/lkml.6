@@ -2,103 +2,202 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE647FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A4B13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A587A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k3l2qA0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A587A20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E46420893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:56:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E46420893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeG3K23 (ORCPT
+        id S1726649AbeG3KaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:28:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40544 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeG3K22 (ORCPT
+        Mon, 30 Jul 2018 06:30:04 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:46805 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeG3KaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:28:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xdGnmK8t1YV0QPYIjo0ZqGbctDl195gyFDUuKKzBSiE=; b=k3l2qA0SGymJzCLwS3/427W9+
-        Mt1KB9QnpGlV0RXLV3wfPRg4JItAY7UsFUZKBCCIso1z0kHLiVCrK3/URK2zI5sLKj07qovsI1rvJ
-        N29mOgq3WdSqLQp5ZjN1J+Vf+zTRquNI/ij5DEGRffFB18eYlebPZfys0kdPdcudAmJho/XMrU9y7
-        eay5Zpbgx+hvuQW4uKK1TUNYeiFRE1BGIGmpuRe76UV23cZZHQZyrHLxiNKQi2k18emDYpvy+xJSI
-        W+51pgllsmCBD4ref9MXtaLZRKb1u43TougfwTxOihjSR8AnUi25AY0ZeMU5mn+ZRpiPAiMb3o5NP
-        M7yKp8A0Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fk3wE-0005Bk-6e; Mon, 30 Jul 2018 08:53:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0538420268325; Mon, 30 Jul 2018 10:53:55 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 10:53:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "mike.travis@hpe.com" <mike.travis@hpe.com>,
-        Rajvi Jingar <rajvi.jingar@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/1] x86: tsc: avoid system instability in
- hibernation
-Message-ID: <20180730085354.GA2494@hirez.programming.kicks-ass.net>
-References: <20180726155656.14873-1-eduval@amazon.com>
+        Mon, 30 Jul 2018 06:30:04 -0400
+Received: by mail-ua0-f194.google.com with SMTP id u11-v6so2604586uan.13;
+        Mon, 30 Jul 2018 01:56:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dvCQ7edsbYhJlOYLjjDa9s3rQv+dh0CEJfUkdPJvV68=;
+        b=lxmrml31K3gKu3vaGSPCJNALq36Hy+ibuC3XxZQbuL3w7DdLElrKbW+RUc67Vetxjl
+         ruiwWGbwKnnu54K7ODJ3AbsednHtKoOQxK6m8atAItI+5QI0rOL6l6jB7pPpm082ngRl
+         OMJU2HXnVLd2tljwjOoySV8YuSVNIpYrmY9Jk5KTG1CLFYGRiYfSwZgaoHp4GgQ+cwvN
+         wqanBZ/GP9qwZB1u1v0YoIIruhLFhly7M5XDACwKuFD/sLLnrY3GuX1vZx5RmDhqKlH8
+         mm1ZL5PAnLAGZUmh0BP57laUAP1ESwjabR8TiJklIJ0D2mMPeczZu4NCzZ+HSynA5YJQ
+         hlhw==
+X-Gm-Message-State: AOUpUlGIKrqlFWqDcocUmRJGxwUA/HlpzdbPjHOSYTmaeZXE3xr9Fyr2
+        0DPAy/094JhVcjuvk9aQ7MBnO71QHOvH5lhfqdg=
+X-Google-Smtp-Source: AAOMgpcF80mFy82CyRmfYiTfC6zVDSaemnTHgE69IZ0D4ciU47LCwqalZfjiR7U5GyaY2CrC1ppoRTecqufcsnZ3Qa8=
+X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr11520706uae.72.1532940965371;
+ Mon, 30 Jul 2018 01:56:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726155656.14873-1-eduval@amazon.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com> <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 30 Jul 2018 10:55:53 +0200
+Message-ID: <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 08:56:56AM -0700, Eduardo Valentin wrote:
-> System instability are seen during resume from hibernation when system
-> is under heavy CPU load. This is due to the lack of update of sched
-> clock data
+Hi Phil,
 
-Which would suggest you're already running with unstable sched clock.
-Otherwise nobody would care about the scd stuff.
+On Mon, Jul 30, 2018 at 10:36 AM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> Quite a few drivers get an optional clock, e.g. a clock required
+> to access peripheral's registers that is always enabled on some
+> devices.
+>
+> This function behaves the same as of_clk_get_by_name() except that
+> it will return NULL instead of -ENOENT. This makes error checking
+> for users easier and allows clk_prepare_enable, etc to be called
+> on the returned reference without additional checks.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-What kind of machine are you running? What does:
+Thanks for your patch!
 
-  dmesg | grep -i tsc
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
+>
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                                         const char *dev_id,
+> -                                       const char *name)
+> +                                       const char *name,
+> +                                       bool optional)
+>  {
+>         struct clk *clk = ERR_PTR(-ENOENT);
+>
+> @@ -73,6 +74,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                 if (!IS_ERR(clk)) {
+>                         break;
+>                 } else if (name && index >= 0) {
+> +                       if (optional && PTR_ERR(clk) == -ENOENT)
+> +                               clk = NULL;
 
-say?
+This only handles the "name && index >= 0" case.
+If that condition is never true, the loop will end, eventually, and the last
+value of clk will be returned. Hence there should be a similar check at the
+end of the function.
 
-> The fix for this situation is to mark the sched clock as unstable
-> as early as possible in the resume path, leaving it unstable
-> for the duration of the resume process. This will force the
-> scheduler to attempt to align the sched clock across CPUs using
-> the delta with time of day, updating sched clock data. In a post
-> hibernation event, we can then mark the sched clock as stable
-> again, avoiding unnecessary syncs with time of day on systems
-> in which TSC is reliable.
+>                         if (PTR_ERR(clk) != -EPROBE_DEFER)
+>                                 pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
+>                                         np, name ? name : "", index);
 
-None of this makes any sense. Either you were already unstable and it
-should already have worked and them marking it stable is an outright
-bug, or your sched clock was stable but then your initial diagnosis of
-lack of scd updates is complete garbage.
+Hence if not found, this will always print an error, even if the clock is
+optional?
 
+> @@ -106,15 +109,38 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
+>         if (!np)
+>                 return ERR_PTR(-ENOENT);
+>
+> -       return __of_clk_get_by_name(np, np->full_name, name);
+> +       return __of_clk_get_by_name(np, np->full_name, name, false);
+>  }
+>  EXPORT_SYMBOL(of_clk_get_by_name);
+>
+> +/**
+> + * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
+> + * by a device node
+> + * @np: pointer to clock consumer node
+> + * @name: name of consumer's clock input, or NULL for the first clock reference
+> + *
+> + * This function parses the clocks and clock-names properties,
+> + * and uses them to look up the struct clk from the registered list of clock
+> + * providers.
+> + * It behaves the same as of_clk_get_by_name(), except when no clock is found.
+> + * In this case, instead of returning -ENOENT, it returns NULL.
+> + */
+> +struct clk *of_clk_get_by_name_optional(struct device_node *np,
+> +                                       const char *name)
+> +{
+> +       if (!np)
+> +               return ERR_PTR(-ENOENT);
+
+Shouldn't this return NULL?
+Or let __of_clk_get_by_name() handle that (cfr. above)?
+
+Hmm, of_clk_get_by_name() has a similar check, while the current
+__of_clk_get_by_name() already handle np == NULL, too.
+
+> +
+> +       return __of_clk_get_by_name(np, np->full_name, name, true);
+> +}
+> +EXPORT_SYMBOL(of_clk_get_by_name_optional);
+> +
+>  #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
+>
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                                         const char *dev_id,
+> -                                       const char *name)
+> +                                       const char *name,
+> +                                       bool optional)
+>  {
+>         return ERR_PTR(-ENOENT);
+>  }
+> @@ -197,7 +223,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+>         struct clk *clk;
+>
+>         if (dev && dev->of_node) {
+> -               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
+> +               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
+>                 if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+>                         return clk;
+>         }
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 4f750c4..8cb5455 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+>  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+>  struct clk *of_clk_get(struct device_node *np, int index);
+>  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+> +struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
+>  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+>  #else
+>  static inline struct clk *of_clk_get(struct device_node *np, int index)
+
+No dummy version of of_clk_get_by_name_optional() for the !CLK || !COMMON_CLK
+case?
+
+It seems of_clk_get_by_name() and of_clk_get_by_name_optional() can just
+be simple wrappers around __of_clk_get_by_name(), differing only in the
+value of the "optional" parameter. Hence I think it makes sense to move them
+to the header file, and make them static inline.
+Then only __of_clk_get_by_name() needs a (static inline) dummy for the !OF ||
+!COMMON_CLK case.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
