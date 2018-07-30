@@ -3,114 +3,364 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D526FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6532FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B3820892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:57:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B3820892
+	by mail.kernel.org (Postfix) with ESMTP id 8647D208A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8647D208A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbeG3Oce (ORCPT
+        id S1732284AbeG3Oa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:32:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50646 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:30:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50080 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730482AbeG3Ocd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:32:33 -0400
+        id S1732164AbeG3Oa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:30:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26A87AEEB;
-        Mon, 30 Jul 2018 12:57:40 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97A88AED4;
+        Mon, 30 Jul 2018 12:56:05 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id D0018A0BE8; Mon, 30 Jul 2018 14:57:39 +0200 (CEST)
-Message-Id: <61559cddb892494c58aa6b72a5f1d21ecf9cb2d7.1532954671.git.mkubecek@suse.cz>
+        id 5C507A0BE8; Mon, 30 Jul 2018 14:56:04 +0200 (CEST)
+Message-Id: <1ef092fff9b6e691163d11735dc9d807f485f2ec.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 23/23] netlink: add netlink handler for sfec
- (--set-fec)
+Subject: [RFC PATCH ethtool v2 04/23] netlink: add support for string sets
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:57:39 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:04 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement "ethtool --set-fec <dev>" subcommand using netlink interface
-command ETHNL_CMD_SET_PARAMS.
+Add infrastructure for querying kernel string sets (analog to ioct commands
+ETHTOOL_GSSET_INFO and ETHTOOL_GSTRINGS).
+
+Let notification monitor request string sets on start so that it can
+resolve bit indices to names when processing bitsets in compact format.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- ethtool.c        |  3 ++-
- netlink/extapi.h |  1 +
- netlink/params.c | 17 +++++++++++++++++
- 3 files changed, 20 insertions(+), 1 deletion(-)
+ Makefile.am      |   1 +
+ netlink/strset.c | 265 +++++++++++++++++++++++++++++++++++++++++++++++
+ netlink/strset.h |  16 +++
+ 3 files changed, 282 insertions(+)
+ create mode 100644 netlink/strset.c
+ create mode 100644 netlink/strset.h
 
-diff --git a/ethtool.c b/ethtool.c
-index bd85b0c50ce2..8160ab200a16 100644
---- a/ethtool.c
-+++ b/ethtool.c
-@@ -4890,6 +4890,7 @@ static int show_usage(struct cmd_context *ctx);
- #define nl_spause	NULL
- #define nl_schannels	NULL
- #define nl_seee		NULL
-+#define nl_sfec		NULL
- #endif
- 
- static const struct option {
-@@ -5099,7 +5100,7 @@ static const struct option {
- 	  "		[ all ]\n"},
- 	{ "--show-fec", 1, do_gfec, nl_gfec,
- 	  "Show FEC settings"},
--	{ "--set-fec", 1, do_sfec, NULL,
-+	{ "--set-fec", 1, do_sfec, nl_sfec,
- 	  "Set FEC settings",
- 	  "		[ encoding auto|off|rs|baser ]\n"},
- 	{ "-h|--help", 0, show_usage, NULL,
-diff --git a/netlink/extapi.h b/netlink/extapi.h
-index 80ed4afb5227..1938c6075758 100644
---- a/netlink/extapi.h
-+++ b/netlink/extapi.h
-@@ -29,6 +29,7 @@ int nl_sring(struct cmd_context *ctx);
- int nl_spause(struct cmd_context *ctx);
- int nl_schannels(struct cmd_context *ctx);
- int nl_seee(struct cmd_context *ctx);
-+int nl_sfec(struct cmd_context *ctx);
- int nl_monitor(struct cmd_context *ctx);
- 
- void monitor_usage();
-diff --git a/netlink/params.c b/netlink/params.c
-index 1cc2ffbc4b27..95a54d0d2978 100644
---- a/netlink/params.c
-+++ b/netlink/params.c
-@@ -640,3 +640,20 @@ int nl_seee(struct cmd_context *ctx)
- 	return nl_set_param(ctx, "--set-eee", seee_params, ETHA_PARAMS_EEE,
- 			    ETHA_EEE_MAX);
- }
+diff --git a/Makefile.am b/Makefile.am
+index bdb4f4df2b0f..6a4d7083919e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -22,6 +22,7 @@ endif
+ if ETHTOOL_ENABLE_NETLINK
+ ethtool_SOURCES += \
+ 		  netlink/netlink.c netlink/netlink.h netlink/extapi.h \
++		  netlink/strset.c netlink/strset.h \
+ 		  uapi/linux/ethtool_netlink.h \
+ 		  uapi/linux/netlink.h uapi/linux/genetlink.h
+ ethtool_CFLAGS += @MNL_CFLAGS@
+diff --git a/netlink/strset.c b/netlink/strset.c
+new file mode 100644
+index 000000000000..9ea456748531
+--- /dev/null
++++ b/netlink/strset.c
+@@ -0,0 +1,265 @@
++#include <errno.h>
++#include <string.h>
 +
-+static const struct param_parser sfec_params[] = {
-+	{
-+		.arg		= "modes",
-+		.type		= ETHA_FEC_MODES,
-+		.handler	= nl_parse_bitfield32,
-+		.handler_data	= flags_fecenc,
-+		.min_argc	= 1,
-+	},
-+	{}
++#include "../internal.h"
++#include "netlink.h"
++
++struct stringset {
++	const char		**strings;
++	void			*raw_data;
++	unsigned int		count;
 +};
 +
-+int nl_sfec(struct cmd_context *ctx)
++struct perdev_strings {
++	char			devname[IFNAMSIZ];
++	struct stringset	strings[ETH_SS_MAX + 1];
++	struct perdev_strings	*next;
++};
++
++/* universal string sets */
++static struct stringset global_strings[ETH_SS_MAX + 1];
++/* linked list of string sets related to network devices */
++static struct perdev_strings *device_strings;
++
++static void drop_stringset(struct stringset *set)
 +{
-+	return nl_set_param(ctx, "--set-fec", sfec_params, ETHA_PARAMS_FEC,
-+			    ETHA_FEC_MAX);
++	free(set->strings);
++	free(set->raw_data);
++	set->count = 0;
 +}
++
++static int import_stringset(struct stringset *dest, const struct nlattr *nest)
++{
++	const struct nlattr *tb_stringset[ETHA_STRINGSET_MAX + 1] = {};
++	DECLARE_ATTR_TB_INFO(tb_stringset);
++	const struct nlattr *string;
++	unsigned int size;
++	unsigned int count;
++	unsigned int idx;
++	int ret;
++
++	ret = mnl_attr_parse_nested(nest, attr_cb, &tb_stringset_info);
++	if (ret < 0)
++		return ret;
++	if (!tb_stringset[ETHA_STRINGSET_ID] ||
++	    !tb_stringset[ETHA_STRINGSET_COUNT] ||
++	    !tb_stringset[ETHA_STRINGSET_STRINGS])
++		return -EFAULT;
++	idx = mnl_attr_get_u32(tb_stringset[ETHA_STRINGSET_ID]);
++	if (idx > ETH_SS_MAX)
++		return 0;
++	count = mnl_attr_get_u32(tb_stringset[ETHA_STRINGSET_COUNT]);
++	if (count == 0)
++		return 0;
++
++	size = mnl_attr_get_len(tb_stringset[ETHA_STRINGSET_STRINGS]);
++	ret = -ENOMEM;
++	dest[idx].raw_data = malloc(size);
++	if (!dest[idx].raw_data)
++		goto err;
++	memcpy(dest[idx].raw_data, tb_stringset[ETHA_STRINGSET_STRINGS], size);
++	dest[idx].strings = malloc(count * sizeof(dest[idx].strings[0]));
++	if (!dest[idx].strings)
++		goto err;
++	dest[idx].count = count;
++
++	nest = dest[idx].raw_data;
++	mnl_attr_for_each_nested(string, nest) {
++		const struct nlattr *tb[ETHA_STRING_MAX + 1] = {};
++		DECLARE_ATTR_TB_INFO(tb);
++		unsigned int i;
++
++		if (mnl_attr_get_type(string) != ETHA_STRINGS_STRING)
++			continue;
++		ret = mnl_attr_parse_nested(string, attr_cb, &tb_info);
++		if (ret < 0)
++			goto err;
++		ret = -EFAULT;
++		if (!tb[ETHA_STRING_INDEX] || !tb[ETHA_STRING_VALUE])
++			goto err;
++
++		i = mnl_attr_get_u32(tb[ETHA_STRING_INDEX]);
++		if (i >= count)
++			goto err;
++		dest[idx].strings[i] =
++			mnl_attr_get_payload(tb[ETHA_STRING_VALUE]);
++	}
++
++	return 0;
++err:
++	drop_stringset(&dest[idx]);
++	return ret;
++}
++
++static const char *stringset_names[] = {
++	[ETH_SS_TEST] = "test",
++	[ETH_SS_STATS] = "stats",
++	[ETH_SS_PRIV_FLAGS] = "priv-flags",
++	[ETH_SS_NTUPLE_FILTERS] = "ntuple-filters",
++	[ETH_SS_FEATURES] = "features",
++	[ETH_SS_RSS_HASH_FUNCS] = "rss-hash-funcs",
++	[ETH_SS_TUNABLES] = "tunables",
++	[ETH_SS_PHY_STATS] = "phy-stats",
++	[ETH_SS_PHY_TUNABLES] = "phy-tunables",
++	[ETH_SS_LINK_MODES] = "link-modes",
++};
++
++void debug_stringsets(const struct stringset *sets)
++{
++	unsigned int i;
++
++	for (i = 0; i <= ETH_SS_MAX; i++) {
++		if (sets[i].count > 0) {
++			printf("    set %s, count %u\n", stringset_names[i],
++			       sets[i].count);
++		}
++	}
++}
++
++void debug_strings()
++{
++	struct perdev_strings *pd;
++
++	fputs("global strings:\n", stdout);
++	debug_stringsets(global_strings);
++
++	for (pd = device_strings; pd; pd = pd->next) {
++		printf("strings for %s:\n", pd->devname);
++		debug_stringsets(pd->strings);
++	}
++}
++
++static int strset_reply_cb(const struct nlmsghdr *nlhdr, void *data)
++{
++	const struct nlattr *tb[ETHA_STRSET_MAX + 1] = {};
++	DECLARE_ATTR_TB_INFO(tb);
++	struct nl_context *nlctx = data;
++	struct stringset *dest;
++	struct nlattr *attr;
++	unsigned int i;
++	int ret;
++
++	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
++	if (ret < 0)
++		return ret;
++	nlctx->devname = get_dev_name(tb[ETHA_STRSET_DEV]);
++	if (!dev_ok(nlctx))
++		return MNL_CB_OK;
++
++	if (nlctx->devname) {
++		struct perdev_strings *perdev = device_strings;
++
++		while (perdev && strcmp(perdev->devname, nlctx->devname))
++			perdev = perdev->next;
++		if (perdev) {
++			for (i = 0; i <= ETH_SS_MAX; i++)
++				drop_stringset(&perdev->strings[i]);
++		} else {
++			perdev = calloc(sizeof(*perdev), 1);
++			if (!perdev)
++				return -ENOMEM;
++			strncpy(perdev->devname, nlctx->devname, IFNAMSIZ);
++			perdev->devname[IFNAMSIZ - 1] = '\0';
++			perdev->next = device_strings;
++			device_strings = perdev;
++		}
++		dest = perdev->strings;
++	} else {
++		for (i = 0; i <= ETH_SS_MAX; i++)
++			drop_stringset(&global_strings[i]);
++		dest = global_strings;
++	}
++
++	mnl_attr_for_each(attr, nlhdr, GENL_HDRLEN) {
++		if (mnl_attr_get_type(attr) == ETHA_STRSET_STRINGSET)
++			import_stringset(dest, attr);
++	}
++
++	return MNL_CB_OK;
++}
++
++/* interface */
++
++const struct stringset *global_stringset(unsigned int type)
++{
++	if (type > ETH_SS_MAX)
++		return NULL;
++	return &global_strings[type];
++}
++
++const struct stringset *perdev_stringset(const char *dev, unsigned int type)
++{
++	const struct perdev_strings *p;
++
++	if (type > ETH_SS_MAX)
++		return NULL;
++	for (p = device_strings; p; p = p->next)
++		if (!strcmp(p->devname, dev))
++			return &p->strings[type];
++
++	return NULL;
++}
++
++unsigned int get_count(const struct stringset *set)
++{
++	return set->count;
++}
++
++const char *get_string(const struct stringset *set, unsigned int idx)
++{
++	if (idx > set->count)
++		return NULL;
++	return set->strings[idx];
++}
++
++int load_global_strings(struct nl_context *nlctx)
++{
++	int ret;
++
++	ret = msg_init(nlctx, ETHNL_CMD_GET_STRSET, NLM_F_REQUEST | NLM_F_ACK);
++	if (ret < 0)
++		return ret;
++	ret = ethnl_send_get_request(nlctx, strset_reply_cb);
++	return ret;
++}
++
++int load_perdev_strings(struct nl_context *nlctx, const char *dev)
++{
++	int ret;
++
++	ret = msg_init(nlctx, ETHNL_CMD_GET_STRSET,
++		       NLM_F_REQUEST | NLM_F_ACK | (dev ? 0 : NLM_F_DUMP));
++	if (ret < 0)
++		return ret;
++	if (dev) {
++		if (ethnla_put_dev(nlctx, ETHA_STRSET_DEV, dev))
++			return -EMSGSIZE;
++	}
++	ret = ethnl_send_get_request(nlctx, strset_reply_cb);
++	return ret;
++}
++
++void free_perdev_strings(const char *devname)
++{
++	struct perdev_strings **p = &device_strings;
++	unsigned int i;
++
++	p = &device_strings;
++	while (*p) {
++		struct perdev_strings *perdev = *p;
++
++		if (devname && strcmp(perdev->devname, devname)) {
++			p = &((*p)->next);
++			continue;
++		}
++		*p = perdev->next;
++		for (i = 0; i <= ETH_SS_MAX; i++)
++			drop_stringset(&perdev->strings[i]);
++		free(perdev);
++	}
++
++	if (!devname) {
++		for (i = 0; i <= ETH_SS_MAX; i++)
++			drop_stringset(&global_strings[i]);
++	}
++}
+diff --git a/netlink/strset.h b/netlink/strset.h
+new file mode 100644
+index 000000000000..81ddf33a5d15
+--- /dev/null
++++ b/netlink/strset.h
+@@ -0,0 +1,16 @@
++#ifndef ETHTOOL_NETLINK_STRSET_H__
++#define ETHTOOL_NETLINK_STRSET_H__
++
++struct stringset;
++
++const struct stringset *global_stringset(unsigned int type);
++const struct stringset *perdev_stringset(const char *dev, unsigned int type);
++
++unsigned int get_count(const struct stringset *set);
++const char *get_string(const struct stringset *set, unsigned int idx);
++
++int load_global_strings(struct nl_context *nlctx);
++int load_perdev_strings(struct nl_context *nlctx, const char *dev);
++void free_perdev_strings(const char *devname);
++
++#endif /* ETHTOOL_NETLINK_STRSET_H__ */
 -- 
 2.18.0
 
