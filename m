@@ -2,139 +2,125 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568A8FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E1D16256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C54520893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E82820893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:27:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="AaHMGxkV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C54520893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XEozG7dk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E82820893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732028AbeG3SCg (ORCPT
+        id S1732041AbeG3SC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:02:36 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:40167 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeG3SCe (ORCPT
+        Mon, 30 Jul 2018 14:02:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46332 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeG3SC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:02:34 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 2DCA410C05D8;
-        Mon, 30 Jul 2018 09:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1532968010; bh=EN6mNSpaRkYlyEL2gxhw9tIreBpXQzuMLKFgvRF6IAk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AaHMGxkVccjcbQC34ngaxcpErVyk5CuuVD+SQ6sID6YUWSOE/VcqpGruKY5zXIyus
-         Ci0cYuJjDpfX38pX63NQCKB9emrZ32qKckXzmCN/5cCD5PhAoSXUVUtwYjf4cCzlBl
-         vk57PPTQd4JsjmeQaogcuD7Jmb4ynoflZLyhY1XJnDazTIQpk2HbmM7J9CmwNfsx7U
-         esYdPoxm580RI3UwzWJu9P8fxc5Xv0tftw2NU42UVq8qbbdy/lqdy8SDXowEvWJUyA
-         IqTfvfjIouYKidKEgbQzV7yfu/ribj1XWjCnGTMo6gKh2nHXuqSUiits0IImnHCNkN
-         MLPzu9X1jm94w==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.86])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 68EB23FCB;
-        Mon, 30 Jul 2018 09:26:48 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>, hch@lst.de,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 4/4] ARC: don't check for HIGHMEM pages in arch_dma_alloc
-Date:   Mon, 30 Jul 2018 19:26:36 +0300
-Message-Id: <20180730162636.3556-5-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180730162636.3556-1-Eugeniy.Paltsev@synopsys.com>
-References: <20180730162636.3556-1-Eugeniy.Paltsev@synopsys.com>
+        Mon, 30 Jul 2018 14:02:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8JNH8wh6d/fdHM0JnjGlO3CfUiTjQD86h9nXFLQokgo=; b=XEozG7dkYw6Wox5VAJoMxBWaaA
+        Wwuyuf96TQZ8HdC0rNBMHXltopMNO2B8SL6kHCxaBnOjzcZT1tJ/1LcehIvjm39qsCAnFM4fB48I5
+        Pkv34x8edSl9slopu8MauSf71kVZ5utVoAWJljVn3T9ilNdwn+4ysQKknmapUI8Qm05b77notg8UW
+        NVJc4/HkoKlCvAsq+s5bqRveGQO3Cg5gzMZxnEosDnfUBznloF0WbyVLbFcFehUUeUG6VLpgzk59p
+        TkE7uBMg4gcr74QuM+VSeEF6XrwvnMbDGg+Pm2CDnv8rN3cAwi8oxHvtL7JZ37Ahv9bpSOnhhJ4o/
+        ayhmiUbA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkB0Z-0007bn-GQ; Mon, 30 Jul 2018 16:26:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 11A9320275F3E; Mon, 30 Jul 2018 18:26:53 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 18:26:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
+ refcounting
+Message-ID: <20180730162653.GM2494@hirez.programming.kicks-ass.net>
+References: <20180728215357.3249-1-riel@surriel.com>
+ <20180728215357.3249-11-riel@surriel.com>
+ <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
+ <20180729155452.37eddc11@imladris.surriel.com>
+ <20180730095502.GG2494@hirez.programming.kicks-ass.net>
+ <1532961011.28585.30.camel@surriel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1532961011.28585.30.camel@surriel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__GFP_HIGHMEM flag is cleared by upper layer functions
-(in include/linux/dma-mapping.h) so we'll never get a
-__GFP_HIGHMEM flag in arch_dma_alloc gfp argument.
-That's why alloc_pages will never return highmem page
-here.
+On Mon, Jul 30, 2018 at 10:30:11AM -0400, Rik van Riel wrote:
 
-Get rid of highmem pages handling and cleanup arch_dma_alloc
-and arch_dma_free functions.
+> > What happened to the rework I did there? That not only avoided
+> > fiddling
+> > with active_mm, but also avoids grab/drop cycles for the other
+> > architectures when doing task->kthread->kthread->task things.
+>=20
+> I don't think I saw that. I only saw your email from
+> July 20th with this fragment of code, which does not
+> appear to avoid the grab/drop cycles, and still fiddles
+> with active_mm:
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-Changes v1->v2 (Thanks to Christoph):
- * Remove check for HIGHMEM pages from arch_dma_{alloc, free}
+Yeah, that's it. Note how it doesn't do a grab+drop for kernel->kernel,
+where the current could would have.
 
- arch/arc/mm/dma.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+And also note that it only fiddles with active_mm if it does the
+grab+drop thing (the below should have s/ifdef/ifndef/ to make more
+sense maybe).
 
-diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
-index 4d1466905e48..46129d7a298d 100644
---- a/arch/arc/mm/dma.c
-+++ b/arch/arc/mm/dma.c
-@@ -27,30 +27,29 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	struct page *page;
- 	phys_addr_t paddr;
- 	void *kvaddr;
--	int need_coh = 1, need_kvaddr = 0;
-+	bool need_coh = !(attrs & DMA_ATTR_NON_CONSISTENT);
-+
-+	/*
-+	 * __GFP_HIGHMEM flag is cleared by upper layer functions
-+	 * (in include/linux/dma-mapping.h) so we should never get a
-+	 * __GFP_HIGHMEM here.
-+	 */
-+	BUG_ON(gfp & __GFP_HIGHMEM);
- 
- 	page = alloc_pages(gfp, order);
- 	if (!page)
- 		return NULL;
- 
--	if (attrs & DMA_ATTR_NON_CONSISTENT)
--		need_coh = 0;
--
--	/*
--	 * - A coherent buffer needs MMU mapping to enforce non-cachability
--	 * - A highmem page needs a virtual handle (hence MMU mapping)
--	 *   independent of cachability
--	 */
--	if (PageHighMem(page) || need_coh)
--		need_kvaddr = 1;
--
- 	/* This is linear addr (0x8000_0000 based) */
- 	paddr = page_to_phys(page);
- 
- 	*dma_handle = paddr;
- 
--	/* This is kernel Virtual address (0x7000_0000 based) */
--	if (need_kvaddr) {
-+	/*
-+	 * A coherent buffer needs MMU mapping to enforce non-cachability.
-+	 * kvaddr is kernel Virtual address (0x7000_0000 based).
-+	 */
-+	if (need_coh) {
- 		kvaddr = ioremap_nocache(paddr, size);
- 		if (kvaddr == NULL) {
- 			__free_pages(page, order);
-@@ -81,11 +80,8 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- {
- 	phys_addr_t paddr = dma_handle;
- 	struct page *page = virt_to_page(paddr);
--	int is_non_coh = 1;
--
--	is_non_coh = (attrs & DMA_ATTR_NON_CONSISTENT);
- 
--	if (PageHighMem(page) || !is_non_coh)
-+	if (!(attrs & DMA_ATTR_NON_CONSISTENT))
- 		iounmap((void __force __iomem *)vaddr);
- 
- 	__free_pages(page, get_order(size));
--- 
-2.14.4
+So for ARCH_NO_ACTIVE_MM we never touch ->active_mm and therefore
+->active_mm =3D=3D ->mm.
+
+> +       /*
+> +        * kernel -> kernel   lazy + transfer active
+> +        *   user -> kernel   lazy + mmgrab() active
+> +        *
+> +        * kernel ->   user   switch + mmdrop() active
+> +        *   user ->   user   switch
+> +        */
+> +       if (!next->mm) {                                // to kernel
+> +               enter_lazy_tlb(prev->active_mm, next);
+> +
+#ifndef ARCH_NO_ACTIVE_MM
+> +               next->active_mm =3D prev->active_mm;
+> +               if (prev->mm)                           // from user
+> +                       mmgrab(prev->active_mm);
+		else
+			prev->active_mm =3D NULL;
+> +#endif
+> +       } else {                                        // to user
+> +               switch_mm_irqs_off(prev->active_mm, next->mm, next);
+> +
+#ifndef ARCH_NO_ACTIVE_MM
+> +               if (!prev->mm) {                        // from kernel
+> +                       /* will mmdrop() in finish_task_switch(). */
+> +                       rq->prev_mm =3D prev->active_mm;
+> +                       prev->active_mm =3D NULL;
+> +               }
+> +#endif
+
 
