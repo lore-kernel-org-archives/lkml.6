@@ -2,106 +2,219 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 810B6FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FC716256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C89C205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:56:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YqUtja3k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C89C205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B176205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:58:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B176205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeG3RcY (ORCPT
+        id S1727175AbeG3Rdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:32:24 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55007 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeG3RcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:32:24 -0400
-Received: by mail-it0-f68.google.com with SMTP id s7-v6so17918002itb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ElJjk5oiPMLdMkEMLgXEVW93Kmm2P8oEmyOBlRwuYvU=;
-        b=YqUtja3kk0/jxy+KmwM7yAko8JCH40saV3YxBw+UagVE5NqWBXPt1GwNrukyGQNeJm
-         ipPET7zPZDZWR6eCoHWgSWFuKSYidynCYIbkdtmQPFNb2IjmwgIyrejs4cFQNNjm1j3G
-         1zN3F4hAwOgTQh+xCN48chJ5R8MYoiSe1qBVu3WO9hjSafuMxDHmUVhAHpuwcjtbrHSo
-         sCM3I26a/BzMzxdNVYjsWK5fRdGWDM+KTmvEoohU94D0dOTHEMvr/DytGWTR5DILppaP
-         mek2OlINXDXZpv8j+Yek9kpsdrknwmVugXsKnSFhWCJlru8eF4ep3oLsSEAzbDA8Rgit
-         4nhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ElJjk5oiPMLdMkEMLgXEVW93Kmm2P8oEmyOBlRwuYvU=;
-        b=DS1mC2mKA2f3leqtdWRQdEZGkkNfNn11aZnHxcxdeay3W8Y4x7CCdz3u5ahlZovBuw
-         D+Kzbf0GLDTXOksft3LB7xe5RTq0zTb+Xzz5LHaU+gGS7/KIee1CHWbmVM0lKv6C0zpT
-         MGB/m7MOHS6xXAM3T6c6sSjR3RKmNPOlg3Uz2kSKzU3qr3GH7ZHD0idRtjG1d3Nct4dw
-         g/TGN7vPT9awuioCwN0HoIsiY75yw9tFdgrE6Pjw6XnyoWfjjo3BiGihDJeHV+LF5Uh3
-         3HKOrvCq08cIaTInndvYc7rBJyc7le5hnTrWtXs8/Oa4GiPThPUaMc6VkENnbPv4XuM0
-         M8/g==
-X-Gm-Message-State: AOUpUlE8tdERgnPdo6zhWWWTuBBu4ObU+Uruz3F99NWKh7YEt5oQ/r03
-        0115FQ23eWbYttKaYQRVlCcGqiKiX56OcuVxMgfXbw==
-X-Google-Smtp-Source: AAOMgpfdOCSmMIQ9GUvW2hr8gtEOD6K9cjqwEZwq9bfQthW4lCmwm9EJ76QXycvtYkjL4OtWGg93DevRJRK31oZSsDQ=
-X-Received: by 2002:a02:1294:: with SMTP id 20-v6mr17332008jap.141.1532966207204;
- Mon, 30 Jul 2018 08:56:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
- <CANn89iJ=Ad7sVWr3zBmXNSyePJJZaxgnMymN8S7x6fCSvG2jTQ@mail.gmail.com>
- <CALOAHbC4Rs7w1RwZRBsw_fjGSDvuHV37=nguzJNZzkreR5f4Dw@mail.gmail.com>
- <CANn89iKXPu=RKkLop4NJWZLixE__qYV2S=PngSj6ienuvWWL8g@mail.gmail.com>
- <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
- <CANn89i+12HvAsvk9crDcqGh=v-DvLjuGQCOzVTPVDTUhHgeDiw@mail.gmail.com>
- <CALOAHbBFuASgsQK+iiAE+ebPOg5zjtzauYaN_Xtmfc9_wjTFgw@mail.gmail.com>
- <CANn89i+0peAq_BS3Ge-h2_MENHQAHtf8D_M0gzgchK6CxU8D+Q@mail.gmail.com> <CALOAHbBy6wEwDcVaWx9PG35jknwkhM-Y-TVyis3TpVQYr5K-Jw@mail.gmail.com>
-In-Reply-To: <CALOAHbBy6wEwDcVaWx9PG35jknwkhM-Y-TVyis3TpVQYr5K-Jw@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Mon, 30 Jul 2018 08:56:35 -0700
-Message-ID: <CANn89iK4KLHww-R2JmNr-tYVcUWevq6ceFQW0qE2mJCsq6eL-g@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] tcp: call tcp_drop() in tcp collapse
-To:     Yafang Shao <laoar.shao@gmail.com>,
-        Brendan Gregg <bgregg@netflix.com>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Mon, 30 Jul 2018 13:33:35 -0400
+Received: from mga02.intel.com ([134.134.136.20]:59527 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726661AbeG3Rdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 13:33:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 08:57:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
+   d="scan'208";a="59047155"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Jul 2018 08:57:38 -0700
+Message-ID: <50176d26596a019bb6add7b4091046b93004314f.camel@linux.intel.com>
+Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Francisco Jerez <currojerez@riseup.net>
+Cc:     lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        ggherdovich@suse.cz, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>
+Date:   Mon, 30 Jul 2018 08:57:37 -0700
+In-Reply-To: <20180730154347.wrcrkweckclgbyrp@techsingularity.net>
+References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+         <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
+         <87bmarhqk4.fsf@riseup.net>
+         <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
+         <87r2jnf6w0.fsf@riseup.net>
+         <20180730154347.wrcrkweckclgbyrp@techsingularity.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 29, 2018 at 10:40 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+On Mon, 2018-07-30 at 16:43 +0100, Mel Gorman wrote:
+> On Sat, Jul 28, 2018 at 01:21:51PM -0700, Francisco Jerez wrote:
+> > > > Please revert this series, it led to significant energy usage
+> > > > and
+> > > > graphics performance regressions [1].  The reasons are roughly
+> > > > the ones
+> > > > we discussed by e-mail off-list last April: This causes the
+> > > > intel_pstate
+> > > > driver to decrease the EPP to zero when the workload blocks on
+> > > > IO
+> > > > frequently enough, which for the regressing benchmarks detailed
+> > > > in [1]
+> > > > is a symptom of the workload being heavily IO-bound, which
+> > > > means they
+> > > > won't benefit at all from the EPP boost since they aren't
+> > > > significantly
+> > > > CPU-bound, and they will suffer a decrease in parallelism due
+> > > > to the
+> > > > active CPU core using a larger fraction of the TDP in order to
+> > > > achieve
+> > > > the same work, causing the GPU to have a lower power budget
+> > > > available,
+> > > > leading to a decrease in system performance.
+> > > 
+> > > It slices both ways.
+> > 
+> > I don't think it's acceptable to land an optimization that trades
+> > performance of one use-case for another,
+> 
+> The same logic applies to a revert but that aside, I see that there
+> is
+> at least one patch floating around to disable HWP Boost for desktops
+> and
+> laptops. Maybe that'll be sufficient for the cases where IGP is a
+> major
+> component.
+We don't have to revert the series. The only contention is desktop cpu
+model. I didn't have this model before the last version.
+One entry level server uses the same CPU model as desktop, some users
+like Giovanni suggested to add. But we know that those machines are
+servers from ACPI. So we can differentiate.
 
-> Should we put NET_INC_STATS(sock_net(sk),  mib_idx) into the funtion
-> tcp_drop() ?
-> Then we could easily relate the sk_drops with the SNMP counters.
->
-> Something like that,
->
->     static void tcp_drop(struct sock *sk, struct sk_buff *skb, int mib_idx)
->     {
->         int segs = max_t(u16, 1, skb_shinfo(skb)->gso_segs);
->
->         atomic_add(segs, &sk->sk_drops);
->         NET_ADD_STATS(sock_net(sk), mib_idx, segs);
->         __kfree_skb(skb);
->     }
+Thanks,
+Srinivas
 
-We had a discussion during netconf, and Brendan Gregg was working on
-an idea like that,
-so that distinct events could be traced/reported.
 
-I prefer letting Brendan submit his patch, which not only refactors
-things, but add new functionality.
 
-Thanks.
+
+> 
+> > especially since one could make
+> > both use-cases happy by avoiding the boost in cases where we know
+> > beforehand that we aren't going to achieve any improvement in
+> > performance, because an application waiting frequently on an IO
+> > device
+> > which is 100% utilized isn't going to run faster just because we
+> > ramp up
+> > the CPU frequency, since the IO device won't be able to process
+> > requests
+> > from the application faster anyway, so we will only be pessimizing
+> > energy efficiency (and potentially decreasing performance of the
+> > GPU
+> > *and* of other CPU cores living on the same package for no
+> > benefit).
+> > 
+> 
+> The benchmarks in question are not necessarily utilising IO at 100%
+> or
+> IO-bound. One pattern is a small fsync which ends up context
+> switching
+> between the process and a journalling thread (may be dedicated
+> thread, may be
+> workqueue depending on filesystem) and the process waking again in
+> the very
+> near future on IO completion. While the workload may be single
+> threaded,
+> more than one core is in use because of how the short sleeps migrate
+> the
+> task to other cores.  HWP does not necessarily notice that the task
+> is
+> quite CPU-intensive due to the migrations and so the performance
+> suffers.
+> 
+> Some effort is made to minimise the number of cores used with this
+> sort
+> of waker/wakee relationship but it's not necessarily enough for HWP
+> to
+> boost the frequency.  Minimally, the journalling thread woken up will
+> not wake on the same CPU as the IO issuer except under extremely
+> heavily
+> utilisation and this is not likely to change (stacking stacks too
+> often
+> increases wakeup latency).
+> 
+> > > With the series, there are large boosts to performance on other
+> > > workloads where a slight increase in power usage is acceptable in
+> > > exchange for performance. For example,
+> > > 
+> > > Single socket skylake running sqlite
+> > >                                  v4.17               41ab43c9
+> > > Min       Trans     2580.85 (   0.00%)     5401.58 ( 109.29%)
+> > > Hmean     Trans     2610.38 (   0.00%)     5518.36 ( 111.40%)
+> > > Stddev    Trans       28.08 (   0.00%)      208.90 (-644.02%)
+> > > CoeffVar  Trans        1.08 (   0.00%)        3.78 (-251.57%)
+> > > Max       Trans     2648.02 (   0.00%)     5992.74 ( 126.31%)
+> > > BHmean-50 Trans     2629.78 (   0.00%)     5643.81 ( 114.61%)
+> > > BHmean-95 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> > > BHmean-99 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> > > 
+> > > That's over doubling the transactions per second for that
+> > > workload.
+> > > 
+> > > Two-socket skylake running dbench4
+> > >                                 v4.17               41ab43c9
+> > > Amean      1         40.85 (   0.00%)       14.97 (  63.36%)
+> > > Amean      2         42.31 (   0.00%)       17.33 (  59.04%)
+> > > Amean      4         53.77 (   0.00%)       27.85 (  48.20%)
+> > > Amean      8         68.86 (   0.00%)       43.78 (  36.42%)
+> > > Amean      16        82.62 (   0.00%)       56.51 (  31.60%)
+> > > Amean      32       135.80 (   0.00%)      116.06 (  14.54%)
+> > > Amean      64       737.51 (   0.00%)      701.00 (   4.95%)
+> > > Amean      512    14996.60 (   0.00%)    14755.05 (   1.61%)
+> > > 
+> > > This is reporting the average latency of operations running
+> > > dbench. The series over halves the latencies. There are many
+> > > examples
+> > > of basic workloads that benefit heavily from the series and while
+> > > I
+> > > accept it may not be universal, such as the case where the
+> > > graphics
+> > > card needs the power and not the CPU, a straight revert is not
+> > > the
+> > > answer. Without the series, HWP cripplies the CPU.
+> > > 
+> > 
+> > That seems like a huge overstatement.  HWP doesn't "cripple" the
+> > CPU
+> > without this series.  It will certainly set lower clocks than with
+> > this
+> > series for workloads like you show above that utilize the CPU very
+> > intermittently (i.e. they underutilize it). 
+> 
+> Dbench for example can be quite CPU intensive. When bound to a single
+> core, it shows up to 80% utilisation of a single core. When unbound,
+> the usage of individual cores appears low due to the migrations. It
+> may
+> be intermittent usage as it context switches to worker threads but
+> it's
+> not low utilisation either.
+> 
+> intel_pstate also had logic for IO-boosting before HWP so the user-
+> visible
+> impact for some workloads is that upgrading a machine's CPU can
+> result
+> in regressions due to HWP. Similarly it has been observed prior to
+> the
+> series that specifying no_hwp often performed better. So one could
+> argue
+> that HWP isn't "crippled" but it did have surprising behaviour.
+> 
