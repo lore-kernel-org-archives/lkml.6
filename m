@@ -2,101 +2,67 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 034AD13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3971F13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B3E20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:03:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B3E20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id E5F8020881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:04:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RXy/8zdn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F8020881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeG3Pir (ORCPT
+        id S1731957AbeG3PjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:38:47 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:16108 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbeG3Pir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:38:47 -0400
-X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
-   d="scan'208";a="14892083"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Jul 2018 07:03:39 -0700
-Received: from [10.145.4.77] (10.10.76.4) by chn-sv-exch07.mchp-main.com
- (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Mon, 30 Jul 2018
- 07:03:36 -0700
-Subject: Re: [PATCH v6 3/3] ARM: dts: at91: sama5d2 Xplained: add pin muxing
- for I2S
-To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <devicetree@vger.kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-        <Cristian.Birsan@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180730114008.30464-1-codrin.ciubotariu@microchip.com>
- <20180730114008.30464-4-codrin.ciubotariu@microchip.com>
- <2e2bc99e-138e-fbc8-1db0-e37b46637af0@microchip.com>
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Message-ID: <f11c6e5d-b6a4-2c06-ed7b-abdf19ade257@microchip.com>
-Date:   Mon, 30 Jul 2018 17:03:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 11:39:09 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50463 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbeG3PjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:39:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=npDLfcFGj2Ft0amt9BvIZMy3hjPQgdKRx/nZx3N0oGY=;
+        b=RXy/8zdn248Q9bQ4HRKe+shZkWFjnOxiajPe6nRYm9uyzysEKF1wwBwaa/8eawJd7JBxaHnfjbsH7LYlWDb3VcVUYnWLPsG+G3L6s6tL9gaJsAHXU/sL6j+yrHq+MhA87NnZXW8yuB0RP1MnqQSkhE79TtYG/XQgv9FletmBR6A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fk8mD-0008PF-Dp; Mon, 30 Jul 2018 16:03:57 +0200
+Date:   Mon, 30 Jul 2018 16:03:57 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Onnasch, Alexander (EXT)" <Alexander.Onnasch@landisgyr.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net/phy: Micrel KSZ8061 PHY link failure after cable
+ connect
+Message-ID: <20180730140357.GJ13198@lunn.ch>
+References: <1528272198-10825-1-git-send-email-alexander.onnasch@landisgyr.com>
+ <20180606123947.GB14898@lunn.ch>
+ <AM6PR01MB4262F8BB6004D246DFF5C3FEF0700@AM6PR01MB4262.eurprd01.prod.exchangelabs.com>
+ <20180619152858.GD26796@lunn.ch>
+ <AM6PR01MB4262FB2EBD4AFBC05C02F9B6F02F0@AM6PR01MB4262.eurprd01.prod.exchangelabs.com>
 MIME-Version: 1.0
-In-Reply-To: <2e2bc99e-138e-fbc8-1db0-e37b46637af0@microchip.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR01MB4262FB2EBD4AFBC05C02F9B6F02F0@AM6PR01MB4262.eurprd01.prod.exchangelabs.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.07.2018 16:49, Claudiu Beznea wrote:
-> Hi Codrin,
+On Mon, Jul 30, 2018 at 02:00:44PM +0000, Onnasch, Alexander (EXT) wrote:
+> Hi Andrew
 > 
-> On 30.07.2018 14:40, Codrin Ciubotariu wrote:
->> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
->>
->> This patch sets the pin muxing for the I2S controllers
->>
->> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
->> [codrin.ciubotariu@microchip.com: added pin muxing for the second
->> controller]
->> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->> ---
->>
->> Changes in v6:
->> 	- none;
->>
->>   arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 +++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
->> index fcc85d70f36e..95cbec0f8790 100644
->> --- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
->> +++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
->> @@ -281,6 +281,11 @@
->>   				status = "okay";
->>   			};
->>   
->> +			i2s0: i2s@f8050000 {
->> +				pinctrl-names = "default";
->> +				pinctrl-0 = <&pinctrl_i2s0_default>;
-> 
-> The approach with the disabled controllers in board DTS files (for our
-> boards) is to use the: status = "disabled" and if there are pin conflicts
-> with other controllers to put a mark in there, something like:
-> 				status = "disabled"; /* Conflict with X */
-> 
-> I'm seeing that i2s1 is in conflict with sdmmc1 and spi0.
+> thanks for your feedback. I was on holiday, thus just delayed, not forgotten...
+> Sorry for top-posting - odd company default mail setup.
 
-Ok, I will disable them and add the pin conflicts in the next version. 
-Thank you for your review.
+But you did it again....
 
-Best regards,
-Codrin
+Your email client should not be forcing you to top post. So please
+don't.
+
+	Andrew
