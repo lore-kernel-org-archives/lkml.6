@@ -2,97 +2,190 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6DF160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290A9FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8030208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:26:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8030208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCA1F20893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:28:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="R8JqAUrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA1F20893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbeG3RCR (ORCPT
+        id S1727366AbeG3RDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:02:17 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:39186 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeG3RCQ (ORCPT
+        Mon, 30 Jul 2018 13:03:48 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33118 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbeG3RDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:02:16 -0400
-Received: by mail-ed1-f49.google.com with SMTP id h4-v6so4317539edi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:26:47 -0700 (PDT)
+        Mon, 30 Jul 2018 13:03:48 -0400
+Received: by mail-qt0-f195.google.com with SMTP id c15-v6so12495252qtp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bAQF7G4YSF50LkEIXaJPuasuOF/yCfd4ZGRA+h6Ym/4=;
+        b=R8JqAUrhIbmTFWTuYNCGMeXv2jvp+chwIXdu3dNce8B0Z7YCDSOE6mx8X8SqbjfZ7I
+         4UCuDSUQztdzKXEoj2jmJ8ZcakSCTd2wLsNy9GuhFDjTbUSIhuAz+xEFKeRvPRVG86OB
+         MCQLcgJJRh85xSXAAey8O4F5oQc0jeKj4w6pH1oFf4nsISPs8ATcDsswtl0kYEuhGzuu
+         jZKcS34VuuMulycq/344wqPb/iSfG15cVKvVGEmo9ev+lW6nc+Ag1Hr1fo71b+d4zCY5
+         MQg1/z455wQRImjIbwYtevHSQDGDwhYDGZ4VRVIsePxX+RIHCXg+8YYxVOf+PMhx/Le+
+         IBew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TnHFGFu58Z7yUPm88ROb3pfi7Jz6EYmtyqLNLtLx89U=;
-        b=pG4A11zLf0hEXoEknQqS3robkRrWGkeQ1QqxCoKzp+et3uG8PMCUx0GDbeSsbiLXQM
-         2c5KVM78FZv/WdHauWT4Xs5YUghCiiQbEl5qcrqNXJIdgN6g++zWYLow3duZWEBqM+UO
-         4oorv2Iv8Wz4UAXP5G3+P1kh8biilMqeFThamOPecFNtSSmzqUJ0YfrWuuTUO54GqZqW
-         PzCLaXJVuT55KE26N/eLTLiTU/BpM48/yAaf2xYpFDQ72eco6llQmgyID/obgb6wFHZo
-         fEvgfoPxvcDBEK8RUuL4kRtXJO+eOklTykBGhekaLl0CrlpFJOP0KAqyQECkZrxlG0zL
-         5A8Q==
-X-Gm-Message-State: AOUpUlGCUmuRFxk82A5Ds7DhDy+N9RdTn3cmWMGO1Ammblr8u086qZj+
-        WceQ8Ur5RzVrLaXSCbTxGIKokNl8clY=
-X-Google-Smtp-Source: AAOMgpeUUs06x0wY08d6SaudTj7oXDxH5N6/LnXrGMakH/Ajffz+pXwbtg+UGpyiiT7uJc4GK2q6Yw==
-X-Received: by 2002:a50:8406:: with SMTP id 6-v6mr8687203edp.97.1532964406457;
-        Mon, 30 Jul 2018 08:26:46 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id p3-v6sm2453588edp.47.2018.07.30.08.26.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 08:26:45 -0700 (PDT)
-Subject: Re: [PATCH 0/2] ata: libahci: devslp fixes
-To:     Tejun Heo <tj@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     rjw@rjwysocki.net, alan.cox@intel.com, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180702190154.6864-1-srinivas.pandruvada@linux.intel.com>
- <9712316ab62bef25953c523bce02e260a9ea40fe.camel@linux.intel.com>
- <20180730152256.GF1206094@devbig004.ftw2.facebook.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <bf4b860c-6f82-4a3f-8b81-5f5c93f4389e@redhat.com>
-Date:   Mon, 30 Jul 2018 17:26:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bAQF7G4YSF50LkEIXaJPuasuOF/yCfd4ZGRA+h6Ym/4=;
+        b=VLP41hpINvZ+tcQmVLwweMQCAO2S8WvP/3i0mojH0nnNiPDi6etWD79TWYfGc+7Z82
+         10mg7gxMMz0yRKnMfeqqyDQBFTDX7eDK0vxS+7SdQbxfYhhHAog+KNIy4A4WWM3r/6Dx
+         iXz9MR2WY+BZgbgOlNp0IL5b6huksoWB+blcDDiwVz7VqmcqRhWn6zm7yzP2+8kOZtiW
+         qfk5UkbsrSk2A2/ki+AogbKfxfa1WEe7V5G0h8LrGNliYD8ncZrfDp1BwRXGnw59EymO
+         hbC5tiU5QdK5+vNbP2cJGp2MrGXXtsRmf7/HKzUEDOXE1c27vOf9LWTiLpTQnwVio/he
+         72Mg==
+X-Gm-Message-State: AOUpUlEp48hoPDi+d00eJEMDx+GjWlpfw8ui8svIRX4w7ek4F49CIN4+
+        P892lSkT8E86P0lfm+khoz33RA==
+X-Google-Smtp-Source: AAOMgpcd84GZKy04aieu4Znc481Fdfdz3U9UnTuoBVaqbJMXvz3hqBA/1ET9R5Ss8vQrdLWb0BFuPQ==
+X-Received: by 2002:ac8:2b23:: with SMTP id 32-v6mr17794585qtu.119.1532964498599;
+        Mon, 30 Jul 2018 08:28:18 -0700 (PDT)
+Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
+        by smtp.gmail.com with ESMTPSA id q15-v6sm9366120qte.55.2018.07.30.08.28.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 08:28:17 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 11:31:13 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
+ mem_cgroup_css_alloc() failure
+Message-ID: <20180730153113.GB4567@cmpxchg.org>
+References: <6dbc33bb-f3d5-1a46-b454-13c6f5865fcd@virtuozzo.com>
+ <20180413113855.GI17484@dhcp22.suse.cz>
+ <8a81c801-35c8-767d-54b0-df9f1ca0abc0@virtuozzo.com>
+ <20180413115454.GL17484@dhcp22.suse.cz>
+ <abfd4903-c455-fac2-7ed6-73707cda64d1@virtuozzo.com>
+ <20180413121433.GM17484@dhcp22.suse.cz>
+ <20180413125101.GO17484@dhcp22.suse.cz>
+ <20180726162512.6056b5d7c1d2a5fbff6ce214@linux-foundation.org>
+ <20180727193134.GA10996@cmpxchg.org>
+ <20180729192621.py4znecoinw5mqcp@esperanza>
 MIME-Version: 1.0
-In-Reply-To: <20180730152256.GF1206094@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180729192621.py4znecoinw5mqcp@esperanza>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-07-18 17:22, Tejun Heo wrote:
-> On Mon, Jul 30, 2018 at 08:15:47AM -0700, Srinivas Pandruvada wrote:
->> Hi Tejan,
->>
->> On Mon, 2018-07-02 at 12:01 -0700, Srinivas Pandruvada wrote:
->>> Some minor fixes to be able to correctly set devslp register
->>> to optimize power.
->>>
->>> Srinivas Pandruvada (2):
->>>    ata: libahci: Correct setting of DEVSLP register
->>>    ata: libahci: Allow reconfigure of DEVSLP register
->>>
->> Are you applying this series?
+On Sun, Jul 29, 2018 at 10:26:21PM +0300, Vladimir Davydov wrote:
+> On Fri, Jul 27, 2018 at 03:31:34PM -0400, Johannes Weiner wrote:
+> > That said, the lifetime of the root reference on the ID is the online
+> > state, we put that in css_offline. Is there a reason we need to have
+> > the ID ready and the memcg in the IDR before onlining it?
 > 
-> I was waiting for Hans's reviews.  Hans, what do you think?
+> I fail to see any reason for this in the code.
 
-Ah I missed that this was another series. With the caveat that
-I do not really know that much about devslp, both patches
-seem sensible to me, so both are:
+Me neither, thanks for double checking.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+The patch also survives stress testing cgroup creation and destruction
+with the script from 73f576c04b94 ("mm: memcontrol: fix cgroup
+creation failure after many small jobs").
 
-Regards,
+> > Can we do something like this and not mess with the alloc/free
+> > sequence at all?
+> 
+> I guess so, and this definitely looks better to me.
 
-Hans
+Cool, then I think we should merge Kirill's patch as the fix and mine
+as a follow-up cleanup.
+
+---
+
+From b4106ea1f163479da805eceada60c942bd66e524 Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Mon, 30 Jul 2018 11:03:55 -0400
+Subject: [PATCH] mm: memcontrol: simplify memcg idr allocation and error
+ unwinding
+
+The memcg ID is allocated early in the multi-step memcg creation
+process, which needs 2-step ID allocation and IDR publishing, as well
+as two separate IDR cleanup/unwind sites on error.
+
+Defer the IDR allocation until the last second during onlining to
+eliminate all this complexity. There is no requirement to have the ID
+and IDR entry earlier than that. And the root reference to the ID is
+put in the offline path, so this matches nicely.
+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/memcontrol.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 12205159b462..12339ae779ca 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4151,12 +4151,6 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 	if (!memcg)
+ 		return NULL;
+ 
+-	memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
+-				 1, MEM_CGROUP_ID_MAX,
+-				 GFP_KERNEL);
+-	if (memcg->id.id < 0)
+-		goto fail;
+-
+ 	memcg->stat_cpu = alloc_percpu(struct mem_cgroup_stat_cpu);
+ 	if (!memcg->stat_cpu)
+ 		goto fail;
+@@ -4183,10 +4177,8 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	INIT_LIST_HEAD(&memcg->cgwb_list);
+ #endif
+-	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+ 	return memcg;
+ fail:
+-	mem_cgroup_id_remove(memcg);
+ 	__mem_cgroup_free(memcg);
+ 	return NULL;
+ }
+@@ -4245,7 +4237,6 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ 
+ 	return &memcg->css;
+ fail:
+-	mem_cgroup_id_remove(memcg);
+ 	mem_cgroup_free(memcg);
+ 	return ERR_PTR(-ENOMEM);
+ }
+@@ -4253,10 +4244,17 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++	int i;
++
++	i = idr_alloc(&mem_cgroup_idr, memcg, 1, MEM_CGROUP_ID_MAX, GFP_KERNEL);
++	if (i < 0)
++		return i;
+ 
+ 	/* Online state pins memcg ID, memcg ID pins CSS */
++	memcg->id.id = i;
+ 	atomic_set(&memcg->id.ref, 1);
+ 	css_get(css);
++
+ 	return 0;
+ }
+ 
+-- 
+2.18.0
 
