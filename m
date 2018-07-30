@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF19AFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7790EFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999B020894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999B020894
+	by mail.kernel.org (Postfix) with ESMTP id 1C562208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C562208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeG3Jpg (ORCPT
+        id S1726896AbeG3Jph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:45:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55980 "EHLO
+        Mon, 30 Jul 2018 05:45:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55946 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbeG3Jpg (ORCPT
+        with ESMTP id S1726796AbeG3Jph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:45:36 -0400
+        Mon, 30 Jul 2018 05:45:37 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 0850327E23E
+        with ESMTPSA id 6F20A27E237
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -44,9 +44,9 @@ Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com, robin.murphy@arm.com,
         Sean Paul <seanpaul@chromium.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/8] devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on suspend.
-Date:   Mon, 30 Jul 2018 10:11:21 +0200
-Message-Id: <20180730081124.30698-6-enric.balletbo@collabora.com>
+Subject: [PATCH 6/8] drm: rockchip: Add DDR devfreq support.
+Date:   Mon, 30 Jul 2018 10:11:22 +0200
+Message-Id: <20180730081124.30698-7-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180730081124.30698-1-enric.balletbo@collabora.com>
 References: <20180730081124.30698-1-enric.balletbo@collabora.com>
@@ -55,157 +55,284 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Derek Basehore <dbasehore@chromium.org>
+From: Sean Paul <seanpaul@chromium.org>
 
-This disables the timeout for the DDR clk when the governor is
-suspended or stopped. This makes sure that the suspend frequency is
-set. It also makes sure that the userspace governor will be able to
-change the frequency without failing.
+Add support for devfreq to dynamically control the DDR frequency. It
+will activate when there is one CRTC active, and disable if more than
+one becomes active (to avoid flickering on one of the screens).
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
 Changes in v1: None
 
- drivers/clk/rockchip/clk-ddr.c    | 21 ++++++++++++++++++---
- drivers/devfreq/rk3399_dmc.c      | 20 +++++++++++++++-----
- drivers/devfreq/rk3399_dmc_priv.h |  1 +
- 3 files changed, 34 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 46 +++++++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  9 ++++
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 35 ++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 34 +++++++++++++++
+ 4 files changed, 124 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 707be1bd8910..de00590af167 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -32,6 +32,7 @@ struct rockchip_ddrclk {
- 	int		div_shift;
- 	int		div_width;
- 	int		ddr_flag;
-+	bool		timeout_en;
- 	unsigned long	cached_rate;
- 	struct work_struct set_rate_work;
- 	struct mutex	lock;
-@@ -52,8 +53,9 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 
- 	mutex_lock(&ddrclk->lock);
- 	for (i = 0; i < DDRCLK_SET_RATE_MAX_RETRIES; i++) {
--		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0, &timeout);
--		if (ret == NOTIFY_BAD)
-+		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0,
-+					      &timeout);
-+		if (ddrclk->timeout_en && ret == NOTIFY_BAD)
- 			goto out;
- 
- 		/*
-@@ -63,7 +65,8 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 		 * at the wrong time.
- 		 */
- 		local_irq_disable();
--		if (ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
-+		if (ddrclk->timeout_en &&
-+		    ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
- 				timeout)) {
- 			local_irq_enable();
- 			continue;
-@@ -79,6 +82,17 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 	mutex_unlock(&ddrclk->lock);
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index f814d37b1db2..e774f3c7c325 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -19,6 +19,8 @@
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_of.h>
++#include <linux/devfreq.h>
++#include <linux/devfreq-event.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dma-iommu.h>
+ #include <linux/pm_runtime.h>
+@@ -77,6 +79,46 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+ 	iommu_detach_device(domain, dev);
  }
  
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable)
++#if IS_ENABLED(CONFIG_ARM_RK3399_DMC_DEVFREQ)
++static int rockchip_drm_init_devfreq(struct device *dev,
++				     struct rockchip_drm_private *priv)
 +{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
++	struct devfreq *devfreq;
++	struct devfreq_event_dev *edev;
++	int ret;
 +
-+	mutex_lock(&ddrclk->lock);
-+	ddrclk->timeout_en = enable;
-+	mutex_unlock(&ddrclk->lock);
-+}
-+EXPORT_SYMBOL(rockchip_ddrclk_set_timeout_en);
-+
- int rockchip_ddrclk_register_sync_nb(struct clk *clk, struct notifier_block *nb)
- {
- 	struct clk_hw *hw = __clk_get_hw(clk);
-@@ -232,6 +246,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->div_shift = div_shift;
- 	ddrclk->div_width = div_width;
- 	ddrclk->ddr_flag = ddr_flag;
-+	ddrclk->timeout_en = true;
- 	mutex_init(&ddrclk->lock);
- 	INIT_WORK(&ddrclk->set_rate_work, rockchip_ddrclk_set_rate_func);
- 	RAW_INIT_NOTIFIER_HEAD(&ddrclk->sync_chain);
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index b4ac9ee605be..323c888b542a 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -312,14 +312,18 @@ int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
- 	 * one notifier is not generally possible. Thus, if more than one sync
- 	 * notifier is registered, disable dmcfreq.
- 	 */
--	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		devfreq_suspend_device(devfreq);
-+	}
- 
- 	ret = rockchip_ddrclk_register_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0)
- 		dmcfreq->num_sync_nb++;
--	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		devfreq_resume_device(devfreq);
-+	}
- 
- 	mutex_unlock(&dmcfreq->en_lock);
- 	return ret;
-@@ -336,8 +340,10 @@ int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
- 	ret = rockchip_ddrclk_unregister_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0) {
- 		dmcfreq->num_sync_nb--;
--		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+			rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 			devfreq_resume_device(devfreq);
++	devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
++	if (IS_ERR(devfreq)) {
++		ret = PTR_ERR(devfreq);
++		if (ret == -ENODEV) {
++			DRM_DEV_INFO(dev, "devfreq missing, skip\n");
++			return 0;
 +		}
++		return ret;
++	}
++
++	edev = devfreq_event_get_edev_by_phandle(devfreq->dev.parent, 0);
++	if (IS_ERR(edev)) {
++		ret = PTR_ERR(edev);
++		if (ret == -ENODEV) {
++			DRM_DEV_INFO(dev, "devfreq edev missing, skip\n");
++			return 0;
++		}
++		return ret;
++	}
++
++	priv->devfreq = devfreq;
++	priv->devfreq_event_dev = edev;
++	return 0;
++}
++#else
++static int rockchip_drm_init_devfreq(struct device *dev,
++				     struct rockchip_drm_private *priv)
++{
++	return 0;
++}
++#endif
++
+ static int rockchip_drm_init_iommu(struct drm_device *drm_dev)
+ {
+ 	struct rockchip_drm_private *private = drm_dev->dev_private;
+@@ -136,6 +178,10 @@ static int rockchip_drm_bind(struct device *dev)
+ 	INIT_LIST_HEAD(&private->psr_list);
+ 	mutex_init(&private->psr_list_lock);
+ 
++	ret = rockchip_drm_init_devfreq(dev, private);
++	if (ret)
++		goto err_free;
++
+ 	ret = rockchip_drm_init_iommu(drm_dev);
+ 	if (ret)
+ 		goto err_free;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+index 3a6ebfc26036..cc13fac59644 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+@@ -57,6 +57,10 @@ struct rockchip_drm_private {
+ 	struct drm_mm mm;
+ 	struct list_head psr_list;
+ 	struct mutex psr_list_lock;
++
++	struct devfreq *devfreq;
++	struct devfreq_event_dev *devfreq_event_dev;
++	bool dmc_disable_flag;
+ };
+ 
+ int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
+@@ -65,6 +69,11 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+ 				    struct device *dev);
+ int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout);
+ 
++uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode);
++
++void rockchip_drm_enable_dmc(struct rockchip_drm_private *priv);
++void rockchip_drm_disable_dmc(struct rockchip_drm_private *priv);
++
+ extern struct platform_driver cdn_dp_driver;
+ extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
+ extern struct platform_driver dw_mipi_dsi_driver;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index ea18cb2a76c0..7b6f7227d476 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -19,6 +19,7 @@
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <soc/rockchip/rk3399_dmc.h>
+ 
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_fb.h"
+@@ -145,6 +146,16 @@ rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
+ 		rockchip_drm_psr_inhibit_get(encoder);
+ }
+ 
++uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
++{
++	uint64_t vblank_time = mode->vtotal - mode->vdisplay;
++
++	vblank_time *= (uint64_t)NSEC_PER_SEC * mode->htotal;
++	do_div(vblank_time, mode->clock * 1000);
++
++	return vblank_time;
++}
++
+ static void
+ rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
+ {
+@@ -167,9 +178,28 @@ static void
+ rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
+ {
+ 	struct drm_device *dev = old_state->dev;
++	struct rockchip_drm_private *priv = dev->dev_private;
++	struct drm_crtc *crtc;
++	struct drm_display_mode *mode;
++	bool force_dmc_off = false;
++
++	drm_for_each_crtc(crtc, dev) {
++		if (crtc->state->active) {
++			mode = &crtc->state->adjusted_mode;
++			if (rockchip_drm_get_vblank_ns(mode) <
++			    DMC_MIN_VBLANK_NS)
++				force_dmc_off = true;
++		}
++	}
+ 
+ 	rockchip_drm_psr_inhibit_get_state(old_state);
+ 
++	/* If disabling dmc, disable it before committing mode set changes. */
++	if (force_dmc_off && !priv->dmc_disable_flag) {
++		rockchip_dmcfreq_block(priv->devfreq);
++		priv->dmc_disable_flag = true;
++	}
++
+ 	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+ 
+ 	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+@@ -184,6 +214,11 @@ rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
+ 	drm_atomic_helper_wait_for_vblanks(dev, old_state);
+ 
+ 	drm_atomic_helper_cleanup_planes(dev, old_state);
++
++	if (!force_dmc_off && priv->dmc_disable_flag) {
++		rockchip_dmcfreq_unblock(priv->devfreq);
++		priv->dmc_disable_flag = false;
++	}
+ }
+ 
+ static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 45847d4a2e14..e9f91278137d 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -36,6 +36,8 @@
+ #include <linux/reset.h>
+ #include <linux/delay.h>
+ 
++#include <soc/rockchip/rk3399_dmc.h>
++
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_fb.h"
+@@ -106,7 +108,9 @@ struct vop {
+ 	struct drm_flip_work fb_unref_work;
+ 	unsigned long pending;
+ 
++	ktime_t line_flag_timestamp;
+ 	struct completion line_flag_completion;
++	struct notifier_block dmc_nb;
+ 
+ 	const struct vop_data *data;
+ 
+@@ -572,10 +576,12 @@ static int vop_enable(struct drm_crtc *crtc)
+ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
+ 				    struct drm_crtc_state *old_state)
+ {
++	struct rockchip_drm_private *priv = crtc->dev->dev_private;
+ 	struct vop *vop = to_vop(crtc);
+ 
+ 	WARN_ON(vop->event);
+ 
++	rockchip_dmcfreq_unregister_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
+ 	mutex_lock(&vop->vop_lock);
+ 	drm_crtc_vblank_off(crtc);
+ 
+@@ -872,6 +878,7 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	const struct vop_data *vop_data = vop->data;
+ 	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc->state);
+ 	struct drm_display_mode *adjusted_mode = &crtc->state->adjusted_mode;
++	struct rockchip_drm_private *priv = crtc->dev->dev_private;
+ 	u16 hsync_len = adjusted_mode->hsync_end - adjusted_mode->hsync_start;
+ 	u16 hdisplay = adjusted_mode->hdisplay;
+ 	u16 htotal = adjusted_mode->htotal;
+@@ -962,6 +969,31 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	VOP_REG_SET(vop, common, standby, 0);
+ 	mutex_unlock(&vop->vop_lock);
++	rockchip_dmcfreq_register_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
++}
++
++static int dmc_notify(struct notifier_block *nb,
++		      unsigned long action,
++		      void *data)
++{
++	struct vop *vop = container_of(nb, struct vop, dmc_nb);
++	struct drm_crtc *crtc = &vop->crtc;
++	ktime_t *timeout = data;
++	int ret;
++
++	if (WARN_ON(!vop->is_enabled))
++		return NOTIFY_BAD;
++
++	ret = rockchip_drm_wait_vact_end(crtc, 100);
++	*timeout = ktime_add_ns(vop->line_flag_timestamp,
++				rockchip_drm_get_vblank_ns(&crtc->mode));
++	if (ret) {
++		dev_err(vop->dev, "%s: Line flag interrupt did not arrive\n",
++			__func__);
++		return NOTIFY_BAD;
++	}
++
++	return NOTIFY_STOP;
+ }
+ 
+ static bool vop_fs_irq_is_pending(struct vop *vop)
+@@ -1201,6 +1233,7 @@ static irqreturn_t vop_isr(int irq, void *data)
  	}
  
- 	mutex_unlock(&dmcfreq->en_lock);
-@@ -352,8 +358,10 @@ int rockchip_dmcfreq_block(struct devfreq *devfreq)
- 	int ret = 0;
+ 	if (active_irqs & LINE_FLAG_INTR) {
++		vop->line_flag_timestamp = ktime_get();
+ 		complete(&vop->line_flag_completion);
+ 		active_irqs &= ~LINE_FLAG_INTR;
+ 		ret = IRQ_HANDLED;
+@@ -1577,6 +1610,7 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 	spin_lock_init(&vop->reg_lock);
+ 	spin_lock_init(&vop->irq_lock);
+ 	mutex_init(&vop->vop_lock);
++	vop->dmc_nb.notifier_call = dmc_notify;
  
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		ret = devfreq_suspend_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count++;
-@@ -369,8 +377,10 @@ int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
- 	int ret = 0;
- 
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		ret = devfreq_resume_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count--;
-diff --git a/drivers/devfreq/rk3399_dmc_priv.h b/drivers/devfreq/rk3399_dmc_priv.h
-index 8ac0340a4990..1ad46f4b15cc 100644
---- a/drivers/devfreq/rk3399_dmc_priv.h
-+++ b/drivers/devfreq/rk3399_dmc_priv.h
-@@ -7,6 +7,7 @@
- #ifndef __RK3399_DMC_PRIV_H
- #define __RK3399_DMC_PRIV_H
- 
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable);
- void rockchip_ddrclk_wait_set_rate(struct clk *clk);
- int rockchip_ddrclk_register_sync_nb(struct clk *clk,
- 				     struct notifier_block *nb);
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
 -- 
 2.18.0
 
