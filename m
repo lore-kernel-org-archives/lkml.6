@@ -2,110 +2,157 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8977116256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2AC16256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EFB320892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D452083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:24:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="apYpqtuG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EFB320892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gUVSDk8c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gUVSDk8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D452083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731589AbeG3S7S (ORCPT
+        id S1730513AbeG3TAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:59:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726782AbeG3S7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:59:18 -0400
-Received: from mail-qt0-f181.google.com (mail-qt0-f181.google.com [209.85.216.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 30 Jul 2018 15:00:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50708 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbeG3TAF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 15:00:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A5B6621C9; Mon, 30 Jul 2018 17:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532971445;
+        bh=eGkFwWgTmLmb2R/W18zUWdG0bbAYBsCc7+V6EU8OSDY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gUVSDk8cPpjIM1uxP1oLvTTfKmPKuvPN2AT9uylX9inmbbhAaLv7ZuUSxTT1C4VUA
+         wp2P2m7Ge+HuiMy4aeFrSOqDHbFxeRhMq+VqvPe1pBwpRKhKeT2B4Rh6VkfUN0aPLQ
+         feC41xeWLIVMKfFT/HB0EkTaEDpyUQwnHTnqX/Y0=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 391C1208A1;
-        Mon, 30 Jul 2018 17:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532971398;
-        bh=fXPJs5/PCC3bqDJB8Dasq7P6aNaG9REQht4t7e4erK0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=apYpqtuGnuxDnIYNcvtmQ5F7IiaTp+ci8WlQj5i1yDBGKyrHV6LlT+aPJepZNjT1u
-         U7crkr1hZiQzfuvMkjR5u7niCutFuQjUNZvHlOn2bCjaJ1TJm0q1tA1YE7MpRAwrh2
-         R6fitYQFm+HFImarnBxKUshkRY/CgIKeSgz2aFrg=
-Received: by mail-qt0-f181.google.com with SMTP id y5-v6so12898522qti.12;
-        Mon, 30 Jul 2018 10:23:18 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHqS109/zeGEQuTAslmxm93W7CdmEXleIKc5tKNvsfKQucds4RE
-        JwZulx4t/ki5f6er4JAilKODR1G7zQp9V56j9g==
-X-Google-Smtp-Source: AAOMgpe3b97C08Q5uhWZX2EwJl9+ZSduJGFMhypFisLv95RSxXAdmidZ2DuHt2Q96z8QUfCj4Pfu0JHHfdga1331nwI=
-X-Received: by 2002:ac8:2c72:: with SMTP id e47-v6mr18248532qta.60.1532971397425;
- Mon, 30 Jul 2018 10:23:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180712211244.11428-1-yixun.lan@amlogic.com> <20180712211244.11428-2-yixun.lan@amlogic.com>
- <20180724232917.GA27041@rob-hp-laptop> <e797412b-55db-6678-82ba-3a10ac99db9f@amlogic.com>
-In-Reply-To: <e797412b-55db-6678-82ba-3a10ac99db9f@amlogic.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 30 Jul 2018 11:23:06 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLrO+UMjhgSnaO+Ch-zpLj2-gjkuO=v1PRpMemYmcO2pQ@mail.gmail.com>
-Message-ID: <CAL_JsqLrO+UMjhgSnaO+Ch-zpLj2-gjkuO=v1PRpMemYmcO2pQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock controller
-To:     Yixun Lan <yixun.lan@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: kramasub@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6AD12621F2;
+        Mon, 30 Jul 2018 17:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532971445;
+        bh=eGkFwWgTmLmb2R/W18zUWdG0bbAYBsCc7+V6EU8OSDY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gUVSDk8cPpjIM1uxP1oLvTTfKmPKuvPN2AT9uylX9inmbbhAaLv7ZuUSxTT1C4VUA
+         wp2P2m7Ge+HuiMy4aeFrSOqDHbFxeRhMq+VqvPe1pBwpRKhKeT2B4Rh6VkfUN0aPLQ
+         feC41xeWLIVMKfFT/HB0EkTaEDpyUQwnHTnqX/Y0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AD12621F2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kramasub@codeaurora.org
+From:   Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+To:     wsa@the-dreams.de, gregkh@linuxfoundation.org
+Cc:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        acourbot@chromium.org, swboyd@chromium.org, dianders@chromium.org
+Subject: [PATCH v8 0/2] Introduce GENI SE Controller Driver
+Date:   Mon, 30 Jul 2018 11:23:50 -0600
+Message-Id: <1532971432-16784-1-git-send-email-kramasub@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 8:14 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
->
->
-> HI Rob
->
-> On 07/25/2018 07:29 AM, Rob Herring wrote:
-> > On Thu, Jul 12, 2018 at 09:12:43PM +0000, Yixun Lan wrote:
-> >> Document the MMC sub clock controller driver, the potential consumer
-> >> of this driver is MMC or NAND. Also add three clock bindings IDs which
-> >> provided by this driver.
-> >>
-> >> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> >> ---
-> >>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
-> >>  .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
-> >>  2 files changed, 47 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> >>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
->
-> Thanks for the review!
->
-> There is a discussion about dropping "meson-" prefix in the compatible
-> string[1]
->
-> So, I will send another version with the new compatible name adjusted
-> from "amlogic,meson-axg-mmc-clkc" to "amlogic,axg-mmc-clkc"..
-> probably also rename the dt-bindings header file to amlogc,mmc-clkc.h
+Generic Interface (GENI) firmware based Qualcomm Universal Peripheral (QUP)
+Wrapper is a next generation programmable module for supporting a wide
+range of serial interfaces like UART, SPI, I2C, I3C, etc. A single QUP
+module can provide upto 8 Serial Interfaces using its internal Serial
+Engines (SE). The protocol supported by each interface is determined by
+the firmware loaded to the Serial Engine.
 
-Okay, you can keep my R-by.
+This patch series introduces GENI SE Driver to manage the GENI based QUP
+Wrapper and the common aspects of all SEs inside the QUP Wrapper. This
+patch series also introduces the UART and I2C Controller drivers to
+drive the SEs that are programmed with the respective protocols.
+
+[v8]
+ * Handle the error from i2c_add_adapter function
+ * Drop the device tree patches that are uploaded as part of commit:
+   [v2,1/2] arm64: dts: qcom: sdm845: Add I2C, SPI, and UART9 nodes
+
+[v7]
+ * Return appropriate error codes as idenitified in i2c fault-codes
+ * Add Maintainer details for I2C controller driver
+ * Fix an incorrect conditional check in DMA mode
+ * Drop the patches in the series that got accepted
+
+[v6]
+ * Move the I2C clock-frequency configuration to the SDM845 board file
+ * Remove a redundant comment in the I2C driver
+
+[v5]
+ * Remove Linux specific property from the device tree binding
+ * Clarify I2C SCL time period documentation
+ * Remove redundant checks in I2C controller driver during timeout
+ * Use 100kHz as the default clock frequency in the I2C controller driver
+ * Disable Wrapper controller by default in the SDM845 device tree and
+   enable it explicitly for SDM845 MTP
+ * Specify I2C clock frequency in the SDM845 device tree
+ * Remove bias configuration for I2C pins under sleep state in device tree
+ * Drop the serial driver from the patch series since it is merged
+ * Specify the UART port options in the SDM845 device tree
+
+[v4]
+ * Add SPI controller information in device tree binding
+ * Add support for debug UART & I2C controllers in SDM845 device tree
+ * Remove any unnecessary parenthesis & casting
+ * Identify break character in UART line and pass it to the framework
+ * Transmit data from fault handler reliably in debug UART
+ * Map the register block when the UART port is requested
+ * Move concise exported functions as macros or inlines in public header
+ * Move the clock performance table from the wrapper to serial engines
+ * Add a lock to synchronize between IRQ & error handling in I2C controller
+ * Remove any compiler optimization hints like likely/unlikely
+ * Update documentation to clarify tables and hardware blocks
+
+[v3]
+ * Update the driver dependencies
+ * Use the SPDX License Expression
+ * Squash all the controller device tree bindings together
+ * Use kernel doc format for documentation
+ * Add additional documentation for packing configuration
+ * Use clk_bulk_* API for related clocks
+ * Remove driver references to pinctrl and their states
+ * Replace magic numbers with appropriate macros
+ * Update memory barrier usage and associated comments
+ * Reduce interlacing of register reads/writes
+ * Fix poll_get_char() operation in console UART driver under polling mode
+ * Address other comments from Bjorn Andersson to improve code readability
+
+[v2]
+ * Updated device tree bindings to describe the hardware
+ * Updated SE DT node as child node of QUP Wrapper DT node
+ * Moved common AHB clocks to QUP Wrapper DT node
+ * Use the standard "clock-frequency" I2C property
+ * Update compatible field in UART Controller to reflect hardware manual
+ * Addressed other device tree binding specific comments from Rob Herring
+
+Karthikeyan Ramasubramanian (2):
+  i2c: i2c-qcom-geni: Add bus driver for the Qualcomm GENI I2C
+    controller
+  MAINTAINERS: Add Qualcomm Generic Interface I2C driver maintainer
+
+ MAINTAINERS                        |   8 +
+ drivers/i2c/busses/Kconfig         |  13 +
+ drivers/i2c/busses/Makefile        |   1 +
+ drivers/i2c/busses/i2c-qcom-geni.c | 653 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 675 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-qcom-geni.c
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
