@@ -2,124 +2,125 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468A8FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81874FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F260420892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F260420892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 280D220892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:06:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VFIGoRxH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280D220892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbeG3Skd (ORCPT
+        id S1727474AbeG3Sm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:40:33 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:53875 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeG3Skd (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 30 Jul 2018 14:40:33 -0400
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 30 Jul 2018 19:04:27 +0200
-Date:   Tue, 31 Jul 2018 01:04:15 +0800
-From:   joeyli <jlee@suse.com>
-To:     Oliver Neukum <oneukum@suse.com>
-Cc:     Yu Chen <yu.c.chen@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Theodore Ts o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>, linux-pm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gu, Kookoo" <kookoo.gu@intel.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Subject: Re: [PATCH 0/4][RFC v2] Introduce the in-kernel hibernation
- encryption
-Message-ID: <20180730170415.GQ4244@linux-l9pv.suse>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
- <20180718202235.GA4132@amd>
- <20180718235851.GA22170@sandybridge-desktop>
- <20180719110149.GA4679@amd>
- <20180719132003.GA30981@sandybridge-desktop>
- <20180720102532.GA20284@amd>
- <1532346156.3057.11.camel@suse.com>
- <20180723162302.GA4503@sandybridge-desktop>
- <1532590246.7411.3.camel@suse.com>
- <20180726081404.GG4244@linux-l9pv.suse>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180726081404.GG4244@linux-l9pv.suse>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 30 Jul 2018 14:42:26 -0400
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:45639 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeG3Sm0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 14:42:26 -0400
+Received: by mail-vk0-f73.google.com with SMTP id l5-v6so5616384vkd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 10:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=Zhd9brlUSU3VJSV9/oY0K6ohjn54GHCy8fO4/WEPHqo=;
+        b=VFIGoRxHER+0LT4MJmafU4eevLxk039xJHN/613o1L0fblD7tl/6KD8+Idp/ickzeN
+         gH7kQoaclbNNJV5G/Y0VY9jlXqmdDUUWLW21nWzT4kyUjC0eky0Q5NsqLScLpMXFo5QZ
+         PKLWdWVFGJ2WdUonwLxat0blMohH5h4RE14Z641bwcgNBQwQi68MfUcvg/G8KAXWcevM
+         YgUbaluiJPKaN0KRrUIAbwN91+JZ/29D35B7RQNpYr6/hKH0OEZmkInYjFtYKsYNv/HG
+         QV5LISwj0LVchkUu+kIXd5rPrFquzJnD4LReYnCEIqHugt3P3dV/1kz2p86vpWWC2oqg
+         SJAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=Zhd9brlUSU3VJSV9/oY0K6ohjn54GHCy8fO4/WEPHqo=;
+        b=mIwJAnyUmqeM/pPzISv84yKdIydUfyVnmnELwOERC3z+LUPyltsALT80x9nl1FU7qV
+         hOT18jJFXj9v/pZ5p9WB/rwWEJSl4kcsoOHC2D1Iyh/+2DX8LM+yxc5Keo51v2fZ+0B7
+         k4M8kDHMYzBismDg0rBx72Xmps71rO7/68IYhVRUUrkPBwrYciSDpqOk9TGF9UrP9FdX
+         JfOphxoHM5Cm66qm0UOLAUwPxsFVE1B54CXMbDLRnnjZF05ThuhQsPI8fWpfyEMAA6fQ
+         5QlQ3aQNfV4O8dJEq26/JCPswaI4SLqCzisa3oRxetkeuo9wPP3pvihCJHr+TPtTaz39
+         mUPw==
+X-Gm-Message-State: AOUpUlGSmzG0/pPiabpz/E7qi3NJEVVuAnehQwa3iDEpyjwJ2da2JS9k
+        g7C0m7WH9eIzbdCv1r19hjJ2DNuuLDRZACCrrmE=
+X-Google-Smtp-Source: AAOMgpd9lSWOGLqmPeCiOhqJJlY9+jY2MlAjPOtPqh3BUXEbRv2W6HT4NIUey8nsNhjXKupzGLH1uGyP6zjZGyeV0Tk=
+X-Received: by 2002:a1f:ae84:: with SMTP id x126-v6mr8762108vke.38.1532970390260;
+ Mon, 30 Jul 2018 10:06:30 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 10:06:20 -0700
+Message-Id: <20180730170622.99349-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+Subject: [PATCH] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     akpm@linux-foundation.org
+Cc:     mka@chromium.org, ghackmann@android.com, ghackmann@google.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Wei Wang <wvw@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        NeilBrown <neilb@suse.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Starting with Clang-7.0, _THIS_IP_ generates -Wreturn-stack-address
+warnings for almost every translation unit. In general, I'd prefer to
+leave this on (returning the address of a stack allocated variable is in
+general a bad idea) and disable it only at whitelisted call sites.
 
-On Thu, Jul 26, 2018 at 04:14:04PM +0800, joeyli wrote:
-> On Thu, Jul 26, 2018 at 09:30:46AM +0200, Oliver Neukum wrote:
-> > On Di, 2018-07-24 at 00:23 +0800, Yu Chen wrote:
-> > > 
-> > > Good point, we once tried to generate key in kernel, but people
-> > > suggest to generate key in userspace and provide it to the
-> > > kernel, which is what ecryptfs do currently, so it seems this
-> > > should also be safe for encryption in kernel.
-> > > https://www.spinics.net/lists/linux-crypto/msg33145.html
-> > > Thus Chun-Yi's signature can use EFI key and both the key from
-> > > user space.
-> > 
-> > Hi,
-> > 
-> > ecryptfs can trust user space. It is supposed to keep data
-> > safe while the system is inoperative. The whole point of Secure
-> > Boot is a cryptographic system of trust that does not include
-> > user space.
-> > 
-> > I seriously doubt we want to use trusted computing here. So the
-> > key needs to be generated in kernel space and stored in a safe
-> > manner. As we have a saolution doing that, can we come to ausable
-> > synthesis?
-> > 
-> > 	Regards
-> > 		Oliver
-> 
-> Crurently there have two solutions, they are trusted key and EFI key.
-> Both of them are generated in kernel and are not visible in user space.
-> 
-> The trusted key is generated by kernel then sealed by the TPM's
-> SRK. So the trusted key can be stored in anywhere then be enrolled
-> to kernel when we need it. EVM already uses it.
-> 
-> The EFI key is Jiri Kosina's idea. It is stored in boot services
-> variable, which means that it can only be access by signed EFI binary
-> (e.g. signed EFI boot stub) when secure boot be enabled. SLE applied
-> this solution a couple of years.
-> 
-> I am working on put the EFI key to key retention service. Then
-> EFI key can be a master key of encrypted key. EVM can also use
-> it: 
-> https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
-> https://github.com/joeyli/linux-s4sign/commit/f552f97cc3cca5acd84f424b7f946ffb5fe8e9ec
-> 
-> That's why I want to use key retention service in hibernation
-> encryption/authentication. Which means that we can use key
-> API to access trusted key and EFI key.  
->
+We can't do something like:
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wreturn-stack-address"
+ <code>
+ #pragma clang diagnostic pop
 
-Here is a proof of concept for using the key retention service
-to encrypt/sign snapshot image. It's using EFI key now, I will
-add encrypted key support in the key handler later:
-    https://github.com/joeyli/linux-s4sign/commit/6311e97038974bc5de8121769fb4d34470009566 
+in a GNU Statement Expression or macro, hence we use _Pragma, which is
+its raison d'=C3=AAtre: https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html
 
-My next step is that cleaning up the my EFI key type patches and
-submit it to EFI/keys subsystem ASAP. Then I will clean up
-my hibernation encryption/authentication solution for reviewing.
+Cc: stable@vger.kernel.org # 4.17, 4.14, 4.9, 4.4
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ include/linux/kernel.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Thanks
-Joey Lee 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 941dc0a5a877..5906f5727f90 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -168,7 +168,15 @@
+=20
+=20
+ #define _RET_IP_		(unsigned long)__builtin_return_address(0)
+-#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; }=
+)
++#define _THIS_IP_  (							\
++{									\
++	_Pragma("clang diagnostic push")				\
++	_Pragma("clang diagnostic ignored \"-Wreturn-stack-address\"")	\
++	__label__ __here;						\
++__here: (unsigned long)&&__here;					\
++	_Pragma("clang diagnostic pop")					\
++}									\
++)
+=20
+ #ifdef CONFIG_LBDAF
+ # include <asm/div64.h>
+--=20
+2.18.0.233.g985f88cf7e-goog
+
