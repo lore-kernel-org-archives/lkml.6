@@ -6,158 +6,114 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D097D13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2709013F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AAAE20893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AAAE20893
+	by mail.kernel.org (Postfix) with ESMTP id D975420892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:56:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D975420892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732391AbeG3Obk (ORCPT
+        id S1732409AbeG3Obo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:31:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50410 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:31:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50430 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729138AbeG3Obj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:31:39 -0400
+        id S1732050AbeG3Obn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:31:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DACC9AF5F;
-        Mon, 30 Jul 2018 12:56:44 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DB199AD6A;
+        Mon, 30 Jul 2018 12:56:49 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 8D639A0BE8; Mon, 30 Jul 2018 14:56:44 +0200 (CEST)
-Message-Id: <a1c5e9a354780b3d5fca5d448e6c35f6313bc0d9.1532954671.git.mkubecek@suse.cz>
+        id 93C45A0BE8; Mon, 30 Jul 2018 14:56:49 +0200 (CEST)
+Message-Id: <5b3c85cca0db879d2cdda2772f3b57da482ac32c.1532954671.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532954671.git.mkubecek@suse.cz>
 References: <cover.1532954671.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH ethtool v2 12/23] netlink: add netlink handler for
- gcoalesce (-c)
+Subject: [RFC PATCH ethtool v2 13/23] netlink: add netlink handler for gring
+ (-g)
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:56:44 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:56:49 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement "ethtool -c <dev>" subcommand using netlink interface command
-ETHNL_CMD_GET_PARAMS with ETH_PARAMS_IM_COALESCE mask.
+Implement "ethtool -g <dev>" subcommand using netlink interface command
+ETHNL_CMD_GET_PARAMS with ETH_PARAMS_IM_RING mask.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- Makefile.am       |   2 +-
- ethtool.c         |   3 +-
- netlink/extapi.h  |   1 +
- netlink/monitor.c |  10 +++++
- netlink/params.c  | 101 ++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 115 insertions(+), 2 deletions(-)
- create mode 100644 netlink/params.c
+ ethtool.c         |  3 ++-
+ netlink/extapi.h  |  1 +
+ netlink/monitor.c |  5 +++++
+ netlink/params.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/Makefile.am b/Makefile.am
-index 7cc4adc53c59..bedf9edaac47 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -24,7 +24,7 @@ ethtool_SOURCES += \
- 		  netlink/netlink.c netlink/netlink.h netlink/extapi.h \
- 		  netlink/strset.c netlink/strset.h netlink/monitor.c \
- 		  netlink/parser.c netlink/parser.h \
--		  netlink/drvinfo.c netlink/settings.c \
-+		  netlink/drvinfo.c netlink/settings.c netlink/params.c \
- 		  uapi/linux/ethtool_netlink.h \
- 		  uapi/linux/netlink.h uapi/linux/genetlink.h
- ethtool_CFLAGS += @MNL_CFLAGS@
 diff --git a/ethtool.c b/ethtool.c
-index b2f93a331098..24c70c372914 100644
+index 24c70c372914..ba5c73e9abbe 100644
 --- a/ethtool.c
 +++ b/ethtool.c
-@@ -4879,6 +4879,7 @@ static int show_usage(struct cmd_context *ctx);
- #define nl_sset		NULL
+@@ -4880,6 +4880,7 @@ static int show_usage(struct cmd_context *ctx);
  #define nl_gfeatures	NULL
  #define nl_sfeatures	NULL
-+#define nl_gcoalesce	NULL
+ #define nl_gcoalesce	NULL
++#define nl_gring	NULL
  #endif
  
  static const struct option {
-@@ -4909,7 +4910,7 @@ static const struct option {
- 	  "		[ autoneg on|off ]\n"
- 	  "		[ rx on|off ]\n"
- 	  "		[ tx on|off ]\n" },
--	{ "-c|--show-coalesce", 1, do_gcoalesce, NULL,
-+	{ "-c|--show-coalesce", 1, do_gcoalesce, nl_gcoalesce,
- 	  "Show coalesce options" },
- 	{ "-C|--coalesce", 1, do_scoalesce, NULL,
- 	  "Set coalesce options",
+@@ -4936,7 +4937,7 @@ static const struct option {
+ 	  "		[tx-usecs-high N]\n"
+ 	  "		[tx-frames-high N]\n"
+ 	  "		[sample-interval N]\n" },
+-	{ "-g|--show-ring", 1, do_gring, NULL,
++	{ "-g|--show-ring", 1, do_gring, nl_gring,
+ 	  "Query RX/TX ring parameters" },
+ 	{ "-G|--set-ring", 1, do_sring, NULL,
+ 	  "Set RX/TX ring parameters",
 diff --git a/netlink/extapi.h b/netlink/extapi.h
-index ad67e81449ba..8030bda4cbc9 100644
+index 8030bda4cbc9..cc13436c4517 100644
 --- a/netlink/extapi.h
 +++ b/netlink/extapi.h
-@@ -18,6 +18,7 @@ int nl_gset(struct cmd_context *ctx);
- int nl_sset(struct cmd_context *ctx);
+@@ -19,6 +19,7 @@ int nl_sset(struct cmd_context *ctx);
  int nl_gfeatures(struct cmd_context *ctx);
  int nl_sfeatures(struct cmd_context *ctx);
-+int nl_gcoalesce(struct cmd_context *ctx);
+ int nl_gcoalesce(struct cmd_context *ctx);
++int nl_gring(struct cmd_context *ctx);
  int nl_monitor(struct cmd_context *ctx);
  
  void monitor_usage();
 diff --git a/netlink/monitor.c b/netlink/monitor.c
-index e3b8bb46f561..5d494ba43923 100644
+index 5d494ba43923..10dad082de98 100644
 --- a/netlink/monitor.c
 +++ b/netlink/monitor.c
-@@ -68,6 +68,7 @@ static int monitor_event_cb(const struct nlmsghdr *nlhdr, void *data)
- 
- int drvinfo_reply_cb(const struct nlmsghdr *nlhdr, void *data);
- int settings_reply_cb(const struct nlmsghdr *nlhdr, void *data);
-+int params_reply_cb(const struct nlmsghdr *nlhdr, void *data);
- 
- static struct {
- 	uint8_t		cmd;
-@@ -85,6 +86,10 @@ static struct {
- 		.cmd	= ETHNL_CMD_SET_SETTINGS,
- 		.cb	= settings_reply_cb,
+@@ -143,6 +143,11 @@ static struct monitor_option monitor_opts[] = {
+ 		.cmd		= ETHNL_CMD_SET_PARAMS,
+ 		.info_mask	= ETH_PARAMS_IM_COALESCE,
  	},
 +	{
-+		.cmd	= ETHNL_CMD_SET_PARAMS,
-+		.cb	= params_reply_cb,
-+	},
- };
- 
- static int monitor_any_cb(const struct nlmsghdr *nlhdr, void *data)
-@@ -133,6 +138,11 @@ static struct monitor_option monitor_opts[] = {
- 		.cmd		= ETHNL_CMD_SET_SETTINGS,
- 		.info_mask	= ETH_SETTINGS_IM_FEATURES,
- 	},
-+	{
-+		.pattern	= "-c|--show-coalesce|-C|--coalesce",
++		.pattern	= "-g|--show-ring|-G|--set-ring",
 +		.cmd		= ETHNL_CMD_SET_PARAMS,
-+		.info_mask	= ETH_PARAMS_IM_COALESCE,
++		.info_mask	= ETH_PARAMS_IM_RING,
 +	},
  };
  
  static bool pattern_match(const char *s, const char *pattern)
 diff --git a/netlink/params.c b/netlink/params.c
-new file mode 100644
-index 000000000000..30aee5758c42
---- /dev/null
+index 30aee5758c42..6782d98a6956 100644
+--- a/netlink/params.c
 +++ b/netlink/params.c
-@@ -0,0 +1,101 @@
-+#include <errno.h>
-+#include <string.h>
-+#include <stdio.h>
-+
-+#include "../internal.h"
-+#include "../common.h"
-+#include "netlink.h"
-+#include "strset.h"
-+#include "parser.h"
-+
-+/* GET_PARAMS */
-+
-+static int show_coalesce(struct nl_context *nlctx, const struct nlattr *nest)
+@@ -55,6 +55,34 @@ static int show_coalesce(struct nl_context *nlctx, const struct nlattr *nest)
+ 	return 0;
+ }
+ 
++static int show_ring(struct nl_context *nlctx, const struct nlattr *nest)
 +{
-+	const struct nlattr *tb[ETHA_COALESCE_MAX + 1] = {};
++	const struct nlattr *tb[ETHA_RING_MAX + 1] = {};
 +	DECLARE_ATTR_TB_INFO(tb);
 +	int ret;
 +
@@ -167,82 +123,49 @@ index 000000000000..30aee5758c42
 +	if (ret < 0)
 +		return ret;
 +
-+	printf("Coalesce parameters for %s:\n", nlctx->devname);
-+	printf("Adaptive RX: %s  TX: %s\n",
-+	       u8_to_bool(tb[ETHA_COALESCE_RX_USE_ADAPTIVE]),
-+	       u8_to_bool(tb[ETHA_COALESCE_TX_USE_ADAPTIVE]));
-+	show_u32(tb[ETHA_COALESCE_STATS_BLOCK_USECS], "stats-block-usecs: ");
-+	show_u32(tb[ETHA_COALESCE_RATE_SAMPLE_INTERVAL], "sample-interval: ");
-+	show_u32(tb[ETHA_COALESCE_PKT_RATE_LOW], "pkt-rate-low: ");
-+	show_u32(tb[ETHA_COALESCE_PKT_RATE_HIGH], "pkt-rate-high: ");
-+	putchar('\n');
-+	show_u32(tb[ETHA_COALESCE_RX_USECS], "rx-usecs: ");
-+	show_u32(tb[ETHA_COALESCE_RX_MAXFRM], "rx-frames: ");
-+	show_u32(tb[ETHA_COALESCE_RX_USECS_IRQ], "rx-usecs-irq: ");
-+	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_IRQ], "rx-frames-irq: ");
-+	putchar('\n');
-+	show_u32(tb[ETHA_COALESCE_TX_USECS], "tx-usecs: ");
-+	show_u32(tb[ETHA_COALESCE_TX_MAXFRM], "tx-frames: ");
-+	show_u32(tb[ETHA_COALESCE_TX_USECS_IRQ], "tx-usecs-irq: ");
-+	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_IRQ], "tx-frames-irq: ");
-+	putchar('\n');
-+	show_u32(tb[ETHA_COALESCE_RX_USECS_LOW], "rx-usecs-low: ");
-+	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_LOW], "rx-frame-low: ");
-+	show_u32(tb[ETHA_COALESCE_TX_USECS_LOW], "tx-usecs-low: ");
-+	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_LOW], "tx-frame-low: ");
-+	putchar('\n');
-+	show_u32(tb[ETHA_COALESCE_RX_USECS_HIGH], "rx-usecs-high: ");
-+	show_u32(tb[ETHA_COALESCE_RX_MAXFRM_HIGH], "rx-frame-high: ");
-+	show_u32(tb[ETHA_COALESCE_TX_USECS_HIGH], "tx-usecs-high: ");
-+	show_u32(tb[ETHA_COALESCE_TX_MAXFRM_HIGH], "tx-frame-high: ");
++	printf("Ring parameters for %s:\n", nlctx->devname);
++	printf("Pre-set maximums:\n");
++	show_u32(tb[ETHA_RING_RX_MAX_PENDING], "RX:\t\t");
++	show_u32(tb[ETHA_RING_RX_MINI_MAX_PENDING], "RX Mini:\t");
++	show_u32(tb[ETHA_RING_RX_JUMBO_MAX_PENDING], "RX Jumbo:\t");
++	show_u32(tb[ETHA_RING_TX_MAX_PENDING], "TX:\t\t");
++	printf("Current hardware settings:\n");
++	show_u32(tb[ETHA_RING_RX_PENDING], "RX:\t\t");
++	show_u32(tb[ETHA_RING_RX_MINI_PENDING], "RX Mini:\t");
++	show_u32(tb[ETHA_RING_RX_JUMBO_PENDING], "RX Jumbo:\t");
++	show_u32(tb[ETHA_RING_TX_PENDING], "TX:\t\t");
 +	putchar('\n');
 +
 +	return 0;
 +}
 +
-+int params_reply_cb(const struct nlmsghdr *nlhdr, void *data)
-+{
-+	const struct nlattr *tb[ETHA_PARAMS_MAX + 1] = {};
-+	DECLARE_ATTR_TB_INFO(tb);
-+	struct nl_context *nlctx = data;
-+	int ret;
-+
-+	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
-+	if (ret < 0)
-+		return ret;
-+	nlctx->devname = get_dev_name(tb[ETHA_PARAMS_DEV]);
-+	if (!dev_ok(nlctx))
-+		return MNL_CB_OK;
-+
-+	if (mask_ok(nlctx, ETH_PARAMS_IM_COALESCE)) {
-+		ret = show_coalesce(nlctx, tb[ETHA_PARAMS_COALESCE]);
-+		if ((ret < 0) && show_only(nlctx, ETH_PARAMS_IM_COALESCE)) {
-+			nlctx->exit_code = 82;
+ int params_reply_cb(const struct nlmsghdr *nlhdr, void *data)
+ {
+ 	const struct nlattr *tb[ETHA_PARAMS_MAX + 1] = {};
+@@ -78,6 +106,15 @@ int params_reply_cb(const struct nlmsghdr *nlhdr, void *data)
+ 			return MNL_CB_ERROR;
+ 		}
+ 	}
++	if (mask_ok(nlctx, ETH_PARAMS_IM_RING)) {
++		ret = show_ring(nlctx, tb[ETHA_PARAMS_RING]);
++		if ((ret < 0) && show_only(nlctx, ETH_PARAMS_IM_RING)) {
++			nlctx->exit_code = 76;
 +			errno = -ret;
-+			perror("Cannot get device coalesce settings");
++			perror("Cannot get device ring settings");
 +			return MNL_CB_ERROR;
 +		}
 +	}
+ 
+ 	return MNL_CB_OK;
+ }
+@@ -99,3 +136,8 @@ int nl_gcoalesce(struct cmd_context *ctx)
+ {
+ 	return params_request(ctx, ETH_PARAMS_IM_COALESCE);
+ }
 +
-+	return MNL_CB_OK;
-+}
-+
-+static int params_request(struct cmd_context *ctx, uint32_t info_mask)
++int nl_gring(struct cmd_context *ctx)
 +{
-+	int ret;
-+
-+	ret = ethnl_prep_get_request(ctx, ETHNL_CMD_GET_PARAMS,
-+				     ETHA_PARAMS_DEV);
-+	if (ret < 0)
-+		return ret;
-+	if (ethnla_put_u32(ctx->nlctx, ETHA_PARAMS_INFOMASK, info_mask))
-+		return -EMSGSIZE;
-+	return ethnl_send_get_request(ctx->nlctx, params_reply_cb);
-+}
-+
-+int nl_gcoalesce(struct cmd_context *ctx)
-+{
-+	return params_request(ctx, ETH_PARAMS_IM_COALESCE);
++	return params_request(ctx, ETH_PARAMS_IM_RING);
 +}
 -- 
 2.18.0
