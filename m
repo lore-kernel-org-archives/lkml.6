@@ -2,148 +2,106 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C7C13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C350913F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A55D20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7135D20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 10:21:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9LaA0jE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A55D20894
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rlzDHQDk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7135D20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeG3Lzx (ORCPT
+        id S1728976AbeG3L4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:55:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726828AbeG3Lzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:55:52 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1271220881;
-        Mon, 30 Jul 2018 10:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532946094;
-        bh=zBNgFys+OoLYf4LbEJsjIZmsKvb0ZNyKPMgIhEVPSdQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g9LaA0jEaNc5Vt70ivwYMQ7sUC1BH6b2s2Y5ftEre+dBOGz1riAiTi3GptVno7kO8
-         VVyRVsEcOSE6+vdTZ/5juYpVeuc6LAqv8f50s8vpqZzbMudzZK5zSt255lP6ZuVI/2
-         DCBR4LzabQ9WdPdSVEXMDwmJPTKLAqQGzT1r8BfQ=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     rostedt@goodmis.org,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        peterz@infradead.org, Shuah Khan <shuah@kernel.org>
-Cc:     mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] selftests/ftrace: Fix kprobe string testcase to not probe notrace function
-Date:   Mon, 30 Jul 2018 19:21:11 +0900
-Message-Id: <153294607107.32740.1664854684396589624.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153294598465.32740.17737878083872427008.stgit@devbox>
-References: <153294598465.32740.17737878083872427008.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Mon, 30 Jul 2018 07:56:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37310 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeG3L4I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 07:56:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jDTTyW2KUl6ulW67CVRcrexsvc5Sg/CrnTnoSP+kCGM=; b=rlzDHQDkTJC+J7l+QrD5BHrBL
+        gXnn+S9MC3fpX9futgF8t3KTHc/hnRSbLsOJAUw1iTiMUQuxjcO+SZ+2KwxcpsxTVDqwLMw/vOye3
+        GxkYudYzZhXgBHjy+A9i1vdZ4NsngC4HFBTm/HOtgeTeLCnoi7puQx9k5xfWkR4qXc1Us=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fk5JB-0004wI-VY; Mon, 30 Jul 2018 10:21:46 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B0CAC1124216; Mon, 30 Jul 2018 11:21:45 +0100 (BST)
+Date:   Mon, 30 Jul 2018 11:21:45 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>, lgirdwood@gmail.com,
+        thierry.reding@gmail.com, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel@lists.codethink.co.uk
+Subject: Re: [PATCH 4/4] ASoC: tegra: i2s: Add support for more than 2
+ channels
+Message-ID: <20180730102145.GG5789@sirena.org.uk>
+References: <20180727125931.9794-1-jorge.sanjuan@codethink.co.uk>
+ <20180727125931.9794-5-jorge.sanjuan@codethink.co.uk>
+ <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cyV/sMl4KAhiehtf"
+Content-Disposition: inline
+In-Reply-To: <d81d5c3c-2b2f-308f-d98e-d39c5d5d147f@nvidia.com>
+X-Cookie: But they went to MARS around 1953!!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix kprobe string argument testcase to not probe notrace
-function. Instead, it probes tracefs function which must
-be available with ftrace.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Changes in v3:
-  - Fix probepoint testcase too.
----
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     |   30 ++++++++------------
- .../selftests/ftrace/test.d/kprobe/probepoint.tc   |    2 +
- 2 files changed, 13 insertions(+), 19 deletions(-)
+--cyV/sMl4KAhiehtf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-index a0002563e9ee..1ad70cdaf442 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -9,28 +9,22 @@ echo > kprobe_events
- 
- case `uname -m` in
- x86_64)
--  ARG2=%si
--  OFFS=8
-+  ARG1=%di
- ;;
- i[3456]86)
--  ARG2=%cx
--  OFFS=4
-+  ARG1=%ax
- ;;
- aarch64)
--  ARG2=%x1
--  OFFS=8
-+  ARG1=%x0
- ;;
- arm*)
--  ARG2=%r1
--  OFFS=4
-+  ARG1=%r0
- ;;
- ppc64*)
--  ARG2=%r4
--  OFFS=8
-+  ARG1=%r3
- ;;
- ppc*)
--  ARG2=%r4
--  OFFS=4
-+  ARG1=%r3
- ;;
- *)
-   echo "Please implement other architecture here"
-@@ -38,17 +32,17 @@ ppc*)
- esac
- 
- : "Test get argument (1)"
--echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string" > kprobe_events
- echo 1 > events/kprobes/testprobe/enable
--! echo test >> kprobe_events
--tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+echo "p:test _do_fork" >> kprobe_events
-+grep -qe "testprobe.* arg1=\"test\"" trace
- 
- echo 0 > events/kprobes/testprobe/enable
- : "Test get argument (2)"
--echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo "p:testprobe tracefs_create_dir arg1=+0(${ARG1}):string arg2=+0(${ARG1}):string" > kprobe_events
- echo 1 > events/kprobes/testprobe/enable
--! echo test1 test2 >> kprobe_events
--tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+echo "p:test _do_fork" >> kprobe_events
-+grep -qe "testprobe.* arg1=\"test\" arg2=\"test\"" trace
- 
- echo 0 > events/enable
- echo > kprobe_events
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-index 4fda01a08da4..519d2763f5d2 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -4,7 +4,7 @@
- 
- [ -f kprobe_events ] || exit_unsupported # this is configurable
- 
--TARGET_FUNC=create_trace_kprobe
-+TARGET_FUNC=tracefs_create_dir
- 
- dec_addr() { # hexaddr
-   printf "%d" "0x"`echo $1 | tail -c 8`
+On Mon, Jul 30, 2018 at 10:46:14AM +0100, Jon Hunter wrote:
+> On 27/07/18 13:59, Jorge Sanjuan wrote:
 
+> > -	if (params_channels(params) != 2)
+> > +	if (params_channels(params) > 8)
+> >  		return -EINVAL;
+
+> For normal I2S mode, channels should always be 2 and so it could be worth checking
+> if we are using TDM mode here or not.
+
+Yes, there's some question if a multi-channel I2S setup is going to be
+all the left channels then all the right channels, have multiple data
+lines in parallel (this especially common for high end applications) or
+something else.  Usually it's safer to use a DSP mode for those.
+
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
+
+--cyV/sMl4KAhiehtf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte5rgACgkQJNaLcl1U
+h9Az4wf9ENuJw9xHWLzCcUCojvR2r6t/dd8C4zfCSklN8D/pL24kyXy+HXtDXgqw
+dzYaYCL27iECyw16JmuMzM3U/vnnOTIxamjlcCF3/6BjBxYaJJ94gZP3RBLImrDF
+bCga+cNlb3FK0D7FEpyFSlSvREN3ZBpG5H+Da0vhdHZxglKYFsvqkjzJABamiGDK
+u3ryKn9BWMWVFITB5X9o24f902wdc2DY/ErIfCB5nQbmSLPXU7dAJ/3I7YmNSOLD
+8HiHKm74QIAtiDzZT3Sv+kZ8EgAbp8XmkWs/PGxoN7eveBbAJpEQHewQ99ystzKy
+tJNxVjlj1mGVRCxIsi+vNT1JAm9+RA==
+=moNh
+-----END PGP SIGNATURE-----
+
+--cyV/sMl4KAhiehtf--
