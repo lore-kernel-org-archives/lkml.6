@@ -3,752 +3,526 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5A0C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9719C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696FB20894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41C1F20857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:09:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hk9sDPU4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696FB20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="bBSbbOSi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C1F20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nutanix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbeG3Uo1 (ORCPT
+        id S1731854AbeG3Up0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 16:44:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730671AbeG3Uo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 16:44:26 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7270F20890;
-        Mon, 30 Jul 2018 19:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532977681;
-        bh=Rh3GtZxmrGywSwj+Ws42OjUqNO922zLabASd4DUjDfA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Hk9sDPU4rYnFQu1Zpl2GbR0vdarqTij0WaIzaHj011o7N8/jc69b8yt4rkctRS2Jr
-         sq7RTZYdNPggJQNVbpHFeibNzWkmB42roFOZ5Nt2bVdG3auTpgvgrlWuJoUAenxjM3
-         TQWbP6PUieRWRZpbaf2gio4OCH1PbW/HiqfQuQEU=
-Date:   Mon, 30 Jul 2018 20:07:57 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Michael Hennerich" <Michael.Hennerich@analog.com>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 2/2] iio: dac: ad5770r: Add AD5770R support
-Message-ID: <20180730200411.7496064f@archlinux>
-In-Reply-To: <20180730140205.4972-1-mircea.caprioru@analog.com>
-References: <20180730140205.4972-1-mircea.caprioru@analog.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 30 Jul 2018 16:45:26 -0400
+Received: from mx0a-002c1b01.pphosted.com ([148.163.151.68]:37872 "EHLO
+        mx0a-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730482AbeG3UpZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 16:45:25 -0400
+Received: from pps.filterd (m0127839.ppops.net [127.0.0.1])
+        by mx0a-002c1b01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UIxsoC006776;
+        Mon, 30 Jul 2018 12:08:58 -0700
+Received: from nam03-co1-obe.outbound.protection.outlook.com (mail-co1nam03lp0016.outbound.protection.outlook.com [216.32.181.16])
+        by mx0a-002c1b01.pphosted.com with ESMTP id 2kgqjf4u4r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 30 Jul 2018 12:08:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tzl7Pyhz/ZFzUOwyPeIRTFmVswPdEW0kJMmibLvI3Fw=;
+ b=bBSbbOSiDrMJr78yLfcpmPXxcRat3GpSFAqJJybq+e8tMROu+A1UDOOmJyYAhxcXdctKJuM1Lvfjfw7oBK0DayoLR42SDQsiIog5YcNXElae+muwkVEaGK9SIV4oUD5kywzbUd3B4WC+o7ZCDnWyr/T6lL98bJcEmqCG9kJrSqI=
+Received: from BYAPR02MB4501.namprd02.prod.outlook.com (52.135.239.148) by
+ BYAPR02MB4440.namprd02.prod.outlook.com (52.135.237.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.21; Mon, 30 Jul 2018 19:08:55 +0000
+Received: from BYAPR02MB4501.namprd02.prod.outlook.com
+ ([fe80::fc2a:75b2:a5d4:9da]) by BYAPR02MB4501.namprd02.prod.outlook.com
+ ([fe80::fc2a:75b2:a5d4:9da%4]) with mapi id 15.20.0995.020; Mon, 30 Jul 2018
+ 19:08:55 +0000
+From:   David Chen <david.chen@nutanix.com>
+To:     "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: RCU nocb list not reclaiming causing OOM
+Thread-Topic: RCU nocb list not reclaiming causing OOM
+Thread-Index: AQHUIH18yrHc1RUlUkiqYiJ1aV59oKSYwskAgAALDpiACqj1uYAAO1OAgAAHgDWAAA26gIAAAEYJgAAhJgCAAHCFAIAD1Gam
+Date:   Mon, 30 Jul 2018 19:08:55 +0000
+Message-ID: <BYAPR02MB4501BA05FDCDAAC8842B3EBD942F0@BYAPR02MB4501.namprd02.prod.outlook.com>
+References: <BYAPR02MB4501B990E353A2616594821294510@BYAPR02MB4501.namprd02.prod.outlook.com>
+ <20180720233212.GC12945@linux.vnet.ibm.com>
+ <BYAPR02MB450146DF9F67788ED1F0801D94500@BYAPR02MB4501.namprd02.prod.outlook.com>
+ <BYAPR02MB4501690DB627FBB8640A5C46942A0@BYAPR02MB4501.namprd02.prod.outlook.com>
+ <20180727223125.GJ24813@linux.vnet.ibm.com>
+ <DM6PR02MB4508A4A735450EAAC469E635942A0@DM6PR02MB4508.namprd02.prod.outlook.com>
+ <20180727234723.GN24813@linux.vnet.ibm.com>
+ <DM6PR02MB4508E33C65B189DF3B5D6D54942A0@DM6PR02MB4508.namprd02.prod.outlook.com>
+ <20180728014700.GO24813@linux.vnet.ibm.com>,<20180728082944.GA23760@linux.vnet.ibm.com>
+In-Reply-To: <20180728082944.GA23760@linux.vnet.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [66.193.132.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR02MB4440;6:kgAxQcslh8KMlwizGls6zFSNCat9myoZGbEzgfuHtHSPZLOBhsjfsZTqH6Kx+uNtyLyrDxzm6EpvrYd4gH8BqkDwPBjtTSByZIlMBIW129gZ0G1fwCDjgx1q3596BlicTnmWY4gvJtrT29AYUr6MNqyQ1x2HjXz5OuLDQokQr+Cn/tUnHQb+UOhW+nKfo4oaKI5C+zcqX4UZ5n9rjfISWCRG3l1cJZSU0zz9ibHMfcSApBzh3MkQgv0/mcICnfBacI2YxylSr725SzZU5TGRdONSzR95U4a39NZ9BZYRk2H0Q9JC/JVm6gQTOqo+4lwevRHnmlzMsfTt3wh6ARyTbUx5ZzIJDUBlBkm4DGGW8Fl/w2FlGGG9YH01XUKiugENYBWcevQ/CZkibqEtzHWab7oES3Kds1IZX7aZutRgCTMq/tp/lOKklqNrg3ImcPwDX4E59xIs/AaGQLJHgh45tA==;5:NC7M9fo/dam0VXsENZ5RsCrwNDiqOQXiWKQ/PYBqQKu8gi+eAPGNwLL1FEbWSVoZjm2+xJ1bSZo4V+qQ9leTUCc9NOYQKNNbA2rGXTDwpeFF6stBWv7bvzYIs921pVMIAslg0fbHJyb14pdELFNH4dI4Eu97U9SXbI365eT3bdY=;7:4nZBN8snGa73iio+Wxjif/5O0vAma+CiUkXK15u6kdZMfjaV1CeCnBA588DI1X2lYzeCKqFbfYpdz5i8INz3QfvtXJDbbiGGDhY29y5rNbcnpmgdM+gu6rkKCIkxmThDuiHDi+CgmDwD2Wh9/xU8TEfM5jBNvdSBlDeXCygHWIlsmGNw1n5eTgzLTsL755PA0DkYL+U49WVlNezPHUOenl6t2hZFJkQ9yiiHMg8cJumsu/LJSUc3ExSsikHI7Uav
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d82091de-6f3e-453f-fe82-08d5f64fe5b5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR02MB4440;
+x-ms-traffictypediagnostic: BYAPR02MB4440:
+x-microsoft-antispam-prvs: <BYAPR02MB4440D579E2B357FB7D8AA517942F0@BYAPR02MB4440.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(104084551191319);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR02MB4440;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4440;
+x-forefront-prvs: 0749DC2CE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(396003)(366004)(39860400002)(199004)(189003)(51914003)(55016002)(5660300001)(86362001)(575784001)(97736004)(5640700003)(6436002)(6116002)(33656002)(3846002)(105586002)(478600001)(14454004)(229853002)(81166006)(53936002)(4326008)(76176011)(7696005)(2900100001)(66066001)(486006)(102836004)(186003)(6246003)(53546011)(6506007)(26005)(2501003)(476003)(99286004)(5250100002)(44832011)(93886005)(68736007)(106356001)(1730700003)(81156014)(8676002)(14444005)(6916009)(256004)(9686003)(8936002)(2351001)(316002)(7736002)(25786009)(74316002)(446003)(11346002)(2906002)(305945005)(64030200001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR02MB4440;H:BYAPR02MB4501.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nutanix.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lElQLUnfbWKASz/BjuMbA/wsby2dsjOSZjaLkUYvVvhSN4mCHNd1z9ndyo8GfkXnF8+kq8m/xTKMLA9q3lwZ/L+IdNmsbtQGxeMWhABwqliz6zpszR3L49HCOL7ZQSC9fPzZqGUI4JRPI7u4iQAeAbvv4lNy1/ABnYYTch3IqBw7NOiCVXFyBshiiU7BaPVqFSELptC9yfZpda3O6TKMHmTj+gL0sofywB48Wa+rDGdh5IIPwvn1RY3Utmc+LDtpWP9FHDChOZxM/4RiDhAxU/1OxsQXjjXj7SnpsMZhUVvZc/OfDjouQzrrfFNvz1B22UjlE90P6XdAR04AI1V8T1bY2pLYkl4pDeiHE583sfw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d82091de-6f3e-453f-fe82-08d5f64fe5b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2018 19:08:55.7640
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4440
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300201
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 17:02:05 +0300
-Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+Hi Paul,
 
-> The AD5770R is a 6-channel, 14-bit resolution, low noise, programmable
-> current output digital-to-analog converter (DAC) for photonics control
-> applications.
-> 
-> It contains five 14-bit resolution current sourcing DAC channels and one
-> 14-bit resolution current sourcing/sinking DAC channel.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-I'm not sure I've completely avoiding repetition but I tried ;)
-+ naturally Andy got some things I missed!
+Just want to know what's your plan on stable branches regarding this issue.
+Do you intend to backport the ->nocb_lock? Or are you going with just the
+memory barrier change?
 
-Additional comments from me.
+Thanks,
+David
 
-Mostly fine, but a few bits and bobs to clean up.  I'm guessing this
-is a bit special purpose given I couldn't find a datasheet and those really
-random looking current ranges!
 
-Jonathan
+From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Sent: Saturday, July 28, 2018 1:29 AM
+To: David Chen
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: RCU nocb list not reclaiming causing OOM
+=A0=20
 
-p.s. Your CC list was a bit bonkers in terms of number of people and
-who some of them were.  Please try to limit it to people you know
-are likely to be interested and had curate any script outputs.
+On Fri, Jul 27, 2018 at 06:47:00PM -0700, Paul E. McKenney wrote:
+> On Sat, Jul 28, 2018 at 12:07:19AM +0000, David Chen wrote:
+> > Hi Paul,
+> >=20
+> > I wasn't talking about the xchg() though.
+> >=20
+> > The smp_mb__after_atomic() is not for xchg(), it's for `*tail =3D rdp->=
+nocb_gp_head;`
+> > it's stated so in the comment. And I do think we need ordering between
+> > `*tail =3D rdp->nocb_gp_head;` and wake up, because the waiter is check=
+ing on head not tail.
+> >=20
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 swait_ev=
+ent_interruptible(rdp->nocb_wq,
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 READ_ONC=
+E(rdp->nocb_follower_head));
+> >=20
+> > So what I'm saying is that since we need to maintain ordering between `=
+*tail =3D rdp->nocb_gp_head;`
+> > and wake up, we need to change the smp_mb__after_atomic() to smp_mb(). =
+Because
+> > smp_mb__after_atomic() wouldn't guarantee=20
+> >=20
+> > So this is what I'm proposing.
+>=20
+> Good eyes!
+>=20
+> Hmmm...=A0 What do I do about this in mainline?=A0 Ah, I introduced a
+> ->nocb_lock in mainline to prevent this from happening.=A0 In that same
+> commit that you didn't want to use because it is hard to backport.=A0 ;-)
+>=20
+> So yes, but there might well be other misorderings fixed by the
+> hard-to-backport commit that your change below does not cover.=A0 Still I
+> do agree that you need full ordering at that point.
 
-There were a few on their I don't know, so I may have removed someone
-you deliberately added.  If so sorry about that!
+Another approach would be to backport only the ->nocb_lock portions
+of that patch.=A0 This would still potentially leave failure-to-wake
+(as opposed to misordering-on-wake) issues, but it should cover all
+of the misordering-on-wake issues.
 
-> ---
->  MAINTAINERS               |   1 +
->  drivers/iio/dac/Kconfig   |  10 +
->  drivers/iio/dac/Makefile  |   1 +
->  drivers/iio/dac/ad5770r.c | 548 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 560 insertions(+)
->  create mode 100644 drivers/iio/dac/ad5770r.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9c2626079592..c9168ae18f0a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -762,6 +762,7 @@ L:	linux-iio@vger.kernel.org
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	Documentation/devicetree/bindings/iio/dac/ad5770r.txt
-> +F:	drivers/iio/dac/ad5770r.c
->  
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index 25bed2d7d2b9..798db486c333 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -171,6 +171,16 @@ config AD5764
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called ad5764.
->  
-> +config AD5770R
-> +	tristate "Analog Devices AD5770R IDAC driver"
-> +	depends on SPI_MASTER
-> +	help
-> +	  Say yes here to build support for Analog Devices AD5770R Digital to
-> +	  Analog Converter.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ad5770r.
-> +
->  config AD5791
->  	tristate "Analog Devices AD5760/AD5780/AD5781/AD5790/AD5791 DAC SPI driver"
->  	depends on SPI
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index 603587cc2f07..0a38690bbd2b 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_AD5593R) += ad5593r.o
->  obj-$(CONFIG_AD5755) += ad5755.o
->  obj-$(CONFIG_AD5761) += ad5761.o
->  obj-$(CONFIG_AD5764) += ad5764.o
-> +obj-$(CONFIG_AD5770R) += ad5770r.o
->  obj-$(CONFIG_AD5791) += ad5791.o
->  obj-$(CONFIG_AD5686) += ad5686.o
->  obj-$(CONFIG_AD7303) += ad7303.o
-> diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
-> new file mode 100644
-> index 000000000000..9d3db3b25335
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad5770r.c
-> @@ -0,0 +1,548 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * AD5770R Digital to analog converters driver
-> + *
-> + * Copyright 2018 Analog Devices Inc.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/delay.h>
-> +#include <linux/property.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +/* SPI configuration registers */
-> +#define AD5770R_INTERFACE_CONFIG_A	0x00
-> +
-> +/* AD5770R configuration registers */
-> +#define AD5770R_CHANNEL_CONFIG		0x14
-> +#define AD5770R_OUTPUT_RANGE(ch)	(0x15 + (ch))
-> +#define AD5770R_REFERENCE		0x1B
-> +#define AD5770R_DAC_LSB(ch)		(0x26 + 2 * (ch))
-> +#define AD5770R_DAC_MSB(ch)		(0x27 + 2 * (ch))
-> +#define AD5770R_CH_SELECT		0x34
-> +#define AD5770R_CH_ENABLE		0x44
-> +
-> +/* AD5770R_INTERFACE_CONFIG_A */
-> +#define AD5770R_ITF_CFG_A_SW_RESET(x)		(((x) & 0x1) | 0x80)
-> +
-> +/* AD5770R_CHANNEL_CONFIG */
-> +#define AD5770R_CFG_CH0_SINK_EN(x)		(((x) & 0x1) << 7)
-> +#define AD5770R_CFG_SHUTDOWN_B(x, ch)		(((x) & 0x1) << (ch))
-> +
-> +/* AD5770R_OUTPUT_RANGE */
-> +#define AD5770R_RANGE_OUTPUT_SCALING(x)		(((x) & 0x3F) << 2)
-> +#define AD5770R_RANGE_MODE(x)			((x) & 0x03)
-> +
-> +/* AD5770R_REFERENCE */
-> +#define AD5770R_REF_RESISTOR_SEL(x)		(((x) & 0x1) << 2)
-> +#define AD5770R_REF_SEL(x)			(((x) & 0x3) << 0)
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0 Thanx, Paul
 
-The outer brackets don't add anything much in all these cases.
+> > diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/kernel=
+/rcu/tree_plugin.h
+> > --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h=A0=A0=A0=A0=A0 2017-07-1=
+2 06:42:41.000000000 -0700
+> > +++ linux-4.9.37/kernel/rcu/tree_plugin.h=A0=A0 2018-07-27 16:23:41.349=
+044259 -0700
+> > @@ -2076,7 +2076,7 @@
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /* Append callbacks to follower'=
+s "done" list. */
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tail =3D xchg(&rdp->nocb_followe=
+r_tail, rdp->nocb_gp_tail);
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 *tail =3D rdp->nocb_gp_head;
+> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb__after_atomic(); /* Store *tail =
+before wakeup. */
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb(); /* Store *tail before wakeup.=
+ */
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (rdp !=3D my_rdp && tail =3D=
+=3D &rdp->nocb_follower_head) {
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /*
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 * Lis=
+t was empty, wake up the follower.
+> >=20
+> > Thanks,
+> > David
+> >=20
+> > From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Sent: Friday, July 27, 2018 4:47 PM
+> > To: David Chen
+> > Cc: linux-kernel@vger.kernel.org
+> > Subject: Re: RCU nocb list not reclaiming causing OOM
+> > =A0=20
+> >=20
+> > On Fri, Jul 27, 2018 at 11:16:39PM +0000, David Chen wrote:
+> > > Hi Paul,
+> > >=20
+> > > Thanks for the advice.
+> > > The bug is kind of hard to hit, so I can't say for certain yet.
+> >=20
+> > Well, you can always remove the "tail =3D=3D &rdp->nocb_follower_head" =
+as an
+> > extra belt-and-suspenders safety net.=A0 I am not putting that in mainl=
+ine,
+> > but in the privacy of your own copy of the kernel, I don't see any real=
+ly
+> > serious problem with it.=A0 (As long as you aren't going for absolute m=
+aximum
+> > performance, but even then there are other more important tuning action=
+s
+> > and code changes you could make.)
+> >=20
+> > > Though after another look at the code, I found out the `smp_mb__after=
+_atomic();`
+> > > seems to be only a compiler barrier on x86.
+> >=20
+> > Yes, and that is because the locked xchg instruction used on x86 to
+> > implement xchg() already provides full ordering.=A0 ;-)
+> >=20
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tail =3D xchg(&rdp->nocb=
+_follower_tail, rdp->nocb_gp_tail);
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 *tail =3D rdp->nocb_gp_h=
+ead;
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb__after_atomic(); =
+/* Store *tail before wakeup. */
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (rdp !=3D my_rdp && t=
+ail =3D=3D &rdp->nocb_follower_head) {
+> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
+swake_up(&rdp->nocb_wq);
+> > >=20
+> > > But that wouldn't be enough right? Because from 6b5fc3a13318, it stat=
+ed that
+> > > wakeup operation don't guarantee ordering. And when the follower wake=
+s up, it checks
+> > > for nocb_follower_head, which is assigned by `*tail =3D rdp->nocb_gp_=
+head;` which doesn't
+> > > have LOCK prefix. So it's possible for follower to wake up and see th=
+e list is empty and go
+> > > back to sleep.
+> >=20
+> > Again, xchg() is defined to provide full ordering against all operation=
+s
+> > before and after it.=A0 Each architecture is required to do whatever is
+> > necessary to implement that full ordering, and x86 need only provide
+> > its "lock xchg" instruction.
+> >=20
+> > The smp_mb__after_atomic() has effect only after atomic read-modify-wri=
+te
+> > operations that do not return a value, for example, atomic_inc().
+> > If you use it after a value-returning atomic read-modify-write operatio=
+n
+> > like xchg(), all you do is needlessly slow things down on platforms
+> > that provide non-empty smp_mb__after_atomic() definitions.=A0 So again,
+> > smp_mb__after_atomic() after xchg() is pointless.
+> >=20
+> > Please take a look at Documentation/core-api/atomic_ops.rst in the
+> > Linux-kernel source tree for more information.=A0 Or get a v4.17 kernel
+> > source tree and check this using the memory model (tools/memory-model
+> > in that version).
+> >=20
+> > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 Thanx, Paul
+> >=20
+> > > Thanks,
+> > > David
+> > >=20
+> > > From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > Sent: Friday, July 27, 2018 3:31 PM
+> > > To: David Chen
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Subject: Re: RCU nocb list not reclaiming causing OOM
+> > > =A0=20
+> > >=20
+> > > On Fri, Jul 27, 2018 at 07:07:46PM +0000, David Chen wrote:
+> > > > Hi=A0Paul,
+> > > >=20
+> > > > I'd like to opinion again on this subject.
+> > > >=20
+> > > > So we are going to backport this patch:
+> > > > 6b5fc3a13318 ("rcu: Add memory barriers for NOCB leader wakeup")
+> > >=20
+> > > Does this one solve the problem, or are you still seeing hangs?
+> > > If you are no longer seeing hangs, my advice is "hands off keyboard",
+> > > though some would no doubt point out that I should follow that advice
+> > > more myself.=A0 ;-)
+> > >=20
+> > > > But the other one:
+> > > > 8be6e1b15c54 ("rcu: Use timer as backstop for NOCB deferred wakeups=
+")
+> > > > It doesn't apply cleanly, and I'm not too comfortable porting it my=
+self.
+> > >=20
+> > > Yeah, that one is a bit on the non-trivial side, no two ways about it=
+.
+> > >=20
+> > > > So I'm wondering if I use the following change to always wake up fo=
+llower thread
+> > > > regardless if the list was empty or not, just to be on the safe sid=
+e. Do you think
+> > > > this change is reasonable? Do you see any problem it might cause?
+> > > >=20
+> > > > Thanks,
+> > > > David
+> > > >=20
+> > > > diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/ke=
+rnel/rcu/tree_plugin.h
+> > > > --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h=A0=A0=A0=A0=A0=A0=A0=
+ 2017-07-12 06:42:41.000000000 -0700
+> > > > +++ linux-4.9.37/kernel/rcu/tree_plugin.h=A0=A0=A0=A0 2018-07-27 11=
+:57:03.582134519 -0700
+> > > > @@ -2077,7 +2077,7 @@
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tail =3D xchg(&rdp->no=
+cb_follower_tail, rdp->nocb_gp_tail);
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 *tail =3D rdp->nocb_gp=
+_head;
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb__after_atomic()=
+; /* Store *tail before wakeup. */
+> > > > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (rdp !=3D my_rdp && tail =
+=3D=3D &rdp->nocb_follower_head) {
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (rdp !=3D my_rdp) {
+> > >=20
+> > > This will burn a bit of extra CPU time, but it should be fine other t=
+han
+> > > that.
+> > >=20
+> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 Thanx, Paul
+> > >=20
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 /*
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 * List was empty, wake up the follower.
+> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 * Memory barriers supplied by atomic_long_add().
+> > > >=20
+> > > >=20
+> > > > From: David Chen
+> > > > Sent: Friday, July 20, 2018 5:12 PM
+> > > > To: paulmck@linux.vnet.ibm.com
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Subject: Re: RCU nocb list not reclaiming causing OOM
+> > > > =A0=A0=20
+> > > >=20
+> > > > Hi Paul,
+> > > >=20
+> > > > Ok, I'll try those patches.
+> > > >=20
+> > > > Thanks,
+> > > > David
+> > > >=A0=A0=20
+> > > > From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Sent: Friday, July 20, 2018 4:32:12 PM
+> > > > To: David Chen
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Subject: Re: RCU nocb list not reclaiming causing OOM
+> > > > =A0=20
+> > > >=20
+> > > > On Fri, Jul 20, 2018 at 11:05:52PM +0000, David Chen wrote:
+> > > > > Hi Paul,
+> > > > >=20
+> > > > > We hit an RCU issue on 4.9.37 kernel. One of the nocb_follower li=
+st grows too
+> > > > > large, and not getting reclaimed, causing the system to OOM.
+> > > > >=20
+> > > > > Printing the culprit rcu_sched_data:
+> > > > >=20
+> > > > >=A0=A0 nocb_q_count =3D {
+> > > > >=A0=A0=A0=A0 counter =3D 32369635
+> > > > >=A0=A0 },
+> > > > >=A0=A0 nocb_follower_head =3D 0xffff88ae901c0a00,
+> > > > >=A0=A0 nocb_follower_tail =3D 0xffff88af1538b8d8,
+> > > > >=A0=A0 nocb_kthread =3D 0xffff88b06d290000,
+> > > > >=20
+> > > > > As you can see here, the nocb_follower_head is not empty, so in t=
+heory, the
+> > > > > nocb_kthread shouldn't go to sleep. However, if dump the stack of=
+ the kthread:
+> > > > >=20
+> > > > > crash> bt 0xffff88b06d290000
+> > > > > PID: 21=A0=A0=A0=A0 TASK: ffff88b06d290000=A0 CPU: 3=A0=A0 COMMAN=
+D: "rcuos/1"
+> > > > >=A0 #0 [ffffafc9020b7dc0] __schedule at ffffffff8d8789dc
+> > > > >=A0 #1 [ffffafc9020b7e38] schedule at ffffffff8d878e76
+> > > > >=A0 #2 [ffffafc9020b7e50] rcu_nocb_kthread at ffffffff8d112337
+> > > > >=A0 #3 [ffffafc9020b7ec8] kthread at ffffffff8d0c6ce7
+> > > > >=A0 #4 [ffffafc9020b7f50] ret_from_fork at ffffffff8d87d755
+> > > > >=20
+> > > > > And if we dis the address at ffffffff8d112337:
+> > > > >=20
+> > > > > /usr/src/debug/kernel-4.9.37/linux-4.9.37-29.nutanix.07142017.el7=
+.centos.x86_64/kernel/rcu/tree_plugin.h: 2106
+> > > > > 0xffffffff8d11232d <rcu_nocb_kthread+381>:=A0=A0=A0=A0=A0 test=A0=
+=A0 %rax,%rax
+> > > > > 0xffffffff8d112330 <rcu_nocb_kthread+384>:=A0=A0=A0=A0=A0 jne=A0=
+=A0=A0 0xffffffff8d112355 <rcu_nocb_kthread+421>
+> > > > > 0xffffffff8d112332 <rcu_nocb_kthread+386>:=A0=A0=A0=A0=A0 callq=
+=A0 0xffffffff8d878e40 <schedule>
+> > > > > 0xffffffff8d112337 <rcu_nocb_kthread+391>:=A0=A0=A0=A0=A0 lea=A0=
+=A0=A0 -0x40(%rbp),%rsi
+> > > > >=20
+> > > > > So the kthread is blocked at swait_event_interruptible in the noc=
+b_follower_wait.
+> > > > > This contradict with the fact that nocb_follower_head was not emp=
+ty. So I
+> > > > > wonder if this is caused by the lack of memory barrier in the pla=
+ce shown below.
+> > > > > If the head is set to NULL after doing xchg, it will overwrite th=
+e head set
+> > > > > by leader. This caused the kthread to sleep the next iteration, a=
+nd the leader
+> > > > > won't wake him up as the tail doesn't point to head.
+> > > > >=20
+> > > > > Please tell me what do you think.
+> > > > >=20
+> > > > > Thanks,
+> > > > > David
+> > > > >=20
+> > > > > diff -ru linux-4.9.37.orig/kernel/rcu/tree_plugin.h linux-4.9.37/=
+kernel/rcu/tree_plugin.h
+> > > > > --- linux-4.9.37.orig/kernel/rcu/tree_plugin.h=A0=A0=A0=A0=A0=A0=
+=A0 2017-07-12 06:42:41.000000000 -0700
+> > > > > +++ linux-4.9.37/kernel/rcu/tree_plugin.h=A0=A0=A0=A0 2018-07-20 =
+15:25:57.311206343 -0700
+> > > > > @@ -2149,6 +2149,7 @@
+> > > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 BUG_ON(!list);
+> > > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 trace_rcu_nocb_wake(=
+rdp->rsp->name, rdp->cpu, "WokeNonEmpty");
+> > > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 WRITE_ONCE(rdp->nocb=
+_follower_head, NULL);
+> > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb();
+> > > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 tail =3D xchg(&rdp->=
+nocb_follower_tail, &rdp->nocb_follower_head);
+> > > >=20
+> > > > The xchg() operation implies full memory barriers both before and a=
+fter,
+> > > > so adding the smp_mb() before would have no effect.
+> > > >=20
+> > > > But let me take a look at post-4.9 changes to this code...
+> > > >=20
+> > > > I suggest trying out the following commit:
+> > > >=20
+> > > > 6b5fc3a13318 ("rcu: Add memory barriers for NOCB leader wakeup")
+> > > >=20
+> > > > If that one doesn't help, the following might be worth trying, but =
+probably
+> > > > a lot harder to backport:
+> > > >=20
+> > > > 8be6e1b15c54 ("rcu: Use timer as backstop for NOCB deferred wakeups=
+")
+> > > >=20
+> > > > Please let me know how it goes!
+> > > >=20
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 Thanx, Paul
+> > > >=20
+> > > > -------------------------------------------------------------------=
+-----
+> > > >=20
+> > > > commit 6b5fc3a1331810db407c9e0e673dc1837afdc9d0
+> > > > Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Date:=A0=A0 Fri Apr 28 20:11:09 2017 -0700
+> > > >=20
+> > > > =A0=A0=A0 rcu: Add memory barriers for NOCB leader wakeup
+> > > > =A0=A0=A0=20
+> > > > =A0=A0=A0 Wait/wakeup operations do not guarantee ordering on their=
+ own.=A0 Instead,
+> > > > =A0=A0=A0 either locking or memory barriers are required.=A0 This c=
+ommit therefore
+> > > > =A0=A0=A0 adds memory barriers to wake_nocb_leader() and nocb_leade=
+r_wait().
+> > > > =A0=A0=A0=20
+> > > > =A0=A0=A0 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.c=
+om>
+> > > > =A0=A0=A0 Tested-by: Krister Johansen <kjlx@templeofstupid.com>
+> > > > =A0=A0=A0 Cc: <stable@vger.kernel.org> # 4.6.x
+> > > >=20
+> > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > > index 0b1042545116..573fbe9640a0 100644
+> > > > --- a/kernel/rcu/tree_plugin.h
+> > > > +++ b/kernel/rcu/tree_plugin.h
+> > > > @@ -1810,6 +1810,7 @@ static void wake_nocb_leader(struct rcu_data =
+*rdp, bool force)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0 if (READ_ONCE(rdp_leader->nocb_leader_slee=
+p) || force) {
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /* Prior smp_mb__a=
+fter_atomic() orders against prior enqueue. */
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 WRITE_ONCE(rdp_lea=
+der->nocb_leader_sleep, false);
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 smp_mb(); /* ->nocb_lea=
+der_sleep before swake_up(). */
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 swake_up(&rdp_lead=
+er->nocb_wq);
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0 }
+> > > > =A0}
+> > > > @@ -2064,6 +2065,7 @@ static void nocb_leader_wait(struct rcu_data =
+*my_rdp)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 * nocb_gp_head, where they await a grac=
+e period.
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 */
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0 gotcbs =3D false;
+> > > > +=A0=A0=A0=A0=A0=A0 smp_mb(); /* wakeup before ->nocb_head reads. *=
+/
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0 for (rdp =3D my_rdp; rdp; rdp =3D rdp->noc=
+b_next_follower) {
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 rdp->nocb_gp_head =
+=3D READ_ONCE(rdp->nocb_head);
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (!rdp->nocb_gp_=
+head)
+> > > >=20
+> > > >=A0=A0=A0=A0=A0=20
+> > >=20
+> > >=A0=A0=A0=A0=20
+> >=20
+> >=A0=A0=A0=A0=20
 
-> +
-> +/* AD5770R_CH_ENABLE */
-> +#define AD5770R_CH_SET(x, channel)		(((x) & 0x1) << (channel))
-> +
-> +#define AD5770R_MAX_CHANNELS	6
-> +#define AD5770R_MAX_CH_MODES	14
-> +#define AD5770R_LOW_VREF	1250
-> +#define AD5770R_HIGH_VREF	2500
-> +
-> +enum ad5770r_ch {
-> +	AD5770R_CH0 = 0,
-
-As enums go this, one does seem a little unnecessary. Just use the
-numbers directly.
-
-> +	AD5770R_CH1,
-> +	AD5770R_CH2,
-> +	AD5770R_CH3,
-> +	AD5770R_CH4,
-> +	AD5770R_CH5
-> +};
-> +
-> +enum ad5770r_ch0_modes {
-> +	AD5770R_CH0_0_300 = 0,
-> +	AD5770R_CH0_NEG_60_0,
-> +	AD5770R_CH0_NEG_60_300
-> +};
-> +
-> +enum ad5770r_ch1_modes {
-> +	AD5770R_CH1_0_140_LOW_HEAD = 1,
-> +	AD5770R_CH1_0_140_LOW_NOISE,
-> +	AD5770R_CH1_0_250
-> +};
-> +
-> +enum ad5770r_ch2_5_modes {
-> +	AD5770R_CH_LOW_RANGE = 0,
-> +	AD5770R_CH_HIGH_RANGE
-> +};
-> +
-> +enum ad5770r_ref_v {
-> +	AD5770R_EXT_2_5_V = 0,
-> +	AD5770R_INT_1_25_V_OUT_ON,
-> +	AD5770R_EXT_1_25_V,
-> +	AD5770R_INT_1_25_V_OUT_OFF
-> +};
-> +
-> +struct ad5770r_out_range {
-> +	unsigned char	out_scale;
-> +	unsigned char	out_range_mode;
-
-u8 as these aren't characters, they just happen to be 8 bits.
-
-> +};
-> +
-> +/**
-> + * struct ad5770R_state - driver instance specific data
-> + * @spi			spi_device
-
-Some missing colons.  Run kernel-doc scripts against it to check the
-formatting is correct.
-
-> + * @regmap:		regmap
-> + * @regulator		fixed regulator for reference configuration
-> + * @gpio_reset		gpio descriptor
-> + * @output_mode		array contains channels output ranges
-> + * @vref		reference value
-> + * @internal_ref	internal reference flag
-> + * @ch_pwr_down		powerdown flags
-> + */
-> +struct ad5770r_state {
-> +	struct spi_device		*spi;
-> +	struct regmap			*regmap;
-> +	struct regulator		*vref_reg;
-> +	struct gpio_desc		*gpio_reset;
-> +	struct ad5770r_out_range	output_mode[AD5770R_MAX_CHANNELS];
-> +	int				vref;
-> +	bool				internal_ref;
-> +	bool				ch_pwr_down[AD5770R_MAX_CHANNELS];
-> +};
-> +
-> +static const struct regmap_config ad5770r_spi_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.read_flag_mask = BIT(7),
-> +};
-> +
-> +struct ad5770r_output_modes {
-> +	enum ad5770r_ch ch;
-> +	unsigned char mode;
-> +	int min;
-> +	int max;
-> +};
-> +
-> +static struct ad5770r_output_modes ad5770r_rng_tbl[] = {
-> +	{ AD5770R_CH0, AD5770R_CH0_0_300, 0, 300 },
-> +	{ AD5770R_CH0, AD5770R_CH0_NEG_60_0, -60, 0 },
-> +	{ AD5770R_CH0, AD5770R_CH0_NEG_60_300, -60, 300 },
-> +	{ AD5770R_CH1, AD5770R_CH1_0_140_LOW_HEAD, 0, 140 },
-> +	{ AD5770R_CH1, AD5770R_CH1_0_140_LOW_NOISE, 0, 140 },
-> +	{ AD5770R_CH1, AD5770R_CH1_0_250, 0, 250 },
-> +	{ AD5770R_CH2, AD5770R_CH_LOW_RANGE, 0, 55 },
-> +	{ AD5770R_CH2, AD5770R_CH_HIGH_RANGE, 0, 150 },
-> +	{ AD5770R_CH3, AD5770R_CH_LOW_RANGE, 0, 45 },
-> +	{ AD5770R_CH3, AD5770R_CH_HIGH_RANGE, 0, 100 },
-> +	{ AD5770R_CH4, AD5770R_CH_LOW_RANGE, 0, 45 },
-> +	{ AD5770R_CH4, AD5770R_CH_HIGH_RANGE, 0, 100 },
-> +	{ AD5770R_CH5, AD5770R_CH_LOW_RANGE, 0, 45 },
-> +	{ AD5770R_CH5, AD5770R_CH_HIGH_RANGE, 0, 100 },
-> +};
-> +
-> +static int ad5770r_set_output_mode(struct ad5770r_state *st,
-> +				   const struct ad5770r_out_range *out_mode,
-> +				   enum ad5770r_ch channel)
-> +{
-> +	unsigned int regval;
-> +
-> +	regval = AD5770R_RANGE_OUTPUT_SCALING(out_mode->out_scale) |
-> +		 AD5770R_RANGE_MODE(out_mode->out_range_mode);
-> +
-> +	return regmap_write(st->regmap,
-> +			    AD5770R_OUTPUT_RANGE(channel), regval);
-> +}
-> +
-> +static int ad5770r_set_reference(struct ad5770r_state *st)
-> +{
-> +	unsigned int regval = 0;
-> +
-> +	if (st->internal_ref) {
-> +		regval = AD5770R_REF_RESISTOR_SEL(0) |
-> +			 AD5770R_REF_SEL(AD5770R_INT_1_25_V_OUT_OFF);
-> +	} else {
-> +		switch (st->vref) {
-> +		case AD5770R_LOW_VREF:
-> +			regval |= AD5770R_REF_SEL(AD5770R_EXT_1_25_V);
-> +			break;
-> +		case AD5770R_HIGH_VREF:
-This is unusual. Please give comments on what is going on.
-
-I thought vref would be a voltage but it seems you are sort of clamping
-it without actually doing so..
-
-> +			regval |= AD5770R_REF_SEL(AD5770R_EXT_2_5_V);
-> +			break;
-> +		default:
-> +			regval = AD5770R_REF_RESISTOR_SEL(st->internal_ref) |
-> +				 AD5770R_REF_SEL(AD5770R_INT_1_25_V_OUT_OFF);
-> +			break;
-> +		}
-> +	}
-> +
-> +	return regmap_write(st->regmap, AD5770R_REFERENCE, regval);
-> +}
-> +
-> +static int ad5770r_soft_reset(struct ad5770r_state *st)
-> +{
-> +	return regmap_write(st->regmap, AD5770R_INTERFACE_CONFIG_A,
-> +			    AD5770R_ITF_CFG_A_SW_RESET(1));
-> +}
-> +
-> +static int ad5770r_reset(struct ad5770r_state *st)
-> +{
-> +	if (st->gpio_reset) {
-> +		gpiod_set_value(st->gpio_reset, 0);
-> +		udelay(100);
-> +		gpiod_set_value(st->gpio_reset, 1);
-> +	} else {
-> +		/* Perform a software reset */
-> +		return ad5770r_soft_reset(st);
-> +	}
-> +
-> +	/* data must not be written during reset timeframe */
-> +	mdelay(1); /* TODO update with value from datasheet once available */
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad5770r_get_range(struct ad5770r_state *st,
-> +			     enum ad5770r_ch ch, int *min, int *max)
-> +{
-> +	int i;
-> +	unsigned char tbl_ch, tbl_mode, out_range;
-> +
-> +	out_range = st->output_mode[ch].out_range_mode;
-> +
-> +	for (i = 0; i < AD5770R_MAX_CH_MODES; i++) {
-> +		tbl_ch = ad5770r_rng_tbl[i].ch;
-> +		tbl_mode = ad5770r_rng_tbl[i].mode;
-> +		if (tbl_ch == ch && tbl_mode == out_range) {
-> +			*min = ad5770r_rng_tbl[i].min;
-> +			*max = ad5770r_rng_tbl[i].max;
-
-blank line here preferred.
-
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad5770r_read_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int *val, int *val2, long info)
-> +{
-> +	struct ad5770r_state *st = iio_priv(indio_dev);
-> +	int max, min, ret;
-> +	unsigned char buf[2];
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = regmap_bulk_read(st->regmap,
-> +				       chan->address,
-> +				       buf, 2);
-> +		if (ret)
-> +			return 0;
-> +		*val = ((u16)buf[0] << 6) + (buf[1] >> 2);
-
-Hmm. That's a slightly shifted endian conversion. So
-perhaps neater as (and I may have this wrong)
-le16_to_cpu(buf16) >> 2;
-where buf16 is a local __le16 variable.
-
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		ret = ad5770r_get_range(st, chan->channel, &min, &max);
-> +		if (ret < 0)
-> +			return ret;
-> +		if (min < 0)
-> +			min = 0;
-> +		*val = max - min;
-
-This needs some explanation.  Why are none of the 14 bits used for
-the negative part?
-
-> +		*val2 = 14;
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad5770r_write_raw(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     int val, int val2, long info)
-> +{
-> +	struct ad5770r_state *st = iio_priv(indio_dev);
-> +	unsigned char buf[2];
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		buf[0] = ((u16)val >> 6) & 0xFF;
-> +		buf[1] = (val & 0x3F) << 2;
-> +		return regmap_bulk_write(st->regmap, chan->address,
-> +					 buf, ARRAY_SIZE(buf));
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad5770r_reg_access(struct iio_dev *indio_dev,
-> +			      unsigned int reg,
-> +			      unsigned int writeval,
-> +			      unsigned int *readval)
-> +{
-> +	struct ad5770r_state *st = iio_priv(indio_dev);
-> +
-> +	if (readval)
-> +		return regmap_read(st->regmap, reg, readval);
-> +	else
-> +		return regmap_write(st->regmap, reg, writeval);
-> +}
-> +
-> +static const struct iio_info ad5770r_info = {
-> +	.read_raw = ad5770r_read_raw,
-> +	.write_raw = ad5770r_write_raw,
-> +	.debugfs_reg_access = &ad5770r_reg_access,
-> +};
-> +
-> +static int ad5770r_store_output_range(struct ad5770r_state *st,
-> +				      int min, int max, int index)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < AD5770R_MAX_CH_MODES; i++) {
-> +		if (ad5770r_rng_tbl[i].ch != index)
-> +			continue;
-> +		if (ad5770r_rng_tbl[i].min != min ||
-> +		    ad5770r_rng_tbl[i].max != max)
-> +			continue;
-> +		st->output_mode[index].out_range_mode = ad5770r_rng_tbl[i].mode;
-
-blank line here slightly aids readability (very slightly!)
-
-> +		return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static ssize_t ad5770r_read_dac_powerdown(struct iio_dev *indio_dev,
-> +		uintptr_t private, const struct iio_chan_spec *chan, char *buf)
-> +{
-> +	struct ad5770r_state *st = iio_priv(indio_dev);
-> +
-> +	return sprintf(buf, "%d\n", st->ch_pwr_down[chan->channel]);
-> +}
-> +
-> +static ssize_t ad5770r_write_dac_powerdown(struct iio_dev *indio_dev,
-> +		uintptr_t private, const struct iio_chan_spec *chan,
-> +		const char *buf, size_t len)
-> +{
-> +	struct ad5770r_state *st = iio_priv(indio_dev);
-> +	unsigned int regval;
-> +	bool readin;
-> +	int ret;
-> +
-> +	ret = kstrtobool(buf, &readin);
-> +	if (ret)
-> +		return ret;
-> +
-> +	readin = !readin;
-> +
-> +	regval = AD5770R_CFG_SHUTDOWN_B(readin, chan->channel);
-This is an odd mixture of using local variables and not.  I would
-have variables for regval and the mask.  Then just do the regmap_update_bits
-outside the if statement.
-
-> +	if (chan->channel == AD5770R_CH0 &&
-> +	    st->output_mode[AD5770R_CH0].out_range_mode > AD5770R_CH0_0_300) {
-> +		regval |= AD5770R_CFG_CH0_SINK_EN(readin);
-> +		ret = regmap_update_bits(st->regmap, AD5770R_CHANNEL_CONFIG,
-> +					 BIT(chan->channel) + BIT(7), regval);
-> +	} else {
-> +		ret = regmap_update_bits(st->regmap, AD5770R_CHANNEL_CONFIG,
-> +					 BIT(chan->channel), regval);
-> +	}
-> +	if (ret)
-> +		return ret;
-> +
-> +	regval = AD5770R_CH_SET(readin, chan->channel);
-> +	ret = regmap_update_bits(st->regmap, AD5770R_CH_ENABLE,
-> +				 BIT(chan->channel), regval);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->ch_pwr_down[chan->channel] = !readin;
-> +
-
-How did you get here with ret set?
- 
-return len;
-
-> +	return ret ? ret : len;
-> +}
-> +
-> +static const struct iio_chan_spec_ext_info ad5770r_ext_info[] = {
-> +	{
-> +		.name = "powerdown",
-> +		.read = ad5770r_read_dac_powerdown,
-> +		.write = ad5770r_write_dac_powerdown,
-> +		.shared = IIO_SEPARATE,
-> +	},
-> +	{ },
-> +};
-> +
-> +#define AD5770R_IDAC_CHANNEL(index, reg) {			\
-> +	.type = IIO_CURRENT,					\
-> +	.address = reg,						\
-> +	.indexed = 1,						\
-> +	.channel = index,					\
-> +	.output = 1,						\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |		\
-> +			BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.ext_info = ad5770r_ext_info,				\
-> +}
-> +
-> +static const struct iio_chan_spec ad5770r_channels[] = {
-> +	AD5770R_IDAC_CHANNEL(0, AD5770R_DAC_MSB(0)),
-> +	AD5770R_IDAC_CHANNEL(1, AD5770R_DAC_MSB(1)),
-> +	AD5770R_IDAC_CHANNEL(2, AD5770R_DAC_MSB(2)),
-> +	AD5770R_IDAC_CHANNEL(3, AD5770R_DAC_MSB(3)),
-> +	AD5770R_IDAC_CHANNEL(4, AD5770R_DAC_MSB(4)),
-> +	AD5770R_IDAC_CHANNEL(5, AD5770R_DAC_MSB(5)),
-> +};
-> +
-> +static int ad5770r_channel_config(struct ad5770r_state *st)
-> +{
-> +	int ret, tmp[2], min, max, i;
-> +	unsigned int num;
-> +	struct fwnode_handle *child;
-> +	bool ch_config[AD5770R_MAX_CHANNELS] = {0};
-> +
-> +	device_for_each_child_node(&st->spi->dev, child) {
-> +		ret = fwnode_property_read_u32(child, "num", &num);
-> +		if (ret)
-> +			return ret;
-> +		if (num > AD5770R_MAX_CHANNELS)
-> +			return -EINVAL;
-> +
-> +		ret = fwnode_property_read_u32_array(child,
-> +						     "adi,range-microamp",
-> +						     tmp, 2);
-> +		if (ret)
-> +			return ret;
-> +
-> +		min = tmp[0] / 1000;
-> +		max = tmp[1] / 1000;
-> +		ret = ad5770r_store_output_range(st, min, max, num);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ch_config[num] = true;
-> +	}
-> +
-> +	for (i = 0; i < AD5770R_MAX_CHANNELS; i++)
-> +		if (!ch_config[i])
-> +			return -EINVAL;
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad5770r_init(struct ad5770r_state *st)
-> +{
-> +	int ret, i;
-> +
-> +	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
-> +			 GPIOD_OUT_HIGH);
-> +	if (IS_ERR(st->gpio_reset))
-> +		return PTR_ERR(st->gpio_reset);
-> +
-> +	/* Perform a reset */
-> +	ret = ad5770r_reset(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set output range */
-> +	ret = ad5770r_channel_config(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < AD5770R_MAX_CHANNELS; i++) {
-> +		ret = ad5770r_set_output_mode(st,
-> +					      &st->output_mode[i], i);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = ad5770r_set_reference(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set outputs off */
-> +	ret = regmap_write(st->regmap, AD5770R_CHANNEL_CONFIG, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD5770R_CH_ENABLE, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < AD5770R_MAX_CHANNELS; i++)
-> +		st->ch_pwr_down[i] = true;
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad5770r_probe(struct spi_device *spi)
-> +{
-> +	struct ad5770r_state *st;
-> +	struct iio_dev *indio_dev;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	spi_set_drvdata(spi, indio_dev);
-> +
-> +	st->spi = spi;
-> +
-> +	regmap = devm_regmap_init_spi(spi, &ad5770r_spi_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(&spi->dev, "Error initializing spi regmap: %ld\n",
-> +			PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
-> +	}
-> +	st->regmap = regmap;
-> +
-> +	st->vref_reg = devm_regulator_get(&spi->dev, "vref");
-> +	if (!IS_ERR(st->vref_reg)) {
-> +		ret = regulator_enable(st->vref_reg);
-
-You don't ever seem to disable this regulator in the error paths or
-the remove.  If you want to use devm_ managed code
-the use the devm_ action stuff to make sure this is disabled
-in the right sequence.
-
-I think, if this is a regulator that actually has an enable, the result
-of this is you will leave it on when removing rather than disabling it
-if there are no other users.
-
-> +		if (ret)
-> +			dev_err(&spi->dev, "Failed to enable vref regulators: %d\n",
-> +				ret);
-> +
-> +		ret = regulator_get_voltage(st->vref_reg);
-> +		if (ret < 0) {
-
-That's not right.  If the regulator is effectively optional, use
-the regulator_get_optional above rather than noticing only here.
-
-> +			st->vref = AD5770R_LOW_VREF;
-> +			st->internal_ref = true;
-> +		} else {
-> +			st->vref = ret / 1000;
-> +		}
-> +	} else {
-> +		st->vref = AD5770R_LOW_VREF;
-> +		st->internal_ref = true;
-> +	}
-> +
-> +	indio_dev->dev.parent = &spi->dev;
-> +	indio_dev->name = spi_get_device_id(spi)->name;
-> +	indio_dev->info = &ad5770r_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = ad5770r_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ad5770r_channels);
-> +
-> +	ret = ad5770r_init(st);
-> +	if (ret < 0) {
-> +		dev_err(&spi->dev, "AD5770R init failed\n");
-> +		return ret;
-> +	}
-> +
-> +	return devm_iio_device_register(&st->spi->dev, indio_dev);
-> +}
-> +
-> +static const struct spi_device_id ad5770r_id[] = {
-> +	{ "ad5770r", 0 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, ad5770r_id);
-> +
-> +static struct spi_driver ad5770r_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-> +	},
-> +	.probe = ad5770r_probe,
-> +	.id_table = ad5770r_id,
-> +};
-> +
-> +module_spi_driver(ad5770r_driver);
-> +
-> +MODULE_AUTHOR("Mircea Caprioru <mircea.caprioru@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices AD5770R IDAC");
-> +MODULE_LICENSE("GPL v2");
-
+    =
