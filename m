@@ -2,131 +2,90 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EEA13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C2B13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5F520892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:34:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="itvvkVX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5F520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C17E20892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 11:36:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C17E20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbeG3NI6 (ORCPT
+        id S1727497AbeG3NKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 09:08:58 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39303 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbeG3NI6 (ORCPT
+        Mon, 30 Jul 2018 09:10:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59964 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbeG3NKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 09:08:58 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d189-v6so20549380oib.6
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 04:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nWShXJmGmXSlTLqNmjGYfc5vkz4s0/MZQiJBE64CPfE=;
-        b=itvvkVX4jZPEKblkGtnmU20jj6nXebIVRW3uHQdLaaqTnlvB821FdsbL7hTj8uxfNt
-         XE9vCWz82O4P1K0Gi8kOk9m+EHygrbnxuDCemyJsSCFGUUWxQUbGDktELr0DcY0gCb/0
-         q2+YXjZ+ILG497p7qrn2yV18ADcYq16lm94+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nWShXJmGmXSlTLqNmjGYfc5vkz4s0/MZQiJBE64CPfE=;
-        b=DS2VwRAV6p+sxzkHRNc/b1SJho6TkyJJxWaMFuFDxyiB44UTk83GpMYmThZQXLCOZR
-         jAw71zphO5IEogJQL5hIgsrsEDS7nVB4MUWbl4YIJvV2lyJtzWzaeck4PCF3fAyMH1xk
-         mfjxka170sQqY4EX2k1Ziwr5u+UykO0UWpoSOwZVHJvYcctsl62kcuKweD00gwY+svjF
-         Y0q8yh4jrcOgHmMxi3588shyTOXncfkbPJty7JAvaTsGYmdmehYQ+bjeHr6XwXszCppd
-         gzN4BuRfoAq05q7u+rXQBdPYwm959E7huqTftoyhnd2v+zUlPluUYBNRbPTgsITaobIc
-         YChA==
-X-Gm-Message-State: AOUpUlGo9x+c9uJWxUjDKnlOJzLeE0WtOwnpaosa+VOfzlKWSnyinpTi
-        zdBg5pFmwx2GuQDE3u898slx41lRWCymAXVhacsT1w==
-X-Google-Smtp-Source: AAOMgpfA0O8eIUTKe3lp4Mh8ratWMxy10LNNKHj++XL61qEIVLqNFtAn92U89hrVlkRY1c1QSqlSFheb7A3J56CdqoQ=
-X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr18125474oih.31.1532950464732;
- Mon, 30 Jul 2018 04:34:24 -0700 (PDT)
+        Mon, 30 Jul 2018 09:10:39 -0400
+Received: from localhost (D57D388D.static.ziggozakelijk.nl [213.125.56.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B57ECD7;
+        Mon, 30 Jul 2018 11:36:04 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 13:36:01 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Michael Straube <straube.linux@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] staging: rtl8188eu: remove unused
+ rtw_handle_tkip_mic_err()
+Message-ID: <20180730113601.GA19435@kroah.com>
+References: <20180729185447.19903-1-straube.linux@gmail.com>
+ <20180729185447.19903-3-straube.linux@gmail.com>
+ <20180730090216.GA19163@kroah.com>
+ <9ab9ce0f-4b2b-912b-04af-736ee9f23d4e@gmail.com>
+ <7f238d0f-3d65-8f43-61a0-647147ecafdc@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 04:34:24
- -0700 (PDT)
-In-Reply-To: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
-References: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 30 Jul 2018 19:34:24 +0800
-Message-ID: <CAMz4kuKGaMh=M9=P4TkpF4w0onJZJcRaPd+twMyEpj56KNVJLA@mail.gmail.com>
-Subject: Re: [PATCH] hwspinlock: Fix incorrect return pointers
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f238d0f-3d65-8f43-61a0-647147ecafdc@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Mon, Jul 30, 2018 at 12:09:14PM +0200, Michael Straube wrote:
+> On 07/30/18 11:27, Michael Straube wrote:
+> > On 07/30/18 11:02, Greg KH wrote:
+> > > On Sun, Jul 29, 2018 at 08:54:43PM +0200, Michael Straube wrote:
+> > > > The function rtw_handle_tkip_mic_err() is never used, so remove it.
+> > > > Discovered by cppcheck.
+> > > 
+> > > That's a bad tool then, as this is used, and the build breaks when this
+> > > patch is applied :(
+> > > 
+> > > I've dropped it now.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > > 
+> > 
+> > Hm, that's weired, I also checked with:
+> > 
+> > git grep -n rtw_handle_tkip_mic_err drivers/staging/rtl8188eu/
+> > 
+> > There were/are no uses and the driver builds and works fine here.
+> > I don't see what I may have missed here. :(
+> > 
+> > Regards,
+> > Michael
+> 
+> The use of rtw_handle_tkip_mic_err() was added back in commit
+> 
+> 69a1d98c831ec64cbfd381f5dcb6697e1445d239
+> Revert "staging:r8188eu: Use lib80211 to support TKIP"
+> 
+> which was applied with 'Merge 4.18-rc7 into staging-next'.
+> 
+> That was not applied when I sent the patch yesterday,
+> sorry for the trouble.
 
-On 28 June 2018 at 10:32, Baolin Wang <baolin.wang@linaro.org> wrote:
-> The commit 4f1acd758b08 ("hwspinlock: Add devm_xxx() APIs to request/free
-> hwlock") introduces one bug, that will return one error pointer if failed
-> to request one hwlock, but we expect NULL pointer on error for consumers.
-> This patch will fix this issue.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Ah, that makes more sense, sorry for the noise, I should have caught
+that.
 
-Could you pick up this patch which fixes the incorrect return value
-issue? Thanks.
-
-> ---
->  drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> index e16d648..2bad40d 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -877,10 +877,10 @@ struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
->
->         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return ERR_PTR(-ENOMEM);
-> +               return NULL;
->
->         hwlock = hwspin_lock_request();
-> -       if (!IS_ERR(hwlock)) {
-> +       if (hwlock) {
->                 *ptr = hwlock;
->                 devres_add(dev, ptr);
->         } else {
-> @@ -913,10 +913,10 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
->
->         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return ERR_PTR(-ENOMEM);
-> +               return NULL;
->
->         hwlock = hwspin_lock_request_specific(id);
-> -       if (!IS_ERR(hwlock)) {
-> +       if (hwlock) {
->                 *ptr = hwlock;
->                 devres_add(dev, ptr);
->         } else {
-> --
-> 1.7.9.5
->
-
-
-
--- 
-Baolin Wang
-Best Regards
+greg k-h
