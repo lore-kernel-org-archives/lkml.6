@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D9316256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B30EFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2E420894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2E420894
+	by mail.kernel.org (Postfix) with ESMTP id DF02F20894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF02F20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbeG3Ryh (ORCPT
+        id S1732002AbeG3Ryz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:54:37 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54542 "EHLO ale.deltatee.com"
+        Mon, 30 Jul 2018 13:54:55 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54558 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731447AbeG3Ryg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731766AbeG3Ryg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 30 Jul 2018 13:54:36 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fkAsk-0005Yu-7y; Mon, 30 Jul 2018 10:18:51 -0600
+        id 1fkAsk-0005Yw-7y; Mon, 30 Jul 2018 10:18:52 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fkAsb-0003aG-Tp; Mon, 30 Jul 2018 10:18:41 -0600
+        id 1fkAsc-0003aL-7L; Mon, 30 Jul 2018 10:18:42 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-doc@vger.kernel.org
@@ -50,16 +50,18 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Matthew Wilcox <willy@infradead.org>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Mon, 30 Jul 2018 10:18:36 -0600
-Message-Id: <20180730161840.13733-1-logang@deltatee.com>
+Date:   Mon, 30 Jul 2018 10:18:38 -0600
+Message-Id: <20180730161840.13733-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180730161840.13733-1-logang@deltatee.com>
+References: <20180730161840.13733-1-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v8 0/4] Add parameter for disabling ACS redirection for P2P
+Subject: [PATCH v8 2/4] PCI: Allow specifying devices using a base bus and path of devfns
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,48 +69,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v6:
-* Fixed order of operations for device specific disable function as
-  noticed by Alex
-* Rebased onto v4.18-rc5 (no conflicts)
+When specifying PCI devices on the kernel command line using a
+BDF, the bus numbers can change when adding or replacing a device,
+changing motherboard firmware, or applying kernel parameters like
+pci=assign-buses. When this happens, it is usually undesirable to
+apply whatever command line tweak to the wrong device.
 
-Changes since v5:
-* Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
-* Warn in the case that we try to disable ACS redirect on a device
-  that doesn't have the ACS capability (also suggested by Alex)
-* Collect reviewed-by tag from Alex
-* Rebased onto v4.18-rc4 (no conflicts)
+Therefore, it is useful to be able to specify devices with a base
+bus number and the path of devfns needed to get to it. (Similar to
+the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
 
-Changes since v4:
-* Fixed a couple documentation mistakes spotted by Randy
+Thus, we add an option to specify devices in the following format:
 
-Changes since v3:
-* Removed some of the cruft that was copied from the resource_alignment
-  paramater (per Alex)
-* A number of docuemntation fixes as noticed by Alex and Willy
+[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
 
-Changes since v2:
-* Rebased onto v4.18-rc1 (no conflicts)
-* Minor tweaks to the documentation per Andy
-* Removed the "path:" prefix and use the path parsing code
-  for simple devices (as it works the same). Per a suggestion from Alex
+The path can be any segment within the PCI hierarchy of any length and
+determined through the use of 'lspci -t'. When specified this way, it is
+less likely that a renumbered bus will result in a valid device specification
+and the tweak won't be applied to the wrong device.
 
-Changes since v1:
-* Reworked pci_dev_str_match_path using strrchr as suggested by Alex
-* Collected Christian's Acks
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |   8 +-
+ drivers/pci/pci.c                               | 117 ++++++++++++++++++++----
+ 2 files changed, 103 insertions(+), 22 deletions(-)
 
-
-Logan Gunthorpe (4):
-  PCI: Make specifying PCI devices in kernel parameters reusable
-  PCI: Allow specifying devices using a base bus and path of devfns
-  PCI: Introduce disable_acs_redir quirk
-  PCI: Introduce the disable_acs_redir parameter
-
- Documentation/admin-guide/kernel-parameters.txt |  41 +++-
- drivers/pci/pci.c                               | 310 +++++++++++++++++++-----
- drivers/pci/quirks.c                            |  78 +++++-
- include/linux/pci.h                             |   5 +
- 4 files changed, 361 insertions(+), 73 deletions(-)
-
---
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 5cc215870ee1..1fdd1ef03984 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3000,7 +3000,7 @@
+ 				or a set of devices (<pci_dev>). These are
+ 				specified in one of the following formats:
+ 
+-				[<domain>:]<bus>:<slot>.<func>
++				[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
+ 				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+ 
+ 				Note: the first format specifies a PCI
+@@ -3009,7 +3009,11 @@
+ 				firmware changes, or due to changes caused
+ 				by other kernel parameters. If the
+ 				domain is left unspecified, it is
+-				taken to be zero. The second format
++				taken to be zero. Optionally, a path
++				to a device through multiple slot/function
++				addresses can be specified after the base
++				address (this is more robust against
++				renumbering issues). The second format
+ 				selects devices using IDs from the
+ 				configuration space which may match multiple
+ 				devices in the system.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index a6e5d195cbac..7356039a1ae7 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -192,6 +192,89 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+ #endif
+ 
+ /**
++ * pci_dev_str_match_path - test if a path string matches a device
++ * @dev:    the PCI device to test
++ * @p:      string to match the device against
++ * @endptr: pointer to the string after the match
++ *
++ * Test if a string (typically from a kernel parameter) formatted as a
++ * path of slot/function addresses matches a PCI device. The string must
++ * be of the form:
++ *
++ *   [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
++ *
++ * A path for a device can be obtained using 'lspci -t'. Using a path
++ * is more robust against bus renumbering than using only a single bus,
++ * slot and function address.
++ *
++ * Returns 1 if the string matches the device, 0 if it does not and
++ * a negative error code if it fails to parse the string.
++ */
++static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
++				  const char **endptr)
++{
++	int ret;
++	int seg, bus, slot, func;
++	char *wpath, *p;
++	char end;
++
++	*endptr = strchrnul(path, ';');
++
++	wpath = kmemdup_nul(path, *endptr - path, GFP_KERNEL);
++	if (!wpath)
++		return -ENOMEM;
++
++	while (1) {
++		p = strrchr(wpath, '/');
++		if (!p)
++			break;
++		ret = sscanf(p, "/%x.%x%c", &slot, &func, &end);
++		if (ret != 2) {
++			ret = -EINVAL;
++			goto free_and_exit;
++		}
++
++		if (dev->devfn != PCI_DEVFN(slot, func)) {
++			ret = 0;
++			goto free_and_exit;
++		}
++
++		/*
++		 * Note: we don't need to get a reference to the upstream
++		 * bridge because we hold a reference to the top level
++		 * device which should hold a reference to the bridge,
++		 * and so on.
++		 */
++		dev = pci_upstream_bridge(dev);
++		if (!dev) {
++			ret = 0;
++			goto free_and_exit;
++		}
++
++		*p = 0;
++	}
++
++	ret = sscanf(wpath, "%x:%x:%x.%x%c", &seg, &bus, &slot,
++		     &func, &end);
++	if (ret != 4) {
++		seg = 0;
++		ret = sscanf(wpath, "%x:%x.%x%c", &bus, &slot, &func, &end);
++		if (ret != 3) {
++			ret = -EINVAL;
++			goto free_and_exit;
++		}
++	}
++
++	ret = (seg == pci_domain_nr(dev->bus) &&
++	       bus == dev->bus->number &&
++	       dev->devfn == PCI_DEVFN(slot, func));
++
++free_and_exit:
++	kfree(wpath);
++	return ret;
++}
++
++/**
+  * pci_dev_str_match - test if a string matches a device
+  * @dev:    the PCI device to test
+  * @p:      string to match the device against
+@@ -200,13 +283,16 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+  * Test if a string (typically from a kernel parameter) matches a specified
+  * PCI device. The string may be of one of the following formats:
+  *
+- *   [<domain>:]<bus>:<slot>.<func>
++ *   [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
+  *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+  *
+  * The first format specifies a PCI bus/slot/function address which
+  * may change if new hardware is inserted, if motherboard firmware changes,
+  * or due to changes caused in kernel parameters. If the domain is
+- * left unspecified, it is taken to be 0.
++ * left unspecified, it is taken to be 0. In order to be robust against
++ * bus renumbering issues, a path of PCI slot/function numbers may be used
++ * to address the specific device. The path for a device can be determined
++ * through the use of 'lspci -t'.
+  *
+  * The second format matches devices using IDs in the configuration
+  * space which may match multiple devices in the system. A value of 0
+@@ -222,7 +308,7 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+ 			     const char **endptr)
+ {
+ 	int ret;
+-	int seg, bus, slot, func, count;
++	int count;
+ 	unsigned short vendor, device, subsystem_vendor, subsystem_device;
+ 
+ 	if (strncmp(p, "pci:", 4) == 0) {
+@@ -248,25 +334,16 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+ 		    (!subsystem_device ||
+ 			    subsystem_device == dev->subsystem_device))
+ 			goto found;
+-
+ 	} else {
+-		/* PCI Bus,Slot,Function ids are specified */
+-		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
+-			     &func, &count);
+-		if (ret != 4) {
+-			seg = 0;
+-			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
+-				     &func, &count);
+-			if (ret != 3)
+-				return -EINVAL;
+-		}
+-
+-		p += count;
++		/*
++		 * PCI Bus,Slot,Function ids are specified
++		 *  (optionally, may include a path of devfns following it)
++		 */
+ 
+-		if (seg == pci_domain_nr(dev->bus) &&
+-		    bus == dev->bus->number &&
+-		    slot == PCI_SLOT(dev->devfn) &&
+-		    func == PCI_FUNC(dev->devfn))
++		ret = pci_dev_str_match_path(dev, p, &p);
++		if (ret < 0)
++			return ret;
++		else if (ret)
+ 			goto found;
+ 	}
+ 
+-- 
 2.11.0
+
