@@ -3,96 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FFAC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C7CC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B61E20890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B61E20890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B2D7F20890
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 19:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D7F20890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732032AbeG3VQK (ORCPT
+        id S1732045AbeG3VQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 17:16:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57318 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731927AbeG3VQJ (ORCPT
+        Mon, 30 Jul 2018 17:16:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35285 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731816AbeG3VQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 17:16:09 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fkE0z-0005wg-6K; Mon, 30 Jul 2018 21:39:33 +0200
-Date:   Mon, 30 Jul 2018 21:39:32 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     =?ISO-8859-15?Q?J=FCrg_Billeter?= <j@bitron.ch>
-cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] prctl: add PR_[GS]ET_KILLABLE
-In-Reply-To: <922baeb3d6d6387c480026fc3a6ca01d915f60a5.camel@bitron.ch>
-Message-ID: <alpine.DEB.2.21.1807302138580.1725@nanos.tec.linutronix.de>
-References: <20180730075241.24002-1-j@bitron.ch>         <20180730101659.GA24781@redhat.com> <922baeb3d6d6387c480026fc3a6ca01d915f60a5.camel@bitron.ch>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 30 Jul 2018 17:16:36 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6UJdrEw2423016
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 30 Jul 2018 12:39:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6UJdqtT2423013;
+        Mon, 30 Jul 2018 12:39:52 -0700
+Date:   Mon, 30 Jul 2018 12:39:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Joel Fernandes (Google)" <tipbot@zytor.com>
+Message-ID: <tip-fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2@git.kernel.org>
+Cc:     arnd@arndb.de, yang.shi@linux.alibaba.com, hpa@zytor.com,
+        longman@redhat.com, tglx@linutronix.de, joel@joelfernandes.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, joel@joelfernandes.org,
+          yang.shi@linux.alibaba.com, arnd@arndb.de, longman@redhat.com,
+          hpa@zytor.com
+In-Reply-To: <20180723212531.202328-1-joel@joelfernandes.org>
+References: <20180723212531.202328-1-joel@joelfernandes.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/debugobjects] debugobjects: Make stack check warning more
+ informative
+Git-Commit-ID: fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-788013628-1532979573=:1725"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit-ID:  fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2
+Gitweb:     https://git.kernel.org/tip/fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2
+Author:     Joel Fernandes (Google) <joel@joelfernandes.org>
+AuthorDate: Mon, 23 Jul 2018 14:25:31 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 30 Jul 2018 21:36:37 +0200
 
---8323329-788013628-1532979573=:1725
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+debugobjects: Make stack check warning more informative
 
-On Mon, 30 Jul 2018, Jürg Billeter wrote:
+While debugging an issue debugobject tracking warned about an annotation
+issue of an object on stack. It turned out that the issue was due to the
+object in concern being on a different stack which was due to another
+issue.
 
-> On Mon, 2018-07-30 at 12:17 +0200, Oleg Nesterov wrote:
-> > On 07/30, Jürg Billeter wrote:
-> > > 
-> > > This is required for job control in a shell that uses CLONE_NEWPID for
-> > > child processes.
-> > 
-> > Could you explain in more details?
-> 
-> The SIGNAL_UNKILLABLE flag, which is implicitly set for tasks cloned
-> with CLONE_NEWPID, has the effect of ignoring all signals (from
-> userspace) if the corresponding handler is set to SIG_DFL. The only
-> exceptions are SIGKILL and SIGSTOP and they are only accepted if raised
-> from an ancestor namespace.
-> 
-> SIGINT, SIGQUIT and SIGTSTP are used in job control for ^C, ^\, ^Z.
-> While a task with the SIGNAL_UNKILLABLE flag could install handlers for
-> these signals, this is not sufficient to implement a shell that uses
-> CLONE_NEWPID for child processes:
-> 
->  * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
->    itself, I don't think it's possible to implement the stop action in
->    a custom SIGTSTP handler.
->  * Many applications do not install handlers for these signals and
->    thus, job control won't work properly with unmodified applications.
-> 
-> Job control in a shell is just an example. There are other scenarios,
-> of course, where applications rely on the default actions as described
-> in signal(7), and PID isolation may be useful. In my opinion, the
-> kernel support for preventing accidental killing of the "init" process
-> should really be optional and this new prctl provides this without
-> breaking backward compatibility.
+Thomas suggested to print the pointers and the location of the stack for
+the currently running task. This helped to figure out that the object was
+on the wrong stack.
 
-This makes sense and exactly that information needs to be in the changelog.
+As this is general useful information for debugging similar issues, make
+the error message more informative by printing the pointers.
 
-Thanks,
+[ tglx: Massaged changelog ]
 
-	tglx
---8323329-788013628-1532979573=:1725--
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Waiman Long <longman@redhat.com>
+Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: kernel-team@android.com
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: astrachan@google.com
+Link: https://lkml.kernel.org/r/20180723212531.202328-1-joel@joelfernandes.org
+
+---
+ lib/debugobjects.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 994be4805cec..24c1df0d7466 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -360,9 +360,12 @@ static void debug_object_is_on_stack(void *addr, int onstack)
+ 
+ 	limit++;
+ 	if (is_on_stack)
+-		pr_warn("object is on stack, but not annotated\n");
++		pr_warn("object %p is on stack %p, but NOT annotated.\n", addr,
++			 task_stack_page(current));
+ 	else
+-		pr_warn("object is not on stack, but annotated\n");
++		pr_warn("object %p is NOT on stack %p, but annotated.\n", addr,
++			 task_stack_page(current));
++
+ 	WARN_ON(1);
+ }
+ 
