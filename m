@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB6F13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03431FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AAC520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AAC520870
+	by mail.kernel.org (Postfix) with ESMTP id A106720870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A106720870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbeG3JtV (ORCPT
+        id S1726576AbeG3JvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:49:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39566 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 05:51:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40678 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726444AbeG3JtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:49:21 -0400
+        id S1726450AbeG3JvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 05:51:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9610AAD02;
-        Mon, 30 Jul 2018 08:15:29 +0000 (UTC)
-Subject: Re: [PATCH 13/16] btrfs: lift make_bad_inode() into btrfs_iget()
+        by mx1.suse.de (Postfix) with ESMTP id 241B3AD02;
+        Mon, 30 Jul 2018 08:17:15 +0000 (UTC)
+Subject: Re: [PATCH 14/16] btrfs: simplify btrfs_iget()
 To:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        David Sterba <dsterba@suse.com>,
+        David Sterba <dsterba@suse.cz>,
         linux-btrfs <linux-btrfs@vger.kernel.org>
 References: <20180729220317.GB30522@ZenIV.linux.org.uk>
  <20180729220453.13431-1-viro@ZenIV.linux.org.uk>
- <20180729220453.13431-13-viro@ZenIV.linux.org.uk>
+ <20180729220453.13431-14-viro@ZenIV.linux.org.uk>
 From:   Nikolay Borisov <nborisov@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
@@ -78,12 +78,12 @@ Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
  KIuxEcV8wcVjr+Wr9zRl06waOCkgrQbTPp631hToxo+4rA1jiQF2M80HAet65ytBVR2pFGZF
  zGYYLqiG+mpUZ+FPjxk9kpkRYz61mTLSY7tuFljExfJWMGfgSg1OxfLV631jV1TcdUnx+h3l
  Sqs2vMhAVt14zT8mpIuu2VNxcontxgVr1kzYA/tQg32fVRbGr449j1gw57BV9i0vww==
-Message-ID: <34cf62f3-3acc-0ef7-6c5b-906df2b75b29@suse.com>
-Date:   Mon, 30 Jul 2018 11:15:28 +0300
+Message-ID: <4d23323d-9c85-bcfc-ffb8-6477a9ef3c38@suse.com>
+Date:   Mon, 30 Jul 2018 11:17:14 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180729220453.13431-13-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20180729220453.13431-14-viro@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -92,48 +92,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
+[ADDED David Sterba and Linux-btrfs ml to cc. ]
 
 On 30.07.2018 01:04, Al Viro wrote:
 > From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> we don't need to check is_bad_inode() after the call of
-> btrfs_read_locked_inode() - it's exactly the same as checking
-> return value for being non-zero.
+> don't open-code iget_failed(), don't bother with btrfs_free_path(NULL),
+> move handling of positive return values of btrfs_lookup_inode() from
+> btrfs_read_locked_inode() to btrfs_iget() and kill now obviously pointless
+> ASSERT() in there.
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 
 > ---
->  fs/btrfs/inode.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/btrfs/inode.c | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
 > 
 > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 9382e0881900..8f0b2592feb0 100644
+> index 8f0b2592feb0..388b2dba68a0 100644
 > --- a/fs/btrfs/inode.c
 > +++ b/fs/btrfs/inode.c
-> @@ -3777,7 +3777,6 @@ static int btrfs_read_locked_inode(struct inode *inode)
+> @@ -3610,18 +3610,15 @@ static int btrfs_read_locked_inode(struct inode *inode)
+>  		filled = true;
 >  
->  make_bad:
->  	btrfs_free_path(path);
-> -	make_bad_inode(inode);
->  	return ret;
+>  	path = btrfs_alloc_path();
+> -	if (!path) {
+> -		ret = -ENOMEM;
+> -		goto make_bad;
+> -	}
+> +	if (!path)
+> +		return -ENOMEM;
+>  
+>  	memcpy(&location, &BTRFS_I(inode)->location, sizeof(location));
+>  
+>  	ret = btrfs_lookup_inode(NULL, root, path, &location, 0);
+>  	if (ret) {
+> -		if (ret > 0)
+> -			ret = -ENOENT;
+> -		goto make_bad;
+> +		btrfs_free_path(path);
+> +		return ret;
+>  	}
+>  
+>  	leaf = path->nodes[0];
+> @@ -3774,10 +3771,6 @@ static int btrfs_read_locked_inode(struct inode *inode)
+>  
+>  	btrfs_sync_inode_flags_to_i_flags(inode);
+>  	return 0;
+> -
+> -make_bad:
+> -	btrfs_free_path(path);
+> -	return ret;
 >  }
 >  
-> @@ -5708,12 +5707,13 @@ struct inode *btrfs_iget(struct super_block *s, struct btrfs_key *location,
->  		int ret;
->  
->  		ret = btrfs_read_locked_inode(inode);
-> -		if (!is_bad_inode(inode)) {
-> +		if (!ret) {
->  			inode_tree_add(inode);
->  			unlock_new_inode(inode);
+>  /*
+> @@ -5713,11 +5706,10 @@ struct inode *btrfs_iget(struct super_block *s, struct btrfs_key *location,
 >  			if (new)
 >  				*new = 1;
 >  		} else {
-> +			make_bad_inode(inode);
->  			unlock_new_inode(inode);
->  			iput(inode);
->  			ASSERT(ret < 0);
+> -			make_bad_inode(inode);
+> -			unlock_new_inode(inode);
+> -			iput(inode);
+> -			ASSERT(ret < 0);
+> -			inode = ERR_PTR(ret < 0 ? ret : -ESTALE);
+> +			iget_failed(inode);
+> +			if (ret > 0)
+> +				ret = -ENOENT;
+> +			inode = ERR_PTR(ret);
+>  		}
+>  	}
+>  
 > 
