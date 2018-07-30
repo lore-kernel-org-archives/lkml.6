@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2423AC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A908C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC85020857
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D272820857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:24:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lbIckyNB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC85020857
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="VnFxFZ7A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D272820857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbeGaABr (ORCPT
+        id S1731913AbeGaABw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:01:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38732 "EHLO
+        Mon, 30 Jul 2018 20:01:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40537 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeGaABr (ORCPT
+        with ESMTP id S1726622AbeGaABw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:01:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k3-v6so7989130pgq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 15:24:42 -0700 (PDT)
+        Mon, 30 Jul 2018 20:01:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x5-v6so7988544pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 15:24:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kTtW2iYbtXb0v2nTHJapmA2cohlt/lwBWUW52hHpp94=;
-        b=lbIckyNB0+ebexYhgZTZLXRAn6JX5AFuBpFUEHiQNZTUacOxUW1t3j1N1BJcfpi+HO
-         1EJyCePG9MyxHlLLkwSEQ7ewiCtkUFOOh6X5TZ3gW9htwL0VFNSN7GykiDWcm2yArjzK
-         f+/dsqbYpmpjg6Nw81Ni61L/S0C41/mvNQdVU=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/czMhb1QemsAd31haxvAVX6PsBRZge5ZhQaYenBgIik=;
+        b=VnFxFZ7A8vmywHSZR9e7mRGCqSVkld5obMyKcR62D/OJAkaBYVOCDyw9d5gTpW/qoi
+         DpT7h8z51IBDLPaStWfi4vCSBtQE38VyXisHSjed1x5eYkZUMWVd4yA0Huw0lox4FxT8
+         M1KsCAIlO2BYy2o5PbwarY1HwvqSQweLE6GS8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kTtW2iYbtXb0v2nTHJapmA2cohlt/lwBWUW52hHpp94=;
-        b=JAUnPdgXIiytcMJ2vkJ3xyc+zzSvdKeh1FHnZqTyugrKsqFzSEIKe4T0NhTbEUCbWc
-         fDtkWp4cmdPYjOWltGkAwPqPp9XaYSF2ojMmRPx5meZAfa3V0XCzq4FXrJoypxJ2w534
-         MJwHJ5eWOffJFEyNaypkuEa0lMAn6VS3CN4DB+REW6FrAbVlwj/cx3V+XpS7VO4kFBXg
-         VWTtD+DQtm0aVGuW4epQ/mgOsBXLHEZDGWnT6AmpGBEkw7xkX9n2bGuFkEXmsbM4jjYc
-         ZwYrs4Cx7mWR9DYhbkRdEkAZwma0O9H85wp1FN7fB5VMT3QV+LBnsF+0f56eihlRHYvi
-         kI0Q==
-X-Gm-Message-State: AOUpUlFPI3enQ2RbadA0xKkRao2XVqEN/KqvCmAlltPM6ol+x/b+iq0B
-        KK6g3UoF3EJlLJ9yvoMicW+p5CWebO0=
-X-Google-Smtp-Source: AAOMgpcMXulFTw18JMdoaL9dnvymr3Z6wo2ouuXnTasWbw87C+ysAcisd6Ing31AAHm4Ybi08zKfzw==
-X-Received: by 2002:a63:b213:: with SMTP id x19-v6mr17834923pge.393.1532989481418;
-        Mon, 30 Jul 2018 15:24:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/czMhb1QemsAd31haxvAVX6PsBRZge5ZhQaYenBgIik=;
+        b=Dohg8z3b2gVG3MxyBO3zJc7ddFzFlSQF/YwMMrPMkKp8ZXcf+cQI//cow1qtxpAgZv
+         eNKeqqJkK/Vg5omF3YHhu+JrwWo8eFSoVoaAL7ZYXcIMnXmaJQ/KB8oIJSp2IT+P8nAx
+         qjXWxBo/1CKF2Z9rsujAFS+fKEx26MC/P0Nf8khKt7Ldd6mM4We8Fr6Fs/jFcI+NS6p4
+         LbKXtUF+QaodOHvFYzhvQk54gAoYI+nEDptP0kiOrjd0NlWIMImIVqJJu+MGf/dNDgUF
+         Z5x8fRXKcC0gJLN85KoDqSYEtSuZlZDLhFXSmYAwp4EDKIp0FfWmzS+TqwUlnA7FzZQH
+         f2Ow==
+X-Gm-Message-State: AOUpUlG1D/V5Uv51oEFOlKim04JS+kLTs7HePN2zzWHNQ2DiOwRyPhVl
+        QW9qJVIcaZEnoUX++z/QvRKy9L4wYu8=
+X-Google-Smtp-Source: AAOMgpfVFN3K78RI+mfKasLr5r5SsiRtDMqGoMd+uhgMX8L8yvBfr7hWnE9riU5gNldm1DUUagP0Ow==
+X-Received: by 2002:a62:e813:: with SMTP id c19-v6mr19440786pfi.124.1532989486581;
+        Mon, 30 Jul 2018 15:24:46 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm21183914pfi.73.2018.07.30.15.24.40
+        by smtp.gmail.com with ESMTPSA id t21-v6sm21183914pfi.73.2018.07.30.15.24.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 15:24:40 -0700 (PDT)
+        Mon, 30 Jul 2018 15:24:46 -0700 (PDT)
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@android.com,
@@ -70,10 +70,12 @@ Cc:     kernel-team@android.com,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v12 0/3] tracing: Centralize preemptirq tracepoints and unify their usage
-Date:   Mon, 30 Jul 2018 15:24:20 -0700
-Message-Id: <20180730222423.196630-1-joel@joelfernandes.org>
+Subject: [PATCH v12 1/3] lockdep: use this_cpu_ptr instead of get_cpu_var stats
+Date:   Mon, 30 Jul 2018 15:24:21 -0700
+Message-Id: <20180730222423.196630-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+In-Reply-To: <20180730222423.196630-1-joel@joelfernandes.org>
+References: <20180730222423.196630-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,87 +85,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-This series contains the last 2 patches with minor changes suggested by Peter
-and Steven, and an additional clean up of get_lock_stats as suggested by Peter.
+get_cpu_var disables preemption which has the potential to call into the
+preemption disable trace points causing some complications. There's also
+no need to disable preemption in uses of get_lock_stats anyway since
+preempt is already disabled. So lets simplify the code.
 
-The preempt/irq tracepoints exist but not everything in the kernel is using it
-whenever they need to be notified that a preempt disable/enable or an irq
-disable/enable has occurred.  This makes things not work simultaneously (for
-example, only either lockdep or irqsoff trace-events can be used at a time).
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ kernel/locking/lockdep.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-This is particularly painful to deal with, since turning on lockdep breaks
-tracers that install probes on IRQ events, such as the BCC atomic critical
-section tracer [1]. This constraint also makes it not possible to use synthetic
-events to trace irqsoff sections with lockdep simulataneously turned on.
-
-This series solves that, and also results in a nice clean up of relevant parts
-of the kernel. Several ifdefs are simpler, and the design is more unified and
-better. Also as a result of this, we also speeded performance all rcuidle
-tracepoints since their handling is simpler.
-
-[1] https://github.com/iovisor/bcc/pull/1801/
-
-v11->v12:
-- minor corrections to changelog 
-- Added PeterZ's Acks
-- Squashed in fix for get_lock_stats
-
-v10->v11:
-- Dropped extra unneeded else statement since
-  rcu_read_lock_sched_notrace is same as prempt_disable_notrace (PeterZ)
-
-v9->v10:
-- Dropped first 3 and last 2 patches that were applied previously
-- Folded SPDK license into the main patch introducing trace_preemptirq.c (Steve)
-- Dropped lockdep_recursing & use simplify get_cpu_var instead (PeterZ)
-- Simplify __DO_TRACE and use rcu_dereference_raw for both RCU and SRCU (PeterZ)
-
-v8->v9:
-- Small style changes to tracepoint code (Mathieu)
-- Minor style fix to use PTR_ERR_OR_ZERO (0-day bot)
-- Minor fix to test_atomic_sections to use unsigned long.
-- Added Namhyung's, Mathieu's Reviewed-by to some patches.
-
-v7->v8:
-- Refactored irqsoff tracer probe defines (Namhyung)
-
-v6->v7:
-- Added a module to simulate an atomic section, a kselftest to load and
-  and trigger it which verifies the preempt-tracer and this series.
-
-- Fixed a new warning after I rebased in early boot, this is because
-early_boot_irqs_disabled was set too early, I moved it after the lockdep
-initialization.
-
-- added back the softirq fix since it appears it wasn't picked up.
-
-- Ran Ingo's locking API selftest suite which are passing with this
-  series.
-
-- Mathieu suggested ifdef'ing the tracepoint_synchronize_unregister
-  function incase tracepoints aren't enabled, did that.
-
-Joel Fernandes (Google) (3):
-  lockdep: use this_cpu_ptr instead of get_cpu_var stats
-  tracepoint: Make rcuidle tracepoint callers use SRCU
-  tracing: Centralize preemptirq tracepoints and unify their usage
-
- include/linux/ftrace.h            |  11 +-
- include/linux/irqflags.h          |  11 +-
- include/linux/lockdep.h           |   8 +-
- include/linux/preempt.h           |   2 +-
- include/linux/tracepoint.h        |  41 ++++--
- include/trace/events/preemptirq.h |  23 +--
- init/main.c                       |   5 +-
- kernel/locking/lockdep.c          |  45 ++----
- kernel/sched/core.c               |   2 +-
- kernel/trace/Kconfig              |  22 ++-
- kernel/trace/Makefile             |   2 +-
- kernel/trace/trace_irqsoff.c      | 231 ++++++++----------------------
- kernel/trace/trace_preemptirq.c   |  72 ++++++++++
- kernel/tracepoint.c               |  16 ++-
- 14 files changed, 244 insertions(+), 247 deletions(-)
- create mode 100644 kernel/trace/trace_preemptirq.c
-
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 5fa4d3138bf1..fbbb79d5cfa0 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -248,12 +248,7 @@ void clear_lock_stats(struct lock_class *class)
+ 
+ static struct lock_class_stats *get_lock_stats(struct lock_class *class)
+ {
+-	return &get_cpu_var(cpu_lock_stats)[class - lock_classes];
+-}
+-
+-static void put_lock_stats(struct lock_class_stats *stats)
+-{
+-	put_cpu_var(cpu_lock_stats);
++	return &this_cpu_ptr(cpu_lock_stats)[class - lock_classes];
+ }
+ 
+ static void lock_release_holdtime(struct held_lock *hlock)
+@@ -271,7 +266,6 @@ static void lock_release_holdtime(struct held_lock *hlock)
+ 		lock_time_inc(&stats->read_holdtime, holdtime);
+ 	else
+ 		lock_time_inc(&stats->write_holdtime, holdtime);
+-	put_lock_stats(stats);
+ }
+ #else
+ static inline void lock_release_holdtime(struct held_lock *hlock)
+@@ -4090,7 +4084,6 @@ __lock_contended(struct lockdep_map *lock, unsigned long ip)
+ 		stats->contending_point[contending_point]++;
+ 	if (lock->cpu != smp_processor_id())
+ 		stats->bounces[bounce_contended + !!hlock->read]++;
+-	put_lock_stats(stats);
+ }
+ 
+ static void
+@@ -4138,7 +4131,6 @@ __lock_acquired(struct lockdep_map *lock, unsigned long ip)
+ 	}
+ 	if (lock->cpu != cpu)
+ 		stats->bounces[bounce_acquired + !!hlock->read]++;
+-	put_lock_stats(stats);
+ 
+ 	lock->cpu = cpu;
+ 	lock->ip = ip;
 -- 
 2.18.0.345.g5c9ce644c3-goog
+
