@@ -2,237 +2,126 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A3AC43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5452C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83DAD20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8301520894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:43:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SfnWOHEq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DAD20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vqy0Shbi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8301520894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbeG3USW (ORCPT
+        id S1731728AbeG3UT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 16:18:22 -0400
-Received: from mail.efficios.com ([167.114.142.138]:56106 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbeG3USV (ORCPT
+        Mon, 30 Jul 2018 16:19:58 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36769 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbeG3UT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 16:18:21 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7E47222D57F;
-        Mon, 30 Jul 2018 14:42:02 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id fh3L8pl7HLRW; Mon, 30 Jul 2018 14:42:01 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 599EF22D56D;
-        Mon, 30 Jul 2018 14:42:01 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 599EF22D56D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1532976121;
-        bh=oqydiHEB4ydv63FB1UwpTqw76+YTvC57U67iII7B8XA=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=SfnWOHEqXMiqFMNWGWhLxT0/LOmUXyIdtzJwXiCbeaPhMhVcVUfi0M5ehJqwS4DwK
-         DP/H+WTJRKIGMwiAKzJAMJDZaIiDHO7NH5dQNpKa5TA+1axh9LjG404MRD3TvLfAYH
-         Dp02geTYVoCdk8elEcdU/Dk2NloNoGzIIGdtfkV6p3rnstcN8tXDyziQns+eEpAMxC
-         eblsYQfNepK1fNUn+Q7b1WU89k0GLioVPp0jZdX5qAqIBD+UL6dakVp9edLywe1Qog
-         G77Oaq3WyIz7OmjhMFMaOf+FFGE905dLYYcrVFCpZiRrEAZsk0SCFiTLLFThSjuxU6
-         Xi20XeMjqixLg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id ZBqBca2eaeIp; Mon, 30 Jul 2018 14:42:01 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 3B08922D55F;
-        Mon, 30 Jul 2018 14:42:01 -0400 (EDT)
-Date:   Mon, 30 Jul 2018 14:42:00 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1005916991.7038.1532976120931.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180728141314.GA25264@amd>
-References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com> <20180727220115.GA18879@amd> <1210024721.6363.1532785744879.JavaMail.zimbra@efficios.com> <20180728141314.GA25264@amd>
-Subject: Re: [RFC PATCH for 4.18 00/16] Restartable Sequences
+        Mon, 30 Jul 2018 16:19:57 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k15-v6so4562817edr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 11:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=No4E28qgG4yAGVQUeq4irHospSvjGZOL7yansrVe+vA=;
+        b=Vqy0ShbiXIas0M3serhCEEWh7w7XvKGo5+oJdB6NqnWpnos0VKnUCuFz1Cf3mBlxpO
+         kIU/Xy2ZE9DIR6GcPL4XiZGxP84py9hF0kBlna/b6jgBJAhf8lNCCLQVt84kIbd+kMJd
+         U/XVNte9yest/KmPOXsd9mqCb5UAaMFbh8mbJe5mvsTTRkhS4BWLf/UHEyvOlB43ID42
+         cMqr8hmJzmClvHEAE2TCxCpl035c/THOa4SiPdv3tPtoUXa+sSnPVA9mfG5pZ140BdNi
+         EwDFKDr/8YjmmSo0V/3i8T921w2ZikbGW2JgniqeErL4twXJIAxJOiohrI2VY9wAWN5n
+         4l+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=No4E28qgG4yAGVQUeq4irHospSvjGZOL7yansrVe+vA=;
+        b=Aymz7EL70XBugf0Bu0tn8+nYjB3l8WvhFiTp6iavyyaRg3BiIg2Ird0GhEroe4BL8M
+         980dNtFufAWQIHcAAj6+UWIBeP8gIObgdoYCxx28Z9JzZ5Xr+slAeENuvVYMG3/XTkVA
+         dbpmHrMKzFF2BwGAGr2cxuVbpzhdlnAdXfPit/01fpWbUBm2SRlyN86Bf4yndO3Q3sKG
+         h9zPU4A5HuKp/44EdlQfjA+yNDpmblqfyiIXNW7CFzKVKv67q25ffhAp9gocxYinVDZZ
+         f/rxHuLLAiKlwkKUCw8Gq/P0afeKfFlWt0DxGB9mQmyITWXNGFZ01U7+DKyxh71MSmz0
+         PqAg==
+X-Gm-Message-State: AOUpUlEWMCXmM9+xF3SqPNJzBF4av2CbKl0iP1gA3Y7+xW7UBvD+fN2Z
+        7ngYxhirHdIGBhn8VjlRos8=
+X-Google-Smtp-Source: AAOMgpeo/2qJ0dgoaZeli8S1z87c4mb89YMgBNF1S8LViIlcDbnUN3Ss+Ddp9T6Ej5+5bIe9ya49TA==
+X-Received: by 2002:a50:9286:: with SMTP id k6-v6mr9353149eda.66.1532976218756;
+        Mon, 30 Jul 2018 11:43:38 -0700 (PDT)
+Received: from xux707-tw ([109.77.253.253])
+        by smtp.gmail.com with ESMTPSA id p20-v6sm2187855edr.12.2018.07.30.11.43.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 11:43:37 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 19:43:38 +0100
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: Re: [PATCH v2 01/15] staging:rtl8192u: Remove typedef of struct
+ cmpk_txfb_t - Style
+Message-ID: <20180730184337.GA19888@xux707-tw>
+References: <20180729210747.10803-1-johnfwhitmore@gmail.com>
+ <20180729210747.10803-2-johnfwhitmore@gmail.com>
+ <20180730091138.GA22781@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.9_GA_2055 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_2055)
-Thread-Topic: Restartable Sequences
-Thread-Index: MXBK7ELvS6yeEGYapqz7FvRuEMjSSg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730091138.GA22781@kroah.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 28, 2018, at 10:13 AM, Pavel Machek pavel@ucw.cz wrote:
-
-> Hi!
+On Mon, Jul 30, 2018 at 11:11:38AM +0200, Greg KH wrote:
+> On Sun, Jul 29, 2018 at 10:07:33PM +0100, John Whitmore wrote:
+> > Remove the typedef of the structure cmpk_txfb_t. This clears the
+> > checkpatch issue with defining new types.
+> > 
+> > Additionally the type is renamed from cmpk_txfb_t to cmd_pkt_tx_feedback
+> > removing the '_t' as the typedef has been removed.
+> > 
+> > These changes are purely coding style in nature and should have no
+> > impact on runtime code execution.
+> > 
+> > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > ---
+> >  drivers/staging/rtl8192u/r819xU_cmdpkt.c | 8 ++++----
+> >  drivers/staging/rtl8192u/r819xU_cmdpkt.h | 6 +++---
+> >  2 files changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> > index 3140b3413f91..630cf612f265 100644
+> > --- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> > +++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+> > @@ -66,7 +66,7 @@ rt_status SendTxCommandPacket(struct net_device *dev, void *pData, u32 DataLen)
+> >   * Overview:
+> >   *
+> >   * Input:       PADAPTER	pAdapter
+> > - *              CMPK_TXFB_T	*psTx_FB
+> > + *              STRUCT CMD_PKT_TX_FEEDBACK	*psTx_FB
 > 
->> Documentation-wise, I have posted a rseq man page rfc here:
->> 
->> https://lkml.kernel.org/r/20180616195803.29877-1-mathieu.desnoyers@efficios.com
->> 
->> comments are welcome!
+> nit, this should all be in lowercase now right?
 > 
-> Thanks for pointer.
+> Anyway, these function comments need to all go anyway, they are horrid :)
 > 
-> +Restartable sequences are atomic with respect to preemption (making
-> it
-> +atomic with respect to other threads running on the same CPU), as
-> well
-> +as signal delivery (user-space execution contexts nested over the
-> same
-> +thread).
+> Something for future patches, look at the ones for the gasket driver
+> sent yesterday as an example of what to do.
 > 
-> So the threads are protected against sigkill when running the
-> restartable sequence?
-
-In that scenario, SIGKILL _will_ be delivered, hence execution of the
-rseq critical section will never reach the commit instruction. This
-follows the guarantee provided that the rseq c.s. either executes
-completely "atomically" wrt preemption/signal delivery, *or* gets
-aborted. In this case, sigkill will reap the entire process, so
-the kernel will never actually have to return to userspace and
-execute the instruction pointer at the abort_ip, but the rseq c.s.
-will never reach the commit instruction.
-
+> thanks,
 > 
-> +Restartable sequences must not perform system calls. Doing so may
-> result
-> +in termination of the process by a segmentation fault.
-> +
-> 
-> "may result"? It would be nice to always catch that.
+> greg k-h
 
-I would also like this, but unfortunately this check adds overhead to every
-system call, therefore this is only enforced with CONFIG_DEBUG_RSEQ=y builds.
+Thanks for the pointer to gasket driver. I didn't like to start into horrid
+comments, thinking that maybe they do convey some information to somebody, or
+they're in that format for a reson. The code is easier. Anyhow thanks for
+that pointer, and I will change comments in future. Sure all that can
+happen is you'll reject some/all, but sure I might learn the style required.
 
-> 
-> +Optimistic cache of the CPU number on which the current thread is
-> +running. Its value is guaranteed to always be a possible CPU number,
-> +even when rseq is not initialized. The value it contains should
-> always
-> +be confirmed by reading the cpu_id field.
-> 
-> I'm not sure what "optimistic cache" is...
-
-Perhaps we can find a better wording.
-
-It's "optimistic" in the sense that it's always guaranteed to hold a
-valid CPU number within the range [ 0 .. nr_possible_cpus - 1 ]. It can
-therefore be loaded by user-space and then used as an offset, without
-having to check whether it is within valid bounds compared to the number
-of possible CPUs in the system.
-
-This works even if the kernel on which the application runs on does not
-support rseq at all: the __rseq_abi->cpu_id_start field stays initialized at
-0, which is indeed a valid CPU number. It's therefore valid to use it as an
-offset in per-cpu data structures, and only validate whether it's actually the
-current CPU number by comparing it with the __rseq_abi->cpu_id field
-within the rseq critical section. If rseq is not available in the kernel,
-that cpu_id field stays initialized at -1, so the comparison always fails,
-as intended.
-
-It's then up to user-space to use a fall-back mechanism, considering that
-rseq is not available.
-
-Advice on improved wording would be welcome.
-
-> 
-> +Flags indicating the restart behavior for the current thread. This is
-> +mainly used for debugging purposes. Can be either:
-> +.IP \[bu]
-> +RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-> +.IP \[bu]
-> +RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-> +.IP \[bu]
-> 
-> Flags tell me there may be more then one, but "can be either" tells me
-> just one flag is allowed.
-
-Combining them is allowed. Will fix by saying: "Can be a combination of:".
-
-> 
-> +.B Structure alignment
-> +This structure is aligned on multiples of 32 bytes.
-> +.TP
-> +.B Structure size
-> +This structure has a fixed size of 32 bytes.
-> +.B Structure alignment
-> +This structure is aligned on multiples of 32 bytes.
-> +.TP
-> +.B Structure size
-> +This structure has a fixed size of 32 bytes.
-> 
-> I believe we normally say "is aligned on 32-bytes boundary".
-
-OK will fix. I think it should then become:
-
-"is aligned on 32-byte boundary." (no plural for byte)
-
-> (Will not
-> this need to be bigger on machines with bigger cache sizes?)
-> 
-> above it says:
-> 
-> +.B Structure size
-> +This structure is extensible. Its size is passed as parameter to the
-> +rseq system call.
-> 
-> I'm reading source, so maybe it refers to different structure.
-
-It can be aligned on a larger multiple. This requirement of 32 bytes
-is a minimum. Therefore, if we ever extend struct rseq, or if an
-architecture shows benefit from aligning struct rseq on larger boundaries,
-it is free to do so. It will still respect the requirement of alignment on
-32 bytes boundaries.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
-> 
-> Thanks,
->									Pavel
-> 
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures)
-> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+jwhitmore
