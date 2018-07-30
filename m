@@ -2,95 +2,107 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FC513F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C32FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E909820881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BEF20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:27:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jzzhH8B2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E909820881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uyZEwNJv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BEF20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeG3LBj (ORCPT
+        id S1727017AbeG3LBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:01:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60614 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbeG3LBi (ORCPT
+        Mon, 30 Jul 2018 07:01:52 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51854 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbeG3LBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:01:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HYDSQN4mAQ3H4EsrgJB32bDXDJ9yCou2uSFG0BVCPiE=; b=jzzhH8B20gDxADtWKDwNLjHGP
-        unG/+NC2xkiqAMNnEZaAv/w1XvK3MELmllV7hrVX/ets+zJ+EgsruWr8cv631wykuVQpkWJ6oPBUI
-        TpRn99gnqgRLZvC0Ufn0pLffRzwBtBUVsGgDseKgKt+OeAff6s0GnpKBYWu1vVF8ycGctROU9gD5Q
-        FjqZuPQGTvRKNcRQU1pXRm+DjKBqgJZDeE8UngRWya3vtaBoTfCxUNgHCcs7C51Bq8gfvKULwOXd7
-        l8r9eJPJBLeYc+2/b/XkOJtzMGW4N8KeKvs17Qg4gxB2fqRilRfc5f1YVDGBlzHjyJtA622RqFVhH
-        IbUmscRpA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fk4Sg-0000tI-EN; Mon, 30 Jul 2018 09:27:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E7D6420268325; Mon, 30 Jul 2018 11:27:28 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 11:27:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [rt-patch 3/3] arm, KVM: convert vgic_irq.irq_lock to
- raw_spinlock_t
-Message-ID: <20180730092728.GE2494@hirez.programming.kicks-ass.net>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
- <1532764179.9882.14.camel@gmx.de>
- <1532768853.9882.73.camel@gmx.de>
+        Mon, 30 Jul 2018 07:01:52 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so12351028wma.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 02:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KMojuwbFXVdeYJZGWbrGgipfOMNfMh3sAY5iuH+04cw=;
+        b=uyZEwNJvRqY9Q/qh7wkaW3i4TE7vqpg8pI4PP71ZzWk/sme6+kBFoPB7W+gxbO/jGz
+         4yi+jyGpZBXMIwFNiTKsjNsIneKLekO+tAzRUGv6+wvgxiCwtELz801TVlNzHFlBK80D
+         A5hY/MCHFWR0vHu43BzkMxi5hsY6zsKS3BTxee8qZDmKWNUnBQlM0Hx4FFRDsxwEuupy
+         sXsPYRvGB4x2cn3hRVtgYbeg7iG/K5qpsJ60JWsGGgR5BOt68rsE30IcN1vLkglD3zTb
+         cbbbwn8BRl27tJ+AnsAm+EXrnckSUq+Wlu04Tv6iRPLnHmrAqcY0UH6TVGafd2Ugp2QV
+         zadA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KMojuwbFXVdeYJZGWbrGgipfOMNfMh3sAY5iuH+04cw=;
+        b=gFhhnUoVIN/7/x/rQLoO9M3VhWPkYojOuu9mH9oGfzcqDoND8l5QOnLQWwA81CpLMC
+         T7ipUDhkGFwI+kyQiQSLsvwY+bZnb/iSwkGgw9jy3bMnFcxWcfum2agngL+oz2VAVle4
+         T4qnPLDc8vUAFeV7mGcbsH9KG60782DiirJmct7Hou+nVbN+FMyD956tbeVW2aeouOJ+
+         s502dGqhuvPF3cwvCnoB61Kqmzt3QF0i719K6k01vy24rbFE1NNoOC0yFsN12CeJmsTT
+         cl+/Gu4RaSgu5+PVksMkYJ3wKho3drS5grQ5o++VKgCDHsOdaeCGM3HyfYFZ3QvAcScM
+         PwLQ==
+X-Gm-Message-State: AOUpUlFzzRA7Q43BEixX/S89Gy8SyoM6XX7qu8xsLo5TGPMGE3eFbtCu
+        ObkuVHWU5PjgkNTH2k/LBWySMUXV
+X-Google-Smtp-Source: AAOMgpeWMDdB2r0BlIQmTGt2KvT6srUnTtbqE/+Il5myeOKD0jlsh0wXPUv6fZEbpoVp6oumQ3LNyw==
+X-Received: by 2002:a1c:e708:: with SMTP id e8-v6mr14824357wmh.134.1532942864786;
+        Mon, 30 Jul 2018 02:27:44 -0700 (PDT)
+Received: from ?IPv6:2a02:8108:85c0:57c8:32db:916d:97a2:c4eb? ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm15035463wru.27.2018.07.30.02.27.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 02:27:44 -0700 (PDT)
+Subject: Re: [PATCH v2 3/7] staging: rtl8188eu: remove unused
+ rtw_handle_tkip_mic_err()
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180729185447.19903-1-straube.linux@gmail.com>
+ <20180729185447.19903-3-straube.linux@gmail.com>
+ <20180730090216.GA19163@kroah.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <9ab9ce0f-4b2b-912b-04af-736ee9f23d4e@gmail.com>
+Date:   Mon, 30 Jul 2018 11:27:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532768853.9882.73.camel@gmx.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180730090216.GA19163@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 11:07:33AM +0200, Mike Galbraith wrote:
+On 07/30/18 11:02, Greg KH wrote:
+> On Sun, Jul 29, 2018 at 08:54:43PM +0200, Michael Straube wrote:
+>> The function rtw_handle_tkip_mic_err() is never used, so remove it.
+>> Discovered by cppcheck.
 > 
-> b103cc3f10c0 ("KVM: arm/arm64: Avoid timer save/restore in vcpu entry/exit")
-> requires vgic_irq.irq_lock be converted to raw_spinlock_t.
+> That's a bad tool then, as this is used, and the build breaks when this
+> patch is applied :(
 > 
-> Problem: kvm_preempt_ops.sched_in = kvm_sched_in;
->    kvm_sched_in()
->       kvm_arch_vcpu_load()
->          kvm_timer_vcpu_load() <- b103cc3f10c0 addition
->             kvm_timer_vcpu_load_gic()
->                kvm_vgic_map_is_active()
->                   spin_lock_irqsave(&irq->irq_lock, flags);
+> I've dropped it now.
 > 
-> Quoting virt/kvm/arm/vgic/vgic.c, locking order is...
+> thanks,
 > 
->   kvm->lock (mutex)
->     its->cmd_lock (mutex)
->       its->its_lock (mutex)
->         vgic_cpu->ap_list_lock         must be taken with IRQs disabled
->           kvm->lpi_list_lock           must be taken with IRQs disabled
->             vgic_irq->irq_lock         must be taken with IRQs disabled
+> greg k-h
 > 
-> ...meaning vgic_dist.lpi_list_lock and vgic_cpu.ap_list_lock must be
-> converted as well.
 
-The thing missing from the Changelog is the analysis that all the work
-done under these locks is indeed properly bounded and cannot cause
-excessive latencies.
+Hm, that's weired, I also checked with:
+
+git grep -n rtw_handle_tkip_mic_err drivers/staging/rtl8188eu/
+
+There were/are no uses and the driver builds and works fine here.
+I don't see what I may have missed here. :(
+
+Regards,
+Michael
