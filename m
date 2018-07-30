@@ -2,139 +2,399 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15953C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED777C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE1C20890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:24:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE1C20890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EE9320857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:28:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ksgYRGDt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE9320857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732033AbeG3XBM (ORCPT
+        id S1731908AbeG3XFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:01:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54026 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726378AbeG3XBL (ORCPT
+        Mon, 30 Jul 2018 19:05:02 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:50958 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbeG3XFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:01:11 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6ULOBcF088035
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 17:24:18 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kj66cad15-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 17:24:18 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 30 Jul 2018 22:24:16 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Jul 2018 22:24:13 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6ULOCkr40042714
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Jul 2018 21:24:12 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5688DAE053;
-        Tue, 31 Jul 2018 00:24:14 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14C94AE051;
-        Tue, 31 Jul 2018 00:24:14 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.145.55.195])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Jul 2018 00:24:14 +0100 (BST)
-Subject: Re: linux-next: Signed-off-by missing for commit in the kvms390 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Janosch Frank <frankja@linux.ibm.com>
-References: <20180731064526.4610e416@canb.auug.org.au>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 30 Jul 2018 23:24:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 30 Jul 2018 19:05:02 -0400
+Date:   Mon, 30 Jul 2018 23:27:54 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 08/21] watchdog: jz4740: Use regmap and WDT clock
+ provided by TCU driver
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+Message-Id: <1532986074.4702.1@smtp.crapouillou.net>
+In-Reply-To: <9179ab75-f071-d6a2-ef61-52431ca6409b@roeck-us.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
+        <20180724231958.20659-9-paul@crapouillou.net>
+        <9179ab75-f071-d6a2-ef61-52431ca6409b@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20180731064526.4610e416@canb.auug.org.au>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18073021-0016-0000-0000-000001EE5FC5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073021-0017-0000-0000-000032437ACA
-Message-Id: <a304472e-7e42-55a7-fb21-1cf582eb3e96@de.ibm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807300225
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1532986085; bh=SCrFaxjsVxNYUu26GybTijZXW52ThaHUzrkbVb1ZRhQ=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=ksgYRGDtZCQU5byVWaayWGIKE0/hKPbRNW78Yl6BZGKS6/olxLr2QejNFoxGDWvWufZJ8fmubzAmfckSqLLcTxDTCisQkMxbYx4jK1SDKEhaH9G0vul8pQOS8X8yOJKo5WRBRu9A+C77zrjZdOA0hV2A04q8IkYgKgn3ShbuLx0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/30/2018 10:45 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   47dad49df4db ("s390/mm: hugetlb pages within a gmap can not be freed")
-> 
-> is missing a Signed-off-by from its committer.
+Hi Guenter,
 
-Fixed. Thanks for noticing.
+Le mer. 25 juil. 2018 =E0 3:14, Guenter Roeck <linux@roeck-us.net> a=20
+=E9crit :
+> On 07/24/2018 04:19 PM, Paul Cercueil wrote:
+>> Instead of requesting the "ext" clock and handling the watchdog clock
+>> divider and gating in the watchdog driver, we now request and use the
+>> "wdt" clock that is supplied by the ingenic-timer "TCU" driver.
+>>=20
+>> The major benefit is that the watchdog's clock rate and parent can=20
+>> now
+>> be specified from within devicetree, instead of hardcoded in the=20
+>> driver.
+>>=20
+>=20
+> Where is the clock _rate_ specified in the devicetree file ?
+>=20
+> Changing the clock rate in the driver may not be as hardcoded as=20
+> before,
+> but the driver still changes the clock rate.
+
+Right.
+
+>> Also, this driver won't poke anymore into the TCU registers to
+>> enable/disable the clock, as this is now handled by the TCU driver.
+>>=20
+>> On the bad side, we break the ABI with devicetree - as we now=20
+>> request a
+>> different clock. In this very specific case it is still okay, as=20
+>> every
+>> Ingenic JZ47xx-based board out there compile the devicetree within=20
+>> the
+>> kernel; so it's still time to push breaking changes, in order to get=20
+>> a
+>> clean devicetree that won't break once it musn't.
+>=20
+> mustn't
+>=20
+>>=20
+>=20
+> This change needs to be documented in the devicetree bindings and=20
+> must be
+> approved by a DT maintainer. The bindings change only changes the=20
+> clock name
+> in the example, but not in the bindings description itself (which=20
+> still
+> references the rtc clock).
+
+Right, that's an error in the doc. Easily fixed.
+
+>> Since we broke the ABI by changing the clock, the driver was also
+>> updated to use the regmap provided by the TCU driver.
+>>=20
+>=20
+> Odd logic. What does one have to do with the other ? Why not split
+> the patch into two parts, one per logical change, as would be=20
+> customary ?
+
+I didn't want to break the devicetree ABI twice ;)
+I'll split them.
+
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>   drivers/watchdog/Kconfig      |   2 +
+>>   drivers/watchdog/jz4740_wdt.c | 128=20
+>> +++++++++++++++++++++---------------------
+>>   2 files changed, 66 insertions(+), 64 deletions(-)
+>>=20
+>>   v5: New patch
+>>=20
+>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+>> index 9af07fd92763..834222abbbdb 100644
+>> --- a/drivers/watchdog/Kconfig
+>> +++ b/drivers/watchdog/Kconfig
+>> @@ -1476,7 +1476,9 @@ config INDYDOG
+>>   config JZ4740_WDT
+>>   	tristate "Ingenic jz4740 SoC hardware watchdog"
+>>   	depends on MACH_JZ4740 || MACH_JZ4780
+>> +	depends on COMMON_CLK
+>>   	select WATCHDOG_CORE
+>> +	select INGENIC_TIMER
+>>   	help
+>>   	  Hardware driver for the built-in watchdog timer on Ingenic=20
+>> jz4740 SoCs.
+>>   =7Fdiff --git a/drivers/watchdog/jz4740_wdt.c=20
+>> b/drivers/watchdog/jz4740_wdt.c
+>> index ec4d99a830ba..aaa6fc87136c 100644
+>> --- a/drivers/watchdog/jz4740_wdt.c
+>> +++ b/drivers/watchdog/jz4740_wdt.c
+>> @@ -13,6 +13,7 @@
+>>    *
+>>    */
+>>   =7F+#include <linux/mfd/ingenic-tcu.h>
+>>   #include <linux/module.h>
+>>   #include <linux/moduleparam.h>
+>>   #include <linux/types.h>
+>> @@ -25,26 +26,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/err.h>
+>>   #include <linux/of.h>
+>> -
+>> -#include <asm/mach-jz4740/timer.h>
+>> -
+>> -#define JZ_REG_WDT_TIMER_DATA     0x0
+>> -#define JZ_REG_WDT_COUNTER_ENABLE 0x4
+>> -#define JZ_REG_WDT_TIMER_COUNTER  0x8
+>> -#define JZ_REG_WDT_TIMER_CONTROL  0xC
+>> -
+>> -#define JZ_WDT_CLOCK_PCLK 0x1
+>> -#define JZ_WDT_CLOCK_RTC  0x2
+>> -#define JZ_WDT_CLOCK_EXT  0x4
+>> -
+>> -#define JZ_WDT_CLOCK_DIV_SHIFT   3
+>> -
+>> -#define JZ_WDT_CLOCK_DIV_1    (0 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> -#define JZ_WDT_CLOCK_DIV_4    (1 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> -#define JZ_WDT_CLOCK_DIV_16   (2 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> -#define JZ_WDT_CLOCK_DIV_64   (3 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> -#define JZ_WDT_CLOCK_DIV_256  (4 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> -#define JZ_WDT_CLOCK_DIV_1024 (5 << JZ_WDT_CLOCK_DIV_SHIFT)
+>> +#include <linux/regmap.h>
+>>   =7F  #define DEFAULT_HEARTBEAT 5
+>>   #define MAX_HEARTBEAT     2048
+>> @@ -64,15 +46,15 @@ MODULE_PARM_DESC(heartbeat,
+>>   =7F  struct jz4740_wdt_drvdata {
+>>   	struct watchdog_device wdt;
+>> -	void __iomem *base;
+>> -	struct clk *rtc_clk;
+>> +	struct regmap *map;
+>> +	struct clk *clk;
+>>   };
+>>   =7F  static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+>>   {
+>>   	struct jz4740_wdt_drvdata *drvdata =3D=20
+>> watchdog_get_drvdata(wdt_dev);
+>>   =7F-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+>>   	return 0;
+>>   }
+>>   =7F@@ -80,52 +62,65 @@ static int jz4740_wdt_set_timeout(struct=20
+>> watchdog_device *wdt_dev,
+>>   				    unsigned int new_timeout)
+>>   {
+>>   	struct jz4740_wdt_drvdata *drvdata =3D=20
+>> watchdog_get_drvdata(wdt_dev);
+>> -	unsigned int rtc_clk_rate;
+>> -	unsigned int timeout_value;
+>> -	unsigned short clock_div =3D JZ_WDT_CLOCK_DIV_1;
+>> -
+>> -	rtc_clk_rate =3D clk_get_rate(drvdata->rtc_clk);
+>> -
+>> -	timeout_value =3D rtc_clk_rate * new_timeout;
+>> -	while (timeout_value > 0xffff) {
+>> -		if (clock_div =3D=3D JZ_WDT_CLOCK_DIV_1024) {
+>> -			/* Requested timeout too high;
+>> -			* use highest possible value. */
+>> -			timeout_value =3D 0xffff;
+>> -			break;
+>> -		}
+>> -		timeout_value >>=3D 2;
+>> -		clock_div +=3D (1 << JZ_WDT_CLOCK_DIV_SHIFT);
+>> +	struct clk *clk =3D drvdata->clk;
+>> +	unsigned long clk_rate, timeout_value;
+>> +	bool change_rate =3D false;
+>> +	u32 tcer;
+>> +	int ret =3D 0;
+>> +
+>> +	clk_rate =3D clk_get_rate(clk);
+>> +	timeout_value =3D clk_rate * new_timeout;
+>> +
+>> +	if (timeout_value > 0xffff) {
+>> +		clk_rate =3D clk_round_rate(clk, 0xffff / new_timeout);
+>> +		timeout_value =3D clk_rate * new_timeout;
+>> +		if (timeout_value > 0xffff)
+>> +			return -EINVAL;
+>=20
+> This is conceptually wrong. The probe code should determine the
+> maximum timeout and report it to the watchdog core, and it should
+> not be necessary to validate the timeout in this function.
+
+That sounds better indeed.
+
+> Also, unless I am missing something, the new code only ever reduces=20
+> the clock
+> rate and never increases it. Given that, you might as well set the=20
+> clock
+> rate to the lowest possible rate when instantiating the driver and not
+> bother with updating it later. That would simplify the code=20
+> significantly
+> and make it much easier to understand.
+
+Actually I could even use whatever rate the clock is running at without=20
+trying
+to change it within the driver. Then my clock provider can default to=20
+the highest
+divider, and the rate would be overridable in devicetree for those who=20
+don't like
+the default rate.
+
+> Also, clk_round_rate() can technically return 0 or even a negative=20
+> (error)
+> value. Please make sure that the returned rate is valid.
+>=20
+>> +		change_rate =3D true;
+>>   	}
+>>   =7F-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+>> -	writew(clock_div, drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
+>> +	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+>>   =7F-	writew((u16)timeout_value, drvdata->base +=20
+>> JZ_REG_WDT_TIMER_DATA);
+>> -	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+>> -	writew(clock_div | JZ_WDT_CLOCK_RTC,
+>> -		drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
+>> +	if (change_rate) {
+>> +		clk_disable_unprepare(clk);
+>> +		ret =3D clk_set_rate(clk, clk_rate);
+>> +		clk_prepare_enable(clk);
+>> +		if (ret)
+>> +			goto done;
+>> +	}
+>>   =7F-	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TDR, (u16)timeout_value);
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+>>   =7F  	wdt_dev->timeout =3D new_timeout;
+>> -	return 0;
+>> +
+>> +done:
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer &=20
+>> TCU_WDT_TCER_TCEN);
+>=20
+> regmap_read() and regmap_write return errors. Are those ignored on=20
+> purpose ?
+
+Sort of. It's MMIO without IOMMU, what can go wrong?
+
+>> +	return ret;
+>>   }
+>>   =7F  static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+>>   {
+>> -	jz4740_timer_enable_watchdog();
+>> -	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+>> +	struct jz4740_wdt_drvdata *drvdata =3D watchdog_get_drvdata(wdt_dev);
+>> +	int ret;
+>>   =7F-	return 0;
+>> +	clk_prepare_enable(drvdata->clk);
+>> +	ret =3D jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+>> +	if (ret)
+>> +		clk_disable_unprepare(drvdata->clk);
+>> +	else
+>> +		regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+>> +
+>=20
+> No else here please. Proper error handling is preferred.
+
+Sure.
+
+>> +	return ret;
+>>   }
+>>   =7F  static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+>>   {
+>>   	struct jz4740_wdt_drvdata *drvdata =3D=20
+>> watchdog_get_drvdata(wdt_dev);
+>>   =7F-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+>> -	jz4740_timer_disable_watchdog();
+>> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+>> +	clk_disable_unprepare(drvdata->clk);
+>>   =7F  	return 0;
+>>   }
+>> @@ -163,13 +158,17 @@ MODULE_DEVICE_TABLE(of, jz4740_wdt_of_matches);
+>>   =7F  static int jz4740_wdt_probe(struct platform_device *pdev)
+>>   {
+>> +	struct device *dev =3D &pdev->dev;
+>>   	struct jz4740_wdt_drvdata *drvdata;
+>>   	struct watchdog_device *jz4740_wdt;
+>> -	struct resource	*res;
+>>   	int ret;
+>>   =7F-	drvdata =3D devm_kzalloc(&pdev->dev, sizeof(struct=20
+>> jz4740_wdt_drvdata),
+>> -			       GFP_KERNEL);
+>> +	if (!dev->of_node) {
+>> +		dev_err(dev, "jz4740-wdt must be probed via devicetree\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>=20
+> Please explain. This check seems technically unnecessary and thus=20
+> pointless.
+> The driver doesn't even initialize its watchdog timeout from=20
+> devicetree data.
+
+Right, we get the regmap from the device's parent but that does not=20
+imply devicetree.
+I'll remove that.
+
+>> +	drvdata =3D devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+>>   	if (!drvdata)
+>>   		return -ENOMEM;
+>>   =7F@@ -182,19 +181,20 @@ static int jz4740_wdt_probe(struct=20
+>> platform_device *pdev)
+>>   	jz4740_wdt->timeout =3D heartbeat;
+>>   	jz4740_wdt->min_timeout =3D 1;
+>>   	jz4740_wdt->max_timeout =3D MAX_HEARTBEAT;
+>> -	jz4740_wdt->parent =3D &pdev->dev;
+>> +	jz4740_wdt->parent =3D dev;
+>>   	watchdog_set_nowayout(jz4740_wdt, nowayout);
+>>   	watchdog_set_drvdata(jz4740_wdt, drvdata);
+>>   =7F-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -	drvdata->base =3D devm_ioremap_resource(&pdev->dev, res);
+>> -	if (IS_ERR(drvdata->base))
+>> -		return PTR_ERR(drvdata->base);
+>> +	drvdata->map =3D dev_get_regmap(dev->parent, NULL);
+>> +	if (IS_ERR(drvdata->map)) {
+>=20
+> dev_get_regmap() does not return an ERR_PTR().
+
+Oops.
+
+>> +		dev_warn(dev, "regmap not found\n");
+>> +		return PTR_ERR(drvdata->map);
+>> +	}
+>>   =7F-	drvdata->rtc_clk =3D devm_clk_get(&pdev->dev, "rtc");
+>> -	if (IS_ERR(drvdata->rtc_clk)) {
+>> -		dev_err(&pdev->dev, "cannot find RTC clock\n");
+>> -		return PTR_ERR(drvdata->rtc_clk);
+>> +	drvdata->clk =3D devm_clk_get(&pdev->dev, "wdt");
+>> +	if (IS_ERR(drvdata->clk)) {
+>> +		dev_err(&pdev->dev, "cannot find WDT clock\n");
+>> +		return PTR_ERR(drvdata->clk);
+>>   	}
+>>   =7F  	ret =3D devm_watchdog_register_device(&pdev->dev, &drvdata->wdt)=
+;
+>>=20
+>=20
+
+Thanks!
+-Paul Cercueil
+=
 
