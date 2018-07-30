@@ -6,154 +6,129 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41ED0FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B991C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D095C20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D5D120893
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B56xcSwU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D095C20892
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aGpfAAmj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5D120893
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeG3Itc (ORCPT
+        id S1726790AbeG3Itg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 04:49:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33088 "EHLO
+        Mon, 30 Jul 2018 04:49:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33100 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeG3Itb (ORCPT
+        with ESMTP id S1726366AbeG3Itf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 04:49:31 -0400
+        Mon, 30 Jul 2018 04:49:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2MYcXBHRJTtyWcXUkj9lphUllD1qz8kGW8lFngzGIKw=; b=B56xcSwUauZB2KVJ6GS/++tNO
-        309iEGJHbviHUdLGmoPX3grfjZIePIEVPLWv2a+4ZFc/HA6Y7calcAcZ21afGvrQWVoVMYFIqtK/w
-        uSFf8U9s79qUUr0gtNEGhCFBElim/BcUuE4H4+x/DxCMb9OE/ufFFxrI9jevDkIaKbevHT8+08UDW
-        5xWNs2JdyFJpA+CaRrKm7JXS+uEiMydYd1B3tN0Ea7nUf5j8UzCfANDSxdIAqWtmDPEFqOeGo1Ci+
-        c56NifKCp4Y8vPc0j9LhLMLC2BMPq0/hM0srH8HwR6PVO5RvNi8BTUMZTiUPE/klhwS90VZRRX2wK
-        W45jx1auw==;
+         bh=BWtMZ2W9plgEcpyRGLCAFtPZ5rLA8SWc74nPm8axhjY=; b=aGpfAAmjxP0hHWIscuewssazE
+        LfVx4vMt9vWqYkraB0Ls5OkC7ArV4DE5dpy+0dHUMtIQ4mqJ8/Gr5obj8JO79DTVDACvzQ7Z1Gwlx
+        +SmstgRijILTFKQAdTvSEJeVeiCwdBkPgGdjbnuggyQcuP+jL3wTEHTmMt19BHLdzx+DbOQ3+lNhi
+        bPOYY1nCjwpaB9u99HSZxkxMgNHny95+JNNjQvuWrMFe0Qby6gtg9UjWd1lzAW3tFM4btZ9HujpgW
+        ODfpnxHAxXafoE4aZ55l1Vxs1SyIlqO8EQ5q4g4P4tjNuhRIqgfiT8flE9EJIziGzzvKXpfjGmk34
+        V/rzmPmsQ==;
 Received: from 089144213232.atnat0022.highway.a1.net ([89.144.213.232] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fk2PG-0007Zd-Kv; Mon, 30 Jul 2018 07:15:51 +0000
+        id 1fk2PP-0000Dn-57; Mon, 30 Jul 2018 07:15:59 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     viro@zeniv.linux.org.uk
 Cc:     Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: aio poll and a new in-kernel poll API V21 (aka 2.0)
-Date:   Mon, 30 Jul 2018 09:15:40 +0200
-Message-Id: <20180730071544.23998-1-hch@lst.de>
+Subject: [PATCH 2/4] aio: add a iocb refcount
+Date:   Mon, 30 Jul 2018 09:15:42 +0200
+Message-Id: <20180730071544.23998-3-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180730071544.23998-1-hch@lst.de>
+References: <20180730071544.23998-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+This is needed to prevent races caused by the way the ->poll API works.
+To avoid introducing overhead for other users of the iocbs we initialize
+it to zero and only do refcount operations if it is non-zero in the
+completion path.
 
-this series adds support for the IOCB_CMD_POLL operation to poll for the
-readyness of file descriptors using the aio subsystem.  The API is based
-on patches that existed in RHAS2.1 and RHEL3, which means it already is
-supported by libaio.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/aio.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-As our dear leader didn't like the ->poll_mask method this tries to
-implement the behavior using plain old ->poll which is rather painful.
-For one we only support ->poll instances with a single wait queue behind
-them and reject the request otherwise, which isn't really different from
-the previous ->poll_mask requirement, just implemented in a rathet
-awkward way.
-Second we had to implement a refcount on struct aio_iocb (although it
-is kept as a no-op for non-poll commands) so that we can safely handle
-the case of ->poll returning a mask after it got a wakeup.  This
-also means there is a lot of open coded magic for the waitqueue
-removals and dealing with ki_list to deal with these cases.
-Last but not least to avoid a guaranteed context switch on every wakeup
-we trust keyed wakeups, which from an audit of the users seems to be
-good.  The only thing it loses is batching of multiple wakeups in
-a short time period into a single result.
+diff --git a/fs/aio.c b/fs/aio.c
+index 27454594e37a..fe2018ada32c 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -18,6 +18,7 @@
+ #include <linux/export.h>
+ #include <linux/syscalls.h>
+ #include <linux/backing-dev.h>
++#include <linux/refcount.h>
+ #include <linux/uio.h>
+ 
+ #include <linux/sched/signal.h>
+@@ -178,6 +179,7 @@ struct aio_kiocb {
+ 
+ 	struct list_head	ki_list;	/* the aio core uses this
+ 						 * for cancellation */
++	refcount_t		ki_refcnt;
+ 
+ 	/*
+ 	 * If the aio_resfd field of the userspace iocb is not zero,
+@@ -1015,6 +1017,7 @@ static inline struct aio_kiocb *aio_get_req(struct kioctx *ctx)
+ 
+ 	percpu_ref_get(&ctx->reqs);
+ 	INIT_LIST_HEAD(&req->ki_list);
++	refcount_set(&req->ki_refcnt, 0);
+ 	req->ki_ctx = ctx;
+ 	return req;
+ out_put:
+@@ -1049,6 +1052,15 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
+ 	return ret;
+ }
+ 
++static inline void iocb_put(struct aio_kiocb *iocb)
++{
++	if (refcount_read(&iocb->ki_refcnt) == 0 ||
++	    refcount_dec_and_test(&iocb->ki_refcnt)) {
++		percpu_ref_put(&iocb->ki_ctx->reqs);
++		kmem_cache_free(kiocb_cachep, iocb);
++	}
++}
++
+ /* aio_complete
+  *	Called when the io request on the given iocb is complete.
+  */
+@@ -1118,8 +1130,6 @@ static void aio_complete(struct aio_kiocb *iocb, long res, long res2)
+ 		eventfd_ctx_put(iocb->ki_eventfd);
+ 	}
+ 
+-	kmem_cache_free(kiocb_cachep, iocb);
+-
+ 	/*
+ 	 * We have to order our ring_info tail store above and test
+ 	 * of the wait list below outside the wait lock.  This is
+@@ -1130,8 +1140,7 @@ static void aio_complete(struct aio_kiocb *iocb, long res, long res2)
+ 
+ 	if (waitqueue_active(&ctx->wait))
+ 		wake_up(&ctx->wait);
+-
+-	percpu_ref_put(&ctx->reqs);
++	iocb_put(iocb);
+ }
+ 
+ /* aio_read_events_ring
+-- 
+2.18.0
 
-The changes were sponsored by Scylladb.
-
-    git://git.infradead.org/users/hch/vfs.git aio-poll.21
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-poll.21
-
-Libaio changes:
-
-    https://pagure.io/libaio.git io-poll
-
-Seastar changes:
-
-    https://github.com/avikivity/seastar/commits/aio
-
-Changes since v20:
- - use a refcount_t instead of an atomic_t for ki_refcnt
-
-Changes since v13:
- - rewritten to use ->poll
-
-Changes since v12:
- - remove iocb from ki_list only after ki_cancel has completed
- - fix __poll_t annotations
- - turn __poll_t sparse checkin on by default
- - call fput after aio_complete
- - only add the iocb to active_reqs if we wait for it
-
-Changes since v11:
- - simplify cancellation by completion poll requests from a workqueue
-   if we can't take the ctx_lock
-
-Changes since v10:
- - fixed a mismerge that let a sock_rps_record_flow sneak into
-   tcp_poll_mask
- - remove the now unused struct proto_ops get_poll_head method
-
-Changes since v9:
- - add to the delayed_cancel_reqs earlier to avoid a race
- - get rid of POLL_TO_PTR magic
-
-Changes since v8:
- - make delayed cancellation conditional again
- - add a cancel_kiocb file operation to split delayed vs normal cancel
-
-Changes since v7:
- - make delayed cancellation safe and unconditional
-
-Changes since v6:
- - reworked cancellation
-
-Changes since v5:
- - small changelog updates
- - rebased on top of the aio-fsync changes
-
-Changes since v4:
- - rebased ontop of Linux 4.16-rc4
-
-Changes since v3:
- - remove the pre-sleep ->poll_mask call in vfs_poll,
-   allow ->get_poll_head to return POLL* values.
-
-Changes since v2:
- - removed a double initialization
- - new vfs_get_poll_head helper
- - document that ->get_poll_head can return NULL
- - call ->poll_mask before sleeping
- - various ACKs
- - add conversion of random to ->poll_mask
- - add conversion of af_alg to ->poll_mask
- - lacking ->poll_mask support now returns -EINVAL for IOCB_CMD_POLL
- - reshuffled the series so that prep patches and everything not
-   requiring the new in-kernel poll API is in the beginning
-
-Changes since v1:
- - handle the NULL ->poll case in vfs_poll
- - dropped the file argument to the ->poll_mask socket operation
- - replace the ->pre_poll socket operation with ->get_poll_head as
-   in the file operations
