@@ -2,133 +2,98 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9411BFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136EE13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5364A20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5364A20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id C23F6208A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfAWseYa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23F6208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbeG3K7O (ORCPT
+        id S1728782AbeG3K7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:59:14 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:42134 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbeG3K7K (ORCPT
+        Mon, 30 Jul 2018 06:59:19 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45927 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbeG3K7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:59:10 -0400
-Received: by mail-vk0-f66.google.com with SMTP id t4-v6so5371725vke.9;
-        Mon, 30 Jul 2018 02:25:05 -0700 (PDT)
+        Mon, 30 Jul 2018 06:59:18 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i26-v6so4265660pfo.12;
+        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=IzmHTBeBSiVIrmI0rYCsSUBQMd5jnyXOKOPzzJavHxc=;
+        b=BfAWseYaKEvgzC0aHgGnKNJft7AHpn7jESHCTMlZsHJHnDwabh49b4uelgEAQmE1oF
+         vu4QM8gofRSP+un0GuQ4l2VYZ0poix/HMGIdcCu/hZPOklewk24GKRkPGdqSaK5emMhV
+         IvU1MWKOhmjYiLhpMBcjQVSs9A7aohb53cj5fJzuB0057y2W/XkhXijfGdS0WC3NxFlN
+         Mh3ctW/ZjqfA2eBkfsFkviDwmG/XUj+QnMcVJxep3xsI8dtDo/DzYHuljCLjCh+fT1AC
+         PvDcVumJaSmTmMYM9jV+y5l9n+K2ylz/Tni0eXrBNfNVhWcVgYe/QmLBwFrSdsV2i6aw
+         wXqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ju9Jd9qEnbDxSbNmxfr1+J4UbJVqy1PPSjoI9Ui3gLg=;
-        b=qw5LnRLxE92s/QmMgch1fgRhVPvVYtmvVaDTh3694prEUx9ryyk+/uN678pSPX2+rX
-         t7MKG5XZcKxqDlP93RIeJkXmpAm0xwG15P4mKXLJEOtYn8KC7xplWS0ZJwVXCfZ7WaME
-         D38JBgI2okEFLmSqHai2PvOIpUzHaf+AuR3Vf5yTIAfNGcCLM1irm0nqisPJfKivoIIl
-         llcwnI5AKSX9n/TBln83M263XIx7kaHSM8kTgZejl2Xy1ZW+dEIhiQNPqQ6b44kB5aQM
-         mG+ytyhP/Vg0P+aIqEUxknOuteTy6woMDLLA41zXG+IviRRkjgdf7sDOl2tIv91CJcht
-         b58Q==
-X-Gm-Message-State: AOUpUlFfLqHproeRSsxb6hLHD1HuEAfu1B8dDd111t4dETPjh2LfEPhq
-        0mq4I9wVNsfn9I3QjHPJwMlUWKz13skQQHILT+8KeA==
-X-Google-Smtp-Source: AAOMgpcq6GF+uPGwSBMUqGbVrEEIHqvI0qzj9KCz0Np3ez9m64I2wdxiLvX7q5kmkxKTnFMFzZi9cLTYSuvKjE7XfVg=
-X-Received: by 2002:a1f:6b11:: with SMTP id g17-v6mr10090522vkc.82.1532942704594;
- Mon, 30 Jul 2018 02:25:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180724120147.15096-1-hch@lst.de> <20180724202115.GA4685@lst.de> <18df6608-61c1-963d-bb1a-d46320232f40@landley.net>
-In-Reply-To: <18df6608-61c1-963d-bb1a-d46320232f40@landley.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 30 Jul 2018 11:24:52 +0200
-Message-ID: <CAMuHMdXkaoypaszdyXyVA-qZvDtbcEdtdbEwpdoT8ocx-2TPYA@mail.gmail.com>
-Subject: Re: use the generic dma-noncoherent code for sh V2
-To:     Rob Landley <rob@landley.net>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IzmHTBeBSiVIrmI0rYCsSUBQMd5jnyXOKOPzzJavHxc=;
+        b=FN5UVkIm6i6ATkV8QfSbFzffEgh8yg2VZEvXHZquHPZqMmxFm/myF5J/om0gF6A40o
+         mXIJcLzpNx8K8Cw6CIacN5IYb9M5TguvTk/AWlddXR7KJNCr04Si/A7+573y83sOYxkO
+         BBw9Cnm8soZA6GWK6dJI8CJAl66WAFbx9G/9L2Pt80aDGOyp59bpRS1wct7qyhzT06Ef
+         05TnODwJKy2T4M77E0QLOCSYjpVEr8In0/uRgeyCmJPaDczF1QGEPBH+ZNJ42+26OYTq
+         d9c0IKgbMIYyGPF9uJ5P2tr9++Pf8nIMLJfdDmnRYWhAL2eBNpr+t0GRIlS4Lr4L8E28
+         tIpw==
+X-Gm-Message-State: AOUpUlFDqzDL7MhYvIs+I5Rr5GTvJlinl0Giep3/goFuqLI6oKmwxXBj
+        hfmSjt5fKOGwiMYGjlmVy0A=
+X-Google-Smtp-Source: AAOMgpd260cQ6HEvevaFmkALXGv6xbf5is7SwBTecNuAcwJKnydd2dBSVZQBEoDZOVoEoH20bJQjQw==
+X-Received: by 2002:a65:428b:: with SMTP id j11-v6mr15298865pgp.200.1532942713454;
+        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id d9-v6sm20096500pfb.86.2018.07.30.02.25.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 3/3] media: usb: em28xx: Replace GFP_ATOMIC with GFP_KERNEL in em28xx_init_usb_xfer()
+Date:   Mon, 30 Jul 2018 17:25:07 +0800
+Message-Id: <20180730092507.7902-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+em28xx_init_usb_xfer() is never called in atomic context.
+It calls usb_submit_urb() with GFP_ATOMIC, which is not necessary.
+GFP_ATOMIC can be replaced with GFP_KERNEL.
 
-CC Guennadi
+This is found by a static analysis tool named DCNS written by myself.
 
-On Fri, Jul 27, 2018 at 6:21 PM Rob Landley <rob@landley.net> wrote:
-> On 07/24/2018 03:21 PM, Christoph Hellwig wrote:
-> > On Tue, Jul 24, 2018 at 02:01:42PM +0200, Christoph Hellwig wrote:
-> >> can you review these patches to switch sh to use the generic
-> >> dma-noncoherent code?  All the requirements are in mainline already
-> >> and we've switched various architectures over to it already.
-> >
-> > Ok, there is one more issue with this version.   Wait for a new one
-> > tomorrow.
->
-> Speaking of DMA:
->
-> I'm trying to wire up DMAEngine to an sh7760 board that uses platform data (and
-> fix the smc91x.c driver to use DMAEngine without #ifdef arm), so I've been
-> reading through all that stuff, but the docs seem kinda... thin?
->
-> Is there something I should have read other than
-> Documentation/driver-model/platform.txt,
-> Documentation/dmaegine/{provider,client}.txt, then trying to picking through the
-> source code and the sh7760 hardware pdf? (And watching the youtube video of
-> Laurent Pinchart's 2014 ELC talk on DMA, Maxime Ripard's 2015 ELC overview of
-> DMAEngine, the Xilinx video on DMAEngine...)
->
-> At first I thought the SH_DMAE could initialize itself, but the probe function
-> needs platform data, and although arch/sh/kernel/cpu/sh4a/setup-sh7722.c looks
-> _kind_ of like a model I can crib from:
->
-> A) "make ARCH=sh se7722_defconfig" results in a config with SH_DMA disabled??!?
-> (This is why I use miniconfig instead of defconfig format, I'm assuming that's
-> bit rot?)
->
-> B) That platform data is supplying sh_dmae_slave_config preallocating slave
-> channels to devices? (Does it have to? The docs gave me the impression the
-> driver would dynamically request them and devices could even share. Wasn't that
-> sort of the point of DMAEngine? Can my new board data _not_ do that? What's the
-> minimum amount of micromanaging I have to do?)
->
-> C) It's full of stuff like setting ts_low_shift to CHCR_TS_LOW_SHIFT where both
-> grepping Docuemntation and Google "dmaengine ts_low_shift" are unhelpful.
->
-> What I'd really like is a "hello world" version of DMAEngine somewhere I can
-> build and run on a supported qemu target, to set up _one_ channel with a block
-> device or something using it. I can't tell what's optional, or what the minimal
-> version of this looks like.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/media/usb/em28xx/em28xx-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have no experience with DMA on SH, only with DMA on (DT-based) Renesas
-ARM SoCs. But I believe the DMA engines are somewhat similar.
+diff --git a/drivers/media/usb/em28xx/em28xx-core.c b/drivers/media/usb/em28xx/em28xx-core.c
+index 36d341fb65dd..4a2ba6132a90 100644
+--- a/drivers/media/usb/em28xx/em28xx-core.c
++++ b/drivers/media/usb/em28xx/em28xx-core.c
+@@ -1053,7 +1053,7 @@ int em28xx_init_usb_xfer(struct em28xx *dev, enum em28xx_mode mode,
+ 
+ 	/* submit urbs and enables IRQ */
+ 	for (i = 0; i < usb_bufs->num_bufs; i++) {
+-		rc = usb_submit_urb(usb_bufs->urb[i], GFP_ATOMIC);
++		rc = usb_submit_urb(usb_bufs->urb[i], GFP_KERNEL);
+ 		if (rc) {
+ 			dev_err(&dev->intf->dev,
+ 				"submit of urb %i failed (error=%i)\n", i, rc);
+-- 
+2.17.0
 
-I don't know if all pieces to support DMA were ever upstreamed.
-See e.g. commit 219fb0c1436e4893 ("serial: sh-sci: Remove the platform data
-dma slave rx/tx channel IDs").
-
-Perhaps Guennadi knows/remembers?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
