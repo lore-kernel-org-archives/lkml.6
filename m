@@ -2,169 +2,102 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27620FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904E7FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21BE20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB4B20892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 05:55:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUdec97G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21BE20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Me0jB+RQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB4B20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbeG3HOI (ORCPT
+        id S1726463AbeG3H23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 03:14:08 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52760 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbeG3HOI (ORCPT
+        Mon, 30 Jul 2018 03:28:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35638 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbeG3H23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 03:14:08 -0400
-Received: by mail-it0-f68.google.com with SMTP id d9-v6so15398801itf.2;
-        Sun, 29 Jul 2018 22:40:51 -0700 (PDT)
+        Mon, 30 Jul 2018 03:28:29 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q7-v6so4025883pff.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 22:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=neKSnuwzeNEdwsrSZJGDCj6ofbCwbLiLY7jas/NJWKY=;
-        b=kUdec97G0ARS+LZ5PQpwaSY/gIyEws0fQ1gCw8zt8DRGlAk2KzZKod9ZwSCRh/royI
-         hidluESWJH5pZTp9mXa+sZemsaj8c8u8Ly1gwjO/iy+upxYtVgihnsxmH0ejDzo4dH6Y
-         9mS5C4UnDeknTKsbO7Kl9+qUaKVpOqgJZTDWwOZh9j1YScghTHIE6WRSBCwb+lSfdSFX
-         vLXUg6NAthBumK8/+GYTY3Ka4GnVyEhJ7KfAHZtUcq01AOlJayQmwMYmCIzoP/zeM8Ol
-         UK50DpbTYMY76VSMalu7WaLFJpoNXTtNteY/KCBI5pINPWWbZEDbnrZpSHp5arm6I0Tw
-         YPvA==
+        bh=sgIt0iOhZJ3IG96mnr7t5lbJHZp4olQue+CDGJswNa0=;
+        b=Me0jB+RQD2Kw4eoN+IXTn2nvyQcfsF5CHZFfh+0MjlWD1TxLkvDM/IAkvdjmGFdZd5
+         HwNPvryUAIv43AUZ4A4gK1NTdacJ6Br4qHj7/ItP8NLtkUOntJtdzTSNzJfmPbzXyP5U
+         QnkQz2Elv2p5WGKgEw2TuTpDwlhT8Ujw/XpSL9IrM8ltJ+bTrWZ8yyrsJs9V8iDTbKZS
+         9jDeY/SZlXmehtW3SUfNcgy7GKORpODJdXVya2q/G8kYeTZCjUPx2fEKrcwCfDi4o34m
+         UNDNpucJejD7lzzfs/uZneJSQbpQxiuQfYoFbgOA9/NHwOe0ByOOUV+y2udkdk5JJZ7j
+         Zr3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=neKSnuwzeNEdwsrSZJGDCj6ofbCwbLiLY7jas/NJWKY=;
-        b=uARwwXdrYNugBpJgb/9LFBXPXOLeifeg53quyuhcR6ON5i5qFTW0tvUTSI4r37IMRn
-         /HBRi2tkkEfUGL9BtZ2SL/f5C15uz3Ybf0wQaJCmZhFOnjW/Qz3WAgCujUVz1Qh622zC
-         x5H3D0eCo0NgP8DyJ+qiTmgp0ZMQ2FTOvdGm3iU6bx7CH8b8H7bBPgq0CE8+gwiCWahk
-         2GcdrCIBV0pu+byUuI1QydeBsL5oUI4+BZiPMi4TDXywCKpjIQ1V2DGb2UJiv9QRvjcO
-         JTwTJKp7R1JY9PW5KF98tjhJi3NZQRv0OHksZfA8D68F8hcf9E12xOKxFddR8LJOn3wc
-         00PA==
-X-Gm-Message-State: AOUpUlGYaFXJCX/DPNKlG5WxsMJCF21XvbIlV9+WGYDcuMtuO9G/++DV
-        uQIkhmn2dD0K3JiTTRmNQ4jQU693HEsrp7fFf5Y=
-X-Google-Smtp-Source: AAOMgpeKHtzLpd36wOIQI6Jb0npL2+MsF6nOXCdw/zVmHK6MiKkNrCKmdyRACE1+8IeeekscH+0ZliYWgtBCsNuVlUQ=
-X-Received: by 2002:a24:af5d:: with SMTP id l29-v6mr13113047iti.142.1532929251633;
- Sun, 29 Jul 2018 22:40:51 -0700 (PDT)
+        bh=sgIt0iOhZJ3IG96mnr7t5lbJHZp4olQue+CDGJswNa0=;
+        b=KM5LkfeE4Cqhx8xyHoP5iS6MbFE/3n9F4t4j5T/V88wQ9gVDRqyTiCBgCRTXtPAtsv
+         H8kHXm8CuHLZxF3Q9dtoJKxTj8GWppV/kFPoAtzOQCewZmAZGeEEdekMLRs2+fXs8q2J
+         TSdLLC2nkYpMeMeKUbt78NfhKkd901E0Lsgd5PVJxltBsy0QWOP5UQS1eEdOFmCXHlvJ
+         5rDkIo0lhbRy/5cbrl/Bv0k3ZwLRL8jnpjkJEg5h/0U6Dd4gNI5r7U8+M8r4YJVEiImH
+         4ohDjH6tueOVUAP++AiW/lFtM4onCBCRa/inU8TZG9pTO9V2myVFBbmo1ZJn6YCGmIYP
+         qzew==
+X-Gm-Message-State: AOUpUlF2Z62gn/wj9p82lFfJ1FsVRFheTbO8xBfFgGPhRc6i9aqg9j2V
+        wYroMtst5NCbsmnxurw3AN9EI9DnvbsrfhK1loc18Q==
+X-Google-Smtp-Source: AAOMgpeGT0aJCTGU3tHbVvQOu2vMZCZBiHEhmKLwWRZ5puiz7qypeBZJc/2iKR0kOcHt0KWFIVpZ9WxyCUvQcV94vK8=
+X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr14895778pgu.96.1532930110360;
+ Sun, 29 Jul 2018 22:55:10 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sun, 29 Jul 2018 22:40:11
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Sun, 29 Jul 2018 22:54:49
  -0700 (PDT)
-In-Reply-To: <CANn89i+0peAq_BS3Ge-h2_MENHQAHtf8D_M0gzgchK6CxU8D+Q@mail.gmail.com>
-References: <1532746900-11710-1-git-send-email-laoar.shao@gmail.com>
- <CANn89iJ=Ad7sVWr3zBmXNSyePJJZaxgnMymN8S7x6fCSvG2jTQ@mail.gmail.com>
- <CALOAHbC4Rs7w1RwZRBsw_fjGSDvuHV37=nguzJNZzkreR5f4Dw@mail.gmail.com>
- <CANn89iKXPu=RKkLop4NJWZLixE__qYV2S=PngSj6ienuvWWL8g@mail.gmail.com>
- <CALOAHbAjtNf1LOhWEJMKNEEHSxjfEKiVV22KPUK88CTzt-eW0w@mail.gmail.com>
- <CANn89i+12HvAsvk9crDcqGh=v-DvLjuGQCOzVTPVDTUhHgeDiw@mail.gmail.com>
- <CALOAHbBFuASgsQK+iiAE+ebPOg5zjtzauYaN_Xtmfc9_wjTFgw@mail.gmail.com> <CANn89i+0peAq_BS3Ge-h2_MENHQAHtf8D_M0gzgchK6CxU8D+Q@mail.gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Mon, 30 Jul 2018 13:40:11 +0800
-Message-ID: <CALOAHbBy6wEwDcVaWx9PG35jknwkhM-Y-TVyis3TpVQYr5K-Jw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] tcp: call tcp_drop() in tcp collapse
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     David Miller <davem@davemloft.net>,
+In-Reply-To: <20180729233336.GB28684@nautica>
+References: <20180729130248.29612-1-tomasbortoli@gmail.com> <20180729233336.GB28684@nautica>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 30 Jul 2018 07:54:49 +0200
+Message-ID: <CACT4Y+bf1NfCV9aTRCR_qwA0jWxhYDkR3CS8jQcJyvkYXCming@mail.gmail.com>
+Subject: Re: [PATCH] 9p: fix Use-After-Free in p9_write_work()
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        v9fs-developer@lists.sourceforge.net,
         netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 10:27 AM, Eric Dumazet <edumazet@google.com> wrote:
-> On Sun, Jul 29, 2018 at 7:06 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+On Mon, Jul 30, 2018 at 1:33 AM, Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+> Tomas Bortoli wrote on Sun, Jul 29, 2018:
+>> There is a race condition between p9_free_req() and p9_write_work().
+>> A request might still need to be processed while p9_free_req() is called.
 >>
->> On Sun, Jul 29, 2018 at 12:28 AM, Eric Dumazet <edumazet@google.com> wrote:
->> > On Sat, Jul 28, 2018 at 12:43 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->> >>
->> >> On Sat, Jul 28, 2018 at 11:38 AM, Eric Dumazet <edumazet@google.com> wrote:
->> >> > On Fri, Jul 27, 2018 at 8:35 PM Yafang Shao <laoar.shao@gmail.com> wrote:
->> >> >
->> >> >> So what about LINUX_MIB_TCPOFOMERGE ?
->> >> >> Regarding LINUX_MIB_TCPOFOMERGE,  a skb is already covered by another
->> >> >> skb, is that dropping the packet or simply lowering the memory
->> >> >> overhead ?
->> >> >
->> >> > What do you think ?
->> >> >
->> >> > If you receive two times the same payload, don't you have to drop one
->> >> > of the duplicate ?
->> >> >
->> >> > There is a a big difference between the two cases.
->> >>
->> >> If the drop caused some data lost (which may then cause retransmition
->> >> or something), then this is a really DROP.
->> >> While if the drop won't cause any data lost, meaning it is a
->> >> non-harmful behavior, I think it should not be defined as DROP.
->> >> This is my suggestion anyway.
->> >
->> > Sigh.
->> >
->> > We count drops, not because they are ' bad or something went wrong'.
->> >
->> > If TCP stack receives twice the same sequence (same payload), we
->> > _drop_ one of the duplicate, so we account for this event.
->> >
->> > When ' collapsing'  we reorganize our own storage, not because we have
->> > to drop a payload,
->> > but for some memory pressure reason.
+>> To fix it, flush the read/write work before freeing any request.
 >>
->> Thanks for you clarification.
->> So what about LINUX_MIB_TCPOFODROP ?
->>
->>         if (unlikely(tcp_try_rmem_schedule(sk, skb, skb->truesize))) {
->>                 NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP);
->>                 tcp_drop(sk, skb);
->>                 return;
->>         }
->>
->>
->> It is also because of our own memory pressure, but we call tcp_drop() here.
+>> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+>> Reported-by: syzbot+467050c1ce275af2a5b8@syzkaller.appspotmail.com
 >
-> Yes, we _drop_ a packet.
->
-> That is pretty clear that the payload is dropped, and that the sender
-> will have to _retransmit_.
->
->>
->> I am not mean to disagree with you. I am just confused and  want to
->> make it clear.
->
->
-> Collapsing is :
->
-> For (a bunch of packets)
->    Try (to compress them in order to reduce memory overhead)
->
-> No drop of payload happens here. Sender wont have to retransmit.
+> It looks like I have not received this report, I found it through google
+> in the lkml archives
 
-OK.
-Thanks for your patient.
+But you should have been received it? Or not?
+We had some complaints that syzbot emails were not delivered, but in
+these cases they were not delivered to lkml,  and only to explicitly
+CCed people.
 
-Should we put NET_INC_STATS(sock_net(sk),  mib_idx) into the funtion
-tcp_drop() ?
-Then we could easily relate the sk_drops with the SNMP counters.
+> but Dmitry do you have a convenient-ish way of
+> finding the report on the syzkaller website with that reported-by tag?
 
-Something like that,
-
-    static void tcp_drop(struct sock *sk, struct sk_buff *skb, int mib_idx)
-    {
-        int segs = max_t(u16, 1, skb_shinfo(skb)->gso_segs);
-
-        atomic_add(segs, &sk->sk_drops);
-        NET_ADD_STATS(sock_net(sk), mib_idx, segs);
-        __kfree_skb(skb);
-    }
-
-
-Thanks
-Yafang
+Well, you can do:
+http://syzkaller.appspot.com/bug?extid=467050c1ce275af2a5b8
