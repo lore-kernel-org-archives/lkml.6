@@ -2,120 +2,207 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A577FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF03C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A18D20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:08:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A18D20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
+	by mail.kernel.org (Postfix) with ESMTP id 38D9F20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:10:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rJLGMw5m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D9F20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbeG3Ily (ORCPT
+        id S1726658AbeG3In6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 04:41:54 -0400
-Received: from simcoe207srvr.owm.bell.net ([184.150.200.207]:41125 "EHLO
-        torfep01.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726463AbeG3Ily (ORCPT
+        Mon, 30 Jul 2018 04:43:58 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34900 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbeG3In6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 04:41:54 -0400
-Received: from bell.net torfep01 184.150.200.158 by torfep01.bell.net
-          with ESMTP
-          id <20180730070820.HGLQ3030.torfep01.bell.net@torspm02.bell.net>
-          for <linux-kernel@vger.kernel.org>;
-          Mon, 30 Jul 2018 03:08:20 -0400
-Received: from arcusix ([67.71.42.39]) by torspm02.bell.net with ESMTP
-          id <20180730070820.MLVF31064.torspm02.bell.net@arcusix>;
-          Mon, 30 Jul 2018 03:08:20 -0400
-Message-ID: <2bc48efc86800949761b8f4d3a165a9f9c25c57e.camel@sympatico.ca>
-Subject: Re: [PATCH 0/3] PTI x86-32 Updates and Fixes
-From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        jroedel@suse.de, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Date:   Mon, 30 Jul 2018 03:08:14 -0400
-In-Reply-To: <1532533683-5988-1-git-send-email-joro@8bytes.org>
-References: <1532533683-5988-1-git-send-email-joro@8bytes.org>
+        Mon, 30 Jul 2018 04:43:58 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i12-v6so19405005oik.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 00:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=r3RvUxu91ieWFG6GRXszuBBK0CUz/ay/yefT9ZdICpU=;
+        b=rJLGMw5mG7tYCqB+/nrahVULDa81xppdL7Xt7S/gZvECOCs0VbyK0rLHp0m4Cns0Sp
+         uqjnT4nmm4nBiwa3hwUh3lNQWguq6f7yYDejFEeF2QsTnATffZpghOvpnCCK2I0Catbu
+         GgZChOBOACJT17tNXZouc8bOTNk2FEiuL9k2mh1UzjulRwLGEzvHH0ityGonO3uOEVcs
+         x/5MKlAzycTHbgb4N2PbkSXbaMKsKilZXD46CcLgd2RGINERC4fFdSsyb8z828a28rN1
+         2IwEoF5IbsvSoFNwacNfvi3cy4/E2DSCEjCD1WGhkhYK8MvkZkla+15KUo3saNH1ZntX
+         U3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=r3RvUxu91ieWFG6GRXszuBBK0CUz/ay/yefT9ZdICpU=;
+        b=ApufkmCILZYC4VK/WUFEJm5YOT7gBYJm4QQmBamZdwa3Qcvh6iT14FuCYbYmIxb7fG
+         oz2uQ5rvkt7lVDMjo4pviQSwpOhwkOl0iJmMDIjKyW5kTSFOg/DyOVkDX6E5wZGr99Kx
+         ERui+c2YJ7QE09qnQ8zsGVWMr6lyVCEyjHJBvgdHYtF+J/cX/CL2XUvdaKv6VDVnFEtV
+         gT5HFuhojRkQqy6JoUwxFsE0MQr0LX89RCYiEciYp+UnUfLP+AwiC7Nhptzh6/hlRhtG
+         5EB6pKUI5av1tk8yNr3H0K+nPwvHztj50OMb9s2hiLXasWupAr+lP/CUjJwXkziwYemr
+         ey2w==
+X-Gm-Message-State: AOUpUlFcNa+N+KaWFls7MX7jSe8IcY0ojoCIaya3ZrSeVgw7nRQbnBJx
+        fHLf8ALQ6cTJPNgjNgLD0g1eBJkhJ3qGBsasI8s=
+X-Google-Smtp-Source: AAOMgpcDPpDHPWkfFbg/lFyK1gg8QeEYA1WzoZJg9rzZliRX4b45jzT4TojyFupzNs4Pi4u+zrBwQAWoFyGpfuxZRnY=
+X-Received: by 2002:aca:3c02:: with SMTP id j2-v6mr17638257oia.50.1532934623972;
+ Mon, 30 Jul 2018 00:10:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 00:10:23
+ -0700 (PDT)
+In-Reply-To: <642cefaf-9ce7-bf0f-e6b6-e2e520e2427b@arm.com>
+References: <20180419171234.11053-1-ganapatrao.kulkarni@cavium.com>
+ <c6c3655b-cef2-1112-e8a7-79c99f9ddac6@arm.com> <CAKTKpr67gqCK5y6atsterc7kCAg9fK_NKx2yMD3OjY+1L=j0sQ@mail.gmail.com>
+ <CAKTKpr4skf3=Aw1YJNPppSjUT7w7_CF6QhefeHZDQXzENCfm5g@mail.gmail.com>
+ <CAKTKpr7BmaR-rwqf=z8JiNpaoQNhpSXuUp8sZogUgSLpfcCe0A@mail.gmail.com>
+ <CAKTKpr694WntjTB+pbXN--wthH+sw1mrr=JWjDfddG4bHdLwjw@mail.gmail.com>
+ <CAKTKpr74X9e2X-deraxFQzeoTio09LqoZoLDgod4J5AOn+vPMg@mail.gmail.com>
+ <3ed2046c-6912-9380-7ea4-4d921981c64c@arm.com> <CAKTKpr5eERRzxDcH5cno5kDQ10XO9nHXbLTmk=ShEi8HK05fsg@mail.gmail.com>
+ <642cefaf-9ce7-bf0f-e6b6-e2e520e2427b@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Mon, 30 Jul 2018 12:40:23 +0530
+Message-ID: <CAKTKpr5HWUoJL0TcCMmUadtY_Z4p-RnwH7ZNjSxQppw-_=qdOw@mail.gmail.com>
+Subject: Re: [PATCH] iommu/iova: Update cached node pointer when current node
+ fails to get any free IOVA
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Cloudmark-Analysis: v=2.2 cv=JtkelIwC c=1 sm=0 tr=0 a=/4BQ6POolEllGJf7n1YyrQ==:17 a=IkcTkHD0fZMA:10 a=R9QF1RCXAYgA:10 a=k_m-kdumAAAA:8 a=Q1IQS8c1w_6sp_oRIawA:9 a=QEXdDO2ut3YA:10 a=2aFmp3DG3lfw9CblUY6y:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-25 at 17:48 +0200, Joerg Roedel wrote:
-> Hi,
-> 
-> here are three patches on-top of tip/x86/pti to update the
-> vmallo_fault() fix and also with another important fix.
-> 
-> The first two patches remove the WARN_ON_ONCE(in_nmi) from
-> the vmalloc_fault() function and revert the previous fix, as
-> discussed at the last patch-set.
-> 
-> The third patch is an important fix for a silent memory
-> corruption issue found by the trinity fuzzer, which did take
-> a while to track down. But I found it and with the fix the
-> fuzzer already runs for couple of hours now and the VM is
-> still alive.
-> 
-> Regards,
-> 
-> 	Joerg
-> 
-> Joerg Roedel (3):
->   x86/mm: Remove in_nmi() warning from vmalloc_fault()
->   Revert "perf/core: Make sure the ring-buffer is mapped in all
->     page-tables"
->   x86/kexec: Allocate 8k PGDs for PTI
-> 
->  arch/x86/kernel/machine_kexec_32.c |  5 +++--
->  arch/x86/mm/fault.c                |  2 --
->  kernel/events/ring_buffer.c        | 16 ----------------
->  3 files changed, 3 insertions(+), 20 deletions(-)
+On Fri, Jul 27, 2018 at 9:48 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 27/07/18 13:56, Ganapatrao Kulkarni wrote:
+> [...]
+>>>>
+>>>> did you get any chance to look in to this issue?
+>>>> i am waiting for your suggestion/patch for this issue!
+>>>
+>>>
+>>>
+>>> I got as far as [1], but I wasn't sure how much I liked it, since it
+>>> still
+>>> seems a little invasive for such a specific case (plus I can't remember
+>>> if
+>>> it's actually been debugged or not). I think in the end I started
+>>> wondering
+>>> whether it's even worth bothering with the 32-bit optimisation for PCIe
+>>> devices - 4 extra bytes worth of TLP is surely a lot less significant
+>>> than
+>>> every transaction taking up to 50% more bus cycles was for legacy PCI.
+>>
+>>
+>> how about tracking previous attempt to get 32bit range iova and avoid
+>> further attempts, if it was failed. Later Resume attempts once
+>> replenish happens.
+>> Created patch for the same [2]
+>
+>
+> Ooh, that's a much neater implementation of essentially the same concept -
+> now why couldn't I think of that? :)
+>
+> Looks like it should be possible to make it entirely self-contained too,
+> since alloc_iova() is in a position to both test and update the flag based
+> on the limit_pfn passed in.
 
-Hi Joerg,
+is below patch much better?
 
-I've found no significant issues in my testing of this patch set.
-The only minor thing I noted is that in your previous "v8" patch set
-([PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID capable
-CPU), it reports the warning on non-PCID capable CPUs: I think you
-intended a bitwise "&", not a logical "&&" in the if statement?
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 83fe262..abb15d6 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -56,6 +56,7 @@ init_iova_domain(struct iova_domain *iovad, unsigned
+long granule,
+     iovad->granule = granule;
+     iovad->start_pfn = start_pfn;
+     iovad->dma_32bit_pfn = 1UL << (32 - iova_shift(iovad));
++    iovad->free_32bit_pfns = true;
+     iovad->flush_cb = NULL;
+     iovad->fq = NULL;
+     iovad->anchor.pfn_lo = iovad->anchor.pfn_hi = IOVA_ANCHOR;
+@@ -139,8 +140,10 @@ __cached_rbnode_delete_update(struct iova_domain
+*iovad, struct iova *free)
 
-Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+     cached_iova = rb_entry(iovad->cached32_node, struct iova, node);
+     if (free->pfn_hi < iovad->dma_32bit_pfn &&
+-        free->pfn_lo >= cached_iova->pfn_lo)
++        free->pfn_lo >= cached_iova->pfn_lo) {
+         iovad->cached32_node = rb_next(&free->node);
++        iovad->free_32bit_pfns = true;
++    }
 
-Regards,
+     cached_iova = rb_entry(iovad->cached_node, struct iova, node);
+     if (free->pfn_lo >= cached_iova->pfn_lo)
+@@ -290,6 +293,10 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
+     struct iova *new_iova;
+     int ret;
 
-Dave
++    if (limit_pfn < iovad->dma_32bit_pfn &&
++            !iovad->free_32bit_pfns)
++        return NULL;
++
+     new_iova = alloc_iova_mem();
+     if (!new_iova)
+         return NULL;
+@@ -299,6 +306,8 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
 
+     if (ret) {
+         free_iova_mem(new_iova);
++        if (limit_pfn < iovad->dma_32bit_pfn)
++            iovad->free_32bit_pfns = false;
+         return NULL;
+     }
 
+diff --git a/include/linux/iova.h b/include/linux/iova.h
+index 928442d..3810ba9 100644
+--- a/include/linux/iova.h
++++ b/include/linux/iova.h
+@@ -96,6 +96,7 @@ struct iova_domain {
+                            flush-queues */
+     atomic_t fq_timer_on;            /* 1 when timer is active, 0
+                            when not */
++    bool    free_32bit_pfns;
+ };
+
+ static inline unsigned long iova_size(struct iova *iova)
+-- 
+2.9.4
+>
+> Robin.
+>
+>
+>>
+>> [2]
+>> https://github.com/gpkulkarni/linux/commit/e2343a3e1f55cdeb5694103dd354bcb881dc65c3
+>> note, the testing of this patch is in progress.
+>>
+>>>
+>>> Robin.
+>>>
+>>> [1]
+>>>
+>>> http://www.linux-arm.org/git?p=linux-rm.git;a=commitdiff;h=a8e0e4af10ebebb3669750e05bf0028e5bd6afe8
+>>
+>>
+>> thanks
+>> Ganapat
+>>
+>
+
+thanks
+Ganapat
