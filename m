@@ -2,261 +2,268 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7055713F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98583FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A90C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A90C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 436DC208A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:00:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436DC208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeG3Keo (ORCPT
+        id S1726847AbeG3Kev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:34:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59482 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726505AbeG3Keo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:34:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B1231AD8F;
-        Mon, 30 Jul 2018 09:00:42 +0000 (UTC)
-Date:   Mon, 30 Jul 2018 11:00:41 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 2/2] virtio_balloon: replace oom notifier with shrinker
-Message-ID: <20180730090041.GC24267@dhcp22.suse.cz>
-References: <1532683495-31974-1-git-send-email-wei.w.wang@intel.com>
- <1532683495-31974-3-git-send-email-wei.w.wang@intel.com>
+        Mon, 30 Jul 2018 06:34:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50797 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726505AbeG3Kev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 06:34:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A7E6C207AC; Mon, 30 Jul 2018 11:00:47 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6FE4320712;
+        Mon, 30 Jul 2018 11:00:47 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 11:00:48 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] arm64: allwinner: h6: Add OrangePi One Plus initial
+ support
+Message-ID: <20180730090048.gl7fkduztjkxacqq@flea>
+References: <20180728182615.20845-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3wydgpz5xqdexrxj"
 Content-Disposition: inline
-In-Reply-To: <1532683495-31974-3-git-send-email-wei.w.wang@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180728182615.20845-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 27-07-18 17:24:55, Wei Wang wrote:
-> The OOM notifier is getting deprecated to use for the reasons mentioned
-> here by Michal Hocko: https://lkml.org/lkml/2018/7/12/314
-> 
-> This patch replaces the virtio-balloon oom notifier with a shrinker
-> to release balloon pages on memory pressure.
 
-It would be great to document the replacement. This is not a small
-change...
+--3wydgpz5xqdexrxj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> In addition, the bug in the replaced virtballoon_oom_notify that only
-> VIRTIO_BALLOON_ARRAY_PFNS_MAX (i.e 256) balloon pages can be freed
-> though the user has specified more than that number is fixed in the
-> shrinker_scan function.
-> 
-> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+Hi,
+
+On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
+> OrangePi One Plus is Allwinner H6 based open-source SBC,
+> which support:
+> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
+> - GPU Mali-T720
+> - 1GB LPDDR3 RAM
+> - AXP805 PMIC
+> - 1Gbps GMAC via RTL8211
+> - USB 2.0 Host, OTG
+> - HDMI port
+> - 5V/2A DC power supply
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  drivers/virtio/virtio_balloon.c | 115 +++++++++++++++++++++++-----------------
->  1 file changed, 65 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index 9356a1a..6b2229b 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -27,7 +27,6 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/balloon_compaction.h>
-> -#include <linux/oom.h>
->  #include <linux/wait.h>
->  #include <linux/mm.h>
->  #include <linux/mount.h>
-> @@ -40,12 +39,12 @@
->   */
->  #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
->  #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
-> -#define OOM_VBALLOON_DEFAULT_PAGES 256
-> +#define DEFAULT_BALLOON_PAGES_TO_SHRINK 256
->  #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
->  
-> -static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
-> -module_param(oom_pages, int, S_IRUSR | S_IWUSR);
-> -MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
-> +static unsigned long balloon_pages_to_shrink = DEFAULT_BALLOON_PAGES_TO_SHRINK;
-> +module_param(balloon_pages_to_shrink, ulong, 0600);
-> +MODULE_PARM_DESC(balloon_pages_to_shrink, "pages to free on memory presure");
->  
->  #ifdef CONFIG_BALLOON_COMPACTION
->  static struct vfsmount *balloon_mnt;
-> @@ -86,8 +85,8 @@ struct virtio_balloon {
->  	/* Memory statistics */
->  	struct virtio_balloon_stat stats[VIRTIO_BALLOON_S_NR];
->  
-> -	/* To register callback in oom notifier call chain */
-> -	struct notifier_block nb;
-> +	/* To register a shrinker to shrink memory upon memory pressure */
-> +	struct shrinker shrinker;
->  };
->  
->  static struct virtio_device_id id_table[] = {
-> @@ -365,38 +364,6 @@ static void update_balloon_size(struct virtio_balloon *vb)
->  		      &actual);
->  }
->  
-> -/*
-> - * virtballoon_oom_notify - release pages when system is under severe
-> - *			    memory pressure (called from out_of_memory())
-> - * @self : notifier block struct
-> - * @dummy: not used
-> - * @parm : returned - number of freed pages
-> - *
-> - * The balancing of memory by use of the virtio balloon should not cause
-> - * the termination of processes while there are pages in the balloon.
-> - * If virtio balloon manages to release some memory, it will make the
-> - * system return and retry the allocation that forced the OOM killer
-> - * to run.
-> - */
-> -static int virtballoon_oom_notify(struct notifier_block *self,
-> -				  unsigned long dummy, void *parm)
-> -{
-> -	struct virtio_balloon *vb;
-> -	unsigned long *freed;
-> -	unsigned num_freed_pages;
-> -
-> -	vb = container_of(self, struct virtio_balloon, nb);
-> -	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> -		return NOTIFY_OK;
-> -
-> -	freed = parm;
-> -	num_freed_pages = leak_balloon(vb, oom_pages);
-> -	update_balloon_size(vb);
-> -	*freed += num_freed_pages;
-> -
-> -	return NOTIFY_OK;
-> -}
-> -
->  static void update_balloon_stats_func(struct work_struct *work)
->  {
->  	struct virtio_balloon *vb;
-> @@ -548,6 +515,54 @@ static struct file_system_type balloon_fs = {
->  
->  #endif /* CONFIG_BALLOON_COMPACTION */
->  
-> +static unsigned long virtio_balloon_shrinker_scan(struct shrinker *shrinker,
-> +						  struct shrink_control *sc)
-> +{
-> +	unsigned long pages_to_free = balloon_pages_to_shrink,
-> +		      pages_freed = 0;
-> +	struct virtio_balloon *vb = container_of(shrinker,
-> +					struct virtio_balloon, shrinker);
+>  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+>  .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
+>  2 files changed, 151 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-=
+plus.dts
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts=
+/allwinner/Makefile
+> index 9ffa7a038791..c38f326e7fec 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-pc2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-prime.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-zero-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-orangepi-zero-plus2.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-orangepi-one-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-pine-h64.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dt=
+s b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> new file mode 100644
+> index 000000000000..0612c19cd994
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> @@ -0,0 +1,150 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (C) 2018 Amarula Solutions
+> + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> + */
 > +
-> +	/*
-> +	 * One invocation of leak_balloon can deflate at most
-> +	 * VIRTIO_BALLOON_ARRAY_PFNS_MAX balloon pages, so we call it
-> +	 * multiple times to deflate pages till reaching
-> +	 * balloon_pages_to_shrink pages.
-> +	 */
-> +	while (vb->num_pages && pages_to_free) {
-> +		pages_to_free = balloon_pages_to_shrink - pages_freed;
-> +		pages_freed += leak_balloon(vb, pages_to_free);
-> +	}
-> +	update_balloon_size(vb);
+> +/dts-v1/;
 > +
-> +	return pages_freed / VIRTIO_BALLOON_PAGES_PER_PAGE;
-> +}
+> +#include "sun50i-h6.dtsi"
 > +
-> +static unsigned long virtio_balloon_shrinker_count(struct shrinker *shrinker,
-> +						   struct shrink_control *sc)
-> +{
-> +	struct virtio_balloon *vb = container_of(shrinker,
-> +					struct virtio_balloon, shrinker);
+> +#include <dt-bindings/gpio/gpio.h>
 > +
-> +	return min_t(unsigned long, vb->num_pages, balloon_pages_to_shrink) /
-> +	       VIRTIO_BALLOON_PAGES_PER_PAGE;
-> +}
+> +/ {
+> +	model =3D "OrangePi One Plus";
+> +	compatible =3D "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
 > +
-> +static void virtio_balloon_unregister_shrinker(struct virtio_balloon *vb)
-> +{
-> +	unregister_shrinker(&vb->shrinker);
-> +}
+> +	aliases {
+> +		serial0 =3D &uart0;
+> +	};
 > +
-> +static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
-> +{
-> +	vb->shrinker.scan_objects = virtio_balloon_shrinker_scan;
-> +	vb->shrinker.count_objects = virtio_balloon_shrinker_count;
-> +	vb->shrinker.batch = 0;
-> +	vb->shrinker.seeks = DEFAULT_SEEKS;
+> +	chosen {
+> +		stdout-path =3D "serial0:115200n8";
+> +	};
+> +};
 > +
-> +	return register_shrinker(&vb->shrinker);
-> +}
+> +&mmc0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&mmc0_pins>;
+> +	vmmc-supply =3D <&reg_cldo1>;
+> +	cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>;
+> +	bus-width =3D <4>;
+> +	status =3D "okay";
+> +};
 > +
->  static int virtballoon_probe(struct virtio_device *vdev)
->  {
->  	struct virtio_balloon *vb;
-> @@ -580,17 +595,10 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  	if (err)
->  		goto out_free_vb;
->  
-> -	vb->nb.notifier_call = virtballoon_oom_notify;
-> -	vb->nb.priority = VIRTBALLOON_OOM_NOTIFY_PRIORITY;
-> -	err = register_oom_notifier(&vb->nb);
-> -	if (err < 0)
-> -		goto out_del_vqs;
-> -
->  #ifdef CONFIG_BALLOON_COMPACTION
->  	balloon_mnt = kern_mount(&balloon_fs);
->  	if (IS_ERR(balloon_mnt)) {
->  		err = PTR_ERR(balloon_mnt);
-> -		unregister_oom_notifier(&vb->nb);
->  		goto out_del_vqs;
->  	}
->  
-> @@ -599,13 +607,20 @@ static int virtballoon_probe(struct virtio_device *vdev)
->  	if (IS_ERR(vb->vb_dev_info.inode)) {
->  		err = PTR_ERR(vb->vb_dev_info.inode);
->  		kern_unmount(balloon_mnt);
-> -		unregister_oom_notifier(&vb->nb);
->  		vb->vb_dev_info.inode = NULL;
->  		goto out_del_vqs;
->  	}
->  	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
->  #endif
-> -
-> +	/*
-> +	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to decide if a
-> +	 * shrinker needs to be registered to relieve memory pressure.
-> +	 */
-> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
-> +		err = virtio_balloon_register_shrinker(vb);
-> +		if (err)
-> +			goto out_del_vqs;
-> +	}
->  	virtio_device_ready(vdev);
->  
->  	if (towards_target(vb))
-> @@ -637,8 +652,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
->  {
->  	struct virtio_balloon *vb = vdev->priv;
->  
-> -	unregister_oom_notifier(&vb->nb);
-> -
-> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> +		virtio_balloon_unregister_shrinker(vb);
->  	spin_lock_irq(&vb->stop_update_lock);
->  	vb->stop_update = true;
->  	spin_unlock_irq(&vb->stop_update_lock);
-> -- 
-> 2.7.4
+> +&r_i2c {
+> +	status =3D "okay";
+> +
+> +	axp805: pmic@36 {
+> +		compatible =3D "x-powers,axp805", "x-powers,axp806";
+> +		reg =3D <0x36>;
+> +		interrupt-parent =3D <&r_intc>;
+> +		interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <1>;
+> +		x-powers,self-working-mode;
+> +
+> +		regulators {
+> +			reg_aldo1: aldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-pl";
+> +			};
+> +
+> +			reg_aldo2: aldo2 {
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-ac200";
+> +			};
+> +
+> +			reg_aldo3: aldo3 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc25-dram";
+> +			};
+> +
+> +			reg_bldo1: bldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <1800000>;
+> +				regulator-name =3D "vcc-bias-pll";
+> +			};
+> +
+> +			reg_bldo2: bldo2 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <1800000>;
+> +				regulator-name =3D "vcc-efuse-pcie-hdmi-io";
+> +			};
+> +
+> +			reg_bldo3: bldo3 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-max-microvolt =3D <1800000>;
+> +				regulator-name =3D "vcc-dcxoio";
+> +			};
+> +
+> +			bldo4 {
+> +				/* unused */
+> +			};
+> +
+> +			reg_cldo1: cldo1 {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-3v3";
+> +			};
+> +
+> +			reg_cldo2: cldo2 {
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-wifi-1";
+> +			};
+> +
+> +			reg_cldo3: cldo3 {
+> +				regulator-min-microvolt =3D <3300000>;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-name =3D "vcc-wifi-2";
+> +			};
+> +
+> +			reg_dcdca: dcdca {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <810000>;
+> +				regulator-max-microvolt =3D <1080000>;
+> +				regulator-name =3D "vdd-cpu";
+> +			};
+> +
+> +			reg_dcdcc: dcdcc {
+> +				regulator-min-microvolt =3D <810000>;
+> +				regulator-max-microvolt =3D <1080000>;
+> +				regulator-name =3D "vdd-gpu";
+> +			};
+> +
+> +			reg_dcdcd: dcdcd {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <960000>;
+> +				regulator-max-microvolt =3D <960000>;
+> +				regulator-name =3D "vdd-sys";
+> +			};
+> +
+> +			reg_dcdce: dcdce {
+> +				regulator-always-on;
+> +				regulator-min-microvolt =3D <1200000>;
+> +				regulator-max-microvolt =3D <1200000>;
+> +				regulator-name =3D "vcc-dram";
+> +			};
+> +
+> +			sw {
+> +				/* unused */
+> +			};
 
--- 
-Michal Hocko
-SUSE Labs
+Can't we have a DTSI for this PMIC too?
+
+It looks good otherwise, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--3wydgpz5xqdexrxj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlte078ACgkQ0rTAlCFN
+r3RqvA/+NYF3vcF0AZrcFafBByB1DSYCUhk3LplKK0buuMqVNujDTagFEP8ZMl/W
+kXWFuuk4QEA/3TdYAziBafKd1YuZ7oO9S8Yf1RZWUjaZEQPdEmVWymWTNfaPcnFz
+e4etA0Jny90kPLVMQSpKgmSL9lk9leTV5qwVuAXB3fVcJrFp9dzNRzxZHtRUxy8S
+cRBd9d4R0UvQbhacTsDTe2KFD4VGAtQFcwNtzsSOT0KJ9jcfLZUQNGZTVJg7JixB
+TPxZeft74OrvPkqdOhrRgNW1tG7hwwZpW8kSnPQtK3tDfjt9hYTszoMI3zishvQG
+TSpNFDsJzMw5wCgXsQTBeXu7wOfxNu0xYvU8fdTpLvap3m5SZMR/qlJiYM0z2IMs
+Su1jsf+4KiblxA92pB30KvASkBbULIuaRCJYKdip0V3TqGRTXCq5e/N/ZqqvAZpP
+z53SmnCJsGmO3Pj+FcdZsN2ruUK9o2SbzU0InOKmOM2ntb7KoZRyZZFySZSpn/91
+dD4uTuDBeaotR+qp8n4Z79vwe9IA9xK/wXquzku/sdQgEN72Blzd6300gwlhIp/o
+Netwbvmtm80BHNOUIL95UVdDhV5/XUZ1iXMdn9m+jNMLSbd/ndBM9yku9Z+xhliw
+pDuPrsjXK++Q2SbfNZiKZKgpozVFjM0uIm/cVYxx3787ImCMRJk=
+=ds3w
+-----END PGP SIGNATURE-----
+
+--3wydgpz5xqdexrxj--
