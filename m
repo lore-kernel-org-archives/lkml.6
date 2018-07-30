@@ -2,121 +2,147 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051B516256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86135FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B184720894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:19:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oR9dlmno"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B184720894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 46BA520894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BA520894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbeG3Rz1 (ORCPT
+        id S1731820AbeG3R4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:55:27 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:38254 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeG3Rz0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:55:26 -0400
-Received: by mail-ua0-f193.google.com with SMTP id o11-v6so8217087uak.5;
-        Mon, 30 Jul 2018 09:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=m7PhWWsCMr3LfMYRn2R6wNnfvgyjxDga/VgsO+HL+0E=;
-        b=oR9dlmno03HmCTIaDvEcPTrq0qwXRLsv0lP+u8rokfI1Qh2HQVETHIRYMFrZCKrxr/
-         roEhDCaW90dXmY4frlSPcbiy+yJZGtiJH8wyDY4n1+AMnpVfeEhHguwcLVD9pWE9laM3
-         ZnXpwZFM2sH7ByDFWpr7IMQl/HD62hnIUogGLJ5GOCheNSR9ZpI+Hgc7Pnm4Uyzzb30f
-         HszydAm9ZAitSEfztIvW57ghs8QP28WMoDGHYRFp9xZ31XScrEQe4g+SwDZkfDHLax7m
-         Aj0+R1ETqGHAqX4uay3cilvKAsY1HWdqG7vXHJxOtvvBzItW2rH5uPeBw04MdZqscguA
-         HyYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=m7PhWWsCMr3LfMYRn2R6wNnfvgyjxDga/VgsO+HL+0E=;
-        b=ZpmaXaMt75EQEiwqYoTeZnCfVa9gOTFnte56KAHSlnd5sZdkaeZJYGHO6O1gas8f2E
-         81ASayS4kyHsLcjqizVk7JcJgpOrsFFo2FS8un7kNJ4yvFj0Z7GoTinGUOBdZ05XWhuJ
-         mz9Eomh9EB+k43ziyiBuK9zAs7ZxwyVlWa5KreGBXIIFLCURpPoD/SLcwEeCylETlLau
-         4y7L/zPzyKrJaGiHzKB9oqJjy30qt+tciVOubrKTFNdJy16tjubSKsP+7d9dJ9eiqW8V
-         +X7hZDZhLMTDtVBREPs89hjK9DL8zf3HrE50hqB2m8lePLATLcEZ2mEoRxnwhZSSUdgO
-         nL7A==
-X-Gm-Message-State: AOUpUlHOczDfBnKZYhxyL3webicFoDnQawCzSug30Dir3O+c+ulbjx7C
-        dIXEg440IjRqPKGP68VCdOgISI4xwkx1Y02fAXo=
-X-Google-Smtp-Source: AAOMgpd3/op3dOa5HLFQd653G+bxhsDOfxUB/gtA8TKNIbEHvMw1LAjgC7ovbAQ9bXR/tZIcFISFS+Px4eQrhsEYbXg=
-X-Received: by 2002:a9f:3242:: with SMTP id y2-v6mr12565653uad.85.1532967583359;
- Mon, 30 Jul 2018 09:19:43 -0700 (PDT)
+        Mon, 30 Jul 2018 13:56:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41814 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730802AbeG3R4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 13:56:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C253680D;
+        Mon, 30 Jul 2018 09:20:40 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB69C3F5D0;
+        Mon, 30 Jul 2018 09:20:36 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 17:20:32 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [RFC PATCH v4 12/12] OPTIONAL: cpufreq: dt: Register an Energy
+ Model
+Message-ID: <20180730162029.2bu3vqipajgelbyz@queper01-lin>
+References: <20180628114043.24724-1-quentin.perret@arm.com>
+ <20180628114043.24724-13-quentin.perret@arm.com>
+ <CAKfTPtAANKzw7QTzKiU_ntiGYMxZD3etd8wMzXtngwUWHXj+Hg@mail.gmail.com>
+ <20180706101858.GC11862@e108498-lin.cambridge.arm.com>
+ <CAKfTPtASCvv1sbzp-7N=dsFBjATaGdeorxiyZ9urDgsMO8+XGA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a67:7cc8:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 09:19:22
- -0700 (PDT)
-In-Reply-To: <87effy9gfz.fsf@xmission.com>
-References: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
- <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com> <87effy9gfz.fsf@xmission.com>
-From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date:   Mon, 30 Jul 2018 18:19:22 +0200
-Message-ID: <CAJHCu1JkX+7bsh2c2GG1LbH4HW_tQ+kJAXzvWY-rVKBtpDL_4g@mail.gmail.com>
-Subject: Re: [RFC] kconfig: add hardened defconfig helpers
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Laura Abbott <labbott@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKfTPtASCvv1sbzp-7N=dsFBjATaGdeorxiyZ9urDgsMO8+XGA@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-20 15:37 GMT+02:00 Eric W. Biederman <ebiederm@xmission.com>:
-> Kees Cook <keescook@chromium.org> writes:
->
->>> +CONFIG_USER_NS=n
->>> +~~~~~~~~~~~~~~~~
->>> +
->>> +**Negative side effects level:** Medium
->>
->> Unfortunately I think this is High or Extreme. USER_NS gets a lot of use.
->>
->>> +**- Protection type:** Attack surface reduction
->>> +
->>> +This allows containers to use user namespaces to provide different
->>> +user info for different servers.
->>> +User namespaces have been abused in the past for privilege
->>> +escalation.
->
-> This is not a particularly good description.
+Hi Vincent,
 
-You are right, I've been a bit shallow...
-Thank you for pointing it out.
-I didn't mean to say that user namespaces are bad for security in general.
-I'll make this less ambiguous in the next revision.
+On Monday 30 Jul 2018 at 17:53:23 (+0200), Vincent Guittot wrote:
+[...]
+> ok, so you copy/paste what is done in cpu cooling device ?
+> 
+> Nevertheless I still have some concerns with the formula used here and
+> in cpu cooling device:
+> 
+> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/arm/cpus.txt#L273
+> The documentation says
+> Pdyn = dynamic-power-coefficient * V^2 * f where voltage is in uV,
+> frequency is in MHz.
+>  and  dynamic power coefficient in units of mW/MHz/uV^2.
+> 
+> This implies that the results is in mW and we can summarize the formula with :
+> 
+> mW = C * (uV)^2 * Mhz with C = dynamic-power-coefficient
+> then uV = 1000*mV
+> mW = C * (1000*mV)^2 * Mhz
+> mW = C * 1000000 * mV * mV * Mhz
+> 
+> Which is different from what is used here and in cpu cooling device.
+> I may have done something wrong with the formula but i can't catch
+> it... My brain is not yet fully back from vacations
 
-> User namespaces do indeed increase the attack surface of programs that
-> don't use them.
->
-> User namespaces when used to build ``unprivileged containers'' remove or
-> at least drastically reduce the need to run as root when setting up
-> containers.  Which is attack surface reduction.
->
-> User namespaces make available tools that are commonly used to build
-> sandboxes.  Chrome for example uses users namespaces if they are
-> available as part of setting up it's sandbox.
->
-> User namespaces are not limited to containers.
->
-> The bugs in the attack surface that user namespaces expose that have
-> been used for privilege escalation have to the best of my knowledge
-> closed.  So while there is some danger in the increased attack surface
-> we are looking at implementation defects rather than design defects.
->
-> Eric
+I think your brain works fine ;) The doc does seem to be incorrect ...
+I also believe that this issue has been discussed recently in another
+thread:
+
+http://archive.armlinux.org.uk/lurker/message/20180720.141530.2bf75d5c.en.html
+
+> Which gives with the formula in the documentation:
+> mW = 550 * (1100000)^2 * 2362 = 1,571911×10^18 which is quite huge
+> even for a big core running at max freq
+> and with the formula in cpu_cooling.c:
+> mW = 550 * 1100 * 1100 * 2362 / 1000000000 = 1571 which seems to be a
+> bit more reasonable
+
+Indeed, 1.5W for a big CPU at max OPP is in the right ballpark I
+believe.
+
+FYI, this is the power values I have in the EM for all OPPs on H960:
+
+        +--------+-------+--------+--------+
+        |      A53s      |       A73s      |
+        +--------+-------+--------+--------+
+        |  MHz   |  mW   |  MHz   |  mW    |
+        +--------+-------+--------+--------+
+        |  533   |  28   |  903   |  243   |
+        |  999   |  70   |  1421  |  500   |
+        |  1402  |  124  |  1805  |  804   |
+        |  1709  |  187  |  2112  |  1161  |
+        |  1844  |  245  |  2362  |  1571  |
+        +--------+-------+--------+--------+
+
+[...]
+
+> It's just that the tests results that you provided in the cover letter
+> has used this patch and running tests with wrong formula (it seems
+> that's the documentation is wrong) doesn't give much confidence on the
+> results
+
+I can understand that the mismatch between the code and the
+documentation can be slightly confusing. However, as you said yourself
+the code _is_ correct, so the test results are valid.
+
+Moreover, the actual unit for the power costs doesn't make any
+difference with EAS as long as that doesn't cause precision issues. EAS
+works in relative terms, so even if the unit was in, say, uW instead of
+mW, the test results would still be valid. And again, that's not the
+case, the code does the right thing here.
+
+Thanks,
+Quentin
