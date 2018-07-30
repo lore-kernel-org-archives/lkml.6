@@ -2,90 +2,116 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7A0FC6122
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819B1FC6122
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCDAF205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:59:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j6p6nGTN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q9Eimkr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCDAF205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 433BF205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 17:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433BF205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732004AbeG3TfS (ORCPT
+        id S1732033AbeG3Tfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 15:35:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37930 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeG3TfS (ORCPT
+        Mon, 30 Jul 2018 15:35:47 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41273 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeG3Tfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 15:35:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AE84D60769; Mon, 30 Jul 2018 17:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532973549;
-        bh=XoQytGIinmUaOUlvAlU03eqOK4CyaWZYX2/ObWaCSrM=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=j6p6nGTNuj7ITTq2qofxYhE4IfBwFMN9Sv65q8tWthjicDlat6VHkhTh7PwfMWqDw
-         WcAPStq2XSqNBBaF8S9GFA0nEoqKez0Tea5JwgA6PkgGnvQoXuUHbG9yg6JuVz0oF/
-         JOIIBhCWIBwyhnciBK7p+pb3O8KZKXKWlLznpJXA=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E2C060500;
-        Mon, 30 Jul 2018 17:59:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532973548;
-        bh=XoQytGIinmUaOUlvAlU03eqOK4CyaWZYX2/ObWaCSrM=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Q9Eimkr2yBskKakQSkALMPyrZokKes5hmwMiGJyfDbbS9HsuDGQkAvctyLS/82AxR
-         umzW1rCUebyAtQeBWU8GrXZJoQdOS+LfqSrpcZfnzM7yY2t9Cggxa656DOIcc5WhFX
-         9MNEMMFWbtBM671CDzNQwzOcp0hi6M/8M7mNEkzU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E2C060500
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 30 Jul 2018 15:35:47 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B808D80616; Mon, 30 Jul 2018 19:59:36 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 19:59:36 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory,
+ and IO v2
+Message-ID: <20180730175936.GA2416@amd>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180727220123.GB18879@amd>
+ <20180730154035.GC4567@cmpxchg.org>
+ <20180730173940.GB881@amd>
+ <20180730175120.GJ1206094@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k: htt_tx: move lock into id_get function
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1531589900-29220-1-git-send-email-hofrat@osadl.org>
-References: <1531589900-29220-1-git-send-email-hofrat@osadl.org>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180730175909.AE84D60769@smtp.codeaurora.org>
-Date:   Mon, 30 Jul 2018 17:59:09 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <20180730175120.GJ1206094@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nicholas Mc Guire <hofrat@osadl.org> wrote:
 
-> This is only code refactoring as all call sites of
-> ath10k_htt_tx_alloc_msdu_id() take the same lock it can be moved into the
-> id_get function and the assertion dropped.
-> 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied to ath-next branch of ath.git, thanks.
+On Mon 2018-07-30 10:51:20, Tejun Heo wrote:
+> Hello,
+>=20
+> On Mon, Jul 30, 2018 at 07:39:40PM +0200, Pavel Machek wrote:
+> > > I'd rather have the internal config symbol match the naming scheme in
+> > > the code, where psi is a shorter, unique token as copmared to e.g.
+> > > pressure, press, prsr, etc.
+> >=20
+> > I'd do "pressure", really. Yes, psi is shorter, but I'd say that
+> > length is not really important there.
+>=20
+> This is an extreme bikeshedding without any relevance.  You can make
+> suggestions but please lay it to the rest.  There isn't any general
+> consensus against the current name and you're just trying to push your
+> favorite name without proper justifications after contributing nothing
+> to the project.  Please stop.
 
-e82f57c8b970 ath10k: htt_tx: move lock into id_get function
+Its true I have no interest in psi. But I'm trying to use same kernel
+you are trying to "improve" and I was confused enough by seing
+"CONFIG_PSI". And yes, my association was "pounds per square inch" and
+"what is it doing here".
 
--- 
-https://patchwork.kernel.org/patch/10524837/
+So I'm asking you to change the name.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+USB is well known acronym, so it is okay to have CONFIG_USB. PSI is
+also well known -- but means something else.
 
+And the code kind-of acknowledges that acronym is unknown, by having
+/proc/pressure.
+
+So please just fix it.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltfUggACgkQMOfwapXb+vKAvgCfQE/kZZxaNG37MoP55aHmHCeO
+XIEAn0L3Iqd7uuiqMrYzFwuLGN0MMs/N
+=bq/s
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
