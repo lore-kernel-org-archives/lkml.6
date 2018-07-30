@@ -2,207 +2,266 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3354FFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1938313F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2E120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0E520881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:10:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="I03h0rxN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2E120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="t+mHPd8R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0E520881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbeG3Ono (ORCPT
+        id S1731776AbeG3Op0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:43:44 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45389 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbeG3Ono (ORCPT
+        Mon, 30 Jul 2018 10:45:26 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43451 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeG3Op0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:43:44 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s16-v6so4163758edq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:08:47 -0700 (PDT)
+        Mon, 30 Jul 2018 10:45:26 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b15-v6so12821233wrv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:10:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=irCMglaYCgTyZsJDaXGcM2Q0kfEPp/Cwn4ayDBIvsWU=;
-        b=I03h0rxNjQr9zd5k/e7HUUWEWVUSgYasIsbZ5kfJPNsVO4bNw6Liws5eghlfUewGyu
-         WNoXu4/nEgDKs5vS7GFAyH9DOkmNU11M1iqm0iFACtpqaqoq9eoifDhaAxdM7UGDjJ4t
-         b2FXZOhlxloP/CW1N48Sq8ufgU6l0DXXvMBIOW7415MLFx5kpF8RfC1f35vmQhQmnIqY
-         i9IeymoOFwKjPXAea8d8b5eX92HTDjtTlEaZV6MwYS3fXzopNdTI5bd+wmJPdoydBV7I
-         0Ow+0vgRnLXmb9hZ2h5v1dMn/Jq+YalrcxJ9WVryNp2TdeUgKz889JiaiJ9eEkk5h6Jx
-         KgRg==
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/eK/lvQlvWULLteJG7BK78yxgtW84416QjnVXuDgm9s=;
+        b=t+mHPd8RL528tww8F+3Ft93S2GkEWFLLy6U10NOWJQ8RaZlBoNMTDSQ7LVIreCCGS3
+         ILw6feKEz5O6p2yIXd+H33afM/33yt5XoVhYS3xyKh8Gp6z+sH3qCDnK84qafyU7vvCr
+         y7bZyzZu/jgGPlvDpsliPcIKjKrO6eUC6FomYIHEijfx19yFWtLbQtv6A3KuLMFWZQ7c
+         CM7XVR/jmCvC6/WKXWrB32JrryVsFfvcp/MBjB8EKzZR2wMU32mSVuQicML9VsGUvjb1
+         fqWFIwU02TuaCUKLUfVdrVOZdKINkWRlLlTF9nx0gfU6vxna5ACN9Tmz8szcPLnNRiyW
+         Pf7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=irCMglaYCgTyZsJDaXGcM2Q0kfEPp/Cwn4ayDBIvsWU=;
-        b=UQ/S08yG8zQNIF6KkbAg3NVctCaX5H4lFSLuIo9TnQq3crDSkIya4dusU34CkuO2x0
-         K+zzezHcIiULcdxlaUhatWmU1sCduxdJ7fHO7lk30DXW9Ns4l9jz8jK8oFPJBoGcr+5c
-         hkSx8u6b5qaSsEO7Y2dwE4oeHcLJjZQ2tGDg5+x8159W4u4xvPZEXtf0NHeg6zreGu+9
-         21D7nmvqBtz7NJdirUKP+0wbKCiBDZq727/X616PqnH7EomrnsxIeXhPsyxvVMqGjlwD
-         Y6EPF/sK9nPqgZLkioiNh4o3GJkImkAcV/sS1VksXVpC6GXosbna518ucRz6uqxe2QTu
-         1K+Q==
-X-Gm-Message-State: AOUpUlGsY43/wB/TGK8pApeSBfexWy9j6XF2bZ8ocqjzY/jgSC/KSfjf
-        V30FXm4UHlQ1PZ3zHv8vKyJ8Wg==
-X-Google-Smtp-Source: AAOMgpfe6iziaIdF7+CFFWRlmCoYc4F3QYwM6wM72U+ZrB8IqsscRj561GLLzPBfIDgC0BABJLdm6A==
-X-Received: by 2002:a50:a186:: with SMTP id 6-v6mr8347409edk.12.1532956126891;
-        Mon, 30 Jul 2018 06:08:46 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id i15-v6sm2414787edq.56.2018.07.30.06.08.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/eK/lvQlvWULLteJG7BK78yxgtW84416QjnVXuDgm9s=;
+        b=SSHGrQ8d6fhp4+chiO9gyKDnb3u2/J0X9LbjJzb7mysnWzBTfkapqz2GQmFlH93lLR
+         R7aSOgHQ4dWMU2wtvDJzgnuxHenraWv2sfBdYCx8yVLEzMhCWKD3UYCDfNRgcMMdn85A
+         pI4/Eyj4Ci0EpvP/d+Ao3AF4Wjq3hu++TxK+aIaKsd6eDk8Z3OaMYgje7hOYteqDa8+a
+         FByxdadqsuZJCnaCmNIaK0z5P2YDCE5jioTmJ5XSztVLKiq4pZeBW50uGDrh2uLcIT72
+         ZI6TsnYcICH8aQR63W1HtB+aqRpMvdAD6r2BZTyb9/r1fnwDd+PtYlh6Pifd15TrxXMU
+         LHuA==
+X-Gm-Message-State: AOUpUlED/n0k2yC1zPMvOxnv+XPvopkDcEvv8bHPwd82VHEPrAgl6cCn
+        qESgc8RCC2kErrfjUzWzYW8ISw==
+X-Google-Smtp-Source: AAOMgpcc67bKiWeCUadg8QMgExc7+VKskUZB6s4MyEW53efGOliZf0YrUKVi2hcfKMsJThLGOWS2yg==
+X-Received: by 2002:adf:9303:: with SMTP id 3-v6mr18116763wro.197.1532956228367;
+        Mon, 30 Jul 2018 06:10:28 -0700 (PDT)
+Received: from localhost (static-cl188134168102.unet.cz. [188.134.168.102])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm15979938wrv.23.2018.07.30.06.10.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 06:08:46 -0700 (PDT)
-Message-ID: <1532956125.2679.28.camel@arista.com>
-Subject: Re: [LKP] 7acf9d4237 BUG: kernel hang in test stage
-From:   Dmitry Safonov <dima@arista.com>
-To:     kernel test robot <lkp@intel.com>
+        Mon, 30 Jul 2018 06:10:28 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 15:07:47 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Michal Kubecek <mkubecek@suse.cz>
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LKP <lkp@01.org>, David Miller <davem@davemloft.net>
-Date:   Mon, 30 Jul 2018 14:08:45 +0100
-In-Reply-To: <20180730081219.GC30690@shao2-debian>
-References: <20180730081219.GC30690@shao2-debian>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [RFC PATCH net-next v2 00/17] ethtool netlink interface (WiP)
+Message-ID: <20180730130747.GH2058@nanopsycho>
+References: <cover.1532953989.git.mkubecek@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1532953989.git.mkubecek@suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the report, looking into this..
+Mon, Jul 30, 2018 at 02:52:42PM CEST, mkubecek@suse.cz wrote:
+>A netlink based interface for ethtool is a recurring discussion theme;
+>such discussion happens from time to time but never seems to reach any
+>clear conclusion except that netlink interface is desperately needed.
+>I'm sending this hoping that having a proposal (even if partial) on the
+>table could help move the discussion further.
+>
+>The interface used for communication between ethtool and kernel is based on
+>ioctl() and suffers from many problems. The most pressing seems the be the
+>lack of extensibility. While some of the newer commands use structures
+>designed to allow future extensions (e.g. GFEATURES or TEST), most either
+>allow no extension at all (GPAUSEPARAM, GCOALESCE) or only limited set of
+>reserved fields (GDRVINFO, GEEE). Even most of those which support future
+>extensions limit the data types that can be used.
+>
+>This series aims to provide an alternative interface based on netlink which
+>is what other network configuration utilities use. In particular, it uses
+>generic netlink (family "ethtool"). The goal is to provide an interface
+>which would be extensible, flexible and practical both for ethtool and for
+>other network configuration tools (e.g. wicked, systemd-networkd or
+>NetworkManager).
+>
+>The interface is documented in Documentation/networking/ethtool-netlink.txt
+>
+>A series for ethtool utility will follow shortly.
+>
+>Basic concepts:
+>
+>- the interface is based on generic netlink (family name "ethtool")
+>
+>- the goal is to provide all features of ioctl interface but allow
+>  easier future extensions
+>
+>- inextensibility of ioctl interface resulted in way too many commands,
+>  many of them obsoleted by newer ones; reduce the number by  ignoring the
+>  obsolete commands and grouping some together
+>
+>- for "set" type commands, netlink allows providing only the attributes to
+>  be changed; therefore we don't need a get-modify-set cycle (which is
+>  inherently racy), userspace can simply say what it wants to change
+>
+>- provide notifications to multicast group "monitor" like rtnetlink
+>  does, i.e. in the form of messages close to replies to "get" requests
+>
+>- allow dump requests to get some information about all network defices
+>  providing it
+>
+>- be less dependent on ethtool and kernel being in sync; allow e.g. saying
+>  "ethtool -s eth0 advertise foo off" without ethtool knowing what "foo"
+>  means; it's kernel's job to know what mode "xyz" is and if it exists
+>  and is supported
+>
+>Main changes again RFC v1:
+>
+>- support dumps for all "get" requests
+>- provide notifications for changes related to supported request types
+>- support getting string sets (both global and per device)
+>- support getting/setting device features
+>- get rid of family specific header, everything passed as attributes
+>- split netlink code into multiple files in net/ethtool/ directory
+>
+>ToDo / open questions:
+>
+>- as some comments in discussion on v1 pointed out, some features of
+>  ethtool would rather belong to devlink; phy_tunables and phy_stats
+>  seem to be candidates, maybe part of drvinfo; are there more?
+>
+>- another question is where to do the split; should ethtool use devlink
+>  API for these or can we provide them in ethtool API as well but with
+>  devlink backend (for communication with NIC)
 
-On Mon, 2018-07-30 at 16:12 +0800, kernel test robot wrote:
-> Greetings,
-> 
-> 0day kernel testing robot got the below dmesg and the first bad
-> commit is
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git master
-> 
-> commit 7acf9d4237c46894e0fa0492dd96314a41742e84
-> Author:     Dmitry Safonov <dima@arista.com>
-> AuthorDate: Fri Jul 27 16:54:44 2018 +0100
-> Commit:     David S. Miller <davem@davemloft.net>
-> CommitDate: Sun Jul 29 12:50:19 2018 -0700
-> 
->     netlink: Do not subscribe to non-existent groups
->     
->     Make ABI more strict about subscribing to group > ngroups.
->     Code doesn't check for that and it looks bogus.
->     (one can subscribe to non-existing group)
->     Still, it's possible to bind() to all possible groups with (-1)
->     
->     Cc: "David S. Miller" <davem@davemloft.net>
->     Cc: Herbert Xu <herbert@gondor.apana.org.au>
->     Cc: Steffen Klassert <steffen.klassert@secunet.com>
->     Cc: netdev@vger.kernel.org
->     Signed-off-by: Dmitry Safonov <dima@arista.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
-> 
-> 9939a46d90  NET: stmmac: align DMA stuff to largest cache line length
-> 7acf9d4237  netlink: Do not subscribe to non-existent groups
-> 25432eba9c  openvswitch: meter: Fix setting meter id for new entries
-> +--------------------------------------------------+------------+--
-> ----------+------------+
-> >                                                  | 9939a46d90 |
-> > 7acf9d4237 | 25432eba9c |
-> 
-> +--------------------------------------------------+------------+--
-> ----------+------------+
-> > boot_successes                                   | 20         |
-> > 4          | 4          |
-> > boot_failures                                    | 22         |
-> > 11         | 11         |
-> > INFO:task_blocked_for_more_than#seconds          |
-> > 22         |            |            |
-> > Kernel_panic-not_syncing:hung_task:blocked_tasks |
-> > 22         |            |            |
-> > BUG:kernel_hang_in_test_stage                    | 0          |
-> > 11         | 11         |
-> 
-> +--------------------------------------------------+------------+--
-> ----------+------------+
-> 
-> [ 1414.113020] Writes:  Total: 373492244  Max/Min: 0/0   Fail: 0 
-> [ 1472.149785] CE: Reprogramming failure. Giving up
-> [ 1475.552294] Writes:  Total: 387526813  Max/Min: 0/0   Fail: 0 
-> [ 1509.501097] CE: Reprogramming failure. Giving up
-> [ 1536.992336] Writes:  Total: 403788741  Max/Min: 0/0   Fail: 0 
-> BUG: kernel hang in test stage
-> 
-> 
->                                                           # HH:MM
-> RESULT GOOD BAD GOOD_BUT_DIRTY DIRTY_NOT_BAD
-> git bisect start 0a930dcfc77cb12bbf9bffd69fbadcb0c237f577
-> d72e90f33aa4709ebecc5005562f52335e106a60 --
-> git bisect  bad f605359102be537b6217dc49600f4369d1f04932  #
-> 07:19  B      0    11   27   0  Merge 'm68k/master' into devel-
-> catchup-201807300507
-> git bisect  bad 375347c493a490f493fafa02f30fa23179acbdb9  #
-> 07:53  B      0    11   27   0  Merge 'linux-review/Todd-
-> Poynor/staging-gasket-fixes-and-cleanups/20180730-034316' into devel-
-> catchup-201807300507
-> git bisect good 86b34080126c3f4254a3f9e8d5dcb447d9233bc8  #
-> 08:05  G     11     0    6   6  0day base guard for 'devel-catchup-
-> 201807300507'
-> git bisect  bad ed28433e6f289d33dd6b4bbf627a60396234db58  #
-> 08:40  B      0     1   17   0  Merge 'net/master' into devel-
-> catchup-201807300507
-> git bisect good 5b891af7fca14526b2a87c6f38b004e2df655ef4  #
-> 08:54  G     11     0   11  11  bpf: Replace [u]int32_t and
-> [u]int64_t in libbpf
-> git bisect good c259b4fb33ee6e7667bf1d34bf0803b7c5fdbdce  #
-> 09:03  G     10     0    3   3  netdevsim: don't leak devlink
-> resources
-> git bisect good b0753408aadf32c7ece9e6b765017881e54af833  #
-> 09:17  G     11     0    3   3  net: mdio-mux: bcm-iproc: fix wrong
-> getter and setter pair
-> git bisect good 71eb5255f55bdb484d35ff7c9a1803f453dfbf82  #
-> 09:25  G     11     0   11  11  bpf: use GFP_ATOMIC instead of
-> GFP_KERNEL in bpf_parse_prog()
-> git bisect good 6d27c6dd1012e7be748ec05da78556319718fbe7  #
-> 09:39  G     11     0    4   4  Merge branch 'net-socket-Fix-
-> potential-spectre-v1-gadgets'
-> git bisect good 9939a46d90c6c76f4533d534dbadfa7b39dc6acc  #
-> 09:55  G     11     0    7   7  NET: stmmac: align DMA stuff to
-> largest cache line length
-> git bisect  bad 25432eba9cd8f2ef5afef55be811b010a004b5fa  #
-> 10:28  B      0    11   27   0  openvswitch: meter: Fix setting meter
-> id for new entries
-> git bisect  bad 7acf9d4237c46894e0fa0492dd96314a41742e84  #
-> 11:03  B      0     6   22   0  netlink: Do not subscribe to non-
-> existent groups
-> # first bad commit: [7acf9d4237c46894e0fa0492dd96314a41742e84]
-> netlink: Do not subscribe to non-existent groups
-> git bisect good 9939a46d90c6c76f4533d534dbadfa7b39dc6acc  #
-> 11:14  G     31     0   15  22  NET: stmmac: align DMA stuff to
-> largest cache line length
-> # extra tests with debug options
-> git bisect  bad 7acf9d4237c46894e0fa0492dd96314a41742e84  #
-> 11:48  B      0    11   27   0  netlink: Do not subscribe to non-
-> existent groups
-> # extra tests on HEAD of linux-devel/devel-catchup-201807300507
-> git bisect  bad 0a930dcfc77cb12bbf9bffd69fbadcb0c237f577  #
-> 11:49  B      0    13   31   0  0day head guard for 'devel-catchup-
-> 201807300507'
-> # extra tests on tree/branch net/master
-> git bisect  bad 25432eba9cd8f2ef5afef55be811b010a004b5fa  #
-> 11:50  B      0    11   27   0  openvswitch: meter: Fix setting meter
-> id for new entries
-> # extra tests with first bad commit reverted
-> git bisect good e61543e57747e8fd80390af39504365a392cef2b  #
-> 12:04  G     11     0    4   4  Revert "netlink: Do not subscribe to
-> non-existent groups"
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source
-> Technology Center
-> https://lists.01.org/pipermail/lkp                          Intel
-> Corporation
+My idea was to provide a compat layer for it. But I also wanted to
+change the implementation of driver callbacks and provide compat layer
+for it too. Current ethtool callbacks are very tightly wrapped around
+the uapi structs.
+
+Please see the last slide:
+http://vger.kernel.org/netconf2018_files/JiriPirko_netconf2018.pdf
+
+I started to work on POC implementation but got distracted.
+Perhaps we can sync over a beer :)
+
+
+
+>
+>- currently, all communication with drivers via ethtool_ops is done
+>  under RTNL as this is what ioctl interface does and I suspect many
+>  ethtool_ops rely on that; can we do without RTNL?
+>
+>- notifications are sent whenever a change is done via netlink API or
+>  ioctl API and for netdev features also whenever they are updated using
+>  netdev_change_features(); it would be desirable to notify also about
+>  link state and negotiation result (speed/duplex and partner link
+>  modes) but it would be more tricky
+>
+>- find reasonable format for data transfers (e.g. eeprom dump or flash);
+>  I don't have clear idea how big these can get and if 64 KB limit on
+>  attribute size (including nested ones) is a problem; if so, dumps can
+>  be an answer for dumps, some kind of multi-message requests would be
+>  needed for flashes
+
+This is another thing that should go into devlink as it is not
+netdev-handled. We have now a "region" facility there which can be
+re-used.
+
+
+>
+>- while the netlink interface allows easy future extensions, ethtool_ops
+>  interface does not; some settings could be implemented using tunables and
+>  accessed via relevant netlink messages (as well as tunables) from
+>  userspace but in the long term, something better will be needed
+>
+>- it would be nice if driver could provide useful error/warning messages to
+>  be passed to userspace via extended ACK; example: while testing, I found
+>  a driver which only allows values 0, 1, 3 and 10000 for certain parameter
+>  but the only way poor user can find out is either by trying all values or
+>  by checking driver source
+>
+>- some of the functions for GET_SETTINGS and GET_PARAMS are quite
+>  similar (e.g. ethtool_get_*); it might be beneficial to introduce some
+>  "ops", leave only "parse", "prepare", "size" and "fill" handlers and
+>  make the rest generic (like ethnl_dumpit()).
+>
+>- the counts and sizes in GET_DRVINFO reply seem to be a relic of the
+>  past and if userspace needs them, there are (or will be) other ways to
+>  get them; they should most likely go
+>
+>
+>Michal Kubecek (17):
+>  netlink: introduce nla_put_bitfield32()
+>  ethtool: move to its own directory
+>  ethtool: introduce ethtool netlink interface
+>  ethtool: helper functions for netlink interface
+>  ethtool: netlink bitset handling
+>  ethtool: support for netlink notifications
+>  ethtool: implement EVENT notifications
+>  ethtool: implement GET_STRSET message
+>  ethtool: implement GET_DRVINFO message
+>  ethtool: implement GET_SETTINGS message
+>  ethtool: implement GET_SETTINGS request for features
+>  ethtool: implement SET_SETTINGS notification
+>  ethtool: implement SET_SETTINGS message
+>  ethtool: implement SET_SETTINGS request for features
+>  ethtool: implement GET_PARAMS message
+>  ethtool: implement SET_PARAMS notification
+>  ethtool: implement SET_PARAMS message
+>
+> Documentation/networking/ethtool-netlink.txt |  558 ++++++++
+> include/linux/ethtool_netlink.h              |   17 +
+> include/linux/netdevice.h                    |   25 +
+> include/net/netlink.h                        |   15 +
+> include/uapi/linux/ethtool.h                 |    7 +
+> include/uapi/linux/ethtool_netlink.h         |  325 +++++
+> net/Kconfig                                  |    7 +
+> net/Makefile                                 |    2 +-
+> net/core/Makefile                            |    2 +-
+> net/core/dev.c                               |   27 +-
+> net/ethtool/Makefile                         |    7 +
+> net/ethtool/common.c                         |  242 ++++
+> net/ethtool/common.h                         |   26 +
+> net/ethtool/drvinfo.c                        |  131 ++
+> net/{core/ethtool.c => ethtool/ioctl.c}      |  310 ++---
+> net/ethtool/netlink.c                        |  840 ++++++++++++
+> net/ethtool/netlink.h                        |  169 +++
+> net/ethtool/params.c                         | 1008 ++++++++++++++
+> net/ethtool/settings.c                       | 1230 ++++++++++++++++++
+> net/ethtool/strset.c                         |  552 ++++++++
+> 20 files changed, 5269 insertions(+), 231 deletions(-)
+> create mode 100644 Documentation/networking/ethtool-netlink.txt
+> create mode 100644 include/linux/ethtool_netlink.h
+> create mode 100644 include/uapi/linux/ethtool_netlink.h
+> create mode 100644 net/ethtool/Makefile
+> create mode 100644 net/ethtool/common.c
+> create mode 100644 net/ethtool/common.h
+> create mode 100644 net/ethtool/drvinfo.c
+> rename net/{core/ethtool.c => ethtool/ioctl.c} (88%)
+> create mode 100644 net/ethtool/netlink.c
+> create mode 100644 net/ethtool/netlink.h
+> create mode 100644 net/ethtool/params.c
+> create mode 100644 net/ethtool/settings.c
+> create mode 100644 net/ethtool/strset.c
+>
+>-- 
+>2.18.0
+>
