@@ -2,86 +2,118 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A58C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA74C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FDE20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FDE20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id A249A208A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:02:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="BVRiGPEZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A249A208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbeG3Wir (ORCPT
+        id S1731993AbeG3WjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 18:38:47 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:44679 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730613AbeG3Wir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 18:38:47 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6UL1vwi079450;
-        Tue, 31 Jul 2018 06:01:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Tue, 31 Jul 2018 06:01:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6UL1qmP079426
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 31 Jul 2018 06:01:57 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 30 Jul 2018 18:39:13 -0400
+Received: from imap.thunk.org ([74.207.234.97]:44402 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728799AbeG3WjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 18:39:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=I0OXXUQ+HUkAoh85Px7CBSfmnfPizp8wN6b5Q3OhQXA=; b=BVRiGPEZQTylNbDLP/qqbO/IOs
+        NPK0Bo+KYqYGhCMhKpG2teQWoyG1130QZDga2zm2kc6szrwAc6oA423R3C54Twz9vOt2XfPgAVSMd
+        ZzIfmbNd+TAn5XKG9e6L/u0J/P3oAXmLWxpErPXpdD0q+OrDecvtjaC5ouEuCBik0qyQ=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fkFIx-0007XN-CL; Mon, 30 Jul 2018 21:02:11 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0382C7A614A; Mon, 30 Jul 2018 17:02:09 -0400 (EDT)
+Date:   Mon, 30 Jul 2018 17:02:09 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
+ [ver #10]
+Message-ID: <20180730210209.GY21725@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp>
- <20180726113958.GE28386@dhcp22.suse.cz>
- <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
- <20180730093257.GG24267@dhcp22.suse.cz>
- <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
- <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
- <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
- <20180730185110.GB24267@dhcp22.suse.cz>
- <20180730191005.GC24267@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
-Date:   Tue, 31 Jul 2018 06:01:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Pavel Machek <pavel@ucw.cz>, David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180729113749.GA7333@amd>
+ <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+ <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
+ <25489.1532953411@warthog.procyon.org.uk>
+ <20180730143104.GB24051@amd>
+ <20180730180842.GA5544@bombadil.infradead.org>
+ <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com>
+ <20180730183847.GB5544@bombadil.infradead.org>
+ <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
+ <20180730194938.GA12962@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180730191005.GC24267@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730194938.GA12962@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/31 4:10, Michal Hocko wrote:
-> Since should_reclaim_retry() should be a natural reschedule point,
-> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
-> order to guarantee that other pending work items are started. This will
-> workaround this problem and it is less fragile than hunting down when
-> the sleep is missed. E.g. we used to have a sleeping point in the oom
-> path but this has been removed recently because it caused other issues.
-> Having a single sleeping point is more robust.
+On Mon, Jul 30, 2018 at 12:49:38PM -0700, Matthew Wilcox wrote:
+> > That said, people have wanted these kinds of extended error
+> > descriptors forever, and the reason we haven't added them is that it
+> > generally is more pain than it is necessarily worth. I'm not actually
+> > at all convinced that has magically changed with the mount
+> > configuration thing.
+> 
+> I'm not convinced we want to do this either, but if there's anywhere we
+> do want to do it then mount seems like one of the few places it might be
+> worth doing.  The reasons that a mount failed are many, and it doesn't
+> seem like a good idea to introduce a new errno every time a network
+> filesystem finds a new failure mode.
 
-linux.git has not removed the sleeping point in the OOM path yet. Since removing the
-sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
-(And that change will conflict with Roman's cgroup aware OOM killer patchset. But it
-should be easy to rebase.)
+We've lived without VMS-style error reporting for a long time, and it
+*that* much of a real problem.  Even with network file systems, I
+don't think it's been that hard of a problem.
+
+I'd also argue that if there was something super-complicated, the
+right way to solve that problem is to push that processing into
+userspace --- e.g., if President Trump and President Putin both have
+to authenticate to the Nuclear Launch Codes server, then in
+mount.pentagonfs, the relevant X.509 certificates would be sent to
+server in the userspace process, and if there needs to be complex
+error messages reflecting Certificate Revocation List handling, etc.,
+mount.pentagonfs can use gettextfs so the program can be localized in
+English and Russian.  Once the authentication is completed, then
+mount.pentagonfs can pass the file descriptor for the network
+connection into fsconfig.
+
+So it might be that we're seriously over-thinking things.  Most of the
+really complicated error messages are at connection setup time, and
+that can be done in userspace, and then userspace can handle all of
+that awful gettext, or VMS-style error messages, or whatever other
+horrors the I18N community want to inflict on us.  :-)
+
+	    	 	   	   - Ted
