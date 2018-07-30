@@ -2,201 +2,149 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB6FC46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316FAFD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5154220892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5154220892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CEB5220892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 07:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=pks.im header.i=@pks.im header.b="drV62tJG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eG3ZZISR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB5220892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pks.im
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbeG3Jcb (ORCPT
+        id S1726659AbeG3Jdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:32:31 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41041 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbeG3Jca (ORCPT
+        Mon, 30 Jul 2018 05:33:41 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:37691 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726401AbeG3Jdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:32:30 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1fk34a-0008IV-Pt; Mon, 30 Jul 2018 09:58:32 +0200
-Subject: Re: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on power
- off option
-To:     Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-7-o.rempel@pengutronix.de>
- <DB6PR04MB3223FA7B91D0D43B2EC1EE2A892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <afe757dd-d2e7-8bf5-dca0-17a69a36f7c3@pengutronix.de>
-Date:   Mon, 30 Jul 2018 09:58:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 05:33:40 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id A43F7358;
+        Mon, 30 Jul 2018 03:59:53 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Mon, 30 Jul 2018 03:59:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pks.im; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=G51edHxvjsCfSdersHPYPe1W7FvLuaKvW7FK0VltXS8=; b=drV62tJG
+        n3cALeUwYoQt5rlU8+fu4uALK0+KDOX+xpIqzMQHzdjtezMYQqbZC5vuGnRgmcZE
+        o0uNhFAAMrgwP7AhjUVYWQO4XP1A8fxSsGNW6BBjGbRDSxL4/3ZyYouBzg4v7o4I
+        rDQk6bPUWU/iISGcdZEubZvnLq70/Dqg5mdCurmxHeT8AY8CUQnd6VnHCpNjgozY
+        Sei3BSFyFUF0YdzJtr2jynPIR5JwEBXHHGjUO4ZppCPEjjwZ+i9G/711sxuiEyJS
+        4GY1dVhGsD/uFts3YrgP1JOV8ybnMWh4eJF5L7poJZeW6MJg/UcoD2KURvPG0Lsp
+        BCLgfLhOtbJSDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=G51edHxvjsCfSdersHPYPe1W7FvLu
+        aKvW7FK0VltXS8=; b=eG3ZZISRex26P3yLpV4YuxUH6RlmM7eQa6v83t1wftH8/
+        KsduUPmVo/7giw2YsgEyLXKWBCQDyhPkNWD4VWLxNitOR3sGrYXbLigd1Aci/lAC
+        sD70swJiF8lCU6YwphBEIVKdZcfU7NPefcc66HcV8gfy9y1I7gDQ9nPRHhE603dI
+        LB/EVoTXn+NYpIzaL85R7L/bYfOfwe4sZ9EhmTsQDlR5E9pdtEfcr76W3hUVFTQP
+        yUqS+xmQ6+6pEWuKgGiypW+TgjAiTERDBqRq5knT5Y+JDeZpzcNJIkLoI9hXfVh0
+        gY5XdCaQcDFJiUr3aig3Hlamz4GCNBRrO1YAKMiyQ==
+X-ME-Proxy: <xmx:eMVeWyEP8NZg8RGPmJ5qvwbnS7WIwZcURkg3blC0LCdVKnfwmh0LUg>
+    <xmx:eMVeWwBj5M9IMIvPjswUXogDGFqqIdopDMieoHZVLRNfeSVSoG0QJg>
+    <xmx:eMVeWwAKHnNup9OujaRYYD36JvqYSmfy--8e21Njuiku73XJYUpdPA>
+    <xmx:eMVeW2M1jNbYw5xJl2S7hzVMp1UuW_x12ZbA-yPM218sAVLmlwfFEA>
+    <xmx:eMVeW8P6ZCozAYsGpxhz-XwaHbDCjHuH81h5E8qb0rOnj7lNa9xD6w>
+    <xmx:ecVeW5PjDmnfVgzh-s0fjIOq1cWDtlSmpAQAAaPB6CerDSEy3wbFmQ>
+X-ME-Sender: <xms:eMVeWxOdvLVK42YGU4DycBZoq6J4NuO_lW-QzuWUeoCLlphz1pHQZw>
+Received: from apu2.pks.im (x4e30b842.dyn.telefonica.de [78.48.184.66])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DF019E4014;
+        Mon, 30 Jul 2018 03:59:51 -0400 (EDT)
+Received: from localhost (10.192.0.12 [10.192.0.12])
+        by apu2.pks.im (OpenSMTPD) with ESMTPSA id 6304f3c9 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 30 Jul 2018 07:59:50 +0000 (UTC)
+Date:   Mon, 30 Jul 2018 09:59:49 +0200
+From:   Patrick Steinhardt <ps@pks.im>
+To:     Tomas Janousek <tomi@nomi.cz>
+Cc:     Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
+Message-ID: <20180730075949.GA1755@xps.pks.im>
+References: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
+ <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
+ <20180729094131.4kwuukzgfgtisgya@notes.lisk.in>
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB3223FA7B91D0D43B2EC1EE2A892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="oq7IsxD5Auoq9GcQyZN7sqUBRb5b0N5Rv"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+Content-Disposition: inline
+In-Reply-To: <20180729094131.4kwuukzgfgtisgya@notes.lisk.in>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---oq7IsxD5Auoq9GcQyZN7sqUBRb5b0N5Rv
-Content-Type: multipart/mixed; boundary="FoqGdnG7QHr6d0qatIxZUo8asSinzFik1";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
- "A.s. Dong" <aisheng.dong@nxp.com>
-Message-ID: <afe757dd-d2e7-8bf5-dca0-17a69a36f7c3@pengutronix.de>
-Subject: Re: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on power
- off option
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-7-o.rempel@pengutronix.de>
- <DB6PR04MB3223FA7B91D0D43B2EC1EE2A892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB3223FA7B91D0D43B2EC1EE2A892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
 
---FoqGdnG7QHr6d0qatIxZUo8asSinzFik1
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On 27.07.2018 11:33, Robin Gong wrote:
+On Sun, Jul 29, 2018 at 11:41:31AM +0200, Tomas Janousek wrote:
+> Hi,
 >=20
+> On Fri, Jul 13, 2018 at 09:41:41PM +0800, Ming Lei wrote:
+> > Now runtime PM is disabled for blk-mq/scsi_mq, not sure how this issue =
+is
+> > triggered on your machine.
 >=20
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
->> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
->> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
-
->> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
->> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
->> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
->> Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
-
->> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
-Gong
->> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
->> Subject: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on p=
-ower
->> off option
->>
->> This board, as well as some other boards with i.MX6 and a PMIC, uses a=
-
->> "PMIC_STBY_REQ" line to notify the PMIC about a state change.
->> The PMIC is programmed for a specific state change before triggering t=
-he line.
->> In this case, PMIC_STBY_REQ can be used for stand by, sleep and power =
-off
->> modes.
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts
->> b/arch/arm/boot/dts/imx6dl-riotboard.dts
->> index 2e98c92adff7..a0e9753ee767 100644
->> --- a/arch/arm/boot/dts/imx6dl-riotboard.dts
->> +++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
->> @@ -90,6 +90,10 @@
->>  	status =3D "okay";
->>  };
->>
->> +&clks {
->> +	fsl,pmic-stby-poweroff;
->> +};
-> It's better remove the default "syscon-poweroff" power off node.
-
-ok
-
->>  &fec {
->>  	pinctrl-names =3D "default";
->>  	pinctrl-0 =3D <&pinctrl_enet>;
->> @@ -170,6 +174,7 @@
->>  		reg =3D <0x08>;
->>  		interrupt-parent =3D <&gpio5>;
->>  		interrupts =3D <16 8>;
->> +		fsl,pmic-stby-poweroff;
->>
->>  		regulators {
->>  			reg_vddcore: sw1ab {				/* VDDARM_IN */
->> --
->> 2.18.0
+> While Patrick did miss the following patch:
 >=20
+> * 765e40b675a9 ("block: disable runtime-pm for blk-mq"; July 2017).
+>=20
+> there is at least one other way to trigger it -- enable laptop-mode-tools
+> or tlp which enable runtime-pm for all devices.
+>=20
+> The "disable runtime-pm for blk-mq" only disables it _by_default_, but do=
+esn't
+> prevent it from being enabled again from user-space, which it is unless o=
+ne
+> manually blacklists sd devices from runtime-pm enablement. It's bitten a =
+few
+> people already: https://github.com/rickysarraf/laptop-mode-tools/issues/1=
+23
+>=20
+> (I found this thread because I'm also getting the NULL pointer dereferenc=
+e at
+> 00000000000001a8 on resume from suspend.)
 
+Huh, I did send out some more details on how I reproduce the
+issue, but it seems like my mail didn't get through. While I
+don't use laptop-mode-tools, I do have some custom hotplugging
+scripts which do in fact enable runtime-PM for most devices.
 
---FoqGdnG7QHr6d0qatIxZUo8asSinzFik1--
+Regards
+Patrick
 
---oq7IsxD5Auoq9GcQyZN7sqUBRb5b0N5Rv
+--5vNYLRcllDrimb99
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltexSgACgkQdQOiSHVI
-77Tn7wf/Z68qjQ282EXYGrxipHKgWK65FECF6Z4ay8YKJO5/koartIx7CMZR3dSd
-0+xgROKVfIuPQ87JURixVsIe3Ijz4UWsVpCNhm98fbu1gTTQ7XKhYIBeuoEUtiH9
-UXFkrbq1InJGHIsUYyEJLGq6vujx4hQJL2GizDAKk0zpcbjvIhBflGKLGEJWuqi7
-uVaJ+7AeK/4Q2XvuMI3rrOTRsPl58W9Or0+MKr/qoUSW3cLX86NS7/n1oItK9tAt
-pdA8VpcTkWJectYiJUcI0Y25kleu+6zXu57W5pkG5S9ZzeqbZcvOs0j5U9hnmqez
-2EMVN0WFNqLoxTQtHPxq1qdzEmPbqw==
-=lgQc
+iQIzBAABCAAdFiEEtmscHsieVjl9VyNUEXxntp6r8SwFAltexXUACgkQEXxntp6r
+8SyzOg//T0tHxr7/QEE+jM9OHI6NouFFHh7CubJtlZk9Ocv0VQv/4AY9zSfkkqQ/
+9gkGaRnSbM7J7IMdAMsjDkDB+5FUw7uKIFB+0zCxjUK09Zq9jnhw0yiWMCiwOedh
+v96KLiacbIa/l6E+h+xMStNv0goGQcF3AzHlDKjgtstJSnL7aD7XX4URve4YeSuQ
+AAq3yQUbk8tPZcnlJm9SwTXUd6MOoYjCsdl6ptPl7Z1iNrf3ZhGoUzPUaUoG3RE3
+4ZqM74Y3KOHTBhXzyZkoz/SFkUghHJGdaZMm7zk8ApfhQAGw0573JPsH4pj4z7h6
+b0ad2PYmLn8O2c22w6THQMyVO1HaUQg6ngJfTzZHSaGlwqxNFfAKcwYBbAFUS+fQ
+Wb6YlIopC2MVYyAK21r+0p50SntCULRu04ptRFe0gILpfc0JnY89DYOPwk7yEClB
+OXyUKbRXCm/+USe9kKx4vFRzJVdL5Ubohu6v7da6Lm8C6YqZC/o9fYYegrzZdIKB
+TAZQWhRiscXPqdD2lZtmTpKFp2QuKcbWwi7PSrP4jz2gar/s8xN7LATQThSPOEkK
+x+uuGQWFaqGQTHDwn7ViRCXX2rtTysu0Q6fztZ3wc75T7fIzkk98XfAPGGbG5pFV
+qOUKuC7MJaGMOc9g3LJSXblqZUgW/liSvGB7aSecWXVAV2LLACI=
+=RrcF
 -----END PGP SIGNATURE-----
 
---oq7IsxD5Auoq9GcQyZN7sqUBRb5b0N5Rv--
+--5vNYLRcllDrimb99--
