@@ -3,147 +3,157 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA85C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E848C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFE4208A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1289720892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 20:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYiPsH2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFE4208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMjywlV8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1289720892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbeG3W1s (ORCPT
+        id S1731905AbeG3Wbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 18:27:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728714AbeG3W1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 18:27:48 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB176208A3;
-        Mon, 30 Jul 2018 20:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1532983862;
-        bh=PgYvRfDS2uaFo3XlCXLKG3nevcFUOOLX6AybE/g9C0o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uYiPsH2Oqj6deJ8y85vpbtfLinlxUvQdP+5lK5FeMrA0Ev+/ML1xu4KoYcqR3fDOn
-         ERXm8ICMi10gqhGko/JPGZ+cnaMgMUOHrNa8+WGLjwtjh8NOdA5gGkXm6Fwi6xlV6L
-         ZIKWN7m+zkTq90wxbDIZQCbgzshvKOBjGYp/ibOg=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 5/5] perf tools: Fix the build on the alpine:edge distro
-Date:   Mon, 30 Jul 2018 17:50:31 -0300
-Message-Id: <20180730205031.12853-6-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180730205031.12853-1-acme@kernel.org>
-References: <20180730205031.12853-1-acme@kernel.org>
+        Mon, 30 Jul 2018 18:31:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44571 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbeG3Wbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 18:31:46 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so7878103pgp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 13:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to;
+        bh=cy/3pXjkep3M/L/Tj0ud/Zs1kpYrhFra5uDqMg77AVM=;
+        b=WMjywlV8I3n1mSRzGrNt5TdoIMSP3T3GboGAnn6MmWkjbL13Ekq0ZWrToy3WxEX02s
+         KBIM/D3efpbFFnljRYlVAxlEwqGvY10GB9PvYUPuF2HBUqFoz9IveNBjP+uC8pk8y5BA
+         Xj46z7+HCB4aqaemMpavJkXVFUAjic4VHAPlbAIh/BoBIEL3mWWjLcm2agrtkonA30X/
+         I9mDKdvrVMzfUll2jAT1j1Oseq3Yun0ZePSPY67ShVAnmwSdkZcYebm14+59rKiwc3Ca
+         UH7avdzqJuUP/v9NuZ6eZAJvTTCa1IHkAZxIKQjVEjj4Dn0OYMjDq+v3EyYbLCQIET/I
+         +Oxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cy/3pXjkep3M/L/Tj0ud/Zs1kpYrhFra5uDqMg77AVM=;
+        b=l+ps3ezRD11wG/izh1z7dt94zBe25WbkG/vaxfKgWIwwtpvPLs4V55XqU3KQxWcPnm
+         rFxM9YI9jQypwruRpif/INIFjJcBSwGlEqT5zJKQY9MHdBq67tWFC1xw+ndJbNm3z2Jt
+         49jiN9ScigqLa+dlu0CswyH/FTNHXhKu3/PgM9PZBkrImvhkZqX4U+kWpf+s9VhTC6LO
+         G0rq9t+h2jEuDnpc8x2jeEkRF3e8ui/gZD2d26rgMu+kfnDyq0QOby029VJmoNIXqwi5
+         60IKNRMPN8QdlJQIwgvlpsoBm4PnMfVSbvdO8ngoWLkPB/uPmRBNh1lvY3lLsFalwpEz
+         60zA==
+X-Gm-Message-State: AOUpUlE9T3847fVZe0CYAnXAI1r7iZzcqN1V51ReC9NcC1LXzJu9rtT6
+        1KAP9BHde3GyL2OdQfKE+x0=
+X-Google-Smtp-Source: AAOMgpf1SxTNvn7kluIMWVzs53D/8afat/NiI4QJZIQrf4RzggqldUsVZ8Vgv2qAeNCwY5qV3ffnsQ==
+X-Received: by 2002:a63:35c3:: with SMTP id c186-v6mr17706161pga.217.1532984099213;
+        Mon, 30 Jul 2018 13:54:59 -0700 (PDT)
+Received: from mhkkerneltest.corp.microsoft.com ([131.107.160.207])
+        by smtp.gmail.com with ESMTPSA id y33-v6sm15347430pga.41.2018.07.30.13.54.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 13:54:58 -0700 (PDT)
+From:   mhkelley58@gmail.com
+X-Google-Original-From: mikelley@microsoft.com
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
+        vkuznets@redhat.com, jasowang@redhat.com,
+        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
+        kys@microsoft.com
+Cc:     mikelley@microsoft.com
+Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Remove use of slow_virt_to_phys()
+Date:   Mon, 30 Jul 2018 13:17:11 -0700
+Message-Id: <1532981831-28816-1-git-send-email-mikelley@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Reply-To: mikelley@microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-The UAPI file byteorder/little_endian.h uses the __always_inline define
-without including the header where it is defined, linux/stddef.h, this
-ends up working in all the other distros because that file gets included
-seemingly by luck from one of the files included from little_endian.h.
+slow_virt_to_phys() is only implemented for arch/x86.
+Remove its use in arch independent Hyper-V drivers, and
+replace with test for vmalloc() address followed by
+appropriate v-to-p function. This follows the typical
+pattern of other drivers and avoids the need to implement
+slow_virt_to_phys() for Hyper-V on ARM64.
 
-But not on Alpine:edge, that fails for all files where perf_event.h is
-included but linux/stddef.h isn't include before that.
-
-Adding the missing linux/stddef.h file where it breaks on Alpine:edge to
-fix that, in all other distros, that is just a very small header anyway.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-9r1pifftxvuxms8l7ir73p5l@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 ---
- tools/perf/arch/x86/util/pmu.c | 1 +
- tools/perf/arch/x86/util/tsc.c | 1 +
- tools/perf/perf.h              | 1 +
- tools/perf/util/header.h       | 1 +
- tools/perf/util/namespaces.h   | 1 +
- 5 files changed, 5 insertions(+)
+ drivers/hv/channel.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/pmu.c b/tools/perf/arch/x86/util/pmu.c
-index 63a74c32ddc5..e33ef5bc31c5 100644
---- a/tools/perf/arch/x86/util/pmu.c
-+++ b/tools/perf/arch/x86/util/pmu.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <string.h>
+diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
+index ba0a092..d972a12 100644
+--- a/drivers/hv/channel.c
++++ b/drivers/hv/channel.c
+@@ -29,12 +29,26 @@
+ #include <linux/hyperv.h>
+ #include <linux/uio.h>
+ #include <linux/interrupt.h>
++#include <asm/page.h>
  
-+#include <linux/stddef.h>
- #include <linux/perf_event.h>
+ #include "hyperv_vmbus.h"
  
- #include "../../util/intel-pt.h"
-diff --git a/tools/perf/arch/x86/util/tsc.c b/tools/perf/arch/x86/util/tsc.c
-index 06bae7023a51..950539f9a4f7 100644
---- a/tools/perf/arch/x86/util/tsc.c
-+++ b/tools/perf/arch/x86/util/tsc.c
-@@ -2,6 +2,7 @@
- #include <stdbool.h>
- #include <errno.h>
+ #define NUM_PAGES_SPANNED(addr, len) \
+ ((PAGE_ALIGN(addr + len) >> PAGE_SHIFT) - (addr >> PAGE_SHIFT))
  
-+#include <linux/stddef.h>
- #include <linux/perf_event.h>
++static unsigned long virt_to_hvpfn(void *addr)
++{
++	unsigned long paddr;
++
++	if (is_vmalloc_addr(addr))
++		paddr = page_to_phys(vmalloc_to_page(addr)) +
++					 offset_in_page(addr);
++	else
++		paddr = __pa(addr);
++
++	return  paddr >> PAGE_SHIFT;
++}
++
+ /*
+  * vmbus_setevent- Trigger an event notification on the specified
+  * channel.
+@@ -298,8 +312,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
+ 		gpadl_header->range[0].byte_offset = 0;
+ 		gpadl_header->range[0].byte_count = size;
+ 		for (i = 0; i < pfncount; i++)
+-			gpadl_header->range[0].pfn_array[i] = slow_virt_to_phys(
+-				kbuffer + PAGE_SIZE * i) >> PAGE_SHIFT;
++			gpadl_header->range[0].pfn_array[i] = virt_to_hvpfn(
++				kbuffer + PAGE_SIZE * i);
+ 		*msginfo = msgheader;
  
- #include "../../perf.h"
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index a1a97956136f..d215714f48df 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -5,6 +5,7 @@
- #include <time.h>
- #include <stdbool.h>
- #include <linux/types.h>
-+#include <linux/stddef.h>
- #include <linux/perf_event.h>
+ 		pfnsum = pfncount;
+@@ -350,9 +364,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
+ 			 * so the hypervisor guarantees that this is ok.
+ 			 */
+ 			for (i = 0; i < pfncurr; i++)
+-				gpadl_body->pfn[i] = slow_virt_to_phys(
+-					kbuffer + PAGE_SIZE * (pfnsum + i)) >>
+-					PAGE_SHIFT;
++				gpadl_body->pfn[i] = virt_to_hvpfn(
++					kbuffer + PAGE_SIZE * (pfnsum + i));
  
- extern bool test_attr__enabled;
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index 90d4577a92dc..6d7fe44aadc0 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -2,6 +2,7 @@
- #ifndef __PERF_HEADER_H
- #define __PERF_HEADER_H
+ 			/* add to msg header */
+ 			list_add_tail(&msgbody->msglistentry,
+@@ -380,8 +393,8 @@ static int create_gpadl_header(void *kbuffer, u32 size,
+ 		gpadl_header->range[0].byte_offset = 0;
+ 		gpadl_header->range[0].byte_count = size;
+ 		for (i = 0; i < pagecount; i++)
+-			gpadl_header->range[0].pfn_array[i] = slow_virt_to_phys(
+-				kbuffer + PAGE_SIZE * i) >> PAGE_SHIFT;
++			gpadl_header->range[0].pfn_array[i] = virt_to_hvpfn(
++				kbuffer + PAGE_SIZE * i);
  
-+#include <linux/stddef.h>
- #include <linux/perf_event.h>
- #include <sys/types.h>
- #include <stdbool.h>
-diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-index 760558dcfd18..cae1a9a39722 100644
---- a/tools/perf/util/namespaces.h
-+++ b/tools/perf/util/namespaces.h
-@@ -10,6 +10,7 @@
- #define __PERF_NAMESPACES_H
- 
- #include <sys/types.h>
-+#include <linux/stddef.h>
- #include <linux/perf_event.h>
- #include <linux/refcount.h>
- #include <linux/types.h>
+ 		*msginfo = msgheader;
+ 	}
 -- 
-2.14.4
+1.8.3.1
 
