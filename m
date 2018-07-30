@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7790EFD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C60FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C562208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C562208AD
+	by mail.kernel.org (Postfix) with ESMTP id 03BCB20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BCB20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeG3Jph (ORCPT
+        id S1727016AbeG3Jpk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 05:45:37 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55946 "EHLO
+        Mon, 30 Jul 2018 05:45:40 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56018 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbeG3Jph (ORCPT
+        with ESMTP id S1726796AbeG3Jpj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 05:45:37 -0400
+        Mon, 30 Jul 2018 05:45:39 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 6F20A27E237
+        with ESMTPSA id E369E27E22F
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -43,10 +43,19 @@ Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
         kernel@collabora.com, robin.murphy@arm.com,
         Sean Paul <seanpaul@chromium.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/8] drm: rockchip: Add DDR devfreq support.
-Date:   Mon, 30 Jul 2018 10:11:22 +0200
-Message-Id: <20180730081124.30698-7-enric.balletbo@collabora.com>
+        linux-arm-kernel@lists.infradead.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        devicetree@vger.kernel.org, Mark Yao <markyao0591@gmail.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Randy Li <ayaka@soulik.info>,
+        Douglas Anderson <dianders@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 7/8] arm64: dts: rk3399: Add dfi and dmc nodes.
+Date:   Mon, 30 Jul 2018 10:11:23 +0200
+Message-Id: <20180730081124.30698-8-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180730081124.30698-1-enric.balletbo@collabora.com>
 References: <20180730081124.30698-1-enric.balletbo@collabora.com>
@@ -55,284 +64,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Lin Huang <hl@rock-chips.com>
 
-Add support for devfreq to dynamically control the DDR frequency. It
-will activate when there is one CRTC active, and disable if more than
-one becomes active (to avoid flickering on one of the screens).
+These are required to support DDR DVFS on rk3399 platform. The patch also
+introduces two new files (rk3399-dram.h and rk3399-dram-default-timing)
+with default DRAM settings.
 
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
-Changes in v1: None
+Changes in v1:
+- [RFC 8/10] Move rk3399-dram.h to dt-includes.
+- [RFC 8/10] Put sdram default values under the dmc node.
+- [RFC 8/10] Removed rk3399-dram-default-timing.dts
 
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 46 +++++++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  9 ++++
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 35 ++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 34 +++++++++++++++
- 4 files changed, 124 insertions(+)
+ .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 ++++++++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 49 +++++++++++++
+ include/dt-bindings/power/rk3399-dram.h       | 73 +++++++++++++++++++
+ 3 files changed, 151 insertions(+)
+ create mode 100644 include/dt-bindings/power/rk3399-dram.h
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index f814d37b1db2..e774f3c7c325 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -19,6 +19,8 @@
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_of.h>
-+#include <linux/devfreq.h>
-+#include <linux/devfreq-event.h>
- #include <linux/dma-mapping.h>
- #include <linux/dma-iommu.h>
- #include <linux/pm_runtime.h>
-@@ -77,6 +79,46 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
- 	iommu_detach_device(domain, dev);
- }
- 
-+#if IS_ENABLED(CONFIG_ARM_RK3399_DMC_DEVFREQ)
-+static int rockchip_drm_init_devfreq(struct device *dev,
-+				     struct rockchip_drm_private *priv)
-+{
-+	struct devfreq *devfreq;
-+	struct devfreq_event_dev *edev;
-+	int ret;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+index 69cc9b05baa5..c9e7032b01a8 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+@@ -110,6 +110,31 @@
+ 			opp-microvolt = <1075000>;
+ 		};
+ 	};
 +
-+	devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
-+	if (IS_ERR(devfreq)) {
-+		ret = PTR_ERR(devfreq);
-+		if (ret == -ENODEV) {
-+			DRM_DEV_INFO(dev, "devfreq missing, skip\n");
-+			return 0;
-+		}
-+		return ret;
-+	}
++	dmc_opp_table: dmc_opp_table {
++		compatible = "operating-points-v2";
 +
-+	edev = devfreq_event_get_edev_by_phandle(devfreq->dev.parent, 0);
-+	if (IS_ERR(edev)) {
-+		ret = PTR_ERR(edev);
-+		if (ret == -ENODEV) {
-+			DRM_DEV_INFO(dev, "devfreq edev missing, skip\n");
-+			return 0;
-+		}
-+		return ret;
-+	}
-+
-+	priv->devfreq = devfreq;
-+	priv->devfreq_event_dev = edev;
-+	return 0;
-+}
-+#else
-+static int rockchip_drm_init_devfreq(struct device *dev,
-+				     struct rockchip_drm_private *priv)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int rockchip_drm_init_iommu(struct drm_device *drm_dev)
- {
- 	struct rockchip_drm_private *private = drm_dev->dev_private;
-@@ -136,6 +178,10 @@ static int rockchip_drm_bind(struct device *dev)
- 	INIT_LIST_HEAD(&private->psr_list);
- 	mutex_init(&private->psr_list_lock);
- 
-+	ret = rockchip_drm_init_devfreq(dev, private);
-+	if (ret)
-+		goto err_free;
-+
- 	ret = rockchip_drm_init_iommu(drm_dev);
- 	if (ret)
- 		goto err_free;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-index 3a6ebfc26036..cc13fac59644 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-@@ -57,6 +57,10 @@ struct rockchip_drm_private {
- 	struct drm_mm mm;
- 	struct list_head psr_list;
- 	struct mutex psr_list_lock;
-+
-+	struct devfreq *devfreq;
-+	struct devfreq_event_dev *devfreq_event_dev;
-+	bool dmc_disable_flag;
++		opp00 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <900000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <666000000>;
++			opp-microvolt = <900000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <900000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <928000000>;
++			opp-microvolt = <900000>;
++		};
++	};
  };
  
- int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
-@@ -65,6 +69,11 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
- 				    struct device *dev);
- int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout);
- 
-+uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode);
+ &cpu_l0 {
+@@ -139,3 +164,7 @@
+ &gpu {
+ 	operating-points-v2 = <&gpu_opp_table>;
+ };
 +
-+void rockchip_drm_enable_dmc(struct rockchip_drm_private *priv);
-+void rockchip_drm_disable_dmc(struct rockchip_drm_private *priv);
++&dmc {
++	operating-points-v2 = <&dmc_opp_table>;
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index b6cc50ab2cb8..e9d9aa7aa2ac 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/power/rk3399-dram.h>
+ #include <dt-bindings/power/rk3399-power.h>
+ #include <dt-bindings/thermal/thermal.h>
+ 
+@@ -1833,6 +1834,54 @@
+ 		status = "disabled";
+ 	};
+ 
++	dfi: dfi@ff630000 {
++		reg = <0x00 0xff630000 0x00 0x4000>;
++		compatible = "rockchip,rk3399-dfi";
++		rockchip,pmu = <&pmugrf>;
++		interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks = <&cru PCLK_DDR_MON>;
++		clock-names = "pclk_ddr_mon";
++		status = "disabled";
++	};
 +
- extern struct platform_driver cdn_dp_driver;
- extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
- extern struct platform_driver dw_mipi_dsi_driver;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index ea18cb2a76c0..7b6f7227d476 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <soc/rockchip/rk3399_dmc.h>
- 
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_fb.h"
-@@ -145,6 +146,16 @@ rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
- 		rockchip_drm_psr_inhibit_get(encoder);
- }
- 
-+uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
-+{
-+	uint64_t vblank_time = mode->vtotal - mode->vdisplay;
++	dmc: dmc {
++		compatible = "rockchip,rk3399-dmc";
++		rockchip,pmu = <&pmugrf>;
++		devfreq-events = <&dfi>;
++		clocks = <&cru SCLK_DDRC>;
++		clock-names = "dmc_clk";
++		status = "disabled";
++		rockchip,ddr3_speed_bin = <21>;
++		rockchip,pd_idle = <0x40>;
++		rockchip,sr_idle = <0x2>;
++		rockchip,sr_mc_gate_idle = <0x3>;
++		rockchip,srpd_lite_idle	= <0x4>;
++		rockchip,standby_idle = <0x2000>;
++		rockchip,dram_dll_dis_freq = <300000000>;
++		rockchip,phy_dll_dis_freq = <125000000>;
++		rockchip,auto_pd_dis_freq = <666000000>;
++		rockchip,ddr3_odt_dis_freq = <333000000>;
++		rockchip,ddr3_drv = <DDR3_DS_40ohm>;
++		rockchip,ddr3_odt = <DDR3_ODT_120ohm>;
++		rockchip,phy_ddr3_ca_drv = <PHY_DRV_ODT_40>;
++		rockchip,phy_ddr3_dq_drv = <PHY_DRV_ODT_40>;
++		rockchip,phy_ddr3_odt = <PHY_DRV_ODT_240>;
++		rockchip,lpddr3_odt_dis_freq = <333000000>;
++		rockchip,lpddr3_drv = <LP3_DS_34ohm>;
++		rockchip,lpddr3_odt = <LP3_ODT_240ohm>;
++		rockchip,phy_lpddr3_ca_drv = <PHY_DRV_ODT_40>;
++		rockchip,phy_lpddr3_dq_drv = <PHY_DRV_ODT_40>;
++		rockchip,phy_lpddr3_odt = <PHY_DRV_ODT_240>;
++		rockchip,lpddr4_odt_dis_freq = <333000000>;
++		rockchip,lpddr4_drv = <LP4_PDDS_60ohm>;
++		rockchip,lpddr4_dq_odt = <LP4_DQ_ODT_40ohm>;
++		rockchip,lpddr4_ca_odt = <LP4_CA_ODT_40ohm>;
++		rockchip,phy_lpddr4_ca_drv = <PHY_DRV_ODT_40>;
++		rockchip,phy_lpddr4_ck_cs_drv = <PHY_DRV_ODT_80>;
++		rockchip,phy_lpddr4_dq_drv = <PHY_DRV_ODT_80>;
++		rockchip,phy_lpddr4_odt = <PHY_DRV_ODT_60>;
++	};
 +
-+	vblank_time *= (uint64_t)NSEC_PER_SEC * mode->htotal;
-+	do_div(vblank_time, mode->clock * 1000);
+ 	pinctrl: pinctrl {
+ 		compatible = "rockchip,rk3399-pinctrl";
+ 		rockchip,grf = <&grf>;
+diff --git a/include/dt-bindings/power/rk3399-dram.h b/include/dt-bindings/power/rk3399-dram.h
+new file mode 100644
+index 000000000000..4b3d4a79923b
+--- /dev/null
++++ b/include/dt-bindings/power/rk3399-dram.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR X11) */
++/*
++ * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * Author: Lin Huang <hl@rock-chips.com>
++ */
 +
-+	return vblank_time;
-+}
++#ifndef _DTS_DRAM_ROCKCHIP_RK3399_H
++#define _DTS_DRAM_ROCKCHIP_RK3399_H
 +
- static void
- rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
- {
-@@ -167,9 +178,28 @@ static void
- rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
- {
- 	struct drm_device *dev = old_state->dev;
-+	struct rockchip_drm_private *priv = dev->dev_private;
-+	struct drm_crtc *crtc;
-+	struct drm_display_mode *mode;
-+	bool force_dmc_off = false;
++#define DDR3_DS_34ohm		34
++#define DDR3_DS_40ohm		40
 +
-+	drm_for_each_crtc(crtc, dev) {
-+		if (crtc->state->active) {
-+			mode = &crtc->state->adjusted_mode;
-+			if (rockchip_drm_get_vblank_ns(mode) <
-+			    DMC_MIN_VBLANK_NS)
-+				force_dmc_off = true;
-+		}
-+	}
- 
- 	rockchip_drm_psr_inhibit_get_state(old_state);
- 
-+	/* If disabling dmc, disable it before committing mode set changes. */
-+	if (force_dmc_off && !priv->dmc_disable_flag) {
-+		rockchip_dmcfreq_block(priv->devfreq);
-+		priv->dmc_disable_flag = true;
-+	}
++#define DDR3_ODT_DIS		0
++#define DDR3_ODT_40ohm		40
++#define DDR3_ODT_60ohm		60
++#define DDR3_ODT_120ohm		120
 +
- 	drm_atomic_helper_commit_modeset_disables(dev, old_state);
- 
- 	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-@@ -184,6 +214,11 @@ rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
- 	drm_atomic_helper_wait_for_vblanks(dev, old_state);
- 
- 	drm_atomic_helper_cleanup_planes(dev, old_state);
++#define LP2_DS_34ohm		34
++#define LP2_DS_40ohm		40
++#define LP2_DS_48ohm		48
++#define LP2_DS_60ohm		60
++#define LP2_DS_68_6ohm		68	/* optional */
++#define LP2_DS_80ohm		80
++#define LP2_DS_120ohm		120	/* optional */
 +
-+	if (!force_dmc_off && priv->dmc_disable_flag) {
-+		rockchip_dmcfreq_unblock(priv->devfreq);
-+		priv->dmc_disable_flag = false;
-+	}
- }
- 
- static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 45847d4a2e14..e9f91278137d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -36,6 +36,8 @@
- #include <linux/reset.h>
- #include <linux/delay.h>
- 
-+#include <soc/rockchip/rk3399_dmc.h>
++#define LP3_DS_34ohm		34
++#define LP3_DS_40ohm		40
++#define LP3_DS_48ohm		48
++#define LP3_DS_60ohm		60
++#define LP3_DS_80ohm		80
++#define LP3_DS_34D_40U		3440
++#define LP3_DS_40D_48U		4048
++#define LP3_DS_34D_48U		3448
 +
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_gem.h"
- #include "rockchip_drm_fb.h"
-@@ -106,7 +108,9 @@ struct vop {
- 	struct drm_flip_work fb_unref_work;
- 	unsigned long pending;
- 
-+	ktime_t line_flag_timestamp;
- 	struct completion line_flag_completion;
-+	struct notifier_block dmc_nb;
- 
- 	const struct vop_data *data;
- 
-@@ -572,10 +576,12 @@ static int vop_enable(struct drm_crtc *crtc)
- static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
- 				    struct drm_crtc_state *old_state)
- {
-+	struct rockchip_drm_private *priv = crtc->dev->dev_private;
- 	struct vop *vop = to_vop(crtc);
- 
- 	WARN_ON(vop->event);
- 
-+	rockchip_dmcfreq_unregister_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
- 	mutex_lock(&vop->vop_lock);
- 	drm_crtc_vblank_off(crtc);
- 
-@@ -872,6 +878,7 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
- 	const struct vop_data *vop_data = vop->data;
- 	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc->state);
- 	struct drm_display_mode *adjusted_mode = &crtc->state->adjusted_mode;
-+	struct rockchip_drm_private *priv = crtc->dev->dev_private;
- 	u16 hsync_len = adjusted_mode->hsync_end - adjusted_mode->hsync_start;
- 	u16 hdisplay = adjusted_mode->hdisplay;
- 	u16 htotal = adjusted_mode->htotal;
-@@ -962,6 +969,31 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
- 
- 	VOP_REG_SET(vop, common, standby, 0);
- 	mutex_unlock(&vop->vop_lock);
-+	rockchip_dmcfreq_register_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
-+}
++#define LP3_ODT_DIS		0
++#define LP3_ODT_60ohm		60
++#define LP3_ODT_120ohm		120
++#define LP3_ODT_240ohm		240
 +
-+static int dmc_notify(struct notifier_block *nb,
-+		      unsigned long action,
-+		      void *data)
-+{
-+	struct vop *vop = container_of(nb, struct vop, dmc_nb);
-+	struct drm_crtc *crtc = &vop->crtc;
-+	ktime_t *timeout = data;
-+	int ret;
++#define LP4_PDDS_40ohm		40
++#define LP4_PDDS_48ohm		48
++#define LP4_PDDS_60ohm		60
++#define LP4_PDDS_80ohm		80
++#define LP4_PDDS_120ohm		120
++#define LP4_PDDS_240ohm		240
 +
-+	if (WARN_ON(!vop->is_enabled))
-+		return NOTIFY_BAD;
++#define LP4_DQ_ODT_40ohm	40
++#define LP4_DQ_ODT_48ohm	48
++#define LP4_DQ_ODT_60ohm	60
++#define LP4_DQ_ODT_80ohm	80
++#define LP4_DQ_ODT_120ohm	120
++#define LP4_DQ_ODT_240ohm	240
++#define LP4_DQ_ODT_DIS		0
 +
-+	ret = rockchip_drm_wait_vact_end(crtc, 100);
-+	*timeout = ktime_add_ns(vop->line_flag_timestamp,
-+				rockchip_drm_get_vblank_ns(&crtc->mode));
-+	if (ret) {
-+		dev_err(vop->dev, "%s: Line flag interrupt did not arrive\n",
-+			__func__);
-+		return NOTIFY_BAD;
-+	}
++#define LP4_CA_ODT_40ohm	40
++#define LP4_CA_ODT_48ohm	48
++#define LP4_CA_ODT_60ohm	60
++#define LP4_CA_ODT_80ohm	80
++#define LP4_CA_ODT_120ohm	120
++#define LP4_CA_ODT_240ohm	240
++#define LP4_CA_ODT_DIS		0
 +
-+	return NOTIFY_STOP;
- }
- 
- static bool vop_fs_irq_is_pending(struct vop *vop)
-@@ -1201,6 +1233,7 @@ static irqreturn_t vop_isr(int irq, void *data)
- 	}
- 
- 	if (active_irqs & LINE_FLAG_INTR) {
-+		vop->line_flag_timestamp = ktime_get();
- 		complete(&vop->line_flag_completion);
- 		active_irqs &= ~LINE_FLAG_INTR;
- 		ret = IRQ_HANDLED;
-@@ -1577,6 +1610,7 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 	spin_lock_init(&vop->reg_lock);
- 	spin_lock_init(&vop->irq_lock);
- 	mutex_init(&vop->vop_lock);
-+	vop->dmc_nb.notifier_call = dmc_notify;
- 
- 	ret = vop_create_crtc(vop);
- 	if (ret)
++#define PHY_DRV_ODT_Hi_Z	0
++#define PHY_DRV_ODT_240		240
++#define PHY_DRV_ODT_120		120
++#define PHY_DRV_ODT_80		80
++#define PHY_DRV_ODT_60		60
++#define PHY_DRV_ODT_48		48
++#define PHY_DRV_ODT_40		40
++#define PHY_DRV_ODT_34_3	34
++
++#endif /* _DTS_DRAM_ROCKCHIP_RK3399_H */
 -- 
 2.18.0
 
