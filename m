@@ -2,127 +2,95 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF9B13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4184013F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14FF20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:30:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1UxaopC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14FF20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F2E3320873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 14:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E3320873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeG3QGC (ORCPT
+        id S1731986AbeG3QGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 12:06:02 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35717 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726860AbeG3QGC (ORCPT
+        Mon, 30 Jul 2018 12:06:22 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35703 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbeG3QGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 12:06:02 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w3-v6so5640330plq.2;
-        Mon, 30 Jul 2018 07:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1hWa1mX8s05v3DYpMzpwCXIWjKn9aExRyXaVZHcy3/k=;
-        b=K1UxaopC5P9vJGepF9IHO6j3i6v8PWJ3F6jjjOXGUQq9RzRRnsbfyBhOfqen08mB8r
-         6Qx+e3AMJFb180l11V2AMHvLDrhlzNQoA39s3nuKcIKG484svcMlXSnOWW35j6IpGIf2
-         jYT62PDy73FmlN8dpgYbTTSr3wO7YFBLeYuEcPIPjkuoBVI3Fybg7T5sP6CO0ALO1+Mf
-         PI2PiYjF8/Uc2PdzR+bjDiRGlUHv6oStsH+Qnrri0ZCFtLAKDNh1r6qGGYMcYZKuv5K3
-         d8Ed4frPSW43dfxFKiAcu7StCJCTAdAF18kiJhj7OBSGGiXS0J8Ew1MuzaqK8cnL0Rfn
-         1p1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1hWa1mX8s05v3DYpMzpwCXIWjKn9aExRyXaVZHcy3/k=;
-        b=oEevBD/djjYWcNOAaJHqybXzWPKSXfkZUmz/eTEU79bcjWuMJ+atLvSCWJ52V+tweB
-         6yZn0RyqBrVSyalHfgZQ44pnpzMA45lUOP8IpsTDa67Z7q0GqB8H13oO/hdwxl5RAGK/
-         tqxIWpnNhPHMHBzKZke0ZkHUQ2KPV2eO92aRc6/5fRKiW8U0GOkF4y1meH6FJFVZqHc2
-         hIttnPlpw05m2sVQPfjYEqSZCTnX8wmaJvd6M1Qi9GsgW0NNeJGhC6073YHRgFk0ngkk
-         PJis1Z8R2Zvcd3XMEw57edsTCDdPRISx37jghetAvydmrtBIovULFogxOLPkUFOv4jZX
-         zOGQ==
-X-Gm-Message-State: AOUpUlHXKP75228vbM2uRyqZj5GJeXeofExrza6HBNdEB3xqMkzPnXA1
-        xNknttzRSN8cqS1KLiC0+ds=
-X-Google-Smtp-Source: AAOMgpfWsN3g22NKyhQ+AdbvDdubEzNyuQ1w+yXkK1zx3oeeBf4D6+IQaWpVP29e6Wy5GBk6OImixA==
-X-Received: by 2002:a17:902:1703:: with SMTP id i3-v6mr16392697pli.263.1532961046116;
-        Mon, 30 Jul 2018 07:30:46 -0700 (PDT)
-Received: from localhost (c-24-4-233-174.hsd1.ca.comcast.net. [24.4.233.174])
-        by smtp.gmail.com with ESMTPSA id n24-v6sm24781375pfi.161.2018.07.30.07.30.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 07:30:45 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 07:30:43 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Yangbo Lu <yangbo.lu@nxp.com>
-Cc:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ptp_qoriq: convert to use module parameters for
- initialization
-Message-ID: <20180730143043.qu66ttzwyjbw6si7@localhost>
-References: <20180730100154.27906-1-yangbo.lu@nxp.com>
- <20180730100154.27906-3-yangbo.lu@nxp.com>
+        Mon, 30 Jul 2018 12:06:22 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C632A8063F; Mon, 30 Jul 2018 16:31:04 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 16:31:04 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
+ [ver #10]
+Message-ID: <20180730143104.GB24051@amd>
+References: <20180729113749.GA7333@amd>
+ <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
+ <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
+ <25489.1532953411@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
 Content-Disposition: inline
-In-Reply-To: <20180730100154.27906-3-yangbo.lu@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <25489.1532953411@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 06:01:54PM +0800, Yangbo Lu wrote:
-> The ptp_qoriq driver initialized the 1588 timer with the
-> configurations provided by the properties of device tree
-> node. For example,
-> 
->   fsl,tclk-period = <5>;
->   fsl,tmr-prsc    = <2>;
->   fsl,tmr-add     = <0xaaaaaaab>;
->   fsl,tmr-fiper1  = <999999995>;
->   fsl,tmr-fiper2  = <99990>;
->   fsl,max-adj     = <499999999>;
-> 
-> These things actually were runtime configurations which
-> were not proper to be put into dts.
 
-That is debatable.  While I agree that the dts isn't ideal for these,
-still it is the lesser of two or more evils.
+--2B/JsCI69OhZNC5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This patch is to convert
-> to use module parameters for 1588 timer initialization, and
-> to support initial register values calculation.
+On Mon 2018-07-30 13:23:31, David Howells wrote:
+> Pavel Machek <pavel@ucw.cz> wrote:
+>=20
+> > Hmm, so kernel now returns messages in english? Not sure that is
+> > reasonable, as that is going to cause problems with translations...
+>=20
+> The problem is that if there's no explicit logging route attached, the
+> messages get dumped via printk() instead, so they really need to be print=
+able
+> strings.
 
-It is hard for me to understand how using module parameters improves
-the situation.
+Well, I guess errors should have numbers, and catalog explaining what
+error means what. That way userspace can translate, and it is what we
+do with errno.
 
-> If the parameters are not provided, the driver will calculate
-> register values with a set of default parameters. With this
-> patch, those dts properties are no longer needed for new
-> platform to support 1588 timer, and many QorIQ DPAA platforms
-> (some P series and T series platforms of PowerPC, and some
-> LS series platforms of ARM64) could use this driver for their
-> fman ptp timer with default module parameters. However, this
-> patch didn't remove the dts method. Because there were still
-> many old platforms using the dts method. We need to clean up
-> their dts files, verify module parameters on them, and convert
-> them to the new method gradually in case of breaking any
-> function.
+I believe numbers are best. If you hate numbers, you can still use
+strings, as long as you can enumerate them in docs (but it will be
+strange design).
 
-In addition, like it or not, because the dts is an ABI, you must
-continue support of the dts values as a legacy option.
+But anything else is not suitable, I'm afraid.
 
-Thanks,
-Richard
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2B/JsCI69OhZNC5r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltfIScACgkQMOfwapXb+vKg4ACfZaW20eGyJG54agyIfU1Cxd1z
+zb0AoJIeEfzVO7Pkz1IsbW1YF+9dX+A/
+=Lt0B
+-----END PGP SIGNATURE-----
+
+--2B/JsCI69OhZNC5r--
