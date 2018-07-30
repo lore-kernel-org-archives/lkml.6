@@ -2,116 +2,91 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B630C46462
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 03:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3F1C46461
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 03:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1546F20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 03:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1546F20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C1F0620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 03:10:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BMg/CXQb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F0620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725967AbeG3EkS (ORCPT
+        id S1726074AbeG3En3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 00:40:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10176 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725789AbeG3EkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 00:40:18 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 813A0DF4A1A96;
-        Mon, 30 Jul 2018 11:07:25 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Mon, 30 Jul 2018
- 11:07:19 +0800
-Subject: Re: [PATCH 1/2] staging: erofs: fix compile error without built-in
- decompression support
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <chao@kernel.org>, Gao Xiang <hsiangkao@aol.com>
-CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1532761832-6964-1-git-send-email-gaoxiang25@huawei.com>
- <20180729053459.34140-1-hsiangkao@aol.com>
- <5a396128-822f-5232-f3ee-1c5ac6524380@huawei.com>
- <614f3148-91ae-2a9a-f932-21e32e290717@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <d5e4f0a5-c184-c4ac-d5dc-451488d6fd2d@huawei.com>
-Date:   Mon, 30 Jul 2018 11:07:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 00:43:29 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:51890 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbeG3En2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 00:43:28 -0400
+Received: by mail-wm0-f51.google.com with SMTP id y2-v6so11437662wma.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 20:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=nfECFzjZPVlyRfUz2yJg3SfVMrKQXDob7lF9CNDUsV0=;
+        b=BMg/CXQbq/x8HwUBEQJ9twJrEo3vxsuWkBBl0n6h4qNnQ/dkCo0jon7G/3ecmWzDB+
+         +azZAYWdt/h+EbrzK4D1ksp/9/D5dHNU+DWuze0V8pwq01SQVB7lOtRVV4ICFP3hveP0
+         zhwAaidfJJuGdFpgl5g8n9jBtv3cAi0HbwquQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=nfECFzjZPVlyRfUz2yJg3SfVMrKQXDob7lF9CNDUsV0=;
+        b=CZt9IKVHAj8jnOLV2K1o1mWO7qpN3ABVD+OpKEiz6z62udZ581zfOz4TRG4ta7aCMN
+         toITN4S77qSuzg2NaTkIzXo1Zv++E5qVhMv/1Dwb5wkKR/52MWSUH0mcaTRT5w+yTGhh
+         I/033cVDcMQuDXU1bjTmHlF86a6VS/vu0OF2R45HGrX9mZ6LiQCaweQwqtr35O7NzSdz
+         NbJcxPNb5gGKzp9q5fwv5tbCJ+Llr819qCCLl6IwkHAIIosyNKycC+0f4YVubwBK9xfz
+         AiIT48PlG+XeIe8xnFuX0sDnhzTstiYfOdPMuLSA4lEJeqUvLmm4AdBE/EHpWbRy1S0C
+         IbCQ==
+X-Gm-Message-State: AOUpUlG6TWvU/e+Tg0xKAPtIlmtItIzjM+ARA+9QQZITkl3Gust6ryDP
+        J5YyLJ8XLauwepmzWNIGvgQODQ==
+X-Google-Smtp-Source: AAOMgpd5AYSqnt0hKfJp/Z5JIQnOg4hIdJhjxkfAqJnEKg14akLnAgOK40nW6PZjB7oXNGcP2si8JQ==
+X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr12774605wmf.1.1532920236976;
+        Sun, 29 Jul 2018 20:10:36 -0700 (PDT)
+Received: from andrea ([94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id t6-v6sm14588872wmf.8.2018.07.29.20.10.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 29 Jul 2018 20:10:36 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 05:10:30 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        AL Yu-Chen Cho <acho@suse.com>
+Subject: [Question] bluetooth/{bnep,cmtp,hidp}: memory barriers
+Message-ID: <20180730031030.GA9430@andrea>
 MIME-Version: 1.0
-In-Reply-To: <614f3148-91ae-2a9a-f932-21e32e290717@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiang,
+Hi,
 
-On 2018/7/30 10:32, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2018/7/30 10:07, Chao Yu wrote:
->> On 2018/7/29 13:34, Gao Xiang via Linux-erofs wrote:
->>> This patch fixes incorrect code snippets due to spilt code
->>> into small patches by mistake.
->>>
->>> Link: https://lists.01.org/pipermail/kbuild-all/2018-July/050747.html
->>> Link: https://lists.01.org/pipermail/kbuild-all/2018-July/050750.html
->>> Reported-by: kbuild test robot <lkp@intel.com>
->>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->>> ---
->>>  I test several Kconfig option combinations and all these
->>> combinations are successfully compiled.
->>>
->>> Hi Chao,
->>>  Could you please review this two patches first before merging
->>> into staging-next tree?
->> Hi Xiang,
->>
->> For this compiler issue, I think we only need to cover erofs_shrink_workstation
->> with marco CONFIG_EROFS_FS_ZIP, other modification like symbol name change or
->> relocate erofs_shrink_workstation are with other reason, so how about separate
->> them into different patches?
->>
->> Thanks,
->>
-> 
-> It seems that Greg merged this patch to staging-next yesterday, since it is a urgent fix
-> (otherwise erofs cannot be compiled properly without CONFIG_EROFS_FS_ZIP, that is my fault).
-> 
-> I wrote in a patch yesterday becuase all the modifications have the same root cause ----
->     fix incorrect code snippets due to spilt code into small patches by mistake.
-> 
-> But you are right, it is more proper to spilt into two patches, let me resend these patches later
-> (I don't know whether Greg will apply them... :-( sorry... )
-> 
-> I think in order to reduce Greg's patchwork burden, we could quickly review patches internally in linux-erofs first,
-> tidy up in a patchset set and send to Greg in a series periodically (if patches are not urgent).
-> 
-> How do you think about it?
+I'm currently puzzled by the the three calls to smp_mb__before_atomic()
+in bnep_session(), cmtp_session() and hidp_session_run() respectively:
 
-I agree with you, as we discussed offline, let's send patch to erofs mailing
-list for review first, and keep all developing patches in erofs-dev branch as
-long as possible, then periodically, submitting patches to Greg in batch, it can
-reduce unneeded modification in staging-next tree. For urgent fix, we can speed
-up the progress. :)
+On the one hand, these barriers provide no guarantee on the subsequent
+atomic_read(s->terminate) (as the comments preceding the barriers seem
+to suggest), because atomic_read() is not a read-modify-write.
 
-Thanks,
+On the other hand, I'm currently unable to say *why such an "mb" would
+be required: not being too familiar with this code, I figured I should
+ask before sending a patch.  ;-)
 
-> 
-> Thanks,
-> Gao Xiang
-> 
-> .
-> 
-
+  Andrea
