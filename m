@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6811113F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 246A6FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1456E20892
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1456E20892
+	by mail.kernel.org (Postfix) with ESMTP id D085820892
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 12:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D085820892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731859AbeG3O1v (ORCPT
+        id S1731926AbeG3O14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 10:27:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48968 "EHLO mx1.suse.de"
+        Mon, 30 Jul 2018 10:27:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49036 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731700AbeG3O1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 10:27:51 -0400
+        id S1730592AbeG3O1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 10:27:55 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7CCAAF54;
-        Mon, 30 Jul 2018 12:52:57 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C38EBAF56;
+        Mon, 30 Jul 2018 12:53:02 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 6C09AA0BE8; Mon, 30 Jul 2018 14:52:57 +0200 (CEST)
-Message-Id: <b0a6a8fd66eb610a30f5f4af7143ffa3a27fcee3.1532953989.git.mkubecek@suse.cz>
+        id 7278EA0BE8; Mon, 30 Jul 2018 14:53:02 +0200 (CEST)
+Message-Id: <f7a8c8bfc69deae25669aaf4a42feedcfce58209.1532953989.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1532953989.git.mkubecek@suse.cz>
 References: <cover.1532953989.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v2 03/17] ethtool: introduce ethtool netlink
+Subject: [RFC PATCH net-next v2 04/17] ethtool: helper functions for netlink
  interface
 To:     netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
@@ -41,343 +41,356 @@ Cc:     linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
         Roopa Prabhu <roopa@cumulusnetworks.com>,
         Jakub Kicinski <kubakici@wp.pl>,
         "John W. Linville" <linville@tuxdriver.com>
-Date:   Mon, 30 Jul 2018 14:52:57 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 14:53:02 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No function implemented yet, only genetlink and module infrastructure.
-Register/unregister genetlink family "ethtool" and allow the module to be
-autoloaded by genetlink code (if built as a module, distributions would
-probably prefer "y").
+Misc helpers used by ethtool netlink code.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- Documentation/networking/ethtool-netlink.txt | 168 +++++++++++++++++++
- include/linux/ethtool_netlink.h              |   9 +
- include/uapi/linux/ethtool_netlink.h         |  19 +++
- net/Kconfig                                  |   7 +
- net/ethtool/Makefile                         |   6 +-
- net/ethtool/netlink.c                        |  41 +++++
- net/ethtool/netlink.h                        |  12 ++
- 7 files changed, 261 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/networking/ethtool-netlink.txt
- create mode 100644 include/linux/ethtool_netlink.h
- create mode 100644 include/uapi/linux/ethtool_netlink.h
- create mode 100644 net/ethtool/netlink.c
- create mode 100644 net/ethtool/netlink.h
+ include/uapi/linux/ethtool_netlink.h |  11 ++
+ net/ethtool/netlink.c                | 163 +++++++++++++++++++++++++++
+ net/ethtool/netlink.h                | 124 ++++++++++++++++++++
+ 3 files changed, 298 insertions(+)
 
-diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
-new file mode 100644
-index 000000000000..120376e0f91b
---- /dev/null
-+++ b/Documentation/networking/ethtool-netlink.txt
-@@ -0,0 +1,168 @@
-+                        Netlink interface for ethtool
-+                        =============================
-+
-+
-+Basic information
-+-----------------
-+
-+Netlink interface for ethtool uses generic netlink family "ethtool" (userspace
-+application should use macros ETHTOOL_GENL_NAME and ETHTOOL_GENL_VERSION
-+defined in <linux/ethtool_netlink.h> uapi header). This family does not use
-+a specific header, all information in requests and replies is passed using
-+netlink attributes.
-+
-+In requests, device can be identified by ifindex or by name; if both are used,
-+they must match. In replies, kernel fills both. The meaning of flags,
-+info_mask and index fields depends on request type.
-+
-+The ethtool netlink interface uses extended ACK for error and warning
-+reporting, userspace application developers are encouraged to make these
-+messages available to user in a suitable way.
-+
-+Requests can be divided into three categories: "get" (retrieving information),
-+"set" (setting parameters) and "action" (invoking an action).
-+
-+All "set" and "action" type requests require admin privileges (CAP_NET_ADMIN
-+in the namespace). Most "get" type request are allowed for anyone but there
-+are exceptions (where the response contains sensitive information). In some
-+cases, the request as such is allowed for anyone but unprivileged users have
-+attributes with sensitive information (e.g. wake-on-lan password) omitted.
-+
-+
-+Conventions
-+-----------
-+
-+Attributes which represent a boolean value usually use u8 type so that we can
-+distinguish three states: "on", "off" and "not present" (meaning the
-+information is not available in "get" requests or value is not to be changed
-+in "set" requests). For these attributes, the "true" value should be passed as
-+number 1 but any non-zero value should be understood as "true" by recipient.
-+
-+Some request types allow passing an attribute named ETHA_*_INFOMASK with
-+a bitmask telling kernel that we are only interested in some parts of the
-+information. If info mask is omitted, all available information is returned.
-+Meaning of info mask bits depends on request type and is listed below.
-+
-+
-+Device identification
-+---------------------
-+
-+When appropriate, network device is identified by a nested attribute named
-+ETHA_*_DEV. This attribute can contain
-+
-+    ETHA_DEV_INDEX	(u32)		device ifindex
-+    ETHA_DEV_NAME	(string)	device name
-+
-+In device related requests, one of these is sufficient; if both are used, they
-+must match (i.e. identify the same device). In device related replies both are
-+provided by kernel. In dump requests, device is not specified and kernel
-+replies with one message per network device (only those for which the request
-+is supported).
-+
-+List of message types
-+---------------------
-+
-+All constants use ETHNL_CMD_ prefix, usually followed by "GET", "SET" or "ACT"
-+to indicate the type.
-+
-+Messages of type "get" are used by userspace to request information and
-+usually do not contain any attributes (that may be added later for dump
-+filtering). Kernel response is in the form of corresponding "set" message;
-+the same message can be also used to set (some of) the parameters, except for
-+messages marked as "response only" in the table above. "Get" messages with
-+NLM_F_DUMP flags and no device identification dump the information for all
-+devices supporting the request.
-+
-+Later sections describe the format and semantics of these request messages.
-+
-+
-+Request translation
-+-------------------
-+
-+The following table maps iosctl commands to netlink commands providing their
-+functionality. Entries with "n/a" in right column are commands which do not
-+have their netlink replacement yet.
-+
-+ioctl command			netlink command
-+---------------------------------------------------------------------
-+ETHTOOL_GSET			n/a
-+ETHTOOL_SSET			n/a
-+ETHTOOL_GDRVINFO		n/a
-+ETHTOOL_GREGS			n/a
-+ETHTOOL_GWOL			n/a
-+ETHTOOL_SWOL			n/a
-+ETHTOOL_GMSGLVL			n/a
-+ETHTOOL_SMSGLVL			n/a
-+ETHTOOL_NWAY_RST		n/a
-+ETHTOOL_GLINK			n/a
-+ETHTOOL_GEEPROM			n/a
-+ETHTOOL_SEEPROM			n/a
-+ETHTOOL_GCOALESCE		n/a
-+ETHTOOL_SCOALESCE		n/a
-+ETHTOOL_GRINGPARAM		n/a
-+ETHTOOL_SRINGPARAM		n/a
-+ETHTOOL_GPAUSEPARAM		n/a
-+ETHTOOL_SPAUSEPARAM		n/a
-+ETHTOOL_GRXCSUM			n/a
-+ETHTOOL_SRXCSUM			n/a
-+ETHTOOL_GTXCSUM			n/a
-+ETHTOOL_STXCSUM			n/a
-+ETHTOOL_GSG			n/a
-+ETHTOOL_SSG			n/a
-+ETHTOOL_TEST			n/a
-+ETHTOOL_GSTRINGS		n/a
-+ETHTOOL_PHYS_ID			n/a
-+ETHTOOL_GSTATS			n/a
-+ETHTOOL_GTSO			n/a
-+ETHTOOL_STSO			n/a
-+ETHTOOL_GPERMADDR		n/a
-+ETHTOOL_GUFO			n/a
-+ETHTOOL_SUFO			n/a
-+ETHTOOL_GGSO			n/a
-+ETHTOOL_SGSO			n/a
-+ETHTOOL_GFLAGS			n/a
-+ETHTOOL_SFLAGS			n/a
-+ETHTOOL_GPFLAGS			n/a
-+ETHTOOL_SPFLAGS			n/a
-+ETHTOOL_GRXFH			n/a
-+ETHTOOL_SRXFH			n/a
-+ETHTOOL_GGRO			n/a
-+ETHTOOL_SGRO			n/a
-+ETHTOOL_GRXRINGS		n/a
-+ETHTOOL_GRXCLSRLCNT		n/a
-+ETHTOOL_GRXCLSRULE		n/a
-+ETHTOOL_GRXCLSRLALL		n/a
-+ETHTOOL_SRXCLSRLDEL		n/a
-+ETHTOOL_SRXCLSRLINS		n/a
-+ETHTOOL_FLASHDEV		n/a
-+ETHTOOL_RESET			n/a
-+ETHTOOL_SRXNTUPLE		n/a
-+ETHTOOL_GRXNTUPLE		n/a
-+ETHTOOL_GSSET_INFO		n/a
-+ETHTOOL_GRXFHINDIR		n/a
-+ETHTOOL_SRXFHINDIR		n/a
-+ETHTOOL_GFEATURES		n/a
-+ETHTOOL_SFEATURES		n/a
-+ETHTOOL_GCHANNELS		n/a
-+ETHTOOL_SCHANNELS		n/a
-+ETHTOOL_SET_DUMP		n/a
-+ETHTOOL_GET_DUMP_FLAG		n/a
-+ETHTOOL_GET_DUMP_DATA		n/a
-+ETHTOOL_GET_TS_INFO		n/a
-+ETHTOOL_GMODULEINFO		n/a
-+ETHTOOL_GMODULEEEPROM		n/a
-+ETHTOOL_GEEE			n/a
-+ETHTOOL_SEEE			n/a
-+ETHTOOL_GRSSH			n/a
-+ETHTOOL_SRSSH			n/a
-+ETHTOOL_GTUNABLE		n/a
-+ETHTOOL_STUNABLE		n/a
-+ETHTOOL_GPHYSTATS		n/a
-+ETHTOOL_PERQUEUE		n/a
-+ETHTOOL_GLINKSETTINGS		n/a
-+ETHTOOL_SLINKSETTINGS		n/a
-+ETHTOOL_PHY_GTUNABLE		n/a
-+ETHTOOL_PHY_STUNABLE		n/a
-+ETHTOOL_GFECPARAM		n/a
-+ETHTOOL_SFECPARAM		n/a
-+
-diff --git a/include/linux/ethtool_netlink.h b/include/linux/ethtool_netlink.h
-new file mode 100644
-index 000000000000..0412adb4f42f
---- /dev/null
-+++ b/include/linux/ethtool_netlink.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+#ifndef _LINUX_ETHTOOL_NETLINK_H_
-+#define _LINUX_ETHTOOL_NETLINK_H_
-+
-+#include <uapi/linux/ethtool_netlink.h>
-+#include <linux/ethtool.h>
-+
-+#endif /* _LINUX_ETHTOOL_NETLINK_H_ */
 diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
-new file mode 100644
-index 000000000000..3c0c5c70692b
---- /dev/null
+index 3c0c5c70692b..1df263d9feb7 100644
+--- a/include/uapi/linux/ethtool_netlink.h
 +++ b/include/uapi/linux/ethtool_netlink.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+#ifndef _UAPI_LINUX_ETHTOOL_NETLINK_H_
-+#define _UAPI_LINUX_ETHTOOL_NETLINK_H_
-+
-+#include <linux/ethtool.h>
+@@ -12,6 +12,17 @@ enum {
+ 	ETHNL_CMD_MAX = (__ETHNL_CMD_MAX - 1)
+ };
+ 
++/* device specification */
 +
 +enum {
-+	ETHNL_CMD_NOOP,
++	ETHA_DEV_UNSPEC,
++	ETHA_DEV_INDEX,				/* u32 */
++	ETHA_DEV_NAME,				/* string */
 +
-+	__ETHNL_CMD_MAX,
-+	ETHNL_CMD_MAX = (__ETHNL_CMD_MAX - 1)
++	__ETHA_DEV_MAX,
++	ETHA_DEV_MAX = (__ETHA_DEV_MAX - 1)
 +};
 +
-+/* generic netlink info */
-+#define ETHTOOL_GENL_NAME "ethtool"
-+#define ETHTOOL_GENL_VERSION 1
-+
-+#endif /* _UAPI_LINUX_ETHTOOL_NETLINK_H_ */
-diff --git a/net/Kconfig b/net/Kconfig
-index 228dfa382eec..12e763449525 100644
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@ -445,6 +445,13 @@ config FAILOVER
- 	  migration of VMs with direct attached VFs by failing over to the
- 	  paravirtual datapath when the VF is unplugged.
- 
-+config ETHTOOL_NETLINK
-+	tristate "Netlink interface for ethtool"
-+	default m
-+	help
-+	   New netlink based interface for ethtool which is going to obsolete
-+	   the old ioctl based one once it provides all features.
-+
- endif   # if NET
- 
- # Used by archs to tell that they support BPF JIT compiler plus which flavour.
-diff --git a/net/ethtool/Makefile b/net/ethtool/Makefile
-index 3ebfab2bca66..f30e0da88be5 100644
---- a/net/ethtool/Makefile
-+++ b/net/ethtool/Makefile
-@@ -1,3 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-y		+= ioctl.o
-+obj-y				+= ioctl.o
-+
-+obj-$(CONFIG_ETHTOOL_NETLINK)	+= ethtool_nl.o
-+
-+ethtool_nl-y	:= netlink.o
+ /* generic netlink info */
+ #define ETHTOOL_GENL_NAME "ethtool"
+ #define ETHTOOL_GENL_VERSION 1
 diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-new file mode 100644
-index 000000000000..1c6efb9b2eae
---- /dev/null
+index 1c6efb9b2eae..bf234e5bc660 100644
+--- a/net/ethtool/netlink.c
 +++ b/net/ethtool/netlink.c
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+#include <linux/module.h>
-+#include <linux/ethtool_netlink.h>
-+#include "netlink.h"
-+
-+/* genetlink setup */
-+
-+static const struct genl_ops ethtool_genl_ops[] = {
+@@ -1,9 +1,172 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
+ #include <linux/module.h>
++#include <net/sock.h>
+ #include <linux/ethtool_netlink.h>
+ #include "netlink.h"
+ 
++static const struct nla_policy dev_policy[ETHA_DEV_MAX + 1] = {
++	[ETHA_DEV_UNSPEC]	= { .type = NLA_UNSPEC },
++	[ETHA_DEV_INDEX]	= { .type = NLA_U32 },
++	[ETHA_DEV_NAME]		= { .type = NLA_STRING, .len = IFNAMSIZ - 1 },
 +};
 +
-+struct genl_family ethtool_genl_family = {
-+	.hdrsize	= 0,
-+	.name		= ETHTOOL_GENL_NAME,
-+	.version	= ETHTOOL_GENL_VERSION,
-+	.netnsok	= true,
-+	.parallel_ops	= true,
-+	.ops		= ethtool_genl_ops,
-+	.n_ops		= ARRAY_SIZE(ethtool_genl_ops),
-+};
-+
-+/* module setup */
-+
-+static int __init ethtool_nl_init(void)
++struct net_device *ethnl_dev_get(struct genl_info *info, struct nlattr *nest)
 +{
-+	return genl_register_family(&ethtool_genl_family);
++	struct net *net = genl_info_net(info);
++	struct nlattr *tb[ETHA_DEV_MAX + 1];
++	struct net_device *dev;
++	int ret;
++
++	ret = nla_parse_nested(tb, ETHA_DEV_MAX, nest, dev_policy,
++			       info->extack);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	if (tb[ETHA_DEV_INDEX]) {
++		dev = dev_get_by_index(net, nla_get_u32(tb[ETHA_BIT_INDEX]));
++		if (!dev)
++			return ERR_PTR(-ENODEV);
++		/* if both ifindex and ifname are passed, they must match */
++		if (tb[ETHA_DEV_NAME]) {
++			const char *nl_name = nla_data(tb[ETHA_DEV_NAME]);
++
++			if (strncmp(dev->name, nl_name, IFNAMSIZ)) {
++				ETHNL_SET_ERRMSG(info,
++						 "ifindex and ifname do not match");
++				return ERR_PTR(-ENODEV);
++			}
++		}
++		return dev;
++	} else if (tb[ETHA_DEV_NAME]) {
++		dev = dev_get_by_name(net, nla_data(tb[ETHA_DEV_NAME]));
++		return dev ?: ERR_PTR(-ENODEV);
++	}
++
++	return ERR_PTR(-EINVAL);
 +}
 +
-+static void __exit ethtool_nl_exit(void)
++int ethnl_fill_dev(struct sk_buff *msg, struct net_device *dev, u16 attrtype)
 +{
-+	genl_unregister_family(&ethtool_genl_family);
++	struct nlattr *nest;
++	int ret = -EMSGSIZE;
++
++	nest = ethnl_nest_start(msg, attrtype);
++	if (!nest)
++		return -EMSGSIZE;
++
++	if (nla_put_u32(msg, ETHA_DEV_INDEX, (u32)dev->ifindex))
++		goto err;
++	if (nla_put_string(msg, ETHA_DEV_NAME, dev->name))
++		goto err;
++
++	nla_nest_end(msg, nest);
++	return 0;
++err:
++	nla_nest_cancel(msg, nest);
++	return ret;
 +}
 +
-+module_init(ethtool_nl_init);
-+module_exit(ethtool_nl_exit);
++/* create skb for a reply
++ * payload: payload length (without netlink, genetlink and ethnl headers)
++ * dev:     device the reply is about
++ * cmd:     ETHNL_CMD_* command for reply
++ * info:    info for the received packet we respond to
++ * ehdrp:   place to store payload pointer returned by genlmsg_new()
++ * returns: skb or null on error
++ */
++struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
++				 u16 dev_attrtype, struct genl_info *info,
++				 void **ehdrp)
++{
++	void *ehdr;
++	struct sk_buff *rskb;
 +
-+/* alias for module autoload */
-+MODULE_ALIAS_GENL_FAMILY(ETHTOOL_GENL_NAME);
-+MODULE_AUTHOR("Michal Kubecek <mkubecek@suse.cz>");
-+MODULE_DESCRIPTION("Netlink interface for ethtool");
-+MODULE_LICENSE("GPL");
++	if (dev)
++		payload += nla_total_size(nla_total_size(sizeof(u32)) +
++					  nla_total_size(IFNAMSIZ));
++	rskb = genlmsg_new(payload, GFP_KERNEL);
++	if (!rskb) {
++		ETHNL_SET_ERRMSG(info,
++				 "failed to allocate reply message");
++		return NULL;
++	}
++
++	ehdr = genlmsg_put_reply(rskb, info, &ethtool_genl_family, 0, cmd);
++	if (!ehdr)
++		goto err;
++	if (ehdrp)
++		*ehdrp = ehdr;
++	if (dev) {
++		int ret = ethnl_fill_dev(rskb, dev, dev_attrtype);
++
++		if (ret < 0)
++			goto err;
++	}
++
++	return rskb;
++err:
++	nlmsg_free(rskb);
++	return NULL;
++}
++
++/* device iteration copied from rtnl_dump_ifinfo()
++ * cb->args[0]: command specific dump function
++ * cb->args[1]: ethnl command to use in reply
++ * cb->args[2]: position - hashbucket
++ * cb->args[3]: position - ifindex
++ */
++int ethnl_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
++{
++	int (*dumpfn)(struct sk_buff *skb, struct netlink_callback *cb,
++		      struct net_device *dev);
++	struct net *net = sock_net(skb->sk);
++	struct hlist_head *head;
++	struct net_device *dev;
++	int h, s_h, idx = 0, s_idx;
++	int ret = 0;
++	void *ehdr;
++	u8 rcmd;
++
++	dumpfn = (void *)cb->args[0];
++	rcmd = cb->args[1];
++	s_h = cb->args[2];
++	s_idx = cb->args[3];
++
++	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
++		idx = 0;
++		head = &net->dev_index_head[h];
++		hlist_for_each_entry(dev, head, index_hlist) {
++			if (idx < s_idx)
++				goto cont;
++			ehdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
++					   cb->nlh->nlmsg_seq,
++					   &ethtool_genl_family, 0, rcmd);
++			ret = dumpfn(skb, cb, dev);
++			if (ret < 0) {
++				genlmsg_cancel(skb, ehdr);
++				if (ret == -EOPNOTSUPP)
++					goto cont;
++				if (likely(skb->len))
++					goto out;
++				goto out_err;
++			}
++			genlmsg_end(skb, ehdr);
++cont:
++			idx++;
++		}
++	}
++out:
++	ret = skb->len;
++out_err:
++	cb->args[2] = h;
++	cb->args[3] = idx;
++	cb->seq = net->dev_base_seq;
++	nl_dump_check_consistent(cb, nlmsg_hdr(skb));
++
++	return ret;
++}
++
+ /* genetlink setup */
+ 
+ static const struct genl_ops ethtool_genl_ops[] = {
 diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-new file mode 100644
-index 000000000000..63063b582ca2
---- /dev/null
+index 63063b582ca2..acfed5ba6b54 100644
+--- a/net/ethtool/netlink.h
 +++ b/net/ethtool/netlink.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+@@ -6,7 +6,131 @@
+ #include <linux/ethtool_netlink.h>
+ #include <linux/netdevice.h>
+ #include <net/genetlink.h>
++#include <net/sock.h>
 +
-+#ifndef _NET_ETHTOOL_NETLINK_H
-+#define _NET_ETHTOOL_NETLINK_H
++#define ETHNL_SET_ERRMSG(info, msg) \
++	do { if (info) GENL_SET_ERR_MSG(info, msg); } while (0)
+ 
+ extern struct genl_family ethtool_genl_family;
+ 
++struct net_device *ethnl_dev_get(struct genl_info *info, struct nlattr *nest);
++int ethnl_fill_dev(struct sk_buff *msg, struct net_device *dev, u16 attrtype);
 +
-+#include <linux/ethtool_netlink.h>
-+#include <linux/netdevice.h>
-+#include <net/genetlink.h>
++struct sk_buff *ethnl_reply_init(size_t payload, struct net_device *dev, u8 cmd,
++				 u16 dev_attrtype, struct genl_info *info,
++				 void **ehdrp);
 +
-+extern struct genl_family ethtool_genl_family;
++static inline int ethnl_str_size(const char *s)
++{
++	return nla_total_size(strlen(s) + 1);
++}
 +
-+#endif /* _NET_ETHTOOL_NETLINK_H */
++static inline int ethnl_str_ifne_size(const char *s)
++{
++	return s[0] ? ethnl_str_size(s) : 0;
++}
++
++static inline int ethnl_put_str_ifne(struct sk_buff *skb, int attrtype,
++				     const char *s)
++{
++	if (!s[0])
++		return 0;
++	return nla_put_string(skb, attrtype, s);
++}
++
++static inline struct nlattr *ethnl_nest_start(struct sk_buff *skb,
++					      int attrtype)
++{
++	return nla_nest_start(skb, attrtype | NLA_F_NESTED);
++}
++
++/* ethnl_update_* return true if the value is changed */
++static inline bool ethnl_update_u32(u32 *dst, struct nlattr *attr)
++{
++	u32 val;
++
++	if (!attr)
++		return false;
++	val = nla_get_u32(attr);
++	if (*dst == val)
++		return false;
++
++	*dst = val;
++	return true;
++}
++
++static inline bool ethnl_update_u8(u8 *dst, struct nlattr *attr)
++{
++	u8 val;
++
++	if (!attr)
++		return false;
++	val = nla_get_u8(attr);
++	if (*dst == val)
++		return false;
++
++	*dst = val;
++	return true;
++}
++
++/* update u32 value used as bool from NLA_U8 */
++static inline bool ethnl_update_bool32(u32 *dst, struct nlattr *attr)
++{
++	u8 val;
++
++	if (!attr)
++		return false;
++	val = !!nla_get_u8(attr);
++	if (!!*dst == val)
++		return false;
++
++	*dst = val;
++	return true;
++}
++
++static inline bool ethnl_update_binary(u8 *dst, unsigned int len, struct nlattr *attr)
++{
++	if (!attr)
++		return false;
++	if (nla_len(attr) < len)
++		len = nla_len(attr);
++	if (!memcmp(dst, nla_data(attr), len))
++		return false;
++
++	memcpy(dst, nla_data(attr), len);
++	return true;
++}
++
++static inline bool ethnl_update_bitfield32(u32 *dst, struct nlattr *attr)
++{
++	struct nla_bitfield32 change;
++	u32 newval;
++
++	if (!attr)
++		return false;
++	change = nla_get_bitfield32(attr);
++	newval = (*dst & ~change.selector) | (change.value & change.selector);
++	if (*dst == newval)
++		return false;
++
++	*dst = newval;
++	return true;
++}
++
++static inline void warn_partial_info(struct genl_info *info)
++{
++	ETHNL_SET_ERRMSG(info, "not all requested data could be retrieved");
++}
++
++/* Check user privileges explicitly to allow finer access control based on
++ * context of the request or hiding part of the information from unprivileged
++ * users
++ */
++static inline bool ethnl_is_privileged(struct sk_buff *skb)
++{
++	struct net *net = sock_net(skb->sk);
++
++	return netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN);
++}
++
+ #endif /* _NET_ETHTOOL_NETLINK_H */
 -- 
 2.18.0
 
