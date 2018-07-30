@@ -2,86 +2,177 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C71F16256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E189916256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEEC205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEEC205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9A252205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:05:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZ16V+mR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A252205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729331AbeG3Rl2 (ORCPT
+        id S1730482AbeG3Rl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:41:28 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:43039 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbeG3Rl1 (ORCPT
+        Mon, 30 Jul 2018 13:41:29 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34972 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbeG3Rl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:41:27 -0400
-Received: from [148.252.241.226] (helo=[10.35.4.113])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fkAg7-00019D-FD; Mon, 30 Jul 2018 17:05:47 +0100
-Subject: Re: [PATCH v2 1/4] ALSA: usb-audio: Initial Power Domain support
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
- <20180730092336.18741-1-jorge.sanjuan@codethink.co.uk>
- <20180730092336.18741-2-jorge.sanjuan@codethink.co.uk>
- <s5hbmaox4dh.wl-tiwai@suse.de>
-From:   Jorge <jorge.sanjuan@codethink.co.uk>
-Message-ID: <dcca62da-db80-5081-4552-2a010b307656@codethink.co.uk>
-Date:   Mon, 30 Jul 2018 17:05:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <s5hbmaox4dh.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Jul 2018 13:41:29 -0400
+Received: by mail-qt0-f194.google.com with SMTP id a5-v6so12637967qtp.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 09:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=U04gvzZIH4nq8t0sikdcItNY74are8cfO7wsEHewwUw=;
+        b=hZ16V+mRE6VpkYYJGJXjQ1EO0WFmabRXvW52RZZ3g5z1P3DiA8gZyiCI07dARUEGR3
+         NrUXHKYxzfsItk0esUoaiH+8uAwPRkxqbMofYmH2LuWOvpptjz+XINEZGqCHaTTuuvXi
+         hxADe34Fo2ZJTAbEVpZSKZ6ILGIlqiNoEHvG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U04gvzZIH4nq8t0sikdcItNY74are8cfO7wsEHewwUw=;
+        b=f6jJ6DHLc3hgzgHtqeFo2WcpHZdHHW1SLsnY5mU6vgO8p3I/26hvWoHo7vqs1HjZyI
+         ZT/41CW7tLbMjAVcARQS0tgNaKD94gQ8xviohkRmYxX+2cqrw/hDWuWsY3XlnrMoQEkJ
+         glxmhPEBl9SkDwAcPkuiRmm3w+lPFvr+uFqVqL0HMj3SYAvHRp/XCE0pGfP992Qsggfc
+         Rgopq9KEfzZLMKBUvBhd2l733g7THQFJmohG2aRdnX7Tb4nJAaELDJNW4e8f2Jwwo+0b
+         EbC6dmLvc0GOLw7wLQqXkNq9YivG6ybIRT+9DDxTNhxlNy2FicpIoym/rYX+pc1H/v1K
+         Er9Q==
+X-Gm-Message-State: AOUpUlF/tb7MY+9s3aE3kPACT/n4P4c66563s+ZqHtAKq8ovyGefJ3vN
+        sgbk0+tgIxDMUGi9YR26iDO/8gEHZxwdpg==
+X-Google-Smtp-Source: AAOMgpd2p1KQUUWztvc2LHynkdg0LnP47ke2N1bYnwtqjQypdZ7bUJtsA+UgB32CNN1LDERoWNtXtQ==
+X-Received: by 2002:ac8:32a:: with SMTP id q42-v6mr17315902qtg.343.1532966749204;
+        Mon, 30 Jul 2018 09:05:49 -0700 (PDT)
+Received: from mobile.celeiro.br ([138.204.25.60])
+        by smtp.gmail.com with ESMTPSA id h68-v6sm7258974qkc.97.2018.07.30.09.05.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 09:05:48 -0700 (PDT)
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-kselftest@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael.tinoco@linaro.org, mathieu.desnoyers@efficios.com,
+        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        shuah@kernel.org
+Subject: [PATCH] selftests: membarrier: fix test by checking supported commands
+Date:   Mon, 30 Jul 2018 13:05:43 -0300
+Message-Id: <20180730160543.19056-1-rafael.tinoco@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Makes membarrier_test compatible with older kernels (LTS) by checking if
+the membarrier features exist before running the tests.
 
+Link: https://bugs.linaro.org/show_bug.cgi?id=3771
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc: <stable@vger.kernel.org> #v4.17
+---
+ .../selftests/membarrier/membarrier_test.c    | 69 +++++++++++--------
+ 1 file changed, 41 insertions(+), 28 deletions(-)
 
-On 30/07/18 14:03, Takashi Iwai wrote:
-> On Mon, 30 Jul 2018 11:23:33 +0200,
-> Jorge Sanjuan wrote:
->>
->> diff --git a/include/linux/usb/audio-v3.h b/include/linux/usb/audio-v3.h
->> index 334bfa6dfb47..786e5939d831 100644
->> --- a/include/linux/usb/audio-v3.h
->> +++ b/include/linux/usb/audio-v3.h
->> @@ -447,4 +447,8 @@ struct uac3_interrupt_data_msg {
->>  /* BADD sample rate is always fixed to 48kHz */
->>  #define UAC3_BADD_SAMPLING_RATE				48000
->>  
->> +/* BADD power domains recovery times */
->> +#define UAC3_BADD_PD_RECOVER_D1D0			0x0258
->> +#define UAC3_BADD_PD_RECOVER_D2D0			0x1770
-> 
-> Please put the unit for these values.  I guess they don't need to be
-> hex?
-> 
-
-Hi!
-
-The BADD spec defines these inferred values as hex (see section 6.2.2.13
-of the spec). Should we keep them as per spec to avoid confusion? I'll
-update comment there with the units (50 us increments).
-
-Thanks for the reviews today. I'll update this series soon with the
-suggested changes.
-
-Jorge
-
-> 
-> Takashi
-> 
-
+diff --git a/tools/testing/selftests/membarrier/membarrier_test.c b/tools/testing/selftests/membarrier/membarrier_test.c
+index 6793f8ecc8e7..b96caa096e2f 100644
+--- a/tools/testing/selftests/membarrier/membarrier_test.c
++++ b/tools/testing/selftests/membarrier/membarrier_test.c
+@@ -225,7 +225,14 @@ static int test_membarrier_global_expedited_success(void)
+ 
+ static int test_membarrier(void)
+ {
+-	int status;
++	int supported, status;
++
++	supported = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
++	if (supported < 0) {
++		ksft_test_result_fail(
++			"sys_membarrier() failed to query supported cmds\n");
++		return supported;
++	}
+ 
+ 	status = test_membarrier_cmd_fail();
+ 	if (status)
+@@ -236,21 +243,22 @@ static int test_membarrier(void)
+ 	status = test_membarrier_global_success();
+ 	if (status)
+ 		return status;
+-	status = test_membarrier_private_expedited_fail();
+-	if (status)
+-		return status;
+-	status = test_membarrier_register_private_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_private_expedited_success();
+-	if (status)
+-		return status;
+-	status = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
+-	if (status < 0) {
+-		ksft_test_result_fail("sys_membarrier() failed\n");
+-		return status;
++
++	/* commit 22e4ebb975822833b083533035233d128b30e98f added this feature */
++	if (supported & MEMBARRIER_CMD_PRIVATE_EXPEDITED) {
++		status = test_membarrier_private_expedited_fail();
++		if (status)
++			return status;
++		status = test_membarrier_register_private_expedited_success();
++		if (status)
++			return status;
++		status = test_membarrier_private_expedited_success();
++		if (status)
++			return status;
+ 	}
+-	if (status & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
++
++	/* commit 70216e18e519a54a2f13569e8caff99a092a92d6 added this feature */
++	if (supported & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
+ 		status = test_membarrier_private_expedited_sync_core_fail();
+ 		if (status)
+ 			return status;
+@@ -261,19 +269,24 @@ static int test_membarrier(void)
+ 		if (status)
+ 			return status;
+ 	}
+-	/*
+-	 * It is valid to send a global membarrier from a non-registered
+-	 * process.
+-	 */
+-	status = test_membarrier_global_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_register_global_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_global_expedited_success();
+-	if (status)
+-		return status;
++
++	/* commit c5f58bd58f432be5d92df33c5458e0bcbee3aadf added this feature */
++	if (supported & MEMBARRIER_CMD_GLOBAL_EXPEDITED) {
++		/*
++		 * It is valid to send a global membarrier from a non-registered
++		 * process.
++		 */
++		status = test_membarrier_global_expedited_success();
++		if (status)
++			return status;
++		status = test_membarrier_register_global_expedited_success();
++		if (status)
++			return status;
++		status = test_membarrier_global_expedited_success();
++		if (status)
++			return status;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.18.0
 
