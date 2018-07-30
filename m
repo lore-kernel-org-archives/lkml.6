@@ -2,223 +2,147 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40C2C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF6DC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F6B20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F6B20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 388BD20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388BD20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbeGaAxD (ORCPT
+        id S1732140AbeGaAzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:53:03 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14706 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732038AbeGaAxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:53:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 16:15:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,425,1526367600"; 
-   d="scan'208";a="60751514"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.149]) ([10.7.153.149])
-  by orsmga007.jf.intel.com with ESMTP; 30 Jul 2018 16:15:45 -0700
-Subject: Re: [PATCH v7 08/12] mfd: intel-peci-client: Add PECI client MFD
- driver
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Lee Jones <lee.jones@linaro.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        darrick.wong@oracle.com, sandeen@redhat.com,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        kusumi.tomohiro@gmail.com, bryantly@linux.vnet.ibm.com,
-        fbarrat@linux.vnet.ibm.com, David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod <vkoul@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        david.kershner@unisys.com,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, jgross@suse.com,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Linux HWMON List <linux-hwmon@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180723214751.1733-1-jae.hyun.yoo@linux.intel.com>
- <20180723214751.1733-9-jae.hyun.yoo@linux.intel.com>
- <20180727082611.GE4628@dell>
- <acffdfef-cb20-4208-5297-d94bac5ecb1b@linux.intel.com>
- <CAL_JsqL7WkDOaegwmBDqLkRh0JfCo7O2krONVstjWMUsLiJMrg@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <7ab43253-1154-6e2f-b216-69b0d44b470a@linux.intel.com>
-Date:   Mon, 30 Jul 2018 16:15:45 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 20:55:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54804 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732038AbeGaAzG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 20:55:06 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UNEpLP091665
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 19:17:47 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kj85t87ub-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 19:17:47 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Mon, 30 Jul 2018 19:17:46 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Jul 2018 19:17:42 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6UNHfYD10944772
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 23:17:41 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBFB2112063;
+        Mon, 30 Jul 2018 19:17:25 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF94E112062;
+        Mon, 30 Jul 2018 19:17:24 -0400 (EDT)
+Received: from localhost (unknown [9.80.210.238])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Mon, 30 Jul 2018 19:17:24 -0400 (EDT)
+Date:   Mon, 30 Jul 2018 20:17:38 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     LEROY Christophe <christophe.leroy@c-s.fr>
+Cc:     linux-kernel@vger.kernel.org,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Joe Perches <joe@perches.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 04/10] powerpc/traps: Use REG_FMT in show_signal_msg()
+References: <20180727145811.12334-1-muriloo@linux.ibm.com>
+ <20180727145811.12334-5-muriloo@linux.ibm.com>
+ <20180727184023.Horde.KRXPzZpG18uxt_B9sy_FBg5@messagerie.si.c-s.fr>
+ <20180730152838.GA23704@kermit-br-ibm-com>
+ <20180730183047.Horde.g9hQ_3EXmF6St0upNs2DDw1@messagerie.si.c-s.fr>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqL7WkDOaegwmBDqLkRh0JfCo7O2krONVstjWMUsLiJMrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180730183047.Horde.g9hQ_3EXmF6St0upNs2DDw1@messagerie.si.c-s.fr>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-TM-AS-GCONF: 00
+x-cbid: 18073023-0064-0000-0000-00000331AB7F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009459; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068241; UDB=6.00549135; IPR=6.00846371;
+ MB=3.00022414; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-30 23:17:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073023-0065-0000-0000-00003A2027FF
+Message-Id: <20180730231738.GA20351@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300245
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi, Christophe.
 
-On 7/30/2018 3:10 PM, Rob Herring wrote:
-> On Fri, Jul 27, 2018 at 11:36 AM Jae Hyun Yoo
-> <jae.hyun.yoo@linux.intel.com> wrote:
->>
->> Hi Lee,
->>
->> On 7/27/2018 1:26 AM, Lee Jones wrote:
->>> On Mon, 23 Jul 2018, Jae Hyun Yoo wrote:
->>>
->>>> This commit adds PECI client MFD driver.
->>>>
->>>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->>>> Cc: Lee Jones <lee.jones@linaro.org>
->>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>> Cc: Andrew Jeffery <andrew@aj.id.au>
->>>> Cc: James Feist <james.feist@linux.intel.com>
->>>> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
->>>> Cc: Joel Stanley <joel@jms.id.au>
->>>> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
->>>> ---
->>>>    drivers/mfd/Kconfig                   |  14 ++
->>>>    drivers/mfd/Makefile                  |   1 +
->>>>    drivers/mfd/intel-peci-client.c       | 182 ++++++++++++++++++++++++++
->>>>    include/linux/mfd/intel-peci-client.h |  81 ++++++++++++
->>>>    4 files changed, 278 insertions(+)
->>>>    create mode 100644 drivers/mfd/intel-peci-client.c
->>>>    create mode 100644 include/linux/mfd/intel-peci-client.h
->>>>
->>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->>>> index f3fa516011ec..e38b591479d4 100644
->>>> --- a/drivers/mfd/Kconfig
->>>> +++ b/drivers/mfd/Kconfig
->>>> @@ -595,6 +595,20 @@ config MFD_INTEL_MSIC
->>>>         Passage) chip. This chip embeds audio, battery, GPIO, etc.
->>>>         devices used in Intel Medfield platforms.
->>>>
->>>> +config MFD_INTEL_PECI_CLIENT
->>>> +    bool "Intel PECI client"
->>>> +    depends on (PECI || COMPILE_TEST)
->>>> +    select MFD_CORE
->>>> +    help
->>>> +      If you say yes to this option, support will be included for the
->>>> +      multi-funtional Intel PECI (Platform Environment Control Interface)
->>>> +      client. PECI is a one-wire bus interface that provides a communication
->>>> +      channel from PECI clients in Intel processors and chipset components
->>>> +      to external monitoring or control devices.
->>>> +
->>>> +      Additional drivers must be enabled in order to use the functionality
->>>> +      of the device.
->>>> +
->>>>    config MFD_IPAQ_MICRO
->>>>       bool "Atmel Micro ASIC (iPAQ h3100/h3600/h3700) Support"
->>>>       depends on SA1100_H3100 || SA1100_H3600
->>>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
->>>> index 2852a6042ecf..29e2cacc58bd 100644
->>>> --- a/drivers/mfd/Makefile
->>>> +++ b/drivers/mfd/Makefile
->>>> @@ -203,6 +203,7 @@ obj-$(CONFIG_MFD_INTEL_LPSS)     += intel-lpss.o
->>>>    obj-$(CONFIG_MFD_INTEL_LPSS_PCI)   += intel-lpss-pci.o
->>>>    obj-$(CONFIG_MFD_INTEL_LPSS_ACPI)  += intel-lpss-acpi.o
->>>>    obj-$(CONFIG_MFD_INTEL_MSIC)       += intel_msic.o
->>>> +obj-$(CONFIG_MFD_INTEL_PECI_CLIENT) += intel-peci-client.o
->>>>    obj-$(CONFIG_MFD_PALMAS)   += palmas.o
->>>>    obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
->>>>    obj-$(CONFIG_MFD_RC5T583)  += rc5t583.o rc5t583-irq.o
->>>> diff --git a/drivers/mfd/intel-peci-client.c b/drivers/mfd/intel-peci-client.c
->>>> new file mode 100644
->>>> index 000000000000..d7702cf1ea50
->>>> --- /dev/null
->>>> +++ b/drivers/mfd/intel-peci-client.c
->>>> @@ -0,0 +1,182 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +// Copyright (c) 2018 Intel Corporation
->>>> +
->>>> +#include <linux/bitfield.h>
->>>> +#include <linux/mfd/core.h>
->>>> +#include <linux/mfd/intel-peci-client.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/peci.h>
->>>> +#include <linux/of_device.h>
->>>> +
->>>> +enum cpu_gens {
->>>> +    CPU_GEN_HSX = 0, /* Haswell Xeon */
->>>> +    CPU_GEN_BRX,     /* Broadwell Xeon */
->>>> +    CPU_GEN_SKX,     /* Skylake Xeon */
->>>> +};
->>>> +
->>>> +static struct mfd_cell peci_functions[] = {
->>>> +    {
->>>> +            .name = "peci-cputemp",
->>>> +            .of_compatible = "intel,peci-cputemp",
->>>> +    },
->>>> +    {
->>>> +            .name = "peci-dimmtemp",
->>>> +            .of_compatible = "intel,peci-dimmtemp",
->>>> +    },
->>>> +};
->>>
->>> The more I look at this driver, the less I think it fits into MFD.
->>>
->>> What's stopping you from registering these devices directly from DT?
->>>
->>
->> Because DT doesn't allow 2 nodes at the same address so Rob suggested
->> MFD for this case.
-> 
-> Only after I first suggested you create cpu and dimm sensors from a
-> single hwmon driver. Perhaps you should figure out how to fix the
-> problem with delayed registration. Perhaps you can register the
-> sensor, but just delay returning actual data until it is ready.
-> 
+On Mon, Jul 30, 2018 at 06:30:47PM +0200, LEROY Christophe wrote:
+> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+>
+> > Hi, Christophe.
+> >
+> > On Fri, Jul 27, 2018 at 06:40:23PM +0200, LEROY Christophe wrote:
+> > > Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+> > >
+> > > > Simplify the message format by using REG_FMT as the register format.  This
+> > > > avoids having two different formats and avoids checking for MSR_64BIT.
+> > >
+> > > Are you sure it is what we want ?
+> >
+> > Yes.
+> >
+> > > Won't it change the behaviour for a 32 bits app running on a 64bits kernel ?
+> >
+> > In fact, this changes how many zeroes are prefixed when displaying the
+> > registers
+> > (%016lx vs. %08lx format).  For example, 32-bits userspace, 64-bits kernel:
+>
+> Indeed that's what I suspected. What is the real benefit of this change ?
+> Why not keep the current format for 32bits userspace ? All those leading
+> zeroes are pointless to me.
 
-The actual reason why I divided the single hwmon driver into two is for
-using recommended hwmon API set which doesn't allow incremental
-creation of sysfs attributes at run time - using of
-'devm_hwmon_device_register_with_info' is suggested by Guenter instead
-of using other deprecated APIs.
+One of the benefits is simplifying the code by removing some checks.  Another is
+deduplicating almost identical format strings in favor of a unified one.
 
-The reason why the delayed registration is needed is, BMC kernel cannot
-know how many DIMM are installed in remote machine before the machine
-completing memory training and testing in POST. So dimm temp driver
-cannot create hwmon attributes in advance.
+After reading Joe's comment [1], %px seems to be the format we're looking for.
+An extract from Documentation/core-api/printk-formats.rst:
 
-My thought is, this way is the best to address these requirements.
+  "%px is functionally equivalent to %lx (or %lu). %px is preferred because it
+  is more uniquely grep'able."
 
-Thanks,
+So I guess we don't need to worry about the format (%016lx vs. %08lx), let's
+just use %px, as per the guideline.
 
-Jae
+[1] https://lore.kernel.org/lkml/26f07092cdde378ebb42c1034badde1b56521c36.camel@perches.com/
 
-> Rob
-> 
+Cheers
+Murilo
+
