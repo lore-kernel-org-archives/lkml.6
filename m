@@ -2,138 +2,199 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9AB13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B6013F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220F620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220F620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C8D7F20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D7F20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeG3LIj (ORCPT
+        id S1729072AbeG3LIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 07:08:39 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51571 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726723AbeG3LIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 07:08:39 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6U94Mwn004898;
-        Mon, 30 Jul 2018 12:04:22 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 7BB756312A; Mon, 30 Jul 2018 12:34:21 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 1/1] gpio: mmio: add inverted direction get_set io support
-Date:   Mon, 30 Jul 2018 12:34:18 +0300
-Message-Id: <20180730093418.124648-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180730093418.124648-1-tmaimon77@gmail.com>
-References: <20180730093418.124648-1-tmaimon77@gmail.com>
+        Mon, 30 Jul 2018 07:08:42 -0400
+Received: from nautica.notk.org ([91.121.71.147]:55816 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726723AbeG3LIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 07:08:41 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 2E28CC01A; Mon, 30 Jul 2018 11:34:32 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     v9fs-developer@lists.sourceforge.net
+Cc:     Greg Kurz <groug@kaod.org>, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] net/9p: add a per-client fcall kmem_cache
+Date:   Mon, 30 Jul 2018 11:34:23 +0200
+Message-Id: <1532943263-24378-2-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
+In-Reply-To: <1532943263-24378-1-git-send-email-asmadeus@codewreck.org>
+References: <20180730093101.GA7894@nautica>
+ <1532943263-24378-1-git-send-email-asmadeus@codewreck.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add get_set_inv_dir and get_set_multiple_inv_dir I/O functions
-to call the data register when the dirction is input and
-set register when the direction is output.
-the functions will linked to the I/O get functions if the user set
-BGPIOF_INVERTED_REG_DIR flag in the bgpio initialization.
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Having a specific cache for the fcall allocations helps speed up
+allocations a bit, especially in case of non-"round" msizes.
+
+The caches will automatically be merged if there are multiple caches
+of items with the same size so we do not need to try to share a cache
+between different clients of the same size.
+
+Since the msize is negotiated with the server, only allocate the cache
+after that negotiation has happened - previous allocations or
+allocations of different sizes (e.g. zero-copy fcall) are made with
+kmalloc directly.
+
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 ---
- drivers/gpio/gpio-mmio.c    | 48 ++++++++++++++++++++++++++++++++++++++++++---
- include/linux/gpio/driver.h |  1 +
- 2 files changed, 46 insertions(+), 3 deletions(-)
+ include/net/9p/client.h |  2 ++
+ net/9p/client.c         | 40 ++++++++++++++++++++++++++++++++--------
+ net/9p/trans_rdma.c     |  2 +-
+ 3 files changed, 35 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 7b14d6280e44..46f664459853 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -168,6 +168,40 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+diff --git a/include/net/9p/client.h b/include/net/9p/client.h
+index 4b4ac1362ad5..8d9bc7402a42 100644
+--- a/include/net/9p/client.h
++++ b/include/net/9p/client.h
+@@ -123,6 +123,7 @@ struct p9_client {
+ 	struct p9_trans_module *trans_mod;
+ 	enum p9_trans_status status;
+ 	void *trans;
++	struct kmem_cache *fcall_cache;
+ 
+ 	union {
+ 		struct {
+@@ -230,6 +231,7 @@ int p9_client_mkdir_dotl(struct p9_fid *fid, const char *name, int mode,
+ 				kgid_t gid, struct p9_qid *);
+ int p9_client_lock_dotl(struct p9_fid *fid, struct p9_flock *flock, u8 *status);
+ int p9_client_getlock_dotl(struct p9_fid *fid, struct p9_getlock *fl);
++void p9_fcall_free(struct p9_client *c, struct p9_fcall *fc);
+ struct p9_req_t *p9_tag_lookup(struct p9_client *, u16);
+ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status);
+ 
+diff --git a/net/9p/client.c b/net/9p/client.c
+index ba99a94a12c9..215e3b1ed7b4 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -231,15 +231,34 @@ static int parse_opts(char *opts, struct p9_client *clnt)
+ 	return ret;
+ }
+ 
+-static int p9_fcall_alloc(struct p9_fcall *fc, int alloc_msize)
++static int p9_fcall_alloc(struct p9_client *c, struct p9_fcall *fc,
++			  int alloc_msize)
+ {
+-	fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
++	if (c->fcall_cache && alloc_msize == c->msize)
++		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
++	else
++		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+ 	if (!fc->sdata)
+ 		return -ENOMEM;
+ 	fc->capacity = alloc_msize;
  	return 0;
  }
  
-+/* get set function when the direction is inverted */
-+static int bgpio_get_set_inv_dir(struct gpio_chip *gc, unsigned int gpio)
++void p9_fcall_free(struct p9_client *c, struct p9_fcall *fc)
 +{
-+	unsigned long pinmask = bgpio_line2mask(gc, gpio);
++	/* sdata can be NULL for interrupted requests in trans_rdma,
++	 * and kmem_cache_free does not do NULL-check for us
++	 */
++	if (unlikely(!fc->sdata))
++		return;
 +
-+	if (gc->bgpio_dir & pinmask)
-+		return !!(gc->read_reg(gc->reg_dat) & pinmask);
++	if (c->fcall_cache && fc->capacity == c->msize)
++		kmem_cache_free(c->fcall_cache, fc->sdata);
 +	else
-+		return !!(gc->read_reg(gc->reg_set) & pinmask);
++		kfree(fc->sdata);
 +}
++EXPORT_SYMBOL(p9_fcall_free);
 +
-+/* get set multiple function when the direction is inverted */
-+static int bgpio_get_set_multiple_inv_dir(struct gpio_chip *gc,
-+					  unsigned long *mask,
-+					  unsigned long *bits)
-+{
-+	unsigned long get_mask = 0;
-+	unsigned long set_mask = 0;
-+
-+	/* Make sure we first clear any bits that are zero when we read the register */
-+	*bits &= ~*mask;
-+
-+	/* Exploit the fact that we know which directions are set */
-+	set_mask = *mask & ~gc->bgpio_dir;
-+	get_mask = *mask & gc->bgpio_dir;
-+
-+	if (set_mask)
-+		*bits |= gc->read_reg(gc->reg_set) & set_mask;
-+	if (get_mask)
-+		*bits |= gc->read_reg(gc->reg_dat) & get_mask;
-+
-+	return 0;
-+}
-+
- static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	return !!(gc->read_reg(gc->reg_dat) & bgpio_line2mask(gc, gpio));
-@@ -525,9 +559,17 @@ static int bgpio_setup_io(struct gpio_chip *gc,
+ static struct kmem_cache *p9_req_cache;
  
- 	if (!(flags & BGPIOF_UNREADABLE_REG_SET) &&
- 	    (flags & BGPIOF_READ_OUTPUT_REG_SET)) {
--		gc->get = bgpio_get_set;
--		if (!gc->be_bits)
--			gc->get_multiple = bgpio_get_set_multiple;
-+		/* if the direction inverted */
-+		if (flags & BGPIOF_INVERTED_REG_DIR) {
-+			gc->get = bgpio_get_set_inv_dir;
-+			if (!gc->be_bits)
-+				gc->get_multiple =
-+				bgpio_get_set_multiple_inv_dir;
-+		} else {
-+			gc->get = bgpio_get_set;
-+			if (!gc->be_bits)
-+				gc->get_multiple = bgpio_get_set_multiple;
-+		}
- 		/*
- 		 * We deliberately avoid assigning the ->get_multiple() call
- 		 * for big endian mirrored registers which are ALSO reflecting
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 5382b5183b7e..63570580707c 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -425,6 +425,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
- #define BGPIOF_BIG_ENDIAN_BYTE_ORDER	BIT(3)
- #define BGPIOF_READ_OUTPUT_REG_SET	BIT(4) /* reg_set stores output value */
- #define BGPIOF_NO_OUTPUT		BIT(5) /* only input */
-+#define BGPIOF_INVERTED_REG_DIR		BIT(6) /* reg_dir inverted */
+ /**
+@@ -261,9 +280,9 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
+ 	if (!req)
+ 		return NULL;
  
- #endif
+-	if (p9_fcall_alloc(&req->tc, alloc_msize))
++	if (p9_fcall_alloc(c, &req->tc, alloc_msize))
+ 		goto free;
+-	if (p9_fcall_alloc(&req->rc, alloc_msize))
++	if (p9_fcall_alloc(c, &req->rc, alloc_msize))
+ 		goto free;
  
+ 	p9pdu_reset(&req->tc);
+@@ -288,8 +307,8 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
+ 	return req;
+ 
+ free:
+-	kfree(req->tc.sdata);
+-	kfree(req->rc.sdata);
++	p9_fcall_free(c, &req->tc);
++	p9_fcall_free(c, &req->rc);
+ 	kmem_cache_free(p9_req_cache, req);
+ 	return ERR_PTR(-ENOMEM);
+ }
+@@ -333,8 +352,8 @@ static void p9_free_req(struct p9_client *c, struct p9_req_t *r)
+ 	spin_lock_irqsave(&c->lock, flags);
+ 	idr_remove(&c->reqs, tag);
+ 	spin_unlock_irqrestore(&c->lock, flags);
+-	kfree(r->tc.sdata);
+-	kfree(r->rc.sdata);
++	p9_fcall_free(c, &r->tc);
++	p9_fcall_free(c, &r->rc);
+ 	kmem_cache_free(p9_req_cache, r);
+ }
+ 
+@@ -944,6 +963,7 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 
+ 	clnt->trans_mod = NULL;
+ 	clnt->trans = NULL;
++	clnt->fcall_cache = NULL;
+ 
+ 	client_id = utsname()->nodename;
+ 	memcpy(clnt->name, client_id, strlen(client_id) + 1);
+@@ -980,6 +1000,9 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 	if (err)
+ 		goto close_trans;
+ 
++	clnt->fcall_cache = kmem_cache_create("9p-fcall-cache", clnt->msize,
++					      0, 0, NULL);
++
+ 	return clnt;
+ 
+ close_trans:
+@@ -1011,6 +1034,7 @@ void p9_client_destroy(struct p9_client *clnt)
+ 
+ 	p9_tag_cleanup(clnt);
+ 
++	kmem_cache_destroy(clnt->fcall_cache);
+ 	kfree(clnt);
+ }
+ EXPORT_SYMBOL(p9_client_destroy);
+diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+index c5cac97df7f7..5e43f0a00b3a 100644
+--- a/net/9p/trans_rdma.c
++++ b/net/9p/trans_rdma.c
+@@ -445,7 +445,7 @@ static int rdma_request(struct p9_client *client, struct p9_req_t *req)
+ 	if (unlikely(atomic_read(&rdma->excess_rc) > 0)) {
+ 		if ((atomic_sub_return(1, &rdma->excess_rc) >= 0)) {
+ 			/* Got one! */
+-			kfree(req->rc.sdata);
++			p9_fcall_free(client, &req->rc);
+ 			req->rc.sdata = NULL;
+ 			goto dont_need_post_recv;
+ 		} else {
 -- 
-2.14.1
+2.17.1
 
