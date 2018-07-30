@@ -2,155 +2,138 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49469C46461
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46156FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBF420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:48:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a02DjYVc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBF420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EE1D620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 06:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1D620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbeG3IVx (ORCPT
+        id S1726490AbeG3IZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 04:21:53 -0400
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:35053 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeG3IVx (ORCPT
+        Mon, 30 Jul 2018 04:25:45 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44583 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeG3IZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 04:21:53 -0400
-Received: by mail-lj1-f182.google.com with SMTP id p10-v6so9456165ljg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jul 2018 23:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/JKnRJMmtDRTyFijUWJmAtgfa3oPhwYiuDdulRLQwOU=;
-        b=a02DjYVcYnL84YNa+NHc0KpFLTHyoWNF5jrx9HSeSGGYlWoY7i1WuYXyR7qt7uynVI
-         L1xZEnDTpf1E2BrKtERxPSo7h7r+MRX998zKGBJ4mrbVElpnrD4IQrG5Cr1XpL4HXFbC
-         1VUwU3EXUs6/e9jd+7l/BGMirpe6s9vA8sVEM=
+        Mon, 30 Jul 2018 04:25:44 -0400
+Received: by mail-lf1-f66.google.com with SMTP id g6-v6so7335351lfb.11;
+        Sun, 29 Jul 2018 23:52:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/JKnRJMmtDRTyFijUWJmAtgfa3oPhwYiuDdulRLQwOU=;
-        b=eMKOcp6ZAc7CKXXSesqcCw3vUPnQCrGnTWK5WKzd+JfD5GfNGZ3oBJkBBRjI8bzB++
-         zLBZ+WTRdkZ5afET/HN/lTPstjrrmvvD03QtS3yFrrzCY+F2oiZ+N3hov9+PFGurfiV1
-         QYAWUTRHNAus7YjxpDR+r94JoHY81Sz2Sw77eDwJ6p+VYCF3DIJ3jSY8HiXMtB20tUj/
-         EdLEFM9jjnCl6XaylIHPzhqIOIMhcY5UiWe9Yx6L4yd1mKaPzk334OZbGfOFYnuwlB/N
-         XtUJ+au9zi59GMw7ng0RTRorqzhDSIro8M2pM22xNtV2pms2TPToiU+jvKYM/ZRWS6CC
-         bv8Q==
-X-Gm-Message-State: AOUpUlGLNxbwFLsA7+pSwPVLSRRJevCGyvrb21Dukn+yfEkCYv1SVKjk
-        rrI6EI4oOXv1fnsbc3k/PmT9sWEHXcPWpBQC+GElTg==
-X-Google-Smtp-Source: AAOMgpcbu29bUIOMLsZbza2AQfGyudGmvQxDg5Kk7HM+rioL+f80Tb7KDok7GR4J6e7lRDY8EUT4g+OaApqHPRAEo68=
-X-Received: by 2002:a2e:29da:: with SMTP id p87-v6mr11222404ljp.12.1532933302477;
- Sun, 29 Jul 2018 23:48:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=fRIrObFNcE0XyMpBVRVtMmxusYuzrOmbeqdDJiatK6Y=;
+        b=lRzGIXbEgK/px61Oij4MrfTqafxovx2QPfioQVTISZ+d9PiObFlwFMduy5osWtgkE5
+         lij0YnnUeQ3tDVk0aCoxtensZDG+6AC2GH8Qh6XMRH3tJFb+s39DOS68VtDkbTttEQ0L
+         j4N4tOGFY7y2DDwcizicY7fl51mQdzvJLGZAiqzHOCuPzV530R5WB3w4xQ6ge3RcbHlX
+         xY0CwrW5i1z+mynytKQzbflmM++SF+MrCgx3KZ5rIWtTD+EURFkG82MTrvHwfSE7VnpE
+         9TYbmuAK69xQpl50/Mv04XSmwW3kSgrrWP+DN18qhq9we1jz62cVXxZ8leyR1IWNAfMM
+         Hycg==
+X-Gm-Message-State: AOUpUlG9Q+lzmU1NNw4R08/mc5sVbdqI1Ru/biRxyoWx9sWbeyB2tG57
+        hr945hb+jTpk3+7MlurD8Is=
+X-Google-Smtp-Source: AAOMgpedUL8Vx4Wdozl7O+0/bX9ltzh9i/i2zpazwcb+SbOx3cbhdvHe3eZIlqIqflYC9fr7B0T/4w==
+X-Received: by 2002:a19:17c2:: with SMTP id 63-v6mr9040162lfx.112.1532933532538;
+        Sun, 29 Jul 2018 23:52:12 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q19-v6sm1962059lji.14.2018.07.29.23.52.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Jul 2018 23:52:11 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 09:52:00 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180730065200.GA8862@localhost.localdomain>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180712130013.GJ4641@dell>
 MIME-Version: 1.0
-References: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
-In-Reply-To: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
-From:   Amit Pundir <amit.pundir@linaro.org>
-Date:   Mon, 30 Jul 2018 12:17:46 +0530
-Message-ID: <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com>
-Subject: Re: Linux 4.18-rc7
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>, aarcange@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>, linux-mm@kvack.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180712130013.GJ4641@dell>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018 at 03:39, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So unless something odd happens, this should be the last rc for 4.18.
->
-> Nothing particularly odd happened this last week - we got the usual
-> random set of various minor fixes all over. About two thirds of it is
-> drivers - networking, staging and usb stands out, but there's a little
-> bit of stuff all over (clk, block, gpu, nvme..).
->
-> Outside of drivers, the bulk is some core networking stuff, with
-> random changes elsewhere (minor arch updates, filesystems, core
-> kernel, test scripts).
->
-> The appended shortlog gives a flavor of the details.
->
->                   Linus
->
-> ---
-> Kirill A. Shutemov (3):
->       mm: introduce vma_init()
->       mm: use vma_init() to initialize VMAs on stack and data segments
->       mm: fix vma_is_anonymous() false-positives
+Hello Lee & All others,
 
-Hi, I have run into AOSP userspace crash with v4.18-rc7, leading to
-above mm patches. bfd40eaff5ab ("mm: fix vma_is_anonymous()
-false-positives") to be specific. The same userspace is working fine
-with v4.18-rc6.
+I'm physically back from my vacations so I can once again reach the
+keyboard. So it's time to try address these issues =)
 
-I didn't yet look into what is going wrong from userspace point of
-view, but I just wanted to give you a heads up on this. I'll be happy
-to assist in further debugging/diagnosis if required.
+On Thu, Jul 12, 2018 at 02:00:13PM +0100, Lee Jones wrote:
+> On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> 
+> > +	ret = regmap_read(bd71837->regmap, BD71837_REG_REV, &val);
+> > +	if (ret) {
+> > +		dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
+> > +		return ret;
+> > +	}
+> 
+> You never do anything with the value here.
+> 
+> Please either utilise it, read something useful or remove it.
 
-Here is the crash log from logcat, if it helps:
-F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-F DEBUG   : Build fingerprint:
-'Android/db410c32_only/db410c32_only:Q/OC-MR1/102:userdebug/test-key
-F DEBUG   : Revision: '0'
-F DEBUG   : ABI: 'arm'
-F DEBUG   : pid: 2261, tid: 2261, name: zygote  >>> zygote <<<
-F DEBUG   : signal 7 (SIGBUS), code 2 (BUS_ADRERR), fault addr 0xec00008
-.. <snip> ..
-F DEBUG   : backtrace:
-F DEBUG   :     #00 pc 00001c04  /system/lib/libc.so (memset+48)
-F DEBUG   :     #01 pc 0010c513  /system/lib/libart.so
-(create_mspace_with_base+82)
-F DEBUG   :     #02 pc 0015c601  /system/lib/libart.so
-(art::gc::space::DlMallocSpace::CreateMspace(void*, unsigned int,
-unsigned int)+40)
-F DEBUG   :     #03 pc 0015c3ed  /system/lib/libart.so
-(art::gc::space::DlMallocSpace::CreateFromMemMap(art::MemMap*,
-std::__1::basic_string<char, std::__
-1::char_traits<char>, std::__1::allocator<char>> const&, unsigned int,
-unsigned int, unsigned int, unsigned int, bool)+36)
-F DEBUG   :     #04 pc 0013c9ab  /system/lib/libart.so
-(art::gc::Heap::Heap(unsigned int, unsigned int, unsigned int,
-unsigned int, double, double, unsigned int, unsigned int,
-std::__1::basic_string<char, std::__1::char_traits<char>,
-std::__1::allocator<char>> const&, art::InstructionSet,
-art::gc::CollectorType, art::gc::CollectorType,
-art::gc::space::LargeObjectSpaceType, unsigned int, unsigned int,
-unsigned int, bool, unsigned int, unsigned int, bool, bool, bool,
-bool, bool, bool, bool, bool, bool, bool, bool, unsigned long
-long)+1674)
-DEBUG   :     #05 pc 00318201  /system/lib/libart.so
-(art::Runtime::Init(art::RuntimeArgumentMap&&)+7036)
-DEBUG   :     #06 pc 0031af19  /system/lib/libart.so
-(art::Runtime::Create(std::__1::vector<std::__1::pair<std::__1::basic_string<char,
-std::__1::char_traits<char>, std::__1::allocator<char>>, void const*>,
-std::__1::allocator<std::__1::pair<std::__1::basic_string<char,
-std::__1::char_traits<char>, std::__1::allocator<char>>, void
-const*>>> const&, bool)+68)
-F DEBUG   :     #07 pc 0023c353  /system/lib/libart.so (JNI_CreateJavaVM+658)
-F DEBUG   :     #08 pc 0000205f  /system/lib/libandroid_runtime.so
-(android::AndroidRuntime::startVm(_JavaVM**, _JNIEnv**, bool)+5038)
-F DEBUG   :     #09 pc 00002381  /system/lib/libandroid_runtime.so
-(android::AndroidRuntime::start(char const*,
-android::Vector<android::String8> const&, bool)+196)
-F DEBUG   :     #10 pc 0000046b  /system/bin/app_process32 (main+702)
+Right. I'll add check that the chip revision is known and supported by
+driver. Later I'll also use this value to distinguish between BD71837
+and BD71847.
 
-Regards,
-Amit Pundir
+> > +struct bd71837_pmic;
+> > +struct bd71837_clk;
+> > +
+> > +struct bd71837 {
+> > +	struct device *dev;
+> > +	struct i2c_client *i2c_client;
+> 
+> Are these both being used?
+> 
+> If you save one, you tend not to need the other.
+> 
+
+That's what I would call experience. I indeed only use the dev pointer
+in subdevices - and what's even more ugly is that I use
+dev_get_drvdata(pdev->dev.parent) - in regulator while I use
+i2c_set_clientdata(i2c, bd71837); in MFD. This works because
+i2c_set_clientdata actually calls dev_set_drvdata - buit that's not
+pretty.
+
+I think it would be more appropriate to drop the i2c_client because
+subdevices need not to know the chip is connected via i2c. I'll do that
+and also replace the call to i2c_set_clientdata with direct use of
+dev_set_drvdata. Thanks!
+
+> > +	struct regmap *regmap;
+> > +	unsigned long int id;
+> > +
+> > +	int chip_irq;
+> > +	struct regmap_irq_chip_data *irq_data;
+> > +
+> > +	struct bd71837_pmic *pmic;
+> > +	struct bd71837_clk *clk;
+> > +};
+> > +
+> > +#endif /* __LINUX_MFD_BD71837_H__ */
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
