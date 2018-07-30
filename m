@@ -2,114 +2,178 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD4813F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 475CD13F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3FD20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F4A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SQ6KB6o1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oqLnPaqN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3FD20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b26sFZGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F4A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbeG3PIY (ORCPT
+        id S1731831AbeG3PI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:08:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42262 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbeG3PIY (ORCPT
+        Mon, 30 Jul 2018 11:08:58 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:40120 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbeG3PI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:08:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5450261D8F; Mon, 30 Jul 2018 13:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532957603;
-        bh=uFXRZDBFj+1KQiT8DzU7AxgLtNURM7oNuXS69CTRXiQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SQ6KB6o1I4aFKOsTd7y84wWqDpMFhBa3qoNeBWpVJYuxQ7NW2TDF/pY8NxzzbHJqd
-         HKqfOFrTd641CJdcVahnGZRnyW9Kaskh9aXxWcNxmC9zIsQyEWFeM4gMaHeXi+O+JV
-         8mA0PeEuGTS7SYQBbGnBpDL3TShsY5q3zPYpKqsY=
-Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3722560117;
-        Mon, 30 Jul 2018 13:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1532957602;
-        bh=uFXRZDBFj+1KQiT8DzU7AxgLtNURM7oNuXS69CTRXiQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oqLnPaqNJfCC4vdB6jRefOdmDmxZurik3kRJ1LeDU5lMN4vNWGh7Ei2kqqIqzIonb
-         hMpvMvpDcurXDtY70Vvrb8qjWK6980OVg95NPc7CqilbY3kAEGEcAnhi0PhpJm1xJK
-         Ich8svwuQ/GQKHW94jc7osWJaQL4q688rrm8aVMg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3722560117
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH v2] cpu/hotplug: Fix cpuhp_step name for timers
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Mathieu Malaterre <malat@debian.org>, gkohli@codeaurora.org,
-        neeraju@codeaurora.org
-References: <1532443668-26810-1-git-send-email-mojha@codeaurora.org>
- <1cf38a28-e95e-a8e4-9e1f-a83a6973436a@codeaurora.org>
- <alpine.DEB.2.21.1807301411010.2518@nanos.tec.linutronix.de>
-From:   Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <08c9986e-f774-332e-9838-462921f5486f@codeaurora.org>
-Date:   Mon, 30 Jul 2018 19:03:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 30 Jul 2018 11:08:58 -0400
+Received: by mail-yb0-f194.google.com with SMTP id y11-v6so4728544ybm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yPpaGxGtKTuWGQzWGyHOv2mrQenCB1T7lhvxE4adx5M=;
+        b=b26sFZGjIl10Ijgl5mAsqZ7oTaE4m+Zq7KeAThafMCqqn08CvYRGp6gsuE/dZeGYh/
+         pL9d7+MpHFpgSkRz+qjEPa8k3eretYk+raPdq8s5CvKUTzWQXi9KpXVqoumi5XfXz0B+
+         gM+uSkNl5mVmy2o42sxS1BW2AwpRQgHEdeiEI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yPpaGxGtKTuWGQzWGyHOv2mrQenCB1T7lhvxE4adx5M=;
+        b=YPZoInhoLlpEEqp2pvJBWNPyHs1PcjpmOd4bqHp3TC9RVr3oyn9UBtooSaS9bM3MVj
+         KL2KrQiBE9RmYKO0LwV6S7DfQDC7eC2iy9DI5GsYQOm35118hbifPtnjn36HX7aNL+lR
+         FXDhSuLyVwpOwPozC9/piEd1KM+dy3UgM1pVRbvggmJYWIv1A/up2Cnl+FArQWkLqedR
+         FAb17DQI8R84baX8PVWW6F103ofkprRoCHOIL0O+nn+b1m78wImlOUcTGqapPJ9zJGuQ
+         mb6rGGEQlCEbcEHfrNpBkhFlmsmWg9onFUM9gEEE9uxbNy89zLKTB4haJEW/yrwdqsdF
+         OJGA==
+X-Gm-Message-State: AOUpUlFsvOKQmbGR+94ZYNS2AvXHOFilOr4bScqHo0HYAkL7I+sGVPVI
+        xEot3pjLKWf+SOlVAQAV0hDO4A==
+X-Google-Smtp-Source: AAOMgpdOsMkxvdxWlT+5exGZ+zGYhPFTkhGUCGUgcLYrKGcW0hNXLQ2ZxZ8jUK1fVcva4VcbcVdmhw==
+X-Received: by 2002:a25:ac08:: with SMTP id w8-v6mr9227880ybi.245.1532957636621;
+        Mon, 30 Jul 2018 06:33:56 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm5086161ywa.12.2018.07.30.06.33.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 06:33:55 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 09:33:55 -0400
+From:   Sean Paul <seanpaul@chromium.org>
+To:     Satendra Singh Thakur <satendra.t@samsung.com>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        vineet.j@samsung.com, hemanshu.s@samsung.com,
+        nishant.y08@samsung.com, sst2005@gmail.com
+Subject: Re: [PATCH] drm/kms/crtc: Saving crtc->primary into a drm_plane
+ pointer instead of dereferencing it every time.
+Message-ID: <20180730133355.GB20303@art_vandelay>
+References: <CGME20180730060607epcas5p18565ae86e1c88e82469554aa3c0e1664@epcas5p1.samsung.com>
+ <20180730060607epcas5p18565ae86e1c88e82469554aa3c0e1664~GEGlfPEp_2913429134epcas5p1v@epcas5p1.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807301411010.2518@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730060607epcas5p18565ae86e1c88e82469554aa3c0e1664~GEGlfPEp_2913429134epcas5p1v@epcas5p1.samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 30, 2018 at 11:35:58AM +0530, Satendra Singh Thakur wrote:
+> In the func __drm_mode_set_config_internal,
+> objects (fb, old_fb, crtc) of crtc->primary are used at many places.
+> To access the objects of primary, it is dereferenced from crtc every
+> time. It's better to save it into drm_plane pointer.
+> This will make the code look simple.
+
+Maybe this is simpler, but not overwhelmingly so.
+
+To be honest, I'm a bit concerned with the volume of no-op patches you're
+sending to the list. I so appreciate and encourage your participation,
+but perhaps we could redirect your efforts. 
+
+A lot of the patches you send (not necessarily this one, it's pretty
+straightforward), are changing core pieces of commit validation which have
+already been proven to work. These types of changes require a lot of
+context and scrutinization on the part of the reviewer, which takes time that
+most of us don't have. If you introduce a bug with a no-op change, people are
+not going to be happy.
+
+So, in order to make everyone more productive, may I suggest the following:
+
+- Every change you make sure have a purpose greater than "this code snippet
+  is marginally more readable".
+- If you want to make readability changes, do them in one patch series with
+  a common theme (for example, the drm_crtc.h refactors).
+- Spend your time on bug fixes, performance improvements, and features as
+  opposed to readability.
+- Make sure you test your code.
+
+Again, *thank you* for your patches, it's great to have you here.
+
+Sean
 
 
-On 7/30/2018 5:49 PM, Thomas Gleixner wrote:
-> Mukesh,
->
-> On Thu, 26 Jul 2018, Mukesh Ojha wrote:
->
->> Hi All,
->>
->> Can i get input on this ?
-> Sure.
->
->> Thanks,
->> Mukesh
->> On 7/24/2018 8:17 PM, Mukesh Ojha wrote:
-> The input you get is that it's unprofessional to poke people after TWO days
-> about a patch which is purely cosmetic.
->
-> It's perfectly fine to send a reminder after a week for important changes
-> and after two for trivial cleanups like this. You really cannot expect that
-> maintainers and other developers permanentely sit there twiddling thumbs
-> and wait for new mail to arrive in order to reply immediately.
+> 
+> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+> ---
+>  drivers/gpu/drm/drm_crtc.c | 25 +++++++++++++++----------
+>  1 file changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+> index 98a36e6..9644f5b 100644
+> --- a/drivers/gpu/drm/drm_crtc.c
+> +++ b/drivers/gpu/drm/drm_crtc.c
+> @@ -462,6 +462,7 @@ static int __drm_mode_set_config_internal(struct drm_mode_set *set,
+>  	struct drm_crtc *crtc = set->crtc;
+>  	struct drm_framebuffer *fb;
+>  	struct drm_crtc *tmp;
+> +	struct drm_plane *plane;
+>  	int ret;
+>  
+>  	/*
+> @@ -469,23 +470,27 @@ static int __drm_mode_set_config_internal(struct drm_mode_set *set,
+>  	 * connectors from it), hence we need to refcount the fbs across all
+>  	 * crtcs. Atomic modeset will have saner semantics ...
+>  	 */
+> -	drm_for_each_crtc(tmp, crtc->dev)
+> -		tmp->primary->old_fb = tmp->primary->fb;
+> +	drm_for_each_crtc(tmp, crtc->dev) {
+> +		plane = tmp->primary;
+> +		plane->old_fb = plane->fb;
+> +	}
+>  
+>  	fb = set->fb;
+> -
+>  	ret = crtc->funcs->set_config(set, ctx);
+>  	if (ret == 0) {
+> -		crtc->primary->crtc = fb ? crtc : NULL;
+> -		crtc->primary->fb = fb;
+> +		plane = crtc->primary;
+> +		plane->crtc = fb ? crtc : NULL;
+> +		plane->fb = fb;
+>  	}
+>  
+>  	drm_for_each_crtc(tmp, crtc->dev) {
+> -		if (tmp->primary->fb)
+> -			drm_framebuffer_get(tmp->primary->fb);
+> -		if (tmp->primary->old_fb)
+> -			drm_framebuffer_put(tmp->primary->old_fb);
+> -		tmp->primary->old_fb = NULL;
+> +		plane = tmp->primary;
+> +		if (plane->fb)
+> +			drm_framebuffer_get(plane->fb);
+> +		if (plane->old_fb) {
+> +			drm_framebuffer_put(plane->old_fb);
+> +			plane->old_fb = NULL;
+> +		}
+>  	}
+>  
+>  	return ret;
+> -- 
+> 2.7.4
+> 
 
-Thanks for your patience and time in replying.
-Will keep the patience :-)
-
-Regards,
-Mukesh
-
->
-> Thanks,
->
-> 	tglx
->
-
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
