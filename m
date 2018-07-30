@@ -2,98 +2,148 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136EE13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906C413F6DFF
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23F6208A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2879620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 09:25:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfAWseYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23F6208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CrWeWG/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2879620881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbeG3K7T (ORCPT
+        id S1728919AbeG3K7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:59:19 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45927 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbeG3K7S (ORCPT
+        Mon, 30 Jul 2018 06:59:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56114 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbeG3K7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:59:18 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i26-v6so4265660pfo.12;
-        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IzmHTBeBSiVIrmI0rYCsSUBQMd5jnyXOKOPzzJavHxc=;
-        b=BfAWseYaKEvgzC0aHgGnKNJft7AHpn7jESHCTMlZsHJHnDwabh49b4uelgEAQmE1oF
-         vu4QM8gofRSP+un0GuQ4l2VYZ0poix/HMGIdcCu/hZPOklewk24GKRkPGdqSaK5emMhV
-         IvU1MWKOhmjYiLhpMBcjQVSs9A7aohb53cj5fJzuB0057y2W/XkhXijfGdS0WC3NxFlN
-         Mh3ctW/ZjqfA2eBkfsFkviDwmG/XUj+QnMcVJxep3xsI8dtDo/DzYHuljCLjCh+fT1AC
-         PvDcVumJaSmTmMYM9jV+y5l9n+K2ylz/Tni0eXrBNfNVhWcVgYe/QmLBwFrSdsV2i6aw
-         wXqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IzmHTBeBSiVIrmI0rYCsSUBQMd5jnyXOKOPzzJavHxc=;
-        b=FN5UVkIm6i6ATkV8QfSbFzffEgh8yg2VZEvXHZquHPZqMmxFm/myF5J/om0gF6A40o
-         mXIJcLzpNx8K8Cw6CIacN5IYb9M5TguvTk/AWlddXR7KJNCr04Si/A7+573y83sOYxkO
-         BBw9Cnm8soZA6GWK6dJI8CJAl66WAFbx9G/9L2Pt80aDGOyp59bpRS1wct7qyhzT06Ef
-         05TnODwJKy2T4M77E0QLOCSYjpVEr8In0/uRgeyCmJPaDczF1QGEPBH+ZNJ42+26OYTq
-         d9c0IKgbMIYyGPF9uJ5P2tr9++Pf8nIMLJfdDmnRYWhAL2eBNpr+t0GRIlS4Lr4L8E28
-         tIpw==
-X-Gm-Message-State: AOUpUlFDqzDL7MhYvIs+I5Rr5GTvJlinl0Giep3/goFuqLI6oKmwxXBj
-        hfmSjt5fKOGwiMYGjlmVy0A=
-X-Google-Smtp-Source: AAOMgpd260cQ6HEvevaFmkALXGv6xbf5is7SwBTecNuAcwJKnydd2dBSVZQBEoDZOVoEoH20bJQjQw==
-X-Received: by 2002:a65:428b:: with SMTP id j11-v6mr15298865pgp.200.1532942713454;
-        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
-        by smtp.gmail.com with ESMTPSA id d9-v6sm20096500pfb.86.2018.07.30.02.25.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 02:25:13 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 3/3] media: usb: em28xx: Replace GFP_ATOMIC with GFP_KERNEL in em28xx_init_usb_xfer()
-Date:   Mon, 30 Jul 2018 17:25:07 +0800
-Message-Id: <20180730092507.7902-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 30 Jul 2018 06:59:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zWypWX/Lmc9Sal0F1/QOdBjv6HrkRIilD9ad6tS5RO8=; b=CrWeWG/+YmsX5cM/5g1DIGqND
+        EegIclVCLrWbcNxgAhSshO4qgtiNw18fYZXwxUVgmGjUg1pRZROeWW4Q9McfywW+JmCOEKTGwfZGA
+        WcJJ82ztdwFP00Wttxm2zn8AXoNnM6u2W9oN9bdLYP3RIsS2LPffvt4ks55NmojapnU91ANNpYkfL
+        sReAD5ruJ8YaPZbbI7HDlXtGSpTvxAjC7//diNzCeCE3RsSuQHBtzOGQNpTJqGfeLzPeRiZcs8YVf
+        kfJ7ouJ/Z3PXhHBRTQ6G6xxu4h/dmE7JO6++A3dRM0Hf4RZ7xuLL9oDSqJLDX8HOSE2WSPQ7T46mt
+        d6gQN/WRg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fk4QV-0008TP-C4; Mon, 30 Jul 2018 09:25:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D027A20268325; Mon, 30 Jul 2018 11:25:13 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 11:25:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC tip/core/rcu] Avoid resched_cpu() when rescheduling
+ the current CPU
+Message-ID: <20180730092513.GD2494@hirez.programming.kicks-ass.net>
+References: <20180727154931.GA12106@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727154931.GA12106@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-em28xx_init_usb_xfer() is never called in atomic context.
-It calls usb_submit_urb() with GFP_ATOMIC, which is not necessary.
-GFP_ATOMIC can be replaced with GFP_KERNEL.
+On Fri, Jul 27, 2018 at 08:49:31AM -0700, Paul E. McKenney wrote:
+> Hello, Peter,
+> 
+> It occurred to me that it is wasteful to let resched_cpu() acquire
+> ->pi_lock when doing something like resched_cpu(smp_processor_id()),
 
-This is found by a static analysis tool named DCNS written by myself.
+rq->lock
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/media/usb/em28xx/em28xx-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> and that it would be better to instead use set_tsk_need_resched(current)
+> and set_preempt_need_resched().
+> 
+> But is doing so really worthwhile?  For that matter, are there some
+> constraints on the use of those two functions that I am failing to
+> allow for in the patch below?
 
-diff --git a/drivers/media/usb/em28xx/em28xx-core.c b/drivers/media/usb/em28xx/em28xx-core.c
-index 36d341fb65dd..4a2ba6132a90 100644
---- a/drivers/media/usb/em28xx/em28xx-core.c
-+++ b/drivers/media/usb/em28xx/em28xx-core.c
-@@ -1053,7 +1053,7 @@ int em28xx_init_usb_xfer(struct em28xx *dev, enum em28xx_mode mode,
- 
- 	/* submit urbs and enables IRQ */
- 	for (i = 0; i < usb_bufs->num_bufs; i++) {
--		rc = usb_submit_urb(usb_bufs->urb[i], GFP_ATOMIC);
-+		rc = usb_submit_urb(usb_bufs->urb[i], GFP_KERNEL);
- 		if (rc) {
- 			dev_err(&dev->intf->dev,
- 				"submit of urb %i failed (error=%i)\n", i, rc);
--- 
-2.17.0
 
+>     The resched_cpu() interface is quite handy, but it does acquire the
+>     specified CPU's runqueue lock, which does not come for free.  This
+>     commit therefore substitutes the following when directing resched_cpu()
+>     at the current CPU:
+>     
+>             set_tsk_need_resched(current);
+>             set_preempt_need_resched();
+
+That is only a valid substitute for resched_cpu(smp_processor_id()).
+
+But also note how this can cause more context switches over
+resched_curr() for not checking if TIF_NEED_RESCHED wasn't already set.
+
+Something that might be more in line with
+resched_curr(smp_processor_id()) would be:
+
+	preempt_disable();
+	if (!test_tsk_need_resched(current)) {
+		set_tsk_need_resched(current);
+		set_preempt_need_resched();
+	}
+	preempt_enable();
+
+Where the preempt_enable() could of course instantly trigger the
+reschedule if it was the outer most one.
+
+> @@ -2674,10 +2675,12 @@ static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused
+
+> -		resched_cpu(rdp->cpu); /* Provoke future context switch. */
+
+> +		set_tsk_need_resched(current);
+> +		set_preempt_need_resched();
+
+That's not obviously correct. rdp->cpu had better be smp_processor_id().
+
+> @@ -672,7 +672,8 @@ static void sync_rcu_exp_handler(void *unused)
+>  			rcu_report_exp_rdp(rdp);
+>  		} else {
+>  			rdp->deferred_qs = true;
+> -			resched_cpu(rdp->cpu);
+> +			set_tsk_need_resched(t);
+> +			set_preempt_need_resched();
+
+That only works if @t == current.
+
+>  		}
+>  		return;
+>  	}
+
+> -	else
+> -		resched_cpu(rdp->cpu);
+> +	} else {
+> +		set_tsk_need_resched(t);
+> +		set_preempt_need_resched();
+
+Similar...
+
+>  }
+
+> @@ -791,8 +791,10 @@ static void rcu_flavor_check_callbacks(int user)
+>  	if (t->rcu_read_lock_nesting > 0 ||
+>  	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+>  		/* No QS, force context switch if deferred. */
+> -		if (rcu_preempt_need_deferred_qs(t))
+> -			resched_cpu(smp_processor_id());
+> +		if (rcu_preempt_need_deferred_qs(t)) {
+> +			set_tsk_need_resched(t);
+> +			set_preempt_need_resched();
+> +		}
+
+And another dodgy one..
