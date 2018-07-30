@@ -2,61 +2,103 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2340313F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE647FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D2220881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D2220881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id A587A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 08:54:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k3l2qA0S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A587A20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbeG3K2A (ORCPT
+        id S1726843AbeG3K23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 06:28:00 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:56212 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbeG3K17 (ORCPT
+        Mon, 30 Jul 2018 06:28:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40544 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726543AbeG3K22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 06:27:59 -0400
-X-IronPort-AV: E=Sophos;i="5.51,422,1526367600"; 
-   d="scan'208";a="14263165"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Jul 2018 01:53:45 -0700
-Received: from localhost.localdomain (10.10.76.4) by
- chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 30 Jul 2018 01:53:44 -0700
-Subject: Re: [PATCH v2 0/3] add support to non-uniform SFDP SPI NOR flash
- memories
-To:     <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <Cristian.Birsan@microchip.com>
-References: <20180712173235.7901-1-tudor.ambarus@microchip.com>
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <1a3a29a7-abdd-cfb4-b955-48dad6417cca@microchip.com>
-Date:   Mon, 30 Jul 2018 11:53:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 30 Jul 2018 06:28:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xdGnmK8t1YV0QPYIjo0ZqGbctDl195gyFDUuKKzBSiE=; b=k3l2qA0SGymJzCLwS3/427W9+
+        Mt1KB9QnpGlV0RXLV3wfPRg4JItAY7UsFUZKBCCIso1z0kHLiVCrK3/URK2zI5sLKj07qovsI1rvJ
+        N29mOgq3WdSqLQp5ZjN1J+Vf+zTRquNI/ij5DEGRffFB18eYlebPZfys0kdPdcudAmJho/XMrU9y7
+        eay5Zpbgx+hvuQW4uKK1TUNYeiFRE1BGIGmpuRe76UV23cZZHQZyrHLxiNKQi2k18emDYpvy+xJSI
+        W+51pgllsmCBD4ref9MXtaLZRKb1u43TougfwTxOihjSR8AnUi25AY0ZeMU5mn+ZRpiPAiMb3o5NP
+        M7yKp8A0Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fk3wE-0005Bk-6e; Mon, 30 Jul 2018 08:53:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0538420268325; Mon, 30 Jul 2018 10:53:55 +0200 (CEST)
+Date:   Mon, 30 Jul 2018 10:53:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Eduardo Valentin <eduval@amazon.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Rajvi Jingar <rajvi.jingar@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/1] x86: tsc: avoid system instability in
+ hibernation
+Message-ID: <20180730085354.GA2494@hirez.programming.kicks-ass.net>
+References: <20180726155656.14873-1-eduval@amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <20180712173235.7901-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180726155656.14873-1-eduval@amazon.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a side note, the SFDP code increases its size, it would make sense to move
-all SFDP logic into a spi-nor-sfdp.c file. I'm volunteering to do this after
-this patch set gets applied.
+On Thu, Jul 26, 2018 at 08:56:56AM -0700, Eduardo Valentin wrote:
+> System instability are seen during resume from hibernation when system
+> is under heavy CPU load. This is due to the lack of update of sched
+> clock data
 
-Best,
-ta
+Which would suggest you're already running with unstable sched clock.
+Otherwise nobody would care about the scd stuff.
+
+What kind of machine are you running? What does:
+
+  dmesg | grep -i tsc
+
+say?
+
+> The fix for this situation is to mark the sched clock as unstable
+> as early as possible in the resume path, leaving it unstable
+> for the duration of the resume process. This will force the
+> scheduler to attempt to align the sched clock across CPUs using
+> the delta with time of day, updating sched clock data. In a post
+> hibernation event, we can then mark the sched clock as stable
+> again, avoiding unnecessary syncs with time of day on systems
+> in which TSC is reliable.
+
+None of this makes any sense. Either you were already unstable and it
+should already have worked and them marking it stable is an outright
+bug, or your sched clock was stable but then your initial diagnosis of
+lack of scd updates is complete garbage.
+
