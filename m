@@ -2,82 +2,91 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F123516256E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A4316256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A87CE20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:25:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87CE20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 6CCD520894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:26:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="niJ9A2X+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CCD520894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731578AbeG3SBa (ORCPT
+        id S1731700AbeG3SB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:01:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:60770 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbeG3SBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:01:30 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D83A613F00BBE;
-        Mon, 30 Jul 2018 09:25:45 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 09:25:45 -0700 (PDT)
-Message-Id: <20180730.092545.225621578249887012.davem@davemloft.net>
-To:     yangbo.lu@nxp.com
-Cc:     netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        richardcochran@gmail.com, robh+dt@kernel.org, shawnguo@kernel.org,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ptp_qoriq: convert to use module parameters for
- initialization
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180730100154.27906-3-yangbo.lu@nxp.com>
-References: <20180730100154.27906-1-yangbo.lu@nxp.com>
-        <20180730100154.27906-3-yangbo.lu@nxp.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 30 Jul 2018 09:25:46 -0700 (PDT)
+        Mon, 30 Jul 2018 14:01:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbeG3SB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 14:01:58 -0400
+Received: from localhost (unknown [104.132.0.91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F163C20870;
+        Mon, 30 Jul 2018 16:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1532967974;
+        bh=Z0bbgSW9XilYmBig0cf/W2OghYPpfgrXhZQJouMUuEA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=niJ9A2X+sIdt+J+lJFErYW54zMmQig8YdK26nEVhP0qXYjB0QgSqSlL8yqIR3opaA
+         HkhRKK5/eyKNW2oop+mCmVz8xwk4tUTXQZw+OnLSnDW6XA/xOvddndjwWS2S5twWC8
+         GpcIW5zzAa1NIxQLJes8PbzgN8Oww0Nr+FBHBJSc=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180730114056.GA17362@e107155-lin>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        linux-clk@vger.kernel.org,
+        LAK <linux-arm-kernel@lists.infradead.org>
+References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
+ <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
+ <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+ <20180730114056.GA17362@e107155-lin>
+Message-ID: <153296797329.17365.14490424418553594815@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
+Date:   Mon, 30 Jul 2018 09:26:13 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangbo Lu <yangbo.lu@nxp.com>
-Date: Mon, 30 Jul 2018 18:01:54 +0800
+Quoting Sudeep Holla (2018-07-30 04:40:56)
+> On Mon, Jul 30, 2018 at 11:03:51AM +0530, Amit Daniel Kachhap wrote:
+> > Hi,
+> > =
 
-> +static unsigned int cksel = DEFAULT_CKSEL;
-> +module_param(cksel, uint, 0644);
-> +MODULE_PARM_DESC(cksel, "Select reference clock");
-> +
-> +static unsigned int clk_src;
-> +module_param(clk_src, uint, 0644);
-> +MODULE_PARM_DESC(clk_src, "Reference clock frequency (if clocks property not provided in dts)");
-> +
-> +static unsigned int tmr_prsc = 2;
-> +module_param(tmr_prsc, uint, 0644);
-> +MODULE_PARM_DESC(tmr_prsc, "Output clock division/prescale factor");
-> +
-> +static unsigned int tmr_fiper1 = 1000000000;
-> +module_param(tmr_fiper1, uint, 0644);
-> +MODULE_PARM_DESC(tmr_fiper1, "Desired fixed interval pulse period (ns)");
-> +
-> +static unsigned int tmr_fiper2 = 100000;
-> +module_param(tmr_fiper2, uint, 0644);
-> +MODULE_PARM_DESC(tmr_fiper2, "Desired fixed interval pulse period (ns)");
+> > On Fri, Jul 27, 2018 at 10:07 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
+> > >> This fix rounds the clock rate properly by using quotient and not
+> > >> remainder in the calculation. This issue was found while testing HDMI
+> > >> in the Juno platform.
+> > >>
+> > >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> > >
+> > > Any Fixes: tag here?
+> > Yes, This patch is tested with Linux v4.18-rc6 tag.
+> >
+> =
 
-Sorry, there is no way I am every applying something like this.  Module
-parameters are to be avoided at all costs.
+> No Stephen meant the commit that this fixes, something like below:
+> =
 
-And you don't need it here, you have DTS, please use it.
+> Fixes: 6d6a1d82eaef ("clk: add support for clocks provided by SCMI")
+> =
 
-You are required to support the existing DTS cases, in order to
-avoid breaking things, anyways.
+> so that it can get backported if required.
+> =
+
+
+Yep! Thanks!
+
