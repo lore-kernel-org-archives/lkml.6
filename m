@@ -2,178 +2,84 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED540C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952DEC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D66D20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D66D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5120D20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 21:47:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5120D20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbeG3XXZ (ORCPT
+        id S1731913AbeG3XYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 19:23:25 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50464 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbeG3XXZ (ORCPT
+        Mon, 30 Jul 2018 19:24:05 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40537 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbeG3XYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 19:23:25 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fkFzW-0006rD-G1; Mon, 30 Jul 2018 17:46:10 -0400
-Message-ID: <1532987170.28585.52.camel@surriel.com>
-Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
- refcounting
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date:   Mon, 30 Jul 2018 17:46:10 -0400
-In-Reply-To: <CALCETrXnG9nPzJKOtd=65BWeoTs2y=mVUAEvNGmFrD8fvg-EfQ@mail.gmail.com>
-References: <20180728215357.3249-1-riel@surriel.com>
-         <20180728215357.3249-11-riel@surriel.com>
-         <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
-         <20180729155452.37eddc11@imladris.surriel.com>
-         <20180730095502.GG2494@hirez.programming.kicks-ass.net>
-         <1532961011.28585.30.camel@surriel.com>
-         <20180730162653.GM2494@hirez.programming.kicks-ass.net>
-         <1532978146.28585.32.camel@surriel.com>
-         <CALCETrXZPN6Lt55siHM__YW4jFfoy5w+Hd2aJtEi8qhsro6RMA@mail.gmail.com>
-         <1532979368.28585.33.camel@surriel.com>
-         <CALCETrXnG9nPzJKOtd=65BWeoTs2y=mVUAEvNGmFrD8fvg-EfQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-jFEYLkuCRCWCOb7iteU5"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Mon, 30 Jul 2018 19:24:05 -0400
+Received: by mail-io0-f195.google.com with SMTP id l14-v6so11185039iob.7;
+        Mon, 30 Jul 2018 14:47:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WQK6FvjTxfJSvSQBv5w7qSWyweNcGOAW89uXnqjvF2o=;
+        b=oQ9tjr45wWtL+Ztqc4VGJlZvRBuRHnYnnSuHDb2w/B+ZNj+6MYzgh0K1yL1A+LZuon
+         ZAKrokG1wiF1v/EH9VuHhcXGxy+z61npXG2+Rc8rOZ1riiG7LuRSidcNlMiMgAMwAce4
+         Ad5oO+6dFrjiHyjMIBOPpClyo3D2WUZg5FSdb2KAAMinHk3UyHMXRJ7gRey06sn3Lbmj
+         OZEQ0XIkiFzCe5qHwoko0kNf5B73anOFkmnw4xia1DbaxVrTOjdR9DkXCaz8t3a05lUA
+         qlw/8obW486K2L41mUh/DVL55apfehVOivFRvhTLM9UNCpFtOmXJNQFD+QyFyP0SPtFz
+         77IA==
+X-Gm-Message-State: AOUpUlHwd0NPyQS7tJAnnBbjW+db6JIq2xD9CXMtRKRQ1aheccivrAR7
+        BSCQLuliqeO0PAtnxRo1HA==
+X-Google-Smtp-Source: AAOMgpeWbnEYeZEkmb7AW+113RMiUOH4jclwrzXOkYmBl5KvZj+Gdxb/iEctDICyhAxpKk3GIDtdBA==
+X-Received: by 2002:a6b:d611:: with SMTP id w17-v6mr15492777ioa.216.1532987226992;
+        Mon, 30 Jul 2018 14:47:06 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id m1-v6sm2063239iok.81.2018.07.30.14.47.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 14:47:06 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 15:47:05 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc:     broonie@kernel.org, mark.rutland@arm.com,
+        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        masami.hiramatsu@linaro.org, jaswinder.singh@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: add DT bindings for UniPhier
+ SPI controller
+Message-ID: <20180730214705.GA25882@rob-hp-laptop>
+References: <1532588943-19481-1-git-send-email-hayashibara.keiji@socionext.com>
+ <1532588943-19481-2-git-send-email-hayashibara.keiji@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532588943-19481-2-git-send-email-hayashibara.keiji@socionext.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 26, 2018 at 04:09:02PM +0900, Keiji Hayashibara wrote:
+> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> 
+> Add DT bindings for SPI controller implemented in UniPhier SoCs.
+> 
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+> ---
+>  .../devicetree/bindings/spi/spi-uniphier.txt       | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-uniphier.txt
 
---=-jFEYLkuCRCWCOb7iteU5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Please add acks/reviewed-bys when posting new versions.
 
-On Mon, 2018-07-30 at 12:49 -0700, Andy Lutomirski wrote:
-
->=20
-> I think it's a big step in the right direction, but it still makes be
-> nervous.  I'd be more comfortable with it if you at least had a
-> functional set of patches that result in active_mm being gone,
-> because
-> that will mean that you actually audited the whole mess and fixed
-> anything that might rely on active_mm pointing somewhere or that
-> might
-> be putting a value you didn't take into account into active_mm.  IOW
-> I'm not totally thrilled by applying the patches as is if we're still
-> a bit unsure as to what might have gotten missed.
->=20
-> I don't think it's at all necessary to redo the patches.
->=20
-> Does that seem reasonable?
-
-Absolutely. I tried to keep ->active_mm very similar
-to before for exactly that reason.
-
-Lets go through all the places where it is used, in
-x86 and architecture independent code. I have not
-checked other architectures.
-
-It looks like we should be able to get rid of
-->active_mm at some point, but a lot of it depends
-on other architecture maintainers.
-
-
-arch/x86/events/core.c:
-- get_segment_base: get current->active_mm->context.ldt,
-  this appears to be for TIF_IA32 user programs only, so
-  we should be able to use current->mm here
-
-arch/x86/kernel/cpu/common.c:
-- current task's ->active_mm assigned in two places,
-  never read
-
-arch/x86/lib/insn-eval.c:
-- get_desc() gets current->active_mm->context.ldt, this
-  appears to be only for user space programs
-
-arch/x86/mm/tlb.c:
-- this series adds two places where current->active_mm is
-  written, it is never read
-
-arch/x86/platform/efi/efi_64.c:
-- current->active_mm is set to efi_mm for a little bit,
-  with irqs disabled, and then changed back, with irqs still
-  disabled; we should be able to get rid of ->active_mm here
-- in the init code, ->active_mm is set to efi_mm as well,
-  presumably the kernel automatically switches that back on
-  the next context switch; this may be buggy, since preemption
-  is enabled and a GFP_KERNEL allocation is just a few lines
-  below
-
-arch/x86/power/cpu.c:
-- fix_processor_context() calls load_mm_ldt(current->active_mm);,
-  we should be able to use cpu_tlbstate.loaded_mm instead
-
-drivers/cpufreq/pmac32-cpufreq.c:
-- pmu_set_cpu_speed() restores current->active_mm - don't know if
-  anyone still cares about 32 bit PPC :)
-
-drivers/firmware/efi/arm-runtime.c:
-- efi_virtmap_unload switches back the pgd to current->active_mm
-  from &efi_mm; that mm could be stored elsewhere if we excised
-  ->active_mm everywhere
-
-drivers/macintosh/via-pmu.c:
-- same deal as pmap32-cpufreq.c above
-
-mm/mmu_context.c:
-- use_mm() tracks the ->active_mm a kernel thread is pointing to,
-  but the mm is also tracked in ->mm
-- unuse_mm() is the same deal as use_mm(), we should be able to
-  get rid of ->active_mm if everybody stops using it, and we
-  no longer refcount it anywhere
-
-init/init_task.c:
-- init_task.active_mm =3D &init_mm
-
-fs/exec.c:
-- exec_mmap() juggles both ->mm and ->active_mm, in order to
-  get refcounting right; without refcounting we can lose ->active_mm
-
-
---=20
-All Rights Reversed.
---=-jFEYLkuCRCWCOb7iteU5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltfhyIACgkQznnekoTE
-3oMyPggAhzdVoswWzCP6ZpxFYpWaneT0VypiM9spbl87zsDnSANr5opDPBl4ZJDq
-HjGLBGCKVKYFpN9pnR9iFImQllHosMKFKrEOoYueTXwjZu/hPZoyONghxWCVbgYL
-QSCgpWGkrO6EPnlwKqdXuAyX7vsE4z9NmSWCltpywtJ+ZMq/yfovYByOEt9JEd8Q
-XLGmlDV4I9rUFRDG5Fhfg3zNYulRkyfAVD7wCu3jyb7sKnAQ88bPXojPIBxgQI3p
-8uWtl8FhO7d5U9Rc2KspW8kuto5Hzy2VzlrFiPhhG/CcpDOpTwskNqAkaSAKQ6MW
-W0P0QQiVwf5a6MxcKIIrTMlvCbtpow==
-=Bhiw
------END PGP SIGNATURE-----
-
---=-jFEYLkuCRCWCOb7iteU5--
-
+Rob
