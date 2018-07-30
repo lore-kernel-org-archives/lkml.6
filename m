@@ -2,129 +2,85 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F94C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB3EC43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB3720840
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CB3720840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=padovan.org
+	by mail.kernel.org (Postfix) with ESMTP id 7436420840
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 18:36:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="W/00KoUV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7436420840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731557AbeG3ULT (ORCPT
+        id S1731766AbeG3UMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 16:11:19 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44474 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729477AbeG3ULT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 16:11:19 -0400
-Received: by mail-qt0-f194.google.com with SMTP id b15-v6so13173832qtp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 11:35:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kQi1TM0lpCOqOZYKHd8ujoQLm/MKQK2jUpVDMZLURq0=;
-        b=REoh2SMdu7YUzirr9DAZTPFYUeIOhbJhAwtE3mR5tkdgXQ3iXGCG/TXBLGyyaxfwHF
-         oNxW0TiMqOPLNEiY6P3uWakBtvlJCPw1gKQccERVp3nxg2105lNbKptAAXxGJNtyuJ/t
-         q8wg3yH3UPNURq1WbwfTWIrQ1JXv+lzi29IwGlMTGVveIFF8i4P5Yu0HszfvqOtFe19/
-         ZkiYvpjT4x5sZjHMrfGjfcY/4WkouqTjbco2U8X+BjCU+TzxS0CQSKu+egcQ68MOUE5J
-         AU65gSQBbXEsxeEg42YQfwizpZCREvztQ7wKPIlYKsuJo8nq4m3zZaDGfrIcw+ngwqC1
-         /8IQ==
-X-Gm-Message-State: AOUpUlGxUD3bP56NjZx0H67bp90e19Iy8zZZ1UmA4gkdwWf9sMfrCclO
-        6/vzkYB07wAbyrnvPKRqWZo=
-X-Google-Smtp-Source: AAOMgpfcEr1eoPWcZvcGsFBCDvtYfB4LllfReOl9L6TkrPYwyu5gYYkiauT0k9B3MA0jM79Lck9AqQ==
-X-Received: by 2002:a0c:b24c:: with SMTP id k12-v6mr16287919qve.152.1532975701848;
-        Mon, 30 Jul 2018 11:35:01 -0700 (PDT)
-Received: from juma ([177.73.70.202])
-        by smtp.gmail.com with ESMTPSA id t127-v6sm3789656qkd.1.2018.07.30.11.34.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 11:35:01 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 15:34:54 -0300
-From:   Gustavo Padovan <gustavo@padovan.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     willy@infradead.org, airlied@linux.ie, daniel.vetter@ffwll.ch,
-        rodrigosiqueiramelo@gmail.com, gustavo.padovan@collabora.com,
-        hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm/vkms: Use new return type vm_fault_t
-Message-ID: <20180730183454.GA5400@juma>
-References: <20180726144549.GA9434@jordon-HP-15-Notebook-PC>
+        Mon, 30 Jul 2018 16:12:34 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43870 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727478AbeG3UMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 16:12:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=OIsDH67WcLn2ONRSZEzJp5gb7ozyiHGWxEPbbUMSq28=; b=W/00KoUVxeeMULY893fPKqxfNt
+        Cf3Kb+ZrMPyL2XiyOuuo/NjdFVs4Ez0fYCnfB+xYwSPP3qiLbnVBWBbUO0pg5m8fOyT19rP4/VlO/
+        l2NBg7GZIkUB/qZRItTG+ZHgPz2biMEaFZbgBgNVHeOqPi+Zx+S9eGWrh+LXD6DX1bHk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fkD1k-0006L1-G4; Mon, 30 Jul 2018 18:36:16 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7A93B7A614A; Mon, 30 Jul 2018 14:36:15 -0400 (EDT)
+Date:   Mon, 30 Jul 2018 14:36:15 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jeremy Cline <jcline@redhat.com>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: mballoc: Fix spectre gadget in
+ ext4_mb_regular_allocator
+Message-ID: <20180730183615.GU21725@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jeremy Cline <jcline@redhat.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
+References: <20180730180747.25200-1-jcline@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180726144549.GA9434@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180730180747.25200-1-jcline@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Souptick,
+Hey Jeremy,
 
-On Thu, Jul 26, 2018 at 08:15:49PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
-> v2: Updated patch title
-> 
->  drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
->  drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
->  2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 07be29f..d5d04a8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
->  				       u32 *handle,
->  				       u64 size);
->  
-> -int vkms_gem_fault(struct vm_fault *vmf);
-> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
->  
->  int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
->  		     struct drm_mode_create_dumb *args);
-> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-> index c7e3836..62e05dc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> @@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
->  	kfree(gem);
->  }
->  
-> -int vkms_gem_fault(struct vm_fault *vmf)
-> +vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct vkms_gem_object *obj = vma->vm_private_data;
->  	unsigned long vaddr = vmf->address;
->  	pgoff_t page_offset;
->  	loff_t num_pages;
-> -	int ret;
-> +	vm_fault_t ret = VM_FAULT_SIGBUS;
->  
->  	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
->  	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
-> @@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
->  	if (page_offset > num_pages)
->  		return VM_FAULT_SIGBUS;
->  
-> -	ret = -ENOENT;
->  	mutex_lock(&obj->pages_lock);
->  	if (obj->pages) {
->  		get_page(obj->pages[page_offset]);
-> -- 
-> 1.9.1
+I think you are also going to be changing the 1/3 patch from the
+original patch series that this was part of.  That's correct, right?
 
-Patch pushed to drm-misc-next. vkms is still experimental so I'm not
-queueing this for 4.19. Thanks.
+It would be easier for me if you could simply make all of the
+revisions you plan to make for the patch series, and then upload a
+full v2 of the entire patch series.
 
-Gustavo
+Right now I've mentally marked the entire patch series as "waiting
+forh v2".  So when you send a V2 version of individual patch out of
+that series, it leaves things unclear when/if you plan to update any
+of other patches in the series.
 
+Thanks!!
+
+						- Ted
