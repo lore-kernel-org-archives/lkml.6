@@ -2,104 +2,107 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C407E13F6DFF
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DD9FD21E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF5420893
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:42:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF5420893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A261020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 13:43:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOjlUOCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A261020873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeG3PRs (ORCPT
+        id S1727010AbeG3PSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 11:17:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10156 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726530AbeG3PRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 11:17:48 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 357442B75703D;
-        Mon, 30 Jul 2018 21:42:33 +0800 (CST)
-Received: from [10.177.98.84] (10.177.98.84) by smtp.huawei.com (10.3.19.205)
- with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 30 Jul 2018 21:42:27
- +0800
-Subject: Re: [Question] load balance move tasks not suitable ?
-To:     Peter Zijlstra <peterz@infradead.org>
-References: <6e782fa5-de1d-93a9-ed11-5b43b65b20c9@huawei.com>
- <20180730125606.GP2476@hirez.programming.kicks-ass.net>
-CC:     <linux-kernel@vger.kernel.org>,
-        Zhanghailiang <zhang.zhanghailiang@huawei.com>
-From:   "weiqi (C)" <weiqi4@huawei.com>
-Message-ID: <8513a5c1-2067-cdf6-285f-3fb422274c05@huawei.com>
-Date:   Mon, 30 Jul 2018 21:42:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180730125606.GP2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.98.84]
-X-CFilter-Loop: Reflected
+        Mon, 30 Jul 2018 11:18:07 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35631 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbeG3PSH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 11:18:07 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w3-v6so5579316plq.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 06:43:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DNdnE/kZ/XuUmtH5Z/dUaoBqpi0bBVl9FJ0FK1kRdbA=;
+        b=iOjlUOCgmLzk0fekyO/1D4wIKuJYdycSmAuHY2lpYgcrpFkkDl84aeAO/kwHHj2UC2
+         JU574Bc1LylQSS1/HlyTXgBYQbUXMPqgP9fmMTDkHyjaabVeKokDYh2K9Q11ho1pW+43
+         eBlyAUkZtYPseF91U8T20i75Trejz0HUSf3CeIRtvcQeMXbyavja9HFKDABSNGM8bj/j
+         bRrnAGix6mVejCg1jiu8HZSiSg2Qxk8+QI47RXgIPlNMrl5tC6lnY9+nPrqY2apFqLYm
+         CpmYTgcWBBPWMjRpcTOdJeCp+AWELk97ksb/mmxklxkdvAgWrqTivl45E1rmYsk+X1mj
+         6rHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DNdnE/kZ/XuUmtH5Z/dUaoBqpi0bBVl9FJ0FK1kRdbA=;
+        b=X4rITC/ySC+f54RCb+F8hdqQD7PtOaoB7qL0H7HsH0HDMMUZrCrGkkWGauXzw/lYyX
+         8SnQhSKOua4Fvmy2FRiRLGTg1wv6eSM/zSDHW213m5LBQobI3dkIX1DEu4zeKiGIeVeN
+         P+m1iNL9ni/KHGbEbmRVbQzDn6A6rK6ELYoJ1uXOMmDJYkPFThEK6LMjLHhD8Kb5PvsQ
+         JalMCt5M7V3lGj4C4APF2du3wrSK4tGABwgsTHRB3T+gkGTjklCYY2DAXh8+POYAWilr
+         eAG0slhjoNyKSVhU50gD7sCh0uIIbfkLNG7ge1L5CxjUBGdAx64GPaQRkriifSnX3A1C
+         96xA==
+X-Gm-Message-State: AOUpUlFVRxN6B8nCh0dj7HboKy1l6TlZYqgqcXvVdcSQyzf0S9dznUtP
+        PpXaTCxcRxpEUrxWOPcz6w8+9D8f
+X-Google-Smtp-Source: AAOMgpdMzHTGvGWHbNpAq+LS8ZJkOdcXZeMJKiwGPEZQOFcjHhu/WPoXWLUF1woJ529ukLObnrxgNQ==
+X-Received: by 2002:a17:902:a989:: with SMTP id bh9-v6mr16733920plb.245.1532958183353;
+        Mon, 30 Jul 2018 06:43:03 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:4550:ab75:cee3:d6c1])
+        by smtp.gmail.com with ESMTPSA id f23-v6sm12397577pgl.5.2018.07.30.06.43.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 06:43:02 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     linux@dominikbrodowski.net
+Cc:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] pcmcia: pcmcia_resource: Replace mdelay() with msleep()
+Date:   Mon, 30 Jul 2018 21:42:56 +0800
+Message-Id: <20180730134256.8901-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in latest  linux kernel version,  load-balance's  detach_tasks() keeps  
-"load/2"  behavior:
+pcmcia_fixup_iowidth() and pcmcia_enable_device() are 
+never called in atomic context.
+They call mdelay() to busily wait, which is not necessary.
+mdelay() can be replaced with msleep().
 
-"""
+This is found by a static analysis tool named DCNS written by myself.
 
-         if (( load / 2 ) > env->imbalance)
-                 goto next;
-"""
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/pcmcia/pcmcia_resource.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It  means  a task  "p",  which  load  is 1.5 times than "env->imbalance" 
-can move from "src_rq" to "dst_rq".
-after this move,  imbalance between  "src_rq"  and "dst_rq" may larger 
-than  before.
-but if use "load*2" here,  It means we can pick a task "p" , which load 
-is half of "env->imbalance"， and after move，
-"src_rq" and "dst_rq"  is balanced.
-
-Am I right?
-
-
-在 2018/7/30 20:56, Peter Zijlstra 写道:
-> On Mon, Jul 30, 2018 at 08:08:55PM +0800, weiqi (C) wrote:
->> Hi Peter,
->>
->> After  Commits 5d6523ebd(sched: Fix load-balance wreckage)，
-> That's a _6_ year old patch... and I can barely remember last week.
->
->> The jugement whether imbalance reached changed from twice to one-half.
->>
->> from
->>
->> (1) if((load * 2)> rem_load_move)
->>          goto next;
->>
->> to
->>
->> (2) if((load / 2)> env-> load_move)
->>          goto next;
->>
->> I'm confused about this change.
->>
->> "load*2" may be more appropriate, because if a task whose load more than
->> env->imbalance is moved from high load cpu to low load cpu,
->>
->> will make more imbalance.
-> It basically goes back to what it was before (see 367456c), in that
-> patch I (inadvertently) replaced (load.weight >> 1) with (load * 2)
-> instead of (load / 2).
->
-> I'm not entirely sure I can explain that logic at this time. Doing
-> software archeology on it might clarify where it came from.
-> .
->
+diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resource.c
+index 34aad895a239..8129dd8094cd 100644
+--- a/drivers/pcmcia/pcmcia_resource.c
++++ b/drivers/pcmcia/pcmcia_resource.c
+@@ -284,7 +284,7 @@ int pcmcia_fixup_iowidth(struct pcmcia_device *p_dev)
+ 		io_on.stop = s->io[i].res->end;
+ 
+ 		s->ops->set_io_map(s, &io_off);
+-		mdelay(40);
++		msleep(40);
+ 		s->ops->set_io_map(s, &io_on);
+ 	}
+ unlock:
+@@ -567,7 +567,7 @@ int pcmcia_enable_device(struct pcmcia_device *p_dev)
+ 			!(flags & CONF_ENABLE_PULSE_IRQ))
+ 			option |= COR_LEVEL_REQ;
+ 		pcmcia_write_cis_mem(s, 1, (base + CISREG_COR)>>1, 1, &option);
+-		mdelay(40);
++		msleep(40);
+ 	}
+ 	if (p_dev->config_regs & PRESENT_STATUS)
+ 		pcmcia_write_cis_mem(s, 1, (base + CISREG_CCSR)>>1, 1, &status);
+-- 
+2.17.0
 
