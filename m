@@ -2,142 +2,104 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCF2160A325
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B8F160A325
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B32920894
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0306A208A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 15:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CjoTPzcr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B32920894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="JUWDBi++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0306A208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeG3RKm (ORCPT
+        id S1726916AbeG3RNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 13:10:42 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40758 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeG3RKm (ORCPT
+        Mon, 30 Jul 2018 13:13:13 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38532 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbeG3RNN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 13:10:42 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 36B111BE8;
-        Mon, 30 Jul 2018 17:35:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1532964910;
-        bh=v81mQXqRptK04rcULpOQ6VpSsXiiXfLfJ8X+7QbwbCQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CjoTPzcrMawj3qA6a/61aDhlkmxP44uolbt06YF5pGk7PnfgPuqtcaQ6xfTkGG4ds
-         QsHtPCMBcGK6mijYj7xhlr9W2i7CkbaILVbxQaIlT6WQDX/3mZu0RFAKAW8UEnDppb
-         HYgxASsURvhfAS0OKftebsSVQ1VTYKc0mB0cxUBg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
-Date:   Mon, 30 Jul 2018 18:35:48 +0300
-Message-ID: <1556658.LS2rrRvGR3@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
-References: <CAJs94EZEqWEscECp7bsJ3DvqoU83_Y2WQ55jPaG4MyoG-hvLFQ@mail.gmail.com> <Pine.LNX.4.44L0.1807231444150.1328-100000@iolanthe.rowland.org> <CAJs94EahjbkJRWKR=2QeD=tOMR=kznwXbQgTbKvSuTg4jBk1ew@mail.gmail.com>
+        Mon, 30 Jul 2018 13:13:13 -0400
+Received: by mail-qt0-f193.google.com with SMTP id y19-v6so12529188qto.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 08:37:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Iehqudg7CKqI1RcAVqsYmuSRAZls32znE68LmEY9744=;
+        b=JUWDBi++8tdTDhWMmCZNk+2ryfskvCC2KHCWHh2YOifEyrUUNGbnLKhEFH/K8a/FXV
+         IlN71yO9e84YO9sqCOLMC2ndIDrvwUIWDSO8/bbOE56D7ppMnzwWVwYwUfWpGw2xwtKn
+         bvKp5btEUMa4iSzczGRBf6Z7h+1v5Trxy6V7g+t4lYXMp9XUe7Lu1KtROskDJVX9kAiR
+         opdhgldh01iCHrN/DX65/ZD8seeZWnRs9VNOO9Vjt1dMbW6a8MG5bcGGdvai7KVOIrsN
+         PnDOYyzTYi2xxPrZ/rBHkkN5tL+fWM/O7tzcP15wxcuXMNTSpPsrF0D4In6dAGl4lpah
+         y7Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Iehqudg7CKqI1RcAVqsYmuSRAZls32znE68LmEY9744=;
+        b=C+ccM5MoUL0ZLQeynrKS/hfe5Y8fXYA0wIy954cXeUa4ynAye7xuklMjU/oIrsNcnr
+         RKpXo8AmdrH+75ZWmsZOp/9ErASBN6Y0N3CAObbiHJFDmnkuPKraw4fi42o3yI6zwiN+
+         69e5iSn70gRzSxCbDGNThFwn/Q3OgtBQt6mpjO1SjMUo4XVUXpKZ7SIvhHQOfZqHqFOB
+         g1Uzkcl7x8xvNlmf9myJKW3jfDRY2WfwAuRB/MCLdENRJSzFkWcOz4+tPoEfyWdGsZZQ
+         Z6dp3XIKVzuZoGasSI0etGdBZH/FNGwLhAlU0mgXD0Sw4SSosdi7UEidjokAWM7Z/e+v
+         giVA==
+X-Gm-Message-State: AOUpUlFakfz9vnv8L4lkI6WNjzLZ6oophr9qU5mkwP+i9wa324k8Isf+
+        959sqVe2q7ps15r7Nv3HNtDkpw==
+X-Google-Smtp-Source: AAOMgpex0VengVj8vevolBpiq27LQJqlV87R5ZfrAkjWgcd39xHXihfmvrEZTzC8mnfIUWkKf3iDFA==
+X-Received: by 2002:ac8:34b2:: with SMTP id w47-v6mr16884784qtb.172.1532965061102;
+        Mon, 30 Jul 2018 08:37:41 -0700 (PDT)
+Received: from localhost (pool-96-246-38-36.nycmny.fios.verizon.net. [96.246.38.36])
+        by smtp.gmail.com with ESMTPSA id s31-v6sm4555811qtg.19.2018.07.30.08.37.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 08:37:40 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 11:40:35 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/10] psi: pressure stall information for CPU, memory,
+ and IO v2
+Message-ID: <20180730154035.GC4567@cmpxchg.org>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180727220123.GB18879@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727220123.GB18879@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
-
-On Tuesday, 24 July 2018 21:56:09 EEST Matwey V. Kornilov wrote:
-> 2018-07-23 21:57 GMT+03:00 Alan Stern:
-> > On Mon, 23 Jul 2018, Matwey V. Kornilov wrote:
-> >> I've tried to strategies:
-> >> 
-> >> 1) Use dma_unmap and dma_map inside the handler (I suppose this is
-> >> similar to how USB core does when there is no URB_NO_TRANSFER_DMA_MAP)
+On Sat, Jul 28, 2018 at 12:01:23AM +0200, Pavel Machek wrote:
+> > 		How do you use this feature?
 > > 
-> > Yes.
-> > 
-> >> 2) Use sync_cpu and sync_device inside the handler (and dma_map only
-> >> once at memory allocation)
-> >> 
-> >> It is interesting that dma_unmap/dma_map pair leads to the lower
-> >> overhead (+1us) than sync_cpu/sync_device (+2us) at x86_64 platform.
-> >> At armv7l platform using dma_unmap/dma_map  leads to ~50 usec in the
-> >> handler, and sync_cpu/sync_device - ~65 usec.
-> >> 
-> >> However, I am not sure is it mandatory to call
-> >> dma_sync_single_for_device for FROM_DEVICE direction?
-> > 
-> > According to Documentation/DMA-API-HOWTO.txt, the CPU should not write
-> > to a DMA_FROM_DEVICE-mapped area, so dma_sync_single_for_device() is
-> > not needed.
+> > A kernel with CONFIG_PSI=y will create a /proc/pressure directory with
+> > 3 files: cpu, memory, and io. If using cgroup2, cgroups will also
 > 
-> Well, I measured the following at armv7l. The handler execution time
-> (URB_NO_TRANSFER_DMA_MAP is used for all cases):
-> 
-> 1) coherent DMA: ~3000 usec (pwc is not functional)
-> 2) explicit dma_unmap and dma_map in the handler: ~52 usec
-> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~56
-> usec
+> Could we get the config named CONFIG_PRESSURE to match /proc/pressure?
+> "PSI" is little too terse...
 
-I really don't understand why the sync option is slower. Could you please 
-investigate ? Before doing anything we need to make sure we have a full 
-understanding of the problem.
+I'd rather have the internal config symbol match the naming scheme in
+the code, where psi is a shorter, unique token as copmared to e.g.
+pressure, press, prsr, etc.
 
-> So, I suppose that unfortunately Tomasz suggestion doesn't work. There
-> is no performance improvement when dma_sync_single is used.
-> 
-> At x86_64 the following happens:
-> 
-> 1) coherent DMA: ~2 usec
-
-What do you mean by coherent DMA for x86_64 ? Is that usb_alloc_coherent() ? 
-Could you trace it to see how memory is allocated exactly, and how it's mapped 
-to the CPU ? I suspect that it will end up in dma_direct_alloc() but I'd like 
-a confirmation.
-
-> 2) explicit dma_unmap and dma_map in the handler: ~3.5 usec
-> 3) explicit dma_sync_single_for_cpu (no dma_sync_single_for_device): ~4 usec
-> 
-> So, whats to do next? Personally, I think that DMA streaming API
-> introduces not so great overhead.
-
-It might not be very large, but with USB3 cameras at high resolutions and 
-framerates, it might still become noticeable. I wouldn't degrade performances 
-on x86, especially if we can decide which option to use based on the platform 
-(or perhaps even better based on Kconfig options such as DMA_NONCOHERENT).
-
-> Does anybody happy with turning to streaming DMA or I'll introduce
-> module-level switch as Ezequiel suggested?
-
-A module-level switch isn't a good idea, it will just confuse users. We need 
-to establish a strategy and come up with a good heuristic that can be applied 
-at compile and/or runtime to automatically decide how to allocate buffers.
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+The prompt text that the user primarily sees spells out "Pressure", so
+I don't think this is confusing.
