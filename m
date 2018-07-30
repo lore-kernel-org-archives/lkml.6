@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8872C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5D6C43142
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5259820890
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D30120894
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 22:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxtG6jhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5259820890
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0+XyJjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D30120894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeGaA2o (ORCPT
+        id S1732045AbeGaAaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 20:28:44 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44504 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730983AbeGaA2n (ORCPT
+        Mon, 30 Jul 2018 20:30:22 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39901 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbeGaAaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 20:28:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so14541150wrt.11;
-        Mon, 30 Jul 2018 15:51:31 -0700 (PDT)
+        Mon, 30 Jul 2018 20:30:21 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m1-v6so6203870plt.6;
+        Mon, 30 Jul 2018 15:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=HBeZpiY4gyRqgMn6WhRPhc3BBOdcjEEqpgBWR8898aE=;
-        b=LxtG6jhH1UaY2MZGpC+PyelLDtehdMSau0RhpdudjGgvLSZV/1MqkIc9JMTut+VJyF
-         t7ZsVa8VVUvt9PiP5hi+sruRGkTPykDmOfVp7oibnj3Ww9bvzD8GVzAOHGipcNArXogi
-         GSbKCgKs4ozoI0Hc6wlhcdHfJv/bb33zMmbFIDnoTpw4j3iMghSXgWnYhev7bBuVuee6
-         AXyXrdwMliWRzGNBoI4qsmTuJtf8b/WKFTdKJLLYEjITTEOHIpuMH9EuI51/EQk4l/Pn
-         waAzM0PAhqpXmXQKFUjCp45BuKZMh/X505ayUhpTOiUQ+lkXelO2B5Y7C4PtrNq/irAq
-         bMUw==
+        bh=F5MzJ9EXhzbr/hoFSUaiJlIhuHxcYWGO7SaD6kkyNuc=;
+        b=C0+XyJjfSfuIsPThSJzGFpaDViZlI3trtct0TtgC21MwRUCKljdha0z5NW8JEf0SNa
+         mgF1GpYPwAYbo4lSNqsfTZww2+BrYjMsiYYNyQzc1KCuVCJCuRWM8is9/IJirvFmc59a
+         +0CKUtY75K9ZxM1iKS/AvN46ABSpSZh/gSLs042s8cL978w/qzgcfSzj7eOX2MK+LlvM
+         RIa056SNjlRc4SCCF9Pw884yj89EShMwRr5VX8VOG4izoDytdv2fzOKXr+364doUhO7s
+         6RnRjYiipECMxtFyWi+jzTO1DENJU5ulAQ5UhfcJrU/fa0VEbg77W9I7B8XWUMzQ0oQ1
+         1OtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=HBeZpiY4gyRqgMn6WhRPhc3BBOdcjEEqpgBWR8898aE=;
-        b=lapAz51D4XXitZBFPe8gcu6wu+DH/642Bf/pfDictIx/jePet2xSyBBKN8Nq0kS5Io
-         9jlZdNHaOyxDLbDxSICohKIPLZRA+AkYUmr4wsHzXPlUCU/W4WxWzwu+ql9GoDA8PDqx
-         NzLVqzKN6/g7oVEMqX0fDaNxpD12hzxtc1UeOuyYGuo90b5k94eMbDf2RJanKX6roLR/
-         50E08mt6pNlVUt8fnMMSd1Pp81z9Vw+vBxmFoYCB+XCzhJDnfhSLM3AP3AZGMmsb9RfS
-         WizWByg+yuS5dxaJ9UfZj/rnbGUiaEgSmhCTDXBJCa/g/SbAWYvCf7mVpRSyvEMrqa0d
-         wiAw==
-X-Gm-Message-State: AOUpUlFAnSlCt6ZeR09E+Lt2Cwjr/2sfhZraeOy+p9O7NK0ET6WCl2iM
-        Zv/3jT++y7cJNEWEBrnwZc8=
-X-Google-Smtp-Source: AAOMgpc9BiVHHRfu5zP0Jsd0Qm4TcwC1e/B2EgfzUKs6Fz5fDqwzhTiUbJN3aYyMhWnIuIfLkbu0ZQ==
-X-Received: by 2002:adf:f485:: with SMTP id l5-v6mr1335253wro.259.1532991091194;
-        Mon, 30 Jul 2018 15:51:31 -0700 (PDT)
+        bh=F5MzJ9EXhzbr/hoFSUaiJlIhuHxcYWGO7SaD6kkyNuc=;
+        b=fVHYN/SsaRAZAKJqHZZ8AhiDoIaVmSJywHaNYS46IVjvE8TAmNJ4XwFWEQiD+yoo+p
+         i5wJ23ZKKw0+B/Ipy3EDm67Jn9fTPY7W+ZCXCQdh3TKDeDvK4Rnxes/gMdBEMH3f9HqP
+         wCSu8BdHFPd8Zd+cmKJdop5rb7h8cdvqe6K+w76tKefT2rwqSeEzhzhbw4lKtfcli8vE
+         hamUu4kIhdgegSrBKJgSlIZCd4vYMPoPHOJFLt28n1LCnsJM+scxhNSHzXe/J8Gyv0U5
+         GlPuxWgcyfOY7XLOZKVjZZM/goT3HzvFJsCoKcw41zS8aBaKw12JAvnVkFy2REfsCTG2
+         mQnQ==
+X-Gm-Message-State: AOUpUlEwABdHtfYOv31V6NaqOYApCgZlUnG1MKTT/jNv6jqMvc8hO54V
+        yaW2kbiD33p+fF2tPTP0nEU=
+X-Google-Smtp-Source: AAOMgpdbIg6ggqwlOnyx6hkK1Whe+d7S4/iQhi3Ep+iveQER3jWmNYtSzqrDfNsfLIN0srkqQoVCHg==
+X-Received: by 2002:a17:902:7683:: with SMTP id m3-v6mr17806815pll.255.1532991189299;
+        Mon, 30 Jul 2018 15:53:09 -0700 (PDT)
 Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id v188-v6sm783870wme.43.2018.07.30.15.51.25
+        by smtp.googlemail.com with ESMTPSA id i62-v6sm19198968pge.66.2018.07.30.15.53.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 15:51:30 -0700 (PDT)
-Subject: Re: [PATCH v2 5/7] dt-bindings: net: Add clock handle to Broadcom
- iProc mdio mux
+        Mon, 30 Jul 2018 15:53:08 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] net: phy: Add pm support to Broadcom iProc mdio
+ mux driver
 To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -76,7 +76,7 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com
 References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
- <1532726613-6483-6-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-8-git-send-email-arun.parameswaran@broadcom.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -112,12 +112,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <81bc9718-b486-71bb-f674-245ce52a5306@gmail.com>
-Date:   Mon, 30 Jul 2018 15:51:24 -0700
+Message-ID: <8d732031-c5e8-d6ea-5b61-3b9baf79796f@gmail.com>
+Date:   Mon, 30 Jul 2018 15:53:06 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1532726613-6483-6-git-send-email-arun.parameswaran@broadcom.com>
+In-Reply-To: <1532726613-6483-8-git-send-email-arun.parameswaran@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -127,14 +127,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/27/2018 02:23 PM, Arun Parameswaran wrote:
-> Add clock phandle, of the core clock driving the mdio block, as an
-> optional property to the Broadcom iProc mdio mux.
-> 
-> The clock, when specified, will be used to setup the rate adjust registers
-> in the mdio to derrive the mdio's operating frequency.
+> Add support for suspend and resume to the Broadcom iProc mdio
+> mux driver.
 > 
 > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+> ---
+>  drivers/net/phy/mdio-mux-bcm-iproc.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+> index 51d1003..d89dce0 100644
+> --- a/drivers/net/phy/mdio-mux-bcm-iproc.c
+> +++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+> @@ -290,6 +290,33 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static int mdio_mux_iproc_suspend(struct device *dev)
+> +{
+> +	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
+> +
+> +	if (md->core_clk)
+> +		clk_disable_unprepare(md->core_clk);
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Since you are assigning md->core_clk to NULL in case clk_get() returned
+an error, checking for md->core_clk is not necessary since the Linux
+common clock framework perform that NULL check already.
+-- 
 -- 
 Florian
