@@ -2,91 +2,83 @@ Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDD2FD21E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C5416256E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0CAE208A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CAE208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id F2B9420857
+	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 16:47:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DtcGemKr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B9420857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbeG3SXJ (ORCPT
+        id S1732120AbeG3SXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 14:23:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726798AbeG3SXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 14:23:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9614AEDE;
-        Mon, 30 Jul 2018 16:47:16 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 01917A0BE8; Mon, 30 Jul 2018 18:47:14 +0200 (CEST)
-Date:   Mon, 30 Jul 2018 18:47:14 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Pirko <jiri@resnulli.us>,
-        David Miller <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Jakub Kicinski <kubakici@wp.pl>,
-        "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [RFC PATCH net-next v2 09/17] ethtool: implement GET_DRVINFO
- message
-Message-ID: <20180730164714.lqf5codtzxigsufe@unicorn.suse.cz>
-References: <cover.1532953989.git.mkubecek@suse.cz>
- <4dcd60f25efe368ada4e0c035dc1d7612ab59132.1532953989.git.mkubecek@suse.cz>
- <20180730142825.GL13198@lunn.ch>
- <20180730144644.r3utyf4toqkjcxwd@unicorn.suse.cz>
- <20180730154803.GB2983@lunn.ch>
+        Mon, 30 Jul 2018 14:23:25 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:40649 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbeG3SXZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 14:23:25 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 93D0C10C05D8;
+        Mon, 30 Jul 2018 09:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1532969254; bh=e9Pn6eAKVzcNz8wuIwqGc/8Ik1oaai3lJfLi9R32QdI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=DtcGemKrWWcmfxsbjS112K23TlZ0VUzg4iZJbTqRFvEUIY4kI8I228a9DTmSFQMcA
+         DsXsl7pMja8mXVMxC4j+CewxLhCdXA6fsxmTeBbOmjrVBcggOIhcE9onncjwBJxQ1P
+         O50Ye0BZOsVytXscJRCRyo4yoln4eaVPx0vrHYm3+VVqFkQ1oT57yiQyHWbgl4oMAg
+         CkNgqSHCVx0j+5nO9+iwN8WR4JpCaCepjAD9mO70R3NXiqoOlXHzFtOFvDDGIk7WFN
+         3zEzXme+4lDwLvj1y8+8pmjK1Os69O2uKl52qiSrjrrdY8hXPqU+Ati/s++fCHBj43
+         m9AjFxZBx3avA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 2F8783A31;
+        Mon, 30 Jul 2018 09:47:34 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0361.001; Mon, 30 Jul 2018 09:47:33 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arc-current
+ tree
+Thread-Topic: linux-next: Signed-off-by missing for commit in the
+ arc-current tree
+Thread-Index: AQHUJuHSBble61r5mE2spp6XMOEQDw==
+Date:   Mon, 30 Jul 2018 16:47:32 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B08828A@us01wembx1.internal.synopsys.com>
+References: <20180729121351.26912f3c@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730154803.GB2983@lunn.ch>
-User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 05:48:03PM +0200, Andrew Lunn wrote:
-> 
-> For the statistics, it is a bit of a corner case. One of the Ethernet
-> switches in DSA can have two different PHYs linked to one MAC. One PHY
-> is built in, the second is connected via a SERDES interface. Which
-> every gets link first is used. However, the SERDES interface has
-> additional statistics counters. So if the SERDES is in use, we return
-> more statistics. If somebody was to plug in the cable at just the
-> wrong/right time, the count of statistics could be different to the
-> number of statistics.
-> 
-> Another corner case i can think of. Some drivers return statistics per
-> queue. And there is an ioctl to change the number of queues....
-> 
-> I could also imaging tests being similar. There are more loopback
-> tests you can do with a SERDES which you cannot do with a built in
-> PHY. But so far, i've not seen anything like that.
-
-Thank you for the explanation. What I have in mind is that there are two
-different types of userspace applications: one shot and running long
-term. It can be seen in my series in the way e.g. link modes are
-handled. There are two formats in which a bitset can be passed: verbose
-(list of bits with names) or compact (just bitmaps). For one shot
-queries (e.g. "ethtool eth0") it's easier to use verbose format so that
-you get names with bit values in one package. But for long running
-applications processing many messages ("ethtool --monitor" or config
-management daemons), it's more practical to load the names once and pass
-only data with each notification or response.
-
-I suppose in the scenarios you mentioned the driver would be able to
-trigger a notification whenever the list changes so that userspace
-application could reload the string set.
-
-Michal Kubecek
+On 07/28/2018 07:14 PM, Stephen Rothwell wrote:=0A=
+> Hi Vineet,=0A=
+>=0A=
+> Commit=0A=
+>=0A=
+>   fa52704e2816 ("ARC: add SMP_CACHE_BYTES value validate")=0A=
+>=0A=
+> is missing a Signed-off-by from its committer.=0A=
+=0A=
+Thx for the report Stephen.=0A=
+=0A=
+This is now fixed/pushed.=0A=
+=0A=
+-Vineet=0A=
