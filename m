@@ -2,100 +2,104 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D401CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5FBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8394420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8394420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B9E120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:18:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9E120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732355AbeGaP4z (ORCPT
+        id S1732337AbeGaP6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:56:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39671 "EHLO mail.bootlin.com"
+        Tue, 31 Jul 2018 11:58:46 -0400
+Received: from mga07.intel.com ([134.134.136.100]:65082 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729762AbeGaP4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:56:55 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A80A020789; Tue, 31 Jul 2018 16:16:21 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 78FAC20731;
-        Tue, 31 Jul 2018 16:16:21 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 16:16:22 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Diego Rondini <diego.rondini@kynetics.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH v2] ARM: dts: sun8i: Add initial Orangepi Zero Plus 2 H3
- support
-Message-ID: <20180731141622.d3hvpfc5h74pwtgm@flea>
-References: <20180727125739.22871-1-diego.rondini@kynetics.com>
- <20180730115223.14161-1-diego.rondini@kynetics.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tomexo5ozpxwvilj"
-Content-Disposition: inline
-In-Reply-To: <20180730115223.14161-1-diego.rondini@kynetics.com>
-User-Agent: NeoMutt/20180622
+        id S1732255AbeGaP6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 11:58:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 07:18:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,427,1526367600"; 
+   d="scan'208";a="250488534"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Jul 2018 07:17:47 -0700
+Message-ID: <6e7a3b340635f73e3c748b97184b181b7698b978.camel@linux.intel.com>
+Subject: Re: [PATCH v2 0/6] Add support for MSCC Ocelot i2c
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microsemi.com>
+Date:   Tue, 31 Jul 2018 17:17:47 +0300
+In-Reply-To: <20180731134740.441-1-alexandre.belloni@bootlin.com>
+References: <20180731134740.441-1-alexandre.belloni@bootlin.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-07-31 at 15:47 +0200, Alexandre Belloni wrote:
+> Hi,
+> 
+> Because the designware IP was not able to handle the SDA hold time
+> before
+> version 1.11a, MSCC has its own implementation. Add support for it and
+> then add
+> i2c on ocelot boards.
+> 
+> I would expect patches 1 to 4 to go through the i2c tree and 5-6
+> through
+> the mips tree once patch 4 has been reviewed by the DT maintainers.
+> 
 
---tomexo5ozpxwvilj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for an update, looks quite nice!
+I gave my tags wherever it is appropriate.
 
-Hi!
+> Changes in v2:
+>  - removed first patch as a similar one is in i2c-next
 
-On Mon, Jul 30, 2018 at 01:52:23PM +0200, Diego Rondini wrote:
-> +&uart1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&uart1_pins>, <&uart1_rts_cts_pins>;
-> +	status =3D "okay";
-> +};
+>  - rebase on top of i2c-next
 
-Like I said in the mail from a minute ago, we either want the serdev
-node, or no BT node at all and leave it for later.
+It seems you also took my patches which are not yet in i2c/for-next.
 
-The rest looks fine, thanks!
-maxime
+>  - Added two patches to implement ideas from Andy
+> 
+> Alexandre Belloni (6):
+>   i2c: designware: use generic table matching
+>   i2c: designware: move #ifdef CONFIG_OF to the top
+>   i2c: designware: allow IP specific sda_hold_time
+>   i2c: designware: add MSCC Ocelot support
+>   mips: dts: mscc: Add i2c on ocelot
+>   mips: dts: mscc: enable i2c on ocelot_pcb123
+> 
+>  .../bindings/i2c/i2c-designware.txt           |  9 ++-
+>  arch/mips/boot/dts/mscc/ocelot.dtsi           | 18 ++++++
+>  arch/mips/boot/dts/mscc/ocelot_pcb123.dts     |  6 ++
+>  drivers/i2c/busses/i2c-designware-common.c    |  2 +
+>  drivers/i2c/busses/i2c-designware-core.h      |  4 ++
+>  drivers/i2c/busses/i2c-designware-platdrv.c   | 62 +++++++++++++++---
+> -
+>  6 files changed, 87 insertions(+), 14 deletions(-)
+> 
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---tomexo5ozpxwvilj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltgbzUACgkQ0rTAlCFN
-r3SiUhAAmFMRW5ZtBQc4rZvlJ+gU0LDsOw51gXoW/hIrynh6EWCepO1h41bKOTYW
-yID8gofBzwYcEZEXl7DNBvepYOYhIuNfVu3Q/6x//v4BnSPUjPpdNOw2UubJGrfW
-8JcAO558Vgt09GLtO0VqpF2pB60UhTTXj+lwRPYGfHxgk6sTKTwyUzQXVUBpS95q
-hOkyb/LQ7fx1HnGAVkn7OJvOSKH0OYcMW3hf8qeCj3At0DktirEncE2+NaFbIwPf
-H9foK10QKVJzNhP5CbWFrVjUE93vQuXz7XUKLIDjWcYlipUOMzBrPQE5+zMtj2i7
-/+Nb0cRZp3NyWCIbzWmxDXzFlA9Qr4Xj1tc0iZ8F6QRDcEAKp1u49ve6pdFL91hd
-8v2yTVmRExqZiTYbNMcpTIypDJ/XApYiLexlXq+F5AeHPb6Ux1S5uM7XMleATDS/
-PSgYgI3uZAA15aK5m5hxDAdhmBkW/mescYChuxQe6u6NwKhHceoUkigOPfYzFqaZ
-FV/pVLmQ1m+oDXu5zVhrmUDZWnv80wKH0awWh7okLPvvHN7CktP9t0gZj93o1Ifb
-bvJITbEcdedBK3+bulXDy2RqAtyaz6asXpp51xXA0x6TQUMasaJLc5AZ11E0/zmM
-xpfAOOh12VE+JqpQvynvCB6iBBvsyRwY53McTkU2Qh/ZZNTFy7o=
-=fpso
------END PGP SIGNATURE-----
-
---tomexo5ozpxwvilj--
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
