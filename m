@@ -2,184 +2,99 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B469FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD005C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6524220844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6524220844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F68720862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:29:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OrvO/Pyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F68720862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732535AbeGaSK0 (ORCPT
+        id S1732546AbeGaSKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:10:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:57394 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732467AbeGaSKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:10:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55D177A9;
-        Tue, 31 Jul 2018 09:29:20 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B7243F5BA;
-        Tue, 31 Jul 2018 09:29:18 -0700 (PDT)
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Guenter Roeck <linux@roeck-us.net>, Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-References: <CAJKOXPeaguNxRr7pCArJ5Db4tS6Kr5BDheCxskY+vd0dUN+0GQ@mail.gmail.com>
- <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
- <20180727140448.GA29001@lst.de> <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
- <4339e35944851cc105ddfba03e1b990b@agner.ch>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <892f9d14-e6fd-7b1b-d07b-af0be6e623fa@arm.com>
-Date:   Tue, 31 Jul 2018 17:29:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 14:10:39 -0400
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35885 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732365AbeGaSKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 14:10:39 -0400
+Received: by mail-it0-f45.google.com with SMTP id p81-v6so5226943itp.1
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f3hCeX0kaZSBzqUGORcpaei11sRWFKwXi214q+E0cL8=;
+        b=OrvO/PyfiedmAfb0GX7UYd/+Rt2M8hzrNa6q+coF180sK5AxCA9wJTeXJIxTVoXmXe
+         DGlMJ3bgF6hnxfs15r05fqSO+h6iv8YrLHkqUrtmDaQHJdoUO4kqAnbojLhkv58yGpk9
+         dNZWwNeWeyV/qSP1z2ZW1uqdPhC5yaQmkGXeU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f3hCeX0kaZSBzqUGORcpaei11sRWFKwXi214q+E0cL8=;
+        b=QINxgO+mwB0Rq3oXo90t9B3/KF350bWTA8gfqBj4WIrBRY4hObWLWJRB6hWMBL/HxT
+         id7NBZbax2aqhxpWGuNyoNF9nw/3zMjk8VAVZ2J6lkjKWV6g0fJUHcPQphqzWcX6GzdJ
+         6j4YHCpDgQ1ubpRb6goKIRWYhRhWKo+ObbIILsUH73d2PzReUHhIFTwFFuJB28LM4H6G
+         ZZ9BH68kPUFvzxXlcieku2QPVZXegyJuivK2n9AHNxBD0jwjt5OBWPpJsqJcn7vPMYl9
+         1E+XQqnS1DSFuYGT+hLz1BdMpnISRPJvbUugLzisedXcwsn6AmVph5W2H2fkQE3XCaUi
+         lZzA==
+X-Gm-Message-State: AOUpUlFfwjKhBxJgRiSYrh88fEgIN4V9nRL2qqEN/vaiMBvDTEFDgy57
+        h2aClOtldgzHYEg9xeQL5Q6ja9wwyDY9oyPPlo4=
+X-Google-Smtp-Source: AAOMgpeVcyCyVW2OVFo+lDz1t7MCfANxRnHT6Mbr/Q/joBVoneWFnnyJDulInBpvVatkCZe7Tbm61jy6MVcASBa6dZA=
+X-Received: by 2002:a24:b211:: with SMTP id u17-v6mr356654ite.1.1533054573486;
+ Tue, 31 Jul 2018 09:29:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4339e35944851cc105ddfba03e1b990b@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
+ <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com>
+ <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1> <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com>
+ <alpine.LSU.2.11.1807301410470.4805@eggly.anvils> <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
+ <alpine.LSU.2.11.1807301940460.5904@eggly.anvils> <CALAqxLU3cmu4g+HaB6A7=VhY-hW=d9e68EZ=_4JiwX_BigzjPQ@mail.gmail.com>
+ <CAMi1Hd0-2eDod4HiBifKCxY0cUUEW_A-yv7sZ7GRgL0whWQt+w@mail.gmail.com>
+In-Reply-To: <CAMi1Hd0-2eDod4HiBifKCxY0cUUEW_A-yv7sZ7GRgL0whWQt+w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 31 Jul 2018 09:29:22 -0700
+Message-ID: <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com>
+Subject: Re: Linux 4.18-rc7
+To:     Amit Pundir <amit.pundir@linaro.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        youling 257 <youling257@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Colin Cross <ccross@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/07/18 16:53, Stefan Agner wrote:
-> On 31.07.2018 14:32, Robin Murphy wrote:
->> On 31/07/18 09:19, Stefan Agner wrote:
->>> On 30.07.2018 16:38, Robin Murphy wrote:
->>>> On 28/07/18 17:58, Guenter Roeck wrote:
->>>>> On Fri, Jul 27, 2018 at 04:04:48PM +0200, Christoph Hellwig wrote:
->>>>>> On Fri, Jul 27, 2018 at 03:18:14PM +0200, Krzysztof Kozlowski wrote:
->>>>>>> On 27 July 2018 at 15:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> On today's next, the bisect pointed commit
->>>>>>>> ff33d1030a6ca87cea9a41e1a2ea7750a781ab3d as fault for my boot failures
->>>>>>>> with NFSv4 root on Toradex Colibri VF50 (Iris carrier board).
->>>>>>>>
->>>>>>>> Author: Robin Murphy <robin.murphy@arm.com>
->>>>>>>> Date:   Mon Jul 23 23:16:12 2018 +0100
->>>>>>>>        OF: Don't set default coherent DMA mask
->>>>>>>>
->>>>>>>> Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial configured
->>>>>>>> with DMA) on Iris Carrier.
->>>>>>>>
->>>>>>>> It looks like problem with Freescale Ethernet driver:
->>>>>>>> [   15.458477] fsl-edma 40018000.dma-controller: coherent DMA mask is unset
->>>>>>>> [   15.465284] fsl-lpuart 40027000.serial: Cannot prepare cyclic DMA
->>>>>>>> [   15.472086] Root-NFS: no NFS server address
->>>>>>>> [   15.476359] VFS: Unable to mount root fs via NFS, trying floppy.
->>>>>>>> [   15.484228] VFS: Cannot open root device "nfs" or
->>>>>>>> unknown-block(2,0): error -6
->>>>>>>> [   15.491664] Please append a correct "root=" boot option; here are
->>>>>>>> the available partitions:
->>>>>>>> [   15.500188] 0100           16384 ram0
->>>>>>>> [   15.500200]  (driver?)
->>>>>>>> [   15.506406] Kernel panic - not syncing: VFS: Unable to mount root
->>>>>>>> fs on unknown-block(2,0)
->>>>>>>> [   15.514747] ---[ end Kernel panic - not syncing: VFS: Unable to
->>>>>>>> mount root fs on unknown-block(2,0) ]---
->>>>>>>>
->>>>>>>> Attached - defconfig and full boot log.
->>>>>>>>
->>>>>>>> Any hints?
->>>>>>>> Let me know if you need any more information.
->>>>>>>
->>>>>>> My Exynos boards also fail to boot on missing network:
->>>>>>> https://krzk.eu/#/builders/21/builds/799/steps/10/logs/serial0
->>>>>>>
->>>>>>> As expected there are plenty of "DMA mask not set" warnings... and
->>>>>>> later dwc3 driver fails with:
->>>>>>>        dwc3: probe of 12400000.dwc3 failed with error -12
->>>>>>> which is probably the answer why LAN attached to USB is not present.
->>>>>>
->>>>>> Looks like all the drivers failed to set a dma mask and were lucky.
->>>>>
->>>>> I would call it a serious regression. Also, no longer setting a default
->>>>> coherent DMA mask is a quite substantial behavioral change, especially
->>>>> if and since the code worked just fine up to now.
->>>>
->>>> To reiterate, that particular side-effect was an unintentional
->>>> oversight, and I was simply (un)lucky enough that none of the drivers
->>>> I did test depended on that default mask. Sorry for the blip; please
->>>> check whether it's now fixed in next-20180730 as it should be.
->>>>
->>>
->>> Just for my understanding:
->>>
->>> Your first patch ("OF: Don't set default coherent DMA mask") sounded
->>> like that *not* setting default coherent DMA mask was intentionally.
->>> Since the commit message reads: "...the bus code has not initialised any
->>> default value" that was assuming that all bus code sets a default DMA
->>> mask which wasn't the case for "simple-bus".
->>
->> Yes, reading the patches in the order they were written is perhaps a
->> little unclear, but hopefully the order in which they are now applied
->> makes more sense.
->>
->>> So I guess that is what ("of/platform: Initialise default DMA masks")
->>> makes up for in the typical device tree case ("simple-bus")?
->>
->> Indeed, I'd missed the fact that the now-out-of-place-looking
->> initialisation in of_dma_configure() still actually belonged to
->> of_platform_device_create_pdata() - that patch should make the
->> assumptions of "OF: Don't set default coherent DMA mask" true again,
->> even for OF-platform devices.
->>
->>> Now, since almost all drivers are inside a soc "simple-bus" and DMA mask
->>> is set again, can/should we rely on the coherent DMA mask set?
->>>
->>> Or is the expectation still that this is set on driver level too?
->>
->> Ideally, we'd like all drivers to explicitly request their masks as
->> the documentation in DMA-API-HOWTO.txt recommends, if only to ensure
->> DMA is actually possible - there can be systems where even the default
->> 32-bit mask is no good - but clearly we're a little way off trying to
->> enforce that just yet.
-> 
-> In the FEC driver case, there is an integrated DMA (uDMA). It has
-> alignment restrictions, but can otherwise address the full 32-bit range.
-> 
-> So something like this should do it right?
-> 
-> 	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32))) {
-> 		dev_warn(dev, "No suitable DMA available\n");
-> 		return -ENODEV;
-> 	}
-> 
+On Mon, Jul 30, 2018 at 11:40 PM Amit Pundir <amit.pundir@linaro.org> wrote:
+>
+> This ashmem change ^^ worked too.
 
-Yup, precisely.
+Ok, let's go for that one and hope it's the only one.
 
-> However, that, as far as I understand, still requires that the bus set
-> up dma_mask properly.
-> 
-> Should I be using dma_coerce_mask_and_coherent?
+John, can I get a proper commit message and sign-off for that ashmem change?
 
-AFAICS for FEC, the ColdFire instances have statically-set masks, the 
-i.MX boardfiles get them set via platform+device_register_full(), and 
-now that the bug-which-never-should-have-been is fixed the DT-based 
-instances should be fine too, so you should be good to go. In general 
-I'd say that the dma_coerce_mask*() routines are only really for generic 
-interface drivers like *HCI where they don't really know what the 
-underlying device is and it may be on any old random bus. Drivers for 
-specific IP blocks normally only have one or two known buses to deal 
-with, so in most cases it's more reasonable to make the bus code 
-well-behaved if it isn't already.
+Kirill - you mentioned that somebody reproduced a problem on x86-64
+too. I didn't see that report. Was that some odd x86 Android setup
+with Ashmem too, or is there something else pending?
 
-Robin.
+                       Linus
