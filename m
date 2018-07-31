@@ -2,115 +2,106 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98972C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F8BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51EA1208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51EA1208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AAD70208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:41:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="c4SZsr9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD70208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732483AbeGaQUb (ORCPT
+        id S1732454AbeGaQVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:20:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60846 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732361AbeGaQUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:20:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3AA588198B06;
-        Tue, 31 Jul 2018 14:39:52 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 166701C4C3;
-        Tue, 31 Jul 2018 14:39:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 31 Jul 2018 16:39:52 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 16:39:50 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     =?iso-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] prctl: add PR_[GS]ET_KILLABLE
-Message-ID: <20180731143949.GA1890@redhat.com>
-References: <20180730075241.24002-1-j@bitron.ch>
- <20180731070337.61004-1-j@bitron.ch>
+        Tue, 31 Jul 2018 12:21:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36870 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732260AbeGaQVj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 12:21:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9hwHdfiAxmN7Tg5nNt7esKchF7QWf5V9P+UE4ilwHgs=; b=c4SZsr9GpuW6oclL1gbZHhuuQ
+        Zc2a14OS6fRA0v1wVKVe8Y7Hj1hsNg+ff07urCtg6M/mtr9QBiwIvudHsK0MNIg5kcmNw4aeO7cxV
+        e/yWhQO4LF+ON7MuOOrsflQbHJfrAg5jbSZyCZ0bJdLNYDFpdxVNELrNcnj8kVwIqOTII=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fkVpU-0007D5-Qu; Tue, 31 Jul 2018 14:40:52 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 844A111242BD; Tue, 31 Jul 2018 15:40:52 +0100 (BST)
+Date:   Tue, 31 Jul 2018 15:40:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, Alexander.Deucher@amd.com,
+        djkurtz@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer
+ function
+Message-ID: <20180731144052.GF5719@sirena.org.uk>
+References: <7a88c7b4-d31d-b044-bb8e-a866d49d1256@amd.com>
+ <s5hwotc0y6v.wl-tiwai@suse.de>
+ <5b3249cb-6212-6a14-b644-7548cf0ad00c@amd.com>
+ <s5ha7q721vs.wl-tiwai@suse.de>
+ <20180731101943.GB5719@sirena.org.uk>
+ <s5heffjr8ys.wl-tiwai@suse.de>
+ <20180731131246.GC5719@sirena.org.uk>
+ <s5hin4vpm80.wl-tiwai@suse.de>
+ <20180731135115.GD5719@sirena.org.uk>
+ <s5hd0v3pkyj.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eDB11BtaWSyaBkpc"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180731070337.61004-1-j@bitron.ch>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 31 Jul 2018 14:39:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 31 Jul 2018 14:39:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+In-Reply-To: <s5hd0v3pkyj.wl-tiwai@suse.de>
+X-Cookie: Save the bales!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31, Jürg Billeter wrote:
->
-> PR_SET_KILLABLE clears the SIGNAL_UNKILLABLE flag. This allows
-> CLONE_NEWPID tasks to restore normal signal behavior, opting out of the
-> special signal protection for init processes. This prctl does not allow
-> setting the SIGNAL_UNKILLABLE flag, only clearing.
->
-> The SIGNAL_UNKILLABLE flag, which is implicitly set for tasks cloned
-> with CLONE_NEWPID, has the effect of ignoring all signals (from
-> userspace) if the corresponding handler is set to SIG_DFL. The only
-> exceptions are SIGKILL and SIGSTOP and they are only accepted if raised
-> from an ancestor namespace.
->
-> SIGINT, SIGQUIT and SIGTSTP are used in job control for ^C, ^\, ^Z.
-> While a task with the SIGNAL_UNKILLABLE flag could install handlers for
-> these signals, this is not sufficient to implement a shell that uses
-> CLONE_NEWPID for child processes:
 
-Ah. My question wasn't clear, sorry.
+--eDB11BtaWSyaBkpc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Could you explain your use-case? Why a shell wants to use CLONE_NEWPID?
-And what do we actually want in, say, ^Z case? Just stop the child reaper
-or may be it would be better to stop the whole pid namespace?
+On Tue, Jul 31, 2018 at 03:56:52PM +0200, Takashi Iwai wrote:
+> Mark Brown wrote:
 
->  * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
->    itself, it's not possible to implement the stop action in a custom
->    SIGTSTP handler.
+> > Yes.  I'm saying that if the CPU DAI thinks it can figure out the base
+> > delay something is confused.
 
-Yes. So may be we actually want to change __isig() paths to use
-SEND_SIG_FORCED (this is not that simple), or perhaps we can change
-__send_signal() to not drop SIGSTOP sent to itself, or may be we can even
-introduce SIG_DFL_EVEN_IF_INIT, I dunno.
+> Then basically Akshu's patch does the correct thing, I suppose.
 
->  * Many applications do not install handlers for these signals and
->    thus, job control won't work properly with unmodified applications.
+I think so.  Could perhaps do with a little clarification though.
 
-I can't understand this. An application should be changed anyway to do
-PR_SET_KILLABLE?
+--eDB11BtaWSyaBkpc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Let me clarify. I am not arguing with this patch, probably it makes sense in
-any case. I am just trying to understand your real motivation for this change.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgdPMACgkQJNaLcl1U
+h9C+jwf/bx01Tp500sjkgbIdsaxeTZg926yRoXNkQsXYnb2f/Tl7JW3vKpEBrYUl
+tYubOD9m/3XZ7tJOrfn37h03VL4R/Y7Ykx2s3cCDutdiGzaDLMktAxd1c9I9/m/Y
+Sp0BS0HJM5rgLk14PObW3E4xxsuxURg6WMP1HRX6Xps1A4yDP6hakNv9fpEHQ6fb
+YJuj+zMk3f8feeVIWkMl3HlCTaIRz2dMEfJEZnxfdhW82BMv7HQAlIVWg/axGlWI
+gSWxMqARvCOTWGrIvJjRiD1wtI8+MnDGHAe758TC9jcoeXQ0JoxkFIyDbPH6SRZ9
+RkdpuibywAcb3hmc7DSIDGJGH4dXmg==
+=bkPk
+-----END PGP SIGNATURE-----
 
-
-
-> +	case PR_SET_KILLABLE:
-> +		if (arg2 != 1 || arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		spin_lock_irq(&me->sighand->siglock);
-> +		me->signal->flags &= ~SIGNAL_UNKILLABLE;
-> +		spin_unlock_irq(&me->sighand->siglock);
-
-OK, but then you need to change the CLONE_PARENT/SIGNAL_UNKILLABLE check
-in copy_process().
-
-Oleg.
-
+--eDB11BtaWSyaBkpc--
