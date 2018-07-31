@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615D0C46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704C7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E7420841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 283AE20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="A6rUxz+d";
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="A6rUxz+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E7420841
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="e3uqE2zp";
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="tp6gMNmc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283AE20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731146AbeGaSY5 (ORCPT
+        id S1730196AbeGaSY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 31 Jul 2018 14:24:57 -0400
-Received: from node.akkea.ca ([192.155.83.177]:53330 "EHLO node.akkea.ca"
+Received: from node.akkea.ca ([192.155.83.177]:53340 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbeGaSY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729622AbeGaSY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 14:24:56 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 9AB0F54204A;
-        Tue, 31 Jul 2018 16:43:47 +0000 (UTC)
+        by node.akkea.ca (Postfix) with ESMTP id 1772354204F;
+        Tue, 31 Jul 2018 16:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1533055427; bh=Zaoo4BP1E3svnkvA1ywY9EWy7t04k4qEBiFuEYlwC/E=;
+        t=1533055428; bh=dCfHocIygE2OVwn7APcYr3UlqLVlhR6vjcV4lVWShuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=A6rUxz+di7kvV21Afnc1nbL7BYh4YgBlemae7awIaG3DK6mK3xRpYLA5izk6FuSwt
-         AXLZ9IfgpkOcVdUGcYjzs4qJ0jK929tcIdgnI3pHPcaU1JfWXITxhD/BgZqeJRxH2f
-         8IYlkx52Tx9XmDZyI2dVB6hwTBveXbI/2pTWxePM=
+        b=e3uqE2zpTJ6ijtL+rm3QN5uVJ5lnGsf+y2DczPs4eeZ8PWtG3Vzp0ugUVBHN0+1QY
+         g1yVExdzrrm5Y9Hpkxz1sTrA4+0lNHcxV7M0VBrps7BgcCh1jRdvS/mRbOhyZMONGJ
+         mITa818qKqj6pHCmNPUAVM7ame0KQbJfThRRIx6s=
 X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
 Received: from node.akkea.ca ([127.0.0.1])
         by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id l8BNPM0psEgW; Tue, 31 Jul 2018 16:43:47 +0000 (UTC)
+        with ESMTP id PqJDkMT_kRZB; Tue, 31 Jul 2018 16:43:47 +0000 (UTC)
 Received: from midas.localdomain (S0106788a2041785e.cg.shawcable.net [68.144.56.170])
-        by node.akkea.ca (Postfix) with ESMTPSA id C670954204B;
-        Tue, 31 Jul 2018 16:43:46 +0000 (UTC)
+        by node.akkea.ca (Postfix) with ESMTPSA id 5F8E454204E;
+        Tue, 31 Jul 2018 16:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1533055427; bh=Zaoo4BP1E3svnkvA1ywY9EWy7t04k4qEBiFuEYlwC/E=;
+        t=1533055427; bh=dCfHocIygE2OVwn7APcYr3UlqLVlhR6vjcV4lVWShuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=A6rUxz+di7kvV21Afnc1nbL7BYh4YgBlemae7awIaG3DK6mK3xRpYLA5izk6FuSwt
-         AXLZ9IfgpkOcVdUGcYjzs4qJ0jK929tcIdgnI3pHPcaU1JfWXITxhD/BgZqeJRxH2f
-         8IYlkx52Tx9XmDZyI2dVB6hwTBveXbI/2pTWxePM=
+        b=tp6gMNmcouP1+S5ZX70x1jEZiSrXgcJUXiZnbKqQ6G3FnB6wGpQic1qZFaPh7UkLu
+         AGLL8fA6vAensODXhws+0u3aDaeIERIEcxKTNdvi2vIJ4mOoENwvOKImjIN4poo+KL
+         /qCgof1MMli0hGHY86gn0pZKF0dGIkMpQIoxQbAE=
 From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v3 3/4] power: bq25890_charger.c: Add the BQ25896 part
-Date:   Tue, 31 Jul 2018 10:43:15 -0600
-Message-Id: <20180731164316.32696-4-angus@akkea.ca>
+Subject: [PATCH v3 4/4] power: bq25890_charger.c: Read back the current battery voltage
+Date:   Tue, 31 Jul 2018 10:43:16 -0600
+Message-Id: <20180731164316.32696-5-angus@akkea.ca>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180731164316.32696-1-angus@akkea.ca>
 References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
@@ -64,116 +64,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BQ25896 is almost identical the the BQ25890.
+The part has the capability of reading the current battery voltage.
 
 Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 ---
- .../bindings/power/supply/bq25890.txt         |  3 +++
- drivers/power/supply/bq25890_charger.c        | 24 +++++++++++++++----
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ drivers/power/supply/bq25890_charger.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/bq25890.txt b/Documentation/devicetree/bindings/power/supply/bq25890.txt
-index c9dd17d142ad..ccb3a123ab57 100644
---- a/Documentation/devicetree/bindings/power/supply/bq25890.txt
-+++ b/Documentation/devicetree/bindings/power/supply/bq25890.txt
-@@ -1,5 +1,8 @@
- Binding for TI bq25890 Li-Ion Charger
- 
-+This driver will support the bq25896 and the bq25890. There are other parts
-+in the same family but those have not been tested.
-+
- Required properties:
- - compatible: Should contain one of the following:
-     * "ti,bq25890"
 diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
-index ca61278e932e..23b39da07e56 100644
+index 23b39da07e56..1aa7872ddeb0 100644
 --- a/drivers/power/supply/bq25890_charger.c
 +++ b/drivers/power/supply/bq25890_charger.c
-@@ -32,6 +32,7 @@
- #define BQ25890_IRQ_PIN			"bq25890_irq"
- 
- #define BQ25890_ID			3
-+#define BQ25896_ID			0
- 
- enum bq25890_fields {
- 	F_EN_HIZ, F_EN_ILIM, F_IILIM,				     /* Reg00 */
-@@ -153,8 +154,8 @@ static const struct reg_field bq25890_reg_fields[] = {
- 	[F_CONV_RATE]		= REG_FIELD(0x02, 6, 6),
- 	[F_BOOSTF]		= REG_FIELD(0x02, 5, 5),
- 	[F_ICO_EN]		= REG_FIELD(0x02, 4, 4),
--	[F_HVDCP_EN]		= REG_FIELD(0x02, 3, 3),
--	[F_MAXC_EN]		= REG_FIELD(0x02, 2, 2),
-+	[F_HVDCP_EN]		= REG_FIELD(0x02, 3, 3),  // reserved on BQ25896
-+	[F_MAXC_EN]		= REG_FIELD(0x02, 2, 2),  // reserved on BQ25896
- 	[F_FORCE_DPM]		= REG_FIELD(0x02, 1, 1),
- 	[F_AUTO_DPDM_EN]	= REG_FIELD(0x02, 0, 0),
- 	/* REG03 */
-@@ -163,6 +164,7 @@ static const struct reg_field bq25890_reg_fields[] = {
- 	[F_OTG_CFG]		= REG_FIELD(0x03, 5, 5),
- 	[F_CHG_CFG]		= REG_FIELD(0x03, 4, 4),
- 	[F_SYSVMIN]		= REG_FIELD(0x03, 1, 3),
-+	/* MIN_VBAT_SEL on BQ25896 */
- 	/* REG04 */
- 	[F_PUMPX_EN]		= REG_FIELD(0x04, 7, 7),
- 	[F_ICHG]		= REG_FIELD(0x04, 0, 6),
-@@ -181,7 +183,7 @@ static const struct reg_field bq25890_reg_fields[] = {
- 	[F_CHG_TMR]		= REG_FIELD(0x07, 1, 2),
- 	[F_JEITA_ISET]		= REG_FIELD(0x07, 0, 0),
- 	/* REG08 */
--	[F_BATCMP]		= REG_FIELD(0x08, 6, 7),
-+	[F_BATCMP]		= REG_FIELD(0x08, 6, 7), // 5-7 on BQ25896
- 	[F_VCLAMP]		= REG_FIELD(0x08, 2, 4),
- 	[F_TREG]		= REG_FIELD(0x08, 0, 1),
- 	/* REG09 */
-@@ -195,12 +197,13 @@ static const struct reg_field bq25890_reg_fields[] = {
- 	[F_PUMPX_DN]		= REG_FIELD(0x09, 0, 0),
- 	/* REG0A */
- 	[F_BOOSTV]		= REG_FIELD(0x0A, 4, 7),
-+	/* PFM_OTG_DIS 3 on BQ25896 */
- 	[F_BOOSTI]		= REG_FIELD(0x0A, 0, 2),
- 	/* REG0B */
- 	[F_VBUS_STAT]		= REG_FIELD(0x0B, 5, 7),
- 	[F_CHG_STAT]		= REG_FIELD(0x0B, 3, 4),
- 	[F_PG_STAT]		= REG_FIELD(0x0B, 2, 2),
--	[F_SDP_STAT]		= REG_FIELD(0x0B, 1, 1),
-+	[F_SDP_STAT]		= REG_FIELD(0x0B, 1, 1), // reserved on BQ25896
- 	[F_VSYS_STAT]		= REG_FIELD(0x0B, 0, 0),
- 	/* REG0C */
- 	[F_WD_FAULT]		= REG_FIELD(0x0C, 7, 7),
-@@ -396,6 +399,16 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
- 		val->strval = BQ25890_MANUFACTURER;
+@@ -461,6 +461,15 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+ 		val->intval = bq25890_find_val(bq->init_data.iterm, TBL_ITERM);
  		break;
  
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		if (bq->chip_id == BQ25890_ID)
-+			val->strval = "BQ25890";
-+		else if (bq->chip_id == BQ25896_ID)
-+			val->strval = "BQ25896";
-+		else
-+			val->strval = "UNKNOWN";
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		ret = bq25890_field_read(bq, F_SYSV); /* read measured value */
++		if (ret < 0)
++			return ret;
 +
++		/* converted_val = 2.304V + ADC_val * 20mV (table 10.3.15) */
++		val->intval = 2304000 + ret * 20000;
 +		break;
 +
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval = state.online;
- 		break;
-@@ -647,6 +660,7 @@ static int bq25890_hw_init(struct bq25890_device *bq)
- 
- static enum power_supply_property bq25890_power_supply_props[] = {
- 	POWER_SUPPLY_PROP_MANUFACTURER,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_HEALTH,
-@@ -848,7 +862,7 @@ static int bq25890_probe(struct i2c_client *client,
- 		return bq->chip_id;
+ 	default:
+ 		return -EINVAL;
  	}
+@@ -669,6 +678,7 @@ static enum power_supply_property bq25890_power_supply_props[] = {
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
+ 	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ };
  
--	if (bq->chip_id != BQ25890_ID) {
-+	if ((bq->chip_id != BQ25890_ID) && (bq->chip_id != BQ25896_ID)) {
- 		dev_err(dev, "Chip with ID=%d, not supported!\n", bq->chip_id);
- 		return -ENODEV;
- 	}
+ static char *bq25890_charger_supplied_to[] = {
 -- 
 2.17.1
 
