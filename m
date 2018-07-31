@@ -2,144 +2,114 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,UPPERCASE_50_75,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4254C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09955C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41BD120841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2BD820844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JX16f4h2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BD120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ASmNm8+Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BD820844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbeGaSqv (ORCPT
+        id S1731329AbeGaSrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:46:51 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:46570 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbeGaSqv (ORCPT
+        Tue, 31 Jul 2018 14:47:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54470 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727269AbeGaSrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:46:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VH3r9R186120;
-        Tue, 31 Jul 2018 17:05:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=uyRQMbYe9xdrAEDbho6bRxXrkDTd0OqH4kmosZIDQjM=;
- b=JX16f4h2OQ286oHLG598AKeTaAaco3ZUYsmpG7Y/GeTJ7v5a/ZSlv+1OuELpP4TRVQQF
- Sie8E1cIxHYJOqcENzzTLI7l7UTDAauXXr1zd4dud2bC3how3PzY/z3Qlv1wEf3HYh0n
- 0G6Mc+ydYfOBeaGRwNwCIH2zJIUcfET4TuwNKHyYHD/h8R53Wa3afrNjSrMNvrC7OlI+
- KaLCqzLvMIZiQTJK7wunarojYUy94KNFDN18Oj3jgwncRGuX6f92gFTVbuhdvHuzAaMG
- 1AvXQfokfowsLrx3lFw6fGAwpjQWJtGowwvTehED0ev7J70uiy6LFnnLZurY0bywhELL pQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2kgh4q1xtt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 17:05:15 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6VH5E9o010768
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 17:05:15 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6VH5ESR003338;
-        Tue, 31 Jul 2018 17:05:14 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 10:05:14 -0700
-Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
-To:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <1532036397-19449-1-git-send-email-longman@redhat.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <a57a15cb-162f-6248-79c9-311756bd9560@oracle.com>
-Date:   Tue, 31 Jul 2018 13:05:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 31 Jul 2018 14:47:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IcZJ0CDLQ6LRWs+nBmBDcw4bwX46BsNRBqRZCclzrVc=; b=ASmNm8+QahrL6Le4Lv2l4uLQF
+        6N2UTXunL+jSFauLq+p2v9cXjTxNtchMFO5WqLeXMmUVccvl2qs5lxA/8JKlCqVORZRzGKJ4ZEOg0
+        vXMWb0191viObrPE/ZwhX+6NQyqZa0KU7uD07AT6VqHYaF5YnNayNe2PETqwiwZLfJ6S8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fkY5t-0008Lr-Tv; Tue, 31 Jul 2018 17:05:57 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 4BD3711242BD; Tue, 31 Jul 2018 18:05:57 +0100 (BST)
+Date:   Tue, 31 Jul 2018 18:05:57 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 05/10] ASoC: wcd9335: add CLASS-H Controller support
+Message-ID: <20180731170557.GK5719@sirena.org.uk>
+References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
+ <20180727121806.18209-6-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1532036397-19449-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=599
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310158
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VSVNCtZB1QZ8vhj+"
+Content-Disposition: inline
+In-Reply-To: <20180727121806.18209-6-srinivas.kandagatla@linaro.org>
+X-Cookie: Save the bales!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 05:39 PM, Waiman Long wrote:
-> On a VM with only 1 vCPU, the locking fast paths will always be
-> successful. In this case, there is no need to use the the PV qspinlock
-> code which has higher overhead on the unlock side than the native
-> qspinlock code.
->
-> The xen_pvspin veriable is also turned off in this 1 vCPU case to
-> eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
-> which is run after xen_init_spinlocks().
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
 
+--VSVNCtZB1QZ8vhj+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied to for-linus-4.19.
+On Fri, Jul 27, 2018 at 01:18:01PM +0100, Srinivas Kandagatla wrote:
 
--boris
+> +	res_val = WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_0KOHM;
+> +	switch (mode) {
+> +	case CLS_H_NORMAL:
+> +		res_val = WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_50KOHM;
+> +		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_NORMAL;
+> +		gain = DAC_GAIN_0DB;
+> +		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
+> +		break;
+> +	case CLS_AB:
+> +		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_NORMAL;
+> +		gain = DAC_GAIN_0DB;
+> +		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
+> +		break;
+> +	case CLS_H_HIFI:
+> +		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_UHQA;
+> +		gain = DAC_GAIN_M0P2DB;
+> +		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
+> +		break;
+> +	case CLS_H_LP:
+> +		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_LP;
+> +		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_30MA;
+> +		break;
+> +	};
 
+This is missing a default case for error checking, and you don't need
+the semicolon at the end either.
 
+--VSVNCtZB1QZ8vhj+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltglvQACgkQJNaLcl1U
+h9DxCgf+MkCcuHxQonSpd9ITGrqpFrCSDOBZjOOepXTvj/tXAGLT9gfM3c/wNTNs
+/j2LdASeN5XbRupEgD3WgxRQ3moXq3bwtqeFizFhz8UH1Bq612cVMbqmLNKvpDRw
+uEws8494YPyxyXpEz2GgflOXiB5yUs9lSHaGJACZZU9M9BrR3wyeyBRO+1hw2Fk9
+ugRL9wmNTz2pNimXaZ9qQSjZ5uaUJphoUuahXdNy+nhIWeESHskVR24vcZEyRiNr
+gGOk1miiOwE2M0TO+MY1TuxoXLRQzZ7yDzuERvONQ7+RIy+iZnbFNwKO1+eP0Zzy
+/kgca7nvIU19ro8aMU9+MI5WzV04iw==
+=R8QF
+-----END PGP SIGNATURE-----
+
+--VSVNCtZB1QZ8vhj+--
