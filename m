@@ -2,123 +2,127 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C90DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5CDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFFD20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02ADD20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:55:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ezjDAtVK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFFD20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=dugeo-com.20150623.gappssmtp.com header.i=@dugeo-com.20150623.gappssmtp.com header.b="tUebcs3Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02ADD20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dugeo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732458AbeGaQfP (ORCPT
+        id S1732479AbeGaQfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:35:15 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33758 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732268AbeGaQfO (ORCPT
+        Tue, 31 Jul 2018 12:35:41 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:38515 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732268AbeGaQfl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:35:14 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VEsVpv085465
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:54:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=vxDTuMf+oRKOxK/ZxtcYPwBiaj2XGGWxZep/1od9TOk=;
- b=ezjDAtVKons4ZArpeJLgPlbnTboSIZNa471mQ21aulfl6k4bohFOhqja0rowDpznUtD5
- HgyVjlWpt7OJzUDQ946//gQnnNyUSQMQZqZ9AEQ+vwahBcEsu7Yx650mVRCN2XvTqiu/
- grjvwe9hrRnOd082F//yPpxNAJT4W3tCflJWei/PrP52NJk9AhPaffmFReFj8GCICDVW
- tVRkuGh04bRUxoUfJMM/X/HPtkSt9v1WzvA5TVZV+RUCLiz8O8PXM0K0VvuUyqVqwfDT
- U70LMbb8e4gYwjgY9OiNJD+ihDVvfPP/j4ji7JxEwi1tsgTRivaaRz3RNnhZ7D2gp0Et CQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2kgfwt1exg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:54:31 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6VEsTVb032095
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:54:29 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6VEsSU9028609
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:54:29 GMT
-Received: from mail-oi0-f46.google.com (/209.85.218.46)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 07:54:28 -0700
-Received: by mail-oi0-f46.google.com with SMTP id n84-v6so28441585oib.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:54:28 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHjUQgsrXX6eUJ1OTvg+TPKKdKRrfwmeIcSy+6Ga1sX92KnEYiB
-        aLnlsgOymyi29X8WpadOcKuCfT3+MbT1gM5a57s=
-X-Google-Smtp-Source: AAOMgpe/yOYsnOqv6gwoV7RrBvgAysrWoswrySP9VqR2xcWp2qSc4y5abk5xnPemQ9l9wqAsUkNo02Geaz7bCChlI7Q=
-X-Received: by 2002:aca:da88:: with SMTP id r130-v6mr23440363oig.163.1533048868474;
- Tue, 31 Jul 2018 07:54:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180731124504.27582-1-osalvador@techadventures.net>
- <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
- <20180731144157.GA1499@techadventures.net> <20180731144545.fh5syvwcecgvqul6@xakep.localdomain>
- <20180731145125.GB1499@techadventures.net>
-In-Reply-To: <20180731145125.GB1499@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 31 Jul 2018 10:53:52 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
-Message-ID: <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
-Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
-To:     osalvador@techadventures.net
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
-        Mel Gorman <mgorman@suse.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=424
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310138
+        Tue, 31 Jul 2018 12:35:41 -0400
+Received: by mail-pf1-f169.google.com with SMTP id x17-v6so6242086pfh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dugeo-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=vQH6T0bqpSjfV7dGMfdnWWjA0NyS9DJmowVyxjlUlTU=;
+        b=tUebcs3YnmB7LUr4PwxZqfHdb67FKXh9+/L1BYcLFyFePFOeAXf9rp7uyBA9E9KjWB
+         8VPYrMOucI+evQlc13R1t8kESm4i7UOsmz9AQBbHVJfo6lC4qr2Ncc6AfM3wTq98CGXH
+         KJF+w8KN5O6jC3a5hz2APylgiKBTlcvUZ7rUKhWIVlvhEXOOALPlHf94xZi8krQDPOaF
+         FnoLXzl2JG0+CPJa+nJamj1az7tPpZEWusfijHlO8Wpnrx7xYkjlTNAforBTSVznUChV
+         zM5VlSQnR/XfVyFzdS+T6Q5TSj5SatY/9TdxrqzJdPrPGzMFSV+AgjQL3pWYVz5atpr5
+         QdkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vQH6T0bqpSjfV7dGMfdnWWjA0NyS9DJmowVyxjlUlTU=;
+        b=WK4ju25VtVMzr1uKcuLasIbPUabHN/k2X78MrYNTkCxyQz2opv4a1u1XOwfhXEGwCt
+         LM2TshylXqK/LLOLrHmvkNXEkPiWmNGhOPMOjghgn/TPQW1kIoV826kCrkIY6IEU1EQC
+         scwlcQxrNXkoALFDvt3pHHfpRZ0vrtxeLNA7tv5uSZWN569ImuNDi76YesuBytUzzUGP
+         sN7qRxWxZr3+Y+qzD4WJNXMiFtomgAYg89tTacUU6qKuYrhxMNXD52ySZDPlS986Bd+o
+         +DD5sarXGQe2LDK4Hpw3rRRIltv/V4PWPWQ8YSSi2SiRMNoDf5mS/FEloMCETG5+kxcq
+         U0gA==
+X-Gm-Message-State: AOUpUlGVCyD7dpPw2tfH2OrejMM8xOyE7gg1AU6adCMTmRY+eI1VbvRf
+        rIN3m8G0NQWzRrCsvG7CTPv+/A==
+X-Google-Smtp-Source: AAOMgpd4LbrHm5JNiCaY3k5NQwF/9/stIm3Pb8UqzJHbXb2rQPZJebD474QK04brjx37zeEbA6jPiQ==
+X-Received: by 2002:a63:d613:: with SMTP id q19-v6mr20742470pgg.327.1533048898672;
+        Tue, 31 Jul 2018 07:54:58 -0700 (PDT)
+Received: from bud178.dugeo.com ([116.212.202.58])
+        by smtp.gmail.com with ESMTPSA id i25-v6sm35800596pfi.150.2018.07.31.07.54.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 07:54:57 -0700 (PDT)
+From:   Jacek Tomaka <jacekt@dugeo.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jacek Tomaka <jacek.tomaka@poczta.fm>
+Subject: [PATCH v3] perf/x86/intel: Add support for MISPREDICT bit on Knights Landing cpus
+Date:   Tue, 31 Jul 2018 22:54:14 +0800
+Message-Id: <20180731145414.8568-1-jacekt@dugeo.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thats correct on arches where no sparsemem setup_usemap() will not be
-freed up. It is a tiny function, just a few instructions. Not a big
-deal.
+From: Jacek Tomaka <jacek.tomaka@poczta.fm>
 
-Pavel
-On Tue, Jul 31, 2018 at 10:51 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
->
-> On Tue, Jul 31, 2018 at 10:45:45AM -0400, Pavel Tatashin wrote:
-> > Here the patch would look like this:
-> >
-> > From e640b32dbd329bba5a785cc60050d5d7e1ca18ce Mon Sep 17 00:00:00 2001
-> > From: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > Date: Tue, 31 Jul 2018 10:37:44 -0400
-> > Subject: [PATCH] mm: remove __paginginit
-> >
-> > __paginginit is the same thing as __meminit except for platforms without
-> > sparsemem, there it is defined as __init.
-> >
-> > Remove __paginginit and use __meminit. Use __ref in one single function
-> > that merges __meminit and __init sections: setup_usemap().
-> >
-> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
->
-> Uhm, I am probably missing something, but with this change, the functions will not be freed up
-> while freeing init memory, right?
->
-> Thanks
-> --
-> Oscar Salvador
-> SUSE L3
->
+Problem: perf did not show branch predicted/mispredicted bit in brstack.
+
+Output of perf -F brstack for profile collected
+
+Before:
+0x4fdbcd/0x4fdc03/-/-/-/0
+0x45f4c1/0x4fdba0/-/-/-/0
+0x45f544/0x45f4bb/-/-/-/0
+0x45f555/0x45f53c/-/-/-/0
+0x7f66901cc24b/0x45f555/-/-/-/0
+0x7f66901cc22e/0x7f66901cc23d/-/-/-/0
+0x7f66901cc1ff/0x7f66901cc20f/-/-/-/0
+0x7f66901cc1e8/0x7f66901cc1fc/-/-/-/0
+
+After:
+0x4fdbcd/0x4fdc03/P/-/-/0
+0x45f4c1/0x4fdba0/P/-/-/0
+0x45f544/0x45f4bb/P/-/-/0
+0x45f555/0x45f53c/P/-/-/0
+0x7f66901cc24b/0x45f555/P/-/-/0
+0x7f66901cc22e/0x7f66901cc23d/P/-/-/0
+0x7f66901cc1ff/0x7f66901cc20f/P/-/-/0
+0x7f66901cc1e8/0x7f66901cc1fc/P/-/-/0
+
+Cause:
+As mentioned in Software Development Manual vol 3, 17.4.8.1,
+IA32_PERF_CAPABILITIES[5:0] indicates the format of the address that is
+stored in the LBR stack. Knights Landing reports 1 (LBR_FORMAT_LIP) as
+its format. Despite that, registers containing FROM address of the branch,
+do have MISPREDICT bit but because of the format indicated in
+IA32_PERF_CAPABILITIES[5:0], LBR did not read MISPREDICT bit.
+
+Solution:
+Teach LBR about above Knights Landing quirk and make it read MISPREDICT bit.
+---
+ arch/x86/events/intel/lbr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index cf372b9055..81fe5047c6 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -1230,4 +1230,8 @@ void intel_pmu_lbr_init_knl(void)
+ 
+ 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
+ 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
++
++	/* Knights Landing does have MISPREDICT bit */
++	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
++		x86_pmu.intel_cap.lbr_format = LBR_FORMAT_EIP_FLAGS;
+ }
+-- 
+2.17.0
+
