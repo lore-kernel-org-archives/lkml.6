@@ -2,464 +2,202 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C447C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C967DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B9620870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:22:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767E1208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MGZDGwYg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MGZDGwYg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B9620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="beVDKCFz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 767E1208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeGaUEZ (ORCPT
+        id S1732073AbeGaUFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:04:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45478 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbeGaUEY (ORCPT
+        Tue, 31 Jul 2018 16:05:09 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:41268 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729639AbeGaUFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:04:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DAE4260264; Tue, 31 Jul 2018 18:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533061371;
-        bh=eh6QpJ9l/bwzyCgDeVXShJLJuP6bxtKxNavuFVFKR4c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGZDGwYgMsN2L0WKOvVIO3+sj6uG+zdC5krD5AfDiQLphxinDuXIuyGoQUrP58/EZ
-         Sy6rLuAEXqqJAjzwmqJ6A/81voyobPhT+SnA5m213aJHVErwLyMa9nml+zvtD3S/a/
-         oStzfdYCw7msDXManb8MGbpFqujpOCZQSjsg55ks=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDC6960397;
-        Tue, 31 Jul 2018 18:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533061371;
-        bh=eh6QpJ9l/bwzyCgDeVXShJLJuP6bxtKxNavuFVFKR4c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGZDGwYgMsN2L0WKOvVIO3+sj6uG+zdC5krD5AfDiQLphxinDuXIuyGoQUrP58/EZ
-         Sy6rLuAEXqqJAjzwmqJ6A/81voyobPhT+SnA5m213aJHVErwLyMa9nml+zvtD3S/a/
-         oStzfdYCw7msDXManb8MGbpFqujpOCZQSjsg55ks=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDC6960397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, bryanh@codeaurora.org,
-        psodagud@codeaurora.org,
-        Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>,
-        Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-Subject: [PATCH 2/2] Embedded USB Debugger (EUD) driver
-Date:   Tue, 31 Jul 2018 11:22:13 -0700
-Message-Id: <1533061333-7680-3-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1533061333-7680-1-git-send-email-pheragu@codeaurora.org>
-References: <1533061333-7680-1-git-send-email-pheragu@codeaurora.org>
+        Tue, 31 Jul 2018 16:05:08 -0400
+Received: by mail-yb0-f195.google.com with SMTP id s8-v6so6516128ybe.8
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HcNGn81lVbA2+gznZXJ8pA/U1xZyI+uq5TSOm56MT4k=;
+        b=beVDKCFzqxJDXApbkUQLoqst6o4+XOndbDnDmyWL1/dFiUZaekpxA3+/IAZINFDyNI
+         Jjt1k+OT/LTxgKNhFktdtGDCT8iCvHOYP8UZKkmCONuZCevpIjLOY1dEIkHqTiCtt6Qc
+         QvdvE1mpD68tyur19awcu7HWf7roCqhmHkVzMKV+uEDSftSlZUvpflxqGj+NRjdPaEcg
+         sHm7YAqDJp37bEp1jNFlhic2e7izYz8GDa0oVPqrRmNB5eVbmOeuU6JGhvAqXbPN2oUJ
+         3PIZpHQtTXxCVJJSAb8BYDsvDfAh9wFJUtz2q44qvMiWzZPAcckIpYpDzyluB4yh2gD9
+         GBgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HcNGn81lVbA2+gznZXJ8pA/U1xZyI+uq5TSOm56MT4k=;
+        b=Wj09MFNQCwNIHkSYk3pHwWJgn3qWUrt9LqkX42y+BNv9ReAAn6dyR7x9KHWj21pAjF
+         WmGr9MTrKy1veOd53kbSzh1BD8LjeSZB59C2kwk4DivqYV5Z7YL2yTYHq4crKfpmb1AP
+         hn+GWCn4rNAcHIGIRGT6Yvf9S/qqiPr2ZlYbGgGg+FTyAya3+Pbwxf63JGt07KqiFx04
+         Wq7gF4GFaGhZXC19lOV3XJUwKs7Mz3oYX4WmAYky3UMzAaZlnwF0yJDZiHmKapcMZTBa
+         DfWA/cCFZrKdH45qyJn97tsSyxDZ186L7KJvwRqNZP+H21Bl2ZpEQirWs6xzqFOSoWXv
+         K80A==
+X-Gm-Message-State: AOUpUlEr5k5AzG742NkN5wZEhQ66/4KApEsXPPnQpcNcLRZtGn71QaKx
+        +gSjgtI0yfJ1U5kKecLLeZutLIMoGPrhcIN3v9w+DA==
+X-Google-Smtp-Source: AAOMgpdDBRK3IMeMv80FgL5/ym8HtjNfvDsUMP2nuv16bA2vi/0GPp98mklMqVFZxswTu6CXlHroEdSAPzug5ynpVzk=
+X-Received: by 2002:a5b:b44:: with SMTP id b4-v6mr12644604ybr.463.1533061415421;
+ Tue, 31 Jul 2018 11:23:35 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:c445:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 11:23:34
+ -0700 (PDT)
+In-Reply-To: <20180406222350.174104-1-khazhy@google.com>
+References: <20180406222350.174104-1-khazhy@google.com>
+From:   Khazhismel Kumykov <khazhy@google.com>
+Date:   Tue, 31 Jul 2018 11:23:34 -0700
+Message-ID: <CACGdZY+cHaKSMKqpM3p5SJq9sVyZHViDUoCTmTusr=Dw1iiR0A@mail.gmail.com>
+Subject: Re: [PATCH] block/compat_ioctl: fix range check in BLKGETSIZE
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000001fdf1a05724fadca"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for control peripheral of EUD (Embedded USB Debugger) to
-listen to events such as USB attach/detach, charger enable/disable, pet
-EUD to indicate software is functional.
+--0000000000001fdf1a05724fadca
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>
-Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
----
- drivers/soc/qcom/Kconfig  |  13 ++
- drivers/soc/qcom/Makefile |   1 +
- drivers/soc/qcom/eud.c    | 340 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 354 insertions(+)
- create mode 100644 drivers/soc/qcom/eud.c
+Ping?
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 5856e79..efd431f 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -136,4 +136,17 @@ config QCOM_APR
-           application processor and QDSP6. APR is
-           used by audio driver to configure QDSP6
-           ASM, ADM and AFE modules.
-+
-+config QCOM_EUD
-+	tristate "QTI Embedded USB Debugger (EUD)"
-+	depends on ARCH_QCOM
-+	select SERIAL_CORE
-+	help
-+	  The Embedded USB Debugger (EUD) driver is a driver for the
-+	  control peripheral which waits on events like USB attach/detach
-+	  and charger enable/disable. The control peripheral further helps
-+	  support the USB-based debug and trace capabilities.
-+	  This module enables support for Qualcomm Technologies, Inc.
-+	  Embedded USB Debugger (EUD).
-+	  If unsure, say N.
- endmenu
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 19dcf95..dd4701b 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
- obj-$(CONFIG_QCOM_APR) += apr.o
-+obj-$(CONFIG_QCOM_EUD) += eud.o
-diff --git a/drivers/soc/qcom/eud.c b/drivers/soc/qcom/eud.c
-new file mode 100644
-index 0000000..b4c4235
---- /dev/null
-+++ b/drivers/soc/qcom/eud.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/interrupt.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/extcon.h>
-+#include <linux/delay.h>
-+#include <linux/sysfs.h>
-+#include <linux/io.h>
-+#include <linux/bitops.h>
-+#include <linux/workqueue.h>
-+#include <linux/power_supply.h>
-+
-+#define EUD_ENABLE_CMD 1
-+#define EUD_DISABLE_CMD 0
-+
-+#define EUD_REG_INT1_EN_MASK	0x0024
-+#define EUD_REG_INT_STATUS_1	0x0044
-+#define EUD_REG_CTL_OUT_1	0x0074
-+#define EUD_REG_VBUS_INT_CLR	0x0080
-+#define EUD_REG_CHGR_INT_CLR	0x0084
-+#define EUD_REG_CSR_EUD_EN	0x1014
-+#define EUD_REG_SW_ATTACH_DET	0x1018
-+
-+#define EUD_INT_VBUS		BIT(2)
-+#define EUD_INT_CHGR		BIT(3)
-+#define EUD_INT_SAFE_MODE	BIT(4)
-+
-+#define EUD_NR			1
-+
-+struct eud_chip {
-+	struct device			*dev;
-+	int				eud_irq;
-+	unsigned int			extcon_id;
-+	unsigned int			int_status;
-+	bool				usb_attach;
-+	bool				chgr_enable;
-+	void __iomem			*eud_reg_base;
-+	struct extcon_dev		*extcon;
-+	struct work_struct		eud_work;
-+};
-+
-+static const unsigned int eud_extcon_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_CHG_USB_SDP,
-+	EXTCON_NONE,
-+};
-+
-+/*
-+ * On the kernel command line specify eud.enable=1 to enable EUD.
-+ * EUD is disabled by default.
-+ */
-+static int enable;
-+static bool eud_ready;
-+static struct eud_chip *eud_private;
-+
-+static void enable_eud(struct eud_chip *priv)
-+{
-+	struct power_supply *usb_psy = NULL;
-+	union power_supply_propval pval = {0};
-+	union power_supply_propval tval = {0};
-+	int ret;
-+
-+	usb_psy = power_supply_get_by_name("usb");
-+	if (!usb_psy)
-+		return;
-+
-+	ret = power_supply_get_property(usb_psy,
-+			POWER_SUPPLY_PROP_PRESENT, &pval);
-+	if (ret)
-+		return;
-+
-+	ret = power_supply_get_property(usb_psy,
-+			POWER_SUPPLY_PROP_REAL_TYPE, &tval);
-+	if (ret)
-+		return;
-+
-+	if (pval.intval && (tval.intval == POWER_SUPPLY_TYPE_USB ||
-+	    tval.intval == POWER_SUPPLY_TYPE_USB_CDP)) {
-+		/* write into CSR to enable EUD */
-+		writel_relaxed(BIT(0), priv->eud_reg_base + EUD_REG_CSR_EUD_EN);
-+		/* Enable vbus, chgr & safe mode warning interrupts */
-+		writel_relaxed(EUD_INT_VBUS | EUD_INT_CHGR | EUD_INT_SAFE_MODE,
-+				priv->eud_reg_base + EUD_REG_INT1_EN_MASK);
-+
-+		/* Ensure Register Writes Complete */
-+		wmb();
-+
-+		/*
-+		 * Set the default cable state to usb connect and charger
-+		 * enable
-+		 */
-+		ret = extcon_set_state_sync(priv->extcon, EXTCON_USB, true);
-+		if (ret)
-+			return;
-+		ret = extcon_set_state_sync(priv->extcon,
-+				EXTCON_CHG_USB_SDP, true);
-+		if (ret)
-+			return;
-+	} else {
-+		return;
-+	}
-+
-+}
-+
-+static void disable_eud(struct eud_chip *priv)
-+{
-+	/* write into CSR to disable EUD */
-+	writel_relaxed(0, priv->eud_reg_base + EUD_REG_CSR_EUD_EN);
-+}
-+
-+static int param_eud_set(const char *val, const struct kernel_param *kp)
-+{
-+	int enable = 0;
-+
-+	if (sscanf(val, "%du", &enable) != 1)
-+		return -EINVAL;
-+
-+	if (enable != EUD_ENABLE_CMD && enable != EUD_DISABLE_CMD)
-+		return -EINVAL;
-+
-+	*((uint *)kp->arg) = enable;
-+	if (!eud_ready)
-+		return 0;
-+
-+	if (enable == EUD_ENABLE_CMD)
-+		enable_eud(eud_private);
-+	else if (enable == EUD_DISABLE_CMD)
-+		disable_eud(eud_private);
-+
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops eud_param_ops = {
-+	.set = param_eud_set,
-+	.get = param_get_int,
-+};
-+
-+module_param_cb(enable, &eud_param_ops, &enable, 0644);
-+
-+static void eud_event_notifier(struct work_struct *eud_work)
-+{
-+	struct eud_chip *chip = container_of(eud_work, struct eud_chip,
-+					eud_work);
-+	int ret;
-+
-+	if (chip->int_status == EUD_INT_VBUS) {
-+		ret = extcon_set_state_sync(chip->extcon, chip->extcon_id,
-+					chip->usb_attach);
-+		if (ret)
-+			return;
-+	} else if (chip->int_status == EUD_INT_CHGR) {
-+		ret = extcon_set_state_sync(chip->extcon, chip->extcon_id,
-+					chip->chgr_enable);
-+		if (ret)
-+			return;
-+	}
-+}
-+
-+static void usb_attach_detach(struct eud_chip *chip)
-+{
-+	u32 reg;
-+
-+	chip->extcon_id = EXTCON_USB;
-+	/* read ctl_out_1[4] to find USB attach or detach event */
-+	reg = readl_relaxed(chip->eud_reg_base + EUD_REG_CTL_OUT_1);
-+	if (reg & BIT(4))
-+		chip->usb_attach = true;
-+	else
-+		chip->usb_attach = false;
-+
-+	schedule_work(&chip->eud_work);
-+
-+	/* set and clear vbus_int_clr[0] to clear interrupt */
-+	writel_relaxed(BIT(0), chip->eud_reg_base + EUD_REG_VBUS_INT_CLR);
-+	/* Ensure Register Writes Complete */
-+	wmb();
-+	writel_relaxed(0, chip->eud_reg_base + EUD_REG_VBUS_INT_CLR);
-+}
-+
-+static void chgr_enable_disable(struct eud_chip *chip)
-+{
-+	u32 reg;
-+
-+	chip->extcon_id = EXTCON_CHG_USB_SDP;
-+	/* read ctl_out_1[6] to find charger enable or disable event */
-+	reg = readl_relaxed(chip->eud_reg_base + EUD_REG_CTL_OUT_1);
-+	if (reg & BIT(6))
-+		chip->chgr_enable = true;
-+	else
-+		chip->chgr_enable = false;
-+
-+	schedule_work(&chip->eud_work);
-+
-+	/* set and clear chgr_int_clr[0] to clear interrupt */
-+	writel_relaxed(BIT(0), chip->eud_reg_base + EUD_REG_CHGR_INT_CLR);
-+	/* Ensure Register Writes Complete */
-+	wmb();
-+	writel_relaxed(0, chip->eud_reg_base + EUD_REG_CHGR_INT_CLR);
-+}
-+
-+static void pet_eud(struct eud_chip *chip)
-+{
-+	u32 reg;
-+
-+	/* read sw_attach_det[0] to find attach/detach event */
-+	reg = readl_relaxed(chip->eud_reg_base + EUD_REG_SW_ATTACH_DET);
-+	if (reg & BIT(0)) {
-+		/* Detach & Attach pet for EUD */
-+		writel_relaxed(0, chip->eud_reg_base + EUD_REG_SW_ATTACH_DET);
-+		/* Ensure Register Writes Complete */
-+		wmb();
-+		/* Delay to make sure detach pet is done before attach pet */
-+		udelay(100);
-+		writel_relaxed(BIT(0), chip->eud_reg_base +
-+					EUD_REG_SW_ATTACH_DET);
-+		/* Ensure Register Writes Complete */
-+		wmb();
-+	} else {
-+		/* Attach pet for EUD */
-+		writel_relaxed(BIT(0), chip->eud_reg_base +
-+					EUD_REG_SW_ATTACH_DET);
-+		/* Ensure Register Writes Complete */
-+		wmb();
-+	}
-+}
-+
-+static irqreturn_t handle_eud_irq(int irq, void *data)
-+{
-+	struct eud_chip *chip = data;
-+	u32 reg;
-+
-+	/* read status register and find out which interrupt triggered */
-+	reg = readl_relaxed(chip->eud_reg_base + EUD_REG_INT_STATUS_1);
-+	if (reg & EUD_INT_VBUS) {
-+		chip->int_status = EUD_INT_VBUS;
-+		usb_attach_detach(chip);
-+	} else if (reg & EUD_INT_CHGR) {
-+		chip->int_status = EUD_INT_CHGR;
-+		chgr_enable_disable(chip);
-+	} else if (reg & EUD_INT_SAFE_MODE) {
-+		pet_eud(chip);
-+	} else {
-+		return IRQ_NONE;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int msm_eud_probe(struct platform_device *pdev)
-+{
-+	struct eud_chip *chip;
-+	struct resource *res;
-+	int ret;
-+
-+	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip) {
-+		ret = -ENOMEM;
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, chip);
-+
-+	chip->extcon = devm_extcon_dev_allocate(&pdev->dev, eud_extcon_cable);
-+	if (IS_ERR(chip->extcon))
-+		return PTR_ERR(chip->extcon);
-+
-+	ret = devm_extcon_dev_register(&pdev->dev, chip->extcon);
-+	if (ret)
-+		return ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		ret = -ENOMEM;
-+		return ret;
-+	}
-+
-+	chip->eud_reg_base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(chip->eud_reg_base))
-+		return PTR_ERR(chip->eud_reg_base);
-+
-+	chip->eud_irq = platform_get_irq(pdev, 0);
-+
-+	ret = devm_request_irq(&pdev->dev, chip->eud_irq, handle_eud_irq,
-+				IRQF_TRIGGER_HIGH, NULL, chip);
-+	if (ret)
-+		return ret;
-+
-+	device_init_wakeup(&pdev->dev, true);
-+	enable_irq_wake(chip->eud_irq);
-+
-+	INIT_WORK(&chip->eud_work, eud_event_notifier);
-+
-+	eud_private = chip;
-+	eud_ready = true;
-+
-+	/* Enable EUD */
-+	if (enable)
-+		enable_eud(eud_private);
-+
-+	return 0;
-+}
-+
-+static int msm_eud_remove(struct platform_device *pdev)
-+{
-+	struct eud_chip *chip = platform_get_drvdata(pdev);
-+
-+	if (enable)
-+		disable_eud(eud_private);
-+	device_init_wakeup(&pdev->dev, false);
-+	disable_irq_wake(chip->eud_irq);
-+	platform_set_drvdata(pdev, NULL);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id msm_eud_dt_match[] = {
-+	{.compatible = "qcom,msm-eud"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, msm_eud_dt_match);
-+
-+static struct platform_driver msm_eud_driver = {
-+	.probe		= msm_eud_probe,
-+	.remove		= msm_eud_remove,
-+	.driver		= {
-+		.name		= "msm-eud",
-+		.of_match_table = msm_eud_dt_match,
-+	},
-+};
-+module_platform_driver(msm_eud_driver);
-+
-+MODULE_DESCRIPTION("QTI EUD driver");
-+MODULE_LICENSE("GPL v2");
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Fri, Apr 6, 2018 at 3:23 PM, Khazhismel Kumykov <khazhy@google.com> wrote:
+> kernel ulong and compat_ulong_t may not be same width. Use type directly
+> to eliminate mismatches.
+>
+> This would result in truncation rather than EFBIG for 32bit mode for
+> large disks.
+>
+> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+> ---
+>  block/compat_ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/block/compat_ioctl.c b/block/compat_ioctl.c
+> index 6ca015f92766..3a2c77f07da8 100644
+> --- a/block/compat_ioctl.c
+> +++ b/block/compat_ioctl.c
+> @@ -388,7 +388,7 @@ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+>                 return 0;
+>         case BLKGETSIZE:
+>                 size = i_size_read(bdev->bd_inode);
+> -               if ((size >> 9) > ~0UL)
+> +               if ((size >> 9) > ~((compat_ulong_t)0UL))
+>                         return -EFBIG;
+>                 return compat_put_ulong(arg, size >> 9);
+>
+> --
+> 2.17.0.484.g0c8726318c-goog
+>
 
+--0000000000001fdf1a05724fadca
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS5wYJKoZIhvcNAQcCoIIS2DCCEtQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBNMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+BQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWltZWNhMS5j
+cnQwHQYDVR0OBBYEFDBayG/HuozB3nr7XpIwvMdtMOg+MB8GA1UdIwQYMBaAFMs4ErDHmcB4koyz
+IZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8v
+d3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0dHA6Ly9j
+cmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQBRJEgrMaLvmWUZ+Njl
+2Nv1nyyUCOqZ9DVy/vSoHfwEGjfHvU7LKMBXG23U7+MFxsQ+zjvShwVFh+xd1f/WhVYskxUWtFNx
+cvVntI7VRiuPMEyzuJAIif7Gz/3nGHYELnuCT/LJiRt+8s5ifvk4ARlTyzXvmTgYI0SWmY3XzG7m
+w//hyllv3Oeju53dWy7m08J+wYroHL+95IETljOngoBeyaFJmACcHwdrM+oASBYR5cpauJrFZOuu
+6SmC9wsvjI52co5WcO6b7PqO/NjJtIIdXzWZH6P99IHiKI5NU3MAAOtJ7sz9py/SRei4YELyzwFp
+KW1mK6xDpJiRbOzZPIC5MYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xv
+YmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIMaTEz/DvA
+bIQaq/gnMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCTvAmr+pRrcIsBIFFZT75y
+SUqoCEyL1acUFaE31/T8gzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+Fw0xODA3MzExODIzMzZaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQB
+FjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglg
+hkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAm2t1bJAOwA7xQee2Q5GGeKtESeOD+gGi3LuJWB+z
+BDbVTKNWAuf5UtngnJnO7n3J7WtXY5owHdOil9Db4+61aHawsfKFyNjCzsXdMnzyletT1OeQ6su/
+n0Ttgcf3S3JCVbbnYpBW5a7ayCdsW3hWq/yBo6+zbECI7iM7PjNZlLgrH/EEdVCwPmh/e2Z9Z7xy
+BiiV8l7ieotmPluc/vySEyGxJcwqs6SjXpRuURJMfFGbIGIclgA8liGS+zjjkBG1Iu+Gt7vRzqBH
+vgVOOKGU8W8LEuFoxFj9yUmyZvVUqxxjZqpXh1nZSCAW6Mr4tIYvLaGnHAPKIlB7g0qPuLyfJQ==
+--0000000000001fdf1a05724fadca--
