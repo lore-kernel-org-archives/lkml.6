@@ -2,137 +2,222 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 722BFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B104C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCCE20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4BVfX+n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCCE20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 411D720862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411D720862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbeGaHpe (ORCPT
+        id S1730113AbeGaHqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:45:34 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:42569 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeGaHpd (ORCPT
+        Tue, 31 Jul 2018 03:46:13 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:59659 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeGaHqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:45:33 -0400
-Received: by mail-yb0-f195.google.com with SMTP id c10-v6so5716945ybf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e5caXUogE0rfXz6bwSVzTjVit3uhCHDvkJZvyD1/m7M=;
-        b=j4BVfX+nwa6N73KBg1YAiZfOyWojL23a4xTgaiRmUsMNn75WAsFIIXhQv1W4j1PNsm
-         UqHB9mC2yj8xDqXyeaoTT5/swidkFT3va5ig/WsN2xo053ZjLeyeNa3bLcJmYgyVcx2n
-         qumlYtr92Ws4pUDzCDo0Ktss7LIDnB6Ixkd5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e5caXUogE0rfXz6bwSVzTjVit3uhCHDvkJZvyD1/m7M=;
-        b=eU6HDDiNae66oW3zgHhEFlbVJZQADlxgr+kL8AtIELhh6e/vFUnexbm/nLT89hMCvn
-         5mbliMdfsc60bBliSNfn41CITio1SSnA8CvqDUPAaJ03La6nECgtD52ahAK6Kgd+eNLK
-         u+mh0e4b+0EavbYkoYVDATCu8AyCuwcwI/Xxl4PAKi34wvs/WvHaoBpHWw8zWohvR69Q
-         XTcrHCt8x/zK0itPe4QrwZQeNA/y9RGFcBnnWPZFsNcJEnKvAc2IcKTJNt904wYcWcZn
-         i4GpBczvlqx/pTvRnaOVGYmMnuOFoYKjl3/h60V1UeJKRndecfZwG6Z7zsO2/PjXjEvP
-         +bXQ==
-X-Gm-Message-State: AOUpUlF6FcFZA/H1jbBdA0iiZgLdAPra0fqZOAynDn+aHrF4ngK5O6id
-        t9UoUFo8+hez6x+AsrxM1+FXtvD2EtI=
-X-Google-Smtp-Source: AAOMgpfAXCpPDFR7c7z7VHprskoQPTzXeTO7QAkk2qLMUEfAyNmedZzDBttbBUvOqFzBnf9wv+KrZw==
-X-Received: by 2002:a25:aea5:: with SMTP id b37-v6mr10631644ybj.303.1533017217116;
-        Mon, 30 Jul 2018 23:06:57 -0700 (PDT)
-Received: from mail-yw0-f180.google.com (mail-yw0-f180.google.com. [209.85.161.180])
-        by smtp.gmail.com with ESMTPSA id w143-v6sm21865975yww.49.2018.07.30.23.06.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
-Received: by mail-yw0-f180.google.com with SMTP id c135-v6so5338192ywa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
-X-Received: by 2002:a0d:dcc3:: with SMTP id f186-v6mr10001707ywe.66.1533017216195;
- Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180617143625.32133-1-matwey@sai.msu.ru> <20180617143625.32133-2-matwey@sai.msu.ru>
- <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
- <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
- <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com> <20180730130702.27664d15@coco.lan>
-In-Reply-To: <20180730130702.27664d15@coco.lan>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 31 Jul 2018 15:06:45 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5A6hDdPR87r5mq=-JxeSGGwaiTjHFBH04q7tEcd3oZJdQ@mail.gmail.com>
-Message-ID: <CAAFQd5A6hDdPR87r5mq=-JxeSGGwaiTjHFBH04q7tEcd3oZJdQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Alan Stern <stern@rowland.harvard.edu>, hdegoede@redhat.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 31 Jul 2018 03:46:13 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id CBE531C000E;
+        Tue, 31 Jul 2018 06:07:24 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Cc:     Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v5 04/11] hugetlb: Introduce generic version of huge_ptep_get_and_clear
+Date:   Tue, 31 Jul 2018 06:01:48 +0000
+Message-Id: <20180731060155.16915-5-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
+References: <20180731060155.16915-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 1:07 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Em Tue, 17 Jul 2018 17:10:22 -0300
-> Ezequiel Garcia <ezequiel@collabora.com> escreveu:
->
-> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-> > create DMA mappings and use the streaming API. Which makes more
-> > sense in hardware without hardware coherency.
-> >
-> > The only thing that bothers me with this patch is that it's not
-> > really something specific to this driver. If this fix is valid
-> > for pwc, then it's valid for all the drivers allocating coherent
-> > memory.
->
-> We're actually doing this change on other drivers:
->         https://git.linuxtv.org/media_tree.git/commit/?id=d571b592c6206
->
-> I suspect that the reason why all USB media drivers were using
-> URB_NO_TRANSFER_DMA_MAP is just because the first media USB driver
-> upstream used it.
->
-> On that time, I remember I tried once to not use this flag, but there
-> was something that broke (perhaps I just didn't know enough about the
-> USB layer - or perhaps some fixes happened at USB core - allowing it
-> to be used with ISOC transfers).
->
-> Anyway, nowadays, I fail to see a reason why not let the USB core
-> do the DMA maps. On my tests after this patch, at the boards I tested
-> (arm and x86), I was unable to see any regressions.
+arm, ia64, sh, x86 architectures use the
+same version of huge_ptep_get_and_clear, so move this generic
+implementation into asm-generic/hugetlb.h.
 
-I can see one reason:
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ arch/arm/include/asm/hugetlb-3level.h | 6 ------
+ arch/arm64/include/asm/hugetlb.h      | 1 +
+ arch/ia64/include/asm/hugetlb.h       | 6 ------
+ arch/mips/include/asm/hugetlb.h       | 1 +
+ arch/parisc/include/asm/hugetlb.h     | 1 +
+ arch/powerpc/include/asm/hugetlb.h    | 1 +
+ arch/sh/include/asm/hugetlb.h         | 6 ------
+ arch/sparc/include/asm/hugetlb.h      | 1 +
+ arch/x86/include/asm/hugetlb.h        | 6 ------
+ include/asm-generic/hugetlb.h         | 8 ++++++++
+ 10 files changed, 13 insertions(+), 24 deletions(-)
 
-usb_alloc_coherent() would use dma_pool_alloc() with a fallback to
-dma_alloc_coherent() to do the allocation. I'm not sure what a typical
-size for an URB buffer is, but I assume that it's definitely more than
-1 page. Order >0 allocations with page allocator (and SLAB, which
-eventually just falls back to page allocator for such large
-allocations) are generally considered costly. With allocation through
-DMA API, mechanisms such as CMA or IOMMU can be used (if available),
-making it much more likely to have the allocation satisfied on heavy
-load / long uptime systems.
+diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
+index 398fb06e8207..ad36e84b819a 100644
+--- a/arch/arm/include/asm/hugetlb-3level.h
++++ b/arch/arm/include/asm/hugetlb-3level.h
+@@ -49,12 +49,6 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 	ptep_set_wrprotect(mm, addr, ptep);
+ }
+ 
+-static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+-					    unsigned long addr, pte_t *ptep)
+-{
+-	return ptep_get_and_clear(mm, addr, ptep);
+-}
+-
+ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 					     unsigned long addr, pte_t *ptep,
+ 					     pte_t pte, int dirty)
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 874661a1dff1..6ae0bcafe162 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -66,6 +66,7 @@ extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 				      unsigned long addr, pte_t *ptep,
+ 				      pte_t pte, int dirty);
++#define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 				     unsigned long addr, pte_t *ptep);
+ extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index a235d6f60fb3..6719c74da0de 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -20,12 +20,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
+ }
+ 
+-static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+-					    unsigned long addr, pte_t *ptep)
+-{
+-	return ptep_get_and_clear(mm, addr, ptep);
+-}
+-
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 8ea439041d5d..0959cc5a41fa 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -36,6 +36,7 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 77c8adbac7c3..6e281e1bb336 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -8,6 +8,7 @@
+ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		     pte_t *ptep, pte_t pte);
+ 
++#define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+ 			      pte_t *ptep);
+ 
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 0794b53439d4..970101cf9c82 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -132,6 +132,7 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index bc552e37c1c9..08ee6c00b5e9 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -25,12 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+-					    unsigned long addr, pte_t *ptep)
+-{
+-	return ptep_get_and_clear(mm, addr, ptep);
+-}
+-
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 16b0c53ea6c9..944e3a4bfaff 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -16,6 +16,7 @@ extern struct pud_huge_patch_entry __pud_huge_patch, __pud_huge_patch_end;
+ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ 		     pte_t *ptep, pte_t pte);
+ 
++#define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
+ 			      pte_t *ptep);
+ 
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 8db9a761964d..e9e7fef867ad 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -28,12 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+-					    unsigned long addr, pte_t *ptep)
+-{
+-	return ptep_get_and_clear(mm, addr, ptep);
+-}
+-
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index ee010b756246..0f6f151780dd 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -57,4 +57,12 @@ static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
++static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
++		unsigned long addr, pte_t *ptep)
++{
++	return ptep_get_and_clear(mm, addr, ptep);
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
 
-Best regards,
-Tomasz
