@@ -2,105 +2,99 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D756BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79C2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86530208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:45:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86530208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 86CBD20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86CBD20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731845AbeGaKY1 (ORCPT
+        id S1729784AbeGaKag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:24:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46690 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731364AbeGaKY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:24:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83903B00D;
-        Tue, 31 Jul 2018 08:45:10 +0000 (UTC)
-Date:   Tue, 31 Jul 2018 10:45:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 1/3] mm: introduce mem_cgroup_put() helper
-Message-ID: <20180731084509.GE4557@dhcp22.suse.cz>
-References: <20180730180100.25079-1-guro@fb.com>
- <20180730180100.25079-2-guro@fb.com>
+        Tue, 31 Jul 2018 06:30:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:50260 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729224AbeGaKag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 06:30:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC0851596;
+        Tue, 31 Jul 2018 01:51:19 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D01F3F5BA;
+        Tue, 31 Jul 2018 01:51:19 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 5A2961AE2F57; Tue, 31 Jul 2018 09:51:21 +0100 (BST)
+Date:   Tue, 31 Jul 2018 09:51:21 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kees Cook <keescook@google.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Popov <alex.popov@linux.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] efi/libstub: Only disable stackleak plugin for arm64
+Message-ID: <20180731085121.GC4680@arm.com>
+References: <20180730163722.GD4276@arm.com>
+ <20180730183118.25869-1-labbott@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730180100.25079-2-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180730183118.25869-1-labbott@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30-07-18 11:00:58, Roman Gushchin wrote:
-> Introduce the mem_cgroup_put() helper, which helps to eliminate guarding
-> memcg css release with "#ifdef CONFIG_MEMCG" in multiple places.
-
-Is there any reason for this to be a separate patch? I usually do not
-like to add helpers without their users because this makes review
-harder. This one is quite trivial to fit into Patch3 easilly.
-
-> Link: http://lkml.kernel.org/r/20180623000600.5818-2-guro@fb.com
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Mon, Jul 30, 2018 at 11:31:18AM -0700, Laura Abbott wrote:
+> arm64 uses the full KBUILD_CFLAGS for building libstub as opposed
+> to x86 which doesn't. This means that x86 doesn't pick up
+> the gcc-plugins. We need to disable the stackleak plugin but
+> doing this unconditionally breaks x86 build since it doesn't
+> have any plugins. Switch to disabling the stackleak plugin for
+> arm64 only.
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 > ---
->  include/linux/memcontrol.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 6c6fb116e925..e53e00cdbe3f 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -375,6 +375,11 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
->  	return css ? container_of(css, struct mem_cgroup, css) : NULL;
->  }
->  
-> +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
-> +{
-> +	css_put(&memcg->css);
-> +}
-> +
->  #define mem_cgroup_from_counter(counter, member)	\
->  	container_of(counter, struct mem_cgroup, member)
->  
-> @@ -837,6 +842,10 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
->  	return true;
->  }
->  
-> +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
-> +{
-> +}
-> +
->  static inline struct mem_cgroup *
->  mem_cgroup_iter(struct mem_cgroup *root,
->  		struct mem_cgroup *prev,
-> -- 
-> 2.14.4
-> 
+>  drivers/firmware/efi/libstub/Makefile | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
--- 
-Michal Hocko
-SUSE Labs
+Cheers, Laura, I'll pick this up today. I think we'll need the same thing
+for 32-bit ARM if/when they enable support for the plugin.
+
+Will
+
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 25dd2a14560d..88c322d7c71e 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -11,7 +11,10 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
+>  				   -fPIC -fno-strict-aliasing -mno-red-zone \
+>  				   -mno-mmx -mno-sse -fshort-wchar
+>  
+> -cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
+> +# arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+> +# disable the stackleak plugin
+> +cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie \
+> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>  cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
+>  				   -fno-builtin -fpic -mno-single-pic-base
+>  
+> @@ -21,7 +24,6 @@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>  				   -D__NO_FORTIFY \
+>  				   $(call cc-option,-ffreestanding) \
+>  				   $(call cc-option,-fno-stack-protector) \
+> -				   $(DISABLE_STACKLEAK_PLUGIN)
+>  
+>  GCOV_PROFILE			:= n
+>  KASAN_SANITIZE			:= n
+> -- 
+> 2.17.1
+> 
