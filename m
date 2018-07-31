@@ -2,200 +2,212 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E8C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E619C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18DC3208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DC3208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 11590208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11590208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731760AbeGaKqX (ORCPT
+        id S1731905AbeGaKqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:46:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50986 "EHLO mx1.suse.de"
+        Tue, 31 Jul 2018 06:46:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50992 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728968AbeGaKqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:46:22 -0400
+        id S1731387AbeGaKqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 06:46:23 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 90331AE6D;
-        Tue, 31 Jul 2018 09:06:58 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
+        by mx1.suse.de (Postfix) with ESMTP id A4F76AFF0;
+        Tue, 31 Jul 2018 09:07:00 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 11:07:00 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
         David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vijayanand Jitta <vjitta@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Subject: [PATCH v4 4/6] mm: rename and change semantics of nr_indirectly_reclaimable_bytes
-Date:   Tue, 31 Jul 2018 11:06:47 +0200
-Message-Id: <20180731090649.16028-5-vbabka@suse.cz>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180731090649.16028-1-vbabka@suse.cz>
-References: <20180731090649.16028-1-vbabka@suse.cz>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] mm, oom: introduce memory.oom.group
+Message-ID: <20180731090700.GF4557@dhcp22.suse.cz>
+References: <20180730180100.25079-1-guro@fb.com>
+ <20180730180100.25079-4-guro@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730180100.25079-4-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES was introduced by commit
-eb59254608bc ("mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES") with the goal of
-accounting objects that can be reclaimed, but cannot be allocated via a
-SLAB_RECLAIM_ACCOUNT cache. This is now possible via kmalloc() with
-__GFP_RECLAIMABLE flag, and the dcache external names user is converted.
+On Mon 30-07-18 11:01:00, Roman Gushchin wrote:
+> For some workloads an intervention from the OOM killer
+> can be painful. Killing a random task can bring
+> the workload into an inconsistent state.
+> 
+> Historically, there are two common solutions for this
+> problem:
+> 1) enabling panic_on_oom,
+> 2) using a userspace daemon to monitor OOMs and kill
+>    all outstanding processes.
+> 
+> Both approaches have their downsides:
+> rebooting on each OOM is an obvious waste of capacity,
+> and handling all in userspace is tricky and requires
+> a userspace agent, which will monitor all cgroups
+> for OOMs.
+> 
+> In most cases an in-kernel after-OOM cleaning-up
+> mechanism can eliminate the necessity of enabling
+> panic_on_oom. Also, it can simplify the cgroup
+> management for userspace applications.
+> 
+> This commit introduces a new knob for cgroup v2 memory
+> controller: memory.oom.group. The knob determines
+> whether the cgroup should be treated as a single
+> unit by the OOM killer. If set, the cgroup and its
+> descendants are killed together or not at all.
 
-The counter is however still useful for accounting direct page allocations
-(i.e. not slab) with a shrinker, such as the ION page pool. So keep it, and:
+I do not want to nit pick on wording but unit is not really a good
+description. I would expect that to mean that the oom killer will
+consider the unit also when selecting the task and that is not the case.
+I would be more explicit about this being a single killable entity
+because it forms an indivisible workload.
 
-- change granularity to pages to be more like other counters; sub-page
-  allocations should be able to use kmalloc
-- rename the counter to NR_KERNEL_MISC_RECLAIMABLE
-- expose the counter again in vmstat as "nr_kernel_misc_reclaimable"; we can
-  again remove the check for not printing "hidden" counters
+You can reuse http://lkml.kernel.org/r/20180730080357.GA24267@dhcp22.suse.cz
+if you want.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Vijayanand Jitta <vjitta@codeaurora.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Roman Gushchin <guro@fb.com>
----
- drivers/staging/android/ion/ion_page_pool.c |  8 ++++----
- include/linux/mmzone.h                      |  2 +-
- mm/page_alloc.c                             | 19 +++++++------------
- mm/util.c                                   |  3 +--
- mm/vmstat.c                                 |  6 +-----
- 5 files changed, 14 insertions(+), 24 deletions(-)
+[...]
+> +/**
+> + * mem_cgroup_get_oom_group - get a memory cgroup to clean up after OOM
+> + * @victim: task to be killed by the OOM killer
+> + * @oom_domain: memcg in case of memcg OOM, NULL in case of system-wide OOM
+> + *
+> + * Returns a pointer to a memory cgroup, which has to be cleaned up
+> + * by killing all belonging OOM-killable tasks.
 
-diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
-index 9bc56eb48d2a..0d2a95957ee8 100644
---- a/drivers/staging/android/ion/ion_page_pool.c
-+++ b/drivers/staging/android/ion/ion_page_pool.c
-@@ -33,8 +33,8 @@ static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
- 		pool->low_count++;
- 	}
- 
--	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
--			    (1 << (PAGE_SHIFT + pool->order)));
-+	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
-+							1 << pool->order);
- 	mutex_unlock(&pool->mutex);
- }
- 
-@@ -53,8 +53,8 @@ static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
- 	}
- 
- 	list_del(&page->lru);
--	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
--			    -(1 << (PAGE_SHIFT + pool->order)));
-+	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
-+							-(1 << pool->order));
- 	return page;
- }
- 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2dc52a..c2f6bc4c9e8a 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -180,7 +180,7 @@ enum node_stat_item {
- 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
- 	NR_DIRTIED,		/* page dirtyings since bootup */
- 	NR_WRITTEN,		/* page writings since bootup */
--	NR_INDIRECTLY_RECLAIMABLE_BYTES, /* measured in bytes */
-+	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 5d800d61ddb7..91f75bf4404d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4704,6 +4704,7 @@ long si_mem_available(void)
- 	unsigned long pagecache;
- 	unsigned long wmark_low = 0;
- 	unsigned long pages[NR_LRU_LISTS];
-+	unsigned long reclaimable;
- 	struct zone *zone;
- 	int lru;
- 
-@@ -4729,19 +4730,13 @@ long si_mem_available(void)
- 	available += pagecache;
- 
- 	/*
--	 * Part of the reclaimable slab consists of items that are in use,
--	 * and cannot be freed. Cap this estimate at the low watermark.
-+	 * Part of the reclaimable slab and other kernel memory consists of
-+	 * items that are in use, and cannot be freed. Cap this estimate at the
-+	 * low watermark.
- 	 */
--	available += global_node_page_state(NR_SLAB_RECLAIMABLE) -
--		     min(global_node_page_state(NR_SLAB_RECLAIMABLE) / 2,
--			 wmark_low);
--
--	/*
--	 * Part of the kernel memory, which can be released under memory
--	 * pressure.
--	 */
--	available += global_node_page_state(NR_INDIRECTLY_RECLAIMABLE_BYTES) >>
--		PAGE_SHIFT;
-+	reclaimable = global_node_page_state(NR_SLAB_RECLAIMABLE) +
-+			global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
-+	available += reclaimable - min(reclaimable / 2, wmark_low);
- 
- 	if (available < 0)
- 		available = 0;
-diff --git a/mm/util.c b/mm/util.c
-index 3351659200e6..891f0654e7b5 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -675,8 +675,7 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
- 		 * Part of the kernel memory, which can be released
- 		 * under memory pressure.
- 		 */
--		free += global_node_page_state(
--			NR_INDIRECTLY_RECLAIMABLE_BYTES) >> PAGE_SHIFT;
-+		free += global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
- 
- 		/*
- 		 * Leave reserved pages. The pages are not for anonymous pages.
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8ba0870ecddd..c5e52f94ba5f 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1161,7 +1161,7 @@ const char * const vmstat_text[] = {
- 	"nr_vmscan_immediate_reclaim",
- 	"nr_dirtied",
- 	"nr_written",
--	"", /* nr_indirectly_reclaimable */
-+	"nr_kernel_misc_reclaimable",
- 
- 	/* enum writeback_stat_item counters */
- 	"nr_dirty_threshold",
-@@ -1704,10 +1704,6 @@ static int vmstat_show(struct seq_file *m, void *arg)
- 	unsigned long *l = arg;
- 	unsigned long off = l - (unsigned long *)m->private;
- 
--	/* Skip hidden vmstat items. */
--	if (*vmstat_text[off] == '\0')
--		return 0;
--
- 	seq_puts(m, vmstat_text[off]);
- 	seq_put_decimal_ull(m, " ", *l);
- 	seq_putc(m, '\n');
+Caller has to call mem_cgroup_put on the returned non-null memcg.
+
+> + */
+> +struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
+> +					    struct mem_cgroup *oom_domain)
+> +{
+> +	struct mem_cgroup *oom_group = NULL;
+> +	struct mem_cgroup *memcg;
+> +
+> +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+> +		return NULL;
+> +
+> +	if (!oom_domain)
+> +		oom_domain = root_mem_cgroup;
+> +
+> +	rcu_read_lock();
+> +
+> +	memcg = mem_cgroup_from_task(victim);
+> +	if (!memcg || memcg == root_mem_cgroup)
+> +		goto out;
+
+When can we have memcg == NULL? victim should be always non-NULL.
+Also why do you need to special case the root_mem_cgroup here. The loop
+below should handle that just fine no?
+
+> +
+> +	/*
+> +	 * Traverse the memory cgroup hierarchy from the victim task's
+> +	 * cgroup up to the OOMing cgroup (or root) to find the
+> +	 * highest-level memory cgroup with oom.group set.
+> +	 */
+> +	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
+> +		if (memcg->oom_group)
+> +			oom_group = memcg;
+> +
+> +		if (memcg == oom_domain)
+> +			break;
+> +	}
+> +
+> +	if (oom_group)
+> +		css_get(&oom_group->css);
+> +out:
+> +	rcu_read_unlock();
+> +
+> +	return oom_group;
+> +}
+> +
+[...]
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 8bded6b3205b..08f30ed5abed 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -914,6 +914,19 @@ static void __oom_kill_process(struct task_struct *victim)
+>  }
+>  #undef K
+>  
+> +/*
+> + * Kill provided task unless it's secured by setting
+> + * oom_score_adj to OOM_SCORE_ADJ_MIN.
+> + */
+> +static int oom_kill_memcg_member(struct task_struct *task, void *unused)
+> +{
+> +	if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN) {
+> +		get_task_struct(task);
+> +		__oom_kill_process(task);
+> +	}
+> +	return 0;
+> +}
+> +
+>  static void oom_kill_process(struct oom_control *oc, const char *message)
+>  {
+>  	struct task_struct *p = oc->chosen;
+> @@ -921,6 +934,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>  	struct task_struct *victim = p;
+>  	struct task_struct *child;
+>  	struct task_struct *t;
+> +	struct mem_cgroup *oom_group;
+>  	unsigned int victim_points = 0;
+>  	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+>  					      DEFAULT_RATELIMIT_BURST);
+> @@ -974,7 +988,22 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>  	}
+>  	read_unlock(&tasklist_lock);
+>  
+> +	/*
+> +	 * Do we need to kill the entire memory cgroup?
+> +	 * Or even one of the ancestor memory cgroups?
+> +	 * Check this out before killing the victim task.
+> +	 */
+> +	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
+> +
+>  	__oom_kill_process(victim);
+> +
+> +	/*
+> +	 * If necessary, kill all tasks in the selected memory cgroup.
+> +	 */
+> +	if (oom_group) {
+
+we want a printk explaining that we are going to tear down the whole
+oom_group here.
+
+> +		mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
+> +		mem_cgroup_put(oom_group);
+> +	}
+>  }
+
+Other than that looks good to me. My concern that the previous
+implementation was more consistent because we were comparing memcgs
+still holds but if there is no way forward that direction this should be
+acceptable as well.
+
+After above small things are addressed you can add
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
 -- 
-2.18.0
-
+Michal Hocko
+SUSE Labs
