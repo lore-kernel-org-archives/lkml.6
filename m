@@ -3,182 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245A5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D8EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0E7208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0E7208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 866A8208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866A8208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731387AbeGaKzV (ORCPT
+        id S1730017AbeGaK7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:55:21 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:44719 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729767AbeGaKzV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:55:21 -0400
-X-UUID: d70c6472f0874f4ea39bc308760b4464-20180731
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 758749830; Tue, 31 Jul 2018 17:15:54 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Tue, 31 Jul
- 2018 17:15:52 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 31 Jul 2018 17:15:52 +0800
-Message-ID: <1533028552.3472.95.camel@mtkswgap22>
-Subject: Re: [PATCH v6 3/4] Bluetooth: mediatek: Add protocol support for
- MediaTek serial devices
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 31 Jul 2018 17:15:52 +0800
-In-Reply-To: <F83B6E35-B0D7-4050-A112-251BDFB9C998@holtmann.org>
-References: <cover.1532060309.git.sean.wang@mediatek.com>
-         <f3a064f86c1da4664a231a40c6cf038cccc758da.1532060309.git.sean.wang@mediatek.com>
-         <60024004-779E-4E1A-8E1B-799339595A27@holtmann.org>
-         <1532966985.3472.54.camel@mtkswgap22>
-         <F83B6E35-B0D7-4050-A112-251BDFB9C998@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Tue, 31 Jul 2018 06:59:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50530 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729485AbeGaK7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 06:59:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 658AA7A9;
+        Tue, 31 Jul 2018 02:19:38 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B97233F5BA;
+        Tue, 31 Jul 2018 02:19:36 -0700 (PDT)
+Subject: Re: [PATCH v2] arm64, kaslr: export offset in VMCOREINFO ELF notes
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, bhupesh.linux@gmail.com,
+        takahiro.akashi@linaro.org, catalin.marinas@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1532931883-16132-1-git-send-email-bhsharma@redhat.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <303e32f7-ff47-ea9b-d5a0-45a22e44d0a9@arm.com>
+Date:   Tue, 31 Jul 2018 10:19:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <1532931883-16132-1-git-send-email-bhsharma@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-30 at 20:06 +0200, Marcel Holtmann wrote:
-> Hi Sean,
+Hi Bhupesh,
+
+On 30/07/18 07:24, Bhupesh Sharma wrote:
+> Include KASLR offset in arm64 VMCOREINFO ELF notes to assist in
+> debugging. vmcore parsing in user-space already expects this value in
+> the notes and we are providing it for portability of those existing
+> tools with x86.
 > 
-> > All suggestions seem reasonable for me in order to make code style aligned with the other drivers and code better to read,
-> > and it looks like no any big problem, so I'll start to work on the next version immediately.
+> Ideally we would like core code to do this (so that way this
+> information won't be missed when an architecture adds KASLR support),
+> but mips has CONFIG_RANDOMIZE_BASE, and doesn't provide kaslr_offset(),
+> so I am not sure if this is needed for mips (and other such similar arch
+> cases in future). So, lets keep this architecture specific for now.
+
+(heh, I assumed you would rewrite my train-of-thought, but I guess this works!)
+
+
+> As an example of a user-space use-case, consider the
+> makedumpfile user-space utility which will need fixup to use this
+> KASLR offset to work with cases where we need to find a way to
+> translate symbol address from vmlinux to kernel run time address
+> in case of KASLR boot on arm64.
+
+Acked-by: James Morse <james.morse@arm.com>
+
+If we want to send this to stable, it looks like it should have been part of the
+KASLR series, f80fb3a3d5084 ("arm64: add support for kernel ASLR") was merged
+for v4.6.
+CC: <stable@vger.kernel.org> # 4.6.x
+
+
+Thanks,
+
+James
+
+
+> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+> index f62effc6e064..028df356a5fd 100644
+> --- a/arch/arm64/kernel/machine_kexec.c
+> +++ b/arch/arm64/kernel/machine_kexec.c
+> @@ -360,4 +360,5 @@ void arch_crash_save_vmcoreinfo(void)
+>  						kimage_voffset);
+>  	vmcoreinfo_append_str("NUMBER(PHYS_OFFSET)=0x%llx\n",
+>  						PHYS_OFFSET);
+> +	vmcoreinfo_append_str("KERNELOFFSET=%lx\n", kaslr_offset());
+>  }
 > 
-> no rush, but if you can get this back to me quickly, we might be still able to get this driver included.
-> 
-> > And I also add a few explanations inline about questions about the diagnostic packet and how hci->shutdown is being made.
-> > 
-> > On Mon, 2018-07-30 at 15:40 +0200, Marcel Holtmann wrote:
-
-
-[ ... ]
-
-> >> Do we want these as HCI vendor events. Or actually as vendor / diagnostic packets. There is a hci_recv_diag.
-> >> 
-> > 
-> > These are actually Hci vendor events. not for diagnostic purpose. They hdr->evt == 0xe4 are all the part of chip initialization.
-> 
-> Ok, then leave it as is.
-> 
-> > 
-> >> So let me ask this a different way, do you have support for LMP / LL tracing in your chips? If yes, then how is that enabled and how does it work? Or any general debug data that can be switched on. That is what we have a diagnostic channel for that is also fed into btmon.
-> >> 
-> > 
-> > I'm not really sure about them because I didn't see any diagnostic packets handling in vendor driver.
-> 
-> You can see examples for this in btusb.c, hci_bcm.c and bpa10x.c where the hardware has a side channel. In case of Broadcom, they are LL or LMP trace packets, but it could be also debug messages or something else. Other vendors use HCI vendor events for that which is also fine. Just wanted to know what it is.
-> 
-> And if your hardware supports LL or LMP traces to be enabled, then implement hdev->set_diag() callback. You can then enable it via /sys/kernel/debug/bluetooth/hci0/vendor_diag
-> 
-
-Thanks for sharing the information to me.
-
-If I get the permission and details about adding support for these debug trace packets, I am willing to add them.
-
-> > 
-> >>> +
-> >>> +	/* Each HCI event would go through the core. */
-> >>> +	return hci_recv_frame(hdev, skb);
-> >>> +}
-> >>> +
-
-[ ... ]
-
-> >>> +
-> >>> +static int mtk_btuart_shutdown(struct hci_dev *hdev)
-> >>> +{
-> >>> +	struct mtk_btuart_dev *bdev = hci_get_drvdata(hdev);
-> >>> +	struct device *dev = &bdev->serdev->dev;
-> >>> +	u8 param = 0x0;
-> >>> +
-> >>> +	/* Disable the device. */
-> >>> +	mtk_hci_wmt_sync(hdev, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param), &param);
-> >>> +
-> >>> +	/* Shutdown the clock and power domain the device requires. */
-> >>> +	clk_disable_unprepare(bdev->clk);
-> >>> +	pm_runtime_put_sync(dev);
-> >>> +	pm_runtime_disable(dev);
-> >> 
-> >> Don’t these belong into ->close method? And the enable ones into ->open? I really think that ->setup and ->shutdown should just do HCI commands and leave the others to ->open and ->close. Since ->open and ->close are suppose to set up and terminate the transport.
-> >> 
-> > 
-> > Yes, ->open and ->close are already done just for setup and terminate the transport. I've noted the part during earlier version discussion. 
-> > 
-> > Because mt7622 is a SoC integrating Bluetooth hardware inside, these operations for clk* and pm clk_* and pm_*  you saw here are all for controlling clocks and powers Bluetooth circuits requires on the SoC, not for the transports.
-> > 
-> > As for clocks for the transport, they're already being taken care of by the serial driver.
-> 
-> With transport, I meant the Bluetooth transport. So I really thing they belong into ->open and ->close. Within ->setup and ->shutdown, I would just expect HCI commands.
-> 
-
-At the moment, it's not easy that clk_* and pm_*  are moved to ->open and ->close
-
-because firmware download would depend on the full cycle of hardware power down and then up.
-
-And another advantage is that when users call hdev down and the up, the device can do the real hardware reset, not just the software reset via hci command.
-
-> > 
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static int mtk_btuart_send(struct hci_dev *hdev, struct sk_buff *skb)
-> >>> +{
-> >> 
-> >> This should be called btmtkuart_send_frame.
-> >> 
-> > 
-> > okay, will have a rename.
-> > 
-> >>> +	struct mtk_btuart_dev *bdev = hci_get_drvdata(hdev);
-> >>> +	int err;
-> >>> +
-
-[ ... ]
-
-> >>> +static inline void
-> >>> +mtk_make_wmt_hdr(struct mtk_wmt_hdr *hdr, u8 op, u16 plen, u8 flag)
-> >>> +{
-> >>> +	hdr->dir = 1;
-> >>> +	hdr->op = op;
-> >>> +	hdr->dlen = cpu_to_le16(plen + 1);
-> >>> +	hdr->flag = flag;
-> >>> +}
-> >> 
-> >> Move all the *.h parts into the *.c file. It is all so simple that there is no need for having this in a header.
-> >> 
-> >> Minor cosmetic changes, but the rest look good to me.
-> >> 
-> > 
-> > okay, will move whole thing in *.h to *.c and finally I really appreciate your effort on reviewing on these code.
-> 
-> Regards
-> 
-> Marcel
-> 
-
 
