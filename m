@@ -2,102 +2,83 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DB6C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7695C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3B820894
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3B820894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DF35208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:39:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ktSLIbm4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF35208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732034AbeGaNSG (ORCPT
+        id S1732077AbeGaNTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:18:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:52712 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731912AbeGaNSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:18:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 049E880D;
-        Tue, 31 Jul 2018 04:38:11 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D06EB3F5D0;
-        Tue, 31 Jul 2018 04:38:09 -0700 (PDT)
-Subject: Re: [PATCH 1/1] sched/debug: fix potential deadlock when write to
- sched_features
-To:     Peter Zijlstra <peterz@infradead.org>, jiada_wang@mentor.com
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>
-References: <20180731092219.28908-1-jiada_wang@mentor.com>
- <20180731103404.GV2494@hirez.programming.kicks-ass.net>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <a0f03f69-ec5f-c667-c440-173c7d363c7f@arm.com>
-Date:   Tue, 31 Jul 2018 13:38:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180731103404.GV2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 31 Jul 2018 09:19:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43288 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731912AbeGaNTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:19:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NnXbs+3ZS/CGSdFZwLzsp6+Oqz76GR3Lf4LQ4B7iGLc=; b=ktSLIbm4s09rGsFuiVzpUPWh4
+        7OouUukEUXZxRYp2hur9Jnz/zDDD0k/qbLgVrAt2+oVMRh/RrFANQqHwT8it2Uo/n3VEzOVLKcOwN
+        YYE/u/0G8toYmP/7DpIka8XvIL365zKRBRzDhoX5Rkle0IzdWDXdUk7nzUZyIN4H8Mo+mHD0kw9Ae
+        L4syMtza/KbvIetwYspuyOmGPvu5uFK6yd+MSa//8iI7+cur9rXofK9yopRcSQ4HBNDIyFNDyOObe
+        JLNGgY5HwCSUOYQBZVOBZD4zAWr50eeh6R07jIi/tBrZQ8XPZLzN/xo2jKNNFMExDjeqK3EfvtpIm
+        KKHhxzRFg==;
+Received: from 089144201224.atnat0010.highway.a1.net ([89.144.201.224] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkT06-0001Hv-B0; Tue, 31 Jul 2018 11:39:38 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>, linux-kbuild@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: include architecture Kconfig files from top-level Kconfig v4
+Date:   Tue, 31 Jul 2018 13:39:25 +0200
+Message-Id: <20180731113935.6105-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31/2018 12:34 PM, Peter Zijlstra wrote:
-> 
-> Leaving a lot of quoted crud for Viresh..
-> 
-> On Tue, Jul 31, 2018 at 06:22:19PM +0900, jiada_wang@mentor.com wrote:
->> From: Jiada Wang <jiada_wang@mentor.com>
->>
->> Following lockdep report can be triggered by write to
->> /sys/kernel/debug/sched_features
-> 
-> Only if you're using this dt_cpufreq thing of course.. I wonder why this
-> hasn't been reported before.
-> 
+Hi Masahiro,
 
-[...]
+what do you think about the series below, which moves the includes
+of all the architecture independ Kconfig files to the top-level
+Kconfig instead of duplicating the includes in all architectures?
 
-> 
-> I don't much care for all the _cpuslocked renaming done, but otherwise I
-> suppose this is the easiest fix.
-> 
-> Note however that this doesn't apply, you're missing that match_string()
-> patch. Please use tip/sched/core or something.
+Note that this only handles the low-hanging fruite, there are a lot
+of other bits that should probably be cleaned up to be common,
+but those will be not entirely trivial.
 
-With the patch tweaked onto tip/sched/core.
+Changes since v3:
+ - don't allow to select PREEMPT_COUNT for architectures that don't
+   implement it
+ - fix usage of SUBARCH=i386 and SUBARCH=x86_64 for um
 
-w/o the patch:
+Changes since v2:
+ - fix the missing sh conversion
+ - handle the lack of CONFIG_SWAP support in microblaze and nios2
+   properly
 
-root@h960:~# echo NO_LB_BIAS > /sys/kernel/debug/sched_features
-[  293.052451]
-[  293.053978] ======================================================   
-[  293.060166] WARNING: possible circular locking dependency detected   
-[  293.066358] 4.18.0-rc5-00064-gae48698275b3 #1 Tainted: G S
-[  293.073153] ------------------------------------------------------   
-[  293.079340] bash/3490 is trying to acquire lock:
-[  293.083966] 00000000155b9437 (cpu_hotplug_lock.rw_sem){++++}, at: static_key_disable+0x1c/0x38
-[  293.092620]
-[  293.092620] but task is already holding lock:
-[  293.098459] 0000000084a95e1c (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0xc4/0x1e0
-[  293.107277]
-[  293.107277] which lock already depends on the new lock.
-...
-
-w/ the patch:
-
-root@h960:~# echo NO_LB_BIAS > /sys/kernel/debug/sched_features
-root@h960:~#
-
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-
-
-
+Changes since v1:
+ - add back a remove source statement from arch/arm/Kconfig
+ - various fixes from Randy
+ - various UML patches to be able to use the common Kconfig
