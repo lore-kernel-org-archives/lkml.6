@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7F5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486B7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C48F9208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFE83208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGeJgwkn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48F9208A6
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIREaNpK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFE83208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732010AbeGaLCa (ORCPT
+        id S1731845AbeGaLC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:02:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46276 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729771AbeGaLC3 (ORCPT
+        Tue, 31 Jul 2018 07:02:27 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40604 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729768AbeGaLC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:02:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h14-v6so15853970wrw.13;
-        Tue, 31 Jul 2018 02:23:04 -0700 (PDT)
+        Tue, 31 Jul 2018 07:02:26 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y9-v6so2327074wma.5;
+        Tue, 31 Jul 2018 02:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TTXfINDZ2ZqQ+bpQKY5udYNqHsQFXpgqngZPHFTTxgk=;
-        b=BGeJgwknGPSAB8GPYfgnt3PZrH8wPsQfs0f0QSUSajfLIl/txGRWEIFJdhJ4M5b+ZI
-         rmg+9Q8CP7v+PeV4JJ6lLG203ZNc0avSl6ZwjTWNTPs0HLIFFfO3GQjBTGV2Jbqu6wt1
-         WpGtXplGDaZX5j22opqvuLKogiYZSOZR1r1wodbCBADs+5A4tyktjEYrEoHOce2+TXLT
-         fdGof/qDlSNe2Ccq8KnnEMc2er0H1uW2CxxVeq3wy025Bn48OjCXzuhcWnJosE9aQyrV
-         ZsTsPKXQ9A+7qTHJ7whjTRFEA6jHKoODZPiTp+IkGGWrSam+zfocZVouoXuM7/OyKNZ1
-         CqGw==
+        bh=jBCF5OYdsOEdWKAdYLBMBsHgn2F2SAZ3lPTXjstKWRY=;
+        b=BIREaNpKxg9qcCsLAYlY7+/rMRUvt3rfUMw8EjFUdfvsqwPGNNL2GuA/uhr2ta8Z4y
+         Vkd0odOS7nZ7Bp7gqKZfRgJAO/1CGIoslKH7Eq0NcA8Xz2H5rYeIlDRkUKmBpspwtY2a
+         SRWBMmjca3LDXH/4OG3UjZ1c7WpQPjBEBeu7t1pOJygsR0OSZRJ0KhdqEVCBbJ1vNIye
+         jrDaN9v1sgOf/J+XRoCZzSek4fDJpcsu2VUSp6Qcfb144dTb03oEUfYqCIHwbDy9rgPI
+         og1CAC+DMBAw9K74v3JTOoyPsBf/wLxjO+x8Jk6iV4wJMmAJwJlKS4arSp5KMvi0OEBn
+         5TYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TTXfINDZ2ZqQ+bpQKY5udYNqHsQFXpgqngZPHFTTxgk=;
-        b=L+zMAdlvEUfgaceEZyguBHvqrrMugpeATg7rrYfimW0ZJZyuWwu2YcpWvwnkm42EJX
-         LAT/ZltIcAbysF6i7s49wv2CbTYJHFJXsO3N1a8Y8P2yYGUFjzU1fiM/BOSW21FR8QBK
-         hzrWg6zP3Avb2VuTKgvNW3WG2eGhVAJFCvbkkcZ9jboNunswJ0VqXRoOFhrwLU01Pmti
-         JxvTWmvmwXfPShANuMc+fJ9oEI6wNo4OOLwBMlBtBVVkUOA+oxwjkDM7S2CinpOhbfZb
-         sLFDidYH/lF9bet4+xXppdsWKzLxUnmVcHCZXe1cTqeBluuM/8mwEqlUHuddOp93AjNX
-         aKxA==
-X-Gm-Message-State: AOUpUlFqsmOPfHGiP5S2CiCTMPsZjxMPAgjwjOjziUpOj7OvyPCkkOLn
-        lGdIiU8kR47f+yoGDD2ylxtViuZL
-X-Google-Smtp-Source: AAOMgpdKT3XOlB/fA7Jl29tiFUn6lcSLFnO1kqhKDYH4UdLNNwqEDInGnMtrc9IqbsLYP0wgMVnN8w==
-X-Received: by 2002:adf:f790:: with SMTP id q16-v6mr12824550wrp.86.1533028983707;
-        Tue, 31 Jul 2018 02:23:03 -0700 (PDT)
+        bh=jBCF5OYdsOEdWKAdYLBMBsHgn2F2SAZ3lPTXjstKWRY=;
+        b=ujEy/o7/fIv90/2IWLNAkcmOQ+fYY9qZnfYUepaooo4tUNUuBkO6WbBKyYs62kAa0v
+         M0Ij+VhHA5v1/ya6e/wxJVivmNzqjOXptJc0bXLuwiX08XYkqKGjSQqp9sIL3onBgWCO
+         QybY3hwLSg3Dhw632pX7Z7tLVirRixojF7lnN0spQ5x5WdhGdhbGeKuHnL0y514lBv21
+         ZQMWGU6a6VoANGcHf3tNb3wQ+6GKUZ7hrVUquuR17Th96vKLbWjCyzOfu09vzve7k0H0
+         fZALLaOhEXQ0hHbiJt6kV85ttMkB6ijPE8d+t/lAE7BhfmEFaywsq8otQtiZiFFC0rUQ
+         5aJw==
+X-Gm-Message-State: AOUpUlGs1fLlNvyynXOUXHW9mjRVHUHbc0gGwIXX47OPFpS3w+NzBpGX
+        aRSGlky4XMTY1lVa/RJlp58=
+X-Google-Smtp-Source: AAOMgpfqZX+yquBvV8/cYFtcGxVIgccDrn+Q6ju71Ix4zcuf2G4xBjqbmGO9uOnp+k1xLpWpuOdFGA==
+X-Received: by 2002:a1c:1004:: with SMTP id 4-v6mr1710796wmq.68.1533028980919;
+        Tue, 31 Jul 2018 02:23:00 -0700 (PDT)
 Received: from debian-hp.wlan.uni-ulm.de (eduroam170-020.wlan.uni-ulm.de. [134.60.170.20])
-        by smtp.gmail.com with ESMTPSA id y191-v6sm1670873wmy.4.2018.07.31.02.23.02
+        by smtp.gmail.com with ESMTPSA id y191-v6sm1670873wmy.4.2018.07.31.02.23.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 02:23:03 -0700 (PDT)
+        Tue, 31 Jul 2018 02:23:00 -0700 (PDT)
 From:   Philipp Rossak <embed3d@gmail.com>
 To:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, wens@csie.org,
@@ -66,9 +66,9 @@ To:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v6 4/4] ARM: dts: sun8i: h3-h5: ir register size should be the whole memory block
-Date:   Tue, 31 Jul 2018 11:22:58 +0200
-Message-Id: <20180731092258.2279-5-embed3d@gmail.com>
+Subject: [PATCH v6 1/4] ARM: dts: sun8i: a83t: Add the cir pin for the A83T
+Date:   Tue, 31 Jul 2018 11:22:55 +0200
+Message-Id: <20180731092258.2279-2-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180731092258.2279-1-embed3d@gmail.com>
 References: <20180731092258.2279-1-embed3d@gmail.com>
@@ -77,27 +77,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The size of the register should be the size of the whole memory block,
-not just the registers, that are needed.
+The CIR Pin of the A83T is located at PL12.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index c3bff1105e5d..2f4d93de836e 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -818,7 +818,7 @@
- 			clock-names = "apb", "ir";
- 			resets = <&r_ccu RST_APB0_IR>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
--			reg = <0x01f02000 0x40>;
-+			reg = <0x01f02000 0x400>;
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 2be23d600957..afed6c0dea6f 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -1004,6 +1004,11 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
  
++			r_cir_pin: r-cir-pin {
++				pins = "PL12";
++				function = "s_cir_rx";
++			};
++
+ 			r_rsb_pins: r-rsb-pins {
+ 				pins = "PL0", "PL1";
+ 				function = "s_rsb";
 -- 
 2.11.0
 
