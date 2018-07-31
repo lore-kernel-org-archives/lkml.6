@@ -5,102 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED799C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD11C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48C820857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:13:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48C820857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 743FD20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743FD20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732590AbeGaVzq (ORCPT
+        id S1728768AbeGaV5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:55:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58387 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeGaVzq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:55:46 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6VKDSXd2840000
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 31 Jul 2018 13:13:29 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6VKDSUZ2839997;
-        Tue, 31 Jul 2018 13:13:28 -0700
-Date:   Tue, 31 Jul 2018 13:13:28 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
-Message-ID: <tip-80d20d35af1edd632a5e7a3b9c0ab7ceff92769e@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        anna-maria@linutronix.de, hpa@zytor.com,
-        paulmck@linux.vnet.ibm.com, frederic@kernel.org, mingo@kernel.org,
-        bristot@redhat.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          anna-maria@linutronix.de, hpa@zytor.com,
-          paulmck@linux.vnet.ibm.com, frederic@kernel.org,
-          mingo@kernel.org, bristot@redhat.com
-In-Reply-To: <20180731161358.29472-1-anna-maria@linutronix.de>
-References: <20180731161358.29472-1-anna-maria@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] nohz: Fix local_timer_softirq_pending()
-Git-Commit-ID: 80d20d35af1edd632a5e7a3b9c0ab7ceff92769e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 31 Jul 2018 17:57:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58944 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726585AbeGaV5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 17:57:14 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2D040400138A;
+        Tue, 31 Jul 2018 20:15:14 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA961215670D;
+        Tue, 31 Jul 2018 20:15:12 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghau51/ghau40 v4 1/6] AUDIT_CONTAINER_OP message type basic support
+Date:   Tue, 31 Jul 2018 16:11:36 -0400
+Message-Id: <1533067901-21817-2-git-send-email-rgb@redhat.com>
+In-Reply-To: <1533067901-21817-1-git-send-email-rgb@redhat.com>
+References: <1533067901-21817-1-git-send-email-rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 20:15:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 20:15:14 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  80d20d35af1edd632a5e7a3b9c0ab7ceff92769e
-Gitweb:     https://git.kernel.org/tip/80d20d35af1edd632a5e7a3b9c0ab7ceff92769e
-Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-AuthorDate: Tue, 31 Jul 2018 18:13:58 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 31 Jul 2018 22:08:44 +0200
+This defines the message number for the audit container identifier
+registration record should the kernel headers not be up to date, gives
+the record number a name for printing and allows the record to be
+interpreted since it is in the 1000 range like AUDIT_LOGIN.
 
-nohz: Fix local_timer_softirq_pending()
-
-local_timer_softirq_pending() checks whether the timer softirq is
-pending with: local_softirq_pending() & TIMER_SOFTIRQ.
-
-This is wrong because TIMER_SOFTIRQ is the softirq number and not a
-bitmask. So the test checks for the wrong bit.
-
-Use BIT(TIMER_SOFTIRQ) instead.
-
-Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: bigeasy@linutronix.de
-Cc: peterz@infradead.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180731161358.29472-1-anna-maria@linutronix.de
-
+See: https://github.com/linux-audit/audit-userspace/issues/51
+See: https://github.com/linux-audit/audit-kernel/issues/90
+See: https://github.com/linux-audit/audit-testsuite/issues/64
+See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- kernel/time/tick-sched.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/libaudit.h    | 4 ++++
+ lib/msg_typetab.h | 1 +
+ lib/netlink.c     | 1 +
+ 3 files changed, 6 insertions(+)
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index da9455a6b42b..5b33e2f5c0ed 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -642,7 +642,7 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+diff --git a/lib/libaudit.h b/lib/libaudit.h
+index b681e8d..2e85e0b 100644
+--- a/lib/libaudit.h
++++ b/lib/libaudit.h
+@@ -242,6 +242,10 @@ extern "C" {
+ #define AUDIT_GET_FEATURE       1019    /* Get which features are enabled */
+ #endif
  
- static inline bool local_timer_softirq_pending(void)
- {
--	return local_softirq_pending() & TIMER_SOFTIRQ;
-+	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
- }
- 
- static ktime_t tick_nohz_next_event(struct tick_sched *ts, int cpu)
++#ifndef AUDIT_CONTAINER_OP
++#define AUDIT_CONTAINER_OP	1020    /* Container creation notice */
++#endif
++
+ #ifndef AUDIT_MMAP
+ #define AUDIT_MMAP		1323 /* Descriptor and flags in mmap */
+ #endif
+diff --git a/lib/msg_typetab.h b/lib/msg_typetab.h
+index 966865f..e1fc1d1 100644
+--- a/lib/msg_typetab.h
++++ b/lib/msg_typetab.h
+@@ -44,6 +44,7 @@ _S(AUDIT_LOGIN,                      "LOGIN"                         )
+ //_S(AUDIT_TTY_SET,                    "TTY_SET"                       )
+ //_S(AUDIT_SET_FEATURE,                "SET_FEATURE"                   )
+ //_S(AUDIT_GET_FEATURE,                "GET_FEATURE"                   )
++_S(AUDIT_CONTAINER_OP,               "CONTAINER_OP"                  )
+ _S(AUDIT_USER_AUTH,                  "USER_AUTH"                     )
+ _S(AUDIT_USER_ACCT,                  "USER_ACCT"                     )
+ _S(AUDIT_USER_MGMT,                  "USER_MGMT"                     )
+diff --git a/lib/netlink.c b/lib/netlink.c
+index 5b2028f..caa963b 100644
+--- a/lib/netlink.c
++++ b/lib/netlink.c
+@@ -184,6 +184,7 @@ static int adjust_reply(struct audit_reply *rep, int len)
+ 			break;
+ 		case AUDIT_USER:
+ 		case AUDIT_LOGIN:
++		case AUDIT_CONTAINER_OP:
+ 		case AUDIT_KERNEL:
+ 		case AUDIT_FIRST_USER_MSG...AUDIT_LAST_USER_MSG:
+ 		case AUDIT_FIRST_USER_MSG2...AUDIT_LAST_USER_MSG2:
+-- 
+1.8.3.1
+
