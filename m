@@ -2,82 +2,111 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE09C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F127DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C34402083F
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:50:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34402083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 918C220894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:53:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMTnbAey"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 918C220894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbeHAAc6 (ORCPT
+        id S1732768AbeHAAfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:32:58 -0400
-Received: from www62.your-server.de ([213.133.104.62]:38536 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731637AbeHAAc6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:32:58 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fkdTD-0002Y5-Np; Wed, 01 Aug 2018 00:50:23 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fkdTD-000UsI-Ax; Wed, 01 Aug 2018 00:50:23 +0200
-Subject: Re: [PATCH v4 bpf-next 08/14] bpf: introduce the
- bpf_get_local_storage() helper function
-To:     Roman Gushchin <guro@fb.com>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Alexei Starovoitov <ast@kernel.org>
-References: <20180727215243.3850-1-guro@fb.com>
- <20180727215243.3850-9-guro@fb.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <ad6c58e3-08a8-aa9c-2d69-528007fe126e@iogearbox.net>
-Date:   Wed, 1 Aug 2018 00:50:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180727215243.3850-9-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24800/Tue Jul 31 18:43:36 2018)
+        Tue, 31 Jul 2018 20:35:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732726AbeHAAfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 20:35:32 -0400
+Received: from lerouge.suse.de (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32BCC2083F;
+        Tue, 31 Jul 2018 22:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533077578;
+        bh=ZHeUqo/pMRqtkBIfDJ6t955UFCTuaX94qZUvrx2j0x8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DMTnbAeyCrbnu9urwrl91xNw3X2OGW7ap3uscOumq1HpNX86aLYmaCSjVYoFU3H/k
+         TUcb4rNfgwxdXMub1oeYgqLn9qAz5XcLLrlDfqMMsjgeqCTERB0njCzMuenMvO/7k1
+         AebREKisqar2d5mkoeYAwRycH5VJwpFRTcuv8df8=
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: [PATCH] nohz: Fix missing tick reprog while interrupting inline timer softirq
+Date:   Wed,  1 Aug 2018 00:52:50 +0200
+Message-Id: <1533077570-9169-1-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2018 11:52 PM, Roman Gushchin wrote:
-[...]
-> @@ -2533,6 +2541,16 @@ static int check_helper_call(struct bpf_verifier_env *env, int func_id, int insn
->  	}
->  
->  	regs = cur_regs(env);
-> +
-> +	/* check that flags argument in get_local_storage(map, flags) is 0,
-> +	 * this is required because get_local_storage() can't return an error.
-> +	 */
-> +	if (func_id == BPF_FUNC_get_local_storage &&
-> +	    !tnum_equals_const(regs[BPF_REG_2].var_off, 0)) {
-> +		verbose(env, "get_local_storage() doesn't support non-zero flags\n");
-> +		return -EINVAL;
-> +	}
+Before updating the full nohz tick or the idle time on IRQ exit, we
+check first if we are not in a nesting interrupt, whether the inner
+interrupt is a hard or a soft IRQ.
 
-Hmm, this check is actually not correct. You will still be able to pass non-zero
-values in there. arg2_type from the helper is ARG_ANYTHING, so the register type
-could for example be one of the pointer types and it will still pass the verifier.
-The correct way to check would be to use register_is_null().
+There is a historical reason for that: the dyntick idle mode used to
+reprogram the tick on IRQ exit, after softirq processing, and there was
+no point in doing that job in the outer nesting interrupt because the
+tick update will be performed through the end of the inner interrupt
+eventually, with even potential new timer updates.
 
-> +
->  	/* reset caller saved regs */
->  	for (i = 0; i < CALLER_SAVED_REGS; i++) {
->  		mark_reg_not_init(env, regs, caller_saved[i]);
+One corner case could show up though: if an idle tick interrupts a softirq
+executing inline in the idle loop (through a call to local_bh_enable())
+after we entered in dynticks mode, the IRQ won't reprogram the tick
+because it assumes the softirq executes on an inner IRQ-tail. As a
+result we might put the CPU in sleep mode with the tick completely
+stopped whereas a timer can still be enqueued. Indeed there is no tick
+reprogramming in local_bh_enable(). We probably asssumed there was no bh
+disabled section in idle, although there didn't seem to be debug code
+ensuring that.
+
+Nowadays the nesting interrupt optimization still stands but only concern
+full dynticks. The tick is stopped on IRQ exit in full dynticks mode
+and we want to wait for the end of the inner IRQ to reprogramm the tick.
+But in_interrupt() doesn't make a difference between softirqs executing
+on IRQ tail and those executing inline. What was to be considered a
+corner case in dynticks-idle mode now becomes a serious opportunity for
+a bug in full dynticks mode: if a tick interrupts a task executing
+softirq inline, the tick reprogramming will be ignored and we may exit
+to userspace after local_bh_enable() with an enqueued timer that will
+never fire.
+
+To fix this, simply keep reprogramming the tick if we are in a hardirq
+interrupting softirq. We can still figure out a way later to restore
+this optimization while excluding inline softirq processing.
+
+Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/softirq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 900dcfe..0980a81 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -386,7 +386,7 @@ static inline void tick_irq_exit(void)
+ 
+ 	/* Make sure that timer wheel updates are propagated */
+ 	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+-		if (!in_interrupt())
++		if (!in_irq())
+ 			tick_nohz_irq_exit();
+ 	}
+ #endif
+-- 
+2.7.4
+
