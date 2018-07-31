@@ -2,88 +2,77 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB230C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2E5C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E289208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E289208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 1D2A4208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:04:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cbYIxVjz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2A4208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbeGaNnK (ORCPT
+        id S1732026AbeGaNod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:43:10 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25891 "EHLO
-        sender1.zoho.com.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731272AbeGaNnK (ORCPT
+        Tue, 31 Jul 2018 09:44:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45968 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731272AbeGaNod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:43:10 -0400
-Received: from localhost.localdomain.localdomain (115.231.19.16 [115.231.19.16]) by mx.zoho.com.cn
-        with SMTPS id 1533038570784572.6676115279031; Tue, 31 Jul 2018 20:02:50 +0800 (CST)
-From:   oceanhe@zoho.com.cn
-To:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Ocean He <hehy1@lenovo.com>
-Subject: [PATCH] libnvdimm, bus: check if type of nd_device_driver within valid scope
-Date:   Tue, 31 Jul 2018 08:02:32 -0400
-Message-Id: <1533038552-6195-1-git-send-email-oceanhe@zoho.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-ZohoCNMailClient: External
+        Tue, 31 Jul 2018 09:44:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=35UC22Qf1bVFqde/kuy9JANvy0ja3rv6CmjqXcPL7Nk=; b=cbYIxVjzICmQjSqef3G/5f2dh
+        wUfL7NhF3MjG1zFVnrBAjEAGVbB+0LucXv7rJuwtI+xClIn0LhrvZFOPofpdnXIlBF0xil/+8gFXb
+        t3R+JzTBrj+oDZf8AtiTiLz093eqO4XTkxtHz4++Liofo6wqrUg8NmW4Ur0+5TrZlrEUZJ2a8feV5
+        P7D/UMZm+53MuOKXP1xC5CWy7DdQIk0bJNLbEmbNJWln2M3wbTtDDIVIrZxOIyJYFnTuB7i+8Mys3
+        aCRYYaunwLF0e1NmAS/tkTXgXIvXQ0gkw+3uTJyQqk2o/48O9GFebhCYlfJ3Y5kDJc5jxm3oX/R5M
+        4Ryiuf5tg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkTO8-0001zI-90; Tue, 31 Jul 2018 12:04:28 +0000
+Date:   Tue, 31 Jul 2018 05:04:28 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Alexei Colin <acolin@isi.edu>
+Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Paul Walters <jwalters@isi.edu>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] arm: enable RapidIO menu in Kconfig
+Message-ID: <20180731120428.GA5696@infradead.org>
+References: <20180730225035.28365-1-acolin@isi.edu>
+ <20180730225035.28365-6-acolin@isi.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730225035.28365-6-acolin@isi.edu>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ocean He <hehy1@lenovo.com>
+On Mon, Jul 30, 2018 at 06:50:33PM -0400, Alexei Colin wrote:
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index afe350e5e3d9..602a61324890 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
+>  
+>  source "drivers/pci/Kconfig"
+>  
+> +source "drivers/rapidio/Kconfig"
 
-According to enum nd_driver_flags, the valid type of nd_device_driver
-start from 0x02 and end up with 0x80. Both 0x00 and 0x01 are invalid, and
-the value larger than 0x80 is invalid.
-
-To filter valid type, ND_DRIVER_FLAGS_MASK is defined as
-(((ND_DRIVER_FLAGS_MAX) << 1) - 2). For example, when ND_DRIVER_FLAGS_MAX
-equals to ND_DRIVER_DAX_PMEM(0x80), then ND_DRIVER_FLAGS_MASK equals
-to 0xFE.
-
-Signed-off-by: Ocean He <hehy1@lenovo.com>
----
- drivers/nvdimm/bus.c       | 2 +-
- include/uapi/linux/ndctl.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 27902a8..ec8cf4b 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -546,7 +546,7 @@ int __nd_driver_register(struct nd_device_driver *nd_drv, struct module *owner,
- {
- 	struct device_driver *drv = &nd_drv->drv;
- 
--	if (!nd_drv->type) {
-+	if (!(nd_drv->type & ND_DRIVER_FLAGS_MASK)) {
- 		pr_debug("driver type bitmask not set (%pf)\n",
- 				__builtin_return_address(0));
- 		return -EINVAL;
-diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
-index 7e27070..2a1ce06 100644
---- a/include/uapi/linux/ndctl.h
-+++ b/include/uapi/linux/ndctl.h
-@@ -207,6 +207,8 @@ enum nd_driver_flags {
- 	ND_DRIVER_NAMESPACE_BLK   = 1 << ND_DEVICE_NAMESPACE_BLK,
- 	ND_DRIVER_DAX_PMEM	  = 1 << ND_DEVICE_DAX_PMEM,
- };
-+#define ND_DRIVER_FLAGS_MAX	ND_DRIVER_DAX_PMEM
-+#define ND_DRIVER_FLAGS_MASK	(((ND_DRIVER_FLAGS_MAX) << 1) - 2)
- 
- enum {
- 	ND_MIN_NAMESPACE_SIZE = PAGE_SIZE,
--- 
-1.8.3.1
-
-
+Please include this from drivers/Kconfig instead of enabling it
+for a completely random set of architectures.
