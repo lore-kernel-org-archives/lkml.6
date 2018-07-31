@@ -2,111 +2,106 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959ECC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29761C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504F32083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F32083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id B4D532083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:48:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mbKKc5uK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D532083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732171AbeGaOZZ (ORCPT
+        id S1732193AbeGaO2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:25:25 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44218 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731652AbeGaOZZ (ORCPT
+        Tue, 31 Jul 2018 10:28:41 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51144 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729723AbeGaO2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:25:25 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so16495084wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 05:45:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r1CBh5En4n4Wn7J9Am2n5DoLoLM4u1BZ9VrK61wlxgE=;
-        b=qi1f7Tcm7+MuSoJM7FDrpNUCOZyfGHWPAyrgG0a5jca80K2OaoLj8y3Ha3Hzoi7x3k
-         d5+CFqKjJvTuLnQs9EyFDh6J12AosmFmp6DJgREI0O7bqqMnym4M9n9DW2mBPfmkIGHK
-         23UG9oAamWVUc8xolQz0gAmZCKgtSeJfmf+mic9uRv2mefpBRweuzYvHBmCoC+pwbamg
-         VYbPAFC7O0ACc9NEBzxSjmdPJwxLxBwqDJMDrssoebghktsAINnLSiI3hW08Y9hrieBG
-         UtX3ixrXEM1/t/oouBrN5xf25z1eoErRUAD+xqOAu/qDk/hV7o2A+Zq9whZemWX7jpNa
-         RIdA==
-X-Gm-Message-State: AOUpUlH6squzetJ/wxwIhorj5IMwNUeApHBNWI2LyRC3uulOwywDkRiu
-        dEX5RV88i2Evfoyg+CcT4Ys=
-X-Google-Smtp-Source: AAOMgpcW1KXz68RKY5jX8yJSJULd+rFg25AeMBH/XsUlVSl/lA3W7jZRQS+2Gq1ZlWvEHHkAkgy4sA==
-X-Received: by 2002:adf:cc0a:: with SMTP id x10-v6mr19939564wrh.242.1533041114347;
-        Tue, 31 Jul 2018 05:45:14 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm17333140wrr.19.2018.07.31.05.45.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 05:45:13 -0700 (PDT)
-Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id EBE2F1244CC;
-        Tue, 31 Jul 2018 14:45:12 +0200 (CEST)
-From:   osalvador@techadventures.net
-To:     akpm@linux-foundation.org
-Cc:     mhocko@suse.com, vbabka@suse.cz, kirill.shutemov@linux.intel.com,
-        pasha.tatashin@oracle.com, iamjoonsoo.kim@lge.com, mgorman@suse.de,
-        jrdr.linux@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
-Date:   Tue, 31 Jul 2018 14:45:04 +0200
-Message-Id: <20180731124504.27582-1-osalvador@techadventures.net>
-X-Mailer: git-send-email 2.13.6
+        Tue, 31 Jul 2018 10:28:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0+dPhruWmjmb8JDzovbVp/84Ly/vN48kd3FHBzISaxA=; b=mbKKc5uKyrSVu9iKSXCpAILrN
+        nR+BcJmv5X5qjKON0fiep7B678lipcpmMlAaVywwSpqjBe8LaukZF8BNY5TNZ8kBs9oN6SmitT6FS
+        M49WQGbwb8jHXI9OARKtXoJng8Q2fu2HpX0Hc0yQgfdqBc7iG/Q+XEe3OIQqJ657muD0A=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:53746)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fkU4b-0006Fi-7Z; Tue, 31 Jul 2018 13:48:21 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fkU4Y-0005YX-Kt; Tue, 31 Jul 2018 13:48:18 +0100
+Date:   Tue, 31 Jul 2018 13:48:17 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Alex Bounine <alex.bou9@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexei Colin <acolin@isi.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Paul Walters <jwalters@isi.edu>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/6] arm: enable RapidIO menu in Kconfig
+Message-ID: <20180731124815.GK17271@n2100.armlinux.org.uk>
+References: <20180730225035.28365-1-acolin@isi.edu>
+ <20180730225035.28365-6-acolin@isi.edu>
+ <20180731120428.GA5696@infradead.org>
+ <3784698f-bd9d-6d02-6fa4-2f6057e4c93f@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3784698f-bd9d-6d02-6fa4-2f6057e4c93f@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+On Tue, Jul 31, 2018 at 08:43:02AM -0400, Alex Bounine wrote:
+> On 2018-07-31 08:04 AM, Christoph Hellwig wrote:
+> >On Mon, Jul 30, 2018 at 06:50:33PM -0400, Alexei Colin wrote:
+> >>diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> >>index afe350e5e3d9..602a61324890 100644
+> >>--- a/arch/arm/Kconfig
+> >>+++ b/arch/arm/Kconfig
+> >>@@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
+> >>  source "drivers/pci/Kconfig"
+> >>+source "drivers/rapidio/Kconfig"
+> >
+> >Please include this from drivers/Kconfig instead of enabling it
+> >for a completely random set of architectures.
+> >
+> This is not a random set of architectures but only ones that implement
+> support for RapidIO as system bus.
+> 
+> On some platforms RapidIO can be the only system bus available replacing
+> PCI/PCIe.
+> 
+> As it is done now, RapidIO is configured in "Bus Options" (x86/PPC) or "Bus
+> Support" (ARMs) sub-menu and from system configuration option it should be
+> kept this way.
+> 
+> Current location of RAPIDIO configuration option is familiar to users of
+> PowerPC and x86 platforms, and is similarly available in some ARM
+> manufacturers kernel code trees.
 
-__pagininit macro is being used to mark functions for:
+... which is why you have a HAS_RAPIDIO thing and select it from
+arch/*/Kconfig as I suggested in my original review of your patch
+set.
 
-a) Functions that we do not need to keep once the system is fully
-   initialized with regard to memory.
-b) Functions that will be needed for the memory-hotplug code,
-   and because of that we need to keep them after initialization.
+As I've also said, I'm unable to review what you've sent this time
+around because I don't have all your patches.
 
-Right now, the condition to choose between one or the other is based on
-CONFIG_SPARSEMEM, but I think that this should be changed to be based
-on CONFIG_MEMORY_HOTPLUG.
-
-The reason behind this is that it can very well be that we have CONFIG_SPARSEMEM
-enabled, but not CONFIG_MEMORY_HOTPLUG, and thus, we will not need the
-functions marked as __paginginit to stay around, since no
-memory-hotplug code will call them.
-
-Although the amount of freed bytes is not that big, I think it will
-become more clear what __paginginit is used for.
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- mm/internal.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 33c22754d282..c9170b4f7699 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -392,10 +392,11 @@ static inline struct page *mem_map_next(struct page *iter,
- /*
-  * FLATMEM and DISCONTIGMEM configurations use alloc_bootmem_node,
-  * so all functions starting at paging_init should be marked __init
-- * in those cases. SPARSEMEM, however, allows for memory hotplug,
-- * and alloc_bootmem_node is not used.
-+ * in those cases.
-+ * In case that MEMORY_HOTPLUG is enabled, we need to keep those
-+ * functions around since they can be called when hot-adding memory.
-  */
--#ifdef CONFIG_SPARSEMEM
-+#ifdef CONFIG_MEMORY_HOTPLUG
- #define __paginginit __meminit
- #else
- #define __paginginit __init
 -- 
-2.13.6
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
