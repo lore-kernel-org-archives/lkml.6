@@ -2,144 +2,124 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF3FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ACAC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2532620844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75EEE208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tz1fYdTw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2532620844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZY6tr+zY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75EEE208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732178AbeGaUki (ORCPT
+        id S1732201AbeGaUlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:40:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46769 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729772AbeGaUki (ORCPT
+        Tue, 31 Jul 2018 16:41:24 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37593 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732006AbeGaUlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:40:38 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t17-v6so7559687ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:58:58 -0700 (PDT)
+        Tue, 31 Jul 2018 16:41:24 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n7-v6so9540905pgq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mpHcqNaN5pHfT/bJjWP0xHK7kxdSYEPGBJT4HyqS9TY=;
-        b=tz1fYdTw/1efGYkUCYC88qKM+G4adAPpfORb9lWGba5/wCrT/zuGcEKSkQcLcA6DNJ
-         2XUzjyLxC8yOcHS0QLa5aDamlpC5iSeJrdAcmBUD0WSPjlOuIsrUR0KRLY+C3oWztV2O
-         crGtIiUNICHyrp4RW6LvWuSf7JLU+Sdjm7Cq5xH/Sp6gJRYaXNKAad8FS3dyp3dqzPH1
-         D8Bo36nmkGz672MOuCmMD/8QIQ285omm4RMjIm2WolmwynVQ2+A80BJRSTiQubta88Q5
-         iBWvlGbt78SZ4Ow+Tbii308TAqw19DY6scEhvqmNtc4n18QPJ+Iua1vGS14rxIHCkyGJ
-         m1WQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pregnSMfkOaGBP4vqZw3v3Rj/ItF+UeK9Knvf5WfDP4=;
+        b=ZY6tr+zYY40u8HIGlHlv7yUWn4nd25P9iTfaiSsJk0cobiYOamYX5s9xCpzYB6XMyv
+         O9s+4uj0n05Wjf+zetTSTyamcEimvSziJ3UZiTjet5j2z3HW1KnBnVSjdef402dHCCqt
+         LUngiV0pXnXmV5QF/u406B8pLXIM6P4IvQiLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mpHcqNaN5pHfT/bJjWP0xHK7kxdSYEPGBJT4HyqS9TY=;
-        b=H5UEKMRr5mc5uZIA6Y+AKAdYfJO4fbElbqHwTDW2fY8n+4l2Qoi23E2klRZve8/Pd0
-         P2+GOb9beSYryf6368wwd3fdfHSCr30EvyjQBDbyOAKnyzUDz6GoDBK+XgtlPQW6t14f
-         Bhhx81kz8bOMJV9ApWftM7RyXC5TdwlxUe3LAAd+B64gIYcRJe83rTyXV7GVbG7JjnFS
-         DYmY9E8ftKR8FyjD6VnbThyaIsEs4ePyTV/V2NDZszYh4AQ/Hh+JWqCcbSWMkHFlvudH
-         vDJD7MQA+yrhpqQpqdXZt9pw4KXGI0r9lNpnwi7+GSOPEForrcGVQ3eCjulJ8po+5jQf
-         ZaIA==
-X-Gm-Message-State: AOUpUlGomCuQ/cMcjwcu7VJYBKae5GUCk9YqtbdeY+HkwDlUCjoBiuqX
-        xVvShUH6/ywf2rfjV/yXYh0sqTFlKJC6LsQpSO+hyw==
-X-Google-Smtp-Source: AAOMgpfHxbAUanFHxpcHsd1nNDPVRtBbvVxbgFs//sfGwKqZkpFIH9kqaKwo4vD/HHsQvofdKsWLkFEBciiQbRP8dkw=
-X-Received: by 2002:a17:902:b08a:: with SMTP id p10-v6mr21348264plr.217.1533063537584;
- Tue, 31 Jul 2018 11:58:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pregnSMfkOaGBP4vqZw3v3Rj/ItF+UeK9Knvf5WfDP4=;
+        b=ll9MVk+dqDIfUoqIhulk88YdMJwNCA1yPAl8+0iTHdMkjMO3lCuSq0/EW8e8iwsqK3
+         olPFC087Vi9wt/vzarZt4qreAJ+DE1vMSAhsBGZa26Q6wndq5fl9HH/kB1npX4yTH834
+         wIZtG+4GjhZ7+DBysEx1Iecujwm+RGDdtYd1p48ykXtZW998TG2sE1J2//PJs+eQmW+C
+         f55j3JEUmu6++MC1YH+ofNR/HBhdgySaz/2dGkLNyb10qhPmAPYYjmKJy57JR/gs1j/x
+         jDPc6dSRaRaz2J/GPsBPkjsdLDeREMoHzte8+T1GUclfPPfc5GQZovwMIYzq2RxiUlUx
+         TB0w==
+X-Gm-Message-State: AOUpUlFsF5AUfin/bqLiP6FstQva9ZIRxT8Uy3aJuGGnHuoEhyBpd5T+
+        xgduJ9e+mj//2gpnSDT5i+N6BA==
+X-Google-Smtp-Source: AAOMgpd8xxnEWfHqO2sUp+cEmFEzipR/+YKCkPW+qO2/mgpwGOvmtbpEcEIPjXdIVhWmcfUNUZmgUQ==
+X-Received: by 2002:aa7:8591:: with SMTP id w17-v6mr23605077pfn.77.1533063583758;
+        Tue, 31 Jul 2018 11:59:43 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id e132-v6sm27797567pfc.49.2018.07.31.11.59.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 11:59:43 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        David Collins <collinsd@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v6 1/5] dt-bindings: thermal: qcom-spmi-temp-alarm: Fix documentation of 'reg'
+Date:   Tue, 31 Jul 2018 11:59:13 -0700
+Message-Id: <20180731185917.176074-1-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 MIME-Version: 1.0
-References: <20180730213412.242849-3-ndesaulniers@google.com>
- <201807311827.UpeCrGPC%fengguang.wu@intel.com> <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
- <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
-In-Reply-To: <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 31 Jul 2018 11:58:46 -0700
-Message-ID: <CAKwvOdneN9xG5iegvfnn9XUm_-qUHxx--7k3j-UthwvsXmZOjg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-To:     Kees Cook <keescook@chromium.org>
-Cc:     lkp@intel.com, kbuild-all@01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
-        christophe.leroy@c-s.fr, shorne@gmail.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, rdunlap@infradead.org,
-        bp@suse.de, neilb@suse.com, LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
-        sandipan@linux.vnet.ibm.com, linux@rasmusvillemoes.dk,
-        Paul Lawrence <paullawrence@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>, avagin@openvz.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:02 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Jul 31, 2018 at 9:48 AM, Nick Desaulniers
-> > On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
-> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
-> >> >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-> >>      if (!(cmd->flags & CMD_ASYNC))
-> >>      ^~
-> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-> >>       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
-> >>     ^ ~
-> >>
-> >> vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
-> >>
-> >> 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
-> >> 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
->
-> #define lock_map_acquire_read(l)
-> lock_acquire_shared_recursive(l, 0, 0, NULL, _THIS_IP_)
->
-> #define lock_acquire_shared_recursive(l, s, t, n, i)
-> lock_acquire(l, s, t, 2, 1, n, i)
->
-> The config doesn't have CONFIG_LOCKDEP, so it's not:
->
-> extern void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
->                          int trylock, int read, int check,
->                          struct lockdep_map *nest_lock, unsigned long ip);
->
-> but rather:
->
-> # define lock_acquire(l, s, t, r, c, n, i)      do { } while (0)
+The documentation claims that the 'reg' property consists of two values,
+the SPMI address and the length of the controller's registers. However
+the SPMI bus to which it is added specifies "#size-cells = <0>;". Remove
+the controller register length from the documentation of the field and the
+example.
 
-This is tricky, if I preprocess that translation unit with the exact
-flags used during compilation, I get:
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+Changes in v6:
+- patch added to the series
+---
+ .../devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt     | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-```
- if (!(cmd->flags & CMD_ASYNC))
-
-#pragma GCC diagnostic push
-
-#pragma GCC diagnostic pop
- do { } while (0);
-```
-
-Which is not enough to trigger -Wmisleading-indentation alone.  It is
-curious that if we add braces to that if statement (as Nathan notes in
-a sibling post) or removing the pop (not shippable) seems to fix the
-warning.
-
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
+index 290ec06fa33a..86fb41fe772f 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
++++ b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
+@@ -6,8 +6,7 @@ interrupt signal and status register to identify high PMIC die temperature.
+ 
+ Required properties:
+ - compatible:      Should contain "qcom,spmi-temp-alarm".
+-- reg:             Specifies the SPMI address and length of the controller's
+-                   registers.
++- reg:             Specifies the SPMI address.
+ - interrupts:      PMIC temperature alarm interrupt.
+ - #thermal-sensor-cells: Should be 0. See thermal.txt for a description.
+ 
+@@ -20,7 +19,7 @@ Example:
+ 
+ 	pm8941_temp: thermal-alarm@2400 {
+ 		compatible = "qcom,spmi-temp-alarm";
+-		reg = <0x2400 0x100>;
++		reg = <0x2400>;
+ 		interrupts = <0 0x24 0 IRQ_TYPE_EDGE_RISING>;
+ 		#thermal-sensor-cells = <0>;
+ 
 -- 
-Thanks,
-~Nick Desaulniers
+2.18.0.345.g5c9ce644c3-goog
+
