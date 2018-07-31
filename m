@@ -2,112 +2,128 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032A4C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5330EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB965208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0719220857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:51:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TL/gp2T6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB965208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bVfb+Bmk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0719220857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732168AbeGaTdA (ORCPT
+        id S1731943AbeGaTcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:33:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42407 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732067AbeGaTc4 (ORCPT
+        Tue, 31 Jul 2018 15:32:54 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:35031 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729782AbeGaTcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:32:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so6467516pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:31 -0700 (PDT)
+        Tue, 31 Jul 2018 15:32:54 -0400
+Received: by mail-qk0-f195.google.com with SMTP id u21-v6so10839598qku.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PKElp04UgMwElXRd3OjLixeXgrBPSMQRVTAjbusprc4=;
-        b=TL/gp2T6VKOIkzJj9VM14lnHYFStQ53Ahj63pcN028SKRr+GSIzVeEOLKFhm1IEgOF
-         6/lSYSl5AER5sUYxJApEJJu5UWss9U01WwzTcbJFX9S5lL12NVg+psgx9bBHq36TQ3dF
-         QDEgrl3nzZxx4AdRDBhyZ/uU6d7JZTNT9PPUdhF7H/cIwFF+n3hLUo8XUIMZ9tT38Gem
-         KL6EIOjPwmZPJeaAcBxK7bPTmOgrBZa41oy/X/n5e9gyVQlH+n7MB92ieUpmrEfSFKa6
-         Cm0Cgshqf1sN+YVvzRIx9FDfXggLjPLDnW+Ua/ZfoCnQ5kyiQMSHZ4icGxBzfypQtQJY
-         jz/g==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Vuv1/DUiY3yElibysTszEqkNUuWpYgpH5IqsSB8eSps=;
+        b=bVfb+BmkdJVfKRFZ6vUISI5VX/S2p2JZTcN1RVSWfzDYkwNH/XFEfnom/wb1h6IBwb
+         MTWnFp105e1SZDrYPr1ElD+83KyDhEnWgD4m+Ua1Udp/XwkSsN4GrbyZlxKOYFrbpuQ5
+         ALV2Ox/ggcY388JBNT7Y0ohimFmJjwfmusVho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PKElp04UgMwElXRd3OjLixeXgrBPSMQRVTAjbusprc4=;
-        b=fo+QXUxS/kBMqo6ia8Uqwy+KNvMxG/nKy5xynjLBfTc87tf3ZLM3lWae/b/pUDIVTf
-         myY4/usu2/BFFqliNsJBNdGPsuwXjIrszmqG2XG/DJis4SH6kz+C7DInnpJh6kbqSSt1
-         +Es9gjYx3XLZz4DWg+ETQVaZDEBeMzuonc6ahsPvJ7kBMxOBHJXj4EeB175OnSfBS8VB
-         ippgCnLnwIpZ740IjOEiRNuMOVGcYuBF5P9+EQrO3PtDtunIVTFcqTpzyI+kB22/U4NA
-         mNjp5CLHDzngl96Li6SnIWj+KaU4TTUQWzR/DgrekzfMEzqhbTaFg+JAIHHFE9GrhVLP
-         q6zA==
-X-Gm-Message-State: AOUpUlERgj0eIh3a3XNxUnLEATVJP9/N1G3zetS2frF0BJU/OM9/BrbN
-        Bjw1NEP0F/B9Iwjb7T1E6YzDsElZBTZ9aMyprY04Bg==
-X-Google-Smtp-Source: AAOMgpcDsxkw4nLkGIa2b36NXG8RAZf/8f/LjeFacSA2sqboQ7wmJa02765iwV4qjTbXnV0W79M8EzFf718e6qRetnk=
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr21820229pgp.334.1533059490212;
- Tue, 31 Jul 2018 10:51:30 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Vuv1/DUiY3yElibysTszEqkNUuWpYgpH5IqsSB8eSps=;
+        b=EtvhSLeTQRg/1Q8rTOURT6MNw2aLQa0460gA1veMZURLvJLABVZhlyY/tHTGCBlvSp
+         30zOcWNqeooRw+PnriHK4nFdHIdQzJBjPAlXfSGbUDqro2yBxi+1d2RVFsjQ9rNJ6uEw
+         dTnG1/GSEo0NrFcuBW+S8C2s16wC94swgXn3iNF42P+v9OJDCqzd6DCmwaqwbgZ911Hn
+         ePRWNCk3tzNCbQToLAHeA9SDlVL69PPNQuMP2wUdiJ4HTWzAA+o8i2VmvKEqjAvHMrH7
+         Qi+OnnboEZkMhQ5k/I7r4TPA107eicfQas0cYUv/T/HoifUCOqX2nPWs9VZfWUYb+AY8
+         UfPA==
+X-Gm-Message-State: AOUpUlE/g+FmSk1/WbOCIPzJSwIEsy8be2I8r/sQJcUFW3EoA+BvT6Sp
+        USuLJ1G5rH+gK48aIreSaocWjg==
+X-Google-Smtp-Source: AAOMgpfgDp6b5o8Y+2ceay5ZcQatyGnFtN5SllZWeNTbXZd/sciUNi5QfXLwbji+bkI9McfSODfP+g==
+X-Received: by 2002:a37:6e01:: with SMTP id j1-v6mr21502393qkc.70.1533059488668;
+        Tue, 31 Jul 2018 10:51:28 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id n25-v6sm8275867qtp.94.2018.07.31.10.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 10:51:28 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] net: phy: Add pm support to Broadcom iProc mdio
+ mux driver
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-8-git-send-email-arun.parameswaran@broadcom.com>
+ <8d732031-c5e8-d6ea-5b61-3b9baf79796f@gmail.com>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <f298c64e-d8de-0e6d-3c4d-f62b257329f9@broadcom.com>
+Date:   Tue, 31 Jul 2018 10:51:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 31 Jul 2018 10:51:09
- -0700 (PDT)
-In-Reply-To: <CANn89iLLQP2vA+2J-zxL3Fa75zNw=yRmv3Jg6vcEc=fYeEZ2ow@mail.gmail.com>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CANn89iLLQP2vA+2J-zxL3Fa75zNw=yRmv3Jg6vcEc=fYeEZ2ow@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 31 Jul 2018 19:51:09 +0200
-Message-ID: <CACT4Y+Y6dhNgisDM9hdP-M-Rnk66DxZWcX7v39ESGJR8RY3asQ@mail.gmail.com>
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8d732031-c5e8-d6ea-5b61-3b9baf79796f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 7:41 PM, Eric Dumazet <edumazet@google.com> wrote:
-> On Tue, Jul 31, 2018 at 10:36 AM Christopher Lameter <cl@linux.com> wrote:
->
+Hi Florian,
+
+On 18-07-30 03:53 PM, Florian Fainelli wrote:
+> On 07/27/2018 02:23 PM, Arun Parameswaran wrote:
+>> Add support for suspend and resume to the Broadcom iProc mdio
+>> mux driver.
 >>
->> If there is refcounting going on then why use SLAB_TYPESAFE_BY_RCU?
->
-> To allow fast reuse of objects, without going through call_rcu() and
-> reducing cache efficiency.
->
-> I believe this is mentioned in Documentation/RCU/rculist_nulls.txt
+>> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+>> ---
+>>  drivers/net/phy/mdio-mux-bcm-iproc.c | 28 ++++++++++++++++++++++++++++
+>>  1 file changed, 28 insertions(+)
+>>
+>> diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+>> index 51d1003..d89dce0 100644
+>> --- a/drivers/net/phy/mdio-mux-bcm-iproc.c
+>> +++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+>> @@ -290,6 +290,33 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
+>>  	return 0;
+>>  }
+>>  
+>> +#ifdef CONFIG_PM_SLEEP
+>> +static int mdio_mux_iproc_suspend(struct device *dev)
+>> +{
+>> +	struct iproc_mdiomux_desc *md = dev_get_drvdata(dev);
+>> +
+>> +	if (md->core_clk)
+>> +		clk_disable_unprepare(md->core_clk);
+> 
+> Since you are assigning md->core_clk to NULL in case clk_get() returned
+> an error, checking for md->core_clk is not necessary since the Linux
+> common clock framework perform that NULL check already.
+> 
+Will remove the check.
 
+I am working on Andrew's comments (which will add one more patch to the series).
+I will send the whole patchset again, with reviewed-by tags (From Florian
+and Andrew on the ones that apply).
 
-Is it OK to overwrite ct->status? It seems that are some read and
-writes to it right after atomic_inc_not_zero.
+Thanks
+Arun
