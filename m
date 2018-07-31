@@ -4,106 +4,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974C1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F887C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43BB8208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0BBA208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:04:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gKZPny6s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43BB8208A2
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K9PuuNts"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BBA208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbeGaMns (ORCPT
+        id S1732024AbeGaMoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:43:48 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48944 "EHLO
+        Tue, 31 Jul 2018 08:44:05 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49074 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731395AbeGaMns (ORCPT
+        with ESMTP id S1731395AbeGaMoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:43:48 -0400
+        Tue, 31 Jul 2018 08:44:05 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180731110359euoutp02db9494f0be8584958ebd9a97d3d86145~Gbz75UGAE0260902609euoutp02C;
-        Tue, 31 Jul 2018 11:03:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180731110359euoutp02db9494f0be8584958ebd9a97d3d86145~Gbz75UGAE0260902609euoutp02C
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180731110416euoutp02093732e3aa3bca469f2de11e2a34389b~Gb0MJqEL00273902739euoutp02M;
+        Tue, 31 Jul 2018 11:04:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180731110416euoutp02093732e3aa3bca469f2de11e2a34389b~Gb0MJqEL00273902739euoutp02M
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1533035039;
-        bh=5fFlWPkNoRPeZqXn5dH4QX7OnT0dopg3Gdke4CaHp6c=;
+        s=mail20170921; t=1533035056;
+        bh=bJpXlrNHKF7+PPhiUzffTCOH/eSTaGeDq/DC531a2PM=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=gKZPny6s+XYSi7m625PfqPJyheU1lCtPjSbery3Iq7sF4l1ebAAiayRbVzjcNQfBL
-         ugT/nZy8M7W+km+9spp906RnRTRBbF8qjRBjWxLSIn+dvniLitSJB8LnQnHnDhXl79
-         E+0EH37tfzfNgzhufwpTqCqW3ocWiRMzJ/xOXSg0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=K9PuuNtsJZgk+5C9I8rsmuFk8NVnjB6JArAXjiVUCowDQ1oGUtspDseVbbFW6Mck5
+         QNC3G+FpUbdyiNZYL7A81P65JXtCX/nFeaIXwmr6COYHL9MtnQyuWr18wK0M1ubVLP
+         Ygxuv0aEbCM0T8ji4Rkyof022NGFz/K7SOaLBWcs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180731110358eucas1p1c1655e8c290fbac71dfec79225636951~Gbz7TZd0g1167511675eucas1p1K;
-        Tue, 31 Jul 2018 11:03:58 +0000 (GMT)
+        20180731110416eucas1p190442208bf14c4acda0fb084a5aa755d~Gb0Lse-Zy1323213232eucas1p1Y;
+        Tue, 31 Jul 2018 11:04:16 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 2B.C3.05751.E12406B5; Tue, 31
-        Jul 2018 12:03:58 +0100 (BST)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6E.C5.04627.032406B5; Tue, 31
+        Jul 2018 12:04:16 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180731110358eucas1p1bea0cc75c40691f010204dba293ee52b~Gbz6mhT6W2761727617eucas1p1V;
-        Tue, 31 Jul 2018 11:03:58 +0000 (GMT)
-X-AuditID: cbfec7f4-077c59c000001677-06-5b60421e53ad
+        20180731110415eucas1p1ae2d8e50b2583a4367f9cc47375ffef4~Gb0LC-jFf1167511675eucas1p1i;
+        Tue, 31 Jul 2018 11:04:15 +0000 (GMT)
+X-AuditID: cbfec7f2-51b7d9c000021213-64-5b604230262a
 Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A7.96.04183.D12406B5; Tue, 31
-        Jul 2018 12:03:57 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 26.29.04178.F22406B5; Tue, 31
+        Jul 2018 12:04:15 +0100 (BST)
 Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PCQ00LZ99ELG880@eusync1.samsung.com>; Tue, 31 Jul
-        2018 12:03:57 +0100 (BST)
+        2014)) with ESMTPA id <0PCQ003EZ9F3T860@eusync1.samsung.com>; Tue, 31 Jul
+        2018 12:04:15 +0100 (BST)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     kbuild test robot <fengguang.wu@intel.com>
 Cc:     Mauro Carvalho Chehab <m.chehab@samsung.com>, kbuild-all@01.org,
         linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
         linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] media: omap2: omapfb: fix boolreturn.cocci warnings
-Date:   Tue, 31 Jul 2018 13:03:57 +0200
-Message-id: <1621309.sZUdEDiQYq@amdc3058>
+Subject: Re: [PATCH] media: omap2: omapfb: fix bugon.cocci warnings
+Date:   Tue, 31 Jul 2018 13:04:14 +0200
+Message-id: <1852918.sFt5Xj4oDG@amdc3058>
 User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180725175700.GA82131@lkp-sb05.lkp.intel.com>
+In-reply-to: <20180725175700.GA82595@lkp-sb05.lkp.intel.com>
 MIME-version: 1.0
 Content-transfer-encoding: 7Bit
 Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduznOV05p4Rog/ufFCxe/5vOYnHl63s2
-        i/fP1zNbHLs+kdniRN8HVovLu+awWfRs2MpqMXtJP4vFxXXyFuvn32Jz4PK4v5fdY/Gel0we
-        97uPM3l8fHqLxaNvyypGj+M3tjN5fN4kF8AexWWTkpqTWZZapG+XwJXxc8889oLXrBW7P6xm
-        aWD8wtLFyMkhIWAisbWtn72LkYtDSGAFo0RXVy8LhPOZUeLE+e/sMFXTtnYzgdhCAssYJRp+
-        +0DYvxkldi0SBrHZBKwkJravYgSxRQT0JFYsbGMEGcQssIlJYt+qU2CDhAU8JL6eewG2mkVA
-        VeLIsr9ARRwcvAKaEq/myoCERQW8JLbsawfbxSlgI7Hp3lJmEJtXQFDix+R7YK3MAvIS+/ZP
-        ZYWwdSTOHlvHCHHnfTaJwxMFIGwXicZnF6G+FJZ4dXwL1C8yEpcnd4M9KSEwnVHiza+lUM56
-        Rok1Z44xQVRZSxw+fhFqA5/EpG3TmUEOlRDglehoE4Io8ZB4vm4SOyQgDjBKdG/ynMAoMwvJ
-        rbOQ3DoLya0LGJlXMYqnlhbnpqcWG+WllusVJ+YWl+al6yXn525iBKaO0/+Of9nBuOtP0iFG
-        AQ5GJR5eD634aCHWxLLiytxDjBIczEoivDYyQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8d/rj
-        ooUE0hNLUrNTUwtSi2CyTBycUg2MvvLfnPfLnvn0+OCV85H+wUIZvJ03xKsCgreuvl0a0dOh
-        enaFVabn6kdXeJzXJ+3IeTz17LFfq9MDzkzOD7JeL139qPm52wQjFUGL9Ws2vxbaILV90kz9
-        Y50Jf//aFIftL77ooZKsfWeFF9+E3wk5acu7xL7smrFb01Tx/LXqF6Xedu25yYxTlViKMxIN
-        tZiLihMB7wZJaxkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsVy+t/xy7qyTgnRBgenWFu8/jedxeLK1/ds
-        Fu+fr2e2OHZ9IrPFib4PrBaXd81hs+jZsJXVYvaSfhaLi+vkLdbPv8XmwOVxfy+7x+I9L5k8
-        7ncfZ/L4+PQWi0ffllWMHsdvbGfy+LxJLoA9issmJTUnsyy1SN8ugSvj55557AWvWSt2f1jN
-        0sD4haWLkZNDQsBEYtrWbqYuRi4OIYEljBL/plxmhnD+Mkqs37ecFaSKTcBKYmL7KkYQW0RA
-        T2LFwjZGkCJmgU1MEp8vb2QDSQgLeEh8PfcCbCyLgKrEkWV/gYo4OHgFNCVezZUBCYsKeEls
-        2dfOBGJzCthIbLq3FGrZAUaJG8evgSV4BQQlfky+BzaHWUBeYt/+qawQtpbE+p3HmSYw8s9C
-        UjYLSdksJGULGJlXMYqklhbnpucWG+kVJ+YWl+al6yXn525iBAb/tmM/t+xg7HoXfIhRgINR
-        iYfXQys+Wog1say4MvcQowQHs5IIr40MUIg3JbGyKrUoP76oNCe1+BCjNAeLkjjveYPKKCGB
-        9MSS1OzU1ILUIpgsEwenVAPj/qIG643hr19V2JcW/mrUOKDpGVodeCOiYemz6vNZvoFztA/d
-        Xxny+sEvl3VfJp2c5BCj0uh98EiCnFW8pMzCiQpzbXR0GtbwrDGPkqmP+O3PlnnodfbO94r/
-        1/Nx6TcuY/3leEX9ou0/rXler7f7Pi7KWfht25MT62Pvb3i7te3CyjV8scpTlFiKMxINtZiL
-        ihMBnDRNo3oCAAA=
-X-CMS-MailID: 20180731110358eucas1p1bea0cc75c40691f010204dba293ee52b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djPc7oGTgnRBkubOC2ufH3PZvH++Xpm
+        i2PXJzJbnOj7wGpxedccNoueDVtZLWYv6WexuLhO3mL9/FtsDpwe9/eyeyze85LJ4373cSaP
+        vi2rGD2O39jO5PF5k1wAWxSXTUpqTmZZapG+XQJXxsub+5gLtnBU/Lm7jLWB8TtbFyMnh4SA
+        icTrRVvYuxi5OIQEVjBKTFz2mRHC+cwo8Wb5fWaYqiWLFzBDJJYxSizrOM4E4fxmlGhZf4gR
+        pIpNwEpiYvsqMFtEQE9ixcI2sFHMAm1MEiu/bQBbKCzgLHFy2kQgm4ODRUBV4vD6WJAwr4Cm
+        xI4Z7ewgtqiAl8SWfe1MIDangI3Et1+nGSFqBCV+TL7HAmIzC8hL7Ns/lRXC1pE4e2wd2C4J
+        gTNsEifWvmAHmS8h4CJx40caxAfCEq+Ob2GHsGUkOjsOMkHUTwd689dSFghnPaPEmjPHmCCq
+        rCUOH78ItYFPYtK26cwQQ3klOtqEIEwPiT0fyyEBcYBRYsu8SUwTGGVmIbl1FpJbZyG5dQEj
+        8ypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAVHH63/FPOxi/Xko6xCjAwajEw/tBPT5a
+        iDWxrLgy9xCjBAezkgivjQxQiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+d/rhoIYH0xJLU7NTU
+        gtQimCwTB6dUA+Pu8JVOCZ/XGDye6Nwa2FWR7nNUPENIacsRdZUntyLPzeret51DhOuMLWdw
+        e9rfhGsn8jpm3JCc299dNPP7nEmT9JemL/5ovPj33+KF85ukboYmsjhwZy42yV96OdjDZe2B
+        NKeN0XPnCeS/Z7xtd0bT8eP2y4sz9EPvOsT2mGyy8nnKpXjc+6MSS3FGoqEWc1FxIgBmx6CO
+        EQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsVy+t/xy7r6TgnRBleXa1hc+fqezeL98/XM
+        FseuT2S2ONH3gdXi8q45bBY9G7ayWsxe0s9icXGdvMX6+bfYHDg97u9l91i85yWTx/3u40we
+        fVtWMXocv7GdyePzJrkAtigum5TUnMyy1CJ9uwSujJc39zEXbOGo+HN3GWsD43e2LkZODgkB
+        E4klixcwdzFycQgJLGGUmLrpPJTzl1Fi1ct1jCBVbAJWEhPbV4HZIgJ6EisWtjGCFDELtDFJ
+        3FuxFGyUsICzxMlpE4FsDg4WAVWJw+tjQcK8ApoSO2a0s4PYogJeElv2tTOB2JwCNhLffp1m
+        hFh2gFHi7sorrBANghI/Jt9jAbGZBeQl9u2fygpha0ms33mcaQIj/ywkZbOQlM1CUraAkXkV
+        o0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYKBvO/Zz8w7GSxuDDzEKcDAq8fB6aMVHC7EmlhVX
+        5h5ilOBgVhLhtZEBCvGmJFZWpRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliSmp2aWpBaBJNl
+        4uCUamDUbDbysDnzOeHUiv3SEg933sy7I3rkUMTNtx98nFRvXfi0Za+duUmTlFvdLSMe0Qr+
+        lLvS0+TXlZS39ZxVVjncPmlOSYCG1oINssznbPd7VebZym/YkPF1ReWVIIslfyTm3r7yt8RD
+        Lbgtw/XZ3KCrE8pbt3w+lxT996A/H2sRk963320TnzcqsRRnJBpqMRcVJwIApGQfznACAAA=
+X-CMS-MailID: 20180731110415eucas1p1ae2d8e50b2583a4367f9cc47375ffef4
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180725175735epcas4p1bd4f49c171946156d847d643a6ea22c0
+X-CMS-RootMailID: 20180725180009epcas4p4a1bb08f2e2c763ae043a6dd107887721
 References: <201807260144.q4WK2PMA%fengguang.wu@intel.com>
-        <CGME20180725175735epcas4p1bd4f49c171946156d847d643a6ea22c0@epcas4p1.samsung.com>
-        <20180725175700.GA82131@lkp-sb05.lkp.intel.com>
+        <CGME20180725180009epcas4p4a1bb08f2e2c763ae043a6dd107887721@epcas4p4.samsung.com>
+        <20180725175700.GA82595@lkp-sb05.lkp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -112,11 +110,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thursday, July 26, 2018 01:57:00 AM kbuild test robot wrote:
 > From: kbuild test robot <fengguang.wu@intel.com>
 > 
-> drivers/video/fbdev/omap2/omapfb/omapfb-main.c:290:9-10: WARNING: return of 0/1 in function 'cmp_var_to_colormode' with return type bool
+> drivers/video/fbdev/omap2/omapfb/dss/dss_features.c:895:2-5: WARNING: Use BUG_ON instead of if condition followed by BUG.
+> Please make sure the condition has no side effects (see conditional BUG_ON definition in include/asm-generic/bug.h)
 > 
->  Return statements in functions returning bool should use
->  true/false instead of 1/0.
-> Generated by: scripts/coccinelle/misc/boolreturn.cocci
+>  Use BUG_ON instead of a if condition followed by BUG.
+> 
+> Semantic patch information:
+>  This makes an effort to find cases where BUG() follows an if
+>  condition on an expression and replaces the if condition and BUG()
+>  with a BUG_ON having the conditional expression of the if statement
+>  as argument.
+> 
+> Generated by: scripts/coccinelle/misc/bugon.cocci
 > 
 > Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_TEST")
 > Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
