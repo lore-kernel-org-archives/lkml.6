@@ -2,108 +2,189 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6C0C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058A4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB177208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B4CF208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:13:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="jRxq3ddB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB177208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="I2gYSe82"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4CF208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732298AbeGaOxM (ORCPT
+        id S1732312AbeGaOxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:53:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58552 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732037AbeGaOxL (ORCPT
+        Tue, 31 Jul 2018 10:53:46 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:57166 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732153AbeGaOxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:53:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=R3h1QxgJZjCD4XNYi4rK5Ff9barRj8V9KaHTytEBu9g=; b=jRxq3ddBhuAfEI6Sur7TLu8YQ
-        Fhtoh6TIKLDfqhms3lPGHoUgv3vnF5BmoDx63jaLoRd0rVKf06kH9oaR0UPwJGaqK4HYtTzVXPD3+
-        XDboVCJwdGMPmq83ZGcLjh3zXv7T8vFqc9Svt5IOMPk9XpVNToQcdF92mxbRSRoS4zixk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkUSF-00077b-It; Tue, 31 Jul 2018 13:12:47 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F334611242BD; Tue, 31 Jul 2018 14:12:46 +0100 (BST)
-Date:   Tue, 31 Jul 2018 14:12:46 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Alexander.Deucher@amd.com,
-        djkurtz@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer
- function
-Message-ID: <20180731131246.GC5719@sirena.org.uk>
-References: <e0990b62-897c-6dc7-8ac9-296932c505b7@amd.com>
- <dd4d3dc6-88f3-d53f-cd5c-5035c80be3da@linux.intel.com>
- <s5hy3dsviwq.wl-tiwai@suse.de>
- <20180730155030.GP5789@sirena.org.uk>
- <7a88c7b4-d31d-b044-bb8e-a866d49d1256@amd.com>
- <s5hwotc0y6v.wl-tiwai@suse.de>
- <5b3249cb-6212-6a14-b644-7548cf0ad00c@amd.com>
- <s5ha7q721vs.wl-tiwai@suse.de>
- <20180731101943.GB5719@sirena.org.uk>
- <s5heffjr8ys.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Md/poaVZ8hnGTzuv"
-Content-Disposition: inline
-In-Reply-To: <s5heffjr8ys.wl-tiwai@suse.de>
-X-Cookie: Save the bales!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 31 Jul 2018 10:53:46 -0400
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 0BD275C03BB;
+        Tue, 31 Jul 2018 15:13:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533042807;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=k5BJzDmPTALNOj3TS1jLShgIRhWEq1vpFANB4aINJbA=;
+        b=I2gYSe82ShEhByEYEFxrVQlNHVTyLxrdk1YZsuUr03km9lebmNwGA3Hw9Aj5TVc3N/d7fx
+        8/Mqr0P5RYVR+YMYfHrj+T7igW4ris603szaKZx4zAlYyuYQgBnoonoUKTX5Ca7HM3HqEX
+        h6eGDwkJ+In8ck4OzpJIcMfcL8x7+Vk=
+From:   Stefan Agner <stefan@agner.ch>
+To:     richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] fs: ubifs: introduce Kconfig symbol for xattr support
+Date:   Tue, 31 Jul 2018 15:13:20 +0200
+Message-Id: <20180731131320.21087-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Allow to disable extended attribute support.
 
---Md/poaVZ8hnGTzuv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This aids in reliability testing, especially since some xattr
+related bugs have surfaced.
 
-On Tue, Jul 31, 2018 at 12:32:59PM +0200, Takashi Iwai wrote:
-> Mark Brown wrote:
+Also an embedded system might not need it, so this allows for a
+slightly smaller kernel (about 4KiB).
 
-> > However since it's not supposed to be providing any DMA a CPU DAI really
-> > shouldn't be doing this...
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ fs/ubifs/Kconfig  | 15 +++++++++++++--
+ fs/ubifs/Makefile |  3 ++-
+ fs/ubifs/dir.c    |  2 ++
+ fs/ubifs/file.c   |  4 ++++
+ fs/ubifs/super.c  |  2 ++
+ fs/ubifs/ubifs.h  |  6 ++++++
+ 6 files changed, 29 insertions(+), 3 deletions(-)
 
-> Well, if so, the CPU dai also cannot get the exact base delay
-> corresponding to the reported position, either, no?
+diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
+index 83a961bf7280..bbc78549be4c 100644
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@ -51,9 +51,20 @@ config UBIFS_ATIME_SUPPORT
+ 
+ 	  If unsure, say 'N'
+ 
++config UBIFS_FS_XATTR
++	bool "UBIFS XATTR support"
++	depends on UBIFS_FS
++	default y
++	help
++	  Saying Y here includes support for extended attributes (xattrs).
++	  Xattrs are name:value pairs associated with inodes by
++	  the kernel or by users (see the attr(5) manual page).
++
++	  If unsure, say Y.
++
+ config UBIFS_FS_ENCRYPTION
+ 	bool "UBIFS Encryption"
+-	depends on UBIFS_FS && BLOCK
++	depends on UBIFS_FS && UBIFS_FS_XATTR && BLOCK
+ 	select FS_ENCRYPTION
+ 	default n
+ 	help
+@@ -64,7 +75,7 @@ config UBIFS_FS_ENCRYPTION
+ 
+ config UBIFS_FS_SECURITY
+ 	bool "UBIFS Security Labels"
+-	depends on UBIFS_FS
++	depends on UBIFS_FS && UBIFS_FS_XATTR
+ 	default y
+ 	help
+ 	  Security labels provide an access control facility to support Linux
+diff --git a/fs/ubifs/Makefile b/fs/ubifs/Makefile
+index 9758f709c736..6197d7e539e4 100644
+--- a/fs/ubifs/Makefile
++++ b/fs/ubifs/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_UBIFS_FS) += ubifs.o
+ ubifs-y += shrinker.o journal.o file.o dir.o super.o sb.o io.o
+ ubifs-y += tnc.o master.o scan.o replay.o log.o commit.o gc.o orphan.o
+ ubifs-y += budget.o find.o tnc_commit.o compress.o lpt.o lprops.o
+-ubifs-y += recovery.o ioctl.o lpt_commit.o tnc_misc.o xattr.o debug.o
++ubifs-y += recovery.o ioctl.o lpt_commit.o tnc_misc.o debug.o
+ ubifs-y += misc.o
+ ubifs-$(CONFIG_UBIFS_FS_ENCRYPTION) += crypto.o
++ubifs-$(CONFIG_UBIFS_FS_XATTR) += xattr.o
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 9da224d4f2da..dc875886f11f 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -1647,7 +1647,9 @@ const struct inode_operations ubifs_dir_inode_operations = {
+ 	.rename      = ubifs_rename,
+ 	.setattr     = ubifs_setattr,
+ 	.getattr     = ubifs_getattr,
++#ifdef CONFIG_UBIFS_FS_XATTR
+ 	.listxattr   = ubifs_listxattr,
++#endif
+ #ifdef CONFIG_UBIFS_ATIME_SUPPORT
+ 	.update_time = ubifs_update_time,
+ #endif
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index fd7eb6fe9090..b8b3962eb449 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1654,7 +1654,9 @@ const struct address_space_operations ubifs_file_address_operations = {
+ const struct inode_operations ubifs_file_inode_operations = {
+ 	.setattr     = ubifs_setattr,
+ 	.getattr     = ubifs_getattr,
++#ifdef CONFIG_UBIFS_FS_XATTR
+ 	.listxattr   = ubifs_listxattr,
++#endif
+ #ifdef CONFIG_UBIFS_ATIME_SUPPORT
+ 	.update_time = ubifs_update_time,
+ #endif
+@@ -1664,7 +1666,9 @@ const struct inode_operations ubifs_symlink_inode_operations = {
+ 	.get_link    = ubifs_get_link,
+ 	.setattr     = ubifs_setattr,
+ 	.getattr     = ubifs_getattr,
++#ifdef CONFIG_UBIFS_FS_XATTR
+ 	.listxattr   = ubifs_listxattr,
++#endif
+ #ifdef CONFIG_UBIFS_ATIME_SUPPORT
+ 	.update_time = ubifs_update_time,
+ #endif
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index c5466c70d620..564a131afc56 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -2053,7 +2053,9 @@ static int ubifs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (c->max_inode_sz > MAX_LFS_FILESIZE)
+ 		sb->s_maxbytes = c->max_inode_sz = MAX_LFS_FILESIZE;
+ 	sb->s_op = &ubifs_super_operations;
++#ifdef CONFIG_UBIFS_FS_XATTR
+ 	sb->s_xattr = ubifs_xattr_handlers;
++#endif
+ #ifdef CONFIG_UBIFS_FS_ENCRYPTION
+ 	sb->s_cop = &ubifs_crypt_operations;
+ #endif
+diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
+index 04bf84d71e7b..6aab759f0f9d 100644
+--- a/fs/ubifs/ubifs.h
++++ b/fs/ubifs/ubifs.h
+@@ -1755,7 +1755,13 @@ int ubifs_xattr_set(struct inode *host, const char *name, const void *value,
+ 		    size_t size, int flags, bool check_lock);
+ ssize_t ubifs_xattr_get(struct inode *host, const char *name, void *buf,
+ 			size_t size);
++
++#ifdef CONFIG_UBIFS_FS_XATTR
+ void ubifs_evict_xattr_inode(struct ubifs_info *c, ino_t xattr_inum);
++#else
++static inline void ubifs_evict_xattr_inode(struct ubifs_info *c,
++					   ino_t xattr_inum) { }
++#endif
+ 
+ #ifdef CONFIG_UBIFS_FS_SECURITY
+ extern int ubifs_init_security(struct inode *dentry, struct inode *inode,
+-- 
+2.18.0
 
-It can know how much delay it's adding internally between its input and
-output, which feeds into the overall delay experienced by the user.
-
---Md/poaVZ8hnGTzuv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgYE4ACgkQJNaLcl1U
-h9DswQf9GWUANKQgU6UT1mqpQLQHXWUl9Jckdv0IvNpbNN68xcHif4AWvvHQ3gaI
-127uYUDWgwBdQZ7vr8DS2N0D33IzdkhB2jlWfLyueG512IGrSSSjAAI6BnKrRng9
-/TEb39JwG9ITu7wDj2fdP/qK2cJ0V6YnCZtH6HTQfs2w+sn9PD+0bjgwE2GdhCy+
-jABd2IgOUyKTC/zNnunIivL/1oU4aVRUCdfyKil7B6HEAhVVVB3PIB7Ow42j68JY
-7B39V99ZNv0N083I30w/fQ3wzQu6IHs3iy3s5VcDgfkFWuEMcTbHNhE+OY5owuG/
-NI74av/DHJ2qeTYd/RtTxqvPeJs2Kw==
-=Zrxu
------END PGP SIGNATURE-----
-
---Md/poaVZ8hnGTzuv--
