@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94836C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E013C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5011D208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5011D208A3
+	by mail.kernel.org (Postfix) with ESMTP id 41F4E208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F4E208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbeGaIQT (ORCPT
+        id S1731845AbeGaIQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:16:19 -0400
+        Tue, 31 Jul 2018 04:16:20 -0400
 Received: from mga09.intel.com ([134.134.136.24]:59929 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeGaIQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:16:18 -0400
+        id S1726086AbeGaIQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:16:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 23:37:34 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 23:37:35 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,426,1526367600"; 
-   d="scan'208";a="61154210"
+   d="scan'208";a="61154215"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga008.jf.intel.com with ESMTP; 30 Jul 2018 23:37:32 -0700
+  by orsmga008.jf.intel.com with ESMTP; 30 Jul 2018 23:37:34 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next 07/12] mei: hbm: setup dma ring
-Date:   Tue, 31 Jul 2018 09:35:39 +0300
-Message-Id: <20180731063544.25540-8-tomas.winkler@intel.com>
+Subject: [char-misc-next 08/12] mei: hw: add dma ring control block
+Date:   Tue, 31 Jul 2018 09:35:40 +0300
+Message-Id: <20180731063544.25540-9-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180731063544.25540-1-tomas.winkler@intel.com>
 References: <20180731063544.25540-1-tomas.winkler@intel.com>
@@ -47,162 +47,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DMA ring is allocated upon HBM handshake and the ring parameters are set
-via dedicated HBM_DMA_SETUP request command. The firmware will perform
-its setup and respond with a status. On failure the DMA buffers are
-released.
+The DMA ring control block contains write and read
+indices for host and device circular buffers.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/misc/mei/hbm.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++--
- drivers/misc/mei/hbm.h |  2 ++
- 2 files changed, 86 insertions(+), 3 deletions(-)
+ drivers/misc/mei/dma-ring.c | 21 +++++++++++++++++++++
+ drivers/misc/mei/hbm.c      |  2 ++
+ drivers/misc/mei/hw.h       | 23 +++++++++++++++++++++++
+ drivers/misc/mei/mei_dev.h  |  1 +
+ 4 files changed, 47 insertions(+)
 
-diff --git a/drivers/misc/mei/hbm.c b/drivers/misc/mei/hbm.c
-index 09e233d4c0de..a3cdffb9ef62 100644
---- a/drivers/misc/mei/hbm.c
-+++ b/drivers/misc/mei/hbm.c
-@@ -65,6 +65,7 @@ const char *mei_hbm_state_str(enum mei_hbm_state state)
- 	MEI_HBM_STATE(IDLE);
- 	MEI_HBM_STATE(STARTING);
- 	MEI_HBM_STATE(STARTED);
-+	MEI_HBM_STATE(DR_SETUP);
- 	MEI_HBM_STATE(ENUM_CLIENTS);
- 	MEI_HBM_STATE(CLIENT_PROPERTIES);
- 	MEI_HBM_STATE(STOPPED);
-@@ -295,6 +296,47 @@ int mei_hbm_start_req(struct mei_device *dev)
- 	return 0;
+diff --git a/drivers/misc/mei/dma-ring.c b/drivers/misc/mei/dma-ring.c
+index 368012116196..70901319534e 100644
+--- a/drivers/misc/mei/dma-ring.c
++++ b/drivers/misc/mei/dma-ring.c
+@@ -101,3 +101,24 @@ bool mei_dma_ring_is_allocated(struct mei_device *dev)
+ {
+ 	return !!dev->dr_dscr[DMA_DSCR_HOST].vaddr;
  }
- 
-+/**
-+ * mei_hbm_dma_setup_req - setup DMA request
-+ *
-+ * @dev: the device structure
-+ *
-+ * Return: 0 on success and < 0 on failure
-+ */
-+static int mei_hbm_dma_setup_req(struct mei_device *dev)
++
++static inline
++struct hbm_dma_ring_ctrl *mei_dma_ring_ctrl(struct mei_device *dev)
 +{
-+	struct mei_msg_hdr mei_hdr;
-+	struct hbm_dma_setup_request req;
-+	const size_t len = sizeof(struct hbm_dma_setup_request);
-+	unsigned int i;
-+	int ret;
-+
-+	mei_hbm_hdr(&mei_hdr, len);
-+
-+	memset(&req, 0, len);
-+	req.hbm_cmd = MEI_HBM_DMA_SETUP_REQ_CMD;
-+	for (i = 0; i < DMA_DSCR_NUM; i++) {
-+		phys_addr_t paddr;
-+
-+		paddr = dev->dr_dscr[i].daddr;
-+		req.dma_dscr[i].addr_hi = upper_32_bits(paddr);
-+		req.dma_dscr[i].addr_lo = lower_32_bits(paddr);
-+		req.dma_dscr[i].size = dev->dr_dscr[i].size;
-+	}
-+
-+	ret = mei_hbm_write_message(dev, &mei_hdr, &req);
-+	if (ret) {
-+		dev_err(dev->dev, "dma setup request write failed: ret = %d.\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	dev->hbm_state = MEI_HBM_DR_SETUP;
-+	dev->init_clients_timer = MEI_CLIENTS_INIT_TIMEOUT;
-+	mei_schedule_stall_timer(dev);
-+	return 0;
++	return (struct hbm_dma_ring_ctrl *)dev->dr_dscr[DMA_DSCR_CTRL].vaddr;
 +}
 +
- /**
-  * mei_hbm_enum_clients_req - sends enumeration client request message.
-  *
-@@ -1044,6 +1086,7 @@ int mei_hbm_dispatch(struct mei_device *dev, struct mei_msg_hdr *hdr)
- 	struct hbm_host_version_response *version_res;
- 	struct hbm_props_response *props_res;
- 	struct hbm_host_enum_response *enum_res;
-+	struct hbm_dma_setup_response *dma_setup_res;
- 	struct hbm_add_client_request *add_cl_req;
- 	int ret;
++/**
++ * mei_dma_ring_reset - reset the dma control block
++ *
++ * @dev: mei device
++ */
++void mei_dma_ring_reset(struct mei_device *dev)
++{
++	struct hbm_dma_ring_ctrl *ctrl = mei_dma_ring_ctrl(dev);
++
++	if (!ctrl)
++		return;
++
++	memset(ctrl, 0, sizeof(*ctrl));
++}
+diff --git a/drivers/misc/mei/hbm.c b/drivers/misc/mei/hbm.c
+index a3cdffb9ef62..f15d44bda28e 100644
+--- a/drivers/misc/mei/hbm.c
++++ b/drivers/misc/mei/hbm.c
+@@ -324,6 +324,8 @@ static int mei_hbm_dma_setup_req(struct mei_device *dev)
+ 		req.dma_dscr[i].size = dev->dr_dscr[i].size;
+ 	}
  
-@@ -1108,14 +1151,52 @@ int mei_hbm_dispatch(struct mei_device *dev, struct mei_msg_hdr *hdr)
- 			return -EPROTO;
- 		}
++	mei_dma_ring_reset(dev);
++
+ 	ret = mei_hbm_write_message(dev, &mei_hdr, &req);
+ 	if (ret) {
+ 		dev_err(dev->dev, "dma setup request write failed: ret = %d.\n",
+diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
+index 65655925791a..4f09bbcdbc2a 100644
+--- a/drivers/misc/mei/hw.h
++++ b/drivers/misc/mei/hw.h
+@@ -512,4 +512,27 @@ struct hbm_dma_setup_response {
+ 	u8 reserved[2];
+ } __packed;
  
--		if (mei_hbm_enum_clients_req(dev)) {
--			dev_err(dev->dev, "hbm: start: failed to send enumeration request\n");
--			return -EIO;
-+		if (dev->hbm_f_dr_supported) {
-+			if (mei_dmam_ring_alloc(dev))
-+				dev_info(dev->dev, "running w/o dma ring\n");
-+			if (mei_dma_ring_is_allocated(dev)) {
-+				if (mei_hbm_dma_setup_req(dev))
-+					return -EIO;
++/**
++ * struct mei_dma_ring_ctrl - dma ring control block
++ *
++ * @hbuf_wr_idx: host circular buffer write index in slots
++ * @reserved1: reserved for alignment
++ * @hbuf_rd_idx: host circular buffer read index in slots
++ * @reserved2: reserved for alignment
++ * @dbuf_wr_idx: device circular buffer write index in slots
++ * @reserved3: reserved for alignment
++ * @dbuf_rd_idx: device circular buffer read index in slots
++ * @reserved4: reserved for alignment
++ */
++struct hbm_dma_ring_ctrl {
++	u32 hbuf_wr_idx;
++	u32 reserved1;
++	u32 hbuf_rd_idx;
++	u32 reserved2;
++	u32 dbuf_wr_idx;
++	u32 reserved3;
++	u32 dbuf_rd_idx;
++	u32 reserved4;
++} __packed;
 +
-+				wake_up(&dev->wait_hbm_start);
-+				break;
-+			}
- 		}
+ #endif
+diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
+index a6796e3f712b..033b5eff8e59 100644
+--- a/drivers/misc/mei/mei_dev.h
++++ b/drivers/misc/mei/mei_dev.h
+@@ -597,6 +597,7 @@ void mei_cancel_work(struct mei_device *dev);
+ int mei_dmam_ring_alloc(struct mei_device *dev);
+ void mei_dmam_ring_free(struct mei_device *dev);
+ bool mei_dma_ring_is_allocated(struct mei_device *dev);
++void mei_dma_ring_reset(struct mei_device *dev);
  
-+		dev->hbm_f_dr_supported = 0;
-+		mei_dmam_ring_free(dev);
-+
-+		if (mei_hbm_enum_clients_req(dev))
-+			return -EIO;
-+
- 		wake_up(&dev->wait_hbm_start);
- 		break;
- 
-+	case MEI_HBM_DMA_SETUP_RES_CMD:
-+		dev_dbg(dev->dev, "hbm: dma setup response: message received.\n");
-+
-+		dev->init_clients_timer = 0;
-+
-+		if (dev->hbm_state != MEI_HBM_DR_SETUP) {
-+			dev_err(dev->dev, "hbm: dma setup response: state mismatch, [%d, %d]\n",
-+				dev->dev_state, dev->hbm_state);
-+			return -EPROTO;
-+		}
-+
-+		dma_setup_res = (struct hbm_dma_setup_response *)mei_msg;
-+
-+		if (dma_setup_res->status) {
-+			dev_info(dev->dev, "hbm: dma setup response: failure = %d %s\n",
-+				 dma_setup_res->status,
-+				 mei_hbm_status_str(dma_setup_res->status));
-+			dev->hbm_f_dr_supported = 0;
-+			mei_dmam_ring_free(dev);
-+		}
-+
-+		if (mei_hbm_enum_clients_req(dev))
-+			return -EIO;
-+		break;
-+
- 	case CLIENT_CONNECT_RES_CMD:
- 		dev_dbg(dev->dev, "hbm: client connect response: message received.\n");
- 		mei_hbm_cl_res(dev, cl_cmd, MEI_FOP_CONNECT);
-diff --git a/drivers/misc/mei/hbm.h b/drivers/misc/mei/hbm.h
-index a2025a5083a3..0171a7e79bab 100644
---- a/drivers/misc/mei/hbm.h
-+++ b/drivers/misc/mei/hbm.h
-@@ -26,6 +26,7 @@ struct mei_cl;
-  *
-  * @MEI_HBM_IDLE : protocol not started
-  * @MEI_HBM_STARTING : start request message was sent
-+ * @MEI_HBM_DR_SETUP : dma ring setup request message was sent
-  * @MEI_HBM_ENUM_CLIENTS : enumeration request was sent
-  * @MEI_HBM_CLIENT_PROPERTIES : acquiring clients properties
-  * @MEI_HBM_STARTED : enumeration was completed
-@@ -34,6 +35,7 @@ struct mei_cl;
- enum mei_hbm_state {
- 	MEI_HBM_IDLE = 0,
- 	MEI_HBM_STARTING,
-+	MEI_HBM_DR_SETUP,
- 	MEI_HBM_ENUM_CLIENTS,
- 	MEI_HBM_CLIENT_PROPERTIES,
- 	MEI_HBM_STARTED,
+ /*
+  *  MEI interrupt functions prototype
 -- 
 2.14.4
 
