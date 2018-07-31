@@ -2,113 +2,177 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23645C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FBDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6841208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:18:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KqYxgUci";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aPs/KvNh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6841208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B2B84208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:19:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B84208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeGaG46 (ORCPT
+        id S1729323AbeGaG6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 02:56:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57586 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbeGaG46 (ORCPT
+        Tue, 31 Jul 2018 02:58:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35487 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeGaG6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 02:56:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1DDE3606DD; Tue, 31 Jul 2018 05:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533014312;
-        bh=NMzJYSdj9reqKvdQFZDmu5GJ8A8H09mU9cX1SjYZsu4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KqYxgUcit2P1BpmS2Tz59AW62wdk8Hoyy41lO1vd6Pal8C/UpDIRHKyorKY5K9CRx
-         SOGYGIW9RG/KRIDE78E/n5WEeeSuJ/ps3knn6ydIS+pdS1OUW9UxrolywB3XWN1yIX
-         lBn/I20FvKCqms6LDNUtjkdWGhergY2iZu+xz17g=
-Received: from [10.206.24.124] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9588660275;
-        Tue, 31 Jul 2018 05:18:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533014311;
-        bh=NMzJYSdj9reqKvdQFZDmu5GJ8A8H09mU9cX1SjYZsu4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aPs/KvNh6ol5MXlQdAjRLGbGuTi2AeQw2bRHWtVfkria89Eq7bluopqTHT1dq6J07
-         /yol8m/vst/RIJciCXA4xYKSKhNJLxy3jqTr3rMzYKyUv9ZpSCyK0THm2OoAEteJVi
-         G4WkQ8fJ16j/Q6cDNdgRU06PSshmbMPr9mewTQUY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9588660275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-Subject: Re: [PATCH V5 2/2] scsi: ufs: Add configfs support for ufs
- provisioning
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Bart.VanAssche@wdc.com, Vinayak Holikatti <vinholikatti@gmail.com>,
-        linux-kernel@vger.kernel.org, asutoshd@codeaurora.org,
-        riteshh@codeaurora.org, cang@codeaurora.org,
-        martin.petersen@oracle.com, subhashj@codeaurora.org,
-        linux-scsi@vger.kernel.org, vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        jejb@linux.vnet.ibm.com, gregkh@linuxfoundation.org
-References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
- <1530858040-13971-3-git-send-email-sayalil@codeaurora.org>
- <CAE=gft5U1-Jo-GvTF7sNAV3Q565AmuUrHpmBdxUL+UwkKxesqA@mail.gmail.com>
- <0dce9e9c-4f93-9857-72ee-f65ff195c41a@codeaurora.org>
- <CAE=gft6_=SQjgv7_kHXKJKa8_45NKKFwwE7UaXsijPpMd35LOg@mail.gmail.com>
- <4cb931e199599314829f5ff750797c88fc123f1f.camel@wdc.com>
- <CAE=gft6zm2mw3rnNuktDe0NWs-NM1CFQw1BUeGhaBi3eoEDXBg@mail.gmail.com>
- <8e6af8ed-1ec0-f10e-69b2-08281b638a4b@codeaurora.org>
- <CAE=gft4S9_H-PgpUHVrmjq4uah8pGKH+4A9xph+L=yButpqEpA@mail.gmail.com>
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-Message-ID: <cd621e88-99c6-b2a0-8ab9-84761fb0a1f9@codeaurora.org>
-Date:   Tue, 31 Jul 2018 10:48:25 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 02:58:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6V5ItY12583566
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 30 Jul 2018 22:18:56 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6V5Iruu2583563;
+        Mon, 30 Jul 2018 22:18:53 -0700
+Date:   Mon, 30 Jul 2018 22:18:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-99811294b063eb44185df9a58923928fccdbe122@git.kernel.org>
+Cc:     peterz@infradead.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+        m.mizuma@jp.fujitsu.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
+        eranian@google.com, torvalds@linux-foundation.org, acme@redhat.com,
+        kan.liang@linux.intel.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          torvalds@linux-foundation.org, jolsa@redhat.com,
+          eranian@google.com, acme@redhat.com, kan.liang@linux.intel.com,
+          mingo@kernel.org, peterz@infradead.org,
+          alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+          m.mizuma@jp.fujitsu.com
+In-Reply-To: <1532953688-15008-1-git-send-email-kan.liang@linux.intel.com>
+References: <1532953688-15008-1-git-send-email-kan.liang@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/x86/intel/uncore: Fix hardcoded index of
+ Broadwell extra PCI devices
+Git-Commit-ID: 99811294b063eb44185df9a58923928fccdbe122
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft4S9_H-PgpUHVrmjq4uah8pGKH+4A9xph+L=yButpqEpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  99811294b063eb44185df9a58923928fccdbe122
+Gitweb:     https://git.kernel.org/tip/99811294b063eb44185df9a58923928fccdbe122
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Mon, 30 Jul 2018 08:28:08 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 30 Jul 2018 20:13:58 +0200
 
+perf/x86/intel/uncore: Fix hardcoded index of Broadwell extra PCI devices
 
-On 7/31/2018 5:09 AM, Evan Green wrote:
-> On Mon, Jul 30, 2018 at 12:46 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
->> Hi Evan,
->>
->>
->> On 7/18/2018 1:53 AM, Evan Green wrote:
-> ...
->>> I'm not dead set on binary, since as above I could do it either way,
->>> but it seemed worth at least talking through. Let me know what you
->>> think.
->>> -Evan
->> I am using ASCII format for reading/writing to config desc as it will be
->> more readable for users and easier/comfortable to compare any value to
->> default spec value(if required).
->> So I don't really see any harm in using current ASCII format for
->> provisioning purpose.
-> I'm not convinced by those arguments, but ultimately it's between you
-> and the maintainers. If you're going with the ASCII route, then I have
-> another review comment. Currently in your patch, if kstrtoint fails,
-> you print, but then break out of the loop and try to write the
-> partially parsed descriptor anyway. That "break" should probably be
-> changed to a "goto out".
->
-> -Evan
-Agreed. I will replace that break with "goto out" .
+Masayoshi Mizuma reported that a warning message is shown while a CPU is
+hot-removed on Broadwell servers:
+
+  WARNING: CPU: 126 PID: 6 at arch/x86/events/intel/uncore.c:988
+  uncore_pci_remove+0x10b/0x150
+  Call Trace:
+   pci_device_remove+0x42/0xd0
+   device_release_driver_internal+0x148/0x220
+   pci_stop_bus_device+0x76/0xa0
+   pci_stop_root_bus+0x44/0x60
+   acpi_pci_root_remove+0x1f/0x80
+   acpi_bus_trim+0x57/0x90
+   acpi_bus_trim+0x2e/0x90
+   acpi_device_hotplug+0x2bc/0x4b0
+   acpi_hotplug_work_fn+0x1a/0x30
+   process_one_work+0x174/0x3a0
+   worker_thread+0x4c/0x3d0
+   kthread+0xf8/0x130
+
+This bug was introduced by:
+
+  commit 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
+
+The index of "QPI Port 2 filter" was hardcode to 2, but this conflicts with the
+index of "PCU.3" which is "HSWEP_PCI_PCU_3", which equals to 2 as well.
+
+To fix the conflict, the hardcoded index needs to be cleaned up:
+
+ - introduce a new enumerator "BDX_PCI_QPI_PORT2_FILTER" for "QPI Port 2
+   filter" on Broadwell,
+ - increase UNCORE_EXTRA_PCI_DEV_MAX by one,
+ - clean up the hardcoded index.
+
+Debugged-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: msys.mizuma@gmail.com
+Cc: stable@vger.kernel.org
+Fixes: 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
+Link: http://lkml.kernel.org/r/1532953688-15008-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/events/intel/uncore.h       |  2 +-
+ arch/x86/events/intel/uncore_snbep.c | 10 +++++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index c9e1e0bef3c3..e17ab885b1e9 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -28,7 +28,7 @@
+ #define UNCORE_PCI_DEV_TYPE(data)	((data >> 8) & 0xff)
+ #define UNCORE_PCI_DEV_IDX(data)	(data & 0xff)
+ #define UNCORE_EXTRA_PCI_DEV		0xff
+-#define UNCORE_EXTRA_PCI_DEV_MAX	3
++#define UNCORE_EXTRA_PCI_DEV_MAX	4
+ 
+ #define UNCORE_EVENT_CONSTRAINT(c, n) EVENT_CONSTRAINT(c, n, 0xff)
+ 
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 87dc0263a2e1..51d7c117e3c7 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -1029,6 +1029,7 @@ void snbep_uncore_cpu_init(void)
+ enum {
+ 	SNBEP_PCI_QPI_PORT0_FILTER,
+ 	SNBEP_PCI_QPI_PORT1_FILTER,
++	BDX_PCI_QPI_PORT2_FILTER,
+ 	HSWEP_PCI_PCU_3,
+ };
+ 
+@@ -3286,15 +3287,18 @@ static const struct pci_device_id bdx_uncore_pci_ids[] = {
+ 	},
+ 	{ /* QPI Port 0 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f86),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 0),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   SNBEP_PCI_QPI_PORT0_FILTER),
+ 	},
+ 	{ /* QPI Port 1 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f96),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 1),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   SNBEP_PCI_QPI_PORT1_FILTER),
+ 	},
+ 	{ /* QPI Port 2 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   BDX_PCI_QPI_PORT2_FILTER),
+ 	},
+ 	{ /* PCU.3 (for Capability registers) */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
