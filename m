@@ -2,66 +2,71 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78D1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D936C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8795520862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8795520862
+	by mail.kernel.org (Postfix) with ESMTP id 13D6D208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:39:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZ5VIXLK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D6D208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbeGaJRt (ORCPT
+        id S1729736AbeGaJSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:17:49 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36464 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbeGaJRs (ORCPT
+        Tue, 31 Jul 2018 05:18:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40663 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbeGaJSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:17:48 -0400
-Received: by mail-wm0-f67.google.com with SMTP id w24-v6so525551wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:38:47 -0700 (PDT)
+        Tue, 31 Jul 2018 05:18:23 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y9-v6so1976287wma.5
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6BOJL8BADzct8oUwN9DhrlNmfTCJuSBvtsKWw9YikIU=;
+        b=QZ5VIXLK2nGUvIz5JX845G6tEBZrsweJflsi35T9IcqhekdXfDn1+kO283E0xXi8yZ
+         VBX2XmI/AloGJsD5ez3USoyVI8She7WBT1QK3uuB2aDbgMtNRlwyagNfMvZjell41Q5J
+         NPNVtN9NuLGTBChaeNMrkZjna96kYfemp1u28HZgRKW/A6a+8vVC7HxgHZbwjFCsAZI9
+         JX81L1DgoAXp3KIWRx795+REXxZInpIy1GSybkSvt+rouLWMwb/Sz2RiPYON0FbJFWmm
+         QJWijUop1hC1AHRsEDFKhPydCrtcdlP4KLI2QmypUWRZgv7U+OfbyE3C3A7SaulU/fBG
+         JpEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
+        h=x-gm-message-state:sender:subject:to:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=bngEjIkawQGTRZAUE9xrYFj/qMnIK86GgMLe9r51olE=;
-        b=nasiZB43EQ5s2C/ibRMgfEaTnRtnHuMqvxBdmZ6wCmS4avhSlziac7tfCC253ECPaE
-         AoMGOZyiOlNkRDF2VTMG1kKHpjIr4sJdOWXu2Iynw0SYrI/aPkqImvq/rdcWgcQ0qgRy
-         XUbOGzqEf77NEn+Kr707HbBReSIFVGGIMD0ei+2Z04PvycJZzgljFZO1cAiK1ataoUIc
-         wypavF5bYvWpVHlM4gWumG9Sh6NoT6y46vvkfChGtZ4+J0J2qJ3+R2wrM+jcPa7vfLtN
-         mMNyYlL0AaDSfQ4x71H1QY7UWWjUBD6yoIWmtSX5W2PA0E5wYjs8TVKboqda91y9qvaM
-         cQLw==
-X-Gm-Message-State: AOUpUlFyxYqpStX7ToOBIrifaT9/YO1a181VZOtGOAU/T/SToaNqdrcr
-        kgFGZqTA67gpc0AtXuA3B9vTsA==
-X-Google-Smtp-Source: AAOMgpfHKhCN6ziLmmAQrUbGY1YKtFm3M8PWuLbMM17j96pvOBuyjWjZ0u9yXgsXB/fC9GYdbNIBNA==
-X-Received: by 2002:a1c:ec06:: with SMTP id k6-v6mr1560766wmh.39.1533022727071;
-        Tue, 31 Jul 2018 00:38:47 -0700 (PDT)
+        bh=6BOJL8BADzct8oUwN9DhrlNmfTCJuSBvtsKWw9YikIU=;
+        b=IuAj5WYtjCQUzjHLoap0ApJbV2UPUlBRaX2Jn4OGxGygqg0Cecl3Ev0J3CxVYe03Sz
+         gxhldAV2Je1tJy6OKebE3rCQxLQA0yNi234GHvu3U3YFJr4cI9oZ4mGYv4yJ2vYQuQS7
+         eaoEEDkeX+VYDO7DrvQGPAkcJNE4TsX1Bc9KTDQlvivUwfG/tChVspuzrZOC9lvwcG5k
+         pypiZNYoJytsdxRTPxamDqYgBV8TslfH/yUBqWX7+UgcnSOwP4qg6dR0mw2rPj0Zapb5
+         ZuoI2aWdFmN5pn5c9g41Tk4pZCwJWMpDQaL/aJZxFrd8K+gaf0Pryay1gP8Y+DbJz0R5
+         1/Ow==
+X-Gm-Message-State: AOUpUlEGvCwgigoc8uO55G1ZRuv4TQbKwflmRgqmJgTIUcRyXwxgIS/J
+        JLufRVZZ3rcCHYN2QTJZ8UnoCphW
+X-Google-Smtp-Source: AAOMgpfaIzQWj1tFYd1WS1YPLKM5qjpkHLdsx0tNSXiLC8e9+wtOApS0lfESDSMFsEEpT72xpqrtEA==
+X-Received: by 2002:a1c:5f56:: with SMTP id t83-v6mr1555492wmb.27.1533022760571;
+        Tue, 31 Jul 2018 00:39:20 -0700 (PDT)
 Received: from [192.168.10.150] (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id v188-v6sm1745007wme.43.2018.07.31.00.38.44
+        by smtp.googlemail.com with ESMTPSA id n7-v6sm9964207wmc.2.2018.07.31.00.39.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 00:38:46 -0700 (PDT)
-Subject: Re: [PATCH v2 16/17] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Pu Wen <puwen@hygon.cn>, tglx@linutronix.de, bp@alien8.de,
-        thomas.lendacky@amd.com, mingo@redhat.com, hpa@zytor.com,
-        peterz@infradead.org, tony.luck@intel.com, rkrcmar@redhat.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, rjw@rjwysocki.net,
-        lenb@kernel.org, viresh.kumar@linaro.org, mchehab@kernel.org,
-        trenn@suse.com, shuah@kernel.org, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
- <1532352037-7151-17-git-send-email-puwen@hygon.cn>
- <b24739e8-0833-8509-0850-815758accaee@redhat.com>
- <c8f53708-bd57-fb41-8300-115ac5083094@hygon.cn>
+        Tue, 31 Jul 2018 00:39:19 -0700 (PDT)
+Subject: Re: [PATCH] x86: kvm: Restrict X86_FEATURE_VMMCALL to x86_64 platform
+To:     Matthew Whitehead <tedheadster@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180730194059.5781-1-tedheadster@gmail.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+Autocrypt: addr=pbonzini@redhat.com; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
  CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
  hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
@@ -96,12 +101,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <1360de2a-5aae-bfd7-ced1-f707b29e7b1f@redhat.com>
-Date:   Tue, 31 Jul 2018 09:38:43 +0200
+Message-ID: <7c274466-6d93-d1ba-8721-4d69f847b40f@redhat.com>
+Date:   Tue, 31 Jul 2018 09:39:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <c8f53708-bd57-fb41-8300-115ac5083094@hygon.cn>
+In-Reply-To: <20180730194059.5781-1-tedheadster@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -110,62 +115,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2018 18:43, Pu Wen wrote:
-> On 2018-07-29 07:42, Paolo Bonzini wrote:
->> On 23/07/2018 15:20, Pu Wen wrote:
->>>  scrubval = scrubrates[i].scrubval;
->>>
->>> -    if (pvt->fam == 0x17) {
->>> +    if (pvt->fam == 0x17 || pvt->fam == 0x18) {
->>>  __f17h_set_scrubval(pvt, scrubval);
->>>  } else if (pvt->fam == 0x15 && pvt->model == 0x60) {
->>>  f15h_select_dct(pvt, 0);
->>
->> This, and many other occurrences in this file, should in my opinion
->> avoid testing family 18h without also checking for Hygon as a vendor.
->> You probably need to add a vendor field to struct amd64_pvt and
->> initialize it in per_family_init.
-> 
-> Thanks for the suggestion.
-> 
-> As AMD and Hygon will negotiate the usage of CPU family number
-> to make sure the unique of family numbers in both company's processors.
-> As Hygon will use family 18h for Dhyana, AMD will not use family 18h
-> and jump to family 19h for new product. So if family number if 18h,
-> processor should be Hygon Dhyana. Based on this assumption, we created
-> this patch set.
+On 30/07/2018 21:40, Matthew Whitehead wrote:
+> early_init_amd() is called on all AMD processors, both 64 and 32 bit.
+> Presently 32 bit processors get the X86_FEATURE_VMMCALL feature set, which
+> they do not support. Add conditionals to restrict it to 64 bit processors.
 
-But if that's the case, it doesn't make sense to have a new vendor!  If
-AMD's 17h and Hygon's 18h ever diverge, you could always choose the
-right behavior based on the family, without checking the vendor.
+This shouldn't be necessary; for systems that don't have virtualization
+extensions, the comment explains why setting X86_FEATURE_VMMCALL is safe.
 
-However, if the x86 maintainers prefer to have a new X86_VENDOR_*
-constant, I'd just ignore the fact that AMD will skip family 18h, and
-introduce vendor checks along the lines below.  This has the advantage
-that it's not an issue if AMD ends up _not_ skipping family 18h.
+But it is also wrong, because you can run a 32-bit kernel as a guest on
+a 64-bit processor, and then it should set X86_FEATURE_VMMCALL because
+the processor has the vmmcall instruction and not Intel's vmcall.
 
-> If the vendor field is added to amd64_pvt, and check the vendor in 0x18
-> codes, then the codes may like:
-> -    if (pvt->fam == 0x17) {
-> +    if (pvt->fam == 0x17 || pvt->vendor == X86_VENDOR_HYGON) {
-> 
-> switch cases will be modified similar to:
-> +    case 0x18:
-> +        if(pvt->vendor == X86_VENDOR_HYGON) {
-> +            fam_type    = &family_types[HYGON_F18_CPUS];
-> +            pvt->ops    = &family_types[HYGON_F18_CPUS].ops;
-> +            break;
-> +        }
-> +
-
-Either that, or
-
-	if (pvt->vendor == X86_VENDOR_AMD) {
-		...
-	} else {
-		fam_type = &family_types[HYGON_F18_CPUS];
-		pvt->ops = &family_types[HYGON_F18_CPUS].ops;
-		break;
-	}
+Thanks,
 
 Paolo
+
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
+> ---
+>  arch/x86/kernel/cpu/amd.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 38915fbfae73..df06919324cd 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -662,12 +662,14 @@ static void early_init_amd(struct cpuinfo_x86 *c)
+>  	}
+>  #endif
+>  
+> +#ifdef CONFIG_X86_64
+>  	/*
+>  	 * This is only needed to tell the kernel whether to use VMCALL
+>  	 * and VMMCALL.  VMMCALL is never executed except under virt, so
+>  	 * we can set it unconditionally.
+>  	 */
+>  	set_cpu_cap(c, X86_FEATURE_VMMCALL);
+> +#endif
+>  
+>  	/* F16h erratum 793, CVE-2013-6885 */
+>  	if (c->x86 == 0x16 && c->x86_model <= 0xf)
+> 
+
