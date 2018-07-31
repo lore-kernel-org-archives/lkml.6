@@ -2,107 +2,118 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF6FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC284C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C91208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98DAA208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:39:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MPccWRkT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C91208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f8sQ+jFW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DAA208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732213AbeGaCLN (ORCPT
+        id S1732132AbeGaCRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:11:13 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37227 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732039AbeGaCLN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:11:13 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k81-v6so24729811oib.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 17:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Q6qAHMtM8Zt3F4yjM8/8LanF+pgDj/Qzv1IxjBBudXA=;
-        b=MPccWRkTWhanoMMspra11+O1jCYtYNVgkk2zCbyZ7c6BEroE+A0zYKXOKEmxPcuVxg
-         s5v6a0NWO0v6Ttr/wq+aVEwLBR84PJ9na0hXZk71SGZc+2/dnrrQJTXnOKHkTDrzaPz3
-         VK0b59DEbLAJI7rDy2zc801kOfLPfm9G7cRT1z5xDz2egDPjQMpjGsNlsEw6JzJwHoHe
-         8Y29j5duHkozDLgqtnfrcX8bu5NFeBo0Y+l1b+kOfpjLqfxuXyrQarGtX8YczfZ3xKOn
-         LMmlnZhXng3QpusuBCfZey9VGunG6M8/ybBjIx/0MhQh/Gl0ter6s+cGe05j2Sam2Ger
-         Ii1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Q6qAHMtM8Zt3F4yjM8/8LanF+pgDj/Qzv1IxjBBudXA=;
-        b=nxBepB3iAjN5pKhJhQPOruxWk/h5W1j0Nnjme3OnJNrDKvE9fFRMiU8GLGOeyVIjgH
-         joWSC6yqGdcdsZuL2FahtNef6VR0E1eAFSBvac9/U1snpWyQ+ZS+X9D/wuPoXruA3oU5
-         T0xMrXW/2IRgLv4xdzepOY4509ZswNs3dBAfVjq52KYUpT3nmBnWgaPOLx2cehVDIxY6
-         5C9yVzoglSGqyFVZtRii+V8uw/4U7nf0RJyT/lpVe4WqzC1bX6Uf4OoMo0TpEGhi1Z2U
-         HBo2Bw9LnqguXFCshYuFrzCgHKyQ45cH09Hz860BlzCxItxBB0OEOtd5X2TGKqd22I0r
-         x21g==
-X-Gm-Message-State: AOUpUlFgeH3biVTgUDyHKDVlgv69+vQgrLkNgL1mHJQdhbh4u/qurQHK
-        YMtvvq9rcHETdBaPIWLtb5TOxJkL5XwkbnfUrlEjvA==
-X-Google-Smtp-Source: AAOMgpePRAHLOsKA22I93VJMZgdFBCbzYnMNlUkQSlLBNuvEi08ptZLYAPqqfjjlwCe+crjaLN1NAuUkcoHnLXRc52E=
-X-Received: by 2002:aca:acc8:: with SMTP id v191-v6mr18527397oie.354.1532997220586;
- Mon, 30 Jul 2018 17:33:40 -0700 (PDT)
+        Mon, 30 Jul 2018 22:17:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:38159 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732039AbeGaCRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 22:17:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41fcyl4kSBz9s1x;
+        Tue, 31 Jul 2018 10:39:43 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1532997585;
+        bh=ERexqFq6BAdOd6UzpCDW2sMMSWCvmIj+v4K6JAoN7Lc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f8sQ+jFWnHUfzWmlb307x1/jGd5oD4zWJlWx3bRlh3UTr0bUJLRHm8szsaTsEx6x+
+         Lzdn3QDXS3IUxruCp3aHb7QreXZiG2i6+zTrURSN9V3FTlCi3wHezPiHfPcY8QSknD
+         DiTlz4sCHhzxEH1G3z9hIXD3WfQVJ+BrKbShvF1QN/I/eH0nCQyPBznCUPv9FOOSiW
+         cJnNzmYqOgseXENdZr69I4pzs6q4w5xjy9vNN5kA29jisFGQwcttbQKsRuv5XOAsyG
+         KXb+UjrQjtokreBeh2xZBLHYGA/r0EECqLqwIRyhXiLT6inECtKywLSDS9r4FRFcAS
+         7b6qJuLWLuvIg==
+Date:   Tue, 31 Jul 2018 10:39:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: linux-next: build warning after merge of the pm tree
+Message-ID: <20180731103923.47c7c294@canb.auug.org.au>
+In-Reply-To: <20180730072445.kt2yxxifx4i7y3fr@paasikivi.fi.intel.com>
+References: <20180730120053.62732d27@canb.auug.org.au>
+        <20180730072445.kt2yxxifx4i7y3fr@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Received: by 2002:ac9:1147:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 17:33:39
- -0700 (PDT)
-In-Reply-To: <20180730172641.7d516231@cakuba.netronome.com>
-References: <CAKOZuesQ6GdNTGDFsNi4o8LYzxLBtYZ=Cz4=aZbqqCNia+QFnQ@mail.gmail.com>
- <20180729205835.34850-1-dancol@google.com> <e8f6e709-e694-ddad-b61e-d2ce1598dff3@iogearbox.net>
- <CAKOZuesH_LRdt15aXaRQRPSNzN-URTQWgSgr0zLsv8ZKFU9=9Q@mail.gmail.com> <20180730172641.7d516231@cakuba.netronome.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 30 Jul 2018 17:33:39 -0700
-Message-ID: <CAKOZuesNnY8oKimMk+gnUppMgZt92F+razSZCSfHu=xfq+snGg@mail.gmail.com>
-Subject: Re: [PATCH v3] Add BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES bpf(2) command
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        netdev <netdev@vger.kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <ast@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cIUv3ou4LxH=jOVXGf4L2o0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 5:26 PM, Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
->
-> On Mon, 30 Jul 2018 03:25:43 -0700, Daniel Colascione wrote:
-> > On Mon, Jul 30, 2018 at 3:04 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
-> > > Hmm, I don't think such UAPI as above is future-proof. In case we would want
-> > > a similar mechanism in future for other maps, we would need a whole new bpf
-> > > command or reuse BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES as a workaround though
-> > > the underlying map may not even be a map-to-map. Additionally, we don't have
-> > > any map object at hand in the above, so we couldn't make any finer grained
-> > > decisions either. Something like below would be more suitable and leaves room
-> > > for extending this further in future.
-> >
-> > YAGNI.  Your proposed mechanism doesn't add anything under the current
-> > implementation.
->
-> FWIW in case of HW offload targeting a particular map may allow users
-> to avoid a potentially slow sync with all the devices on the system.
+--Sig_/cIUv3ou4LxH=jOVXGf4L2o0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Sure. But such a thing doesn't exist right now (right?), and we can
-add that more-efficient-in-that-one-case BPF interface when it lands.
-I'd rather keep things simple for now.
+On Mon, 30 Jul 2018 10:24:45 +0300 Sakari Ailus <sakari.ailus@linux.intel.c=
+om> wrote:
+>
+> On Mon, Jul 30, 2018 at 12:00:53PM +1000, Stephen Rothwell wrote:
+> >=20
+> > After merging the pm tree, today's linux-next build (x86_64 allmodconfi=
+g)
+> > produced this warning:
+> >=20
+> > drivers/media/i2c/mt9v111.c: In function 'mt9v111_set_format':
+> > drivers/media/i2c/mt9v111.c:887:15: warning: 'idx' may be used uninitia=
+lized in this function [-Wmaybe-uninitialized]
+> >   unsigned int idx;
+> >                ^~~
+> >=20
+> > Introduced by commit
+> >=20
+> >   aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
+> >=20
+> > Looks like a false positive, but not something that gcc can easily see.=
+ =20
+>=20
+> This must be coming from a new driver merged to media tree recently. Than=
+ks
+> for reporting this.
+
+Yeah, sorry, process failure.  This should have been reported against
+the v4l-dvb tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/cIUv3ou4LxH=jOVXGf4L2o0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltfr7sACgkQAVBC80lX
+0GzvLgf/bhtKo4+1OmwV+KOKis2Z4fwwj0KbkV5/cEn1mQnDN+5RBwAZjPjIV75Y
+/SWpPRh/B9riwAjZ3geVRkky7mf/x7yoBxVafM9tdAV1+DjPO645rYQZ1jmGYxbG
+qEN/p1NXyE7bkw9CLLPtt6pfr8ImMNj0ugtODNZpgkfbXG7uk/60z06HIXu36Vdv
+vE4nKWmRi8YdJFHWn+6sjshRVG4aiYAjRgWubGxwuRuHBcvh1xEI2C/ud0kg7ZVm
+MV1STUnfjDtUFT/NlrCZT+dinQ5TSy9xIese/GXnvoMAVglSPlCe1+i3T63CHVbH
+nhVxoHWGLZb9lZ+lz5PW0uPT6w+WYQ==
+=po4R
+-----END PGP SIGNATURE-----
+
+--Sig_/cIUv3ou4LxH=jOVXGf4L2o0--
