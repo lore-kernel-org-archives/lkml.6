@@ -3,183 +3,176 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AD3C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7CCC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9367220841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D8F20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:29:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rRXKq7Vf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9367220841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FZsq3DON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D8F20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732349AbeGaVHf (ORCPT
+        id S1732205AbeGaVKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:07:35 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42785 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728800AbeGaVHf (ORCPT
+        Tue, 31 Jul 2018 17:10:54 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41674 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730113AbeGaVKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:07:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so9554127pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:25:48 -0700 (PDT)
+        Tue, 31 Jul 2018 17:10:54 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y10-v6so6577626pfn.8
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=ikNDl+7elGUJ2d3kCdplxvF3vjVOSBtnYK2Ma/4s7Bg=;
-        b=rRXKq7VfHylXLBV9c0roKQ/7+9TxLpWXcyXrBPr1qPen9rGfkcT4AcMKvUc8Rj2JXY
-         +cW0gkJNfhYTOmpvkK/NqidVF2RdJFaDRIBAjP5/AWZX2JL8k/J/0NU06mfkT8MH6RJO
-         +AtfL6NUf9m0d5qunwFcW2gKsVQjTYQOZRBSwoR+2tDIpn8uBxHNkb0sMJm9s9iRuzmr
-         DSwq/N4yS0aGcwOefeFr++2h8ckqsV8ZZoZawp56hENDVQxOx8dK6o5VfehVoQrZrH0d
-         pSvc4h91xbwfcV11+F+v/avXrXPYrZUi08EJ2LN0JI22x4OKkfas/67mYEaSQ0rtCWyj
-         wngg==
+        bh=S21VolcI5E1kI8xiEER7UKrrZ+ItWah2034vi1nFjds=;
+        b=FZsq3DON5cwSJDsE3lHVC/yQtwprP3ORaHV8WQeHiGKI3ECgVzePlUX5MiochTFWX8
+         0ddWwiH9ADyBZZHEGHiCblk2AXbg0ZK2ijDXbap8lrO/PfCFl0/cJyV3DIzi7JTMofX2
+         09JoJtgOjIWhbBpm5sRwQicKO+GWBxIhKfT+w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ikNDl+7elGUJ2d3kCdplxvF3vjVOSBtnYK2Ma/4s7Bg=;
-        b=JpG8UnVkgX44sYLmJH+kGP+klZIbHIvxX7r7+WHxWmw6ZGDY6hykDOhMhp0yWT8nyY
-         IAHFxk8oVkFNgQ24YJn04Pin1fV+JbRO1lMU7sTL+bMG9Z1dfFRue4TJMKGFaohxN47P
-         ga+T2vMuaz0Jg9+jzsXujG2NPvN/uuEOR6TzOP3DTs9rm2IIhyk6UQCwrAZJt4ZdSJmx
-         EeIQHa0w8Tb5hxhOL1WxLOeTU2cWgYoK04pVUzGMjgC5/HTJMpT16hR6RS2otjFXHhtX
-         OKfU5x6TT1VcORK95RGnxLYAxUvl6gN3W37sr8WZyRxIp77OalD0Nh6zutUX/bh10idw
-         70WA==
-X-Gm-Message-State: AOUpUlHPCI7Hq7wSSuE+auG10338LE3EkR0bf4hAJhs5xkVtenWBwafd
-        Nz7gWjcuzZNm8f//X73F/5E=
-X-Google-Smtp-Source: AAOMgpcRJii1MmLfQ7dJDit/m97xn8nF56RbW1kO4ELK1l99gWq0zDaBGxGFTQ9uA6NdhCycWF3tCQ==
-X-Received: by 2002:a62:ee06:: with SMTP id e6-v6mr23446947pfi.2.1533065148071;
-        Tue, 31 Jul 2018 12:25:48 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.216.188])
-        by smtp.gmail.com with ESMTPSA id o4-v6sm40300611pgq.16.2018.07.31.12.25.45
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 31 Jul 2018 12:25:46 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 00:58:33 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     p.zabel@pengutronix.de, airlied@linux.ie, ajitn.linux@gmail.com,
-        leonard.crestez@nxp.com
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        daniel@ffwll.ch
-Subject: [PATCH v2] drm/imx: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20180731192832.GA12073@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=S21VolcI5E1kI8xiEER7UKrrZ+ItWah2034vi1nFjds=;
+        b=FjmcCtyJ8lDiexKA5JPI1zt7BJ2qCTrOxnCInR8KH4bVk3jf8631RDioG7d2AZaYUv
+         sfQfrTqFoiY3CUQDp8Fru9j0x5D7DfPsg6uljzHGgsfxdS9pvp81q3a3AZKB5+VO5mEe
+         0fKRb1NNYaFjq0oWnX3HQvKwlJmWqnXtkE3YznPBT3BhOG+s1rC7vllVv437iBrmRJ8H
+         5UD2Q/+Kg22KwqNyRfi4fFFVUpo4LqVcRt23qLBUjxC2864z5k3oNiP4iJq0pCC3B6Vq
+         DWm/Ei9tObSS/U6KSju3rptrh+AVEqNamODPpmyzwuq63FAWenC3oWohdZuaeSf1SGxU
+         9DPQ==
+X-Gm-Message-State: AOUpUlH+Hz0LnOazC2nCp8e/JwfAXCvFz19tzAM9bOw7sH7lb9+iAWKQ
+        /BMqVL/4IXOpFIIQVvTSXT312g==
+X-Google-Smtp-Source: AAOMgpdYOX3jmU+JyFRBDqoZCeg27pViIaBwS/sOhnyK5I+Xbtg80cS47Za4eZmW1wLcYFBasiLgdA==
+X-Received: by 2002:a62:5ec3:: with SMTP id s186-v6mr23670985pfb.129.1533065346275;
+        Tue, 31 Jul 2018 12:29:06 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm24748037pfi.89.2018.07.31.12.29.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 12:29:05 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 12:29:04 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 07/12] PM / devfreq: export devfreq_class
+Message-ID: <20180731192904.GG68975@google.com>
+References: <20180703234705.227473-1-mka@chromium.org>
+ <CGME20180703234837epcas5p1da751e0394c16816b95ac1956bf6de20@epcas5p1.samsung.com>
+ <20180703234705.227473-8-mka@chromium.org>
+ <5B3C5B78.6020401@samsung.com>
+ <20180706180923.GH129942@google.com>
+ <41164a91-b271-5f3b-b461-21ff5997cc84@samsung.com>
+ <20180716194114.GA129942@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180716194114.GA129942@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+On Mon, Jul 16, 2018 at 12:41:14PM -0700, Matthias Kaehlcke wrote:
+> Hi Chanwoo,
+> 
+> On Thu, Jul 12, 2018 at 06:08:36PM +0900, Chanwoo Choi wrote:
+> > Hi Matthias,
+> > 
+> > On 2018년 07월 07일 03:09, Matthias Kaehlcke wrote:
+> > > Hi,
+> > > 
+> > > On Wed, Jul 04, 2018 at 02:30:32PM +0900, Chanwoo Choi wrote:
+> > > 
+> > >> I didn't see any framework which exporting the class instance.
+> > >> It is very dangerous. Unknown device drivers is able to reset
+> > >> the 'devfreq_class' instance. I can't agree this approach.
+> > > 
+> > > While I agree that it is potential dangerous it is actually a common
+> > > practice to export the class:
+> > > 
+> > 
+> > I tried to find the real usage of exported class instance
+> > and I add the comment for each class instance. Almost exported class
+> > instance are used in the their own director or some exported class
+> > like rio_mport_class/switchtec_class are created from specific device driver
+> > instead of subsystem.
+> > 
+> > Only following two cases are used on outside of subsystem directory.
+> > devtmpfs.c and alarmtimer.c are core feature of linux kernel.
+> > 
+> > 	drivers/base/devtmpfs.c uses 'block_class'.
+> > 	kernel/time/alarmtimer.c uses 'rtc_class'.
+> > 
+> > I cannot yet agree this approach due to only block_class and rtc_class.
+> 
+> I thought your main concern was that the class is exported, which is
+> what several other subsystems do. That the class isn't used outside of
+> the subsystem directory most likely means that there is no need for
+> it, rather than that it shouldn't be done at all (depending on the
+> type of use of course).
+> 
+> In any case not exporting the class object provides a limited
+> protection against potential abuse of the class at best. To use the
+> class API all that is needed is a 'struct device' of a devfreq device,
+> which has a pointer to the class object (dev->class).
+> 
+> Theoretically I could register a fake devfreq device to obtain access
+> to the class object, though that doesn't seem a very neat approach ;-)
+> 
+> > You added the following comment why devfreq_class instance is necessary.
+> > Actullay, I don't know the best solution right now. But, all device drivers
+> > can be added or removed if driver uses the module type. It is not a problem
+> > for only devfreq instance.
+> 
+> Certainly it's not a problem limited to devfreq devices. In many other
+> cases bus notifiers can be used, but since devfreq devices areen't
+> tied to a specific bus this is not an option here.
+> 
+> If you really don't want to export the class we could add wrappers
+> for (un)registering a class interface:
+> 
+> int devfreq_class_interface_register(struct class_interface *)
+> void devfreq_class_interface_unregister(struct class_interface *)
+> 
+> The wrappers would have to assign ci->class since the throttler
+> can't see the class object.
+> 
+> Or add notifiers for device addition/removal, though the throttler
+> relies on the behavior of the class_interface which also notifies
+> about devices added before registration. This might not be what other
+> potential users of the notifiers expect.
 
-with this conversion, both the members of struct
-imx_drm_device pipes and state will be no more
-useful and it could be removed forever.
+Ping
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
----
-v2: Address Philipp's comment. Remove
-    struct imx_drm_device.
+Could we please try to find a solution/reach a conclusion for this?
 
- drivers/gpu/drm/imx/imx-drm-core.c | 43 ++------------------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 1d053bb..a692d68 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -35,12 +35,6 @@
- 
- #define MAX_CRTC	4
- 
--struct imx_drm_device {
--	struct drm_device			*drm;
--	unsigned int				pipes;
--	struct drm_atomic_state			*state;
--};
--
- #if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
- static int legacyfb_depth = 16;
- module_param(legacyfb_depth, int, 0444);
-@@ -219,22 +213,12 @@ static int compare_of(struct device *dev, void *data)
- static int imx_drm_bind(struct device *dev)
- {
- 	struct drm_device *drm;
--	struct imx_drm_device *imxdrm;
- 	int ret;
- 
- 	drm = drm_dev_alloc(&imx_drm_driver, dev);
- 	if (IS_ERR(drm))
- 		return PTR_ERR(drm);
- 
--	imxdrm = devm_kzalloc(dev, sizeof(*imxdrm), GFP_KERNEL);
--	if (!imxdrm) {
--		ret = -ENOMEM;
--		goto err_unref;
--	}
--
--	imxdrm->drm = drm;
--	drm->dev_private = imxdrm;
--
- 	/*
- 	 * enable drm irq mode.
- 	 * - with irq_enabled = true, we can use the vblank feature.
-@@ -306,7 +290,6 @@ static int imx_drm_bind(struct device *dev)
- 	component_unbind_all(drm->dev, drm);
- err_kms:
- 	drm_mode_config_cleanup(drm);
--err_unref:
- 	drm_dev_unref(drm);
- 
- 	return ret;
-@@ -355,37 +338,15 @@ static int imx_drm_platform_remove(struct platform_device *pdev)
- static int imx_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct imx_drm_device *imxdrm;
--
--	/* The drm_dev is NULL before .load hook is called */
--	if (drm_dev == NULL)
--		return 0;
--
--	drm_kms_helper_poll_disable(drm_dev);
- 
--	imxdrm = drm_dev->dev_private;
--	imxdrm->state = drm_atomic_helper_suspend(drm_dev);
--	if (IS_ERR(imxdrm->state)) {
--		drm_kms_helper_poll_enable(drm_dev);
--		return PTR_ERR(imxdrm->state);
--	}
--
--	return 0;
-+	return drm_mode_config_helper_suspend(drm_dev);
- }
- 
- static int imx_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	struct imx_drm_device *imx_drm;
- 
--	if (drm_dev == NULL)
--		return 0;
--
--	imx_drm = drm_dev->dev_private;
--	drm_atomic_helper_resume(drm_dev, imx_drm->state);
--	drm_kms_helper_poll_enable(drm_dev);
--
--	return 0;
-+	return drm_mode_config_helper_resume(drm_dev);
- }
- #endif
- 
--- 
-1.9.1
-
+Not that it should affect the outcome of this discussion, but I want
+to mention that from my point of view it is a bit unfortunate that
+this and other fundamental concerns were only raised after I spent
+significant time on repeatedly refactoring the throttler driver to
+address other comments. Since you and MyungJoo Ham previously had only
+minor comments on the other devfreq patches in this series I assumed
+there were no major concerns from your side :(
