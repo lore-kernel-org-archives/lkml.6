@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD44C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC67C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0331520841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0331520841
+	by mail.kernel.org (Postfix) with ESMTP id CE19B20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE19B20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=isi.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732509AbeGaQKv (ORCPT
+        id S1732524AbeGaQKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:10:51 -0400
+        Tue, 31 Jul 2018 12:10:52 -0400
 Received: from mail-d.ads.isi.edu ([128.9.180.199]:62437 "EHLO
         mail-d.ads.isi.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732266AbeGaQKu (ORCPT
+        with ESMTP id S1732266AbeGaQKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:10:50 -0400
+        Tue, 31 Jul 2018 12:10:52 -0400
 X-IronPort-AV: E=Sophos;i="5.51,427,1526367600"; 
-   d="scan'208";a="2634425"
+   d="scan'208";a="2634428"
 Received: from guest228.east.isi.edu (HELO localhost) ([65.123.202.228])
-  by mail-d.ads.isi.edu with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 07:30:14 -0700
+  by mail-d.ads.isi.edu with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 07:30:16 -0700
 From:   Alexei Colin <acolin@isi.edu>
 To:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
 Cc:     Alexei Colin <acolin@isi.edu>,
         Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        John Paul Walters <jwalters@isi.edu>, x86@kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH 5/6] arm: enable RapidIO menu in Kconfig
-Date:   Tue, 31 Jul 2018 10:29:53 -0400
-Message-Id: <20180731142954.30345-6-acolin@isi.edu>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH 6/6] arm64: enable RapidIO menu in Kconfig
+Date:   Tue, 31 Jul 2018 10:29:54 -0400
+Message-Id: <20180731142954.30345-7-acolin@isi.edu>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180731142954.30345-1-acolin@isi.edu>
 References: <20180731142954.30345-1-acolin@isi.edu>
@@ -53,35 +53,36 @@ be want support for a RapidIO PCI device. Platforms without a PCI bus
 that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
 in the platform-/machine-specific "config ARCH_*" Kconfig entry.
 
-Tested that kernel builds for ARM with the RapidIO subsystem and switch
-drivers enabled.
+Tested that kernel builds for arm64 with RapidIO subsystem and
+switch drivers enabled, also that the modules load successfully
+on a custom Aarch64 Qemu model.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Russell King <linux@armlinux.org.uk>
 Cc: John Paul Walters <jwalters@isi.edu>
-Cc: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org
 Cc: linuxppc-dev@lists.ozlabs.org
 Cc: linux-mips@linux-mips.org
 Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
 Signed-off-by: Alexei Colin <acolin@isi.edu>
 ---
- arch/arm/Kconfig | 2 ++
+ arch/arm64/Kconfig | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index afe350e5e3d9..602a61324890 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a8f0c74e6f7f..5e8cf90505ec 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -308,6 +308,8 @@ config PCI_SYSCALL
  
  source "drivers/pci/Kconfig"
  
 +source "drivers/rapidio/Kconfig"
 +
- source "drivers/pcmcia/Kconfig"
- 
  endmenu
+ 
+ menu "Kernel Features"
 -- 
 2.18.0
 
