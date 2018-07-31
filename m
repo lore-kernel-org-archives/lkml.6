@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAA9C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B566C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418C620841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:51:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418C620841
+	by mail.kernel.org (Postfix) with ESMTP id F3DE920841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:51:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3DE920841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732635AbeGaQbw (ORCPT
+        id S1732648AbeGaQb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:31:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732443AbeGaQbv (ORCPT
+        Tue, 31 Jul 2018 12:31:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43338 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732443AbeGaQb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:31:51 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VE8xkw012999
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:09 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kjqk4xpbc-1
+        Tue, 31 Jul 2018 12:31:57 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VE95fJ118056
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:15 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kjr2snawh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:09 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:51:15 -0400
 Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Tue, 31 Jul 2018 08:51:08 -0600
+        Tue, 31 Jul 2018 08:51:14 -0600
 Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 31 Jul 2018 08:51:04 -0600
+        Tue, 31 Jul 2018 08:51:09 -0600
 Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6VEp3B864094452
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6VEp7fb22544688
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 31 Jul 2018 07:51:03 -0700
+        Tue, 31 Jul 2018 07:51:07 -0700
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EC0E2BE05D;
-        Tue, 31 Jul 2018 08:51:02 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id B8374BE051;
+        Tue, 31 Jul 2018 08:51:07 -0600 (MDT)
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9A67BE04F;
-        Tue, 31 Jul 2018 08:50:59 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 5531EBE056;
+        Tue, 31 Jul 2018 08:51:04 -0600 (MDT)
 Received: from kermit-br-ibm-com.br.ibm.com (unknown [9.18.235.193])
         by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Jul 2018 08:50:59 -0600 (MDT)
+        Tue, 31 Jul 2018 08:51:04 -0600 (MDT)
 From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
@@ -69,8 +69,8 @@ Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
         Simon Guo <wei.guo.simon@gmail.com>,
         Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
         "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v3 7/9] powerpc: Add stacktrace.h header
-Date:   Tue, 31 Jul 2018 11:50:18 -0300
+Subject: [PATCH v3 8/9] powerpc/traps: Show instructions on exceptions
+Date:   Tue, 31 Jul 2018 11:50:19 -0300
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180731145020.14009-1-muriloo@linux.ibm.com>
 References: <20180731145020.14009-1-muriloo@linux.ibm.com>
@@ -78,80 +78,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18073114-0020-0000-0000-00000E461E0B
+x-cbid: 18073114-0016-0000-0000-000009104437
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009463; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01068483; UDB=6.00549299; IPR=6.00846683;
- MB=3.00022427; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-31 14:51:08
+ PH=3.00000004; SC=3.00000266; SDB=6.01068484; UDB=6.00549299; IPR=6.00846683;
+ MB=3.00022427; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-31 14:51:13
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073114-0021-0000-0000-000062792EE7
-Message-Id: <20180731145020.14009-8-muriloo@linux.ibm.com>
+x-cbparentid: 18073114-0017-0000-0000-00003FD389A9
+Message-Id: <20180731145020.14009-9-muriloo@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=923 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=658 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807310137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move show_instructions() declaration to
-arch/powerpc/include/asm/stacktrace.h and include asm/stracktrace.h in
-arch/powerpc/kernel/process.c, which contains the implementation.
+Call show_instructions() in arch/powerpc/kernel/traps.c to dump
+instructions at faulty location, useful to debugging.
 
-This allows show_instructions() to be called on, for example,
-show_signal_msg().
+Before this patch, an unhandled signal message looked like:
+
+  pandafault[10524]: segfault (11) at 100007d0 nip 1000061c lr 7fffbd295100 code 2 in pandafault[10000000+10000]
+
+After this patch, it looks like:
+
+  pandafault[10524]: segfault (11) at 100007d0 nip 1000061c lr 7fffbd295100 code 2 in pandafault[10000000+10000]
+  Instruction dump:
+  4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
+  392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
 
 Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 ---
- arch/powerpc/include/asm/stacktrace.h | 13 +++++++++++++
- arch/powerpc/kernel/process.c         |  3 ++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
- create mode 100644 arch/powerpc/include/asm/stacktrace.h
+ arch/powerpc/kernel/traps.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/stacktrace.h b/arch/powerpc/include/asm/stacktrace.h
-new file mode 100644
-index 000000000000..217ebc52ff97
---- /dev/null
-+++ b/arch/powerpc/include/asm/stacktrace.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Stack trace functions.
-+ *
-+ * Copyright 2018, Murilo Opsfelder Araujo, IBM Corporation.
-+ */
-+
-+#ifndef _ASM_POWERPC_STACKTRACE_H
-+#define _ASM_POWERPC_STACKTRACE_H
-+
-+void show_instructions(struct pt_regs *regs);
-+
-+#endif /* _ASM_POWERPC_STACKTRACE_H */
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 50094c44bf79..e78799a8855a 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -52,6 +52,7 @@
- #include <asm/machdep.h>
- #include <asm/time.h>
- #include <asm/runlatch.h>
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index e71f12bca146..b27f3f71d745 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -70,6 +70,7 @@
+ #include <asm/hmi.h>
+ #include <sysdev/fsl_pci.h>
+ #include <asm/kprobes.h>
 +#include <asm/stacktrace.h>
- #include <asm/syscalls.h>
- #include <asm/switch_to.h>
- #include <asm/tm.h>
-@@ -1261,7 +1262,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
  
- static int instructions_to_print = 16;
+ #if defined(CONFIG_DEBUGGER) || defined(CONFIG_KEXEC_CORE)
+ int (*__debugger)(struct pt_regs *regs) __read_mostly;
+@@ -356,6 +357,8 @@ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+ 	print_vma_addr(KERN_CONT " in ", regs->nip);
  
--static void show_instructions(struct pt_regs *regs)
-+void show_instructions(struct pt_regs *regs)
- {
- 	int i;
- 	unsigned long pc = regs->nip - (instructions_to_print * 3 / 4 *
+ 	pr_cont("\n");
++
++	show_instructions(regs);
+ }
+ 
+ void _exception_pkey(int signr, struct pt_regs *regs, int code,
 -- 
 2.17.1
 
