@@ -5,89 +5,103 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCECC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6952C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62E4D208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:47:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62E4D208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 620E3208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 620E3208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731868AbeGaM1f (ORCPT
+        id S1731928AbeGaM1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:27:35 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:54712 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727409AbeGaM1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:27:35 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowACXkjIgPmBb04x9Eg--.22173S2;
-        Tue, 31 Jul 2018 18:47:10 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v2 16/17] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
-        bp@alien8.de, thomas.lendacky@amd.com, mingo@redhat.com,
-        hpa@zytor.com, peterz@infradead.org, tony.luck@intel.com,
-        rkrcmar@redhat.com, boris.ostrovsky@oracle.com, jgross@suse.com,
-        rjw@rjwysocki.net, lenb@kernel.org, viresh.kumar@linaro.org,
-        mchehab@kernel.org, trenn@suse.com, shuah@kernel.org,
-        x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1532352037-7151-1-git-send-email-puwen@hygon.cn>
- <1532352037-7151-17-git-send-email-puwen@hygon.cn>
- <b24739e8-0833-8509-0850-815758accaee@redhat.com>
- <c8f53708-bd57-fb41-8300-115ac5083094@hygon.cn>
- <1360de2a-5aae-bfd7-ced1-f707b29e7b1f@redhat.com>
-Message-ID: <62003623-b4ee-9ddd-261a-d48b7cf2ce36@hygon.cn>
-Date:   Tue, 31 Jul 2018 18:46:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Tue, 31 Jul 2018 08:27:44 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61309 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731264AbeGaM1o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 08:27:44 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6VAlxXT001629;
+        Tue, 31 Jul 2018 19:47:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Tue, 31 Jul 2018 19:47:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6VAln17001609
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 31 Jul 2018 19:47:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
+ <20180730093257.GG24267@dhcp22.suse.cz>
+ <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
+ <20180730144647.GX24267@dhcp22.suse.cz>
+ <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
+ <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
+ <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
+ <20180730185110.GB24267@dhcp22.suse.cz>
+ <20180730191005.GC24267@dhcp22.suse.cz>
+ <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
+ <20180731050928.GA4557@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b03f09c2-f749-9c80-b4f6-d0b4a9634013@i-love.sakura.ne.jp>
+Date:   Tue, 31 Jul 2018 19:47:45 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1360de2a-5aae-bfd7-ced1-f707b29e7b1f@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180731050928.GA4557@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: swCowACXkjIgPmBb04x9Eg--.22173S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF17CFyrGFyUKr1xZr1xGrg_yoWxKrb_WF
-        n2grn5G3yfJFWv9r4kGF4rZrZ3JrW5Gr1Ig34vk342k34SyFWYg3ZrGr1DZ3Z2kFW3Jryq
-        9r45tFs8CFW29jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbVkYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26F4j6r4UJw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAI
-        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-        nxnUUI43ZEXa7IU8oSoJUUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/31 15:38, Paolo Bonzini wrote:
-> But if that's the case, it doesn't make sense to have a new vendor!  If
-> AMD's 17h and Hygon's 18h ever diverge, you could always choose the
-> right behavior based on the family, without checking the vendor.
+On 2018/07/31 14:09, Michal Hocko wrote:
+> On Tue 31-07-18 06:01:48, Tetsuo Handa wrote:
+>> On 2018/07/31 4:10, Michal Hocko wrote:
+>>> Since should_reclaim_retry() should be a natural reschedule point,
+>>> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
+>>> order to guarantee that other pending work items are started. This will
+>>> workaround this problem and it is less fragile than hunting down when
+>>> the sleep is missed. E.g. we used to have a sleeping point in the oom
+>>> path but this has been removed recently because it caused other issues.
+>>> Having a single sleeping point is more robust.
+>>
+>> linux.git has not removed the sleeping point in the OOM path yet. Since removing the
+>> sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
 > 
-> However, if the x86 maintainers prefer to have a new X86_VENDOR_*
-> constant, I'd just ignore the fact that AMD will skip family 18h, and
-> introduce vendor checks along the lines below.  This has the advantage
-> that it's not an issue if AMD ends up _not_ skipping family 18h.
+> is this an {Acked,Reviewed,Tested}-by?
 
-Thanks for the suggestion. It's reasonable for the fully consideration.
-For code consistency, will check explicitly for Hygon before testing
-family 18h in next patch set.
+I'm saying that "we used to have a sleeping point in the oom path but this has been
+removed recently" is not true. You need to send that patch to linux.git first if you
+want to refer that patch in this patch.
 
-Thanks,
-Pu Wen
+> 
+> I will send the patch to Andrew if the patch is ok. 
 
+Andrew, can we send the "we used to have a sleeping point in the oom path but this has
+been removed recently" patch to linux.git ?
+
+> 
+>> (And that change will conflict with Roman's cgroup aware OOM killer patchset. But it
+>> should be easy to rebase.)
+> 
+> That is still a WIP so I would lose sleep over it.
+> 
