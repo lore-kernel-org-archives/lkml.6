@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C822C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367C720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F4220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AAyiPCtU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367C720870
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nxbst5UF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F4220870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732705AbeGaVfF (ORCPT
+        id S1732692AbeGaVfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:35:05 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46971 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732438AbeGaVd6 (ORCPT
+        Tue, 31 Jul 2018 17:35:04 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39407 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732508AbeGaVd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 17:33:58 -0400
-Received: by mail-pl0-f66.google.com with SMTP id t17-v6so7617303ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:05 -0700 (PDT)
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so6602227pff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=45iL7Ldcofjua4QTthWpvp4bypb36mbYsmy1cy+Yls0=;
-        b=AAyiPCtUyDcoscvOh6VqrE4faK+y6sGszIb03aty4g4GJ7LvA2bKrlIrd10WzkcoaQ
-         gNsGPXjMkZXFSMBtxn6RsSKb6qxoVovZflOyksoajC12u3zy57C1oR4W+d/ng0/FqaaF
-         VdjaQE4YRnqStB31UezeElhXH4fgbeWE3bZxY=
+        bh=3OvSvhiWGfKwBGltm/rvyh7qZB9008ij8gz9HAV4Lqk=;
+        b=nxbst5UFI6ttwo3y5vEiDrfIHGj15RF08ksX5JVVnJ3mttwmbwFPcsE/dqobTs41Wq
+         sg+Su0vlKSeGlE3IwmOTADJVSeNxNlS2hV1Sr08Yf4VrcMLc5PDuB50vCh027Vyg8ORI
+         0yt7Mth7nY7TFX0KkXJROC8hXiE4OtCw/v05s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=45iL7Ldcofjua4QTthWpvp4bypb36mbYsmy1cy+Yls0=;
-        b=ILriFcI/U6VCJaOeCsAoqDxfrfwKHZUSByPXtqhv9RbkZ1bqFs77Q9TvUr01i+zki/
-         q/GwYy+Okb04s5DkkFTN6XfJhymab0TLcRkLo4ssGzpqF/6l1aXIkLYMzWusmyLS7aqX
-         s2PKJTrKgGj4Qe1LLkw0EyVxSMoG3BUe93HMUCYeAkCJD8zymcrduQ1oUV4hxBSkX7FH
-         +qi5So9wUMS3py/8Hb8Lv/uGLF1ywk6xhH2xRiWG3Wm9QZL8myOAgMTpz1u1pEvlxNBG
-         zs7OFj7G8ppzNJoa8COqKLE8nUVePkse6wSSVl4yaaulaxqOfmCVnKNeisd8C/FT9I+i
-         TDmQ==
-X-Gm-Message-State: AOUpUlHbXa4ZXl/AQKZFOxE/IOctp6hdnr/GBupUkxCyKfk6wF3TyTcq
-        YHBdBv8Mv3GSS0c+Xq7g/OxLug==
-X-Google-Smtp-Source: AAOMgpd9f9YLQRSpPWxnszsPRpXgnrtmKuMAeE9ivm8Fs43l+rqaAJzz7PTrgC8gANg0yAPaK8gmAQ==
-X-Received: by 2002:a17:902:64d7:: with SMTP id y23-v6mr21669490pli.53.1533066724978;
-        Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
+        bh=3OvSvhiWGfKwBGltm/rvyh7qZB9008ij8gz9HAV4Lqk=;
+        b=hEcJIKSDPIhyCGeFxvCPqhyqVLAh6cQjPVJgKAx7N9G7d0LJD2QT7DEPkMqD6xuTC0
+         UciYZPdnr62hVq8uKeTHp1ewYo83Ptb79Zqq2nE8oRfOeIacY/QSjJWoG0ZjVy/qAQZZ
+         ztZSYufKvqCiisdDFTI3JnFyHft1Ns2FWKJluFw4mkZ001d54l2WilLGOpcrxTlvSs/B
+         PpCTWC0ciC3GrIqX6VTyoCrUvxditRJiMAwhqz2o8QviK5j+NFgvFtaAA+JsgjlaV7/C
+         hqwR3erHvpca0J1fenCWFqliTzBa+FyytewV7qDMMAnbeaux43+yJax+/zDmI/y77+xo
+         D+QA==
+X-Gm-Message-State: AOUpUlGAAT1tC5lulp9n5/6aNA4EO0gkx4l4KQ9ilvYcIhylR10hw0kP
+        Yjf/ggX6nrv9iD7fBMmyyIehmA==
+X-Google-Smtp-Source: AAOMgpfA8TnocLtlFK3lIbE2T0YqEIB06abj6GF5He1qlw2z57cOFNeRcI+TbAtFFn5/LrtDNHAf7Q==
+X-Received: by 2002:a63:81c3:: with SMTP id t186-v6mr22027654pgd.413.1533066725831;
+        Tue, 31 Jul 2018 12:52:05 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v30-v6sm24729153pgn.80.2018.07.31.12.52.02
+        by smtp.gmail.com with ESMTPSA id h130-v6sm31309276pgc.88.2018.07.31.12.52.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 31 Jul 2018 12:52:02 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -81,9 +81,9 @@ Cc:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi passthrough request users
-Date:   Tue, 31 Jul 2018 12:51:48 -0700
-Message-Id: <20180731195155.46664-4-keescook@chromium.org>
+Subject: [PATCH v2 4/9] target: don't depend on SCSI
+Date:   Tue, 31 Jul 2018 12:51:49 -0700
+Message-Id: <20180731195155.46664-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180731195155.46664-1-keescook@chromium.org>
 References: <20180731195155.46664-1-keescook@chromium.org>
@@ -94,49 +94,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christoph Hellwig <hch@lst.de>
 
-Split scsi_common.o out of SCSI so that non-SCSI users can pull it in
-easily for future sense buffer helper usage.
+The core target code only needs code from scsi_common.c, which is now
+separately selectable.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/Makefile      | 2 +-
- drivers/scsi/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/target/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 24cd47014657..a6abd7a856c6 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -76,7 +76,7 @@ obj-$(CONFIG_DMA_SHARED_BUFFER) += dma-buf/
- obj-$(CONFIG_NUBUS)		+= nubus/
- obj-y				+= macintosh/
- obj-$(CONFIG_IDE)		+= ide/
--obj-$(CONFIG_SCSI)		+= scsi/
-+obj-y				+= scsi/
- obj-y				+= nvme/
- obj-$(CONFIG_ATA)		+= ata/
- obj-$(CONFIG_TARGET_CORE)	+= target/
-diff --git a/drivers/scsi/Makefile b/drivers/scsi/Makefile
-index e29f9b8fd66d..1f6218b98430 100644
---- a/drivers/scsi/Makefile
-+++ b/drivers/scsi/Makefile
-@@ -21,6 +21,7 @@ CFLAGS_gdth.o    = # -DDEBUG_GDTH=2 -D__SERIAL__ -D__COM2__ -DGDTH_STATISTICS
- obj-$(CONFIG_PCMCIA)		+= pcmcia/
+diff --git a/drivers/target/Kconfig b/drivers/target/Kconfig
+index 4c44d7bed01a..cb6f32ce7de8 100644
+--- a/drivers/target/Kconfig
++++ b/drivers/target/Kconfig
+@@ -1,10 +1,10 @@
  
- obj-$(CONFIG_SCSI)		+= scsi_mod.o
-+obj-$(CONFIG_BLK_SCSI_REQUEST)	+= scsi_common.o
+ menuconfig TARGET_CORE
+ 	tristate "Generic Target Core Mod (TCM) and ConfigFS Infrastructure"
+-	depends on SCSI && BLOCK
++	depends on BLOCK
+ 	select CONFIGFS_FS
+ 	select CRC_T10DIF
+-	select BLK_SCSI_REQUEST # only for scsi_command_size_tbl..
++	select BLK_SCSI_REQUEST
+ 	select SGL_ALLOC
+ 	default n
+ 	help
+@@ -29,6 +29,7 @@ config TCM_FILEIO
  
- obj-$(CONFIG_RAID_ATTRS)	+= raid_class.o
- 
-@@ -155,7 +156,6 @@ obj-$(CONFIG_SCSI_HISI_SAS) += hisi_sas/
- obj-$(CONFIG_SCSI_DEBUG)	+= scsi_debug.o
- scsi_mod-y			+= scsi.o hosts.o scsi_ioctl.o \
- 				   scsicam.o scsi_error.o scsi_lib.o
--scsi_mod-y			+= scsi_common.o
- scsi_mod-$(CONFIG_SCSI_CONSTANTS) += constants.o
- scsi_mod-$(CONFIG_SCSI_DMA)	+= scsi_lib_dma.o
- scsi_mod-y			+= scsi_scan.o scsi_sysfs.o scsi_devinfo.o
+ config TCM_PSCSI
+ 	tristate "TCM/pSCSI Subsystem Plugin for Linux/SCSI"
++	depends on SCSI
+ 	help
+ 	Say Y here to enable the TCM/pSCSI subsystem plugin for non-buffered
+ 	passthrough access to Linux/SCSI device
 -- 
 2.17.1
 
