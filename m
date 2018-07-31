@@ -2,77 +2,107 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2E5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB8AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2A4208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:04:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cbYIxVjz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2A4208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A3FA208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3FA208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbeGaNod (ORCPT
+        id S1732038AbeGaNqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:44:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45968 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731272AbeGaNod (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:44:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=35UC22Qf1bVFqde/kuy9JANvy0ja3rv6CmjqXcPL7Nk=; b=cbYIxVjzICmQjSqef3G/5f2dh
-        wUfL7NhF3MjG1zFVnrBAjEAGVbB+0LucXv7rJuwtI+xClIn0LhrvZFOPofpdnXIlBF0xil/+8gFXb
-        t3R+JzTBrj+oDZf8AtiTiLz093eqO4XTkxtHz4++Liofo6wqrUg8NmW4Ur0+5TrZlrEUZJ2a8feV5
-        P7D/UMZm+53MuOKXP1xC5CWy7DdQIk0bJNLbEmbNJWln2M3wbTtDDIVIrZxOIyJYFnTuB7i+8Mys3
-        aCRYYaunwLF0e1NmAS/tkTXgXIvXQ0gkw+3uTJyQqk2o/48O9GFebhCYlfJ3Y5kDJc5jxm3oX/R5M
-        4Ryiuf5tg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkTO8-0001zI-90; Tue, 31 Jul 2018 12:04:28 +0000
-Date:   Tue, 31 Jul 2018 05:04:28 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/6] arm: enable RapidIO menu in Kconfig
-Message-ID: <20180731120428.GA5696@infradead.org>
-References: <20180730225035.28365-1-acolin@isi.edu>
- <20180730225035.28365-6-acolin@isi.edu>
+        Tue, 31 Jul 2018 09:46:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52158 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729723AbeGaNqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:46:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B9638AD39;
+        Tue, 31 Jul 2018 12:06:09 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 14:06:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org
+Subject: Re: [PATCH v2] mm: terminate the reclaim early when direct reclaiming
+Message-ID: <20180731120607.GK4557@dhcp22.suse.cz>
+References: <1533035368-30911-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180731111924.GI4557@dhcp22.suse.cz>
+ <CAGWkznGrc4cgMN4P5OJKGi_UV6kU_6yjV9XcPHv5MVRn11+pzw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730225035.28365-6-acolin@isi.edu>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAGWkznGrc4cgMN4P5OJKGi_UV6kU_6yjV9XcPHv5MVRn11+pzw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 06:50:33PM -0400, Alexei Colin wrote:
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index afe350e5e3d9..602a61324890 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
->  
->  source "drivers/pci/Kconfig"
->  
-> +source "drivers/rapidio/Kconfig"
+On Tue 31-07-18 19:58:20, Zhaoyang Huang wrote:
+> On Tue, Jul 31, 2018 at 7:19 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Tue 31-07-18 19:09:28, Zhaoyang Huang wrote:
+> > > This patch try to let the direct reclaim finish earlier than it used
+> > > to be. The problem comes from We observing that the direct reclaim
+> > > took a long time to finish when memcg is enabled. By debugging, we
+> > > find that the reason is the softlimit is too low to meet the loop
+> > > end criteria. So we add two barriers to judge if it has reclaimed
+> > > enough memory as same criteria as it is in shrink_lruvec:
+> > > 1. for each memcg softlimit reclaim.
+> > > 2. before starting the global reclaim in shrink_zone.
+> >
+> > Then I would really recommend to not use soft limit at all. It has
+> > always been aggressive. I have propose to make it less so in the past we
+> > have decided to go that way because we simply do not know whether
+> > somebody depends on that behavior. Your changelog doesn't really tell
+> > the whole story. Why is this a problem all of the sudden? Nothing has
+> > really changed recently AFAICT. Cgroup v1 interface is mostly for
+> > backward compatibility, we have much better ways to accomplish
+> > workloads isolation in cgroup v2.
+> >
+> > So why does it matter all of the sudden?
+> >
+> > Besides that EXPORT_SYMBOL for such a low level functionality as the
+> > memory reclaim is a big no-no.
+> >
+> > So without a much better explanation and with a low level symbol
+> > exported NAK from me.
+> >
+> My test workload is from Android system, where the multimedia apps
+> require much pages. We observed that one thread of the process trapped
+> into mem_cgroup_soft_limit_reclaim within direct reclaim and also
+> blocked other thread in mmap or do_page_fault(by semphore?).
 
-Please include this from drivers/Kconfig instead of enabling it
-for a completely random set of architectures.
+This requires a much more specific analysis
+
+> Furthermore, we also observed other long time direct reclaim related
+> with soft limit which are supposed to cause page thrash as the
+> allocator itself is the most right of the rb_tree .
+
+I do not follow.
+
+> Besides, even
+> without the soft_limit, shall the 'direct reclaim' check the watermark
+> firstly before shrink_node, for the concurrent kswapd may have
+> reclaimed enough pages for allocation.
+
+Yes, but the direct reclaim is also a way to throttle allocation
+requests and we want them to do at least some work. Making shortcuts
+here can easily backfire and allow somebody to runaway too quickly.
+Not that this wouldn't be possible right now but adding more heuristic
+is surely tricky and far from trivial.
+-- 
+Michal Hocko
+SUSE Labs
