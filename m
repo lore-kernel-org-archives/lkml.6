@@ -2,94 +2,80 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9078EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03786C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E222208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:07:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E222208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id B25C6208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25C6208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732000AbeGaLqk (ORCPT
+        id S1731616AbeGaLsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:46:40 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:32754 "EHLO mx2.mailbox.org"
+        Tue, 31 Jul 2018 07:48:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:51620 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727524AbeGaLqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:46:39 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 0D08641113;
-        Tue, 31 Jul 2018 12:07:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id c-3RN5yAc0lw; Tue, 31 Jul 2018 12:07:02 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 12:07:01 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Martijn Coenen <maco@android.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>, rlove@google.com,
-        ben@decadent.org.uk
-Subject: Re: [PATCH 1/4] file: export __alloc_fd()
-Message-ID: <20180731100701.GA18871@mailbox.org>
-References: <20180730143710.14413-1-christian@brauner.io>
- <20180730143710.14413-2-christian@brauner.io>
- <20180730163155.GA27761@infradead.org>
- <20180730203633.GC12962@bombadil.infradead.org>
- <CAB0TPYG5T_d32iwt8Lgq_nDO_COWfWBfuSzErraASSuTYGm3yQ@mail.gmail.com>
+        id S1727409AbeGaLsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:48:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 270BC1596;
+        Tue, 31 Jul 2018 03:09:17 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ECD893F5BA;
+        Tue, 31 Jul 2018 03:09:16 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id D03A71AE17A1; Tue, 31 Jul 2018 11:09:18 +0100 (BST)
+Date:   Tue, 31 Jul 2018 11:09:18 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Kees Cook <keescook@google.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Popov <alex.popov@linux.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Message-ID: <20180731100918.GC23281@arm.com>
+References: <20180727190207.7ce1c9b0@canb.auug.org.au>
+ <20180727190647.3525f5f7@canb.auug.org.au>
+ <20180727205511.7c0f2e62@canb.auug.org.au>
+ <20180727125522.GA6173@arm.com>
+ <20180730173356.694fbf4e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAB0TPYG5T_d32iwt8Lgq_nDO_COWfWBfuSzErraASSuTYGm3yQ@mail.gmail.com>
+In-Reply-To: <20180730173356.694fbf4e@canb.auug.org.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:44:33AM +0200, Martijn Coenen wrote:
-> On Mon, Jul 30, 2018 at 10:36 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > I'm not entirely sure I understand the binder code (... does anyone?)
-> > but from what I can see, it intends to open a file descriptor in the
-> > process which is the target of the message being sent.
+On Mon, Jul 30, 2018 at 05:33:56PM +1000, Stephen Rothwell wrote:
+> On Fri, 27 Jul 2018 13:55:22 +0100 Will Deacon <will.deacon@arm.com> wrote:
+> > Thanks, Stephen. I managed to reproduce this by merging for-next/kspp from
+> > Kees's tree and for-next/core from the arm64 tree. The failure happens when
+> > building the EFI stub, so the commit you mention above is almost certainly
+> > the culprit.
+> > 
+> > We build the stub with the following GCC invocation:
+> > 
+> >  gcc -Wp,-MD,drivers/firmware/efi/libstub/.efi-stub-helper.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -mcmodel=small -m64 -D__KERNEL__ -O2 -fPIC -fno-strict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY -ffreestanding -fno-stack-protector -fplugin-arg-stackleak_plugin-disable   -fno-builtin      -DKBUILD_BASENAME='"efi_stub_helper"' -DKBUILD_MODNAME='"efi_stub_helper"' -c -o drivers/firmware/efi/libstub/.tmp_efi-stub-helper.o drivers/firmware/efi/libstub/efi-stub-helper.c
+> > 
+> > so given that we're not passing any -fplugin= option anyway (because we
+> > override KBUILD_CFLAGS for the stub), I don't understand why we need
+> > to the disable option at all.
+> > 
+> > Laura?
 > 
-> You're right.
-> 
-> > That strikes
-> > me as wrong-headed; it should be allocating a struct file and passing
-> > that file to the other process.  When that process receives the message,
-> > *it* allocates a file descriptor for itself.ho
-> 
-> We're looking into cleaning this up (historically it was done this way
-> because VIVT caches made this not very efficient), and this is indeed
-> a very good candidate for fixing it.
+> So today I am just trying reverting that arm64 tree commit.
 
-Ah, this wasn't brought up in the original thread when discussing to
-turn this into a module. If using internal functions like this is going
-away it makes sense to wait for this work to happen first. Is there a
-time-frame for this?
+I've pushed out Laura's fix to the arm64 for-next/core branch, so this
+should be resolved in the next next.
 
-Thanks!
-Christian
-
-> 
-> >
-> > But I think the binder user-space API relies on this.  The userspace API
-> > seems to rely on passing fd numbers around ... but I'm having trouble
-> > figuring most of this user API out.  Perhaps Martijn can help here.
-> 
-> The UAPI does expect a file descriptor, but we may be able to do the
-> mapping from fd to struct file (and vice-versa) in the kernel driver,
-> so userspace wouldn't notice.
-> 
-> Thanks,
-> Martijn
+Will
