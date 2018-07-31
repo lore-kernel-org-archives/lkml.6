@@ -2,109 +2,103 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609E2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3C5C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F266B208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E401320841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DfJYQtH6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F266B208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="NZr6aQPG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E401320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732442AbeGaRSA (ORCPT
+        id S1732457AbeGaRTH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:18:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53214 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732308AbeGaRSA (ORCPT
+        Tue, 31 Jul 2018 13:19:07 -0400
+Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:34382 "EHLO
+        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732013AbeGaRTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:18:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bjN1alPUQNsU2X5kbQx8rQ0MJm+fR+j1oqWFWHBd+hs=; b=DfJYQtH6O8ZO5DrByYHyXYx7m
-        d0dZ2yBuziitTY5Otn9Tpq2Kx/DuAKWMTURtfFCvzXisrHQRKSeQBj7OzPHcMUf251w1/zClKW78c
-        6q166r166r7dcFQZcgJA/MICA3fRHqEBohey+skmHPUoXAXg6tn6YhwSdPPmXT9tD+nmQ=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:60992)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fkWhn-0006wL-NY; Tue, 31 Jul 2018 16:36:59 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fkWhl-0007Qh-6y; Tue, 31 Jul 2018 16:36:57 +0100
-Date:   Tue, 31 Jul 2018 16:36:55 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Tue, 31 Jul 2018 13:19:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1533051493;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=BogwT2s0os/XINJIfIGe0l1J+D1a1gT94Kvu9lh++B4=;
+        b=NZr6aQPG9Oqh/hGxTbdIdeLqbPGDQn2DG2iCXGytmjGXQrGRLlWg/+w9OugVvqLE
+        bpT7Az9bvJjFml3WY1GnGPvc8qr1xKhhni3heMzSqQCrGRtRCb6MwhN1UE7wl9YOsn+
+        0ruAMwoKVP7LPDdQQRaLP1pQfM/wnpRN+VuP+ZTc=
+Date:   Tue, 31 Jul 2018 15:38:13 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Dmitry Vyukov <dvyukov@google.com>
+cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        vincenzo.frascino@arm.com, Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH 5/6] arm: enable RapidIO menu in Kconfig
-Message-ID: <20180731153655.GM17271@n2100.armlinux.org.uk>
-References: <20180731142954.30345-1-acolin@isi.edu>
- <20180731142954.30345-6-acolin@isi.edu>
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Subject: Re: [PATCH v4 13/17] khwasan: add hooks implementation
+In-Reply-To: <CACT4Y+Y=61VwwETQP3FwAN16ompSNJOCyDCG6Ew1Bm5f_Fe1Lw@mail.gmail.com>
+Message-ID: <01000164f0fd5abc-df9ea911-9701-498c-adce-9f833e6df3ed-000000@email.amazonses.com>
+References: <cover.1530018818.git.andreyknvl@google.com> <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com> <09cb5553-d84a-0e62-5174-315c14b88833@arm.com> <CAAeHK+yC3XRPoTByhH1QPrX45pG3QY_2Q4gz=dfDgxfzu1Fyfw@mail.gmail.com>
+ <8240d4f9-c8df-cfe9-119d-6e933f8b13df@virtuozzo.com> <CACT4Y+Y=61VwwETQP3FwAN16ompSNJOCyDCG6Ew1Bm5f_Fe1Lw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731142954.30345-6-acolin@isi.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.07.31-54.240.9.112
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:29:53AM -0400, Alexei Colin wrote:
-> Platforms with a PCI bus will be offered the RapidIO menu since they may
-> be want support for a RapidIO PCI device. Platforms without a PCI bus
-> that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
-> in the platform-/machine-specific "config ARCH_*" Kconfig entry.
-> 
-> Tested that kernel builds for ARM with the RapidIO subsystem and switch
-> drivers enabled.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: John Paul Walters <jwalters@isi.edu>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: x86@kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Alexei Colin <acolin@isi.edu>
-> ---
->  arch/arm/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index afe350e5e3d9..602a61324890 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
->  
->  source "drivers/pci/Kconfig"
->  
-> +source "drivers/rapidio/Kconfig"
-> +
->  source "drivers/pcmcia/Kconfig"
+On Tue, 31 Jul 2018, Dmitry Vyukov wrote:
 
-Why not place the new Kconfig file after pcmcia?  That way, it is in
-a consistent position wrt architectures such as powerpc, and it is
-also in alphabetical order.
+> > Actually you should do this for SLAB_TYPESAFE_BY_RCU slabs. Usually they are with ->ctors but there
+> > are few without constructors.
+> > We can't reinitialize or even retag them. The latter will definitely cause false-positive use-after-free reports.
+>
+> Somewhat offtopic, but I can't understand how SLAB_TYPESAFE_BY_RCU
+> slabs can be useful without ctors or at least memset(0). Objects in
+> such slabs need to be type-stable, but I can't understand how it's
+> possible to establish type stability without a ctor... Are these bugs?
+> Or I am missing something subtle? What would be a canonical usage of
+> SLAB_TYPESAFE_BY_RCU slab without a ctor?
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+True that sounds fishy. Would someone post a list of SLAB_TYPESAFE_BY_RCU
+slabs without ctors?
+
