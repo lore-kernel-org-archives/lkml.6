@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDCFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC5FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF0F208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FDB208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="kLojeWB0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF0F208A4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="XMBxbZNf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FDB208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbeGaIum (ORCPT
+        id S1732375AbeGaIxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:42 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.101]:15294 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbeGaIuk (ORCPT
+        Tue, 31 Jul 2018 04:53:02 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.179]:14664 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731657AbeGaIum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:50:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021105;
+        Tue, 31 Jul 2018 04:50:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021107;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=wb9GUVDBUPBqVrKu2Kw5cfkbPHUSSjd1I9vEXuwCyBA=;
-        b=kLojeWB0PvfmuetquyZvrxnC132WMYUyvNl10/eyzm9ai6R7boOoJgUUU6Se4f4eZ7
-        McA6IL49/tCucugAztQL3NgG2WELSntuPqcN8WWuYCPkXueQ6yLSEUwjZmwMtKLjltOZ
-        /B186cEJ/ngWeOJoDVws+/udJbih3U2cH5I61WHxRxptH4aaIGNkjl8dxqVgeIo0drb4
-        m75VAmZHCYkx9iRIUAoKPBQVYZSS2g7iGGJosUQ0s1Es9LoXgJgSYgM9cUftjZnXotWF
-        VrOQtjCw5KoVgXEK6XMEv/QjHRzMQqabPPoAB30HbARZy98maJ6u0Mh4S73IYjMwERvA
-        K3mQ==
+        bh=pWY0n4/ZMSjtFNs8pW/Rae2yCxN/IDiWXHxDZK2imME=;
+        b=XMBxbZNfbO4r4i61ckTbpery1GHU2b+i4LHgHtF+5LqKobk8uqj/FpSGETSQpAfcaU
+        UYMtBwB/7EFwt7RWj+aTnmdkrzVWRtkGXQtqIiBSXdfOcVbb/4XGcdnoN91B6j2a0rFk
+        ZKvX0t4ntEQ6ZeS3HH3Wm9+wXfBkHbhMPwoEH0xpkrj3Pzfh9nH9LT1KLjRXO24ntCOL
+        dxZwV5Sdb6AalpgKCS0NjgUNiTDNN3M/XjB6Wd/N22bgxWZSoq0vvIHbV0LiFjn2xgzN
+        Nbbq2HBppnuA1Es1zyUwtdvBX3W4yyT2Y5sUDZA1rRKiEuWTIBh3sJ1D6SJbVkyJ7k/S
+        8x5w==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BdwOW
+        with ESMTPSA id 6047f4u6V7BfwOc
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:39 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:41 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 05/32] ARM: dts: omap3-gta04: add devconf1 setup for correct tvout pins
-Date:   Tue, 31 Jul 2018 09:11:08 +0200
-Message-Id: <67f5cb7d89001e0a3172844bad3e4150b6053afe.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 11/32] ARM: dts: omap3-gta04: keep vpll2 always on
+Date:   Tue, 31 Jul 2018 09:11:14 +0200
+Message-Id: <5d290e98cd77050e348ccec0f5e6d3a1184ef550.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,43 +69,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VENC with external OPA362 amplifier needs a special
-"pinmux" setup in DEVCONF1 (TVOUTBYPASS and TVOUTACEN).
+This is needed to make the display and venc work properly.
+Compare to omap3-beagle.dts.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/omap3-gta04.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index ed8aff515703..654faa7773a8 100644
+index 8e785cff539d..45d4b080341b 100644
 --- a/arch/arm/boot/dts/omap3-gta04.dtsi
 +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -169,6 +169,24 @@
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&tca6507 0 GPIO_ACTIVE_LOW>;	/* W2CBW003 reset through tca6507 */
- 	};
-+
-+	/* devconf1 setup for tvout pins */
-+	pinmux_tv_out@480022d8 {
-+		compatible = "pinctrl-single";
-+		reg = <0x480022d8 4>;	/* CONTROL_DEVCONF1 */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-single,bit-per-mux;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0x81>;	/* TV out pin control */
-+		#pinctrl-cells = <2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&tv_acbias_devconf1_pins>;
-+		tv_acbias_devconf1_pins: pinmux_tv_acbias_devconf1_pins {
-+			/*			offset	bits	mask */
-+			pinctrl-single,bits = <0x00 0x40800 0x40800>;	/* set TVOUTBYPASS and TVOUTACEN */
-+		};
-+	};
+@@ -574,6 +574,12 @@
+ 	regulator-max-microvolt = <3150000>;
  };
  
- &omap3_pmx_core {
++/* Needed to power the DPI pins */
++
++&vpll2 {
++	regulator-always-on;
++};
++
+ &dss {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = < &dss_dpi_pins >;
 -- 
 2.12.2
 
