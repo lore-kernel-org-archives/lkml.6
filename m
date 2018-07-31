@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4472DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00292C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CECAD20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98A0C20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMQEqbHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CECAD20857
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LRHJG5+d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A0C20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbeGaVd7 (ORCPT
+        id S1732571AbeGaVeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:33:59 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45076 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732403AbeGaVd6 (ORCPT
+        Tue, 31 Jul 2018 17:34:03 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46600 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732541AbeGaVeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:33:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i26-v6so6604053pfo.12
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
+        Tue, 31 Jul 2018 17:34:02 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u24-v6so6599017pfn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nicOVFnotv1BdssFYlukKio1WAhe+11DLlnE/PB7XcM=;
-        b=YMQEqbHdrwnfNQL2dOwXIAdnrbR3JGJQVs41LDFXeXB/0nnr1CFIYCA41L+k72e5r5
-         SSea84ps0jvonON0aE1M1wfvRvnElaeN90bC6fHAdyWQgI4WUkmejjkm2KrKbI7S9Poh
-         XyM8ZkpP+XxTXUL8juFMGZvam7/h1jEMxOaDk=
+        bh=24hZXZaYjkBN7Mhw98yp1L0z0cLuLy+pImRF9czCj3g=;
+        b=LRHJG5+dUthNvaTssITiGXrhVq67Uc2hLz9U5lGiVKe7K4gvHKd+1tKsYIS0KkHeUh
+         68+eP18my0QjNjWuFvA9fHkCPRm+0enDupu83c/IL60CZeGx2CTUUUFsh1TioStOG0QM
+         Xn9AkZTZCCGhDr12kE+Hj7dbKw4VTnLG6aTYw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nicOVFnotv1BdssFYlukKio1WAhe+11DLlnE/PB7XcM=;
-        b=FhzomUUd+i+GN8cXd1u3E+oljhIaK2gYJcDEosg3Fr6bf0SbmDrA3751II8+6CC+dJ
-         u/T3LFj72Q9mXUdOSRkNfVqiU8MHNhRCx1jAOxAK7vafcR9rr/kq6aLhOpuDp+fObmpd
-         lVNKWpo0WThCe5As51noqpkH7e81608HgHKcpSTpsbYI9svjJwqb4eyPw2hwJXIe03og
-         4cfECXVk4gGxZn2lk5UwHmy8bGmKxVBYuhfsinlcAjYbhdmmrg22H5pkoWjbYWlvtZ/Q
-         evCoL78g6RPPaWHxTPS3c9f9mTFtk9bFBZay1khMWrJBnzONSG6+M4AaoT6VTjIF3vM/
-         X9UQ==
-X-Gm-Message-State: AOUpUlE74Dnx9bKwfqxtw6q+gXQk+8l3LFu9oaAfufBfRIghK8GWIYgT
-        Ir2GSUrE8zI1CSGpfyHsDUIGVw==
-X-Google-Smtp-Source: AAOMgpcfJJ3PgxwPf5D5/GLxxNoL18wpmWUVIoRImib9w/RZI24XbFsArAb2cdJQLaGf/4KGWJS3LQ==
-X-Received: by 2002:a62:5ec3:: with SMTP id s186-v6mr23742789pfb.129.1533066724132;
-        Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
+        bh=24hZXZaYjkBN7Mhw98yp1L0z0cLuLy+pImRF9czCj3g=;
+        b=E0OFz73kvfOcbrPFRDtiBtpVxywiybWcKJ6JNth/hd54jLIwbUcyTE6UQ58cEz8St5
+         lbSaNEMCNi5nEcJ9iP4MirdAvO8gXIixWn/XkFieVS6P97RmbnX+9tRR8Ur98jdAd+SO
+         QRHp82zi8bP5kxtZz1An79TAUbzynaaQRqBdy9kHCzm3JvQmMz4CNq1O6a1TT5vni9yH
+         6dcZLjIvweEjbM8toULieq9syqAZP9NbylSxXlD37SPYrbZN/K2gFU1wQmrKrvIwTbx5
+         wNZh6an1g1x72YFyCA+Sm/mZuXKAsSkQGLWw07+U0DFXT34AZfhc/VuuOUs+KV/m9UHr
+         LHoQ==
+X-Gm-Message-State: AOUpUlFqNcyt6pvMmOstZLK7RL6Wr0aoqBnG36BQj2yC0ylx4uIdyDFT
+        viIUe3ZprvJzmn/mBXzGUjeg4A==
+X-Google-Smtp-Source: AAOMgpezb9ER0QUYjK7xUFVvBclCtPAfOWAzBWZVqTZPPa3akynnaF5z8OkGZt7iSnJPxC8IIA3azA==
+X-Received: by 2002:a63:6d8b:: with SMTP id i133-v6mr22059745pgc.215.1533066729234;
+        Tue, 31 Jul 2018 12:52:09 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b192-v6sm27713257pga.2.2018.07.31.12.52.02
+        by smtp.gmail.com with ESMTPSA id y27-v6sm34108464pff.181.2018.07.31.12.52.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 12:52:02 -0700 (PDT)
+        Tue, 31 Jul 2018 12:52:07 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -81,9 +81,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/9] ide-cd: Drop unused sense buffers
-Date:   Tue, 31 Jul 2018 12:51:46 -0700
-Message-Id: <20180731195155.46664-2-keescook@chromium.org>
+Subject: [PATCH v2 6/9] ide-cd: Remove redundant sense buffer
+Date:   Tue, 31 Jul 2018 12:51:51 -0700
+Message-Id: <20180731195155.46664-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180731195155.46664-1-keescook@chromium.org>
 References: <20180731195155.46664-1-keescook@chromium.org>
@@ -92,320 +92,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This drops unused sense buffers from:
-
-	cdrom_eject()
-	cdrom_read_capacity()
-	cdrom_read_tocentry()
-	ide_cd_lockdoor()
-	ide_cd_read_toc()
+This is already able to process the sense buffer, so remove the redundant
+parsing during the failure path. This also fixes any possible stale values
+since the prior code did not check the sense length.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/ide/ide-cd.c       | 36 +++++++++++++++---------------------
- drivers/ide/ide-cd.h       |  2 +-
- drivers/ide/ide-cd_ioctl.c | 34 ++++++++++++----------------------
- 3 files changed, 28 insertions(+), 44 deletions(-)
+ drivers/ide/ide-cd.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
-index 5a8e8e3c22cd..1d5b35312e33 100644
+index cb90560acf6e..023a7d94eb08 100644
 --- a/drivers/ide/ide-cd.c
 +++ b/drivers/ide/ide-cd.c
-@@ -890,8 +890,7 @@ int cdrom_check_status(ide_drive_t *drive, struct request_sense *sense)
- }
- 
- static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
--			       unsigned long *sectors_per_frame,
--			       struct request_sense *sense)
-+			       unsigned long *sectors_per_frame)
+@@ -423,6 +423,7 @@ int ide_cd_queue_pc(ide_drive_t *drive, const unsigned char *cmd,
+ 		    req_flags_t rq_flags)
  {
- 	struct {
- 		__be32 lba;
-@@ -908,7 +907,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
- 	memset(cmd, 0, BLK_MAX_CDB);
- 	cmd[0] = GPCMD_READ_CDVD_CAPACITY;
- 
--	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, sense, 0,
-+	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, NULL, 0,
- 			       RQF_QUIET);
- 	if (stat)
- 		return stat;
-@@ -944,8 +943,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
- }
- 
- static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
--				int format, char *buf, int buflen,
--				struct request_sense *sense)
-+				int format, char *buf, int buflen)
- {
- 	unsigned char cmd[BLK_MAX_CDB];
- 
-@@ -962,11 +960,11 @@ static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
- 	if (msf_flag)
- 		cmd[1] = 2;
- 
--	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, sense, 0, RQF_QUIET);
-+	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, NULL, 0, RQF_QUIET);
- }
- 
- /* Try to read the entire TOC for the disk into our internal buffer. */
--int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
-+int ide_cd_read_toc(ide_drive_t *drive)
- {
- 	int stat, ntracks, i;
  	struct cdrom_info *info = drive->driver_data;
-@@ -996,14 +994,13 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	 * Check to see if the existing data is still valid. If it is,
- 	 * just return.
- 	 */
--	(void) cdrom_check_status(drive, sense);
-+	(void) cdrom_check_status(drive, NULL);
++	struct scsi_sense_hdr local_sshdr;
+ 	int retries = 10;
+ 	bool failed;
  
- 	if (drive->atapi_flags & IDE_AFLAG_TOC_VALID)
- 		return 0;
+@@ -430,6 +431,9 @@ int ide_cd_queue_pc(ide_drive_t *drive, const unsigned char *cmd,
+ 				  "rq_flags: 0x%x",
+ 				  cmd[0], write, timeout, rq_flags);
  
- 	/* try to get the total cdrom capacity and sector size */
--	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame,
--				   sense);
-+	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame);
- 	if (stat)
- 		toc->capacity = 0x1fffff;
++	if (!sshdr)
++		sshdr = &local_sshdr;
++
+ 	/* start of retry loop */
+ 	do {
+ 		struct request *rq;
+@@ -456,9 +460,8 @@ int ide_cd_queue_pc(ide_drive_t *drive, const unsigned char *cmd,
  
-@@ -1016,7 +1013,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 		if (buffer)
+ 			*bufflen = scsi_req(rq)->resid_len;
+-		if (sshdr)
+-			scsi_normalize_sense(scsi_req(rq)->sense,
+-					     scsi_req(rq)->sense_len, sshdr);
++		scsi_normalize_sense(scsi_req(rq)->sense,
++				     scsi_req(rq)->sense_len, sshdr);
  
- 	/* first read just the header, so we know how long the TOC is */
- 	stat = cdrom_read_tocentry(drive, 0, 1, 0, (char *) &toc->hdr,
--				    sizeof(struct atapi_toc_header), sense);
-+				    sizeof(struct atapi_toc_header));
- 	if (stat)
- 		return stat;
- 
-@@ -1036,7 +1033,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 				  (char *)&toc->hdr,
- 				   sizeof(struct atapi_toc_header) +
- 				   (ntracks + 1) *
--				   sizeof(struct atapi_toc_entry), sense);
-+				   sizeof(struct atapi_toc_entry));
- 
- 	if (stat && toc->hdr.first_track > 1) {
  		/*
-@@ -1056,8 +1053,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 					   (char *)&toc->hdr,
- 					   sizeof(struct atapi_toc_header) +
- 					   (ntracks + 1) *
--					   sizeof(struct atapi_toc_entry),
--					   sense);
-+					   sizeof(struct atapi_toc_entry));
- 		if (stat)
- 			return stat;
- 
-@@ -1094,7 +1090,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	if (toc->hdr.first_track != CDROM_LEADOUT) {
- 		/* read the multisession information */
- 		stat = cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,
--					   sizeof(ms_tmp), sense);
-+					   sizeof(ms_tmp));
- 		if (stat)
- 			return stat;
- 
-@@ -1108,7 +1104,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
- 	if (drive->atapi_flags & IDE_AFLAG_TOCADDR_AS_BCD) {
- 		/* re-read multisession information using MSF format */
- 		stat = cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,
--					   sizeof(ms_tmp), sense);
-+					   sizeof(ms_tmp));
- 		if (stat)
- 			return stat;
- 
-@@ -1412,7 +1408,7 @@ static sector_t ide_cdrom_capacity(ide_drive_t *drive)
- {
- 	unsigned long capacity, sectors_per_frame;
- 
--	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame, NULL))
-+	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame))
- 		return 0;
- 
- 	return capacity * sectors_per_frame;
-@@ -1723,9 +1719,8 @@ static unsigned int idecd_check_events(struct gendisk *disk,
- static int idecd_revalidate_disk(struct gendisk *disk)
- {
- 	struct cdrom_info *info = ide_drv_g(disk, cdrom_info);
--	struct request_sense sense;
- 
--	ide_cd_read_toc(info->drive, &sense);
-+	ide_cd_read_toc(info->drive);
- 
- 	return  0;
- }
-@@ -1749,7 +1744,6 @@ static int ide_cd_probe(ide_drive_t *drive)
- {
- 	struct cdrom_info *info;
- 	struct gendisk *g;
--	struct request_sense sense;
- 
- 	ide_debug_log(IDE_DBG_PROBE, "driver_req: %s, media: 0x%x",
- 				     drive->driver_req, drive->media);
-@@ -1798,7 +1792,7 @@ static int ide_cd_probe(ide_drive_t *drive)
- 		goto failed;
- 	}
- 
--	ide_cd_read_toc(drive, &sense);
-+	ide_cd_read_toc(drive);
- 	g->fops = &idecd_ops;
- 	g->flags |= GENHD_FL_REMOVABLE | GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE;
- 	device_add_disk(&drive->gendev, g);
-diff --git a/drivers/ide/ide-cd.h b/drivers/ide/ide-cd.h
-index 04f0f310a856..fc162fbb6629 100644
---- a/drivers/ide/ide-cd.h
-+++ b/drivers/ide/ide-cd.h
-@@ -99,7 +99,7 @@ void ide_cd_log_error(const char *, struct request *, struct request_sense *);
- /* ide-cd.c functions used by ide-cd_ioctl.c */
- int ide_cd_queue_pc(ide_drive_t *, const unsigned char *, int, void *,
- 		    unsigned *, struct request_sense *, int, req_flags_t);
--int ide_cd_read_toc(ide_drive_t *, struct request_sense *);
-+int ide_cd_read_toc(ide_drive_t *);
- int ide_cdrom_get_capabilities(ide_drive_t *, u8 *);
- void ide_cdrom_update_speed(ide_drive_t *, u8 *);
- int cdrom_check_status(ide_drive_t *, struct request_sense *);
-diff --git a/drivers/ide/ide-cd_ioctl.c b/drivers/ide/ide-cd_ioctl.c
-index 2acca12b9c94..c709f4eed0e9 100644
---- a/drivers/ide/ide-cd_ioctl.c
-+++ b/drivers/ide/ide-cd_ioctl.c
-@@ -105,8 +105,7 @@ unsigned int ide_cdrom_check_events_real(struct cdrom_device_info *cdi,
- /* Eject the disk if EJECTFLAG is 0.
-    If EJECTFLAG is 1, try to reload the disk. */
- static
--int cdrom_eject(ide_drive_t *drive, int ejectflag,
--		struct request_sense *sense)
-+int cdrom_eject(ide_drive_t *drive, int ejectflag)
- {
- 	struct cdrom_info *cd = drive->driver_data;
- 	struct cdrom_device_info *cdi = &cd->devinfo;
-@@ -129,20 +128,16 @@ int cdrom_eject(ide_drive_t *drive, int ejectflag,
- 	cmd[0] = GPCMD_START_STOP_UNIT;
- 	cmd[4] = loej | (ejectflag != 0);
- 
--	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, sense, 0, 0);
-+	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- }
- 
- /* Lock the door if LOCKFLAG is nonzero; unlock it otherwise. */
- static
--int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
--		    struct request_sense *sense)
-+int ide_cd_lockdoor(ide_drive_t *drive, int lockflag)
- {
--	struct request_sense my_sense;
-+	struct request_sense my_sense, *sense = &my_sense;
- 	int stat;
- 
--	if (sense == NULL)
--		sense = &my_sense;
+ 		 * FIXME: we should probably abort/retry or something in case of
+@@ -470,12 +473,10 @@ int ide_cd_queue_pc(ide_drive_t *drive, const unsigned char *cmd,
+ 			 * The request failed.  Retry if it was due to a unit
+ 			 * attention status (usually means media was changed).
+ 			 */
+-			struct request_sense *reqbuf = scsi_req(rq)->sense;
 -
- 	/* If the drive cannot lock the door, just pretend. */
- 	if ((drive->dev_flags & IDE_DFLAG_DOORLOCKING) == 0) {
- 		stat = 0;
-@@ -186,23 +181,22 @@ int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
- int ide_cdrom_tray_move(struct cdrom_device_info *cdi, int position)
- {
- 	ide_drive_t *drive = cdi->handle;
--	struct request_sense sense;
- 
- 	if (position) {
--		int stat = ide_cd_lockdoor(drive, 0, &sense);
-+		int stat = ide_cd_lockdoor(drive, 0);
- 
- 		if (stat)
- 			return stat;
- 	}
- 
--	return cdrom_eject(drive, !position, &sense);
-+	return cdrom_eject(drive, !position);
- }
- 
- int ide_cdrom_lock_door(struct cdrom_device_info *cdi, int lock)
- {
- 	ide_drive_t *drive = cdi->handle;
- 
--	return ide_cd_lockdoor(drive, lock, NULL);
-+	return ide_cd_lockdoor(drive, lock);
- }
- 
- /*
-@@ -213,7 +207,6 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
- {
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *cd = drive->driver_data;
--	struct request_sense sense;
- 	u8 buf[ATAPI_CAPABILITIES_PAGE_SIZE];
- 	int stat;
- 	unsigned char cmd[BLK_MAX_CDB];
-@@ -236,7 +229,7 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
- 		cmd[5] = speed & 0xff;
- 	}
- 
--	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
-+	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- 
- 	if (!ide_cdrom_get_capabilities(drive, buf)) {
- 		ide_cdrom_update_speed(drive, buf);
-@@ -252,11 +245,10 @@ int ide_cdrom_get_last_session(struct cdrom_device_info *cdi,
- 	struct atapi_toc *toc;
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *info = drive->driver_data;
--	struct request_sense sense;
- 	int ret;
- 
- 	if ((drive->atapi_flags & IDE_AFLAG_TOC_VALID) == 0 || !info->toc) {
--		ret = ide_cd_read_toc(drive, &sense);
-+		ret = ide_cd_read_toc(drive);
- 		if (ret)
- 			return ret;
- 	}
-@@ -300,7 +292,6 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
- {
- 	ide_drive_t *drive = cdi->handle;
- 	struct cdrom_info *cd = drive->driver_data;
--	struct request_sense sense;
- 	struct request *rq;
- 	int ret;
- 
-@@ -315,7 +306,7 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
- 	 * lock it again.
- 	 */
- 	if (drive->atapi_flags & IDE_AFLAG_DOOR_LOCKED)
--		(void)ide_cd_lockdoor(drive, 1, &sense);
-+		(void)ide_cd_lockdoor(drive, 1);
- 
- 	return ret;
- }
-@@ -355,7 +346,6 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
- 	struct atapi_toc_entry *first_toc, *last_toc;
- 	unsigned long lba_start, lba_end;
- 	int stat;
--	struct request_sense sense;
- 	unsigned char cmd[BLK_MAX_CDB];
- 
- 	stat = ide_cd_get_toc_entry(drive, ti->cdti_trk0, &first_toc);
-@@ -380,7 +370,7 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
- 	lba_to_msf(lba_start,   &cmd[3], &cmd[4], &cmd[5]);
- 	lba_to_msf(lba_end - 1, &cmd[6], &cmd[7], &cmd[8]);
- 
--	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
-+	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
- }
- 
- static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
-@@ -391,7 +381,7 @@ static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
- 	int stat;
- 
- 	/* Make sure our saved TOC is valid. */
--	stat = ide_cd_read_toc(drive, NULL);
-+	stat = ide_cd_read_toc(drive);
- 	if (stat)
- 		return stat;
- 
+-			if (reqbuf->sense_key == UNIT_ATTENTION)
++			if (sshdr->sense_key == UNIT_ATTENTION)
+ 				cdrom_saw_media_change(drive);
+-			else if (reqbuf->sense_key == NOT_READY &&
+-				 reqbuf->asc == 4 && reqbuf->ascq != 4) {
++			else if (sshdr->sense_key == NOT_READY &&
++				 sshdr->asc == 4 && sshdr->ascq != 4) {
+ 				/*
+ 				 * The drive is in the process of loading
+ 				 * a disk.  Retry, but wait a little to give
 -- 
 2.17.1
 
