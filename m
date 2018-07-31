@@ -5,106 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ECAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03D9C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17699208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:27:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17699208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 97277208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97277208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732085AbeGaNHh (ORCPT
+        id S1732111AbeGaNHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:07:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50662 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731639AbeGaNHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:07:36 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 40D754021700;
-        Tue, 31 Jul 2018 11:27:44 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA4A610C1F;
-        Tue, 31 Jul 2018 11:27:43 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     bp@alien8.de
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sironi@amazon.de, tony.luck@intel.com,
-        Prarit Bhargava <prarit@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v2] arch/x86: Fix boot_cpu_data.microcode version output
-Date:   Tue, 31 Jul 2018 07:27:39 -0400
-Message-Id: <20180731112739.32338-1-prarit@redhat.com>
-In-Reply-To: <20180601121939.GA23298@nazgul.tnic>
-References: <20180601121939.GA23298@nazgul.tnic>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 11:27:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 11:27:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+        Tue, 31 Jul 2018 09:07:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46557 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731639AbeGaNHt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:07:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fkSol-0003bu-Fn; Tue, 31 Jul 2018 11:27:55 +0000
+To:     Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        netdev@vger.kernel.org,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: re: [PATCH] cfg80211: read wmm rules from regulatory database
+Message-ID: <9ff30f03-07f1-0abd-8c57-2601af546de0@canonical.com>
+Date:   Tue, 31 Jul 2018 12:27:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I tested this on AMD Ryzen & Intel Broadwell system and dumped the
-boot_cpu_data before and after a microcode update.  On the Intel
-system I also did a fatal MCE using mce-inject to confirm the output
-from the mce handling code.
+Hi Haim,
 
-P.
+I think there may be an issue with the commit:
 
----8<---
+From 230ebaa189af44d50dccb4a1846e39ca594e347b Mon Sep 17 00:00:00 2001
+From: Haim Dreyfuss <haim.dreyfuss@intel.com>
+Date: Wed, 28 Mar 2018 13:24:09 +0300
+Subject: [PATCH] cfg80211: read wmm rules from regulatory database
 
-On systems where a runtime microcode update has occurred the microcode
-version output in a MCE log record is wrong because
-boot_cpu_data.microcode is not updated during runtime.
+specifically in function: reg_copy_regd()
 
-Update boot_cpu_data.microcode when the BSP's microcode is updated.
++       for (i = 0; i < src_regd->n_reg_rules; i++) {
+                memcpy(&regd->reg_rules[i], &src_regd->reg_rules[i],
+                       sizeof(struct ieee80211_reg_rule));
++               if (!src_regd->reg_rules[i].wmm_rule)
++                       continue;
 
-Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
-Suggested-by: Borislav Petkov <bp@alien8.com>
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: stable@vger.kernel.org
-Cc: sironi@amazon.de
-Cc: tony.luck@intel.com
----
-Changes in v2: Use mc_amd->hdr.patch_id on AMD
++               regd->reg_rules[i].wmm_rule = d_wmm +
++                       (src_regd->reg_rules[i].wmm_rule - s_wmm) /
++                       sizeof(struct ieee80211_wmm_rule);
++       }
 
- arch/x86/kernel/cpu/microcode/amd.c   | 4 ++++
- arch/x86/kernel/cpu/microcode/intel.c | 4 ++++
- 2 files changed, 8 insertions(+)
+The pointer arithmetic (src_regd->reg_rules[i].wmm_rule - s_wmm) is
+performed in terms of the size of struct ieee80211_wmm_rule and not in
+bytes and I believe that the division by sizeof(struct
+ieee80211_wmm_rule) is not required.
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 0624957aa068..63b072377ba4 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_amd(int cpu)
- 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
- 	c->microcode = mc_amd->hdr.patch_id;
- 
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode =  mc_amd->hdr.patch_id;
-+
- 	return UCODE_UPDATED;
- }
- 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 97ccf4c3b45b..256d336cbc04 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode = rev;
-+
- 	return UCODE_UPDATED;
- }
- 
--- 
-2.17.0
+This issue was detected by static analysis with Coverity Scan,
+CID#1467451 ("Extra sizeof expression"), 'suspicious_division'
+
+I'm not 100% sure that is this a false positive or not, but I think it
+looks incorrect to me.
+
+Colin
 
