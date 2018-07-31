@@ -2,100 +2,155 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB504C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E719C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516E8208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:24:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Wu9CUNkA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516E8208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id E2CF6208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:29:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2CF6208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeGaKEC (ORCPT
+        id S1729725AbeGaKIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:04:02 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44409 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728227AbeGaKEC (ORCPT
+        Tue, 31 Jul 2018 06:08:21 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35901 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeGaKIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:04:02 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q127-v6so12910860ljq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 01:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CZ0/7b6Y03FEqWT3QOQCjF0sgHc9IgbDo6kMjrPVFuU=;
-        b=Wu9CUNkA4vecQ8QYaS0eqbw3+oFtxlMkfFUmobR1E4abJnBBUtxyTVN47LuGDqRxCk
-         gPDskleCBCM0fyNpSP2U6txXcI0gr/ZX50mAezLWvGOcOOgxHUgd/5FFG9eA78BTLx+f
-         6S8gbDAx7Ais90PsE8FjH6q4rnAGPZkQUsRtrQ38Uz+NkJUwEIfYALy9OFI+I5hmAvld
-         eh9f9qJWylkOSoxD3QDjv79qmE7pz4hjuxNX1d1nYvMdHBWS4qnqYJl0M+s1x4fyWNvH
-         ddk7t9Spl6E1WDCeTrYxO5wOVDisx7gyn4olztBG6MaUlXvNiDfepTa4ryqPdzKEaFdp
-         50Jw==
+        Tue, 31 Jul 2018 06:08:21 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u7-v6so12967355lji.3;
+        Tue, 31 Jul 2018 01:29:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CZ0/7b6Y03FEqWT3QOQCjF0sgHc9IgbDo6kMjrPVFuU=;
-        b=PWUOaVwes4Agl24QosarTYXSm3v7VC72lkskLeFAgsynY/XVHPM5Ds5tB9i31NqS3C
-         qMRgU5o3JzE/GZ+mJAuTR6yCDu1XcFFgAv+nYsOXK232SyN9yqab4dcrjqdaspkc1BL3
-         E5S1CvZxU4wg6AUKq3n3SHpsOgvFWE6RIlcxVN0YICc2TG+l7wT2+7ikTyR3e7LFUQo+
-         Qqw/3itZZhgjBcN2EDa48FwOofW+SEiqXTVtzu+t6tKhzpjf2qHHHun7Jr5/VyXL45Kp
-         UER0gEZZk9w9JnCHL1SvsmKqg4KCrdFh3FzqeGPHcPnuSY1S7UTQfk/PytLtSDEhFb0x
-         STPA==
-X-Gm-Message-State: AOUpUlHxgn1uBWB9pKqBESRSVSEvDvNjzeknVNsfvReBdBe/Q2CAKj24
-        nhqQHXcicFRZoJI2tO/ySQwba59d0as=
-X-Google-Smtp-Source: AAOMgpczj6TB+dUBdn4SYEOFWyEGclexxcybTo4xlxnTTsKGfPwePKFwTWl8MbXddpqi90juC4iDfw==
-X-Received: by 2002:a2e:3313:: with SMTP id d19-v6mr7334000ljc.25.1533025490041;
-        Tue, 31 Jul 2018 01:24:50 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.82.83])
-        by smtp.gmail.com with ESMTPSA id n19-v6sm2418873lja.87.2018.07.31.01.24.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 01:24:48 -0700 (PDT)
-Subject: Re: [PATCH 2/3] drm: rcar-du: Rename var to a more precise name
-To:     Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <1532971214-17962-1-git-send-email-jacopo@jmondi.org>
- <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8104d980-f433-7fe8-d0d2-9028019332d9@cogentembedded.com>
-Date:   Tue, 31 Jul 2018 11:24:48 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=85gcoFQHtyO7OqtRdDr1CISGZDAMXVdmWKkPHOGAw20=;
+        b=KnjBFcloCvUnQtMVhK98X8vFJ/tuWsDulqU0XG594LvzQDL2fUORthDwkksWsXb5Qf
+         kUpRrlrEWAiYJkl5XndEyY/P5Q8w2oOsjYlQEbsWLRBKEQOZ9cnjxnPfW8b1hANB9S5F
+         b2DNCxwmHPK/7uMydJWkzeEWelNnT70uufVBT+YLPrkRgWYsHEdgeNwvhnK4fzCqrKyy
+         1mhwZuAHcHG0eUAZPMMKjxEhTNwKtbw4ZfHWrOCJAzMcnvmSncRJTR1OlVZd0cdfYhZO
+         sVDvWUhk08rLBJOMXz30CSEKmbgEA+6xkcwKz0zW/hivNW5OvTCDesRNLLp8kNUaKJin
+         vjzQ==
+X-Gm-Message-State: AOUpUlEoLoq/eFd6RIgj0YF0kvTeM5+SsOIySUl6L/baHjMFFQ+OI4r/
+        B33Ad4cCL/X5rYKfT0JtwBI=
+X-Google-Smtp-Source: AAOMgpcNbJaq9AWhYj5jU/3Q0z6GLwq8ygRy19u0upNB/Dc14RApMAJ/NEi/SOG4oZRt97jBJoykxQ==
+X-Received: by 2002:a2e:7014:: with SMTP id l20-v6mr16180889ljc.141.1533025747251;
+        Tue, 31 Jul 2018 01:29:07 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g2-v6sm1892972lfb.52.2018.07.31.01.29.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 01:29:06 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 11:28:58 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
+        lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180731073023.GA2956@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+ <20180612082354.GG20078@localhost.localdomain>
+ <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
+ <20180626081319.GA2118@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1532971214-17962-3-git-send-email-jacopo@jmondi.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626081319.GA2118@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Tue, Jun 26, 2018 at 11:13:19AM +0300, Matti Vaittinen wrote:
+> On Mon, Jun 25, 2018 at 04:44:57PM -0700, Stephen Boyd wrote:
+> > Quoting Matti Vaittinen (2018-06-12 01:23:54)
+> > > On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
+> > > > Quoting Matti Vaittinen (2018-06-04 06:19:13)
 
-On 7/30/2018 8:20 PM, Jacopo Mondi wrote:
+[snip]
 
-> Rename the 'value' variable, only used to for writing to DMSR register to a
-                                          ^^ not needed
-
-> more precise 'dmsr' name.
+> > > > > +       if (rval) {
+> > > > > +               dev_err(&pdev->dev, "failed to register clkdev for bd71837");
+> > > > > +               goto err_clean_provider;
+> > > > > +       }
+> > > > > +
+> > > > > +       platform_set_drvdata(pdev, c);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +
+> > > > > +err_clean_provider:
+> > > > > +       of_clk_del_provider(pdev->dev.parent->of_node);
+> > > > > +err_out:
+> > > > > +       return rval;
+> > > > > +}
+> > > > > +
+> > > > > +static int bd71837_clk_remove(struct platform_device *pdev)
+> > > > > +{
+> > > > > +       if (pdev->dev.parent->of_node)
+> > > > > +               of_clk_del_provider(pdev->dev.parent->of_node);
+> > > > 
+> > > > Use devm so this can go away. Or is devm not used because the parent
+> > > > of_node is the provider? That's annoying.
+> > > 
+> > > What would be the correct workaround for this?
+> > 
+> > Smash the clk driver into the overall PMIC node. That should work. Or
+> > possibly assign the same of_node to the child device when creating it?
+> > I'm not sure if that causes some sort of problem with DT code though, so
+> > it would be good to check with Rob H if that's a bad idea or not.
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-[...]
+> 1. Assign MFD node to subdevice node in MFD when creating the cells.
+> 2. Assign parent->of_node to dev.of_node in clk subdevice.
+> 3. Create devm_of_clk_add_hw_provider_w_node() which does something
+> like (not compiled pseudo) code below
+> 
+> int devm_of_clk_add_hw_provider_w_node(struct device *dev,
+> 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> 					      void *data),
+> 			struct device_node *of_node,
+> 			void *data)
+> {
+> 	struct device_node **ptr;
+> 	int ret;
+> 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+> 			   GFP_KERNEL);
+> 	if (!ptr)
+> 		return -ENOMEM;
+> 
+> 	*ptr = of_node;
+> 	ret = of_clk_add_hw_provider(of_node, get, data);
+> 	if (!ret)
+> 		devres_add(dev, ptr);
+> 	else
+> 		devres_free(ptr);
+> 
+> 	return ret;
+> }
+> EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider_w_node);
+> 
+> int devm_of_clk_add_hw_provider(struct device *dev,
+> 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> 					      void *data),
+> 			void *data)
+> {
+> 	return devm_of_clk_add_hw_provider_w_node(dev, get, dev->of_node,
+> 						  data);
+> }
+> EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
 
-MBR, Sergei
+just a friendly reminder, what's your opinion on adding this kind of
+function (devm_of_clk_add_hw_provider_w_node)? or solutions 1/2? And are these options safe what comes to
+reference counting of of_nodes?
+
+Best regards
+	Matti Vaittinen
