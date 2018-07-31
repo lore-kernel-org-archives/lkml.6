@@ -2,121 +2,102 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93184C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DB6C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CEF8208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nu7UILAL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CEF8208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AE3B820894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3B820894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbeGaNOZ (ORCPT
+        id S1732034AbeGaNSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:14:25 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54110 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732087AbeGaNOY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:14:24 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s9-v6so2687136wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 04:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yw3U6maF7HKlLWjLMRz2CAYgBcouoDbnhY2bEOx1Ddc=;
-        b=Nu7UILALIh5SN74dwZbjIhhGLKhHFOdJjkPL9lOCwxjvGtQhShku8nGFJAwO8CD7oR
-         JOub8MrhFWiA9Polpcr0FPkOa3CX0bPgRpk3KAkZAivmQo87P4fbe6qgqEZuDt6q6zi/
-         tyJl+mhm1P/pPC5ObXooaC1vleqYZY9v4c0lLs2WIPKWLfrGxWiTFFNz/Go259Nq5qfk
-         gP3baRc5eLtm8ukVBD4l8Sm/j+zmQJ6bHlp0wkoOhZOb1SjEqvSU/MPiQmidQYgKNoGM
-         3r7pcF3UFJeak7U8eB9v43t0zWgzyZXLmpHohaDhFy1wANUUTT0bDb7in1SwKklOKydG
-         Bvnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yw3U6maF7HKlLWjLMRz2CAYgBcouoDbnhY2bEOx1Ddc=;
-        b=kAl9mp/qNJ0yhuqLcwdfXi6zaTRfidcAmGYm0wVPyYnvD6xzJkcHNOgeo6uOcxrSVf
-         cIBojgIjyr3ii3iGOJBFqDuuARZMj2pEXySoLCGuQO2cV6Hg0hGQUmxkdME2l7lyN5W1
-         zP7zNXVIir8D+gvIlQB8veIuwEFBtbiYlEjAk9H49O4P5/icW1zku9Kexc7rlRZMWWm1
-         0fjJoLaVdLpgtp+RdfB3bUPokGaGozHPGLgt6LQdLLj3ACoQVk8VT0eUsLfWnmYmWD/1
-         xka2oB4B0G9XuvMWeUTi4eWNBN6UvkzCrgNzMrSXu91Ui5F98+UL9oxPEwMgJtxHzTa4
-         V3Lw==
-X-Gm-Message-State: AOUpUlGrMZyi31J9Blu8+SLQmiyeNNFm+ri+GxCKTH0BoUMOtp57dxIg
-        iIITtBSNWFfXhX8qgiUd42E=
-X-Google-Smtp-Source: AAOMgpe6/eTpxtnk5NmHJeTDgqpANCvgMJ/+G2SiVyjtbBJ1mgecvR19qETusY+Wdwv1erUbpkp0XQ==
-X-Received: by 2002:a1c:dc89:: with SMTP id t131-v6mr2148139wmg.50.1533036868596;
-        Tue, 31 Jul 2018 04:34:28 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm16513137wrs.1.2018.07.31.04.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 04:34:28 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/7] staging: rtl8188eu: fix indentation - style
-Date:   Tue, 31 Jul 2018 13:34:10 +0200
-Message-Id: <20180731113415.1500-2-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180731113415.1500-1-straube.linux@gmail.com>
-References: <20180731113415.1500-1-straube.linux@gmail.com>
+        Tue, 31 Jul 2018 09:18:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:52712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731912AbeGaNSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:18:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 049E880D;
+        Tue, 31 Jul 2018 04:38:11 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D06EB3F5D0;
+        Tue, 31 Jul 2018 04:38:09 -0700 (PDT)
+Subject: Re: [PATCH 1/1] sched/debug: fix potential deadlock when write to
+ sched_features
+To:     Peter Zijlstra <peterz@infradead.org>, jiada_wang@mentor.com
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>
+References: <20180731092219.28908-1-jiada_wang@mentor.com>
+ <20180731103404.GV2494@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <a0f03f69-ec5f-c667-c440-173c7d363c7f@arm.com>
+Date:   Tue, 31 Jul 2018 13:38:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180731103404.GV2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix indentation to clear checkpatch warnings.
-WARNING: suspect code indent for conditional statements
+On 07/31/2018 12:34 PM, Peter Zijlstra wrote:
+> 
+> Leaving a lot of quoted crud for Viresh..
+> 
+> On Tue, Jul 31, 2018 at 06:22:19PM +0900, jiada_wang@mentor.com wrote:
+>> From: Jiada Wang <jiada_wang@mentor.com>
+>>
+>> Following lockdep report can be triggered by write to
+>> /sys/kernel/debug/sched_features
+> 
+> Only if you're using this dt_cpufreq thing of course.. I wonder why this
+> hasn't been reported before.
+> 
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c | 4 ++--
- drivers/staging/rtl8188eu/os_dep/usb_intf.c    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+[...]
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-index 4a8124570e6e..19387d87185d 100644
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -142,7 +142,7 @@ static char *translate_scan(struct adapter *padapter,
- 		if (ht_cap)
- 			snprintf(iwe.u.name, IFNAMSIZ, "IEEE 802.11bn");
- 		else
--		snprintf(iwe.u.name, IFNAMSIZ, "IEEE 802.11b");
-+			snprintf(iwe.u.name, IFNAMSIZ, "IEEE 802.11b");
- 	} else if ((rtw_is_cckrates_included((u8 *)&pnetwork->network.SupportedRates))) {
- 		if (ht_cap)
- 			snprintf(iwe.u.name, IFNAMSIZ, "IEEE 802.11bgn");
-@@ -2299,7 +2299,7 @@ static int rtw_set_encryption(struct net_device *dev, struct ieee_param *param,
- 
- 				psecuritypriv->dot118021XGrpPrivacy = _WEP40_;
- 				if (param->u.crypt.key_len == 13)
--						psecuritypriv->dot118021XGrpPrivacy = _WEP104_;
-+					psecuritypriv->dot118021XGrpPrivacy = _WEP104_;
- 			} else if (strcmp(param->u.crypt.alg, "TKIP") == 0) {
- 				DBG_88E("%s, set group_key, TKIP\n", __func__);
- 				psecuritypriv->dot118021XGrpPrivacy = _TKIP_;
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-index 025cd0f59718..69f04fa0a189 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -380,7 +380,7 @@ static struct adapter *rtw_usb_if1_init(struct dvobj_priv *dvobj,
- 	/* 2012-07-11 Move here to prevent the 8723AS-VAU BT auto
- 	 * suspend influence */
- 	if (usb_autopm_get_interface(pusb_intf) < 0)
--			pr_debug("can't get autopm:\n");
-+		pr_debug("can't get autopm:\n");
- 
- 	/*  alloc dev name after read efuse. */
- 	rtw_init_netdev_name(pnetdev, padapter->registrypriv.ifname);
--- 
-2.18.0
+> 
+> I don't much care for all the _cpuslocked renaming done, but otherwise I
+> suppose this is the easiest fix.
+> 
+> Note however that this doesn't apply, you're missing that match_string()
+> patch. Please use tip/sched/core or something.
+
+With the patch tweaked onto tip/sched/core.
+
+w/o the patch:
+
+root@h960:~# echo NO_LB_BIAS > /sys/kernel/debug/sched_features
+[  293.052451]
+[  293.053978] ======================================================   
+[  293.060166] WARNING: possible circular locking dependency detected   
+[  293.066358] 4.18.0-rc5-00064-gae48698275b3 #1 Tainted: G S
+[  293.073153] ------------------------------------------------------   
+[  293.079340] bash/3490 is trying to acquire lock:
+[  293.083966] 00000000155b9437 (cpu_hotplug_lock.rw_sem){++++}, at: static_key_disable+0x1c/0x38
+[  293.092620]
+[  293.092620] but task is already holding lock:
+[  293.098459] 0000000084a95e1c (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0xc4/0x1e0
+[  293.107277]
+[  293.107277] which lock already depends on the new lock.
+...
+
+w/ the patch:
+
+root@h960:~# echo NO_LB_BIAS > /sys/kernel/debug/sched_features
+root@h960:~#
+
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+
+
 
