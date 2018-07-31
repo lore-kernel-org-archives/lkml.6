@@ -6,51 +6,50 @@ X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6B7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7A5C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A3F20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A3F20841
+	by mail.kernel.org (Postfix) with ESMTP id 283CB20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283CB20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732205AbeGaOLK (ORCPT
+        id S1732248AbeGaOLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:11:10 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:54013 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732076AbeGaOLK (ORCPT
+        Tue, 31 Jul 2018 10:11:11 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:59220 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732084AbeGaOLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 10:11:10 -0400
-Received: by mail-it0-f69.google.com with SMTP id e5-v6so2482347itf.3
+Received: by mail-it0-f70.google.com with SMTP id y13-v6so2463686ita.8
         for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 05:31:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RgA0n7+hhf++li63OGnXrtYOWG/s4CQk9qBlHjwK68w=;
-        b=V8RfZtniR4Thea7KWBRdUSzVn82CkftNYUVo6TW9f4r+wHTkCL5V3LLy/hGcnTXhmq
-         K6BZ2b1fhcagfDNDAa5LQiDKUjEkZFtR253Ma50EZcBCbcB0tnK52wXzLM7hvosZHQ2+
-         5C1K7jkxZ/iSU88A8EbPMnoz5Y9yRTGiQFXBi3hVagudolF8Y3mDdeutsxNyehJE0TpN
-         m460h8mdmlDcyHZYDz/HBMXQ+80FbuxP4zzwV8QREtm61YqCjubdyEju8+xJBDuN2qFu
-         3RrDibtCn+Odupko0Tb8B6Nj3tV3TWYkdlRaT3O9g9dt2w2aL9NLZp7rg3ZieluO/sH6
-         CrXw==
-X-Gm-Message-State: AOUpUlHLkc1be+dECiGZU1I0t7ga1UTy22+c/EGI0/V1hLQjz2Xq+GVh
-        NajAMttjjhgSz6mvuDFDVSTmfvkVRg7853D2we2pHDf7HAqX
-X-Google-Smtp-Source: AAOMgpc+RZ023/2uduKP3nA1QuhWIxBsjfeN280C8AbU2HWSrE7d3HSS6cb0zMIBYybplQcEI6P/a9SVEC3ZClFBLJpuhz2vpSly
+        bh=+1glQ6ZSX7Jo49REiKd95sABTvq1Pchq0LvbEV52uKg=;
+        b=tioFK9QIy9+IYCm/+CSpV9BIutKfZPK7AowkNnWvleDUaVstrJwIZUXfTYNu79OmyT
+         2KTjHVvBKDl09LZKifLG7Lw1Eqao5QT6p/KZSNZgJ3sFIjq976cSekAT1OhpH8K51+Pt
+         cxE0f6VZ7h9V2KDCXgfdZfcSWF3s7tOcTw4knSaYRV1qPA2VNTw2bH/KWH8fWzzwGV63
+         ekED6cQ1U1/FuX8Ve1Jqj7XwOb3ljBXxkg+IO9pkpY5hVGliH0SxtXQtX7OXN+9knT1u
+         0iOuWDtDiWnmV3iLxqot/74nnGIlhCtK539oI9ubDbCbvIHzXdq7Uv/mjgzoN5cqU0QS
+         HhHw==
+X-Gm-Message-State: AOUpUlHhLHitLf35whpiRWLaNyB0ZHRHFsxEb8Op87eMzMAwM2zSoRln
+        1p8KBFdcjnTsw8SEaPiOwGMnErSotmzWAg/v6+CKj+3tAuCu
+X-Google-Smtp-Source: AAOMgpfm1WnGfsONFmCQUA2AxDv5lLN7ZOZHujlbe0bUOzWkg5GPC4Po/Ohi8EGo+cGV9IVQ7SyqU5RlfMYWMPyjF2RjMIdniU2y
 MIME-Version: 1.0
-X-Received: by 2002:a6b:a303:: with SMTP id m3-v6mr8369402ioe.96.1533040263157;
+X-Received: by 2002:a6b:fa07:: with SMTP id p7-v6mr7517172ioh.46.1533040263344;
  Tue, 31 Jul 2018 05:31:03 -0700 (PDT)
 Date:   Tue, 31 Jul 2018 05:31:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004fe2be05724ac084@google.com>
-Subject: KASAN: use-after-free Read in rtnetlink_put_metrics
-From:   syzbot <syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com>
-To:     christian.brauner@ubuntu.com, davem@davemloft.net,
-        dsahern@gmail.com, fw@strlen.de, jbenc@redhat.com,
-        ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org,
-        lucien.xin@gmail.com, netdev@vger.kernel.org,
+Message-ID: <00000000000052bc9805724ac083@google.com>
+Subject: WARNING: ODEBUG bug in enqueue_hrtimer
+From:   syzbot <syzbot+3c31c6798616dc2d9ee6@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mkl@pengutronix.de,
+        netdev@vger.kernel.org, socketcan@hartkopp.net,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,174 +61,261 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    61f4b23769f0 netlink: Don't shift with UB on nlk->ngroups
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a9de58400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
-dashboard link: https://syzkaller.appspot.com/bug?extid=41f9c04b50ef70c66947
+HEAD commit:    527838d470e3 Merge branch 'x86-urgent-for-linus' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e90362400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc0cd7c2eefb46f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c31c6798616dc2d9ee6
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com
+Reported-by: syzbot+3c31c6798616dc2d9ee6@syzkaller.appspotmail.com
 
-TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-==================================================================
-BUG: KASAN: use-after-free in rtnetlink_put_metrics+0x621/0x690  
-net/core/rtnetlink.c:754
-Read of size 4 at addr ffff8801b3cd8b00 by task udevd/2613
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor3'.
+------------[ cut here ]------------
+ODEBUG: activate not available (active state 0) object type: hrtimer hint:  
+bcm_tx_timeout_handler+0x0/0x60 net/can/bcm.c:241
+WARNING: CPU: 1 PID: 18 at lib/debugobjects.c:329  
+debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 0 PID: 2613 Comm: udevd Not tainted 4.18.0-rc6+ #34
+CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.18.0-rc7+ #170
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  rtnetlink_put_metrics+0x621/0x690 net/core/rtnetlink.c:754
-  rt6_fill_node+0x7d9/0x1540 net/ipv6/route.c:4753
-  inet6_rt_notify+0x161/0x2c0 net/ipv6/route.c:4985
-  fib6_del_route net/ipv6/ip6_fib.c:1788 [inline]
-  fib6_del+0xf4d/0x1310 net/ipv6/ip6_fib.c:1815
-  fib6_clean_node+0x3ee/0x5e0 net/ipv6/ip6_fib.c:1976
-  fib6_walk_continue+0x4b1/0x8e0 net/ipv6/ip6_fib.c:1899
-  fib6_walk+0x95/0xf0 net/ipv6/ip6_fib.c:1947
-  fib6_clean_tree+0x1ea/0x360 net/ipv6/ip6_fib.c:2024
-  __fib6_clean_all+0x21c/0x420 net/ipv6/ip6_fib.c:2040
-  fib6_clean_all net/ipv6/ip6_fib.c:2051 [inline]
-  fib6_run_gc+0x182/0x3d0 net/ipv6/ip6_fib.c:2107
-  fib6_gc_timer_cb+0x20/0x30 net/ipv6/ip6_fib.c:2124
-  call_timer_fn+0x242/0x970 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x7a6/0xc70 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+Code: 3a 87 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd  
+20 74 3a 87 4c 89 f6 48 c7 c7 c0 69 3a 87 e8 c6 b0 e6 fd <0f> 0b 83 05 a9  
+e6 29 05 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
+RSP: 0018:ffff8801d9f27680 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000000000
+RDX: 0000000000000100 RSI: ffffffff81632481 RDI: 0000000000000001
+RBP: ffff8801d9f276c0 R08: ffff8801d9f0c4c0 R09: ffffed003b623ec2
+R10: ffffed003b623ec2 R11: ffff8801db11f617 R12: 0000000000000001
+R13: ffffffff87fa0660 R14: ffffffff873a7040 R15: ffffffff816a48f0
+  debug_object_activate+0x359/0x690 lib/debugobjects.c:513
+  debug_hrtimer_activate kernel/time/hrtimer.c:416 [inline]
+  debug_activate kernel/time/hrtimer.c:465 [inline]
+  enqueue_hrtimer+0x9e/0x540 kernel/time/hrtimer.c:954
+  __hrtimer_start_range_ns kernel/time/hrtimer.c:1089 [inline]
+  hrtimer_start_range_ns+0x616/0xd20 kernel/time/hrtimer.c:1115
+  hrtimer_start include/linux/hrtimer.h:398 [inline]
+  bcm_tx_start_timer+0x11d/0x1b0 net/can/bcm.c:361
+  bcm_tx_timeout_tsklet+0x1ab/0x4b0 net/can/bcm.c:392
+  tasklet_action_common.isra.19+0x26f/0x720 kernel/softirq.c:522
+  tasklet_action+0x1d/0x20 kernel/softirq.c:540
   __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:372 [inline]
-  irq_exit+0x1d4/0x210 kernel/softirq.c:412
-  exiting_irq arch/x86/include/asm/apic.h:527 [inline]
-  smp_apic_timer_interrupt+0x186/0x730 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:qlink_free mm/kasan/quarantine.c:150 [inline]
-RIP: 0010:qlist_free_all+0xf8/0x160 mm/kasan/quarantine.c:166
-Code: c7 40 10 00 00 00 00 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8  
-57 b8 a4 ff 48 83 3d 67 b4 37 06 00 74 56 48 89 df 57 9d <0f> 1f 44 00 00  
-eb af ba 00 00 00 80 48 01 c2 72 43 48 b9 00 00 00
-RSP: 0018:ffff8801b54a7b08 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: 0000000000000286 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffff8801b5498a38 RDI: 0000000000000286
-RBP: ffff8801b54a7b40 R08: ffff8801b5498a38 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8801dad85dc0 R14: ffff8801b37ace00 R15: ffffffff87f1b0a0
-  quarantine_reduce+0x163/0x1a0 mm/kasan/quarantine.c:259
-  kasan_kmalloc+0x99/0xe0 mm/kasan/kasan.c:538
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  slab_post_alloc_hook mm/slab.h:444 [inline]
-  slab_alloc mm/slab.c:3392 [inline]
-  kmem_cache_alloc+0x11b/0x760 mm/slab.c:3552
-  getname_flags+0xd0/0x5a0 fs/namei.c:140
-  user_path_at_empty+0x2d/0x50 fs/namei.c:2584
-  do_readlinkat+0x14b/0x400 fs/stat.c:394
-  __do_sys_readlink fs/stat.c:427 [inline]
-  __se_sys_readlink fs/stat.c:424 [inline]
-  __x64_sys_readlink+0x78/0xb0 fs/stat.c:424
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7efd8271b577
-Code: f0 ff ff 77 02 f3 c3 48 8b 15 bd 38 2b 00 f7 d8 64 89 02 83 c8 ff c3  
-90 90 90 90 90 90 90 90 90 90 90 90 b8 59 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 01 c3 48 8b 0d 91 38 2b 00 31 d2 48 29 c2 64
-RSP: 002b:00007ffe27d23688 EFLAGS: 00000246 ORIG_RAX: 0000000000000059
-RAX: ffffffffffffffda RBX: 00000000021de250 RCX: 00007efd8271b577
-RDX: 0000000000000400 RSI: 00007ffe27d23690 RDI: 00007ffe27d23b70
-RBP: 00007ffe27d243b0 R08: 00007ffe27d243b0 R09: 00007efd8276fdc0
-R10: 7665642f7379732f R11: 0000000000000246 R12: 00007ffe27d23b70
-R13: 0000000000000400 R14: 00000000021de250 R15: 00000000021e3e10
+  run_ksoftirqd+0x86/0x100 kernel/softirq.c:653
+  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
-Allocated by task 8953:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  fib6_metric_set+0x163/0x2c0 net/ipv6/ip6_fib.c:645
-  fib6_add_rt2node+0xe36/0x27f0 net/ipv6/ip6_fib.c:1000
-  fib6_add+0xaae/0x14d0 net/ipv6/ip6_fib.c:1308
-  __ip6_ins_rt+0x54/0x80 net/ipv6/route.c:1163
-  ip6_route_add+0x6d/0xc0 net/ipv6/route.c:3171
-  addrconf_prefix_route.isra.48+0x51d/0x720 net/ipv6/addrconf.c:2347
-  inet6_addr_modify net/ipv6/addrconf.c:4627 [inline]
-  inet6_rtm_newaddr+0x112e/0x1b50 net/ipv6/addrconf.c:4743
-  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4665
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2453
-  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4683
-  netlink_unicast_kernel net/netlink/af_netlink.c:1315 [inline]
-  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1341
-  netlink_sendmsg+0xa18/0xfd0 net/netlink/af_netlink.c:1906
-  sock_sendmsg_nosec net/socket.c:642 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:652
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2126
-  __sys_sendmsg+0x11d/0x290 net/socket.c:2164
-  __do_sys_sendmsg net/socket.c:2173 [inline]
-  __se_sys_sendmsg net/socket.c:2171 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2171
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+======================================================
+WARNING: possible circular locking dependency detected
+4.18.0-rc7+ #170 Not tainted
+------------------------------------------------------
+ksoftirqd/1/18 is trying to acquire lock:
+000000006298a4a7 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
+kernel/locking/semaphore.c:136
 
-Freed by task 2613:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  fib6_metrics_release+0x77/0x90 net/ipv6/ip6_fib.c:179
-  fib6_drop_pcpu_from net/ipv6/ip6_fib.c:899 [inline]
-  fib6_purge_rt+0x5ec/0x7f0 net/ipv6/ip6_fib.c:934
-  fib6_del_route net/ipv6/ip6_fib.c:1784 [inline]
-  fib6_del+0xc11/0x1310 net/ipv6/ip6_fib.c:1815
-  fib6_clean_node+0x3ee/0x5e0 net/ipv6/ip6_fib.c:1976
-  fib6_walk_continue+0x4b1/0x8e0 net/ipv6/ip6_fib.c:1899
-  fib6_walk+0x95/0xf0 net/ipv6/ip6_fib.c:1947
-  fib6_clean_tree+0x1ea/0x360 net/ipv6/ip6_fib.c:2024
-  __fib6_clean_all+0x21c/0x420 net/ipv6/ip6_fib.c:2040
-  fib6_clean_all net/ipv6/ip6_fib.c:2051 [inline]
-  fib6_run_gc+0x182/0x3d0 net/ipv6/ip6_fib.c:2107
-  fib6_gc_timer_cb+0x20/0x30 net/ipv6/ip6_fib.c:2124
-  call_timer_fn+0x242/0x970 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x7a6/0xc70 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+but task is already holding lock:
+0000000018a38b75 (hrtimer_bases.lock){-.-.}, at:  
+lock_hrtimer_base.isra.18+0x75/0x130 kernel/time/hrtimer.c:174
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (hrtimer_bases.lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        lock_hrtimer_base.isra.18+0x75/0x130 kernel/time/hrtimer.c:174
+        hrtimer_start_range_ns+0x128/0xd20 kernel/time/hrtimer.c:1113
+        hrtimer_start_expires include/linux/hrtimer.h:412 [inline]
+        start_rt_bandwidth kernel/sched/rt.c:68 [inline]
+        inc_rt_group kernel/sched/rt.c:1147 [inline]
+        inc_rt_tasks kernel/sched/rt.c:1191 [inline]
+        __enqueue_rt_entity kernel/sched/rt.c:1261 [inline]
+        enqueue_rt_entity kernel/sched/rt.c:1305 [inline]
+        enqueue_task_rt+0x96a/0xfd0 kernel/sched/rt.c:1335
+        enqueue_task+0xa2/0x1d0 kernel/sched/core.c:750
+        __sched_setscheduler+0xe80/0x20b0 kernel/sched/core.c:4365
+        _sched_setscheduler+0x20c/0x370 kernel/sched/core.c:4402
+        sched_setscheduler+0xe/0x10 kernel/sched/core.c:4417
+        watchdog_set_prio kernel/watchdog.c:455 [inline]
+        watchdog_enable+0x12d/0x1a0 kernel/watchdog.c:477
+        smpboot_thread_fn+0x4c0/0x870 kernel/smpboot.c:145
+        kthread+0x345/0x410 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+-> #3 (&rt_b->rt_runtime_lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+        start_rt_bandwidth kernel/sched/rt.c:56 [inline]
+        inc_rt_group kernel/sched/rt.c:1147 [inline]
+        inc_rt_tasks kernel/sched/rt.c:1191 [inline]
+        __enqueue_rt_entity kernel/sched/rt.c:1261 [inline]
+        enqueue_rt_entity kernel/sched/rt.c:1305 [inline]
+        enqueue_task_rt+0x618/0xfd0 kernel/sched/rt.c:1335
+        enqueue_task+0xa2/0x1d0 kernel/sched/core.c:750
+        __sched_setscheduler+0xe80/0x20b0 kernel/sched/core.c:4365
+        _sched_setscheduler+0x20c/0x370 kernel/sched/core.c:4402
+        sched_setscheduler+0xe/0x10 kernel/sched/core.c:4417
+        watchdog_set_prio kernel/watchdog.c:455 [inline]
+        watchdog_enable+0x12d/0x1a0 kernel/watchdog.c:477
+        smpboot_thread_fn+0x4c0/0x870 kernel/smpboot.c:145
+        kthread+0x345/0x410 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+-> #2 (&rq->lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+        rq_lock kernel/sched/sched.h:1812 [inline]
+        task_fork_fair+0x93/0x680 kernel/sched/fair.c:9952
+        sched_fork+0x446/0xb40 kernel/sched/core.c:2381
+        copy_process.part.39+0x1bf5/0x70b0 kernel/fork.c:1796
+        copy_process kernel/fork.c:1639 [inline]
+        _do_fork+0x291/0x12a0 kernel/fork.c:2122
+        kernel_thread+0x34/0x40 kernel/fork.c:2181
+        rest_init+0x22/0xe4 init/main.c:408
+        start_kernel+0x90e/0x949 init/main.c:738
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+
+-> #1 (&p->pi_lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        try_to_wake_up+0xd2/0x12a0 kernel/sched/core.c:1985
+        wake_up_process+0x10/0x20 kernel/sched/core.c:2148
+        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
+        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
+        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:242
+        console_unlock+0x7a2/0x10b0 kernel/printk/printk.c:2411
+        vprintk_emit+0x6c6/0xdf0 kernel/printk/printk.c:1907
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
+        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
+        printk+0xa7/0xcf kernel/printk/printk.c:1981
+        load_umh+0x51/0xbd net/bpfilter/bpfilter_kern.c:98
+        do_one_initcall+0x127/0x913 init/main.c:884
+        do_initcall_level init/main.c:952 [inline]
+        do_initcalls init/main.c:960 [inline]
+        do_basic_setup init/main.c:978 [inline]
+        kernel_init_freeable+0x49b/0x58e init/main.c:1135
+        kernel_init+0x11/0x1b3 init/main.c:1061
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+-> #0 ((console_sem).lock){-.-.}:
+        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+        __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:225
+        console_trylock+0x15/0xa0 kernel/printk/printk.c:2230
+        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
+        vprintk_emit+0x6ad/0xdf0 kernel/printk/printk.c:1906
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
+        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
+        printk+0xa7/0xcf kernel/printk/printk.c:1981
+        __warn_printk+0x8c/0xe0 kernel/panic.c:590
+        debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+        debug_object_activate+0x359/0x690 lib/debugobjects.c:513
+        debug_hrtimer_activate kernel/time/hrtimer.c:416 [inline]
+        debug_activate kernel/time/hrtimer.c:465 [inline]
+        enqueue_hrtimer+0x9e/0x540 kernel/time/hrtimer.c:954
+        __hrtimer_start_range_ns kernel/time/hrtimer.c:1089 [inline]
+        hrtimer_start_range_ns+0x616/0xd20 kernel/time/hrtimer.c:1115
+        hrtimer_start include/linux/hrtimer.h:398 [inline]
+        bcm_tx_start_timer+0x11d/0x1b0 net/can/bcm.c:361
+        bcm_tx_timeout_tsklet+0x1ab/0x4b0 net/can/bcm.c:392
+        tasklet_action_common.isra.19+0x26f/0x720 kernel/softirq.c:522
+        tasklet_action+0x1d/0x20 kernel/softirq.c:540
+        __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
+        run_ksoftirqd+0x86/0x100 kernel/softirq.c:653
+        smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+        kthread+0x345/0x410 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+other info that might help us debug this:
+
+Chain exists of:
+   (console_sem).lock --> &rt_b->rt_runtime_lock --> hrtimer_bases.lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(hrtimer_bases.lock);
+                                lock(&rt_b->rt_runtime_lock);
+                                lock(hrtimer_bases.lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+1 lock held by ksoftirqd/1/18:
+  #0: 0000000018a38b75 (hrtimer_bases.lock){-.-.}, at:  
+lock_hrtimer_base.isra.18+0x75/0x130 kernel/time/hrtimer.c:174
+
+stack backtrace:
+CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.18.0-rc7+ #170
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_circular_bug.isra.36.cold.57+0x1bd/0x27d  
+kernel/locking/lockdep.c:1227
+  check_prev_add kernel/locking/lockdep.c:1867 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
+  validate_chain kernel/locking/lockdep.c:2421 [inline]
+  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3435
+  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+  __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:225
+  console_trylock+0x15/0xa0 kernel/printk/printk.c:2230
+  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
+  vprintk_emit+0x6ad/0xdf0 kernel/printk/printk.c:1906
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
+  vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
+  printk+0xa7/0xcf kernel/printk/printk.c:1981
+  __warn_printk+0x8c/0xe0 kernel/panic.c:590
+  debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+  debug_object_activate+0x359/0x690 lib/debugobjects.c:513
+  debug_hrtimer_activate kernel/time/hrtimer.c:416 [inline]
+  debug_activate kernel/time/hrtimer.c:465 [inline]
+  enqueue_hrtimer+0x9e/0x540 kernel/time/hrtimer.c:954
+  __hrtimer_start_range_ns kernel/time/hrtimer.c:1089 [inline]
+  hrtimer_start_range_ns+0x616/0xd20 kernel/time/hrtimer.c:1115
+  hrtimer_start include/linux/hrtimer.h:398 [inline]
+  bcm_tx_start_timer+0x11d/0x1b0 net/can/bcm.c:361
+  bcm_tx_timeout_tsklet+0x1ab/0x4b0 net/can/bcm.c:392
+  tasklet_action_common.isra.19+0x26f/0x720 kernel/softirq.c:522
+  tasklet_action+0x1d/0x20 kernel/softirq.c:540
   __do_softirq+0x2e8/0xb17 kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8801b3cd8b00
-  which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 0 bytes inside of
-  96-byte region [ffff8801b3cd8b00, ffff8801b3cd8b60)
-The buggy address belongs to the page:
-page:ffffea0006cf3600 count:1 mapcount:0 mapping:ffff8801dac004c0 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0006a6f3c8 ffffea0007018608 ffff8801dac004c0
-raw: 0000000000000000 ffff8801b3cd8000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b3cd8a00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8801b3cd8a80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff8801b3cd8b00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                    ^
-  ffff8801b3cd8b80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8801b3cd8c00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
+  run_ksoftirqd+0x86/0x100 kernel/softirq.c:653
+  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Shutting down cpus with NMI
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
