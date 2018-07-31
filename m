@@ -2,90 +2,105 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E73EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80401C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABB420841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1575420841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GDhcsxF8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABB420841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="kOzyb1qw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1575420841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732613AbeGaVoW (ORCPT
+        id S1732621AbeGaVpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:44:22 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:51977 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729924AbeGaVoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:44:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=QC/I0CZi/6LkQTjc9+mu8tTeq8br6lXSkpa4j5DUQUI=;
-        b=GDhcsxF83I/zRdgeg9Ux8jTLAby7447RAzt7oNBEZL0iSgHAVC2VeLsalcp/qunqBer1ffBSN6yU98DJBEKB6boO04mMLWlm5CzRawLnBlFYubnzc0PFO+hPyOH72wGuAxBllyE/u4ljdU/5Kc90l7EXMFuDCPt44Uf+/mJ+AZk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fkaqd-0000OV-UB; Tue, 31 Jul 2018 22:02:23 +0200
-Date:   Tue, 31 Jul 2018 22:02:23 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 3/3] net: WireGuard secure network tunnel
-Message-ID: <20180731200223.GA32125@lunn.ch>
-References: <20180731191102.2434-1-Jason@zx2c4.com>
- <20180731191102.2434-4-Jason@zx2c4.com>
+        Tue, 31 Jul 2018 17:45:35 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44711 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732373AbeGaVpf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 17:45:35 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q127-v6so14790986ljq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=tOogUcHOEtB3UKMCP89e3s2RWpykTHR3DRPeXDi5NWw=;
+        b=kOzyb1qwc+bLzfEkf9X8eQ9ms0PyM2yDCTgI4x1UqghkB7f+PZ8WAWIzZSz5te45pr
+         prWK+or8DJyX71x0Nu7RpzaDuny+ltxKO0xxQXPSH3EYGOU19nOsHHvjoroas6LT47VS
+         xvyVyHUhZpY1laCnZpZ1GL3W5ii33qEsiZkKLb776e3zdUo/+qI/P8r2F9nYEy7abNSu
+         imrjRj3X0tkbRQaamgIMWsu6of5+QeVmJA/e9F72lUHhzci2bZ6gwRwmjMy8QJK+wSc9
+         VYpAeVsnmvftvT46gR18Lb/Eejh+M4mcL6Db+Iqgs3w81cgMnpkgHyr++EgFbqnlnKq8
+         Cs5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=tOogUcHOEtB3UKMCP89e3s2RWpykTHR3DRPeXDi5NWw=;
+        b=s5YEJb2kwgvibraZoAIuoCa8n1XjsrFBArpBPj2zG8OshuDZkD7UmBjJ4IZxUU8WoK
+         3CY+M6Loi11HxP6KyZSV2TBW+yNtAQ+H7g7/m98tI6J3qNDk0E7cFyNKe8wgAqTeSRbS
+         9yPnRwzEI8xLqP9ondZGSlGpVDMkhBo2C7ndDKDnchn8T1N8vRaKQ2n066TyRpYT4IYg
+         pZ3zk53mV5G6ffTzTO2PsQvqy2vtKwJ0d/nOORcWTmeawNyHDcDf5mYgR46b0VpHRORU
+         0Msz5ky/cd50nheCxSH3LfarGzR3tq/9ZcCu9Jl2HcYEaUJ+oJS+6MA+tXU5H7XaYpjf
+         Qaww==
+X-Gm-Message-State: AOUpUlEibE0dCNwBFj10XH+nxDr0zPxByQWTOThCPWr3Jx0PXKVUOS6u
+        vMxU7GeV101y7cOharyjRWGUHBG0gEogHAUyDtHONFRd4A==
+X-Google-Smtp-Source: AAOMgpc7/ZRzzk2W+5VW8HKqXvU7qYBgIOpay1kbmtBs8xMKeQg3d/sgNHiC/oQhNsOQs1qrvKE1IFwpp6qrCFIf4HA=
+X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr16950444ljf.102.1533067417967;
+ Tue, 31 Jul 2018 13:03:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731191102.2434-4-Jason@zx2c4.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 31 Jul 2018 16:03:25 -0400
+Message-ID: <CAHC9VhR3vzLkso4kiqKoA4nyZJeD9S8jTE7yZiVMeWfL-acPrg@mail.gmail.com>
+Subject: [GIT PULL] Audit fixes for v4.18 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        wang.yi59@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason
+Hi Linus,
 
-I just gave this patch to checkpatch.pl...
+A single small audit fix to guard against memory allocation failures
+when logging information about a kernel module load.  It's small, easy
+to understand, and self-contained; while nothing is zero risk, this
+should be pretty low.
 
-total: 6 errors, 763 warnings, 6514 lines checked
+Please merge for v4.18, thanks.
+-Paul
 
-It would be good to reduce these numbers.
+--
+The following changes since commit 5b71388663c0920848c0ee7de946970a2692b76d:
 
-> +static __always_inline void swap_endian(u8 *dst, const u8 *src, u8 bits)
+ audit: Fix wrong task in comparison of session ID (2018-05-21 14:27:43 -0400)
 
-There is a general preference to not force the compile to
-inline. Leave it to decide.
+are available in the Git repository at:
 
-> +#define push(stack, p, len) ({ \
-> +	if (rcu_access_pointer(p)) { \
-> +		BUG_ON(len >= 128); \
-> +		stack[len++] = rcu_dereference_protected(p, lockdep_is_held(lock)); \
-> +	} \
-> +	true; \
-> +})
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+   tags/audit-pr-20180731
 
-> +#undef push
-> +
+for you to fetch changes up to b305f7ed0f4f494ad6f3ef5667501535d5a8fa31:
 
-> +#define push(p) ({ BUG_ON(len >= 128); stack[len++] = p; })
+ audit: fix potential null dereference 'context->module.name'
+   (2018-07-30 18:09:37 -0400)
 
-This is going to lead to bugs, coders thinking push() does one thing,
-when it actually does something else. I would suggest making these
-helper functions, with useful names.
+----------------------------------------------------------------
+audit/stable-4.18 PR 20180731
 
-> +/* Returns a strong reference to a peer */
-> +static __always_inline struct wireguard_peer *lookup(struct allowedips_node __rcu *root, u8 bits, const void *be_ip)
-> +{
-> +	struct wireguard_peer *peer = NULL;
-> +	struct allowedips_node *node;
-> +	u8 ip[16] __aligned(__alignof(u64));
+----------------------------------------------------------------
+Yi Wang (1):
+     audit: fix potential null dereference 'context->module.name'
 
-netdev code requires that all local variables are in reverse christmas tree.
+kernel/auditsc.c | 13 +++++++++----
+1 file changed, 9 insertions(+), 4 deletions(-)
 
-       Andrew
+-- 
+paul moore
+www.paul-moore.com
