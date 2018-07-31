@@ -2,100 +2,100 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D9CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F67C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 829F3208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:27:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 829F3208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id DB7DE208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7DE208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeGaHE1 (ORCPT
+        id S1727306AbeGaHIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:04:27 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:50872 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726917AbeGaHE1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:04:27 -0400
-Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-        by 156.147.23.53 with ESMTP; 31 Jul 2018 14:25:58 +0900
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.127 with ESMTP; 31 Jul 2018 14:25:58 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Tue, 31 Jul 2018 14:25:51 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        peterz@infradead.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        joel@joelfernandes.org, len.brown@intel.com, glider@google.com,
-        peter@hurleysoftware.com, aik@ozlabs.ru
-Subject: Re: [QUESTION] llist: Comment releasing 'must delete' restriction
- before traversing
-Message-ID: <20180731052551.GA12241@X58A-UD3R>
-References: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
- <87d0v4mbgx.fsf@yhuang-dev.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87d0v4mbgx.fsf@yhuang-dev.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 31 Jul 2018 03:08:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44288 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726404AbeGaHIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 03:08:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 085E1AF31;
+        Tue, 31 Jul 2018 05:30:18 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 07:30:16 +0200
+Message-ID: <s5hwotc0y6v.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, Alexander.Deucher@amd.com,
+        djkurtz@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer function
+In-Reply-To: <7a88c7b4-d31d-b044-bb8e-a866d49d1256@amd.com>
+References: <1532686422-1790-1-git-send-email-akshu.agrawal@amd.com>
+        <66c8b8c4-bdd0-0129-5e5b-850890cfdb8d@linux.intel.com>
+        <e0990b62-897c-6dc7-8ac9-296932c505b7@amd.com>
+        <dd4d3dc6-88f3-d53f-cd5c-5035c80be3da@linux.intel.com>
+        <s5hy3dsviwq.wl-tiwai@suse.de>
+        <20180730155030.GP5789@sirena.org.uk>
+        <7a88c7b4-d31d-b044-bb8e-a866d49d1256@amd.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:37:50AM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul.park@lge.com> writes:
+On Tue, 31 Jul 2018 03:25:06 +0200,
+Agrawal, Akshu wrote:
 > 
-> > Hello folks,
-> >
-> > I'm careful in saying.. and curious about..
-> >
-> > In restrictive cases like only addtions happen but never deletion, can't
-> > we safely traverse a llist? I believe llist can be more useful if we can
-> > release the restriction. Can't we?
-> >
-> > If yes, we may add another function traversing starting from a head. Or
-> > just use existing funtion with head->first.
-> >
-> > Thank a lot for your answers in advance :)
 > 
-> What's the use case?  I don't know how it is useful that items are never
-> deleted from the llist.
 > 
-> Some other locks could be used to provide mutual exclusive between
+> On 7/30/2018 9:20 PM, Mark Brown wrote:
+> > On Mon, Jul 30, 2018 at 05:32:21PM +0200, Takashi Iwai wrote:
+> > 
+> >> That said, if delay callback of CPU dai provides the additional delay,
+> >> the patch does correct thing.  OTOH, if CPU dai provides the base
+> >> delay instead, we need to clarify that it's rather a must; the delay
+> >> calculation in pointer callback becomes bogus in this scenario.
+> > 
+> > Part of the theory here is that every component might have a delay
+> > independently of the rest and we need to add them all together to figure
+> > out what the system as a whole will see.  Personally I'd rather just
+> > have everything use a callack consistently to avoid confusion.
+> > 
 > 
-> - llist add, llist traverse
+> For consistency we can add a delay callback in snd_pcm_ops and modify
+> the drivers which directly assigning runtime->delay to use the callback.
 
-Hello Huang,
+No, ALSA PCM ops definition is fine.  The delay calculation is
+basically tied with the position, hence it has to be set together, and
+that's the pointer callback.
 
-In my use case, I only do adding and traversing on a llist.
+Judging from the call pattern, the current design of ASoC delay
+callback implies that the return value is more or less constant, which
+can be accumulated on top of the base value.  So your patch is natural
+from that POV.
 
-> 
-> and
-> 
-> - llist delete
+OTOH, if the CPU dai can really provide a dynamic value that is
+strictly tied with pointer, CPU dai itself should provide the pointer
+callback that covers both the pointer and the base delay, and it
+should be used instead of component pointer callback.
 
-Of course, I will use a lock when deletion is needed.
+> Apart from the 2 drivers mentioned in commit message I also found
+> sound/usb to be doing the same and its delay getting lost.
 
-So.. in the case only adding into and traversing a llist is needed,
-can't we safely traverse a llist in the way I thought? Or am I missing
-something?
+The USB driver hasn't been used in ASoC, no?
 
-Thank you.
 
-> Is this your use case?
-> 
-> Best Regards,
-> Huang, Ying
+thanks,
+
+Takashi
