@@ -2,182 +2,200 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC639C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AA8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63AC020844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E7A020841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="phXtSifs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63AC020844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="mz00cNcl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7A020841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeGaRe0 (ORCPT
+        id S1732435AbeGaRhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:34:26 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:58552 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732364AbeGaReZ (ORCPT
+        Tue, 31 Jul 2018 13:37:20 -0400
+Received: from mail-yw0-f180.google.com ([209.85.161.180]:34923 "EHLO
+        mail-yw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732333AbeGaRhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:34:25 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id EEBF55C03BB;
-        Tue, 31 Jul 2018 17:53:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533052406;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UQ2Gi6ayp4aNG8bXusYZLfpfkW1EXSVvG3cAza+b47U=;
-        b=phXtSifsbAu3qL3VnSSAlIOvX9yzvZF/jz14e6n0aJBnYSonXdI1fYKC+G6XnBvUfGSRa6
-        rs8U1upMAwCsgNDKECeTlioVoJ1YUXDXiUnYG7ZypbXO6+C3gWIJey7T9Ezy/tT2/7R32+
-        2m+2H/mnsjUD8BuQPlithIlqDHjaWcE=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 31 Jul 2018 17:53:26 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>, Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-In-Reply-To: <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
-References: <CAJKOXPeaguNxRr7pCArJ5Db4tS6Kr5BDheCxskY+vd0dUN+0GQ@mail.gmail.com>
- <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
- <20180727140448.GA29001@lst.de> <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
-Message-ID: <4339e35944851cc105ddfba03e1b990b@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+        Tue, 31 Jul 2018 13:37:20 -0400
+Received: by mail-yw0-f180.google.com with SMTP id t18-v6so5962713ywg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=pFjZod/eQ3B8gDCTUgXnTQTaFLTWF8ugwD5NcZ8TXTM=;
+        b=mz00cNclEYdVBwDDvJJxlKlxbxzlpB6kROOsRGY+2T9ipnFUkIx1Qs/+hG9C4mcViL
+         66gB+XYgrhtQ5UF8ep3EcX4DxhYcV0DhPX6TQMy/x0MZCYeqQS5bTeFP+nWJRR4VEd9U
+         oDQGPk++C7DigbW8kr2CyAWTN0Qo+j2S94FdogI2XXVBnep9Ntm7Fj8uEWQ6d2hLMyGJ
+         D4nw3Czru9Cfq9QrdKDbUzAMoZft4KFXRi+c55psLZw52Xu3btyrAavwoilUQ5y9o8Bw
+         /UxytDxjB74RpfymhAseyUqrN1b5ALduJn3wCOjwVM2OeRXGo0m60cCQkpK9PcpWRaVt
+         N/AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pFjZod/eQ3B8gDCTUgXnTQTaFLTWF8ugwD5NcZ8TXTM=;
+        b=hooZoLo6oXZwd4hPGKReir3FCWx74Ezg469M6DoJ0i/ynYBaNzwuJ8s2Gz8ScVN0zc
+         Gz4sShmyWI2ahIEtKwsCSWOG0Dfh8WNIWfnq9W/zVKwuXSt6jy1P+V4sTS54BFlyL+ua
+         DAT43qyBWWG+fYsD2dSVI20LnbgVpszk9sFqbLm+wN1Zq6b23A2O6GJsml9RWhXwwbzD
+         ygwnXWMHTFP0AflmTdp0nVf5xoXd/QBKXFleFHwEg8EeGybBnlMa9Yik4Jl40ovHngIG
+         /I92yVdifIFGtkMno/j1IxUyJgVE3OuP04sXw7xujSrtCJWN8rTT6JxzC6cNDM7lLz54
+         OGjg==
+X-Gm-Message-State: AOUpUlGXS9ZFTK/1Wwng38JEgXRU0PJk3ernzYy8C1qCtvkxE9d+ZVrH
+        ilOxG1j5EpxtpTWLl6426HMqtQ==
+X-Google-Smtp-Source: AAOMgpfQO+ow7ClZAPViDr4c3hb6kZuunMA0KLWApYb1ZDzofUzfiQ+ZQ1iQmPkbvEHKrux77Mx3bQ==
+X-Received: by 2002:a81:9446:: with SMTP id l67-v6mr3161819ywg.117.1533052581933;
+        Tue, 31 Jul 2018 08:56:21 -0700 (PDT)
+Received: from graymalkin (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id i12-v6sm7415267ywa.35.2018.07.31.08.56.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 08:56:21 -0700 (PDT)
+Received: by graymalkin (sSMTP sendmail emulation); Tue, 31 Jul 2018 11:56:19 -0400
+From:   Jon Mason <jdmason@kudzu.us>
+To:     David S Miller <davem@davemloft.net>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: change Exar/Neterion menu items to be alphabetical
+Date:   Tue, 31 Jul 2018 11:56:19 -0400
+Message-Id: <20180731155619.16310-1-jdmason@kudzu.us>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.07.2018 14:32, Robin Murphy wrote:
-> On 31/07/18 09:19, Stefan Agner wrote:
->> On 30.07.2018 16:38, Robin Murphy wrote:
->>> On 28/07/18 17:58, Guenter Roeck wrote:
->>>> On Fri, Jul 27, 2018 at 04:04:48PM +0200, Christoph Hellwig wrote:
->>>>> On Fri, Jul 27, 2018 at 03:18:14PM +0200, Krzysztof Kozlowski wrote:
->>>>>> On 27 July 2018 at 15:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On today's next, the bisect pointed commit
->>>>>>> ff33d1030a6ca87cea9a41e1a2ea7750a781ab3d as fault for my boot failures
->>>>>>> with NFSv4 root on Toradex Colibri VF50 (Iris carrier board).
->>>>>>>
->>>>>>> Author: Robin Murphy <robin.murphy@arm.com>
->>>>>>> Date:   Mon Jul 23 23:16:12 2018 +0100
->>>>>>>       OF: Don't set default coherent DMA mask
->>>>>>>
->>>>>>> Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial configured
->>>>>>> with DMA) on Iris Carrier.
->>>>>>>
->>>>>>> It looks like problem with Freescale Ethernet driver:
->>>>>>> [   15.458477] fsl-edma 40018000.dma-controller: coherent DMA mask is unset
->>>>>>> [   15.465284] fsl-lpuart 40027000.serial: Cannot prepare cyclic DMA
->>>>>>> [   15.472086] Root-NFS: no NFS server address
->>>>>>> [   15.476359] VFS: Unable to mount root fs via NFS, trying floppy.
->>>>>>> [   15.484228] VFS: Cannot open root device "nfs" or
->>>>>>> unknown-block(2,0): error -6
->>>>>>> [   15.491664] Please append a correct "root=" boot option; here are
->>>>>>> the available partitions:
->>>>>>> [   15.500188] 0100           16384 ram0
->>>>>>> [   15.500200]  (driver?)
->>>>>>> [   15.506406] Kernel panic - not syncing: VFS: Unable to mount root
->>>>>>> fs on unknown-block(2,0)
->>>>>>> [   15.514747] ---[ end Kernel panic - not syncing: VFS: Unable to
->>>>>>> mount root fs on unknown-block(2,0) ]---
->>>>>>>
->>>>>>> Attached - defconfig and full boot log.
->>>>>>>
->>>>>>> Any hints?
->>>>>>> Let me know if you need any more information.
->>>>>>
->>>>>> My Exynos boards also fail to boot on missing network:
->>>>>> https://krzk.eu/#/builders/21/builds/799/steps/10/logs/serial0
->>>>>>
->>>>>> As expected there are plenty of "DMA mask not set" warnings... and
->>>>>> later dwc3 driver fails with:
->>>>>>       dwc3: probe of 12400000.dwc3 failed with error -12
->>>>>> which is probably the answer why LAN attached to USB is not present.
->>>>>
->>>>> Looks like all the drivers failed to set a dma mask and were lucky.
->>>>
->>>> I would call it a serious regression. Also, no longer setting a default
->>>> coherent DMA mask is a quite substantial behavioral change, especially
->>>> if and since the code worked just fine up to now.
->>>
->>> To reiterate, that particular side-effect was an unintentional
->>> oversight, and I was simply (un)lucky enough that none of the drivers
->>> I did test depended on that default mask. Sorry for the blip; please
->>> check whether it's now fixed in next-20180730 as it should be.
->>>
->>
->> Just for my understanding:
->>
->> Your first patch ("OF: Don't set default coherent DMA mask") sounded
->> like that *not* setting default coherent DMA mask was intentionally.
->> Since the commit message reads: "...the bus code has not initialised any
->> default value" that was assuming that all bus code sets a default DMA
->> mask which wasn't the case for "simple-bus".
-> 
-> Yes, reading the patches in the order they were written is perhaps a
-> little unclear, but hopefully the order in which they are now applied
-> makes more sense.
-> 
->> So I guess that is what ("of/platform: Initialise default DMA masks")
->> makes up for in the typical device tree case ("simple-bus")?
-> 
-> Indeed, I'd missed the fact that the now-out-of-place-looking
-> initialisation in of_dma_configure() still actually belonged to
-> of_platform_device_create_pdata() - that patch should make the
-> assumptions of "OF: Don't set default coherent DMA mask" true again,
-> even for OF-platform devices.
-> 
->> Now, since almost all drivers are inside a soc "simple-bus" and DMA mask
->> is set again, can/should we rely on the coherent DMA mask set?
->>
->> Or is the expectation still that this is set on driver level too?
-> 
-> Ideally, we'd like all drivers to explicitly request their masks as
-> the documentation in DMA-API-HOWTO.txt recommends, if only to ensure
-> DMA is actually possible - there can be systems where even the default
-> 32-bit mask is no good - but clearly we're a little way off trying to
-> enforce that just yet.
+Neterion was standalone for several years, then acquired by Exar and
+shutdown in 11 months without ever making any new Exar branded adapters.
+Users would probably think of them as Neterion and not Exar (as there
+have been no follow-on adapters and the vast majority ever sold were
+under the Neterion name).
 
-In the FEC driver case, there is an integrated DMA (uDMA). It has
-alignment restrictions, but can otherwise address the full 32-bit range.
+6c541b4595a2 ("net: ethernet: Sort Kconfig sourcing alphabetically")
+sorted Kconfig sourcing based on directory names, but in a couple cases,
+the menu item text is quite different from the directory name and is not
+sorted correctly:
 
-So something like this should do it right?
+  drivers/net/ethernet/neterion/Kconfig    => "Exar devices"
 
-	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32))) {
-		dev_warn(dev, "No suitable DMA available\n");
-		return -ENODEV;
-	}
+To address that and clear up any confusion about the name, "Exar" was
+changed to "Neterion (Exar)" and the relevant entries in the Makefile
+and Kconfig were reordered to match the alphabetical organization.
 
-However, that, as far as I understand, still requires that the bus set
-up dma_mask properly.
+Inspired-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
+---
+ drivers/net/ethernet/Kconfig          |  2 +-
+ drivers/net/ethernet/Makefile         |  2 +-
+ drivers/net/ethernet/neterion/Kconfig | 23 ++++++++++++++---------
+ 3 files changed, 16 insertions(+), 11 deletions(-)
 
-Should I be using dma_coerce_mask_and_coherent?
+diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
+index af766fd61151..6fde68aa13a4 100644
+--- a/drivers/net/ethernet/Kconfig
++++ b/drivers/net/ethernet/Kconfig
+@@ -81,7 +81,6 @@ source "drivers/net/ethernet/huawei/Kconfig"
+ source "drivers/net/ethernet/i825xx/Kconfig"
+ source "drivers/net/ethernet/ibm/Kconfig"
+ source "drivers/net/ethernet/intel/Kconfig"
+-source "drivers/net/ethernet/neterion/Kconfig"
+ source "drivers/net/ethernet/xscale/Kconfig"
+ 
+ config JME
+@@ -128,6 +127,7 @@ config FEALNX
+ 	  cards. <http://www.myson.com.tw/>
+ 
+ source "drivers/net/ethernet/natsemi/Kconfig"
++source "drivers/net/ethernet/neterion/Kconfig"
+ source "drivers/net/ethernet/netronome/Kconfig"
+ source "drivers/net/ethernet/ni/Kconfig"
+ source "drivers/net/ethernet/8390/Kconfig"
+diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
+index 22555e7fa752..b45d5f626b59 100644
+--- a/drivers/net/ethernet/Makefile
++++ b/drivers/net/ethernet/Makefile
+@@ -36,7 +36,6 @@ obj-$(CONFIG_NET_VENDOR_DEC) += dec/
+ obj-$(CONFIG_NET_VENDOR_DLINK) += dlink/
+ obj-$(CONFIG_NET_VENDOR_EMULEX) += emulex/
+ obj-$(CONFIG_NET_VENDOR_EZCHIP) += ezchip/
+-obj-$(CONFIG_NET_VENDOR_EXAR) += neterion/
+ obj-$(CONFIG_NET_VENDOR_FARADAY) += faraday/
+ obj-$(CONFIG_NET_VENDOR_FREESCALE) += freescale/
+ obj-$(CONFIG_NET_VENDOR_FUJITSU) += fujitsu/
+@@ -60,6 +59,7 @@ obj-$(CONFIG_NET_VENDOR_MOXART) += moxa/
+ obj-$(CONFIG_NET_VENDOR_MYRI) += myricom/
+ obj-$(CONFIG_FEALNX) += fealnx.o
+ obj-$(CONFIG_NET_VENDOR_NATSEMI) += natsemi/
++obj-$(CONFIG_NET_VENDOR_NETERION) += neterion/
+ obj-$(CONFIG_NET_VENDOR_NETRONOME) += netronome/
+ obj-$(CONFIG_NET_VENDOR_NI) += ni/
+ obj-$(CONFIG_NET_NETX) += netx-eth.o
+diff --git a/drivers/net/ethernet/neterion/Kconfig b/drivers/net/ethernet/neterion/Kconfig
+index 71899009c468..c26e0f70c494 100644
+--- a/drivers/net/ethernet/neterion/Kconfig
++++ b/drivers/net/ethernet/neterion/Kconfig
+@@ -2,8 +2,8 @@
+ # Exar device configuration
+ #
+ 
+-config NET_VENDOR_EXAR
+-	bool "Exar devices"
++config NET_VENDOR_NETERION
++	bool "Neterion (Exar) devices"
+ 	default y
+ 	depends on PCI
+ 	---help---
+@@ -11,16 +11,19 @@ config NET_VENDOR_EXAR
+ 
+ 	  Note that the answer to this question doesn't directly affect the
+ 	  kernel: saying N will just cause the configurator to skip all
+-	  the questions about Exar cards. If you say Y, you will be asked for
+-	  your specific card in the following questions.
++	  the questions about Neterion/Exar cards. If you say Y, you will be
++	  asked for your specific card in the following questions.
+ 
+-if NET_VENDOR_EXAR
++if NET_VENDOR_NETERION
+ 
+ config S2IO
+-	tristate "Exar Xframe 10Gb Ethernet Adapter"
++	tristate "Neterion (Exar) Xframe 10Gb Ethernet Adapter"
+ 	depends on PCI
+ 	---help---
+ 	  This driver supports Exar Corp's Xframe Series 10Gb Ethernet Adapters.
++	  These were originally released from S2IO, which renamed itself
++	  Neterion.  So, the adapters might be labeled as either one, depending
++	  on its age.
+ 
+ 	  More specific information on configuring the driver is in
+ 	  <file:Documentation/networking/s2io.txt>.
+@@ -29,11 +32,13 @@ config S2IO
+ 	  will be called s2io.
+ 
+ config VXGE
+-	tristate "Exar X3100 Series 10GbE PCIe Server Adapter"
++	tristate "Neterion (Exar) X3100 Series 10GbE PCIe Server Adapter"
+ 	depends on PCI
+ 	---help---
+ 	  This driver supports Exar Corp's X3100 Series 10 GbE PCIe
+-	  I/O Virtualized Server Adapter.
++	  I/O Virtualized Server Adapter.  These were originally released from
++	  Neterion, which was later acquired by Exar.  So, the adapters might be
++	  labeled as either one, depending on its age.
+ 
+ 	  More specific information on configuring the driver is in
+ 	  <file:Documentation/networking/vxge.txt>.
+@@ -50,4 +55,4 @@ config VXGE_DEBUG_TRACE_ALL
+ 	  the vxge driver. By default only few debug trace statements are
+ 	  enabled.
+ 
+-endif # NET_VENDOR_EXAR
++endif # NET_VENDOR_NETERION
+-- 
+2.14.4
 
---
-Stefan
-
-> 
-> Robin.
