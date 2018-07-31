@@ -6,56 +6,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A03B7C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C822C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E79320857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367C720870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OpgjqZUp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E79320857
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AAyiPCtU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367C720870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732676AbeGaVeu (ORCPT
+        id S1732705AbeGaVfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:34:50 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37630 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732532AbeGaVd7 (ORCPT
+        Tue, 31 Jul 2018 17:35:05 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46971 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732438AbeGaVd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:33:59 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a26-v6so6607300pfo.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:07 -0700 (PDT)
+        Tue, 31 Jul 2018 17:33:58 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t17-v6so7617303ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=J917hlJwULr6t35bbsk9fwjW3plGhyyNeLJG8ZXmTjQ=;
-        b=OpgjqZUpWeCQ6UwzWFad6jiuh/ckBc14r8nRghS2td/IsdrW4tY+hCkyAKJTpl9FJo
-         Z5Fow34Tp9z+nf43qI4H1eg34V0GomzGXyB3oPieidO+fAUEt74FwMk5+Y+0SUtxu7M2
-         x5Kb4MVArmMVPrv6rdJ/xCZsI4fah4viA7TRI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=45iL7Ldcofjua4QTthWpvp4bypb36mbYsmy1cy+Yls0=;
+        b=AAyiPCtUyDcoscvOh6VqrE4faK+y6sGszIb03aty4g4GJ7LvA2bKrlIrd10WzkcoaQ
+         gNsGPXjMkZXFSMBtxn6RsSKb6qxoVovZflOyksoajC12u3zy57C1oR4W+d/ng0/FqaaF
+         VdjaQE4YRnqStB31UezeElhXH4fgbeWE3bZxY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=J917hlJwULr6t35bbsk9fwjW3plGhyyNeLJG8ZXmTjQ=;
-        b=EQ1FuCedvUMJaKTytB4b1rUv8cJZ2DPHUkMFjX6NFKew8r2Xkh0Zg+NtXFDdR1en98
-         WLeFosRj29c+OW3XwhJOhlzHPX2MMdFgXXfndKZ5HVCwzRPQvh3Hr3Y+5UJuof7XAy5I
-         ydpQqHkOVLkU6LXY5U3GgvYfOG43rhLoCoj/wm4AjObD9XxA/Wps62n7owcp8CKWuWpb
-         KGZ1g+SxhXS4rFKV6hfKDUpf0kDZPKxgjxo6tpFAZesm2xNTPJ/Ia0Ew+IfC6ShtjbRj
-         wNtXe+X6hxo0W7S7S82eSB3GOtItyzyd3Q/3YZIBDzEzJ6mTt6ezsG9pOxBqbUZlQMjY
-         vxog==
-X-Gm-Message-State: AOUpUlEvJmV4fwYJFaxziGfwDm7M4aRwg7+U02VESBulLsu+PX7KT9EP
-        vMPRVvH7QMXCubCmQmgSyc4hhw==
-X-Google-Smtp-Source: AAOMgpeVu3iMR+3CLOFE11Z/sNMLVPJiJAYCNkdcT34WHwlsTmv9/rnXjevNuDqHUB1kDXrderLKLA==
-X-Received: by 2002:a65:6143:: with SMTP id o3-v6mr22161045pgv.52.1533066726720;
-        Tue, 31 Jul 2018 12:52:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=45iL7Ldcofjua4QTthWpvp4bypb36mbYsmy1cy+Yls0=;
+        b=ILriFcI/U6VCJaOeCsAoqDxfrfwKHZUSByPXtqhv9RbkZ1bqFs77Q9TvUr01i+zki/
+         q/GwYy+Okb04s5DkkFTN6XfJhymab0TLcRkLo4ssGzpqF/6l1aXIkLYMzWusmyLS7aqX
+         s2PKJTrKgGj4Qe1LLkw0EyVxSMoG3BUe93HMUCYeAkCJD8zymcrduQ1oUV4hxBSkX7FH
+         +qi5So9wUMS3py/8Hb8Lv/uGLF1ywk6xhH2xRiWG3Wm9QZL8myOAgMTpz1u1pEvlxNBG
+         zs7OFj7G8ppzNJoa8COqKLE8nUVePkse6wSSVl4yaaulaxqOfmCVnKNeisd8C/FT9I+i
+         TDmQ==
+X-Gm-Message-State: AOUpUlHbXa4ZXl/AQKZFOxE/IOctp6hdnr/GBupUkxCyKfk6wF3TyTcq
+        YHBdBv8Mv3GSS0c+Xq7g/OxLug==
+X-Google-Smtp-Source: AAOMgpd9f9YLQRSpPWxnszsPRpXgnrtmKuMAeE9ivm8Fs43l+rqaAJzz7PTrgC8gANg0yAPaK8gmAQ==
+X-Received: by 2002:a17:902:64d7:: with SMTP id y23-v6mr21669490pli.53.1533066724978;
+        Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm32348115pfm.97.2018.07.31.12.52.02
+        by smtp.gmail.com with ESMTPSA id v30-v6sm24729153pgn.80.2018.07.31.12.52.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 31 Jul 2018 12:52:02 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
+Cc:     Kees Cook <keescook@chromium.org>, Christoph Hellwig <hch@lst.de>,
         Christoph Hellwig <hch@infradead.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
@@ -80,74 +81,62 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/9] block: Consolidate scsi sense buffer usage
-Date:   Tue, 31 Jul 2018 12:51:45 -0700
-Message-Id: <20180731195155.46664-1-keescook@chromium.org>
+Subject: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi passthrough request users
+Date:   Tue, 31 Jul 2018 12:51:48 -0700
+Message-Id: <20180731195155.46664-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180731195155.46664-1-keescook@chromium.org>
+References: <20180731195155.46664-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow-up to commit f7068114d45e ("sr: pass down correctly
-sized SCSI sense buffer") which further cleans up and removes needless
-sense character array buffers and "struct request_sense" usage in favor
-of the common "struct scsi_sense_hdr".
+From: Christoph Hellwig <hch@lst.de>
 
-First, drop a bunch of unused sense buffers:
- [PATCH 1/9] ide-cd: Drop unused sense buffers
- [PATCH 2/9] scsi: cxlflash: Drop unused sense buffers
+Split scsi_common.o out of SCSI so that non-SCSI users can pull it in
+easily for future sense buffer helper usage.
 
-Next, allow the sense buffer to be usable outside SCSI tree:
- [PATCH 3/9] scsi: build scsi_common.o for all scsi passthrough request users
- [PATCH 4/9] target: don't depend on SCSI
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/Makefile      | 2 +-
+ drivers/scsi/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Then move all request_sense usage to scsi_sense_hdr:
- [PATCH 5/9] block: Switch struct packet_command to use struct scsi_sense_hdr
-
-And do some further cleanups for scsi_sense_hdr now that we can:
- [PATCH 6/9] ide-cd: Remove redundant sense buffer
- [PATCH 7/9] cdrom: Use struct scsi_sense_hdr internally
-
-Finally add a build-time check to make sure we don't pass bad buffer sizes:
- [PATCH 8/9] libata-scsi: Move sense buffers onto stack
- [PATCH 9/9] scsi: Check sense buffer size at build time
-
-
--Kees
-
-Christoph Hellwig (2):
-  scsi: build scsi_common.o for all scsi passthrough request users
-  target: don't depend on SCSI
-
-Kees Cook (7):
-  ide-cd: Drop unused sense buffers
-  scsi: cxlflash: Drop unused sense buffers
-  block: Switch struct packet_command to use struct scsi_sense_hdr
-  ide-cd: Remove redundant sense buffer
-  cdrom: Use struct scsi_sense_hdr internally
-  libata-scsi: Move sense buffers onto stack
-  scsi: Check sense buffer size at build time
-
- drivers/Makefile                  |  2 +-
- drivers/ata/libata-scsi.c         | 18 +++------
- drivers/block/Kconfig             |  2 +-
- drivers/block/pktcdvd.c           | 36 +++++++++---------
- drivers/cdrom/cdrom.c             | 30 ++++++++-------
- drivers/ide/ide-cd.c              | 58 ++++++++++++++---------------
- drivers/ide/ide-cd.h              |  6 +--
- drivers/ide/ide-cd_ioctl.c        | 62 +++++++++++++------------------
- drivers/scsi/Makefile             |  2 +-
- drivers/scsi/cxlflash/superpipe.c |  8 +---
- drivers/scsi/cxlflash/vlun.c      |  7 +---
- drivers/scsi/scsi_lib.c           |  6 +--
- drivers/scsi/sr_ioctl.c           | 22 +++++------
- drivers/target/Kconfig            |  5 ++-
- include/linux/cdrom.h             |  3 +-
- include/scsi/scsi_cmnd.h          |  6 +--
- include/scsi/scsi_device.h        | 14 ++++++-
- 17 files changed, 136 insertions(+), 151 deletions(-)
-
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 24cd47014657..a6abd7a856c6 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -76,7 +76,7 @@ obj-$(CONFIG_DMA_SHARED_BUFFER) += dma-buf/
+ obj-$(CONFIG_NUBUS)		+= nubus/
+ obj-y				+= macintosh/
+ obj-$(CONFIG_IDE)		+= ide/
+-obj-$(CONFIG_SCSI)		+= scsi/
++obj-y				+= scsi/
+ obj-y				+= nvme/
+ obj-$(CONFIG_ATA)		+= ata/
+ obj-$(CONFIG_TARGET_CORE)	+= target/
+diff --git a/drivers/scsi/Makefile b/drivers/scsi/Makefile
+index e29f9b8fd66d..1f6218b98430 100644
+--- a/drivers/scsi/Makefile
++++ b/drivers/scsi/Makefile
+@@ -21,6 +21,7 @@ CFLAGS_gdth.o    = # -DDEBUG_GDTH=2 -D__SERIAL__ -D__COM2__ -DGDTH_STATISTICS
+ obj-$(CONFIG_PCMCIA)		+= pcmcia/
+ 
+ obj-$(CONFIG_SCSI)		+= scsi_mod.o
++obj-$(CONFIG_BLK_SCSI_REQUEST)	+= scsi_common.o
+ 
+ obj-$(CONFIG_RAID_ATTRS)	+= raid_class.o
+ 
+@@ -155,7 +156,6 @@ obj-$(CONFIG_SCSI_HISI_SAS) += hisi_sas/
+ obj-$(CONFIG_SCSI_DEBUG)	+= scsi_debug.o
+ scsi_mod-y			+= scsi.o hosts.o scsi_ioctl.o \
+ 				   scsicam.o scsi_error.o scsi_lib.o
+-scsi_mod-y			+= scsi_common.o
+ scsi_mod-$(CONFIG_SCSI_CONSTANTS) += constants.o
+ scsi_mod-$(CONFIG_SCSI_DMA)	+= scsi_lib_dma.o
+ scsi_mod-y			+= scsi_scan.o scsi_sysfs.o scsi_devinfo.o
 -- 
 2.17.1
 
