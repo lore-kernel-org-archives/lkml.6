@@ -2,93 +2,124 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531CCC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F588C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04AD7208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:58:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lXv9ytgo";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XqgNoh3Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AD7208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E0AA420862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:00:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AA420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbeGaIhY (ORCPT
+        id S1729647AbeGaIj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:37:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbeGaIhY (ORCPT
+        Tue, 31 Jul 2018 04:39:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46626 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726591AbeGaIj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:37:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0027C606DD; Tue, 31 Jul 2018 06:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533020315;
-        bh=sZKoLjD3TB3Ed4ZkE4mtDWBgh/1p1ZBstu53CR+Ho5Y=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=lXv9ytgor4iVg5uqKfKceierHeIFqcQqfzBUw8sULtiOj2cDJV33hqq/habZEtXZ4
-         7A+pq++6ud1OjPrDBE10o4uJlRxS2TMqm8IfWXMkjvQnlfAcd/kkOnfH63YacHCuxG
-         JQmaDipNuWnxtH1ROWvqr088XSENJJ6aMRgSGdcs=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D80E560397;
-        Tue, 31 Jul 2018 06:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533020314;
-        bh=sZKoLjD3TB3Ed4ZkE4mtDWBgh/1p1ZBstu53CR+Ho5Y=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=XqgNoh3YGlhhLpyHpXmOiDRCKFvaZ12kipD5RZAavfODrZZRs9bpkjVqpWTCfCoWY
-         LrVJTSTBy9244QW1z1ebQ0UtYehktBa6u19AcFhlzF4VVfQwudYKQXwT06IJxljXvK
-         L7rit+cRmRW3ndaxWYz8Vk0LNP1iEant+iXqIx0k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D80E560397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 31 Jul 2018 04:39:28 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6V6xJIk134392
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 03:00:37 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjg2pe52g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 03:00:37 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Tue, 31 Jul 2018 08:00:35 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Jul 2018 08:00:32 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6V70VeW10027010
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 07:00:31 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8AB611C05B;
+        Tue, 31 Jul 2018 10:00:42 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05DFC11C066;
+        Tue, 31 Jul 2018 10:00:32 +0100 (BST)
+Received: from [9.202.14.95] (unknown [9.202.14.95])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jul 2018 10:00:31 +0100 (BST)
+Subject: Re: [RFC 2/4] virtio: Override device's DMA OPS with
+ virtio_direct_dma_ops selectively
+To:     Christoph Hellwig <hch@infradead.org>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-3-khandual@linux.vnet.ibm.com>
+ <20180730092551.GB26245@infradead.org>
+Cc:     robh@kernel.org, srikar@linux.vnet.ibm.com, mst@redhat.com,
+        aik@ozlabs.ru, jasowang@redhat.com, linuxram@us.ibm.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, paulus@samba.org,
+        joe@perches.com, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net, haren@linux.vnet.ibm.com,
+        david@gibson.dropbear.id.au
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Tue, 31 Jul 2018 12:30:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
+In-Reply-To: <20180730092551.GB26245@infradead.org>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] mwifiex: Fix skipped vendor specific IEs
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1532432847-2885-1-git-send-email-roman.stratiienko@globallogic.com>
-References: <1532432847-2885-1-git-send-email-roman.stratiienko@globallogic.com>
-To:     roman.stratiienko@globallogic.com
-Cc:     akarwar@marvell.com, nishants@marvell.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        Roman Stratiienko <roman.stratiienko@globallogic.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180731065835.0027C606DD@smtp.codeaurora.org>
-Date:   Tue, 31 Jul 2018 06:58:34 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 18073107-4275-0000-0000-000002A11C00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073107-4276-0000-0000-000037A92B60
+Message-Id: <1e197586-4e11-48e1-a0dd-c2c440c64f9e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=840 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807310076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-roman.stratiienko@globallogic.com wrote:
-
-> From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+On 07/30/2018 02:55 PM, Christoph Hellwig wrote:
+>> +const struct dma_map_ops virtio_direct_dma_ops;
 > 
-> Mwifiex firmware inserts only Microsoft information element
-> Allow other vendor specific IEs to pass from userspace
+> This belongs into a header if it is non-static.  If you only
+> use it in this file anyway please mark it static and avoid a forward
+> declaration.
+
+Sure, will make it static, move the definition up in the file to avoid
+forward declaration.
+ 
 > 
-> Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+>> +
+>>  int virtio_finalize_features(struct virtio_device *dev)
+>>  {
+>>  	int ret = dev->config->finalize_features(dev);
+>> @@ -174,6 +176,9 @@ int virtio_finalize_features(struct virtio_device *dev)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> +	if (virtio_has_iommu_quirk(dev))
+>> +		set_dma_ops(dev->dev.parent, &virtio_direct_dma_ops);
+> 
+> This needs a big fat comment explaining what is going on here.
 
-When you submit a new version fo a patch please always add a version number to
-the title and include a changelog:
+Sure, will do. Also talk about the XEN domain exception as well once
+that goes into this conditional statement.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#patch_version_missing
+> 
+> Also not new, but I find the existance of virtio_has_iommu_quirk and its
+> name horribly confusing.  It might be better to open code it here once
+> only a single caller is left.
 
-But this is for the future, no need to resend this patch.
-
--- 
-https://patchwork.kernel.org/patch/10541923/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Sure will do. There is one definition in the tools directory which can
+be removed and then this will be the only one left.
 
