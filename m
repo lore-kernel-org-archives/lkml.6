@@ -2,154 +2,143 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931CEC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC9DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30EA3208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A09208B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:58:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="wc+YSr1n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30EA3208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YOAHYQJw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A09208B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732407AbeGaQiI (ORCPT
+        id S1732461AbeGaQi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:38:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38158 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732268AbeGaQiI (ORCPT
+        Tue, 31 Jul 2018 12:38:56 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37544 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732371AbeGaQi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:38:08 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k3-v6so9220694pgq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:57:25 -0700 (PDT)
+        Tue, 31 Jul 2018 12:38:56 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q10-v6so17002975wrd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RGgn3PFXwcU9A9OnXHcqNNvMrbrHZqJ5jkILJrTmkpk=;
-        b=wc+YSr1nLaUItVpldyFLJUwqKr01J1c45AI30PtCYloUkQz2WHchDDwYW5F54thWle
-         D57d6vkwYBWrtILTBcZAsYh0MIANhZtAjREImV5z5rzEYzMEez6fW3vp1e7YZRgAjKIA
-         ajvIwbr2JLEdB6XKAK8hhlRqANY0ARCcYEWefLO7UPwoiq21ChpGbg+4n0xynvTw6frp
-         J3TkqRn7roLSasjzJNsDqBhnDYrbCc49UQ1z7N+C0vWrlYLFTLXf1KAs2U2WPce+Kg1R
-         L84wCc+/xebON7ZPbRgdIxwhtnRWXMQpSZLm3nB0x4BlYfFcPEIMFSt8mWAGnuz697ca
-         4NPA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9WPjz4ZAXqi3j8IMmVRI4g0N/TxCqLpc/2GFPRLhFTc=;
+        b=YOAHYQJwv/EkWDPkKcoansdSwL0xGJ8wHS4GZPCR5dZayAf+nAhd0lINBsunLkt5ML
+         VMCbndQkE7ZSH16gMoKg9jEm0Xef6FNQSF+G6dmT6tlb4sNxkzevqj3InHGWXyJUZJ/l
+         dkDdDH5PFJzedSsSRBR3EPoRzunrhulr9AcrxXaLNufJOEPkORZIrk9xyNAV+yIG12b7
+         QcnRTYL1EnHgSyKcUOEN7ofiPI+S7Xl7WpMFM9C7O/pIVr5PDvZkNAaMzkl455OCxiE0
+         nLBICwNdZi+xn2W2gkPZLiCtJyXfXJBwydPWhjyqAXubuuHbTOFoQqcpLa4nz0n5hBak
+         aDfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RGgn3PFXwcU9A9OnXHcqNNvMrbrHZqJ5jkILJrTmkpk=;
-        b=bCJ2QTD5T94Etk4DtvkfjN8YCALbeGLhFpOPdCyuOVyGrAlhA4tCo7TUNmF13vc2eo
-         VnXpksYTCTFRgPplv+1YP83Bm+PqvvNqkLe+1Rwd+dv5q7HA28y3KEOQb8qa6OYkUNUs
-         uBzJGMpwFI8Hja41E6pT6lLO+9B0QkmuNzqKP8OniNcI5e29YwSOGwoe1/WlKrBda2ME
-         e2wgjofoXMNvoZ3sS4AJGwRiXLCBUq4Eym9r69HoPY2zTcujKuom0dEYmsHt7tZu5MsO
-         fX9s6Ug2dKisThNaJxM+WoDqpnfKGsdbFQH/a+WeAUQrt7/PxrSDpsyiC3lDrHot8PhR
-         P3KA==
-X-Gm-Message-State: AOUpUlFHFNTAAQNewsQccKUi+o2lpBegE6uLK9AcVTOeHlhEmO/PqEA2
-        rAqBUlFxHWwfFmQdiksayRnLXQ==
-X-Google-Smtp-Source: AAOMgpe+wxa/lPdNYvBHc2fe7573/6qdWF84Vc2hXfcvTRo1yJTc3Rk7iMQp1rNJfBeoUv+28JvrHg==
-X-Received: by 2002:a63:e516:: with SMTP id r22-v6mr20405502pgh.170.1533049045427;
-        Tue, 31 Jul 2018 07:57:25 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm42973955pfi.24.2018.07.31.07.57.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 07:57:24 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 4E9143002A5; Tue, 31 Jul 2018 17:57:19 +0300 (+03)
-Date:   Tue, 31 Jul 2018 17:57:19 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        youling257@gmail.com
-Subject: Re: Linux 4.18-rc7
-Message-ID: <20180731145718.pbyy3qkp2a2yvucs@kshutemo-mobl1>
-References: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
- <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com>
- <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1>
- <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com>
- <alpine.LSU.2.11.1807301410470.4805@eggly.anvils>
- <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
- <20180731062927.hjknfcb2cj3bwd7b@kshutemo-mobl1>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9WPjz4ZAXqi3j8IMmVRI4g0N/TxCqLpc/2GFPRLhFTc=;
+        b=PiLKjWHuZsHGwpIb/+xWObggvHlrgbMP83w10QMr9dXiiPWSXVL4bFRdWdHbToIzlW
+         2lglNRJyQiqn6cXMiADS8bu2eYQR+Slkf9u+oeY+NwhQjSGLrTXKE/VCN4vnUGOPPOye
+         pLJzAi8xCSqphkbqqCXrlGyi0DEyX/yATaFaIXCSsp1rLdKckXVGvWjClyCwWocISIjD
+         ZLcBxLdXvCDwiNvAGV7IkmnoeQlODn0o1CUm/sUyuxJ49T5fS/8cpb/U2qIfzFpS7NXn
+         Fxzx9M/u7M24OKAW5O8HdP/8a/xxooZ21MK1lINX1EtxYVLjO4SDVOyrKT+ysfL+CNP3
+         9WXg==
+X-Gm-Message-State: AOUpUlG4nw5zI+IjOySeQiNKJmEddoDg4/Y5Ntkq1SIoCBlXhykuEC8s
+        OduBkOUFe7Jg2j5kiQRCuQJPpjKNpVgrAdahQlsEpw==
+X-Google-Smtp-Source: AAOMgpcsSz9U1uo7tasuATppkA+O21V//qXDt9Ln86LmE13zQe4HyFMadqj6sUflSTUMJjtTKWITzInT5oPPNL4r7ec=
+X-Received: by 2002:a5d:4410:: with SMTP id z16-v6mr21595693wrq.272.1533049091996;
+ Tue, 31 Jul 2018 07:58:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731062927.hjknfcb2cj3bwd7b@kshutemo-mobl1>
-User-Agent: NeoMutt/20180716
+References: <20180730180100.25079-1-guro@fb.com> <20180730180100.25079-2-guro@fb.com>
+ <20180731084509.GE4557@dhcp22.suse.cz>
+In-Reply-To: <20180731084509.GE4557@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 31 Jul 2018 07:58:00 -0700
+Message-ID: <CALvZod75t+uK=FDtpuBCMZCk7cb4vQMy7DpXQ53Aj7ZLiYsTQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mm: introduce mem_cgroup_put() helper
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:29:27AM +0300, Kirill A. Shutemov wrote:
-> On Mon, Jul 30, 2018 at 06:01:26PM -0700, Linus Torvalds wrote:
-> > On Mon, Jul 30, 2018 at 2:53 PM Hugh Dickins <hughd@google.com> wrote:
-> > >
-> > > I have no problem with reverting -rc7's vma_is_anonymous() series.
-> > 
-> > I don't think we need to revert the whole series: I think the rest are
-> > all fairly obvious cleanups, and shouldn't really have any semantic
-> > changes.
-> > 
-> > It's literally only that last patch in the series that then changes
-> > that meaning of "vm_ops". And I don't really _mind_ that last step
-> > either, but since we don't know exactly what it was that it broke, and
-> > we're past rc7, I don't think we really have any option but the revert
-> > it.
-> > 
-> > And if we revert it, I think we need to just remove the
-> > VM_BUG_ON_VMA() that it was supposed to fix. Because I do think that
-> > it is quite likely that the real bug is that overzealous BUG_ON(),
-> > since I can't see any reason why anonymous mappings should be special
-> > there.
-> > 
-> > But I'm certainly also ok with re-visiting that commit later.  I just
-> > think that right _now_ the above is my preferred plan.
-> > 
-> > Kirill?
-> 
-> Considering the timing, I'm okay with reverting the last patch with
-> dropping the VM_BUG_ON_VMA().
-> 
-> But in the end I would like to see strong vma_is_anonymous().
-> 
-> The VM_BUG_ON_VMA() is only triggerable by the test case because
-> vma_is_anonymous() false-positive in fault path and we get anon-THP
-> allocated in file-private mapping.
-> 
-> I don't see immediately how this may trigger other crashes.
-> But it definitely looks wrong.
-> 
-> > > I'm all for deleting that VM_BUG_ON_VMA() in zap_pmd_range(), it was
-> > > just a compromise with those who wanted to keep something there;
-> > > I don't think we even need a WARN_ON_ONCE() now.
-> > 
-> > So to me it looks like a historical check that simply doesn't
-> > "normally" trigger, but there's no reason I can see why we should care
-> > about the case it tests against.
-> 
-> I'll think more on what could go wrong with __split_huge_pmd() called on
-> anon-THP page without mmap_sem(). It's not yet clear cut to me.
+On Tue, Jul 31, 2018 at 1:45 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Mon 30-07-18 11:00:58, Roman Gushchin wrote:
+> > Introduce the mem_cgroup_put() helper, which helps to eliminate guarding
+> > memcg css release with "#ifdef CONFIG_MEMCG" in multiple places.
+>
+> Is there any reason for this to be a separate patch? I usually do not
+> like to add helpers without their users because this makes review
+> harder. This one is quite trivial to fit into Patch3 easilly.
+>
 
-I think not having mmap_sem taken at least on read when we call
-__split_huge_pmd() opens possiblity of race with khugepaged:
-khugepaged can collapse the page back to THP as soon as we drop ptl.
-As result pmd_none_or_trans_huge_or_clear_bad() would return true and we
-basically leave the THP behind, not zapped.
+The helper function introduced in this change is also used in the
+remote charging patches, so, I asked Roman to separate this change out
+and thus can be merged independently.
 
--- 
- Kirill A. Shutemov
+Shakeel
+
+> > Link: http://lkml.kernel.org/r/20180623000600.5818-2-guro@fb.com
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> > Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Shakeel Butt <shakeelb@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  include/linux/memcontrol.h | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 6c6fb116e925..e53e00cdbe3f 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -375,6 +375,11 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+> >       return css ? container_of(css, struct mem_cgroup, css) : NULL;
+> >  }
+> >
+> > +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+> > +{
+> > +     css_put(&memcg->css);
+> > +}
+> > +
+> >  #define mem_cgroup_from_counter(counter, member)     \
+> >       container_of(counter, struct mem_cgroup, member)
+> >
+> > @@ -837,6 +842,10 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
+> >       return true;
+> >  }
+> >
+> > +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+> > +{
+> > +}
+> > +
+> >  static inline struct mem_cgroup *
+> >  mem_cgroup_iter(struct mem_cgroup *root,
+> >               struct mem_cgroup *prev,
+> > --
+> > 2.14.4
+> >
+>
+> --
+> Michal Hocko
+> SUSE Labs
