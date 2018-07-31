@@ -2,124 +2,85 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5751C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9CBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7BE20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:47:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7BE20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=isi.edu
+	by mail.kernel.org (Postfix) with ESMTP id 149D320841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 149D320841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732049AbeGaW3F (ORCPT
+        id S1732199AbeGaW3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 18:29:05 -0400
-Received: from mail-c.ads.isi.edu ([128.9.180.198]:42258 "EHLO
-        mail-c.ads.isi.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbeGaW3F (ORCPT
+        Tue, 31 Jul 2018 18:29:54 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35068 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeGaW3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 18:29:05 -0400
-X-IronPort-AV: E=Sophos;i="5.51,428,1526367600"; 
-   d="scan'208";a="6779006"
-Received: from guest228.east.isi.edu (HELO localhost) ([65.123.202.228])
-  by mail-c.ads.isi.edu with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 13:46:57 -0700
-Date:   Tue, 31 Jul 2018 16:46:56 -0400
-From:   Alexei Colin <acolin@isi.edu>
-To:     Alex Bounine <alex.bou9@gmail.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
+        Tue, 31 Jul 2018 18:29:54 -0400
+Received: by mail-io0-f195.google.com with SMTP id w11-v6so14237459iob.2;
+        Tue, 31 Jul 2018 13:47:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kw7m9ECsqBt287xiBhl5zxoJ4Qna/MsUWGJvOoGhXiw=;
+        b=sipvFie0ZnmhedzNQ8BduQsPF88j2Ta67HtEeyOMGnJtxcVVDTc1cYEFRMOqfWZ5q4
+         GCWNNgFjHuCgfusN/EczZD1l2DD9CIPPGeWOlnsxgC1RgOtBzO7BvnSNWGvuMPoWStw/
+         jhKvGVH/DKgCwO6jQs5/VZ4KiblfGAr4j0QkTkQt480CszcdhDBIrJE1MNYkrmD92Ir8
+         mqm6wbRasjRmLRIJzy0vUAPI8NY5ZTOOwEAed8ecLuWZsr2RDfBvtDNdvOefZAoPYIPm
+         HFK7Txevzgm7K/3mvCkpAAIH6UtmNGJooxqHeJNysURqAPcSueXM4HLbavq0T2DYOx/M
+         Bukw==
+X-Gm-Message-State: AOUpUlGMYQcitAXQHoZAI5DNf8mtkexO+bH38C08OkeffACCLX7CtYd7
+        SoWUk3a8BIjZz0SBnEl6cA==
+X-Google-Smtp-Source: AAOMgpfDAVgviwWm33UTj6cOwvVvciqkztU4BRkm7MQ0NPJKwRQT9jKj3mINOfOrX4J02WSEbklkkw==
+X-Received: by 2002:a6b:88d4:: with SMTP id s81-v6mr1136972ioi.98.1533070066129;
+        Tue, 31 Jul 2018 13:47:46 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id z2-v6sm1824743iti.3.2018.07.31.13.47.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 13:47:45 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 14:47:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Arun Parameswaran <arun.parameswaran@broadcom.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        John Paul Walters <jwalters@isi.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-Message-ID: <20180731204656.GC38497@guest228.east.isi.edu>
-References: <20180730225035.28365-1-acolin@isi.edu>
- <20180730225035.28365-7-acolin@isi.edu>
- <20180731084143.GA4680@arm.com>
- <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
- <f2723578-f39d-27ac-b376-0f06905caa67@gmail.com>
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 1/7] dt-bindings: net: Fix Broadcom iProc mdio mux
+ driver base address
+Message-ID: <20180731204744.GA9993@rob-hp-laptop>
+References: <1532726613-6483-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f2723578-f39d-27ac-b376-0f06905caa67@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1532726613-6483-2-git-send-email-arun.parameswaran@broadcom.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 04:29:56PM -0400, Alex Bounine wrote:
-> On 2018-07-31 08:54 AM, Alex Bounine wrote:
-> > On 2018-07-31 04:41 AM, Will Deacon wrote:
-> > > On Mon, Jul 30, 2018 at 06:50:34PM -0400, Alexei Colin wrote:
-> > > > Platforms with a PCI bus will be offered the RapidIO menu since they may
-> > > > be want support for a RapidIO PCI device. Platforms without a PCI bus
-> > > > that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
-> > > > in the platform-/machine-specific "config ARCH_*" Kconfig entry.
-> > > > 
-> > > > Tested that kernel builds for arm64 with RapidIO subsystem and
-> > > > switch drivers enabled, also that the modules load successfully
-> > > > on a custom Aarch64 Qemu model.
-> > > > 
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: Russell King <linux@armlinux.org.uk>
-> > > > Cc: John Paul Walters <jwalters@isi.edu>
-> > > > Cc: linux-arm-kernel@lists.infradead.org
-> > > > Cc: linux-kernel@vger.kernel.org,
-> > > > Signed-off-by: Alexei Colin <acolin@isi.edu>
-> > > > ---
-> > > >   arch/arm64/Kconfig | 2 ++
-> > > >   1 file changed, 2 insertions(+)
-> > > 
-> > > Thanks, this looks much cleaner than before:
-> > > 
-> > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > > 
-> > > The only thing I'm not sure about is why we don't just select HAS_RAPIDIO
-> > > unconditionally in the arm64 Kconfig. Does selecting only that option
-> > > actually pull in new code to the build?
-> > > 
-> > HAS_RAPIDIO option is intended for SOCs that have built in SRIO
-> > controllers, like TI KeyStoneII or FPGAs. Because RapidIO subsystem core
-> > is required during RapidIO port driver initialization, having separate
-> > option allows us to control available build options for RapidIO core and
-> > port driver (bool vs. tristate) and disable module option if port driver
-> > is configured as built-in.
+On Fri, Jul 27, 2018 at 02:23:27PM -0700, Arun Parameswaran wrote:
+> Modify the base address of the Broadcom iProc MDIO mux driver to
+> point to the start of the block's register address space.
 > 
-> I am thinking about where HAS_RAPIDIO option can be set for arm64 branch.
-> Having it set globally is too broad. For example we have Xilinx Zinq US
-> board with SRIO IP on it. Having it globally in arm64 branch - bad. Probably
-> having it set in drivers/soc/... is the best place.
-> 
-> Will, Alexei what do you think?
+> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Since the HAS_RAPIODIO flag adds meta info about SoC, maybe the line
-that 'select's it can go where the rest of the meta info is, which
-differs across architectures:
-* For ARM64, in arch/arm64/Kconfig.platforms under each config ARCH_*
-for each SoC that includes RapidIO.
-* For ARM, in arch/arm/mach-*/Kconfig
+The example is just an example, but okay...
 
-But, if we want the flag to be automatically selected for some larger
-set of ARM64 SoCs without explicitly adding it to each one, then the
-above is not going to do that.
-
-> > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > > index a8f0c74e6f7f..5e8cf90505ec 100644
-> > > > --- a/arch/arm64/Kconfig
-> > > > +++ b/arch/arm64/Kconfig
-> > > > @@ -308,6 +308,8 @@ config PCI_SYSCALL
-> > > >   source "drivers/pci/Kconfig"
-> > > > +source "drivers/rapidio/Kconfig"
-> > > > +
-> > > >   endmenu
-> > > >   menu "Kernel Features"
-> > > > -- 
-> > > > 2.18.0
-> > > > 
+Reviewed-by: Rob Herring <robh@kernel.org>
