@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87222C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2FBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D87208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 811FE208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:34:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxOze8zX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D87208A3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgusynQR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811FE208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbeGaNO1 (ORCPT
+        id S1732198AbeGaNO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:14:27 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47050 "EHLO
+        Tue, 31 Jul 2018 09:14:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42111 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732087AbeGaNO0 (ORCPT
+        with ESMTP id S1732177AbeGaNO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:14:26 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h14-v6so16274704wrw.13
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 04:34:32 -0700 (PDT)
+        Tue, 31 Jul 2018 09:14:27 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e7-v6so16259983wrs.9
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 04:34:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cnkrYTmYlAJD9ngigCnsIaZgem3YqrbN0ULxW7ANfAs=;
-        b=OxOze8zXOUNP/ykuSPfM/ULNgNyhcFi1bns33YV0+OatiavPxDiG+IzY5rD/jv5q/m
-         +uc15HdNZhSsxLBHKzWLPXO61z2Zg9ivXs1zkbWNdG26UWX8NSaCTlQ4YNm611lnsnxT
-         tsEr1GEIQ3YlZz30LXyYdXkOzlkx5BlmH6OLSazM0pNTc7nZ9EP2pF24LFH8q48XK69h
-         60/7oMq+9te0gAxCpimwS2NRQKwYdyReIk3Lt6J74dRb50D117wFnBusVvMLhbZ7O+ww
-         ysxpA1tURGwIUbyO7YrnXPTMJEXSM2TxrK9mV73jBEkaJZuMVdzSDXi7Az7u6csGzwpV
-         XIkw==
+        bh=NWqh9C/3ImuHo+zZzWz7h5iuIuOT4b1PYSq9aiPPXNU=;
+        b=SgusynQRddNU8jdaSlTFGhZzFTeZLkx4ZLhi8rKhon1O/wxWWLKZaanT6GnRe4v+qB
+         tR2LZyHfxZNknY4nVdkKFTR9mWwbz+yidgDc/f6sYwjUALWLhL3EcoMmWEOesgJkDxFs
+         PMO9DBA73jFZwainLHCtiou8MUfvnKIhi520hajBue9UEtugSV4LEM9BS2meB4WFeWRG
+         dzBIoAUnocedxl+USXJGjd4eQlG7dmKmt4+iuC5bn5E3BVJejf/TnU4DPTZitrS8dLLK
+         sqeDb9wRdOJktAVShQZj6tgLKzRR1ydBGU3Jfv8hhIinddoOfTcZzTKqGx5nE8i0yu4w
+         LQMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cnkrYTmYlAJD9ngigCnsIaZgem3YqrbN0ULxW7ANfAs=;
-        b=iT7SYVSnDzmZJL/jLmrW4ljDwAZYFA85BXXUWcx0zOi2nmLRvLvpjBBm0MEDhPUyBZ
-         B8Zq3ZP3bO5gHs//EYHiDPxWXlbhA1912a2QaMCbU25sE6q1VbBsFsLRTYww294DVWhO
-         yKY33mOFDIjsF0LNdcGNK37z3zFapi3A4EA8giWpxBGhkwhH1L7PePBJ5GtETQQ5jvH8
-         jh6+kgASAi5Wm55U6D8S6BU54T4Jc7FEb21RgDkSNjJ26b1YLYQwobdADIjRCofvhm0O
-         Gq+yp311urKkZ4nqWHXCvH2d7YNIzO44BIvzRONsOS0byq3VTbFWhPgdl1LnxsbfTvM/
-         WFGg==
-X-Gm-Message-State: AOUpUlE5WUJ3knYX4r2fdTnoPH/msEuvV68JX26xdCNKE0Q3b0qe0LwC
-        nYm09rowVIkBt2G6oEAiCqQ=
-X-Google-Smtp-Source: AAOMgpfVZvJ0wAgS+sZf3c/l9pIdmNFE0BQwTSjnxg78Aior9+s5ft4Oa1zh3b3EK2Di8IQYWFXHPQ==
-X-Received: by 2002:adf:cd82:: with SMTP id q2-v6mr21213633wrj.118.1533036871654;
-        Tue, 31 Jul 2018 04:34:31 -0700 (PDT)
+        bh=NWqh9C/3ImuHo+zZzWz7h5iuIuOT4b1PYSq9aiPPXNU=;
+        b=X8BSIvzAEmoQvscLuRzL2t+uaLtMACVMIsCCO3HWAKIMbQHKfhNjyMWft39RA+mqNK
+         FyIXPik3ARJ3EXkdLhspCUbxyJFpLEcu+YYv1Y/sAAECCQe44Z/L/7TRpLXrZbysP799
+         DKBMhdtKvAF3Mr3PaBeq++yX1hli0U4J//QrckWUSUrL1E52heSBzeR3erMPbxjUND8I
+         xKgE6ETirvzvoMaGT2629m1eB0rJ9NcZVX2+Sk5TSWloxiiwsUPu4xBITtYFMaJ7gD7u
+         N6Nhz6PWoAR+JKorG7mTmHqd/3t+0GgdE70RAt2bfEZDN17frEkHS5rJK+CpEzRInBhZ
+         IUOg==
+X-Gm-Message-State: AOUpUlHWw3WZeq9Vi2JQm9M4e1gLsxu1a/wrliYSOQ+iF6rcDkwfzB/a
+        G1FSGXXoFifqnuQsIZUFpJg=
+X-Google-Smtp-Source: AAOMgpfXwvr3kTdjyUFTP777Vu1PNfn1LL5PcfpzXHHk+UQmORghq4PNxhclWtG9gTVUEhURmcdL/A==
+X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr20617224wrf.206.1533036873239;
+        Tue, 31 Jul 2018 04:34:33 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id f17-v6sm16513137wrs.1.2018.07.31.04.34.30
+        by smtp.gmail.com with ESMTPSA id f17-v6sm16513137wrs.1.2018.07.31.04.34.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 04:34:31 -0700 (PDT)
+        Tue, 31 Jul 2018 04:34:32 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/7] staging: rtl8188eu: remove unnecessary parentheses - style
-Date:   Tue, 31 Jul 2018 13:34:12 +0200
-Message-Id: <20180731113415.1500-4-straube.linux@gmail.com>
+Subject: [PATCH 5/7] staging: rtl8188eu: remove unused rtw_add_bcn_ie()
+Date:   Tue, 31 Jul 2018 13:34:13 +0200
+Message-Id: <20180731113415.1500-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180731113415.1500-1-straube.linux@gmail.com>
 References: <20180731113415.1500-1-straube.linux@gmail.com>
@@ -73,34 +73,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary parentheses to improve readability.
+The function rtw_add_bcn_ie() is never used, so remove it.
+Discovered by cppcheck.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_ap.c    | 66 ----------------------
+ drivers/staging/rtl8188eu/include/rtw_ap.h |  2 -
+ 2 files changed, 68 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index a59eb017227f..5ddfc2ead127 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -436,14 +436,14 @@ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
- 		return _FAIL;
- 	}
+diff --git a/drivers/staging/rtl8188eu/core/rtw_ap.c b/drivers/staging/rtl8188eu/core/rtw_ap.c
+index 220b4bbe1f84..82fb1b028fa0 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_ap.c
++++ b/drivers/staging/rtl8188eu/core/rtw_ap.c
+@@ -145,72 +145,6 @@ static void update_BCNTIM(struct adapter *padapter)
+ 	set_tx_beacon_cmd(padapter);
+ }
  
--	if ((!precvbuf->reuse) || (!precvbuf->pskb)) {
-+	if (!precvbuf->reuse || !precvbuf->pskb) {
- 		precvbuf->pskb = skb_dequeue(&precvpriv->free_recv_skb_queue);
- 		if (precvbuf->pskb)
- 			precvbuf->reuse = true;
- 	}
- 
- 	/* re-assign for linux based on skb */
--	if ((!precvbuf->reuse) || (!precvbuf->pskb)) {
-+	if (!precvbuf->reuse || !precvbuf->pskb) {
- 		precvbuf->pskb = netdev_alloc_skb(adapter->pnetdev, MAX_RECVBUF_SZ);
- 		if (!precvbuf->pskb) {
- 			RT_TRACE(_module_hci_ops_os_c_, _drv_err_, ("init_recvbuf(): alloc_skb fail!\n"));
+-void rtw_add_bcn_ie(struct adapter *padapter, struct wlan_bssid_ex *pnetwork,
+-		    u8 index, u8 *data, u8 len)
+-{
+-	struct ndis_802_11_var_ie *pIE;
+-	u8 bmatch = false;
+-	u8 *pie = pnetwork->ies;
+-	u8 *p = NULL, *dst_ie = NULL, *premainder_ie = NULL;
+-	u8 *pbackup_remainder_ie = NULL;
+-	u32 i, offset, ielen = 0, ie_offset, remainder_ielen = 0;
+-
+-	for (i = sizeof(struct ndis_802_11_fixed_ie); i < pnetwork->ie_length;) {
+-		pIE = (struct ndis_802_11_var_ie *)(pnetwork->ies + i);
+-
+-		if (pIE->ElementID > index) {
+-			break;
+-		/*  already exist the same IE */
+-		} else if (pIE->ElementID == index) {
+-			p = (u8 *)pIE;
+-			ielen = pIE->Length;
+-			bmatch = true;
+-			break;
+-		}
+-		p = (u8 *)pIE;
+-		ielen = pIE->Length;
+-		i += (pIE->Length + 2);
+-	}
+-
+-	if (p && ielen > 0) {
+-		ielen += 2;
+-
+-		premainder_ie = p + ielen;
+-
+-		ie_offset = (int)(p - pie);
+-
+-		remainder_ielen = pnetwork->ie_length - ie_offset - ielen;
+-
+-		if (bmatch)
+-			dst_ie = p;
+-		else
+-			dst_ie = p + ielen;
+-	}
+-
+-	if (remainder_ielen > 0) {
+-		pbackup_remainder_ie = rtw_malloc(remainder_ielen);
+-		if (pbackup_remainder_ie && premainder_ie)
+-			memcpy(pbackup_remainder_ie, premainder_ie,
+-			       remainder_ielen);
+-	}
+-
+-	*dst_ie++ = index;
+-	*dst_ie++ = len;
+-
+-	memcpy(dst_ie, data, len);
+-	dst_ie += len;
+-
+-	/* copy remainder IE */
+-	if (pbackup_remainder_ie) {
+-		memcpy(dst_ie, pbackup_remainder_ie, remainder_ielen);
+-
+-		kfree(pbackup_remainder_ie);
+-	}
+-
+-	offset =  (uint)(dst_ie - pie);
+-	pnetwork->ie_length = offset + remainder_ielen;
+-}
+-
+ void rtw_remove_bcn_ie(struct adapter *padapter, struct wlan_bssid_ex *pnetwork,
+ 		       u8 index)
+ {
+diff --git a/drivers/staging/rtl8188eu/include/rtw_ap.h b/drivers/staging/rtl8188eu/include/rtw_ap.h
+index bca41d68ce9d..f8f07257976c 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_ap.h
++++ b/drivers/staging/rtl8188eu/include/rtw_ap.h
+@@ -19,8 +19,6 @@ void rtw_indicate_sta_disassoc_event(struct adapter *padapter,
+ 				     struct sta_info *psta);
+ void init_mlme_ap_info(struct adapter *padapter);
+ void free_mlme_ap_info(struct adapter *padapter);
+-void rtw_add_bcn_ie(struct adapter *padapter, struct wlan_bssid_ex *pnetwork,
+-		    u8 index, u8 *data, u8 len);
+ void rtw_remove_bcn_ie(struct adapter *padapter,
+ 		       struct wlan_bssid_ex *pnetwork, u8 index);
+ void update_beacon(struct adapter *padapter, u8 ie_id,
 -- 
 2.18.0
 
