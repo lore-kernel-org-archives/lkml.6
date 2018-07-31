@@ -2,111 +2,169 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760EFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0E5C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2932A20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4DDD20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:17:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IUFtO+K0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2932A20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLyAhVhG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DDD20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729751AbeGaS6X (ORCPT
+        id S1731385AbeGaS6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:58:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44708 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbeGaS6X (ORCPT
+        Tue, 31 Jul 2018 14:58:34 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39189 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeGaS6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:58:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=m2NsakjDFLNnEMXqOiv349r4kgMt8GLdJYu9Vj2hSoM=; b=IUFtO+K0RpqTQURKCnNeNpKjR
-        hm+rJTnfbT+zkMbXthV4DxQ+rWYxgmavum1A6s8VtOtUtIxQrWFJxrrGNeACdoimBQJTagwZ3n+SD
-        4Y2aFaCjE1k8i1ed9szsVhXGTiqRXReZ6l1/mHFixAaYM3OAPMIpofYiCT8CGOG5QPepc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkYGV-0008MP-Bl; Tue, 31 Jul 2018 17:16:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 06BCE11242BD; Tue, 31 Jul 2018 18:16:55 +0100 (BST)
-Date:   Tue, 31 Jul 2018 18:16:54 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 06/10] ASoC: wcd9335: add basic controls
-Message-ID: <20180731171654.GL5719@sirena.org.uk>
-References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
- <20180727121806.18209-7-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hTKW8p8tUZ/8vLMe"
-Content-Disposition: inline
-In-Reply-To: <20180727121806.18209-7-srinivas.kandagatla@linaro.org>
-X-Cookie: Save the bales!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 31 Jul 2018 14:58:34 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so6424224pff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Mr8SlKMMKOWqMOG5/RqK9f9XGsYcnxSMuRGnJK/CucU=;
+        b=JLyAhVhGcAiy3rzm8sLZ7tPCODrsWKfLyDUpfHHgubx+5um96Xn4BBXWCzu4cLGaj8
+         H+AVeHGJlw0jpCalPaScnRtvio97Af1j3O19YyYL8O18GF1v9LVE0DhWxOSMZ5Rl3Sko
+         Y+B2Aayqk0hTWycVr3a1xWLR8ITWqNbKlk7JA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Mr8SlKMMKOWqMOG5/RqK9f9XGsYcnxSMuRGnJK/CucU=;
+        b=e6wrPEGfNLvqvMLU5UGgU5EYFTNvnjYBrzEy+jUIaqdTiHr5f6Ag4YOVTe3vVrRUP2
+         g5B4NxN8de4NZeBlqOxC7BooyqQSboByV66QbQq+CghhrrXImLRjSETlK6QGla37YftA
+         /Gd43FF/yOTAqLUMMqj7R7jA7sT/YDExBBuBpY0TDLhT/9SwJpLvAqT+2up92Zkng0/D
+         7v3nleV2MP+skc3or3BVNuLtZeFuy/+GLOFPfKDPKVAjjsKOgarZ3uIOjEMhH7ZKHTEu
+         UEE32w2tAWuCPmyKWPsOKMgvmLquegbK4m0sb7OYF8IQRGQZx6jtJYTiuDKZjX8PYmt3
+         mM2g==
+X-Gm-Message-State: AOUpUlHtDJsCzNzVUq6I5/NqSVgKXhcUDEJEXfP3wE4mmpcan0z1i8Gr
+        q6jtQk7PBZG0Wh+RTc1gE3de+xcgFxs=
+X-Google-Smtp-Source: AAOMgpflYEO42li9iH5OxkY8mQuwLpEiSJXf3JUSCGAGhd5tb5739YZEvpyj3m1NyCogKdDHw6/Ukg==
+X-Received: by 2002:aa7:850b:: with SMTP id v11-v6mr22763790pfn.165.1533057436022;
+        Tue, 31 Jul 2018 10:17:16 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm43577938pfi.24.2018.07.31.10.17.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 31 Jul 2018 10:17:14 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>, aarcange@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Colin Cross <ccross@google.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        youling 257 <youling257@gmail.com>
+Subject: [PATCH] staging: ashmem: Fix SIGBUS crash when traversing mmaped ashmem pages
+Date:   Tue, 31 Jul 2018 10:17:04 -0700
+Message-Id: <1533057424-25933-1-git-send-email-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com>
+References: <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Amit Pundir and Youling in parallel reported crashes with recent
+mainline kernels running Android:
 
---hTKW8p8tUZ/8vLMe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+F DEBUG   : Build fingerprint:
+'Android/db410c32_only/db410c32_only:Q/OC-MR1/102:userdebug/test-key
+F DEBUG   : Revision: '0'
+F DEBUG   : ABI: 'arm'
+F DEBUG   : pid: 2261, tid: 2261, name: zygote  >>> zygote <<<
+F DEBUG   : signal 7 (SIGBUS), code 2 (BUS_ADRERR), fault addr 0xec00008
+... <snip> ...
+F DEBUG   : backtrace:
+F DEBUG   :     #00 pc 00001c04  /system/lib/libc.so (memset+48)
+F DEBUG   :     #01 pc 0010c513  /system/lib/libart.so
+(create_mspace_with_base+82)
+F DEBUG   :     #02 pc 0015c601  /system/lib/libart.so
+(art::gc::space::DlMallocSpace::CreateMspace(void*, unsigned int,
+unsigned int)+40)
+F DEBUG   :     #03 pc 0015c3ed  /system/lib/libart.so
+(art::gc::space::DlMallocSpace::CreateFromMemMap(art::MemMap*,
+std::__1::basic_string<char, std::__
+1::char_traits<char>, std::__1::allocator<char>> const&, unsigned int,
+unsigned int, unsigned int, unsigned int, bool)+36)
+...
 
-On Fri, Jul 27, 2018 at 01:18:02PM +0100, Srinivas Kandagatla wrote:
+This was bisected back to commit bfd40eaff5ab ("mm: fix vma_is_anonymous()
+false-positives").
 
-> +static const char * const wcd9335_ear_pa_gain_text[] = {
-> +	"G_6_DB", "G_4P5_DB", "G_3_DB", "G_1P5_DB",
-> +	"G_0_DB", "G_M2P5_DB", "UNDEFINED", "G_M12_DB"
-> +};
+create_mspace_with_base() in the trace above, utilizes ashmem, and
+with ashmem, for shared mappings we use shmem_zero_setup(), which sets
+the vma->vm_ops to &shmem_vm_ops. But for private ashmem mappings
+nothing sets the vma->vm_ops.
 
-This is fairly clearly a volume control so shouldn't be an enum.  I
-don't think we have a standard control that enables you to skip values
-in a regular volume control (we do for enums which you should've used
-rather than having the undefined entry) so you'd have to have custom get
-and put operators but that's better than abusing an enum.
+Looking at the problematic patch, it seems to add a requirement that
+one call vma_set_anonymous() on a vma, otherwise the dummy_vm_ops will
+be used. Using the dummy_vm_ops seem to triggger SIGBUS when traversing
+unmapped pages.
 
-> +static const char * const rx_hph_mode_mux_text[] = {
-> +	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI"
-> +};
+Thus, this patch adds a call to vma_set_anonymous() for ashmem private
+mappings and seems to avoid the reported problem.
 
-Use a SOC_VALUE_ENUM to hide the invalid option from users.
+Cc: Amit Pundir <amit.pundir@linaro.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: aarcange@redhat.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Colin Cross <ccross@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org
+Cc: youling 257 <youling257@gmail.com>
+Fixes: bfd40eaff5ab ("mm: fix vma_is_anonymous() false-positives")
+Reported-by: Amit Pundir <amit.pundir@linaro.org>
+Reported-by: Youling 257 <youling257@gmail.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
 
-> +	wcd->comp_enabled[comp] = value;
-> +	sel = value ? WCD9335_HPH_GAIN_SRC_SEL_COMPANDER :
-> +		WCD9335_HPH_GAIN_SRC_SEL_REGISTER;
+Hopefully my explanation make sense here. Please let me know if it
+needs corrections.
+thanks
+-john
 
-Just write normal if statements unless there's a reason not to, it's
-easier to read.
+---
+ drivers/staging/android/ashmem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---hTKW8p8tUZ/8vLMe
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index a1a0025..d5d33e1 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -402,6 +402,8 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 			fput(asma->file);
+ 			goto out;
+ 		}
++	} else {
++		vma_set_anonymous(vma);
+ 	}
+ 
+ 	if (vma->vm_file)
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgmYYACgkQJNaLcl1U
-h9Adxgf+MFHKxg2WF8v6N+AeOWmjQ3J0XB/mq1WgTIgaPnJwCEbIPpDUhpq4DGdW
-LDcrzKwVlNkeoGkubTMFqlDEGU37VKRNLKHZ5iydaNdVdnkN0AGmoY/70wfYA9Av
-WN8I5pN+v5r1AlorDMLn/XwivKMOp2ekAhDYR7IC3bctHnG6yl8n/AxBCRH0vAhq
-fQVg3GT4Ezd6X3GQJaFg12TLIBk5NfCJnjTD0i4M4g8oSsOywWnfaaYZ8TBhIx3g
-DTX80aK69lqEDYB0tP/gW4Sqr5Hz1JmkPXG17YND/BvDBWUlFp3HunKy4m3Z+yWH
-8rNVq0I2fbE2AZCNeaYb1Ck0ObH6GA==
-=UnyX
------END PGP SIGNATURE-----
-
---hTKW8p8tUZ/8vLMe--
