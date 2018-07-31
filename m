@@ -4,106 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35000C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA98C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD80E208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6702D208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:20:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GMW2uuny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD80E208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DEGLUv6Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6702D208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbeGaG6N (ORCPT
+        id S1729653AbeGaG6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 02:58:13 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:50900 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbeGaG6M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 02:58:12 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6V5IiAJ062864;
-        Tue, 31 Jul 2018 05:19:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=9cQ0TNneGq4sKOlI4REU00u/TKD7WXNyixK0CuKn3oI=;
- b=GMW2uunykrsjoCLNGmifkmnUFQP0YElVNjtX1WhMHHQEh6X4SiTZ87mXMehBUM03hCkN
- +eK6vyzCAyg700oTrPw4rrSYo1k0QXAwQtejQV/uRRl6PEaNEECX/AtJ8O+EUQlyee6E
- YJPZJ23IByqLet0vVPL6qsnWvbB2/riFZNHc8B9esE55nTmynCGLJXdLPGbDcTeclRgE
- eXP7600CvM8LXHzgyzx/YsKlgAZ4Ehacdpy5gLsq4qD2RSiRWvT9nEmupZT2UssQyXvh
- a0jFbK/AjNgi+dPNFbIDnBWahShCHbunlwQd/VJTJIdJGY15Gz7AMteG/DqzCLycNhyx hw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2kge0cycau-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 05:19:43 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6V5JgQP031642
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 05:19:42 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6V5Jg0m032245;
-        Tue, 31 Jul 2018 05:19:42 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Jul 2018 22:19:41 -0700
-Subject: Re: [RFC] blk-mq: clean up the hctx restart
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, bart.vanassche@wdc.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533009735-2221-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180731045805.GE15701@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <8a3383e6-2926-6858-d8f2-671f3cb9e460@oracle.com>
-Date:   Tue, 31 Jul 2018 13:19:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 02:58:35 -0400
+Received: from ozlabs.org ([203.11.71.1]:52445 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726655AbeGaG6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 02:58:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41flBG0h0mz9s3N;
+        Tue, 31 Jul 2018 15:20:05 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533014407;
+        bh=8ajvBxGrzjK8L4xjgRL/YfyE3xUWpAAu9czmgR/ThYs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DEGLUv6Z/AbqHD+Odk5vIH2xICzIAlI2LqOBFhZ60f+tn2V/MsheFMmbj/dETDFF+
+         6/RQ6eaSy3vwWFMluJ+LqRZwqfhBWNtN/WmsNCkXdvzbWeowGx8pYTH/LYPhwkBgg0
+         7QnCIeJgnV8q6NKguMipNHsUMFsDR0xqBkM3bZOXepdajzhg3pUUcGBwhipUb++h/K
+         WSU5cyKOK4Dkc+XVFQY67IUpb9sNO/s5qht5fjPY6hIaATtqAaWI4qdL2ymEX8fgDc
+         TVAws/onFx9MRfhmSXHYV/SdSaimmXIlNQ78nklfLKqnU5KAfqIiL6Xt5jflqb61DX
+         DxQMIy6tk1wCg==
+Date:   Tue, 31 Jul 2018 15:20:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Peter Rosin <peda@axentia.se>, Sebastian Reichel <sre@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mircea Caprioru <mircea.caprioru@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>
+Subject: linux-next: manual merge of the mux tree with the battery tree
+Message-ID: <20180731152004.7a5a4c54@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180731045805.GE15701@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310058
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XkWjOn12ORf2gl=uLwowV4O"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
+--Sig_/XkWjOn12ORf2gl=uLwowV4O
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 07/31/2018 12:58 PM, Ming Lei wrote:
-> On Tue, Jul 31, 2018 at 12:02:15PM +0800, Jianchao Wang wrote:
->> Currently, we will always set SCHED_RESTART whenever there are
->> requests in hctx->dispatch, then when request is completed and
->> freed the hctx queues will be restarted to avoid IO hang. This
->> is unnecessary most of time. Especially when there are lots of
->> LUNs attached to one host, the RR restart loop could be very
->> expensive.
-> 
-> The big RR restart loop has been killed in the following commit:
-> 
-> commit 97889f9ac24f8d2fc8e703ea7f80c162bab10d4d
-> Author: Ming Lei <ming.lei@redhat.com>
-> Date:   Mon Jun 25 19:31:48 2018 +0800
-> 
->     blk-mq: remove synchronize_rcu() from blk_mq_del_queue_tag_set()
-> 
-> 
+Hi all,
 
-Oh, sorry, I didn't look into this patch due to its title when iterated the mail list,
-therefore I didn't realize the RR restart loop has already been killed. :)
+Today's linux-next merge of the mux tree got a conflict in:
 
-The RR restart loop could ensure the fairness of sharing some LLDD resource,
-not just avoid IO hung. Is it OK to kill it totally ?
+  MAINTAINERS
 
-Thanks
-Jianchao
+between commit:
 
+  fe8e81b7e899 ("adp5061: New driver for ADP5061 I2C battery charger")
+
+from the battery tree and commit:
+
+  703160ff3e50 ("dt-bindings: mux: add adi,adgs1408")
+
+from the mux tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index db24b8939ed4,eaa2b55a0e9b..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -829,13 -810,12 +829,19 @@@ L:	linux-media@vger.kernel.or
+  S:	Maintained
+  F:	drivers/media/i2c/ad9389b*
+ =20
++ ANALOG DEVICES INC ADGS1408 DRIVER
++ M:	Mircea Caprioru <mircea.caprioru@analog.com>
++ S:	Supported
++ F:	drivers/mux/adgs1408.c
++ F:	Documentation/devicetree/bindings/mux/adgs1408.txt
++=20
+ +ANALOG DEVICES INC ADP5061 DRIVER
+ +M:	Stefan Popa <stefan.popa@analog.com>
+ +L:	linux-pm@vger.kernel.org
+ +W:	http://ez.analog.com/community/linux-device-drivers
+ +S:	Supported
+ +F:	drivers/power/supply/adp5061.c
+ +
+  ANALOG DEVICES INC ADV7180 DRIVER
+  M:	Lars-Peter Clausen <lars@metafoo.de>
+  L:	linux-media@vger.kernel.org
+
+--Sig_/XkWjOn12ORf2gl=uLwowV4O
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf8YQACgkQAVBC80lX
+0GwzHwf/XlO57ooBPlEwN+mUSM0f6hO8gQgIuwHTCg5GQcHqOKSEGQetSYNAzFx6
+anXChgsDPEfZezcZZyPefeWqm/E7QHxGmfRCocf3JSGcfGx+j/9BHV0Bys2lyT/I
+3KPvge+hU9pqtaAdq8SuN0M7WD62IFFpRC3yjh/4KA6RZePxhdCoVHuU1IEycuVU
+BPpk1mOgF1afBg+iUJMEyKaYYQ9wu4+cofujRllZD/M5CfPFDNlneyklSqj33eAr
+UrmqyoMmnQtLixatZ4FFbqGfF671p1S9NqXICQQBR1pg9oJc6Xc1UPBIm1t/Av+3
+uK4yxRl3DRoNB84N9F+gUMfREpcGTg==
+=VY3a
+-----END PGP SIGNATURE-----
+
+--Sig_/XkWjOn12ORf2gl=uLwowV4O--
