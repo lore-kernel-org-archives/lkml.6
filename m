@@ -6,113 +6,124 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E173C28CF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514A1C46463
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43748208A4
+	by mail.kernel.org (Postfix) with ESMTP id 15171208A3
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:40:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43748208A4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15171208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732273AbeGaCRk (ORCPT
+        id S1732237AbeGaCRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:17:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33124 "EHLO mx1.redhat.com"
+        Mon, 30 Jul 2018 22:17:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37228 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732253AbeGaCRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:17:39 -0400
+        id S1732039AbeGaCRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 22:17:37 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D3DF40216FC;
-        Tue, 31 Jul 2018 00:40:06 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 706CD40241CB;
+        Tue, 31 Jul 2018 00:40:03 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C187216875;
-        Tue, 31 Jul 2018 00:40:05 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F3989FF5B;
+        Tue, 31 Jul 2018 00:40:01 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Karol Herbst <karolherbst@gmail.com>,
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, stable@vger.kernel.org,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/8] drm/nouveau: Respond to HPDs by probing one conn at a time
-Date:   Mon, 30 Jul 2018 20:39:51 -0400
-Message-Id: <20180731003954.19962-7-lyude@redhat.com>
+Subject: [PATCH v3 1/8] drm/nouveau: Fix bogus drm_kms_helper_poll_enable() placement
+Date:   Mon, 30 Jul 2018 20:39:46 -0400
+Message-Id: <20180731003954.19962-2-lyude@redhat.com>
 In-Reply-To: <20180731003954.19962-1-lyude@redhat.com>
 References: <20180731003954.19962-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 00:40:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 00:40:06 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 00:40:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 00:40:03 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There isn't actually any reason we need to call drm_hpd_irq_event() from
-our hotplug handler, as we already know which connector the hotplug
-event was fired for. We're also going to need to avoid probing all
-connectors needlessly from hotplug handlers anyway so that we can track
-when nouveau_connector_detect() is being called from the context of it's
-connector's hotplug handler in order to fix the next deadlocking issue.
+Turns out this part is my fault for not noticing when reviewing
+9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling"). Currently
+we call drm_kms_helper_poll_enable() from nouveau_display_hpd_work().
+This makes basically no sense however, because that means we're calling
+drm_kms_helper_poll_enable() every time we schedule the hotplug
+detection work. This is also against the advice mentioned in
+drm_kms_helper_poll_enable()'s documentation:
 
-This is (slightly) faster anyway!
+ Note that calls to enable and disable polling must be strictly ordered,
+ which is automatically the case when they're only call from
+ suspend/resume callbacks.
 
+Of course, hotplugs can't really be ordered. They could even happen
+immediately after we called drm_kms_helper_poll_disable() in
+nouveau_display_fini(), which can lead to all sorts of issues.
+
+Additionally; enabling polling /after/ we call
+drm_helper_hpd_irq_event() could also mean that we'd miss a hotplug
+event anyway, since drm_helper_hpd_irq_event() wouldn't bother trying to
+probe connectors so long as polling is disabled.
+
+So; simply move this back into nouveau_display_init() again. The race
+condition that both of these patches attempted to work around has
+already been fixed properly in
+
+  d61a5c106351 ("drm/nouveau: Fix deadlock on runtime suspend")
+
+Fixes: 9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling")
 Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
 Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Karol Herbst <karolherbst@gmail.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 28 ++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_display.c | 7 +++++--
+ drivers/gpu/drm/nouveau/nouveau_drm.c     | 1 -
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 010d6db14cba..9714e09f17db 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1114,6 +1114,32 @@ nouveau_connector_funcs_lvds = {
- 	.atomic_get_property = nouveau_conn_atomic_get_property,
- };
+diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
+index ec7861457b84..1d36ab5d4796 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -355,8 +355,6 @@ nouveau_display_hpd_work(struct work_struct *work)
+ 	pm_runtime_get_sync(drm->dev->dev);
  
-+static void
-+nouveau_connector_hotplug_probe(struct nouveau_connector *nv_conn)
-+{
-+	struct drm_modeset_acquire_ctx ctx;
-+	struct drm_connector *conn = &nv_conn->base;
-+	enum drm_connector_status old_status;
-+	struct drm_device *dev = conn->dev;
-+	bool changed;
-+
-+	mutex_lock(&dev->mode_config.mutex);
-+
-+	drm_modeset_acquire_init(&ctx, 0);
-+	drm_modeset_lock(&dev->mode_config.connection_mutex, &ctx);
-+
-+	old_status = conn->status;
-+	conn->status = drm_helper_probe_detect(conn, &ctx, true);
-+	changed = old_status != conn->status;
-+
-+	drm_modeset_drop_locks(&ctx);
-+	drm_modeset_acquire_fini(&ctx);
-+	mutex_unlock(&dev->mode_config.mutex);
-+
-+	if (changed)
-+		drm_kms_helper_hotplug_event(dev);
-+}
-+
- static int
- nouveau_connector_hotplug(struct nvif_notify *notify)
- {
-@@ -1138,7 +1164,7 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
- 				nv50_mstm_remove(nv_encoder->dp.mstm);
- 		}
+ 	drm_helper_hpd_irq_event(drm->dev);
+-	/* enable polling for external displays */
+-	drm_kms_helper_poll_enable(drm->dev);
  
--		drm_helper_hpd_irq_event(connector->dev);
-+		nouveau_connector_hotplug_probe(nv_connector);
+ 	pm_runtime_mark_last_busy(drm->dev->dev);
+ 	pm_runtime_put_sync(drm->dev->dev);
+@@ -411,6 +409,11 @@ nouveau_display_init(struct drm_device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	/* enable connector detection and polling for connectors without HPD
++	 * support
++	 */
++	drm_kms_helper_poll_enable(dev);
++
+ 	/* enable hotplug interrupts */
+ 	drm_connector_list_iter_begin(dev, &conn_iter);
+ 	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index c7ec86d6c3c9..5fdc1fbe2ee5 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -835,7 +835,6 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 		return -EBUSY;
  	}
  
- 	return NVIF_NOTIFY_KEEP;
+-	drm_kms_helper_poll_disable(drm_dev);
+ 	nouveau_switcheroo_optimus_dsm();
+ 	ret = nouveau_do_suspend(drm_dev, true);
+ 	pci_save_state(pdev);
 -- 
 2.17.1
 
