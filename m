@@ -3,141 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D51C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091C2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B1420857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35B820857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="rg4Pr4iO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B1420857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iybbD7Rf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B35B820857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbeGaLV3 (ORCPT
+        id S1732052AbeGaLWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:21:29 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55546 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731760AbeGaLV3 (ORCPT
+        Tue, 31 Jul 2018 07:22:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33393 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730513AbeGaLWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:21:29 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id DFB2F5C01C4;
-        Tue, 31 Jul 2018 11:41:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533030117;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1hTLy/O62J38uZxycpkxLvjBKO0T+J7akpVTFCtnW9s=;
-        b=rg4Pr4iOOcEND0VUs7gWUzH1U/9tkz/IGHGOLBlhJez3MVuj27StXCGaAlCuLcx2+sYYKT
-        Kzywetu228KktSTIrKE5VSASm7MjFw+rrHLgfMrrCME7w3qefyFr9pbKI41CH/JX9X7eec
-        2MG58DX4pvBLd7qP7xZBwtkKUVgInRA=
+        Tue, 31 Jul 2018 07:22:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g6-v6so15929005wrp.0;
+        Tue, 31 Jul 2018 02:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hjfA9pRhMfbKrmBTp4vypnv2JUlfiRRyJrMduxrQl0M=;
+        b=iybbD7Rf2m43muogSRRk1V02CEnocQwgBEkUxLcxSosdWiFAIIs69sYfkhggXHozOz
+         hLmlercBcQAiUoeFU2nevelIGaMiweKB2cLB9tuFARBgCtmnCM+REWCljWmQ3y9rob8N
+         NNnQAP3TOrRnJ119VLAvOI9+mJGGtQqiEF+I3o2ie0/p2OC0H6p05S01t5wrHP5am6ai
+         vbxgF/zSjM+/tImBD8IJB91X9bEMg4/sKyTbYs60q9PHQmG/cORe2utUTvSWDtr2nl9V
+         ia6BaeOimFxXfu13Sn7OXXq8MwQRH9OmS5FtpbGSdJYhDHYkavsxLk0d2R0EeTTWIW2G
+         r/AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hjfA9pRhMfbKrmBTp4vypnv2JUlfiRRyJrMduxrQl0M=;
+        b=LLwOwQX2FgEWiIiBFh09UxSdQrkA4Wm478pvziNuhoHO3v36Op+hpJ1FnEbTxVzKYp
+         2wjukFqOD2BGiF7IO11X6cK6j36wYSgc0VbmwBs9wC0om30C8JEoDISVLyJ41qt8jjkU
+         kV0+zDsEKEv13jNPyYD4QnbWJDbJVKmHkW3+1UmetMl0MYuRuDBhz1TNes0HT9+EH9/P
+         n1vbPV7VZAw9ob1XIsOmQVXTkNiUOBfC8wOesKKUX2okpjzEGS98NUeeqIzYAj4a2uVS
+         a6XRxfI+BOJMDxcBu29Wc7kNg0BEKVVaUr/NdchE/uQ+eXxSGyGwXq9QomEq+Lp1euYM
+         HRSg==
+X-Gm-Message-State: AOUpUlFU8ZcobRRCjntFzPE0ASAHTVnxSZI9HCXSAODB4XsUZ5lX8ihX
+        wJojtcAz3qB9PX/FXyRLU4ga6zX/R1oWwID2oQA=
+X-Google-Smtp-Source: AAOMgpdnxZq/Dv6lAsJBOBSX+10u913i0Ar5hKQyIDaKg4eq31eTMzXf/jXG3wPIoYGABNoEoKhFLaLWu7TUL1Z6QP8=
+X-Received: by 2002:adf:9aeb:: with SMTP id a98-v6mr19965282wrc.110.1533030190595;
+ Tue, 31 Jul 2018 02:43:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 31 Jul 2018 11:41:57 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra-owner@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] mmc: tegra: Power on the calibration pad
-In-Reply-To: <1532608016-14319-4-git-send-email-avienamo@nvidia.com>
-References: <1532608016-14319-1-git-send-email-avienamo@nvidia.com>
- <1532608016-14319-4-git-send-email-avienamo@nvidia.com>
-Message-ID: <e4319add2110282f8ddc4c3016512516@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+Received: by 2002:adf:a78a:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 02:43:10
+ -0700 (PDT)
+In-Reply-To: <20180729.131741.711465145442387927.davem@davemloft.net>
+References: <20180728090217.GA19065@zenus> <20180729.131741.711465145442387927.davem@davemloft.net>
+From:   Sohil Ladhani <supertakumi86@gmail.com>
+Date:   Tue, 31 Jul 2018 15:13:10 +0530
+Message-ID: <CAMKDoXarz_RWH04QY3epFU58k4EEEMen+9dbdcTWh+WTudA-vw@mail.gmail.com>
+Subject: Re: [PATCH] net: ethernet: realtek: r8169: Add spaces after commas
+ coding style issue
+To:     David Miller <davem@davemloft.net>
+Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.07.2018 14:26, Aapo Vienamo wrote:
-> Automatic pad drive strength calibration is performed on a separate pad
-> identical to the ones used for driving the actual bus. Power on the
-> calibration pad during the calibration procedure and power it off
-> afterwards to save power.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 51eda20..363490e 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -53,6 +53,7 @@
->  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL			0x1e0
->  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
->  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
-> +#define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
->  
->  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
->  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
-> @@ -241,11 +242,30 @@ static void tegra_sdhci_reset(struct sdhci_host
-> *host, u8 mask)
->  	tegra_host->ddr_signaling = false;
->  }
->  
-> +static void tegra_sdhci_configure_cal_pad(struct sdhci_host *host, bool enable)
-> +{
-> +	u32 reg;
-> +
-> +	/*
-> +	 * Enable or disable the additional I/O pad used by the drive strength
-> +	 * calibration process.
-> +	 */
-> +	reg = sdhci_readl(host, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> +	if (enable)
-> +		reg |= SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD;
-> +	else
-> +		reg &= ~SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD;
-> +	sdhci_writel(host, reg, SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-> +	udelay(1);
+Hi David. Thanks for your inputs. I'm a kernel newbie and was just
+following Greg's FOSDEM talk to submit my first patch. Will submit
+further patches to net-next tree.
 
-Is this necessary on enable and disable?
-
-If it only necessary on enable, I suggest to move it after the call to:
-tegra_sdhci_configure_cal_pad(host, true);
-
---
-Stefan
-
-> +}
-> +
->  static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
->  {
->  	u32 reg;
->  	int ret;
->  
-> +	tegra_sdhci_configure_cal_pad(host, true);
-> +
->  	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
->  	reg |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
->  	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
-> @@ -255,6 +275,8 @@ static void tegra_sdhci_pad_autocalib(struct
-> sdhci_host *host)
->  				 reg, !(reg & SDHCI_TEGRA_AUTO_CAL_ACTIVE),
->  				 1, 10000);
->  
-> +	tegra_sdhci_configure_cal_pad(host, false);
-> +
->  	if (ret)
->  		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
->  }
+On Mon, Jul 30, 2018 at 1:47 AM, David Miller <davem@davemloft.net> wrote:
+> From: Sohil Ladhani <supertakumi86@gmail.com>
+> Date: Sat, 28 Jul 2018 14:32:21 +0530
+>
+>> Fixed a coding style issue
+>>
+>> Signed-off-by: Sohil Ladhani <supertakumi86@gmail.com>
+>
+> This doesn't apply to the current net-next tree.
