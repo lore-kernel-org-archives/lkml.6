@@ -2,104 +2,148 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94DFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F92C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C84120870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:00:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jZpSdp1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C84120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id B693720870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B693720870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732500AbeGaQko (ORCPT
+        id S1732366AbeGaQmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:40:44 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34605 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732340AbeGaQko (ORCPT
+        Tue, 31 Jul 2018 12:42:01 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39363 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbeGaQmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:40:44 -0400
-Received: by mail-io0-f193.google.com with SMTP id l7-v6so13299204ioj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bXMHY7hPsQi7l5lnV1u4pkA63Sp+QED5w+9R792aUZA=;
-        b=jZpSdp1Bue72kw33fEf8r9HG8gjzo2qXTa7JtH3KHJ7zorBOF/ThyOyogSmIByFuQ7
-         JFrIqG3O1oMR2eUeAEsjMcy66BFGHQIn2oTtvoQR6XxrHBUgZHdf28e3GB5GNwM+1tZs
-         9pQeDCHQt+2u8nr+ewsxZfn/KwKKXl+cUZxCk9Hmu2+jrKaquRplbJaN54WD60Xr4Vwj
-         b1V+JpSembyl8wCLwKbkG+2shm053ICE3DbGf9yUkdMdj3W7+/OU9YBtj5zmr2hfcGWt
-         jUDys9IVQgth2SyXi/Hl4e0dVLi4C/WBzpya1pmo+G+LvNOo5o8i7b1pozXdX/UDSiE1
-         wdRw==
+        Tue, 31 Jul 2018 12:42:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h10-v6so17009071wre.6
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:01:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bXMHY7hPsQi7l5lnV1u4pkA63Sp+QED5w+9R792aUZA=;
-        b=Tt+2OFBIuWq24WYxV9swffbKQhFJWV9QxCogrqGYvc4yklKPWWh1BBjXqx0qbNgttv
-         TwhdunEf4GKTjo4kBAkdJWejwmt/TxOwrAdt1v068DwLL57Lzu8jJk4AAYUu44K+rr+8
-         XgTHcr6ClAdRY6yba/+m+YBQH7dZI63fljemUrPMTUFvdyn5XZZskFGdnUBXeTwVv9Gk
-         qv2QZw5HNp1QodwCPZCPPiTQF34O3xdJxCgzJwG6k9fiK9YaVZwKm86bBeBzEtPCjTgl
-         XvWEBf+3qslS9ayGQtxYEyCcUv0qIqNSMHTkDXgkkdDP1BULTZO5RsZosk+MbBo7Al4J
-         jwjA==
-X-Gm-Message-State: AOUpUlGpfeeHPiNaMTSK8zcx6p8zpSW6GLygoSM+rw3JpmNpiQ1/faSr
-        kDlz4IRAUYTfJxUqEtKztGhngAtWcns=
-X-Google-Smtp-Source: AAOMgpf+WMOQhf2S5I8uzwLgYzIUttosq+neXWAJC4UoyBOxhUnDzNBAmhBx8+dfGxToDED8qJ1ywQ==
-X-Received: by 2002:a5e:9706:: with SMTP id w6-v6mr27312ioj.257.1533049200798;
-        Tue, 31 Jul 2018 08:00:00 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id 80-v6sm1566585itk.14.2018.07.31.07.59.58
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=efmPJEJTuYeH1q8IWdsasHdRIifD74hWF970LXIXLy4=;
+        b=dCa9svgW8n4cfKKcjhBV87v+JK14t4/IjQ9rsJ/Umtkhkh/jOqimQppNa0n1Cd2Uoj
+         26wcrCf81woabLzHp++stve1mWTrcK4JhMVMxYz/uo5ql2TvlHSBS/85HjrIYX6C5I0+
+         SqzXXfZERVbSAZkVZA3M6YCHhlwQjVJACC4WgvA1hX4jqbGMjgWHp8ptJCBLAktAIf5y
+         eYaHL15/6vGlUi691iTyY52Ry1J3WIgyJNNoRIh/1hxPYcJLmtJ1nE9m+jPp9ZU2NDTE
+         SDGYovh3XSj1c9T7eexaVjEVG9szVkm7Q/9TlmPWOcgNq6vlOIruMjYi5aqOQVykvy7b
+         9HAw==
+X-Gm-Message-State: AOUpUlEZAR3IwjIledBjVLlN/j+DZK0HRClyNA97XdsyZztisXX3fswU
+        203q4QQ5grUWd3KXqYPnqj0=
+X-Google-Smtp-Source: AAOMgpcCFd6YfJceo6vmxngPY4Uk7C+qfqWdWbzY69zO3QoW1D3u0KsGhNp9HMylfSEB3AObqtU4Bw==
+X-Received: by 2002:a5d:6892:: with SMTP id h18-v6mr21233674wru.108.1533049276607;
+        Tue, 31 Jul 2018 08:01:16 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm2513999wmh.29.2018.07.31.08.01.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 07:59:58 -0700 (PDT)
-Subject: Re: linux-next: build failure after merge of the block tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Max Gurtovoy <maxg@mellanox.com>
-References: <20180731130700.3ff50dce@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <847d1024-7e9d-65e2-356e-6fc3ffbece1e@kernel.dk>
-Date:   Tue, 31 Jul 2018 08:59:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 31 Jul 2018 08:01:15 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 6118C1244F8; Tue, 31 Jul 2018 17:01:15 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 17:01:15 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
+        Mel Gorman <mgorman@suse.de>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
+Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
+Message-ID: <20180731150115.GC1499@techadventures.net>
+References: <20180731124504.27582-1-osalvador@techadventures.net>
+ <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
+ <20180731144157.GA1499@techadventures.net>
+ <20180731144545.fh5syvwcecgvqul6@xakep.localdomain>
+ <20180731145125.GB1499@techadventures.net>
+ <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180731130700.3ff50dce@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/18 9:07 PM, Stephen Rothwell wrote:
-> Hi Jens,
+On Tue, Jul 31, 2018 at 10:53:52AM -0400, Pavel Tatashin wrote:
+> Thats correct on arches where no sparsemem setup_usemap() will not be
+> freed up. It is a tiny function, just a few instructions. Not a big
+> deal.
 > 
-> After merging the block tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/scsi/sd.o: In function `sd_done':
-> sd.c:(.text+0x1050): undefined reference to `t10_pi_complete'
-> 
-> Presuably caused by commit
-> 
->   10c41ddd6132 ("block: move dif_prepare/dif_complete functions to block layer")
-> 
-> # CONFIG_BLK_DEV_INTEGRITY is not set
-> CONFIG_BLK_DEV_SD=y
-> 
-> I have used the block tree from next-20180730 for today.
+> Pavel
+> On Tue, Jul 31, 2018 at 10:51 AM Oscar Salvador
+> <osalvador@techadventures.net> wrote:
+> >
+> > On Tue, Jul 31, 2018 at 10:45:45AM -0400, Pavel Tatashin wrote:
+> > > Here the patch would look like this:
+> > >
+> > > From e640b32dbd329bba5a785cc60050d5d7e1ca18ce Mon Sep 17 00:00:00 2001
+> > > From: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > Date: Tue, 31 Jul 2018 10:37:44 -0400
+> > > Subject: [PATCH] mm: remove __paginginit
+> > >
+> > > __paginginit is the same thing as __meminit except for platforms without
+> > > sparsemem, there it is defined as __init.
+> > >
+> > > Remove __paginginit and use __meminit. Use __ref in one single function
+> > > that merges __meminit and __init sections: setup_usemap().
+> > >
+> > > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> >
+> > Uhm, I am probably missing something, but with this change, the functions will not be freed up
+> > while freeing init memory, right?
+> Thats correct on arches where no sparsemem setup_usemap() will not be
+> freed up. It is a tiny function, just a few instructions. Not a big
+> deal.
 
-Thanks, I fixed it up just now, next one should be fine again.
+I must be missing something.
 
+What about:
+
+calc_memmap_size
+free_area_init_node
+free_area_init_core
+ 
+These functions are marked with __meminit now.
+If we have CONFIG_PARSEMEM but not CONFIG_MEMORY_HOTPLUG, these functions will
+be left there.
+
+I mean, it is not that it is a big amount, but still.
+
+Do not we need something like:
+
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 2538d176dd1f..3b3a88ba80ed 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -83,8 +83,12 @@
+ #define __exit          __section(.exit.text) __exitused __cold notrace
+ 
+ /* Used for MEMORY_HOTPLUG */
++#ifdef CONFIG_MEMORY_HOTPLUG
+ #define __meminit        __section(.meminit.text) __cold notrace \
+ 						  __latent_entropy
++#else
++#define __meminit	 __init
++#endif
+ #define __meminitdata    __section(.meminit.data)
+ #define __meminitconst   __section(.meminit.rodata)
+ #define __memexit        __section(.memexit.text) __exitused __cold notrace
+
+on top?
+
+Thanks
 -- 
-Jens Axboe
-
+Oscar Salvador
+SUSE L3
