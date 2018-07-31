@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC27C43142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75E0C46462
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E2C208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EF1F208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="LgKmo+U0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E2C208A2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="s0q6qWYa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF1F208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbeGaIup (ORCPT
+        id S1732243AbeGaIus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:45 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.120]:30501 "EHLO
+        Tue, 31 Jul 2018 04:50:48 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:21562 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732036AbeGaIun (ORCPT
+        with ESMTP id S1732178AbeGaIur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:50:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021110;
+        Tue, 31 Jul 2018 04:50:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021114;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=TikdyAzBolFa0SaGs+OiDvttfT96078whd7vB+yQROI=;
-        b=LgKmo+U0a5M+rDp7mPB3t04tdHOSQI81GhaxPyjgND5bKR22C6nwVGQt1d6Va9LsKa
-        9Cdlhbtl+AsYZW6YbB8z2+iuZGIEjsDercBaOj/jPBp+ignUugW7uYrvx4a9NuLxwtFa
-        smRVwvrm3QXGogjKXoDwxX4GkyyUXAKLIhHXZ2kkfFzuv+z5bQxQ8Fqi0LJtwo6e7nri
-        Enf7nnY096GSr4sJNZBCMplG4J6qtzrVQszbdeFtBKGoAahjGsw6Qsup6NYimeedGpnd
-        mxBBRPXsmUFFV84+WW8GffdIA5OFWFmh141xIDTendU4WTk5ZaETLCa8xSHclo2pyxFa
-        FmuA==
+        bh=kgG6jLaR0ocYkLG3AJBnXJe0+VGK35gBIj4J0B+hBTw=;
+        b=s0q6qWYanFy2PMMRY7pZvj69M5chSnf1RTP5BUY4hqoV8q7w8pTfZa3Jj7Cj91hp8Z
+        YRO9l0hMB1O4rvS2sTDHtiTzSiOYhpCPkhhYzB/punpE2IR3mU3QmdDnFO+nKk5vgp02
+        pBzpRldRw6MN8zGfqtrTL72UHzzM8OPJVXhLEChOlr+2C84U8OMCTbg85D/nfK2yHrdf
+        yXv+xrirA3MZL3wSiuAH/IHetGPsGZB2EK69fmwgIWPfC6mcR6HXkYbQ/mutAC8i5equ
+        0qmgup4bzDIPAN4ETyQnLjeeQT4+MxljoOER0UO81g9U+nqzYzM+ptaUItsoDSAJpY07
+        xoQQ==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BiwOl
+        with ESMTPSA id 6047f4u6V7BmwOx
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:44 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:48 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 20/32] ARM: dts: omap3-gta04: add devconf0 setup for mcbsp1 clock pins
-Date:   Tue, 31 Jul 2018 09:11:23 +0200
-Message-Id: <fe77e6c006355e12724b1950dd2be710beee762c.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 31/32] ARM: dts: omap3-gta04a5: define pinmux for bluetooth enable of ti,wl1837 module
+Date:   Tue, 31 Jul 2018 09:11:34 +0200
+Message-Id: <705c7cdd16520147f61229b3722680b97c5a8cf5.1533021094.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,42 +69,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-McBSP1 needs special "pinctrl" for the clocks.
+Properly pinmux the bluetooth enable so that it is not floating.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/omap3-gta04a5.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index cbb55b9c3242..39f0eb8f65b0 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -187,6 +187,24 @@
- 		reset-gpios = <&tca6507 0 GPIO_ACTIVE_LOW>;	/* W2CBW003 reset through tca6507 */
- 	};
+diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
+index 973d07d0b4c8..bd232b1b24cb 100644
+--- a/arch/arm/boot/dts/omap3-gta04a5.dts
++++ b/arch/arm/boot/dts/omap3-gta04a5.dts
+@@ -48,6 +48,12 @@
+ };
  
-+	/* devconf0 setup for mcbsp1 clock pins */
-+	pinmux_mcbsp1@48002274 {
-+		compatible = "pinctrl-single";
-+		reg = <0x48002274 4>;   /* CONTROL_DEVCONF0 */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-single,bit-per-mux;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0x7>;	/* MCBSP1 CLK pinmux */
-+		#pinctrl-cells = <2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&mcbsp1_devconf0_pins>;
-+		mcbsp1_devconf0_pins: pinmux_mcbsp1_devconf0_pins {
-+			/*                   offset bits mask */
-+			pinctrl-single,bits = <0x00 0x08 0x1c>;	/* set MCBSP1_CLKR */
-+		};
+ &omap3_pmx_core {
++	bt_pins: pinmux_bt_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x2166, PIN_OUTPUT | MUX_MODE4)	/* mmc2_dat5 = mmc3_dat1 = gpio137 */
++		>;
 +	};
 +
- 	/* devconf1 setup for tvout pins */
- 	pinmux_tv_out@480022d8 {
- 		compatible = "pinctrl-single";
+ 	wlan_pins: pinmux_wlan_pins {
+ 		pinctrl-single,pins = <
+ 			OMAP3_CORE1_IOPAD(0x2168, PIN_OUTPUT | MUX_MODE4)	/* mmc2_dat6 = mmc3_dat2 = gpio138 */
 -- 
 2.12.2
 
