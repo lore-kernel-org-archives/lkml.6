@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03635C43142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E74C46462
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAD9208A2
+	by mail.kernel.org (Postfix) with ESMTP id E90E2208A5
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:18:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9XHWvhN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAD9208A2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRuh8ctH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90E2208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732539AbeGaQ7O (ORCPT
+        id S1732558AbeGaQ7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 31 Jul 2018 12:59:14 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37309 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732330AbeGaQ7N (ORCPT
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38799 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732464AbeGaQ7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:59:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v9-v6so14070003ljk.4;
-        Tue, 31 Jul 2018 08:18:24 -0700 (PDT)
+        Tue, 31 Jul 2018 12:59:14 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so14055630ljc.5;
+        Tue, 31 Jul 2018 08:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oDFpD0XD10AgLdPz8ese+ZwKGg/jgVOPdmYGBME+5IY=;
-        b=E9XHWvhN5FI7YmYY0EdAm/mUUcuzhDrJRJDgxFXh89blslJEGE54hCxGHen4KODisp
-         iJXv1cppINm0Bb/ZBpO83Nx2ecfBAsb+vsXc8ip7kjBSNVNlGRY2D7BoJUJFchaH4/AY
-         JpAjqUmG7x3qr5WqO7+lINTFCxWdat6WAAqQ02SLnxYRN9jrHu2V8nTbKcffeyhBKj8o
-         6L0ryIitoq0SXNpG/1/CjuOF8JQKGK5Dkc83nqjwjJ+X8A9uUfXpH/ZeGWPltm9Dwe8X
-         VCt0lsk116YSZYOIxYT7QAOmFiXGhSj+xq+lA/nIxjssZPA5lO4rze7kcPG4EB9QzsVm
-         ShqQ==
+        bh=ozyljyZE5/C7EY8axOryS5s7IqJ0ZZxO+Vl7BYdn5iY=;
+        b=VRuh8ctHjQjGIBoqE2jaQ97QN9brDFtuKJs6VBAaft+92mB5NlGc7MPgMhJZ7XP5ok
+         JUEEva1RAP5kiPT7f8kLrDmMTzRCfVenhKNbmEWjw5grD1Z0Khs7f+Ob3AcdLpUYimph
+         1hYPzjEJFjjak1KuwMExPVsu4RDqrNflT82WQg7BckKpAlb4d/X10obykr82m+pr9DZO
+         Fb6DCATN8uUerapCXH0PV4xlG+kHfdrBe1scP66OkJ1YkMyjWLT90OGbLKvXuYqHdlCH
+         iVwlwIbFoyXfVsAQDIZNqHfobLAFtJ6HJUHX2tKVmJ1BsflLmlEguDVqGYXThQe6yr0A
+         pSXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oDFpD0XD10AgLdPz8ese+ZwKGg/jgVOPdmYGBME+5IY=;
-        b=Fb+ysNLipk5+VzXmW7oxF+c8EE3SjJ1uIirifVk0ogfeoMbzEes6BhuegJ7hsvO1FG
-         LqrhXLCJ6KgMrWp0BK9xhGRyGtJ/V50q6rlrPDjpD7r5V1edE/QOuwlTbK8lG0Zdo6lC
-         0mEmuNoqdGRi5y5tj99QWsiqBWtumr2JWWld4ySpmMVU2z/6J3u2WOswero6l9gq1Nmn
-         ntHUiH8xIWReO0IlUkH4p/KQqqGwiL1IF/78CpKXnPBNXq7yMbk2pqvCoaJHKf0yckmC
-         dF/uop2BLvuER1HaXBCouOLqSKYD4ndWboRdhMzQBgp2w7ab37C8YOBY3NzcCp81dJUV
-         HbPw==
-X-Gm-Message-State: AOUpUlGk0ZPjCyM8OEvg2QDw48LQupymGFmLPMJ5T2qMfwb5VyUonT3F
-        Lb6khMiRTi+GRXCT8pD+O6kh7SOTFck=
-X-Google-Smtp-Source: AAOMgpd5vAZQ4cR3dc+7QPzWJsQzsqW1Uibyl9sL/eIa76qFyGInDJUztPW27RS/EW+naM+neDXscQ==
-X-Received: by 2002:a2e:6d0a:: with SMTP id i10-v6mr17416037ljc.145.1533050303364;
-        Tue, 31 Jul 2018 08:18:23 -0700 (PDT)
+        bh=ozyljyZE5/C7EY8axOryS5s7IqJ0ZZxO+Vl7BYdn5iY=;
+        b=STneEy693EQQ011Xg/m7XW6nUiA3WduxpwNT+/nQ8aFlm2rdeurimc1q+D4TNr0fIs
+         8kj7lpjuRPPkqQHHzH4/yBrD5tHi8frVaqgt7okWLHNIilHtN2EUukO0jjVEomBleYox
+         Z+oTkBW3Ipj3ZrV8BJn5czYlaDidGhEu2Xcyv9DVW3Zpn9am4pgFNo0+VL7X65ulOF6K
+         aaNLJAr6pzwXTHQsKEgbwsbmExg5lmgCvBqxolIygpeKbdxzQH55NczwsIoJ5cspmpJj
+         CZ6fm5k6eVb/Y4XRsjKnjJlodKFRaFvB6+TwuFSqKXyZdHOFxNcVLGdHHdku155d1EOY
+         c8wA==
+X-Gm-Message-State: AOUpUlHPqkO3W7gM/WTM5l3drExthDF/QctK7GGHiOaqmKK+qDeeUcvr
+        /fmofM/f/GxRAvtPxrCYNqPHQHs5IxE=
+X-Google-Smtp-Source: AAOMgpcl1yxJL5lSenU9P6c/GEPj7+8QwNHgltsab8X96sMwEmy/V2177dO5mfnPo+WcyMlRdUY1LA==
+X-Received: by 2002:a2e:8:: with SMTP id 8-v6mr16647901lja.112.1533050304738;
+        Tue, 31 Jul 2018 08:18:24 -0700 (PDT)
 Received: from localhost.localdomain (user-94-254-173-71.play-internet.pl. [94.254.173.71])
-        by smtp.googlemail.com with ESMTPSA id p88-v6sm2606209ljp.90.2018.07.31.08.18.22
+        by smtp.googlemail.com with ESMTPSA id p88-v6sm2606209ljp.90.2018.07.31.08.18.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 31 Jul 2018 08:18:22 -0700 (PDT)
+        Tue, 31 Jul 2018 08:18:24 -0700 (PDT)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     nick@shmanahar.org
 Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
@@ -67,9 +67,9 @@ Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v3 2/3] Input: atmel_mxt_ts: Wait for device be ready for communication
-Date:   Tue, 31 Jul 2018 17:18:10 +0200
-Message-Id: <1533050291-11502-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3 3/3] Input: atmel_mxt_ts: Document optional voltage regulators
+Date:   Tue, 31 Jul 2018 17:18:11 +0200
+Message-Id: <1533050291-11502-4-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533050291-11502-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1533050291-11502-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
@@ -81,43 +81,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to documentation, device isn't ready for communication,
-until firmware asserts the CHG line. Add missing wait for this.
+Document new optional voltage regulators, which can be used
+to power down/up touchscreen.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Changes from v1:
+  - Added reviewed-by
+---
+ Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 2cd7f6db6ba9..79e08916359f 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -202,6 +202,7 @@ enum t100_type {
- #define MXT_CRC_TIMEOUT		1000	/* msec */
- #define MXT_FW_RESET_TIME	3000	/* msec */
- #define MXT_FW_CHG_TIMEOUT	300	/* msec */
-+#define MXT_POWERON_DELAY	150	/* msec */
+diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+index c88919480d37..17930ecadad3 100644
+--- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
++++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+@@ -31,6 +31,12 @@ Optional properties for main touchpad device:
  
- /* Command to unlock bootloader */
- #define MXT_UNLOCK_CMD_MSB	0xaa
-@@ -3046,6 +3047,16 @@ static int mxt_regulator_enable(struct mxt_data *data)
- 		msleep(MXT_REGULATOR_DELAY);
- 		gpiod_set_value(data->reset_gpio, 1);
- 		msleep(MXT_RESET_INVALID_CHG);
-+
-+retry_wait:
-+		reinit_completion(&data->bl_completion);
-+		data->in_bootloader = true;
-+		error = mxt_wait_for_completion(data, &data->bl_completion,
-+										MXT_POWERON_DELAY);
-+		if (error == -EINTR)
-+			goto retry_wait;
-+
-+		data->in_bootloader = false;
- 	}
+ - reset-gpios: GPIO specifier for the touchscreen's reset pin (active low)
  
- 	return 0;
++- avdd-supply: Analog power supply. It powers up the analog channel block
++    of the controller to detect the touches.
++
++- vdd-supply: Digital power supply. It powers up the digital block
++    of the controller to enable i2c communication.
++
+ Example:
+ 
+ 	touch@4b {
+@@ -38,4 +44,6 @@ Example:
+ 		reg = <0x4b>;
+ 		interrupt-parent = <&gpio>;
+ 		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
++		avdd-supply = <&atsp_reg>;
++		vdd-supply = <&tsp_reg>;
+ 	};
 -- 
 2.7.4
 
