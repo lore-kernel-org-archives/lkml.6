@@ -2,110 +2,108 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C52C28CF6
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:04:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1244C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1121208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:04:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bvrutSXE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1121208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D68520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:04:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D68520870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbeGaDmI (ORCPT
+        id S1731827AbeGaDmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 23:42:08 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:50906 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeGaDmI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 23:42:08 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6V1xK8k134094;
-        Tue, 31 Jul 2018 02:03:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=PEnD66L2aVzM6XcugfKbhRGXdKIihMhUsAr6ks6yBwc=;
- b=bvrutSXEdcIHKDnIJ7gHbMuZNUC2ARp7rgxpzGoPKvYMDs4cohDkIhPg9/JaB3yM9A3c
- RXgrPHyRipiGNIfmlU+b1HH+ZrbyiVvPZ5ts74b28QgRBW/lszAH3NUyKdZ/yqbT+rXF
- sMGadbVH6cOHjk7KoqgTOeI6HmaQCd3H1VLevQd+XqUlRagKvu0tSyzWop9dPmZUNm02
- gVob495C7WLBSL/jlQGR2XTls69SzBXVB4fDohjyEY1SDCoagePqFWJulIO+F/8/3id7
- zQRbgSbtM9Ya7L96A6ykFa77AkjWS9OVk4J4DtQN/YSWu+ep7d7r8ku2keNxE0tRcRDH Dg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2kge0cy1b8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 02:03:30 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6V23RND012191
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 02:03:28 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6V23PKV007882;
-        Tue, 31 Jul 2018 02:03:25 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Jul 2018 19:03:24 -0700
-To:     Mike Christie <mchristi@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Varun Prakash <varun@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 18/26] target/iscsi: Allocate session IDs from an IDA
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180621212835.5636-1-willy@infradead.org>
-        <20180621212835.5636-19-willy@infradead.org>
-        <5B59FB56.9090901@redhat.com> <5B5A014D.9060901@redhat.com>
-        <20180727193814.GB3825@bombadil.infradead.org>
-        <5B5B892D.1000305@redhat.com>
-Date:   Mon, 30 Jul 2018 22:03:21 -0400
-In-Reply-To: <5B5B892D.1000305@redhat.com> (Mike Christie's message of "Fri,
-        27 Jul 2018 16:05:49 -0500")
-Message-ID: <yq1wotcw49i.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Mon, 30 Jul 2018 23:42:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:26944 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeGaDmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 23:42:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 19:04:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,425,1526367600"; 
+   d="scan'208";a="60780496"
+Received: from yexl-desktop.sh.intel.com (HELO localhost) ([10.239.159.124])
+  by orsmga007.jf.intel.com with ESMTP; 30 Jul 2018 19:04:50 -0700
+Date:   Tue, 31 Jul 2018 10:00:36 +0800
+From:   Ye Xiaolong <xiaolong.ye@intel.com>
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     kernel test robot <lkp@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, LKP <lkp@01.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LKP] [lkp-robot] [confidence: ] 7757d607c6 [ 56.996267] BUG:
+ Bad page map in process trinity-c2 pte:0d755065 pmd:0d55b067
+Message-ID: <20180731020036.GB22500@yexl-desktop>
+References: <20180721022325.GF12513@shao2-debian>
+ <20180727132542.mt35m3knpwpsyb73@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=667
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727132542.mt35m3knpwpsyb73@suse.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-Mike,
-
->> How about I take it through my tree to minimise the amount of rebasing
->> I'll need to do?  I'm already dependent on the nvdimm tree and I'd rather
->> not depend on the scsi tree as well.  I'll queue it up in front of my
->> IDA change to maximise its backportability.
+On 07/27, Joerg Roedel wrote:
+>Hey,
 >
-> Ccing Martin, because he has been handling target patches.
+>thanks for the report! It did a lot of testing and the issue is fixed
+>now with this patch:
+>
+>	https://lore.kernel.org/lkml/1532533683-5988-4-git-send-email-joro@8bytes.org/
+>
+>I did 2150 runs of your reproducer with the reproducer attached to this
+>report, and the issue triggered three times.
+>
+>With the patch above the issue did not trigger anymore in (up to now)
+>2170 runs of the reproducer.
+>
+>On Sat, Jul 21, 2018 at 10:23:25AM +0800, kernel test robot wrote:
+>> git bisect start 8c934e01a7ce685d98e970880f5941d79272c654 37b5dca2898d1471729194f45e281c2443eb9d6c --
+>> git bisect good 8372d66865deb45ee3ec21401a9c80f231b728c8  # 23:36  G    304     0    4   4  x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
+>> git bisect good b976690f5db26fbc7c2be413bfa0fbd270547a94  # 00:10  G    305     0    5   5  x86/mm/pti: Introduce pti_finalize()
+>> git bisect good 9bae3197e15dd5e03ce8e237db6fe4486b08a775  # 00:49  G    308     0    3   4  x86/ldt: Split out sanity check in map_ldt_struct()
+>> git bisect  bad 5e8105950a8b3e03e805299b4d05020ee4eda31a  # 01:12  B    131     1    4   4  x86/mm/pti: Add Warning when booting on a PCID capable CPU
+>> git bisect good 6df934b92a549cb3badb6d576f71aeb133e2f110  # 01:47  G    310     0    7  10  x86/ldt: Enable LDT user-mapping for PAE
+>> git bisect  bad 7757d607c6b31867777de42e1fb0210b9c5d8b70  # 02:08  B    134     1    2   2  x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
+>> # first bad commit: [7757d607c6b31867777de42e1fb0210b9c5d8b70] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
+>> git bisect good 6df934b92a549cb3badb6d576f71aeb133e2f110  # 03:14  G    900     0    9  19  x86/ldt: Enable LDT user-mapping for PAE
+>> # extra tests on HEAD of tip/x86/pti
+>> git bisect  bad 8c934e01a7ce685d98e970880f5941d79272c654  # 03:15  B    279     2    0   6  x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
+>> # extra tests on tree/branch tip/x86/pti
+>> git bisect  bad 8c934e01a7ce685d98e970880f5941d79272c654  # 03:20  B    279     2    0   6  x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
+>> # extra tests with first bad commit reverted
+>> git bisect good 90d0ce801fac8115d424e40a4a258aeed0e409dd  # 03:58  G    302     0    7   7  Revert "x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32"
+>> # extra tests on tree/branch tip/master
+>> git bisect  bad 4edd5aa38cec47346e0d0a85fa43964828b982d0  # 04:37  B    257     1    5   6  Merge branch 'linus'
+>
+>May I ask how this was bisected? I found it very hard to reproduce, it
+>triggered less then two times a day with the attached reproducer. Given
+>that the report came pretty fast after the patches landed in
+>tip/x86/pti, I guess it triggered a lot faster in your testing.
+>
 
-That's fine with me.
+There is higher reproduce rate (2/310) in 0day environment, and we got dozens
+of qemu running simultaneously for bisection thus can get bisect result promptly.
 
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Thanks,
+Xiaolong
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>Regards,
+>
+>	Joerg
+>
+>_______________________________________________
+>LKP mailing list
+>LKP@lists.01.org
+>https://lists.01.org/mailman/listinfo/lkp
