@@ -4,1013 +4,210 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576F1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1440AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D5720857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97C5F208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:52:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hD3dWPxb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D5720857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="pMLf9cj0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="hMbBLqUV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C5F208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbeHABcF (ORCPT
+        id S1732847AbeHABet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 21:32:05 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48950 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732795AbeHABcF (ORCPT
+        Tue, 31 Jul 2018 21:34:49 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:35222 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732819AbeHABet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 21:32:05 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VNmvHF120503;
-        Tue, 31 Jul 2018 23:49:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cXJv00+3tO4xS9A3TsTOdZv0r2KzjAqjGpVpsbPOeFE=;
- b=hD3dWPxbxFCMJjemO3gkIQQ/gqOqcTQs54VsGm6S0Y3EFeK5W7zp/mYCAILHgSr6Cx3i
- jLXCz9IfMPWnkmIQvEFfBgv9l9NDs8q6VXCI/9C1awoe0C+qBScf4tJF34ABXcZeQ1kW
- xm3Tf4keDKocRBUKdZcNEbhOWFOGn5HoxZSrRR+WKf1TpVB9hMTnrMFbGdzl9+Rff47m
- 2ao3BQB3EUWN8MzZYY71ukrcz6kb/RCb8eM+wVs+VgyjyWOR/rp0IxcbQxtYGs7nbMGf
- vPXy6QpjmKmDVcAuVG2d42bYS9BJSytMEiFkdPOHdy9djNubktjFYQ7oyEhm2cLPmjKB MA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kggep3975-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 23:49:12 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6VNnBWk018104
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 23:49:11 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6VNnAuq021699;
-        Tue, 31 Jul 2018 23:49:10 GMT
-Received: from localhost (/10.145.179.122)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 16:49:10 -0700
-Date:   Tue, 31 Jul 2018 16:49:09 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-api@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem
- information [ver #10]
-Message-ID: <20180731234909.GA4206@magnolia>
-References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
+        Tue, 31 Jul 2018 21:34:49 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VNguko017482;
+        Tue, 31 Jul 2018 16:51:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=1AbK3YyLoJmAy3LgKlyDFAlGSkQJKWZ3lECXQDEgqUY=;
+ b=pMLf9cj0vIP8IhGVyaH18/AtIkk/GdD6WHhmIfpJSpB0mu2Wjey3H6/ZY3zW2XVHDOwQ
+ xyJDM4DYkF8jZU4QfkQx3Zx9qE00CZKChpMv+KKyoJ0nY0dO4okjkmar1mQX7eJaJv6a
+ iUCMxbWU0cmFenCC0Oi7DAMM/E3sC4cmH5E= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2kjxvb0fb3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 31 Jul 2018 16:51:53 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.15) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 31 Jul 2018 16:51:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1AbK3YyLoJmAy3LgKlyDFAlGSkQJKWZ3lECXQDEgqUY=;
+ b=hMbBLqUV/30SkhlXKznijwmCDWRTq4HbGe51lK48nDyNnsYsS7rCKzWqfkI8whPxfRGT80ocQbN1xnuodMcrKsZrvqJ1j4+5q7JHWiiSHzZJe8eGlBDObmKPu7bk8+avL0GNvEg7O3o5QKXDRcL1AXSdf2syzdhHXK+9X8gOEKU=
+Received: from castle.DHCP.thefacebook.com (2620:10d:c090:200::6:ec7a) by
+ BLUPR15MB0164.namprd15.prod.outlook.com (2a01:111:e400:5249::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Tue, 31 Jul
+ 2018 23:51:45 +0000
+Date:   Tue, 31 Jul 2018 16:51:38 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     David Rientjes <rientjes@google.com>
+CC:     <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] introduce memory.oom.group
+Message-ID: <20180731235135.GA23436@castle.DHCP.thefacebook.com>
+References: <20180730180100.25079-1-guro@fb.com>
+ <alpine.DEB.2.21.1807301847000.198273@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310221
+In-Reply-To: <alpine.DEB.2.21.1807301847000.198273@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [2620:10d:c090:200::6:ec7a]
+X-ClientProxiedBy: MWHPR11CA0001.namprd11.prod.outlook.com
+ (2603:10b6:301:1::11) To BLUPR15MB0164.namprd15.prod.outlook.com
+ (2a01:111:e400:5249::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c7d88bab-ab67-405f-fe14-08d5f740938f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BLUPR15MB0164;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0164;3:YIteWHaERzPEa5i/rmSEFvpmGWqf9CZi1ukFQSXoACOdtUU4qVq4MQVWbcwgTyDcq9MWSpbsnoMuoRJtDtc7OJDNaZPaOSg2Eln9DdHHbEzJziUJNnqybbg91G1mWGsD32t7Owq/88EYIi3NkF+TRz3h39UDC24vEF2IsL3AgUFsQzf1x7H/XGRDKC7mr6z8fGkMJAiodpu1JQtoETSx8EQlzha7v7dTYo5I/LmUhlutvp4zqj1+TPfwK2zVYPDX;25:4n4wP/NNTiYtGMpR9AtY/BWkY678z43EYiBZltralvluwX414tmNqjKZSoO65xEUcRyjuWX8DHtU0344dISi2DuZb72AF4MuIRnG+snUN2XHYiFAPyffJaZr9wj5IEb0nTNtsVUg8NMLro+jSjp/BzZCtoEPLwEzou1eD5kOt8IrxpP0h4LBRL8tXwszb1y3jYWEe75Gkv8UQgGaOPymM3ay8ifTib0VGQKvjT1D96zZHqtZhEt4Deis0+Bdl69rn2HMqexZa9DzDEwPbzFfaHkpSDPOFM/+0XNGmzgs+5OZvjpG8MCmIn/ZcFAE+env5m1U9i3iXVfOk6q+Y7cqrI6JmHLIRazIbmxrK/h0zx8=;31:OLPZhzEjWMNdNm5xLhPAcmJQ1WZr0oPL5ccBUufFtMFmst49zBPjUCI/d5uowdgFxBYpIaMvS29WNf5vFUvVeb9oTYC4x75K/ZV3PMA+gBEfJDUYDsmsKJkgUmmwyxsAoszIHvlF0gkG9e8Y6e2pJEP4x5i1LdGnZ0FpTMPIkiLGBJHnSwRrAHKu8ssnoqT3hb4W2zSsdypeZDjVrRsXrTRh8ZB9zX4H+BG6NcxFYyU=
+X-MS-TrafficTypeDiagnostic: BLUPR15MB0164:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0164;20:M8cfmqWmqJXrwJREjOCxk0GKwJfTc+gg2xPca0yt+klIVDdrXibo+NDHvHh8HWnZ0u3mmwnvF7o2sFB9sL2ecbh6lNNAtPcpG5SqLXfjbGLpCCRBvJJOAl5hBKypw+iL6zRKa8wWHsCRuKG5fN/jX3VsyRT55Nu1aBHQ6sbuQIIrd366zecj5BQMyG12bIOiH59cF6PwNEkVZtDPJwrvdyWVG5Fw/giSQM5CClyFPj/ss/R23Mq+AJhMrR2hByPxeIGdwJTgTDsvaRtqEhZD9qdXvgWzjhnou0bUyXZHYPSlS0Mm/mM4FRnR4fP71jEz3xj1y0yrv6DysXGpxBfnmm0cTIVO56salwZn1JCksv/6qd5x3qs22AsSOZ8hKVllIWsafUPed6Sbp/qqZUcEZRYRrazoJzYSXA3rmqmBFcdZz9K+SN/HC9DpkjTeB1oSt2AMmq8Yo6+hu2Bo0OHU5jrPjOjuyrowjsQcZX9eIwx/sqV9wIPFlvtf5kgj5au2;4:o20L+coTy+8OsKOiu64seLYApF34gRdrCv8iQl2JJmJ3Om1EsIKMfH1fQl8myTsHUgDtoIVPRpWRkftyVlE0vyiGLmMM9o3LrTCjt3Sz63zNlNUdcoANxeMEkVFf18AGtVBvR0Kx7/OpmmBpYCisow8QtU6PhCJTTy4cXabJ8OUHV7OgNnsYYreYHUtk/X22Ofsha+t9qoQoaGEG5cfty0vmuhIJWmaTcgVC+xxwYZItIH2rzrygPRNM7vvn9mHFSc7g3TMC2NtvOQBHBnHjeyTA4bMqAII1kak9fbyaRowHKHTIlI5yZHSj2E1g7eP6
+X-Microsoft-Antispam-PRVS: <BLUPR15MB01646784A7A36922848E4A39BE2E0@BLUPR15MB0164.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(17755550239193);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(11241501184)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BLUPR15MB0164;BCL:0;PCL:0;RULEID:;SRVR:BLUPR15MB0164;
+X-Forefront-PRVS: 0750463DC9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(396003)(39850400004)(189003)(199004)(52314003)(53936002)(58126008)(105586002)(106356001)(16586007)(316002)(2906002)(97736004)(33656002)(52396003)(229853002)(86362001)(68736007)(478600001)(50466002)(54906003)(76176011)(6506007)(6246003)(966005)(25786009)(55016002)(6916009)(9686003)(5660300001)(4326008)(47776003)(446003)(46003)(7736002)(186003)(6666003)(81166006)(305945005)(16526019)(81156014)(8936002)(11346002)(7696005)(386003)(8676002)(6116002)(23726003)(52116002)(1076002)(486006)(476003)(6306002)(18370500001)(42262002)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0164;H:castle.DHCP.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0164;23:tzxGem18iIeBUyJxPzVohmXK35GmE9vKWwjCi/fAL?=
+ =?us-ascii?Q?/7m3B2cMfxhPfKOddeq1j4wEM9hKyiLjR90POS/7yX5eLhyqk0rmlMrkE7rm?=
+ =?us-ascii?Q?AK6EP6+8fVoKc3TE+vRNid7ylByqq4aluDhVW5OFUd8b2eRMisqCJslqVXOh?=
+ =?us-ascii?Q?dhPwLpenlmesYDkXeEp5Gy5yYVXKIcvQ/TJtJcHOVDM3ozUFFbVwgyYkNpwV?=
+ =?us-ascii?Q?X/Jgh4F5DF9ZadFSX14NyHgXaO29iiSIxohBRFy4+m1BKA76iRa744KZVfs9?=
+ =?us-ascii?Q?vi4B3Uy1Tqj3hU+4FShqOlql6TV9FGX99823Aj+RKpsSNHapYIYySDui/EXd?=
+ =?us-ascii?Q?q1VI0OD646OjK/weum0K+QWm3t0wZqcHhF48wReDsbVjngK9zc7VKrQ/88nT?=
+ =?us-ascii?Q?2BcgWd/42jA4q+ml6V7kQGDxTdRDOUGfCLqM+sXc5lEj+U0MAkWGSzXS6fgH?=
+ =?us-ascii?Q?5v5ykU0RpXmpCOnK60gJrXvFSJdo/yxq36NRTwdTPniDt3ujqVTklyD1GHBq?=
+ =?us-ascii?Q?EAs+M8XqpGFpil3+Jh8A45tUikcOTtSCEMVpQ58iiKfumFRmAq3G/KWiVMXc?=
+ =?us-ascii?Q?GmOGMNTsHvlIlhwb4+wVSLLPMgFceo71f+/hn2POVz+7dvOPP54mrCPVF0NX?=
+ =?us-ascii?Q?F6FFioUhAXsCoNfLVxxbpaHdzCVAEtS5QxBIEZP92mNhJC4hRMeMGJqG5noJ?=
+ =?us-ascii?Q?bi2Q/DSM3O1WUmeOB1TScL40sxU3kpVA0VdrXAjPODVPd658cQZW9VaGABYX?=
+ =?us-ascii?Q?xFdRODXrTpdO+vrvLuZJiKZ9/SC63LJKk3dfnmr8qYEVscj7dthOAtO4MJV+?=
+ =?us-ascii?Q?z0AsN53cd/LOuh+QM601eKdibJe98petImmFBnTfvPgbbPVyfEqwC43HApBE?=
+ =?us-ascii?Q?yEtBeb2eJp1neUjNmsVv6nD1qo+9E+vv2oJhay2/IIY+t9kKndN4LiQBy6c3?=
+ =?us-ascii?Q?K/EVFvr4Z5XWmIGdDPbaTGp5Ebfk2iEzlnO1w12xsCjX5FeI0eaqKPWySaCR?=
+ =?us-ascii?Q?RUUhfZuEmMy7/NjjNfhoet2zVULVUpDbQkdJHF6PesuMWSFm93vH/KDQJ12k?=
+ =?us-ascii?Q?bOHfrwKTqmTFWvcSTE7Yn9j95pSw62rKj42IuH7em2MyBBaU5uqM1Za8zcho?=
+ =?us-ascii?Q?w418j5ne2I0rVRpT/KarW08r1frGtxH3Ufs1aFphMCvi7Fz1ka2ByI/nhgPf?=
+ =?us-ascii?Q?e7xgE3eO/OXNWi/msQnOTNuY7s6NEun/pa43J/fusaN6gCgiN95MTKzS2ZgW?=
+ =?us-ascii?Q?x7CUXKQXjvK0ThCd8lpl/xl6WooHi14go8dmW1a7+B9tt7cPU1otMPe4oi1H?=
+ =?us-ascii?Q?zpNyQsIxFWhMckznBfgznkUpKGXBIiSSV501gjJA5P7?=
+X-Microsoft-Antispam-Message-Info: OxTYpOi80rmPXKEiD5t7TWPSjKG58VEzOHA3qi5ErFGv92BBgqGDuB+A3Bjm1CNj0AXnGm5Ht9M9Sw2Y8z6FUsgwzdFP6WnGgOr0eA93kYYF0USGjfUdccNcZRHMbNH/jx7ha4R068JbxQg6b1UvCC1AsRLA/t2jIIWhjCS8Pi15Lg+El7AEU+84oOVOQ7H666bEzQX8SjWpk+ZOlcODesSjUSElVsJJDQ6tUscsVtGZwiKcXAs6HKRiiCsqmo5qCpzmKPuYAu2ZeY89wX/O4mhxtfdqT7gKOdLz9QAeb2vMugasGwshB8c184H3QCfjeixlA51Q2U3+WSGtwAXxywqan0t/czzHqMNnj4aUgsY=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0164;6:lKJDCaaFSc6YJwu3mZxmbObSN/ZXI+O0ItasQiQfRutLy0msFxYAgIXL+SZIeQ8CxUR1hUTLsvkgGY/AjbWew7E4jhpA/o3z42PdRHmxO8L1w/IIpHkd6+6g8l4H1ZaMEURSHOe9Kjr3x8YgVfbtXoRRJPmaWKBNLKXfEtQL6YXr3V5ZochHqkIcFuEx0fzecD94deQXx9teOQQjitd55MyRunZ9ydcjSZ2gNF3rw4aE57NFI6luIiflF/1YX1O3utbO1r+NkZic87yDxxTI7FSjNvDD+SL9si2PEpHCIzFEDonctpQo9itK+tYiIeL6supnV1p22UltmK9xHZP1D+BjdDO+Tdq/ukngbId0BbfKp+F44xiAsMfIxmMTUNo44wVDCR054udIAe6suX2vPm3nfP3BQpD2BXDwE4XddGakp5mfkd9g8sldUA1TGA9vSeNkkO8DQ5w49HuGC9QTEw==;5:OoeQ84hUl/ng6UiTXfanOmx0Z+k7Fz45OA1c1NwJHN118xVNowCsxWz2YblETb1d+Kh87uV1Gl8sYqFW9k1PH+WVxcO8StlsZPAVqwoMefJBTA0zhK1cRGQQvM3YE8Srgz/F1ZHBIt/WxI8aI35/Bysjd2teFc+oTf0Kdm4338o=;7:lh8W7aevNT02e8Ge2I/KSxIK+iXhqzGl0X6wqTRYTgwlNrr8jMai8tFcoSdIQiUZVajmfdxRe+7oxoDgjiXp+zZH0PuZb0xOY1NXmIY8NNRJCOTb+TLWyvQQpdex5RcOBn2KppPRZaQagF0PRYG7HBe5vkhpwE8WDoimeYz9+OWOsZ0fJ2xRE1clt9kM0Q2a9Zvw3btfD9ldBaN5Dz/mgu7yayuNdXJEmfQRQj6sS3MyTzrYOIF5GUQkgXCZwnyJ
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0164;20:PEXvC78HrQOYQQHewitfbMMfqMCKGpGPCBJzwWLqXvi56kKQhGOEhZFbYNNhzokZOtYQNG0dB2qananGkS1+CwIxOtV4LVvnXuo7ZNYZ+JXrwGVnm8OeCsTvZfuGr9lfY5CfNUrqMbFjuKgDdzHe+1ttmrHXzpwh1KYCP1sxzUM=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2018 23:51:45.8079 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7d88bab-ab67-405f-fe14-08d5f740938f
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR15MB0164
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 27, 2018 at 06:35:10PM +0100, David Howells wrote:
-> Add a system call to allow filesystem information to be queried.  A request
-> value can be given to indicate the desired attribute.  Support is provided
-> for enumerating multi-value attributes.
+On Mon, Jul 30, 2018 at 06:49:31PM -0700, David Rientjes wrote:
+> On Mon, 30 Jul 2018, Roman Gushchin wrote:
 > 
-> ===============
-> NEW SYSTEM CALL
-> ===============
+> > This is a tiny implementation of cgroup-aware OOM killer,
+> > which adds an ability to kill a cgroup as a single unit
+> > and so guarantee the integrity of the workload.
+> > 
+> > Although it has only a limited functionality in comparison
+> > to what now resides in the mm tree (it doesn't change
+> > the victim task selection algorithm, doesn't look
+> > at memory stas on cgroup level, etc), it's also much
+> > simpler and more straightforward. So, hopefully, we can
+> > avoid having long debates here, as we had with the full
+> > implementation.
+> > 
+> > As it doesn't prevent any futher development,
+> > and implements an useful and complete feature,
+> > it looks as a sane way forward.
+> > 
+> > This patchset is against Linus's tree to avoid conflicts
+> > with the cgroup-aware OOM killer patchset in the mm tree.
+> > 
+> > Two first patches are already in the mm tree.
+> > The first one ("mm: introduce mem_cgroup_put() helper")
+> > is totally fine, and the second's commit message has to be
+> > changed to reflect that it's not a part of old patchset
+> > anymore.
+> > 
 > 
-> The new system call looks like:
+> What's the plan with the cgroup aware oom killer?  It has been sitting in 
+> the -mm tree for ages with no clear path to being merged.
+
+It's because your nack, isn't it?
+Everybody else seem to be fine with it.
+
 > 
-> 	int ret = fsinfo(int dfd,
-> 			 const char *filename,
-> 			 const struct fsinfo_params *params,
-> 			 void *buffer,
-> 			 size_t buf_size);
+> Are you suggesting this patchset as a preliminary series so the cgroup 
+> aware oom killer should be removed from the -mm tree and this should be 
+> merged instead?  If so, what is the plan going forward for the cgroup 
+> aware oom killer?
+
+Answered below.
+
 > 
-> The params parameter optionally points to a block of parameters:
+> Are you planning on reviewing the patchset to fix the cgroup aware oom 
+> killer at https://marc.info/?l=linux-kernel&m=153152325411865 which has 
+> been waiting for feedback since March?
 > 
-> 	struct fsinfo_params {
-> 		__u32	at_flags;
-> 		__u32	request;
-> 		__u32	Nth;
-> 		__u32	Mth;
-> 		__u32	__reserved[6];
-> 	};
-> 
-> If params is NULL, it is assumed params->request should be
-> fsinfo_attr_statfs, params->Nth should be 0, params->Mth should be 0 and
-> params->at_flags should be 0.
-> 
-> If params is given, all of params->__reserved[] must be 0.
-> 
-> dfd, filename and params->at_flags indicate the file to query.  There is no
-> equivalent of lstat() as that can be emulated with fsinfo() by setting
-> AT_SYMLINK_NOFOLLOW in params->at_flags.  There is also no equivalent of
-> fstat() as that can be emulated by passing a NULL filename to fsinfo() with
-> the fd of interest in dfd.  AT_NO_AUTOMOUNT can also be used to an allow
-> automount point to be queried without triggering it.
-> 
-> params->request indicates the attribute/attributes to be queried.  This can
-> be one of:
-> 
-> 	fsinfo_attr_statfs		- statfs-style info
-> 	fsinfo_attr_fsinfo		- Information about fsinfo()
-> 	fsinfo_attr_ids			- Filesystem IDs
-> 	fsinfo_attr_limits		- Filesystem limits
-> 	fsinfo_attr_supports		- What's supported in statx(), IOC flags
-> 	fsinfo_attr_capabilities	- Filesystem capabilities
-> 	fsinfo_attr_timestamp_info	- Inode timestamp info
-> 	fsinfo_attr_volume_id		- Volume ID (string)
-> 	fsinfo_attr_volume_uuid		- Volume UUID
-> 	fsinfo_attr_volume_name		- Volume name (string)
-> 	fsinfo_attr_cell_name		- Cell name (string)
-> 	fsinfo_attr_domain_name		- Domain name (string)
-> 	fsinfo_attr_realm_name		- Realm name (string)
-> 	fsinfo_attr_server_name		- Name of the Nth server (string)
-> 	fsinfo_attr_server_address	- Mth address of the Nth server
-> 	fsinfo_attr_parameter		- Nth mount parameter (string)
-> 	fsinfo_attr_source		- Nth mount source name (string)
-> 	fsinfo_attr_name_encoding	- Filename encoding (string)
-> 	fsinfo_attr_name_codepage	- Filename codepage (string)
-> 	fsinfo_attr_io_size		- I/O size hints
-> 
-> Some attributes (such as the servers backing a network filesystem) can have
-> multiple values.  These can be enumerated by setting params->Nth and
-> params->Mth to 0, 1, ... until ENODATA is returned.
-> 
-> buffer and buf_size point to the reply buffer.  The buffer is filled up to
-> the specified size, even if this means truncating the reply.  The full size
-> of the reply is returned.  In future versions, this will allow extra fields
-> to be tacked on to the end of the reply, but anyone not expecting them will
-> only get the subset they're expecting.  If either buffer of buf_size are 0,
-> no copy will take place and the data size will be returned.
-> 
-> At the moment, this will only work on x86_64 and i386 as it requires the
-> system call to be wired up.
 
-<snip> I only have time today to review the user interface bits...
+I already did.
+As I said, I find the proposed oom_policy interface confusing.
+I'm not sure I understand why some memcg OOMs should be handled
+by memcg-aware OOMs, while other by the traditional per-process
+logic; and why this should be set on the OOMing memcg.
+IMO this adds nothing but confusion.
 
-> diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-> new file mode 100644
-> index 000000000000..abcf414dd3be
-> --- /dev/null
-> +++ b/include/uapi/linux/fsinfo.h
-> @@ -0,0 +1,234 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/* fsinfo() definitions.
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +#ifndef _UAPI_LINUX_FSINFO_H
-> +#define _UAPI_LINUX_FSINFO_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/socket.h>
-> +
-> +/*
-> + * The filesystem attributes that can be requested.  Note that some attributes
-> + * may have multiple instances which can be switched in the parameter block.
-> + */
-> +enum fsinfo_attribute {
-> +	fsinfo_attr_statfs		= 0,	/* statfs()-style state */
-> +	fsinfo_attr_fsinfo		= 1,	/* Information about fsinfo() */
-> +	fsinfo_attr_ids			= 2,	/* Filesystem IDs */
-> +	fsinfo_attr_limits		= 3,	/* Filesystem limits */
-> +	fsinfo_attr_supports		= 4,	/* What's supported in statx, iocflags, ... */
-> +	fsinfo_attr_capabilities	= 5,	/* Filesystem capabilities (bits) */
-> +	fsinfo_attr_timestamp_info	= 6,	/* Inode timestamp info */
-> +	fsinfo_attr_volume_id		= 7,	/* Volume ID (string) */
-> +	fsinfo_attr_volume_uuid		= 8,	/* Volume UUID (LE uuid) */
-> +	fsinfo_attr_volume_name		= 9,	/* Volume name (string) */
+If it's just a way to get rid of mount option,
+it doesn't look nice to me (neither I'm fan of the mount option).
+If you need an option to evaluate a cgroup as a whole, but kill
+only one task inside (the ability we've discussed before),
+let's make it clear. It's possible with the new memory.oom.group.
 
-What's the difference between a volume name and a volume string?
+Despite mentioning the lack of priority tuning in the list of
+problems, you do not propose anything. I agree it's hard, but
+why mentioning then?
 
-XFS has a uuid and a label that can be set by userspace (sort of);
-should we return the label for volume_id and volume_name?
+Patches which adjust root memory cgroup accounting and NUMA
+handling should be handled separately, they are really not
+about the interface. I've nothing against them.
 
-Hmmm, I see that the default implementations set volume_id from s_id,
-and s_id (for block device filesystems anyway) tends to be the device, I
-guess?
+Again, I don't like the proposed interface, it doesn't feel
+clear. I think, this is the reason, why your patchset didn't
+collect any acks since March.
+I'm not blocking any progress here, it's not on me.
 
-So if blkid told me that:
-/dev/sda1: LABEL="music" UUID="8d9e5b1e-a094-49e5-a179-6d94f7fd8399" TYPE="xfs"
-
-volume_id == sda1, volume_uuid == 8d9e5b1e-a094-49e5-a179-6d94f7fd8399,
-and volume_name == "music" ?
-
-> +	fsinfo_attr_cell_name		= 10,	/* Cell name (string) */
-> +	fsinfo_attr_domain_name		= 11,	/* Domain name (string) */
-> +	fsinfo_attr_realm_name		= 12,	/* Realm name (string) */
-> +	fsinfo_attr_server_name		= 13,	/* Name of the Nth server */
-> +	fsinfo_attr_server_address	= 14,	/* Mth address of the Nth server */
-> +	fsinfo_attr_parameter		= 15,	/* Nth mount parameter (string) */
-> +	fsinfo_attr_source		= 16,	/* Nth mount source name (string) */
-
-Hmm, so I guess external log devices and realtime device(s) go here?
-
-> +	fsinfo_attr_name_encoding	= 17,	/* Filename encoding (string) */
-> +	fsinfo_attr_name_codepage	= 18,	/* Filename codepage (string) */
-> +	fsinfo_attr_io_size		= 19,	/* Optimal I/O sizes */
-
-Are we tied to this enum forever, or do you plan to split up the number
-space to allow filesystems to define their own attributes without having
-to add them here?
-
-For example, say you let the upper 8 bits be some sort of per-fs code
-(like how _IO{,R,W} work) and the lower 24 bits can be the subcommand.
-0x00 would be the generic space; XFS could (say) reserve 0x58000000 -
-0x58ffffff for XFS (0x58 is the prefix code used for xfs ioctls).  If
-there ever are subdivisions of the number space it might be nice to have
-fsinfo_fsinfo return prefix number of the fs-specific subcommands, and
-how many fs-specific subcommands there are.
-
-I mean, I guess each fs' ->fsinfo function can do that privately but I
-suggest having some mechanism in mind to handle these things.  XFS's
-geometry ioctl structure is nearly out of space and (some day soon) we
-will have to expand and maybe we can use fsinfo instead.
-
-> +	fsinfo_attr__nr
-> +};
-> +
-> +/*
-> + * Optional fsinfo() parameter structure.
-> + *
-> + * If this is not given, it is assumed that fsinfo_attr_statfs instance 0,0 is
-> + * desired.
-> + */
-> +struct fsinfo_params {
-> +	__u32	at_flags;	/* AT_SYMLINK_NOFOLLOW and similar flags */
-> +	__u32	request;	/* What is being asking for (enum fsinfo_attribute) */
-> +	__u32	Nth;		/* Instance of it (some may have multiple) */
-> +	__u32	Mth;		/* Subinstance of Nth instance */
-> +	__u32	__reserved[6];	/* Reserved params; all must be 0 */
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_statfs).
-> + * - This gives extended filesystem information.
-> + */
-> +struct fsinfo_statfs {
-> +	__u64	f_blocks;	/* Total number of blocks in fs */
-> +	__u64	f_bfree;	/* Total number of free blocks */
-> +	__u64	f_bavail;	/* Number of free blocks available to ordinary user */
-> +	__u64	f_files;	/* Total number of file nodes in fs */
-> +	__u64	f_ffree;	/* Number of free file nodes */
-> +	__u64	f_favail;	/* Number of free file nodes available to ordinary user */
-> +	__u32	f_bsize;	/* Optimal block size */
-> +	__u32	f_frsize;	/* Fragment size */
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_ids).
-> + *
-> + * List of basic identifiers as is normally found in statfs().
-> + */
-> +struct fsinfo_ids {
-> +	char	f_fs_name[15 + 1];
-> +	__u64	f_flags;	/* Filesystem mount flags (MS_*) */
-> +	__u64	f_fsid;		/* Short 64-bit Filesystem ID (as statfs) */
-> +	__u64	f_sb_id;	/* Internal superblock ID for sbnotify()/mntnotify() */
-> +	__u32	f_fstype;	/* Filesystem type from linux/magic.h [uncond] */
-> +	__u32	f_dev_major;	/* As st_dev_* from struct statx [uncond] */
-> +	__u32	f_dev_minor;
-> +};
-
-This structure doesn't end on a 64-bit boundary and may cause padding
-problems...
-
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_limits).
-> + *
-> + * List of supported filesystem limits.
-> + */
-> +struct fsinfo_limits {
-> +	__u64	max_file_size;			/* Maximum file size */
-> +	__u64	max_uid;			/* Maximum UID supported */
-> +	__u64	max_gid;			/* Maximum GID supported */
-> +	__u64	max_projid;			/* Maximum project ID supported */
-> +	__u32	max_dev_major;			/* Maximum device major representable */
-> +	__u32	max_dev_minor;			/* Maximum device minor representable */
-> +	__u32	max_hard_links;			/* Maximum number of hard links on a file */
-> +	__u32	max_xattr_body_len;		/* Maximum xattr content length */
-> +	__u32	max_xattr_name_len;		/* Maximum xattr name length */
-> +	__u32	max_filename_len;		/* Maximum filename length */
-> +	__u32	max_symlink_len;		/* Maximum symlink content length */
-> +	__u32	__reserved[1];
-
-Maximum inode number possible, for filesystems that can allocate inodes
-dynamically?
-
-Granted, XFS will probably only ever advertise "0xffffffffffffffff"...
-
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_supports).
-> + *
-> + * What's supported in various masks, such as statx() attribute and mask bits
-> + * and IOC flags.
-> + */
-> +struct fsinfo_supports {
-> +	__u64	stx_attributes;		/* What statx::stx_attributes are supported */
-> +	__u32	stx_mask;		/* What statx::stx_mask bits are supported */
-> +	__u32	ioc_flags;		/* What FS_IOC_* flags are supported */
-> +	__u32	win_file_attrs;		/* What DOS/Windows FILE_* attributes are supported */
-> +	__u32	__reserved[1];
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_capabilities).
-> + *
-> + * Bitmask indicating filesystem capabilities where renderable as single bits.
-> + */
-> +enum fsinfo_capability {
-> +	fsinfo_cap_is_kernel_fs		= 0,	/* fs is kernel-special filesystem */
-> +	fsinfo_cap_is_block_fs		= 1,	/* fs is block-based filesystem */
-> +	fsinfo_cap_is_flash_fs		= 2,	/* fs is flash filesystem */
-> +	fsinfo_cap_is_network_fs	= 3,	/* fs is network filesystem */
-> +	fsinfo_cap_is_automounter_fs	= 4,	/* fs is automounter special filesystem */
-> +	fsinfo_cap_automounts		= 5,	/* fs supports automounts */
-> +	fsinfo_cap_adv_locks		= 6,	/* fs supports advisory file locking */
-> +	fsinfo_cap_mand_locks		= 7,	/* fs supports mandatory file locking */
-> +	fsinfo_cap_leases		= 8,	/* fs supports file leases */
-> +	fsinfo_cap_uids			= 9,	/* fs supports numeric uids */
-> +	fsinfo_cap_gids			= 10,	/* fs supports numeric gids */
-> +	fsinfo_cap_projids		= 11,	/* fs supports numeric project ids */
-> +	fsinfo_cap_id_names		= 12,	/* fs supports user names */
-> +	fsinfo_cap_id_guids		= 13,	/* fs supports user guids */
-> +	fsinfo_cap_windows_attrs	= 14,	/* fs has windows attributes */
-> +	fsinfo_cap_user_quotas		= 15,	/* fs has per-user quotas */
-> +	fsinfo_cap_group_quotas		= 16,	/* fs has per-group quotas */
-> +	fsinfo_cap_project_quotas	= 17,	/* fs has per-project quotas */
-> +	fsinfo_cap_xattrs		= 18,	/* fs has xattrs */
-> +	fsinfo_cap_journal		= 19,	/* fs has a journal */
-> +	fsinfo_cap_data_is_journalled	= 20,	/* fs is using data journalling */
-> +	fsinfo_cap_o_sync		= 21,	/* fs supports O_SYNC */
-> +	fsinfo_cap_o_direct		= 22,	/* fs supports O_DIRECT */
-> +	fsinfo_cap_volume_id		= 23,	/* fs has a volume ID */
-> +	fsinfo_cap_volume_uuid		= 24,	/* fs has a volume UUID */
-> +	fsinfo_cap_volume_name		= 25,	/* fs has a volume name */
-> +	fsinfo_cap_volume_fsid		= 26,	/* fs has a volume FSID */
-> +	fsinfo_cap_cell_name		= 27,	/* fs has a cell name */
-> +	fsinfo_cap_domain_name		= 28,	/* fs has a domain name */
-> +	fsinfo_cap_realm_name		= 29,	/* fs has a realm name */
-> +	fsinfo_cap_iver_all_change	= 30,	/* i_version represents data + meta changes */
-> +	fsinfo_cap_iver_data_change	= 31,	/* i_version represents data changes only */
-> +	fsinfo_cap_iver_mono_incr	= 32,	/* i_version incremented monotonically */
-> +	fsinfo_cap_symlinks		= 33,	/* fs supports symlinks */
-> +	fsinfo_cap_hard_links		= 34,	/* fs supports hard links */
-> +	fsinfo_cap_hard_links_1dir	= 35,	/* fs supports hard links in same dir only */
-> +	fsinfo_cap_device_files		= 36,	/* fs supports bdev, cdev */
-> +	fsinfo_cap_unix_specials	= 37,	/* fs supports pipe, fifo, socket */
-> +	fsinfo_cap_resource_forks	= 38,	/* fs supports resource forks/streams */
-> +	fsinfo_cap_name_case_indep	= 39,	/* Filename case independence is mandatory */
-> +	fsinfo_cap_name_non_utf8	= 40,	/* fs has non-utf8 names */
-> +	fsinfo_cap_name_has_codepage	= 41,	/* fs has a filename codepage */
-> +	fsinfo_cap_sparse		= 42,	/* fs supports sparse files */
-> +	fsinfo_cap_not_persistent	= 43,	/* fs is not persistent */
-> +	fsinfo_cap_no_unix_mode		= 44,	/* fs does not support unix mode bits */
-> +	fsinfo_cap_has_atime		= 45,	/* fs supports access time */
-> +	fsinfo_cap_has_btime		= 46,	/* fs supports birth/creation time */
-> +	fsinfo_cap_has_ctime		= 47,	/* fs supports change time */
-> +	fsinfo_cap_has_mtime		= 48,	/* fs supports modification time */
-> +	fsinfo_cap__nr
-> +};
-> +
-> +struct fsinfo_capabilities {
-> +	__u8	capabilities[(fsinfo_cap__nr + 7) / 8];
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_timestamp_info).
-> + */
-> +struct fsinfo_timestamp_info {
-> +	__s64	minimum_timestamp;	/* Minimum timestamp value in seconds */
-> +	__s64	maximum_timestamp;	/* Maximum timestamp value in seconds */
-> +	__u16	atime_gran_mantissa;	/* Granularity(secs) = mant * 10^exp */
-> +	__u16	btime_gran_mantissa;
-> +	__u16	ctime_gran_mantissa;
-> +	__u16	mtime_gran_mantissa;
-> +	__s8	atime_gran_exponent;
-> +	__s8	btime_gran_exponent;
-> +	__s8	ctime_gran_exponent;
-> +	__s8	mtime_gran_exponent;
-> +	__u32	__reserved[1];
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_volume_uuid).
-> + */
-> +struct fsinfo_volume_uuid {
-> +	__u8	uuid[16];
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_server_addresses).
-> + *
-> + * Find the Mth address of the Nth server for a network mount.
-> + */
-> +struct fsinfo_server_address {
-> +	struct __kernel_sockaddr_storage address;
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_io_size).
-> + *
-> + * Retrieve I/O size hints for a filesystem.
-> + */
-> +struct fsinfo_io_size {
-> +	__u32		dio_size_gran;	/* Size granularity for O_DIRECT */
-> +	__u32		dio_mem_align;	/* Memory alignment for O_DIRECT */
-
-max io size too?
-
-64-bit too, in case we ever get that insane?
-
---D
-
-> +};
-> +
-> +/*
-> + * Information struct for fsinfo(fsinfo_attr_fsinfo).
-> + *
-> + * This gives information about fsinfo() itself.
-> + */
-> +struct fsinfo_fsinfo {
-> +	__u32	max_attr;	/* Number of supported attributes (fsinfo_attr__nr) */
-> +	__u32	max_cap;	/* Number of supported capabilities (fsinfo_cap__nr) */
-> +};
-> +
-> +#endif /* _UAPI_LINUX_FSINFO_H */
-> diff --git a/samples/statx/Makefile b/samples/statx/Makefile
-> index 59df7c25a9d1..9cb9a88e3a10 100644
-> --- a/samples/statx/Makefile
-> +++ b/samples/statx/Makefile
-> @@ -1,7 +1,10 @@
->  # List of programs to build
-> -hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx
-> +hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx test-fsinfo
->  
->  # Tell kbuild to always build the programs
->  always := $(hostprogs-y)
->  
->  HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
-> +
-> +HOSTCFLAGS_test-fsinfo.o += -I$(objtree)/usr/include
-> +HOSTLOADLIBES_test-fsinfo += -lm
-> diff --git a/samples/statx/test-fsinfo.c b/samples/statx/test-fsinfo.c
-> new file mode 100644
-> index 000000000000..deab0081ecd1
-> --- /dev/null
-> +++ b/samples/statx/test-fsinfo.c
-> @@ -0,0 +1,539 @@
-> +/* Test the fsinfo() system call
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#define _ATFILE_SOURCE
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <stdint.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <ctype.h>
-> +#include <errno.h>
-> +#include <time.h>
-> +#include <math.h>
-> +#include <fcntl.h>
-> +#include <sys/syscall.h>
-> +#include <linux/fsinfo.h>
-> +#include <linux/socket.h>
-> +#include <sys/stat.h>
-> +
-> +static __attribute__((unused))
-> +ssize_t fsinfo(int dfd, const char *filename, struct fsinfo_params *params,
-> +	       void *buffer, size_t buf_size)
-> +{
-> +	return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
-> +}
-> +
-> +#define FSINFO_STRING(N)	 [fsinfo_attr_##N] = 0x00
-> +#define FSINFO_STRUCT(N)	 [fsinfo_attr_##N] = sizeof(struct fsinfo_##N)/sizeof(__u32)
-> +#define FSINFO_STRING_N(N)	 [fsinfo_attr_##N] = 0x40
-> +#define FSINFO_STRUCT_N(N)	 [fsinfo_attr_##N] = 0x40 | sizeof(struct fsinfo_##N)/sizeof(__u32)
-> +#define FSINFO_STRUCT_NM(N)	 [fsinfo_attr_##N] = 0x80 | sizeof(struct fsinfo_##N)/sizeof(__u32)
-> +static const __u8 fsinfo_buffer_sizes[fsinfo_attr__nr] = {
-> +	FSINFO_STRUCT		(statfs),
-> +	FSINFO_STRUCT		(fsinfo),
-> +	FSINFO_STRUCT		(ids),
-> +	FSINFO_STRUCT		(limits),
-> +	FSINFO_STRUCT		(supports),
-> +	FSINFO_STRUCT		(capabilities),
-> +	FSINFO_STRUCT		(timestamp_info),
-> +	FSINFO_STRING		(volume_id),
-> +	FSINFO_STRUCT		(volume_uuid),
-> +	FSINFO_STRING		(volume_name),
-> +	FSINFO_STRING		(cell_name),
-> +	FSINFO_STRING		(domain_name),
-> +	FSINFO_STRING		(realm_name),
-> +	FSINFO_STRING_N		(server_name),
-> +	FSINFO_STRUCT_NM	(server_address),
-> +	FSINFO_STRING_N		(parameter),
-> +	FSINFO_STRING_N		(source),
-> +	FSINFO_STRING		(name_encoding),
-> +	FSINFO_STRING		(name_codepage),
-> +	FSINFO_STRUCT		(io_size),
-> +};
-> +
-> +#define FSINFO_NAME(N) [fsinfo_attr_##N] = #N
-> +static const char *fsinfo_attr_names[fsinfo_attr__nr] = {
-> +	FSINFO_NAME(statfs),
-> +	FSINFO_NAME(fsinfo),
-> +	FSINFO_NAME(ids),
-> +	FSINFO_NAME(limits),
-> +	FSINFO_NAME(supports),
-> +	FSINFO_NAME(capabilities),
-> +	FSINFO_NAME(timestamp_info),
-> +	FSINFO_NAME(volume_id),
-> +	FSINFO_NAME(volume_uuid),
-> +	FSINFO_NAME(volume_name),
-> +	FSINFO_NAME(cell_name),
-> +	FSINFO_NAME(domain_name),
-> +	FSINFO_NAME(realm_name),
-> +	FSINFO_NAME(server_name),
-> +	FSINFO_NAME(server_address),
-> +	FSINFO_NAME(parameter),
-> +	FSINFO_NAME(source),
-> +	FSINFO_NAME(name_encoding),
-> +	FSINFO_NAME(name_codepage),
-> +	FSINFO_NAME(io_size),
-> +};
-> +
-> +union reply {
-> +	char buffer[4096];
-> +	struct fsinfo_statfs statfs;
-> +	struct fsinfo_fsinfo fsinfo;
-> +	struct fsinfo_ids ids;
-> +	struct fsinfo_limits limits;
-> +	struct fsinfo_supports supports;
-> +	struct fsinfo_capabilities caps;
-> +	struct fsinfo_timestamp_info timestamps;
-> +	struct fsinfo_volume_uuid uuid;
-> +	struct fsinfo_server_address srv_addr;
-> +	struct fsinfo_io_size io_size;
-> +};
-> +
-> +static void dump_hex(unsigned int *data, int from, int to)
-> +{
-> +	unsigned offset, print_offset = 1, col = 0;
-> +
-> +	from /= 4;
-> +	to = (to + 3) / 4;
-> +
-> +	for (offset = from; offset < to; offset++) {
-> +		if (print_offset) {
-> +			printf("%04x: ", offset * 8);
-> +			print_offset = 0;
-> +		}
-> +		printf("%08x", data[offset]);
-> +		col++;
-> +		if ((col & 3) == 0) {
-> +			printf("\n");
-> +			print_offset = 1;
-> +		} else {
-> +			printf(" ");
-> +		}
-> +	}
-> +
-> +	if (!print_offset)
-> +		printf("\n");
-> +}
-> +
-> +static void dump_attr_statfs(union reply *r, int size)
-> +{
-> +	struct fsinfo_statfs *f = &r->statfs;
-> +
-> +	printf("\n");
-> +	printf("\tblocks: n=%llu fr=%llu av=%llu\n",
-> +	       (unsigned long long)f->f_blocks,
-> +	       (unsigned long long)f->f_bfree,
-> +	       (unsigned long long)f->f_bavail);
-> +
-> +	printf("\tfiles : n=%llu fr=%llu av=%llu\n",
-> +	       (unsigned long long)f->f_files,
-> +	       (unsigned long long)f->f_ffree,
-> +	       (unsigned long long)f->f_favail);
-> +	printf("\tbsize : %u\n", f->f_bsize);
-> +	printf("\tfrsize: %u\n", f->f_frsize);
-> +}
-> +
-> +static void dump_attr_fsinfo(union reply *r, int size)
-> +{
-> +	struct fsinfo_fsinfo *f = &r->fsinfo;
-> +
-> +	printf("max_attr=%u max_cap=%u\n", f->max_attr, f->max_cap);
-> +}
-> +
-> +static void dump_attr_ids(union reply *r, int size)
-> +{
-> +	struct fsinfo_ids *f = &r->ids;
-> +
-> +	printf("\n");
-> +	printf("\tdev   : %02x:%02x\n", f->f_dev_major, f->f_dev_minor);
-> +	printf("\tfs    : type=%x name=%s\n", f->f_fstype, f->f_fs_name);
-> +	printf("\tflags : %llx\n", (unsigned long long)f->f_flags);
-> +	printf("\tfsid  : %llx\n", (unsigned long long)f->f_fsid);
-> +}
-> +
-> +static void dump_attr_limits(union reply *r, int size)
-> +{
-> +	struct fsinfo_limits *f = &r->limits;
-> +
-> +	printf("\n");
-> +	printf("\tmax file size: %llx\n", f->max_file_size);
-> +	printf("\tmax ids      : u=%llx g=%llx p=%llx\n",
-> +	       f->max_uid, f->max_gid, f->max_projid);
-> +	printf("\tmax dev      : maj=%x min=%x\n",
-> +	       f->max_dev_major, f->max_dev_minor);
-> +	printf("\tmax links    : %x\n", f->max_hard_links);
-> +	printf("\tmax xattr    : n=%x b=%x\n",
-> +	       f->max_xattr_name_len, f->max_xattr_body_len);
-> +	printf("\tmax len      : file=%x sym=%x\n",
-> +	       f->max_filename_len, f->max_symlink_len);
-> +}
-> +
-> +static void dump_attr_supports(union reply *r, int size)
-> +{
-> +	struct fsinfo_supports *f = &r->supports;
-> +
-> +	printf("\n");
-> +	printf("\tstx_attr=%llx\n", f->stx_attributes);
-> +	printf("\tstx_mask=%x\n", f->stx_mask);
-> +	printf("\tioc_flags=%x\n", f->ioc_flags);
-> +	printf("\twin_fattrs=%x\n", f->win_file_attrs);
-> +}
-> +
-> +#define FSINFO_CAP_NAME(C) [fsinfo_cap_##C] = #C
-> +static const char *fsinfo_cap_names[fsinfo_cap__nr] = {
-> +	FSINFO_CAP_NAME(is_kernel_fs),
-> +	FSINFO_CAP_NAME(is_block_fs),
-> +	FSINFO_CAP_NAME(is_flash_fs),
-> +	FSINFO_CAP_NAME(is_network_fs),
-> +	FSINFO_CAP_NAME(is_automounter_fs),
-> +	FSINFO_CAP_NAME(automounts),
-> +	FSINFO_CAP_NAME(adv_locks),
-> +	FSINFO_CAP_NAME(mand_locks),
-> +	FSINFO_CAP_NAME(leases),
-> +	FSINFO_CAP_NAME(uids),
-> +	FSINFO_CAP_NAME(gids),
-> +	FSINFO_CAP_NAME(projids),
-> +	FSINFO_CAP_NAME(id_names),
-> +	FSINFO_CAP_NAME(id_guids),
-> +	FSINFO_CAP_NAME(windows_attrs),
-> +	FSINFO_CAP_NAME(user_quotas),
-> +	FSINFO_CAP_NAME(group_quotas),
-> +	FSINFO_CAP_NAME(project_quotas),
-> +	FSINFO_CAP_NAME(xattrs),
-> +	FSINFO_CAP_NAME(journal),
-> +	FSINFO_CAP_NAME(data_is_journalled),
-> +	FSINFO_CAP_NAME(o_sync),
-> +	FSINFO_CAP_NAME(o_direct),
-> +	FSINFO_CAP_NAME(volume_id),
-> +	FSINFO_CAP_NAME(volume_uuid),
-> +	FSINFO_CAP_NAME(volume_name),
-> +	FSINFO_CAP_NAME(volume_fsid),
-> +	FSINFO_CAP_NAME(cell_name),
-> +	FSINFO_CAP_NAME(domain_name),
-> +	FSINFO_CAP_NAME(realm_name),
-> +	FSINFO_CAP_NAME(iver_all_change),
-> +	FSINFO_CAP_NAME(iver_data_change),
-> +	FSINFO_CAP_NAME(iver_mono_incr),
-> +	FSINFO_CAP_NAME(symlinks),
-> +	FSINFO_CAP_NAME(hard_links),
-> +	FSINFO_CAP_NAME(hard_links_1dir),
-> +	FSINFO_CAP_NAME(device_files),
-> +	FSINFO_CAP_NAME(unix_specials),
-> +	FSINFO_CAP_NAME(resource_forks),
-> +	FSINFO_CAP_NAME(name_case_indep),
-> +	FSINFO_CAP_NAME(name_non_utf8),
-> +	FSINFO_CAP_NAME(name_has_codepage),
-> +	FSINFO_CAP_NAME(sparse),
-> +	FSINFO_CAP_NAME(not_persistent),
-> +	FSINFO_CAP_NAME(no_unix_mode),
-> +	FSINFO_CAP_NAME(has_atime),
-> +	FSINFO_CAP_NAME(has_btime),
-> +	FSINFO_CAP_NAME(has_ctime),
-> +	FSINFO_CAP_NAME(has_mtime),
-> +};
-> +
-> +static void dump_attr_capabilities(union reply *r, int size)
-> +{
-> +	struct fsinfo_capabilities *f = &r->caps;
-> +	int i;
-> +
-> +	for (i = 0; i < sizeof(f->capabilities); i++)
-> +		printf("%02x", f->capabilities[i]);
-> +	printf("\n");
-> +	for (i = 0; i < fsinfo_cap__nr; i++)
-> +		if (f->capabilities[i / 8] & (1 << (i % 8)))
-> +			printf("\t- %s\n", fsinfo_cap_names[i]);
-> +}
-> +
-> +static void dump_attr_timestamp_info(union reply *r, int size)
-> +{
-> +	struct fsinfo_timestamp_info *f = &r->timestamps;
-> +
-> +	printf("range=%llx-%llx\n",
-> +	       (unsigned long long)f->minimum_timestamp,
-> +	       (unsigned long long)f->maximum_timestamp);
-> +
-> +#define print_time(G) \
-> +	printf("\t"#G"time : gran=%gs\n",			\
-> +	       (f->G##time_gran_mantissa *		\
-> +		pow(10., f->G##time_gran_exponent)))
-> +	print_time(a);
-> +	print_time(b);
-> +	print_time(c);
-> +	print_time(m);
-> +}
-> +
-> +static void dump_attr_volume_uuid(union reply *r, int size)
-> +{
-> +	struct fsinfo_volume_uuid *f = &r->uuid;
-> +
-> +	printf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x"
-> +	       "-%02x%02x%02x%02x%02x%02x\n",
-> +	       f->uuid[ 0], f->uuid[ 1],
-> +	       f->uuid[ 2], f->uuid[ 3],
-> +	       f->uuid[ 4], f->uuid[ 5],
-> +	       f->uuid[ 6], f->uuid[ 7],
-> +	       f->uuid[ 8], f->uuid[ 9],
-> +	       f->uuid[10], f->uuid[11],
-> +	       f->uuid[12], f->uuid[13],
-> +	       f->uuid[14], f->uuid[15]);
-> +}
-> +
-> +static void dump_attr_server_address(union reply *r, int size)
-> +{
-> +	struct fsinfo_server_address *f = &r->srv_addr;
-> +
-> +	printf("family=%u\n", f->address.ss_family);
-> +}
-> +
-> +static void dump_attr_io_size(union reply *r, int size)
-> +{
-> +	struct fsinfo_io_size *f = &r->io_size;
-> +
-> +	printf("dio_size=%u\n", f->dio_size_gran);
-> +}
-> +
-> +/*
-> + *
-> + */
-> +typedef void (*dumper_t)(union reply *r, int size);
-> +
-> +#define FSINFO_DUMPER(N) [fsinfo_attr_##N] = dump_attr_##N
-> +static const dumper_t fsinfo_attr_dumper[fsinfo_attr__nr] = {
-> +	FSINFO_DUMPER(statfs),
-> +	FSINFO_DUMPER(fsinfo),
-> +	FSINFO_DUMPER(ids),
-> +	FSINFO_DUMPER(limits),
-> +	FSINFO_DUMPER(supports),
-> +	FSINFO_DUMPER(capabilities),
-> +	FSINFO_DUMPER(timestamp_info),
-> +	FSINFO_DUMPER(volume_uuid),
-> +	FSINFO_DUMPER(server_address),
-> +	FSINFO_DUMPER(io_size),
-> +};
-> +
-> +static void dump_fsinfo(enum fsinfo_attribute attr, __u8 about,
-> +			union reply *r, int size)
-> +{
-> +	dumper_t dumper = fsinfo_attr_dumper[attr];
-> +	unsigned int len;
-> +
-> +	if (!dumper) {
-> +		printf("<no dumper>\n");
-> +		return;
-> +	}
-> +
-> +	len = (about & 0x3f) * sizeof(__u32);
-> +	if (size < len) {
-> +		printf("<short data %u/%u>\n", size, len);
-> +		return;
-> +	}
-> +
-> +	dumper(r, size);
-> +}
-> +
-> +/*
-> + * Try one subinstance of an attribute.
-> + */
-> +static int try_one(const char *file, struct fsinfo_params *params, bool raw)
-> +{
-> +	union reply r;
-> +	char *p;
-> +	int ret;
-> +	__u8 about;
-> +
-> +	memset(&r.buffer, 0xbd, sizeof(r.buffer));
-> +
-> +	errno = 0;
-> +	ret = fsinfo(AT_FDCWD, file, params, r.buffer, sizeof(r.buffer));
-> +	if (params->request >= fsinfo_attr__nr) {
-> +		if (ret == -1 && errno == EOPNOTSUPP)
-> +			exit(0);
-> +		fprintf(stderr, "Unexpected error for too-large command %u: %m\n",
-> +			params->request);
-> +		exit(1);
-> +	}
-> +
-> +	//printf("fsinfo(%s,%s,%u,%u) = %d: %m\n",
-> +	//       file, fsinfo_attr_names[params->request],
-> +	//       params->Nth, params->Mth, ret);
-> +
-> +	about = fsinfo_buffer_sizes[params->request];
-> +	if (ret == -1) {
-> +		if (errno == ENODATA) {
-> +			switch (about & 0xc0) {
-> +			case 0x00:
-> +				if (params->Nth == 0 && params->Mth == 0) {
-> +					fprintf(stderr,
-> +						"Unexpected ENODATA1 (%u[%u][%u])\n",
-> +						params->request, params->Nth, params->Mth);
-> +					exit(1);
-> +				}
-> +				break;
-> +			case 0x40:
-> +				if (params->Nth == 0 && params->Mth == 0) {
-> +					fprintf(stderr,
-> +						"Unexpected ENODATA2 (%u[%u][%u])\n",
-> +						params->request, params->Nth, params->Mth);
-> +					exit(1);
-> +				}
-> +				break;
-> +			}
-> +			return (params->Mth == 0) ? 2 : 1;
-> +		}
-> +		if (errno == EOPNOTSUPP) {
-> +			if (params->Nth > 0 || params->Mth > 0) {
-> +				fprintf(stderr,
-> +					"Should return -ENODATA (%u[%u][%u])\n",
-> +					params->request, params->Nth, params->Mth);
-> +				exit(1);
-> +			}
-> +			//printf("\e[33m%s\e[m: <not supported>\n",
-> +			//       fsinfo_attr_names[attr]);
-> +			return 2;
-> +		}
-> +		perror(file);
-> +		exit(1);
-> +	}
-> +
-> +	if (raw) {
-> +		if (ret > 4096)
-> +			ret = 4096;
-> +		dump_hex((unsigned int *)&r.buffer, 0, ret);
-> +		return 0;
-> +	}
-> +
-> +	switch (about & 0xc0) {
-> +	case 0x00:
-> +		printf("\e[33m%s\e[m: ",
-> +		       fsinfo_attr_names[params->request]);
-> +		break;
-> +	case 0x40:
-> +		printf("\e[33m%s[%u]\e[m: ",
-> +		       fsinfo_attr_names[params->request],
-> +		       params->Nth);
-> +		break;
-> +	case 0x80:
-> +		printf("\e[33m%s[%u][%u]\e[m: ",
-> +		       fsinfo_attr_names[params->request],
-> +		       params->Nth, params->Mth);
-> +		break;
-> +	}
-> +
-> +	switch (about) {
-> +		/* Struct */
-> +	case 0x01 ... 0x3f:
-> +	case 0x41 ... 0x7f:
-> +	case 0x81 ... 0xbf:
-> +		dump_fsinfo(params->request, about, &r, ret);
-> +		return 0;
-> +
-> +		/* String */
-> +	case 0x00:
-> +	case 0x40:
-> +	case 0x80:
-> +		if (ret >= 4096) {
-> +			ret = 4096;
-> +			r.buffer[4092] = '.';
-> +			r.buffer[4093] = '.';
-> +			r.buffer[4094] = '.';
-> +			r.buffer[4095] = 0;
-> +		} else {
-> +			r.buffer[ret] = 0;
-> +		}
-> +		for (p = r.buffer; *p; p++) {
-> +			if (!isprint(*p)) {
-> +				printf("<non-printable>\n");
-> +				continue;
-> +			}
-> +		}
-> +		printf("%s\n", r.buffer);
-> +		return 0;
-> +
-> +	default:
-> +		fprintf(stderr, "Fishy about %u %02x\n", params->request, about);
-> +		exit(1);
-> +	}
-> +}
-> +
-> +/*
-> + *
-> + */
-> +int main(int argc, char **argv)
-> +{
-> +	struct fsinfo_params params = {
-> +		.at_flags = AT_SYMLINK_NOFOLLOW,
-> +	};
-> +	unsigned int attr;
-> +	int raw = 0, opt, Nth, Mth;
-> +
-> +	while ((opt = getopt(argc, argv, "alr"))) {
-> +		switch (opt) {
-> +		case 'a':
-> +			params.at_flags |= AT_NO_AUTOMOUNT;
-> +			continue;
-> +		case 'l':
-> +			params.at_flags &= ~AT_SYMLINK_NOFOLLOW;
-> +			continue;
-> +		case 'r':
-> +			raw = 1;
-> +			continue;
-> +		}
-> +		break;
-> +	}
-> +
-> +	argc -= optind;
-> +	argv += optind;
-> +
-> +	if (argc != 1) {
-> +		printf("Format: test-fsinfo [-alr] <file>\n");
-> +		exit(2);
-> +	}
-> +
-> +	for (attr = 0; attr <= fsinfo_attr__nr; attr++) {
-> +		Nth = 0;
-> +		do {
-> +			Mth = 0;
-> +			do {
-> +				params.request = attr;
-> +				params.Nth = Nth;
-> +				params.Mth = Mth;
-> +
-> +				switch (try_one(argv[0], &params, raw)) {
-> +				case 0:
-> +					continue;
-> +				case 1:
-> +					goto done_M;
-> +				case 2:
-> +					goto done_N;
-> +				}
-> +			} while (++Mth < 100);
-> +
-> +		done_M:
-> +			if (Mth >= 100) {
-> +				fprintf(stderr, "Fishy: Mth == %u\n", Mth);
-> +				break;
-> +			}
-> +
-> +		} while (++Nth < 100);
-> +
-> +	done_N:
-> +		if (Nth >= 100) {
-> +			fprintf(stderr, "Fishy: Nth == %u\n", Nth);
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> 
+Anyway, at this point I really think that this patch (memory.oom.group)
+is a reasonable way forward. It implements a useful and complete feature,
+doesn't block any further development and has a clean interface.
+So, you can build memory.oom.policy on top of it.
+Does this sound good?
