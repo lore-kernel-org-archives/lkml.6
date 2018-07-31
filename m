@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FC2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7D4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A1820685
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C271620870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CLJ3iguW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21A1820685
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWctfzyZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C271620870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732604AbeGaRy7 (ORCPT
+        id S1732617AbeGaRzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:54:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45840 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732572AbeGaRy5 (ORCPT
+        Tue, 31 Jul 2018 13:55:00 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40791 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732593AbeGaRy7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:54:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f12-v6so7364911wrv.12
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:13:55 -0700 (PDT)
+        Tue, 31 Jul 2018 13:54:59 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h15-v6so17261209wrs.7
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K+OuSyfn41q9eG33WrMKqO2krbdG9pjKcv2baAyctME=;
-        b=CLJ3iguWWFbaIUz2Z+1ims8YJIQtFqvuzc422GhxGQFk5fLddWtgOhxu8JxcgYVfry
-         zNdoN0nXPT7UvGtxDcQ1ix1B7vbXkZJ3SqZdYdBYI/wXG/LEh34DAnLKjh9e700iXPtA
-         FEJvpp3421DE2X7npcXQLW+VItS4FPRnExR5E=
+        bh=0+4xU3LQjP5NBavrf6IET5qA3bhywT6/Vh+ut+tLFvU=;
+        b=WWctfzyZtwl+wXQLK/cmDi9TO+ae3QkmWeuUnQnUhXUn/+unCAifhqbgMA7WBmLUkj
+         Zxla0n5a0nlwqrKhHTtaB372wgc+n7yZcJ7cLtMJoYal3oVwHz56OBI11nOM2tpremwz
+         VnOcFVQX8hUWjfcUVAh0+Nw4JNWTHJn1hfXwI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K+OuSyfn41q9eG33WrMKqO2krbdG9pjKcv2baAyctME=;
-        b=ki2fniO/ocsgphyUpb/kV+JHvdgwAN7JpKTLu0aNO0v2pysH0gqi1d2YmjGMFRYHdJ
-         NFJHJvrtgI/MMnfZTMLrblgFGrQNa4i0xlunjxg6vcLSGxrTw9AG/LKN+VrKNm0vliVd
-         +/8ZneRmLzgYU2Xrd591anVZVk+7/DTpcuCZ5xaBxA2A50dwEQrVLhSDxsMR6v0XLbWW
-         EeUPnB9biBPpSuJC/7Am6KJ7exzzbxLOGTdyqRxqSEFeJqQaKgwhCUTDpurCqQATP4hF
-         K4ZlERinjJdRwt+YS0drpW0BHehlx2L2SdQrNPtKPWDrrpGsDlvUfcL1GP37JnmdZwx+
-         9Npw==
-X-Gm-Message-State: AOUpUlGk0QP/uCCqvXtNorQpGNvYrkCNkyx1UZP7+A6ZJrQscSeJeECw
-        9Oi/ln1I9TG5c97wAKIphwQN4Q==
-X-Google-Smtp-Source: AAOMgpeKXRMeTa9D5g2sSV+TQwa6SVZGHMy9DkBiMs8xcpbmANoNwk9/+1OVj4NLWZ6er5yEfzR5Pg==
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr21291114wrd.67.1533053635362;
-        Tue, 31 Jul 2018 09:13:55 -0700 (PDT)
+        bh=0+4xU3LQjP5NBavrf6IET5qA3bhywT6/Vh+ut+tLFvU=;
+        b=Jty49wkvXinEJWv3ViyrbvGNBblGI31lDquO23EGtieJySwHv5r2V3u12IXfgd0v5L
+         GsVgQ+ha0rPZE/IZahb1f7hy2kH6b1BJEQKMT45D5VHI4C4YwSNytXRiJcGkRJ6xA191
+         3xf1xWRl/V3fqreL5FMTPMxzxuJT1PZzCaNTG9Xi/Oh7OV4VyQSRrmwAK8IiGcgBArJr
+         A5fL9fy8oE27bfNBV96N5K9K2357ztMGO6fnZzowEGfHPX7vjpfG1P7W2slnXdcM79kv
+         Jdt+jlKOWgu5Bp0Sjrus4DaVe66vR0SR2gc/ddaN/m0EI+au3NAMgvV4XWs3bDpgwHNu
+         GhXA==
+X-Gm-Message-State: AOUpUlGreQ5TlOceFb+636reFuFIlAABQun5IjPZHL61qHU0A8SV08U5
+        gA+m5ZtCu4U30erDUM0oaNnRGA==
+X-Google-Smtp-Source: AAOMgpfZ+oO0zubhhwfmXSqkm1QERp94U1Fl+6taIKIljS4DYOlxsoliLKVk7T2kHZLeVOm9vqvk6w==
+X-Received: by 2002:a5d:56d0:: with SMTP id m16-v6mr2935899wrw.58.1533053637120;
+        Tue, 31 Jul 2018 09:13:57 -0700 (PDT)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id t186-v6sm3643457wmf.14.2018.07.31.09.13.53
+        by smtp.googlemail.com with ESMTPSA id t186-v6sm3643457wmf.14.2018.07.31.09.13.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 31 Jul 2018 09:13:54 -0700 (PDT)
+        Tue, 31 Jul 2018 09:13:56 -0700 (PDT)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
@@ -65,9 +65,9 @@ Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
         abailon@baylibre.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v7 7/8] dt-bindings: Introduce interconnect consumers bindings
-Date:   Tue, 31 Jul 2018 19:13:39 +0300
-Message-Id: <20180731161340.13000-8-georgi.djakov@linaro.org>
+Subject: [PATCH v7 8/8] interconnect: Allow endpoints translation via DT
+Date:   Tue, 31 Jul 2018 19:13:40 +0300
+Message-Id: <20180731161340.13000-9-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180731161340.13000-1-georgi.djakov@linaro.org>
 References: <20180731161340.13000-1-georgi.djakov@linaro.org>
@@ -76,49 +76,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for the interconnect consumer bindings, that will allow
-to link a device node (consumer) to its interconnect controller hardware.
-
-Tha aim is to enable drivers to request a framework API to configure an
-interconnect path by providing their struct device pointer and a name.
+Currently we support only platform data for specifying the interconnect
+endpoints. As now the endpoints are hard-coded into the consumer driver
+this may lead to complications when a single driver is used by multiple
+SoCs, which may have different interconnect topology.
+To avoid cluttering the consumer drivers, introduce a translation function
+to help us get the board specific interconnect data from device-tree.
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- .../bindings/interconnect/interconnect.txt    | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/interconnect/core.c  | 62 ++++++++++++++++++++++++++++++++++++
+ include/linux/interconnect.h |  7 ++++
+ 2 files changed, 69 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-index 6e2b2971b094..5cb7d3c8d44d 100644
---- a/Documentation/devicetree/bindings/interconnect/interconnect.txt
-+++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-@@ -31,3 +31,30 @@ Example:
- 			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
- 				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
- 		};
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 9fef180cf77e..d1b6adff0a3d 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
++#include <linux/of.h>
+ #include <linux/overflow.h>
+ #include <linux/uaccess.h>
+ 
+@@ -251,6 +252,67 @@ static int apply_constraints(struct icc_path *path)
+ 	return ret;
+ }
+ 
++struct icc_path *of_icc_get(struct device *dev, const char *name)
++{
++	struct device_node *np = NULL;
++	struct of_phandle_args src_args, dst_args;
++	u32 src_id, dst_id;
++	int idx = 0;
++	int ret;
 +
++	if (!dev || !dev->of_node)
++		return ERR_PTR(-ENODEV);
 +
-+= interconnect consumers =
++	np = dev->of_node;
 +
-+The interconnect consumers are device nodes which dynamically express their
-+bandwidth requirements along interconnect paths they are connected to. There
-+can be multiple interconnect providers on a SoC and the consumer may consume
-+multiple paths from different providers depending on use case and the
-+components it has to interact with.
++	/*
++	 * When the consumer DT node do not have "interconnects" property
++	 * return a NULL path to skip setting constraints.
++	 */
++	if (!of_find_property(np, "interconnects", NULL))
++		return NULL;
 +
-+Required properties:
-+interconnects : Pairs of phandles and interconnect provider specifier to denote
-+	        the edge source and destination ports of the interconnect path.
++	/*
++	 * We use a combination of phandle and specifier for endpoint. For now
++	 * lets support only global ids and extend this is the future if needed
++	 * without breaking DT compatibility.
++	 */
++	if (name) {
++		idx = of_property_match_string(np, "interconnect-names", name);
++		if (idx < 0)
++			return ERR_PTR(idx);
++	}
 +
-+Optional properties:
-+interconnect-names : List of interconnect path name strings sorted in the same
-+		     order as the interconnects property. Consumers drivers will use
-+		     interconnect-names to match interconnect paths with interconnect
-+		     specifiers.
++	ret = of_parse_phandle_with_args(np, "interconnects",
++					 "#interconnect-cells", idx * 2,
++					 &src_args);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+Example:
++	of_node_put(src_args.np);
 +
-+	sdhci@7864000 {
-+		...
-+		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
-+		interconnect-names = "ddr";
-+	};
++	if (!src_args.args_count || src_args.args_count > 1)
++		return ERR_PTR(-EINVAL);
++
++	src_id = src_args.args[0];
++
++	ret = of_parse_phandle_with_args(np, "interconnects",
++					 "#interconnect-cells", idx * 2 + 1,
++					 &dst_args);
++	if (ret)
++		return ERR_PTR(ret);
++
++	of_node_put(dst_args.np);
++
++	if (!dst_args.args_count || dst_args.args_count > 1)
++		return ERR_PTR(-EINVAL);
++
++	dst_id = dst_args.args[0];
++
++	return icc_get(dev, src_id, dst_id);
++}
++EXPORT_SYMBOL_GPL(of_icc_get);
++
+ /**
+  * icc_set() - set constraints on an interconnect path between two endpoints
+  * @path: reference to the path returned by icc_get()
+diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+index 593215371fd6..ae6744da9bc2 100644
+--- a/include/linux/interconnect.h
++++ b/include/linux/interconnect.h
+@@ -17,6 +17,7 @@ struct device;
+ 
+ struct icc_path *icc_get(struct device *dev, const int src_id,
+ 			 const int dst_id);
++struct icc_path *of_icc_get(struct device *dev, const char *name);
+ void icc_put(struct icc_path *path);
+ int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+ 
+@@ -28,6 +29,12 @@ static inline struct icc_path *icc_get(struct device *dev, const int src_id,
+ 	return NULL;
+ }
+ 
++static inline struct icc_path *of_icc_get(struct device *dev,
++					  const char *name)
++{
++	return NULL;
++}
++
+ static inline void icc_put(struct icc_path *path)
+ {
+ }
