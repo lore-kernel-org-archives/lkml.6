@@ -3,112 +3,171 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62973C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2868BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9D420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C2B20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="deSePhgY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9D420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RXT4VPC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C2B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732376AbeGaQrz (ORCPT
+        id S1732426AbeGaQsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:47:55 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37069 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732266AbeGaQrz (ORCPT
+        Tue, 31 Jul 2018 12:48:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43534 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732266AbeGaQsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:47:55 -0400
-Received: by mail-lf1-f68.google.com with SMTP id j8-v6so11005517lfb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uOyZ/HhD3i22N6PdNepBmB8YpRctB9CHi6QdKJkqAyc=;
-        b=deSePhgYwZT4KBiSRw6d5bE4SIHdYIkhIAHloKpiN+edvMLD/V6svlg2aiHND2XJWf
-         mfpeQa+GaMllCQnjtvs5B2MtThutnTqreNmUVNLmmubt0RcJ3n1OpYZIsVXPampMCcJK
-         gYg7nw/FB4+j2/DimQqePZCgFAp+J2lxYMuOc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uOyZ/HhD3i22N6PdNepBmB8YpRctB9CHi6QdKJkqAyc=;
-        b=R+8PjujpMTZ7c46YeshJ/N6crrF3SYTDAMJpU2pBrbQu+fEfBYWe/MSeWJWFC7/Gpp
-         sV7wY2TigBmeb0b5Mg2XsdDT6F9ZPxh7EvtmntFpmZYRAgRPwqOAhLaElbnM9RDS6sd1
-         JXMcvbICusFbAdMX5A/UIqOvjuCWqc24LlZufq0bACLQI3QRvRMIVE0ZquOSFUZa/AIm
-         gmuzLul7tmAnbiwzgXKOIgvUjvR9OkwKJDXQ+tDL9Yb4qqcneqPE2dVTblS4/DfrMDum
-         YnmimmG5U67JvXWK94gZaEKcs68v0CxZg6uMnd8DgUPUWd6TAUwYbfbBwtItZBqUywcT
-         TeQA==
-X-Gm-Message-State: AOUpUlF+G3AJ2wKiVvEWNM98jKskGiCZmxLPaqE78nJvswBB4iv0vS4b
-        QbG44vKiz9DsAv3MDT5WAs/D/3QkNc5TiANKvTOVcA==
-X-Google-Smtp-Source: AAOMgpeLsJS9uSYCuXeTFyts1rNJCA70gdEERLiZFPeGvs22V2VyaTpruo6Um3X25Mnny6MyBn/CZ2IUMVWxxi8vZHI=
-X-Received: by 2002:a19:f104:: with SMTP id p4-v6mr11191932lfh.137.1533049628905;
- Tue, 31 Jul 2018 08:07:08 -0700 (PDT)
+        Tue, 31 Jul 2018 12:48:13 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VF43ge093662
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 15:07:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=XgZTZVbl2EIYw99y9rcBUVJJCUPpDvg0l/1jgbe8Ydw=;
+ b=RXT4VPC/SYhk7DHxwFaIN6TlVkVi/W+9KCZm866BVWndqO5ID5G3Jcz39xftG25jaztS
+ DrvydJ8XQb3Tso+DYXJBJB3iufQiHOM5UnudIRoQyrbJIVQeM8DKHpPLUUr8G4sk5MWG
+ TAtT+SOTqAINSNsp7y38UrCIYaC8c8d8a3bg6Pi1oHka7ezt5QniTSkSwE6ZF9WtG3Tj
+ 2WufbYXFGnKj1TT+JtqG2q/nvnNyN0RQn7o2Fd9N61P/xagPxIZhxJaDbSar3i7Q8qO1
+ QhtEheTBjCprvHVdiWvgQeWzdS/7Y+LMoYlONxSLIczVceBFrMXxRMNFISjmhuQDDoTE cw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2kgfwt1h61-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 15:07:27 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6VF7PKi031900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 15:07:25 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6VF7PnA009281
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 15:07:25 GMT
+Received: from mail-oi0-f41.google.com (/209.85.218.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 31 Jul 2018 08:07:25 -0700
+Received: by mail-oi0-f41.google.com with SMTP id 8-v6so4330497oip.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:07:25 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHQ56f+cy+b2n9ciZPX2OGt9vVcdfUSTlgdGWPrqVUjtViMGJ0n
+        mYSbbxolqpv0bogxW89n4DZ8cfo9oa0gq+oLePM=
+X-Google-Smtp-Source: AAOMgpfgK8tW+Rt/nlpjyL+NfXURjKkHwh69wrycUPj1vmXOBwRFdDH7Fw+B5afo2JWpXkgcH4mACsUDLgKVcnaBqxQ=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr24039704oiy.191.1533049644723;
+ Tue, 31 Jul 2018 08:07:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <1532686537-12380-1-git-send-email-suzuki.poulose@arm.com> <20180730200232.GA31755@xps15>
-In-Reply-To: <20180730200232.GA31755@xps15>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 31 Jul 2018 09:06:57 -0600
-Message-ID: <CANLsYkzBfCydwDO-KyDub4X=GTy_dtv-478RyMReBEH6VybSAg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] coresight: Update device tree bindings
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        coresight@lists.linaro.org, Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Matt Sealey <matt.sealey@arm.com>,
-        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
-        John Horley <john.horley@arm.com>, Al Grant <al.grant@arm.com>
+References: <20180731124504.27582-1-osalvador@techadventures.net>
+ <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
+ <20180731144157.GA1499@techadventures.net> <20180731144545.fh5syvwcecgvqul6@xakep.localdomain>
+ <20180731145125.GB1499@techadventures.net> <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
+ <20180731150115.GC1499@techadventures.net>
+In-Reply-To: <20180731150115.GC1499@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 31 Jul 2018 11:06:48 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZ+KhsuFhOVvJzRkQO=66TosvxDW0BYAXNf8Gw8zoRQXQ@mail.gmail.com>
+Message-ID: <CAGM2reZ+KhsuFhOVvJzRkQO=66TosvxDW0BYAXNf8Gw8zoRQXQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
+To:     osalvador@techadventures.net
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
+        Mel Gorman <mgorman@suse.de>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
 Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=798
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807310139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+On Tue, Jul 31, 2018 at 11:01 AM Oscar Salvador
+<osalvador@techadventures.net> wrote:
+>
+> On Tue, Jul 31, 2018 at 10:53:52AM -0400, Pavel Tatashin wrote:
+> > Thats correct on arches where no sparsemem setup_usemap() will not be
+> > freed up. It is a tiny function, just a few instructions. Not a big
+> > deal.
+> >
+> > Pavel
+> > On Tue, Jul 31, 2018 at 10:51 AM Oscar Salvador
+> > <osalvador@techadventures.net> wrote:
+> > >
+> > > On Tue, Jul 31, 2018 at 10:45:45AM -0400, Pavel Tatashin wrote:
+> > > > Here the patch would look like this:
+> > > >
+> > > > From e640b32dbd329bba5a785cc60050d5d7e1ca18ce Mon Sep 17 00:00:00 2001
+> > > > From: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > > Date: Tue, 31 Jul 2018 10:37:44 -0400
+> > > > Subject: [PATCH] mm: remove __paginginit
+> > > >
+> > > > __paginginit is the same thing as __meminit except for platforms without
+> > > > sparsemem, there it is defined as __init.
+> > > >
+> > > > Remove __paginginit and use __meminit. Use __ref in one single function
+> > > > that merges __meminit and __init sections: setup_usemap().
+> > > >
+> > > > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > >
+> > > Uhm, I am probably missing something, but with this change, the functions will not be freed up
+> > > while freeing init memory, right?
+> > Thats correct on arches where no sparsemem setup_usemap() will not be
+> > freed up. It is a tiny function, just a few instructions. Not a big
+> > deal.
+>
+> I must be missing something.
+>
+> What about:
+>
+> calc_memmap_size
+> free_area_init_node
+> free_area_init_core
+>
+> These functions are marked with __meminit now.
+> If we have CONFIG_PARSEMEM but not CONFIG_MEMORY_HOTPLUG, these functions will
+> be left there.
 
-> >
-> > Suzuki K Poulose (9):
-> >   coresight: Document error handling in coresight_register
-> >   coresight: platform: Refactor graph endpoint parsing
-> >   coresight: platform: Fix refcounting for graph nodes
-> >   coresight: platform: Fix leaking device reference
-> >   coresight: Fix remote endpoint parsing
-> >   coresight: Add helper to check if the endpoint is input
-> >   coresight: platform: Cleanup coresight connection handling
-> >   coresight: Cleanup coresight DT bindings
-> >   dts: juno: Update coresight bindings
-> >
-> >  .../devicetree/bindings/arm/coresight.txt          |  95 +++++---
-> >  arch/arm64/boot/dts/arm/juno-base.dtsi             | 161 ++++++------
-> >  arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  52 ++--
-> >  arch/arm64/boot/dts/arm/juno.dts                   |  13 +-
-> >  drivers/hwtracing/coresight/coresight.c            |  35 +--
-> >  drivers/hwtracing/coresight/of_coresight.c         | 269 ++++++++++++++-------
-> >  include/linux/coresight.h                          |   9 +-
-> >  7 files changed, 359 insertions(+), 275 deletions(-)
-> >
->
-> Good day,
->
-> I have applied patches 1 to 7.  I will wait for Rob's ACK before doing the same
-> with 8 and 9.
-
-I just applied patch 8 and 9.
+I hope we free meminit section if no hotplug configured. If not, than
+sure we should have something like what you suggest not only for these
+functions, but for all other meminit functions in kernel.
 
 >
-> Thanks,
-> Mathieu
+> I mean, it is not that it is a big amount, but still.
 >
-> > --
-> > 2.7.4
-> >
+> Do not we need something like:
+>
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index 2538d176dd1f..3b3a88ba80ed 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -83,8 +83,12 @@
+>  #define __exit          __section(.exit.text) __exitused __cold notrace
+>
+>  /* Used for MEMORY_HOTPLUG */
+> +#ifdef CONFIG_MEMORY_HOTPLUG
+>  #define __meminit        __section(.meminit.text) __cold notrace \
+>                                                   __latent_entropy
+> +#else
+> +#define __meminit       __init
+> +#endif
+>  #define __meminitdata    __section(.meminit.data)
+>  #define __meminitconst   __section(.meminit.rodata)
+>  #define __memexit        __section(.memexit.text) __exitused __cold notrace
+>
+> on top?
+>
+> Thanks
+> --
+> Oscar Salvador
+> SUSE L3
+>
