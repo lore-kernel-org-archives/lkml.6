@@ -3,174 +3,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71477C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB6BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30058208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:19:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30058208A4
+	by mail.kernel.org (Postfix) with ESMTP id 2573C20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:22:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2573C20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732076AbeGaM7n (ORCPT
+        id S1732000AbeGaNCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:59:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54588 "EHLO mx1.redhat.com"
+        Tue, 31 Jul 2018 09:02:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50416 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731639AbeGaM7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:59:42 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1729494AbeGaNCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:02:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5F29C40241C0;
-        Tue, 31 Jul 2018 11:19:51 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38F0D178BC;
-        Tue, 31 Jul 2018 11:19:49 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     mhkelley58@gmail.com
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, marcelo.cerri@canonical.com,
-        sthemmin@microsoft.com, kys@microsoft.com, mikelley@microsoft.com
-Subject: Re: [PATCH char-misc 1/1] Drivers: hv: vmbus: Make synic_initialized flag per-cpu
-References: <1533004484-3937-1-git-send-email-mikelley@microsoft.com>
-Date:   Tue, 31 Jul 2018 13:19:48 +0200
-In-Reply-To: <1533004484-3937-1-git-send-email-mikelley@microsoft.com>
-        (mhkelley's message of "Mon, 30 Jul 2018 19:34:44 -0700")
-Message-ID: <87ftzzodnv.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFFC54021700;
+        Tue, 31 Jul 2018 11:22:28 +0000 (UTC)
+Received: from redhat.com (ovpn-117-184.ams2.redhat.com [10.36.117.184])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5984B2026D68;
+        Tue, 31 Jul 2018 11:22:27 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 14:22:26 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Subject: Re: [PATCH net-next 1/2] virtio-net: correctly update XDP_TX counters
+Message-ID: <20180731142219-mutt-send-email-mst@kernel.org>
+References: <1533030219-9904-1-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 11:19:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 11:19:51 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533030219-9904-1-git-send-email-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 11:22:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 11:22:28 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mhkelley58@gmail.com writes:
+On Tue, Jul 31, 2018 at 05:43:38PM +0800, Jason Wang wrote:
+> Commit 5b8f3c8d30a6 ("virtio_net: Add XDP related stats") tries to
+> count TX XDP stats in virtnet_receive(). This will cause several
+> issues:
+> 
+> - virtnet_xdp_sq() was called without checking whether or not XDP is
+>   set. This may cause out of bound access when there's no enough txq
+>   for XDP.
+> - Stats were updated even if there's no XDP/XDP_TX.
+> 
+> Fixing this by reusing virtnet_xdp_xmit() for XDP_TX which can counts
+> TX XDP counter itself and remove the unnecessary tx stats embedded in
+> rx stats.
+> 
+> Reported-by: syzbot+604f8271211546f5b3c7@syzkaller.appspotmail.com
+> Fixes: 5b8f3c8d30a6 ("virtio_net: Add XDP related stats")
+> Cc: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-> From: Michael Kelley <mikelley@microsoft.com>
->
-> The synic_initialized flag is part of the global hv_context
-> structure.  But the Hyper-V synthetic interrupt controller is
-> fundamentally a per-cpu device, and other synic related
-> fields are in hv_per_cpu_context.  In a multi-CPU system,
-> synic_initialized gets set multiple times, making the test in
-> hv_synic_cleanup() invalid.  Fix this by moving the flag to
-> hv_per_cpu_context and adjusting the references.
->
-> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
 > ---
->  drivers/hv/hv.c           | 16 +++++++---------
->  drivers/hv/hyperv_vmbus.h |  4 ++--
->  2 files changed, 9 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 312fe5e..8d4fe0e 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -33,9 +33,7 @@
->  #include "hyperv_vmbus.h"
->
->  /* The one and only */
-> -struct hv_context hv_context = {
-> -	.synic_initialized	= false,
-> -};
-> +struct hv_context hv_context;
->
->  /*
->   * If false, we're using the old mechanism for stimer0 interrupts
-> @@ -315,7 +313,7 @@ int hv_synic_init(unsigned int cpu)
->
->  	hv_set_synic_state(sctrl.as_uint64);
->
-> -	hv_context.synic_initialized = true;
-> +	hv_cpu->synic_initialized = true;
->
->  	/*
->  	 * Register the per-cpu clockevent source.
-> @@ -354,6 +352,8 @@ void hv_synic_clockevents_cleanup(void)
->   */
->  int hv_synic_cleanup(unsigned int cpu)
->  {
-> +	struct hv_per_cpu_context *hv_cpu
-> +		= per_cpu_ptr(hv_context.cpu_context, cpu);
->  	union hv_synic_sint shared_sint;
->  	union hv_synic_simp simp;
->  	union hv_synic_siefp siefp;
-> @@ -362,7 +362,7 @@ int hv_synic_cleanup(unsigned int cpu)
->  	bool channel_found = false;
->  	unsigned long flags;
->
-> -	if (!hv_context.synic_initialized)
-> +	if (!hv_cpu->synic_initialized)
->  		return -EFAULT;
->
->  	/*
-> @@ -395,12 +395,8 @@ int hv_synic_cleanup(unsigned int cpu)
->
->  	/* Turn off clockevent device */
->  	if (ms_hyperv.features & HV_MSR_SYNTIMER_AVAILABLE) {
-> -		struct hv_per_cpu_context *hv_cpu
-> -			= this_cpu_ptr(hv_context.cpu_context);
-> -
->  		clockevents_unbind_device(hv_cpu->clk_evt, cpu);
->  		hv_ce_shutdown(hv_cpu->clk_evt);
-> -		put_cpu_ptr(hv_cpu);
->  	}
->
->  	hv_get_synint_state(VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
-> @@ -428,5 +424,7 @@ int hv_synic_cleanup(unsigned int cpu)
->  	sctrl.enable = 0;
->  	hv_set_synic_state(sctrl.as_uint64);
->
-> +	hv_cpu->synic_initialized = false;
-> +
->  	return 0;
+>  drivers/net/virtio_net.c | 39 ++++-----------------------------------
+>  1 file changed, 4 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 1880c86..72d3f68 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -105,10 +105,6 @@ struct virtnet_rq_stats {
+>  
+>  struct virtnet_rx_stats {
+>  	struct virtnet_rq_stat_items rx;
+> -	struct {
+> -		unsigned int xdp_tx;
+> -		unsigned int xdp_tx_drops;
+> -	} tx;
+>  };
+>  
+>  #define VIRTNET_SQ_STAT(m)	offsetof(struct virtnet_sq_stats, m)
+> @@ -485,22 +481,6 @@ static struct send_queue *virtnet_xdp_sq(struct virtnet_info *vi)
+>  	return &vi->sq[qp];
 >  }
-> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> index 72eaba3..eadd3df 100644
-> --- a/drivers/hv/hyperv_vmbus.h
-> +++ b/drivers/hv/hyperv_vmbus.h
-> @@ -202,6 +202,8 @@ enum {
->  struct hv_per_cpu_context {
->  	void *synic_message_page;
->  	void *synic_event_page;
-> +	bool synic_initialized;
-> +
->  	/*
->  	 * buffer to post messages to the host.
->  	 */
-> @@ -230,8 +232,6 @@ struct hv_context {
->
->  	void *tsc_page;
->
-> -	bool synic_initialized;
+>  
+> -static int __virtnet_xdp_tx_xmit(struct virtnet_info *vi,
+> -				   struct xdp_frame *xdpf)
+> -{
+> -	struct xdp_frame *xdpf_sent;
+> -	struct send_queue *sq;
+> -	unsigned int len;
 > -
->  	struct hv_per_cpu_context __percpu *cpu_context;
->
->  	/*
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
-Alternatively, we can get rid of synic_initialized flag altogether:
-hv_synic_init() never fails in the first place but we can always
-implement something like:
-
-int hv_synic_is_initialized(void) {
-	union hv_synic_scontrol sctrl;
-
-	hv_get_synic_state(sctrl.as_uint64);
-
-	return sctrl.enable;
-}
-
-as it doesn't seem that we need to check synic state on _other_ CPUs.
-
--- 
-  Vitaly
+> -	sq = virtnet_xdp_sq(vi);
+> -
+> -	/* Free up any pending old buffers before queueing new ones. */
+> -	while ((xdpf_sent = virtqueue_get_buf(sq->vq, &len)) != NULL)
+> -		xdp_return_frame(xdpf_sent);
+> -
+> -	return __virtnet_xdp_xmit_one(vi, sq, xdpf);
+> -}
+> -
+>  static int virtnet_xdp_xmit(struct net_device *dev,
+>  			    int n, struct xdp_frame **frames, u32 flags)
+>  {
+> @@ -707,10 +687,8 @@ static struct sk_buff *receive_small(struct net_device *dev,
+>  			xdpf = convert_to_xdp_frame(&xdp);
+>  			if (unlikely(!xdpf))
+>  				goto err_xdp;
+> -			stats->tx.xdp_tx++;
+> -			err = __virtnet_xdp_tx_xmit(vi, xdpf);
+> -			if (unlikely(err)) {
+> -				stats->tx.xdp_tx_drops++;
+> +			err = virtnet_xdp_xmit(dev, 1, &xdpf, 0);
+> +			if (unlikely(err < 0)) {
+>  				trace_xdp_exception(vi->dev, xdp_prog, act);
+>  				goto err_xdp;
+>  			}
+> @@ -879,10 +857,8 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+>  			xdpf = convert_to_xdp_frame(&xdp);
+>  			if (unlikely(!xdpf))
+>  				goto err_xdp;
+> -			stats->tx.xdp_tx++;
+> -			err = __virtnet_xdp_tx_xmit(vi, xdpf);
+> -			if (unlikely(err)) {
+> -				stats->tx.xdp_tx_drops++;
+> +			err = virtnet_xdp_xmit(dev, 1, &xdpf, 0);
+> +			if (unlikely(err < 0)) {
+>  				trace_xdp_exception(vi->dev, xdp_prog, act);
+>  				if (unlikely(xdp_page != page))
+>  					put_page(xdp_page);
+> @@ -1315,7 +1291,6 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
+>  {
+>  	struct virtnet_info *vi = rq->vq->vdev->priv;
+>  	struct virtnet_rx_stats stats = {};
+> -	struct send_queue *sq;
+>  	unsigned int len;
+>  	void *buf;
+>  	int i;
+> @@ -1351,12 +1326,6 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
+>  	}
+>  	u64_stats_update_end(&rq->stats.syncp);
+>  
+> -	sq = virtnet_xdp_sq(vi);
+> -	u64_stats_update_begin(&sq->stats.syncp);
+> -	sq->stats.xdp_tx += stats.tx.xdp_tx;
+> -	sq->stats.xdp_tx_drops += stats.tx.xdp_tx_drops;
+> -	u64_stats_update_end(&sq->stats.syncp);
+> -
+>  	return stats.rx.packets;
+>  }
+>  
+> -- 
+> 2.7.4
