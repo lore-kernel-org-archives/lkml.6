@@ -2,181 +2,155 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DD1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4ACDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D35420870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876E320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 02:06:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JepEBOmG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D35420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="yG/tb0oP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876E320870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbeGaDno (ORCPT
+        id S1732000AbeGaDoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 23:43:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42504 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeGaDno (ORCPT
+        Mon, 30 Jul 2018 23:44:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33778 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730841AbeGaDoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 23:43:44 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so5360389pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 19:05:52 -0700 (PDT)
+        Mon, 30 Jul 2018 23:44:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r5-v6so8241898pgv.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 19:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=+n3IsCXIfXKQ9eeO1rwRumWFV0g1UNY/QxIgbOPxHlc=;
-        b=JepEBOmGUPkwxQT7viGZqyV4vrqsiu+k7Bq67fzlNl/MH58KZfz2Ud81x6kzvlRXcu
-         nhULcXxEjNFWhvLOWeuJXgGfkAtH7q+FQq2JMCVnfFlJ4YDOpan0vQHam1cdWFLjbVHw
-         ljUPKBFcKo87u+EeQjJG7QgnpBk1pFU8r/gn1sr+f+BCVlCZ+JIGZn0QV44LPmDEyv/J
-         5sF+xt9hoYtqnYN6JnfcR9gPKBKVP8+VfV6Y/nL5hUTtFwjF6MQyO4R65C4/Y1xeJf6Z
-         EO/dOIe5jCn4BlhFFAfvk7pJNg+zvm14TLxOM+n7UNnHbvkmIw8O6ZjoLvqa876LJvwk
-         qrbg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=A4zpO1uJGsmRjfWj7Y21yntU4J7DLgF5qpZXNTvfC/Y=;
+        b=yG/tb0oPxQmrizJeKnrwTLPsp4yPqMPVOJH/vp5eBSrIQyLf2xxJKezaX070SAA790
+         nwNIPxULbQsOlMjBwjGOAb/n64GmxXxTcTI1/WmEa8LEF1cC0DbSPDpIlNHAlhCWHtN+
+         XUJx+6HzU8O/nMufbSmqPWq0Go0AGrfeSpH8g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=+n3IsCXIfXKQ9eeO1rwRumWFV0g1UNY/QxIgbOPxHlc=;
-        b=MGxdKqMb7ltBfyx3C9LjR6MHoy8fZOM9ge6d60qNsbU2L7vBYbJcs8BVUZyNW/NfnL
-         WsXBjR1nECPlh4y1hz1ZGVc2BCG5C7JqLNcsRqWgjwV2WzwUeGsx/EGCEzUC+QLoCbh9
-         m1MOk0V5+vfXZoMLp4d3r1+ZLTbVebP9GovsiU36w3wd+YZ8NaFSOqtOJevCPzf48obN
-         1qcpoiqs6vMxnouQpV9M0T2iZfype7TCKPurOPAiD4us4DTEm1MnTfp6J47GL4qvduxJ
-         hgbqAMhsdvnwUwoLKvRfrvsr/K9tuFW73tkJBUy1b6Wt4vxrE2C11itSx2sWiVzLp2Mi
-         l74g==
-X-Gm-Message-State: AOUpUlGqdq7A6lj+Ex3McIptMusBbG84haYLgH4CFPkZ6iWBS6Xi5ny+
-        88J2CaYOAobcSq6LuCt2eTs34Q==
-X-Google-Smtp-Source: AAOMgpeRppQl8GyKTW8df73yUoe2pUnYnxyU4qPM8Xt/hmCZg4wil2iSYyn2VzqLb9kw1AzaJ/zIRw==
-X-Received: by 2002:a63:fd52:: with SMTP id m18-v6mr13762857pgj.304.1533002751887;
-        Mon, 30 Jul 2018 19:05:51 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id a77-v6sm23812516pfj.38.2018.07.30.19.05.51
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A4zpO1uJGsmRjfWj7Y21yntU4J7DLgF5qpZXNTvfC/Y=;
+        b=DUO5iLJH6x3jClyTEK3BtMN9DnjTwdoOPi0BCZDrUAnP9yprkqpTe0fGzCVDI0JL5l
+         VZ7eICx/ZNQuNitSyjqeJ+/KnIpyUTCO/PbygjxFTScz7h0dcXnHm4N18TnJ16aeVMdt
+         Gyvew8tRkZBdOnfz10C1OLegxoHl+Dd/Foxe6PMIJ/ivQlOZacnTx36HNyOplubpVfyI
+         wkccwuJ9o5uOsO5ru+/CeFf8oT6NDNCrZC4stk+ejU+TzoChuLm/3xUXxyb3oW6bSyG0
+         WCL/IzSfOAhubX3rqt0IPsAAAbG/fVvyWiyFbZa9BOJHF4j9VhxNrNALjUMERFvqG/op
+         VLXw==
+X-Gm-Message-State: AOUpUlEmfFNhaChfVn3J8+yWblcfoYkYWNMoLF3TQEjfUGJGt0sYsTmf
+        xVIfFlOH3DNjMRXcqdCuh1P0Ww==
+X-Google-Smtp-Source: AAOMgpd/Bnsm5lyzA32Y5a1MEbNNRjBQYR1EX33Vex9uB8YEElsCk62VSnkvhXAc0mFeoyrnQV94YQ==
+X-Received: by 2002:a62:f587:: with SMTP id b7-v6mr20241304pfm.158.1533002790469;
+        Mon, 30 Jul 2018 19:06:30 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id h7-v6sm21839476pfd.155.2018.07.30.19.06.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 19:05:51 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 19:05:50 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     kernel test robot <rong.a.chen@intel.com>,
-        yuzhoujian <yuzhoujian@didichuxing.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Roman Gushchin <guro@fb.com>,
-        Yang Shi <yang.s@alibaba-inc.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Subject: Re: [LKP] [mm, oom]  c1e4c54f9c: BUG:KASAN:null-ptr-deref_in_d
-In-Reply-To: <20180730095635.GI24267@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1807301854040.198273@chino.kir.corp.google.com>
-References: <20180730090320.GD30690@shao2-debian> <20180730095635.GI24267@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 30 Jul 2018 19:06:30 -0700 (PDT)
+Date:   Mon, 30 Jul 2018 19:06:29 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH v2] Add BPF_SYNCHRONIZE_MAPS bpf(2) command
+Message-ID: <20180731020629.GB22311@joelaf.mtv.corp.google.com>
+References: <CAADnVQL4twmGF3d26TgLsQJvnqLnM0F6hqL_42DSs95OuZ1y9A@mail.gmail.com>
+ <20180731020122.GA22311@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731020122.GA22311@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018, Michal Hocko wrote:
-
-> On Mon 30-07-18 17:03:20, kernel test robot wrote:
-> [...]
-> > [    9.034310] BUG: KASAN: null-ptr-deref in dump_header+0x10c/0x448
+On Mon, Jul 30, 2018 at 07:01:22PM -0700, Joel Fernandes wrote:
+> On Sun, Jul 29, 2018 at 06:51:18PM +0300, Alexei Starovoitov wrote:
+> > On Thu, Jul 26, 2018 at 7:51 PM, Daniel Colascione <dancol@google.com> wrote:
+> > > BPF_SYNCHRONIZE_MAPS waits for the release of any references to a BPF
+> > > map made by a BPF program that is running at the time the
+> > > BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command is
+> > > to provide a means for userspace to replace a BPF map with another,
+> > > newer version, then ensure that no component is still using the "old"
+> > > map before manipulating the "old" map in some way.
+> > >
+> > > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > ---
+> > >  include/uapi/linux/bpf.h |  9 +++++++++
+> > >  kernel/bpf/syscall.c     | 13 +++++++++++++
+> > >  2 files changed, 22 insertions(+)
+> > >
+> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > index b7db3261c62d..5b27e9117d3e 100644
+> > > --- a/include/uapi/linux/bpf.h
+> > > +++ b/include/uapi/linux/bpf.h
+> > > @@ -75,6 +75,14 @@ struct bpf_lpm_trie_key {
+> > >         __u8    data[0];        /* Arbitrary size */
+> > >  };
+> > >
+> > > +/* BPF_SYNCHRONIZE_MAPS waits for the release of any references to a
+> > > + * BPF map made by a BPF program that is running at the time the
+> > > + * BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command
+> > 
+> > that doesn't sound right to me.
+> > such command won't wait for the release of the references.
+> > in case of map-in-map the program does not hold
+> > the references to inner map (only to outer map).
 > 
-> Could you faddr2line on the offset please?
+> I didn't follow this completely.
 > 
+> The userspace program is using the inner map per your description of the
 
-It's possible that p is NULL when calling dump_header().  In this case we 
-do not want to print any line concerning a victim because no oom kill has 
-occurred.
+Sorry just to correct myself, here I meant "The kernel eBPF program is using
+the inner map on multiple CPUs" instead of "userspace".
 
-This code shouldn't be part of dump_header(), which is called from 
-multiple contexts even when an oom kill has not occurred, and is 
-ratelimited.  The single line output should be the canonical way that 
-userspace parses the log for oom victims, we can't ratelimit it.
+thanks,
 
-The following would be a fix patch, but it will be broken if the cgroup 
-aware oom killer is removed from -mm so that the oom_group stuff can be 
-merged.
+- Joel
 
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -438,14 +438,6 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 
- 	dump_stack();
- 
--	/* one line summary of the oom killer context. */
--	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
--			oom_constraint_text[oc->constraint],
--			nodemask_pr_args(oc->nodemask));
--	cpuset_print_current_mems_allowed();
--	mem_cgroup_print_oom_context(oc->memcg, p);
--	pr_cont(",task=%s,pid=%d,uid=%d\n", p->comm, p->pid,
--		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
- 		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
-@@ -836,7 +828,8 @@ static bool task_will_free_mem(struct task_struct *task)
- 	return ret;
- }
- 
--static void __oom_kill_process(struct task_struct *victim)
-+static void __oom_kill_process(struct task_struct *victim,
-+			       struct oom_control *oc)
- {
- 	struct task_struct *p;
- 	struct mm_struct *mm;
-@@ -883,6 +876,18 @@ static void __oom_kill_process(struct task_struct *victim)
- 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
- 		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
- 		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
-+
-+	if (oc) {
-+		/* One line summary for non-group oom kills */
-+		pr_info("oom-kill: constraint=%s, nodemask=%*pbl",
-+			oom_constraint_text[oc->constraint],
-+			nodemask_pr_args(oc->nodemask));
-+		cpuset_print_current_mems_allowed();
-+		mem_cgroup_print_oom_context(oc->memcg, victim);
-+		pr_cont(", task=%s, pid=%d, uid=%d\n",
-+			victim->comm, victim->pid,
-+			from_kuid(&init_user_ns, task_uid(victim)));
-+	}
- 	task_unlock(victim);
- 
- 	/*
-@@ -986,13 +991,13 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	}
- 	read_unlock(&tasklist_lock);
- 
--	__oom_kill_process(victim);
-+	__oom_kill_process(victim, oc);
- }
- 
- static int oom_kill_memcg_member(struct task_struct *task, void *unused)
- {
- 	get_task_struct(task);
--	__oom_kill_process(task);
-+	__oom_kill_process(task, NULL);
- 	return 0;
- }
- 
-@@ -1020,7 +1025,7 @@ static bool oom_kill_memcg_victim(struct oom_control *oc)
- 		    oc->chosen_task == INFLIGHT_VICTIM)
- 			goto out;
- 
--		__oom_kill_process(oc->chosen_task);
-+		__oom_kill_process(oc->chosen_task, oc);
- 	}
- 
- out:
+
+
+
+> algorithm for using map-in-map to solve the race conditions that this patch
+> is trying to address:
+> 
+> If you don't mind, I copy-pasted it below from your netdev post:
+> 
+> if you use map-in-map you don't need extra boolean map.
+> 0. bpf prog can do
+>    inner_map = lookup(map_in_map, key=0);
+>    lookup(inner_map, your_real_key);
+> 1. user space writes into map_in_map[0] <- FD of new map
+> 2. some cpus are using old inner map and some a new
+> 3. user space does sys_membarrier(CMD_GLOBAL) which will do synchronize_sched()
+>    which in CONFIG_PREEMPT_NONE=y servers is the same as synchronize_rcu()
+>    which will guarantee that progs finished.
+> 4. scan old inner map
+> 
+> In step 2, as you mentioned there are CPUs using different inner maps. So
+> could you clarify how the synchronize_rcu mechanism will even work if you're
+> now saying "program does not hold references to the inner maps"? 
+> 
+> Thanks!
+> 
+> - Joel
+> 
