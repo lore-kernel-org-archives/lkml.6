@@ -2,146 +2,149 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B576C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525E8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF113208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1441208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:08:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOQWySiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF113208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Mod9oInm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1441208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732250AbeGaOqQ (ORCPT
+        id S1732308AbeGaOsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:46:16 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54099 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732024AbeGaOqQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:46:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id 72-v6so4318702itw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 06:06:01 -0700 (PDT)
+        Tue, 31 Jul 2018 10:48:19 -0400
+Received: from mail-eopbgr680072.outbound.protection.outlook.com ([40.107.68.72]:2665
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732099AbeGaOsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 10:48:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KDgx1wu0S4s/fsoNbAILQ44BQFWBJhQa9o5lBqBhbsA=;
-        b=QOQWySiUBOrjacnJ/0qrKicp9QAp0C7Zv8NRMdXSFPVOgRPlbrS8gNd7RgL6qlUlIj
-         6Edog2HkYgSwovUnsQr3R6tdcWaZ6CMZOERKw/bmb15/wFIaFCBcmj6z8jkHux9rq87W
-         AO6JyepCVfczcxK4BUkGChYkwGL58YRhMTG+GCY7pJ6Mjz2DlxjNL3eFfJ4sbUys8Pid
-         zWWu3yP+QTS79xD9lQ2WPYNGLpo7l0LCi07KWKX9D9Ha6LTnh2DoSh08tdRfYvYMjqmC
-         iOr2p9fMlVTF0Qu6djS0WqVPm5Dohd9sSqUco6niSssdghIxeO6QOgh2PUlh4M5UVEHI
-         vsQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KDgx1wu0S4s/fsoNbAILQ44BQFWBJhQa9o5lBqBhbsA=;
-        b=HI1X0qn178QoRzGiRBLfYaVNKykGnpzOT4Z+Cx+Ja9M56sgeSvvNWxN6HIses0lYWF
-         oHa5/fRCea6E1Ux+Ob+xZ3ekiV1iWd0W5/fp7UC61lG4oGzh2os7Vjnd+gJ/3SZ1y2eZ
-         jcUvlppRlcU1w7Z8r4k1J4LhqgWbIcagjfxwGWUfG2RCsv2DetWaiCvjTZKnc6MMQYfX
-         Zu5EmrEmL4LRUVSrjgEXj3anAX/qxgKT7X/nV0/DGjVtknE8kt3fxPomsQPTlng5LOml
-         IJ73/YLzIUT4lgg30ABBIzRWwd3Z5oGXT5zn73/YUj2T5uHZ6JvtkaMgeKtqZV6Jwm9C
-         541Q==
-X-Gm-Message-State: AOUpUlF2hypY7TT93b1fb2ELkvS1fE/rVPoFRYDrHjkOOz4DbHuYCMk3
-        rSCCezRYl4ZWrHN4NaajA3mAacI693GM95dzu/SImQ==
-X-Google-Smtp-Source: AAOMgpeZr80M/FmFnLuElEuAGYI8x7OAsEcGWQDEiBDQKUU5ihxSenWvbznd9FPrqYswVUCn6u4AzvDQ097Hlxvkuqc=
-X-Received: by 2002:a24:db05:: with SMTP id c5-v6mr3119100itg.44.1533042360087;
- Tue, 31 Jul 2018 06:06:00 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8zZ1qR683OVq+tXgU8rmKtfQ7Ift/AI/OUaBPOk51a4=;
+ b=Mod9oInmwOj3jLlLS+6RYk8TcjzQ1GgJBVaFjxYtc20yeiRBrHa2f4cDOBwyJJnrH+PIbV31kwtVNPNST5oiyTqayHkbTa4Z0dYTo6I4QjA2CS+WrjMefAhiZykH67Btzs21iitY3DUhdKm9MW5GF2SIIabId+hPhDM59Q7P3QI=
+Received: from MWHPR0201MB3481.namprd02.prod.outlook.com (10.167.161.158) by
+ MWHPR0201MB3434.namprd02.prod.outlook.com (10.167.161.147) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.14; Tue, 31 Jul 2018 13:07:58 +0000
+Received: from MWHPR0201MB3481.namprd02.prod.outlook.com
+ ([fe80::8c23:c29e:5c0a:a63f]) by MWHPR0201MB3481.namprd02.prod.outlook.com
+ ([fe80::8c23:c29e:5c0a:a63f%3]) with mapi id 15.20.1017.010; Tue, 31 Jul 2018
+ 13:07:55 +0000
+From:   Nava kishore Manne <navam@xilinx.com>
+To:     Nava kishore Manne <navam@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        Soren Brinkmann <sorenb@xilinx.com>,
+        "atull@opensource.altera.com" <atull@opensource.altera.com>,
+        "moritz.fischer@ettus.com" <moritz.fischer@ettus.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "chinnikishore369@gmail.com" <chinnikishore369@gmail.com>,
+        "atull@kernel.org" <atull@kernel.org>
+Subject: RE: [RFC PATCH 1/2] ARM: dt: fpga: Added binding docs for Xilinx
+ zynqmp FPGA manager
+Thread-Topic: [RFC PATCH 1/2] ARM: dt: fpga: Added binding docs for Xilinx
+ zynqmp FPGA manager
+Thread-Index: AQHUKLXjboO8pwvbjE2osMCstNpM9qSpTShQ
+Date:   Tue, 31 Jul 2018 13:07:55 +0000
+Message-ID: <MWHPR0201MB34813A97EC92F8DC6E3F9CA6C22E0@MWHPR0201MB3481.namprd02.prod.outlook.com>
+References: <20180801100457.25614-1-nava.manne@xilinx.com>
+In-Reply-To: <20180801100457.25614-1-nava.manne@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=navam@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0201MB3434;6:hWtU62mwmU2kTISi8aezhDE94IRlZhYx/jns1ndqCJZU5RHN+11XCZ6EKc8j4or5vprKOTXvW2O+qfNR3sePXRebqPSjndTVnCRtArTXS15DI8DJ614yOTFRp+GUFd7h044tLumkLFTaaZgIatp3ER+WOwpzKoXobtKyselEooudVZwl4HMMSYfgofbNp59cicvI8oyo8aRPX6+ROdDGBHAwnKEHazfqKIs/EwtlJ9mbHyx2Htbt0syPafnLG8So4KCOFW7jV6Az1+MaVttkAtZl/OgN5eu7iRa9RPbNyFg6az51kI4pcyx2C6Cp1xJ6NFN/F+G3fOxv5LycX3Va8xzyJn0G6iqZYjvDFrpLmBTJn5LUF2Hq+j5IH/DiqhlR/Xlq8HSVlYo/bH+CJsDjm+WkyB+y6/iviGr04jyqA5qScgtRCVw3BJlOcVTv9s0Vq/rzMIfADhblMKkDNWrl4g==;5:YwMks6wUsh9F3QvKPtq2NTHb+EiwZhkF82/2k/aiQt3yrAZL16Fi+J2lwpduvqGMtzrKWb3ZLh/hRNicwQlAFrrqtDf/jdPcGQ7J1B3wpwtpJcw7JFZ8rnoNFelslKUfgbL6GR0EY1NyH5bk1LF9MKoFIKKf9An1QtxVp6N6gH0=;7:IcmxK/pEeFPNXeou05m0pSZKa+SFD5oEDGmw/innBbZbqSu35eSxlXy6OP9ctO7cIKum2FNqcRu7w+x4rboRvnCK4ckAqLbdnd7c5gQFhQrK68eKdlQSsYJIwr9Dc1YDW23wXLaMHxmzWpgXi5o1IDrdV0QQegUMJ4YCR7zPfHTNBNjJuVhhfO1WEOO4d0v4FcfMKVsOMTEUBzPU6umd2AhnSssh5ttKGP5qmWnYYmYfysR+zq/040hMxT71FUjd
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(13464003)(199004)(189003)(6116002)(2906002)(9686003)(3846002)(11346002)(446003)(478600001)(53936002)(26005)(486006)(33656002)(39060400002)(476003)(6436002)(68736007)(55016002)(229853002)(305945005)(5660300001)(99286004)(86362001)(25786009)(316002)(8936002)(2201001)(53546011)(6506007)(66066001)(74316002)(256004)(2900100001)(2501003)(6246003)(217873002)(106356001)(102836004)(5250100002)(7696005)(97736004)(76176011)(8676002)(81156014)(14454004)(7736002)(105586002)(81166006)(110136005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3434;H:MWHPR0201MB3481.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 5518c3c5-8855-4d2b-3537-08d5f6e6a169
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR0201MB3434;
+x-ms-traffictypediagnostic: MWHPR0201MB3434:
+x-microsoft-antispam-prvs: <MWHPR0201MB3434A299FF03B45F2F046027C22E0@MWHPR0201MB3434.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(80048183373757)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR0201MB3434;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3434;
+x-forefront-prvs: 0750463DC9
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Jk6lIAcZqzO2g9JAndRG454lHD6J2G23+kls+HaEPSef6j/9ZfmYjjA7a7rjSZQn5St+TGKsYg+RCgkpCc57ppIO1vI0JTbj10Yvo6/c/souZEYDrPzkzOOdQaKvnrygVpiJIQOfbKU/kaRuj71/4o+zwr6/vzIcwKZbNxVU2L8r1rQhb9MoANjsLVcHBgSxN/K2SmKP2DlXP41UN23h9QDAqK5qvKScNODJibfBzKEqJrtjWcN4bp5vUDK32ITp1ViXX2OLY1Tgmxk+0NEPY1kCcEFbfM13sR8CfnHjok1Q4B3Sxjf/uzD7MmyQuGW1jo3CVDQ1130UbKDgu2ozjjsLOKzy3H5CbPW3fa2dNvc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a02:918c:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 06:05:59
- -0700 (PDT)
-In-Reply-To: <09cb5553-d84a-0e62-5174-315c14b88833@arm.com>
-References: <cover.1530018818.git.andreyknvl@google.com> <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
- <09cb5553-d84a-0e62-5174-315c14b88833@arm.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 31 Jul 2018 15:05:59 +0200
-Message-ID: <CAAeHK+yC3XRPoTByhH1QPrX45pG3QY_2Q4gz=dfDgxfzu1Fyfw@mail.gmail.com>
-Subject: Re: [PATCH v4 13/17] khwasan: add hooks implementation
-To:     vincenzo.frascino@arm.com
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5518c3c5-8855-4d2b-3537-08d5f6e6a169
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2018 13:07:55.1969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3434
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 3:44 PM, Vincenzo Frascino@Foss
-<vincenzo.frascino@arm.com> wrote:
-> On 06/26/2018 02:15 PM, Andrey Konovalov wrote:
->
->> @@ -325,18 +341,41 @@ void kasan_init_slab_obj(struct kmem_cache *cache,
->> const void *object)
->>     void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t
->> flags)
->>   {
->> -       return kasan_kmalloc(cache, object, cache->object_size, flags);
->> +       object = kasan_kmalloc(cache, object, cache->object_size, flags);
->> +       if (IS_ENABLED(CONFIG_KASAN_HW) && unlikely(cache->ctor)) {
->> +               /*
->> +                * Cache constructor might use object's pointer value to
->> +                * initialize some of its fields.
->> +                */
->> +               cache->ctor(object);
->>
-> This seams breaking the kmem_cache_create() contract: "The @ctor is run when
-> new pages are allocated by the cache."
-> (https://elixir.bootlin.com/linux/v3.7/source/mm/slab_common.c#L83)
->
-> Since there might be preexisting code relying on it, this could lead to
-> global side effects. Did you verify that this is not the case?
->
-> Another concern is performance related if we consider this solution suitable
-> for "near-production", since with the current implementation you call the
-> ctor (where present) on an object multiple times and this ends up memsetting
-> and repopulating the memory every time (i.e. inode.c: inode_init_once). Do
-> you know what is the performance impact?
++Alan Tull
 
-We can assign tags to objects with constructors when a slab is
-allocated and call constructors once as usual. The downside is that
-such object would always have the same tag when it is reallocated, so
-we won't catch use-after-frees. But that is probably something we'll
-have to deal with if we're aiming for "near-production". I'll add this
-change to v5, thanks!
+> -----Original Message-----
+> From: Nava kishore Manne [mailto:nava.manne@xilinx.com]
+> Sent: Wednesday, August 1, 2018 3:35 PM
+> To: robh+dt@kernel.org; mark.rutland@arm.com; Michal Simek
+> <michals@xilinx.com>; Soren Brinkmann <sorenb@xilinx.com>;
+> atull@opensource.altera.com; moritz.fischer@ettus.com; Nava kishore Manne
+> <navam@xilinx.com>; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Appana Durga
+> Kedareswara Rao <appanad@xilinx.com>; chinnikishore369@gmail.com
+> Cc: Nava kishore Manne <navam@xilinx.com>
+> Subject: [RFC PATCH 1/2] ARM: dt: fpga: Added binding docs for Xilinx zyn=
+qmp
+> FPGA manager
+>=20
+> New bindings document for zynqmp fpga manager.
+>=20
+> Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+> ---
+>  .../devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt   | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fpga/xlnx,zynqmp-
+> pcap-fpga.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-
+> fpga.txt b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-
+> fpga.txt
+> new file mode 100644
+> index 000000000000..0eac747747f5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+> @@ -0,0 +1,9 @@
+> +Xilinx Zynqmp FPGA Manager
+> +
+> +Required properties:
+> +- compatible:		should contain "xlnx,zynqmp-pcap-fpga"
+> +
+> +Example:
+> +	pcap: pcap@00 {
+> +		compatible =3D "xlnx,zynqmp-pcap-fpga";
+> +	};
+> --
+> 2.18.0
+
