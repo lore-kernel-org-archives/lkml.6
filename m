@@ -2,76 +2,90 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 700B5C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D18C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC8520870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:53:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fG1BWqbh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC8520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A6AE420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:54:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AE420870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbeGaKc2 (ORCPT
+        id S1730513AbeGaKdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:32:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48646 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbeGaKc2 (ORCPT
+        Tue, 31 Jul 2018 06:33:53 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60433 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729769AbeGaKdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:32:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+d6dxIydmDGzGUcHW51+EdQ0pZRUvIfZR3rUqB2lB8g=; b=fG1BWqbh1pjNSkAW4EOvObe2Y
-        migJeLN+9BpOxvO7PNGGjbsagFm5XaquhA222qvdvQW6CfT8laGd4eeiqlaUYnxYzYLzbvBj/GDYu
-        03QYzKUKMZrRVOtbJnUCOBKbU6e1UY/ubPhD8qsfiklV3zTFRN3fvgswj6YMjj12lpvYRNH7T+7FP
-        RCdWmmXIZAlpziWcVh40Z7mWxx23Tfe+WVefh/JDnnceansuxQCkeXuMc89vAQTqbUmPB/qj/vTqa
-        i7xLxEMml+rlLLGSTIdbc0dHroPScr5+jkN3MudQ2LrJy+LW3LTG2V59e7EVdpWdAEtbM4a1hWYBL
-        NXwlLPWAg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkQOp-0007J1-VQ; Tue, 31 Jul 2018 08:53:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D40552027585B; Tue, 31 Jul 2018 10:52:57 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 10:52:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        ying.huang@intel.com, mingo@kernel.org, jiangshanlai@gmail.com,
-        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        joel@joelfernandes.org, len.brown@intel.com, glider@google.com,
-        peter@hurleysoftware.com, aik@ozlabs.ru
-Subject: Re: [QUESTION] llist: Comment releasing 'must delete' restriction
- before traversing
-Message-ID: <20180731085257.GR2494@hirez.programming.kicks-ass.net>
-References: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 31 Jul 2018 06:33:53 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1fkQQK-0006GH-GV; Tue, 31 Jul 2018 10:54:32 +0200
+Message-ID: <1533027272.3444.9.camel@pengutronix.de>
+Subject: Re: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Add PDC restart for
+ modem on SDM845 SoCs
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
+        sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Date:   Tue, 31 Jul 2018 10:54:32 +0200
+In-Reply-To: <20180727152811.15258-4-sibis@codeaurora.org>
+References: <20180727152811.15258-1-sibis@codeaurora.org>
+         <20180727152811.15258-4-sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:58:36AM +0900, Byungchul Park wrote:
-> In restrictive cases like only addtions happen but never deletion, can't
-> we safely traverse a llist? I believe llist can be more useful if we can
-> release the restriction. Can't we?
+On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
+> In the presence of a PDC block working with subsystem RSC,
+> assert/deassert PDC restart in modem start/stop path.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/remoteproc/qcom,q6v5.txt         |  4 +++
+>  drivers/remoteproc/qcom_q6v5_pil.c            | 27 ++++++++++++++++---
+>  2 files changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 601dd9f389aa..124fb1dc6fb8 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+[...]
+> @@ -1182,6 +1192,15 @@ static int q6v5_init_reset(struct q6v5 *qproc)
+>  		return PTR_ERR(qproc->mss_restart);
+>  	}
+>  
+> +	if (qproc->has_alt_reset) {
+> +		qproc->pdc_restart = devm_reset_control_get(qproc->dev,
+> +							    "pdc_restart");
 
-Yes you can, but I'm not sure it makes much sense to confuse the
-comments with this.
+Please use devm_reset_control_get_exclusive() instead.
 
-This really ends up in the 'you had better know what you're doing'
-category.
+> +		if (IS_ERR(qproc->pdc_restart)) {
+> +			dev_err(qproc->dev, "failed to acquire pdc restart\n");
+> +			return PTR_ERR(qproc->pdc_restart);
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+
+regards
+Philipp
