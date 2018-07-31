@@ -5,47 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEDAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B79DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4553520862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4553520862
+	by mail.kernel.org (Postfix) with ESMTP id D889F20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D889F20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbeGaJSq (ORCPT
+        id S1729963AbeGaJTE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:18:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53370 "EHLO
+        Tue, 31 Jul 2018 05:19:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50251 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbeGaJSq (ORCPT
+        with ESMTP id S1729598AbeGaJTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:18:46 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so1914354wmh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:39:44 -0700 (PDT)
+        Tue, 31 Jul 2018 05:19:04 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1937713wmc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:40:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=jgRDtggHzm/CR3uWk1gOXzgKiCDBo6/ammRJs9dHz4Q=;
-        b=htU37/wmYzUKkA54cSbrxT6SvEzizpbYvo4vnxCxRx9cSwenVfFB+km60lxEUwUyJQ
-         Yy+/7unEqqswwrFlEfCXaf6qZ1znW4NfuuIUF7HRPewtU4idEtYCJk7/KmsmJo+GnQLe
-         BUdOZEk8Y9LfCBruaKnMjq+JVcb2BwHA85R9g+vm+PwYGLm3d1DvwgIbHVtp6CcEMN2k
-         rr4AU/AwXo5CPmZfou6XCTtd/TNttwdDVF1IfmABMS7Ec10T/G0H1tZVzSP98Tr5HjDy
-         920nwDCmROFHE2x9FdjX4Flc/zpRyny8pGoDO/kJOhCkrm24pL4N4piI5v8Mp9f1ygK7
-         cEPg==
-X-Gm-Message-State: AOUpUlFknnILz24POf4WLBTL1bYVbFkX5JEOxbX+d5D9/aCopuDodWGF
-        UKWM0THRDgXeHXyPuXEWXSA9ng==
-X-Google-Smtp-Source: AAOMgpclb6VvA1+0n805KZqS5+oTKihXPaSVz4fy8BZ+RiG/wlyyU9Br+R1Q1v0DWqctYI7oVa2Ixg==
-X-Received: by 2002:a1c:3314:: with SMTP id z20-v6mr1376011wmz.95.1533022784321;
-        Tue, 31 Jul 2018 00:39:44 -0700 (PDT)
+        bh=lAR5c89RF4kZpy9i5eg3akklRziFgxCZNrQKCbYez+M=;
+        b=uimUkPkI3N5hPtwDlzGj+LPWIfuKyPu16Xq7j+EhQunFLbeFNJ7gy+pP7qHJGpZGua
+         UNy+fAT5M+ZcH0QJGsLoU1EuE2I49O3TDSCjgsetnqY+viC1lg9idBEVbgHP9hY4cf3V
+         JDkVfWdztzT/iFLzAU7yXTOMBiMjBw+0Zj/YxvJsIS99SP9j9AdyD5uaKRHQhZJetrTp
+         e96jgmvD84GmvBIneu6DG6sqcwdxPHN5VE1Pl7MVsUIbsNQbKb+sYNxd7XVDC9C0e/oZ
+         ingET5hEmM2gcuJU9XnUZGE0LXayuDGAgB+rg5JP8T4aMTjEZKzlnxGJe0yAIr2dVQ8k
+         kuOw==
+X-Gm-Message-State: AOUpUlEvRvVIWvXQrDoLx45ItJ6HRD+qk1uOckmtTt47edKtANaq4EnI
+        0WteBT2QxzmQF9zfydciBFqhhw==
+X-Google-Smtp-Source: AAOMgpd08XrcN3Et/8X+xoiQ6kBocTeoauJ4mWumckGKA4bEi9VWmbAcWeIy1nkPMRbFxjYvNNYn1g==
+X-Received: by 2002:a1c:92:: with SMTP id 140-v6mr1353415wma.87.1533022802250;
+        Tue, 31 Jul 2018 00:40:02 -0700 (PDT)
 Received: from [192.168.10.150] (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm1295300wmb.6.2018.07.31.00.39.43
+        by smtp.gmail.com with ESMTPSA id l16-v6sm1135989wme.36.2018.07.31.00.40.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 00:39:43 -0700 (PDT)
-Subject: Re: [PATCH 09/10] KVM: nVMX: include shadow vmcs12 in nested state
+        Tue, 31 Jul 2018 00:40:01 -0700 (PDT)
+Subject: Re: [PATCH 06/10] KVM: x86: do not load vmcs12 pages while still in
+ SMM
 To:     Jim Mattson <jmattson@google.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         kvm list <kvm@vger.kernel.org>,
@@ -53,8 +54,8 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         KarimAllah Ahmed <karahmed@amazon.de>,
         =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 References: <1532819412-51357-1-git-send-email-pbonzini@redhat.com>
- <1532819412-51357-10-git-send-email-pbonzini@redhat.com>
- <CALMp9eSj+rmgvcEb8=W1M+Z0S4m5hKYjXvxTd6DhQe+SLCi=Kw@mail.gmail.com>
+ <1532819412-51357-7-git-send-email-pbonzini@redhat.com>
+ <CALMp9eREhbUc73qDnNnriG+AgfXNTkmJuChbVepmCRxo+TSaaA@mail.gmail.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -92,12 +93,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <21c6f364-d2e8-df22-ec7f-3d76c1a0f2be@redhat.com>
-Date:   Tue, 31 Jul 2018 09:39:42 +0200
+Message-ID: <1e89e7a8-01cb-69d7-043c-425a66b36500@redhat.com>
+Date:   Tue, 31 Jul 2018 09:40:00 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eSj+rmgvcEb8=W1M+Z0S4m5hKYjXvxTd6DhQe+SLCi=Kw@mail.gmail.com>
+In-Reply-To: <CALMp9eREhbUc73qDnNnriG+AgfXNTkmJuChbVepmCRxo+TSaaA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -106,35 +107,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2018 21:11, Jim Mattson wrote:
-> Does this work with CONFIG_HARDENED_USERCOPY?
+On 30/07/2018 21:27, Jim Mattson wrote:
+> On Sat, Jul 28, 2018 at 4:10 PM, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>> If the vCPU enters system management mode while running a nested guest,
+>> RSM starts processing the vmentry while still in SMM.  In that case,
+>> however, the pages pointed to by the vmcs12 might be incorrectly
+>> loaded from SMRAM.  To avoid this, delay the handling of the pages
+>> until just before the next vmentry.  This is done with a new request
+>> and a new entry in kvm_x86_ops, which we will be able to reuse for
+>> nested VMX state migration.
+>>
+>> Extracted from a patch by Jim Mattson and KarimAllah Ahmed.
+>>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>>  arch/x86/include/asm/kvm_host.h |  3 +++
+>>  arch/x86/kvm/vmx.c              | 53 +++++++++++++++++++++++++++--------------
+>>  arch/x86/kvm/x86.c              |  2 ++
+>>  3 files changed, 40 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index c13cd28d9d1b..da957725992d 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -75,6 +75,7 @@
+>>  #define KVM_REQ_HV_EXIT                        KVM_ARCH_REQ(21)
+>>  #define KVM_REQ_HV_STIMER              KVM_ARCH_REQ(22)
+>>  #define KVM_REQ_LOAD_EOI_EXITMAP       KVM_ARCH_REQ(23)
+>> +#define KVM_REQ_GET_VMCS12_PAGES       KVM_ARCH_REQ(24)
+>>
+>>  #define CR0_RESERVED_BITS                                               \
+>>         (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+>> @@ -1085,6 +1086,8 @@ struct kvm_x86_ops {
+>>
+>>         void (*setup_mce)(struct kvm_vcpu *vcpu);
+>>
+>> +       void (*get_vmcs12_pages)(struct kvm_vcpu *vcpu);
+>> +
+>>         int (*smi_allowed)(struct kvm_vcpu *vcpu);
+>>         int (*pre_enter_smm)(struct kvm_vcpu *vcpu, char *smstate);
+>>         int (*pre_leave_smm)(struct kvm_vcpu *vcpu, u64 smbase);
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index 2630ab38d72c..17aede06ae0e 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -10636,9 +10636,9 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
+>>  static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+>>                                                  struct vmcs12 *vmcs12);
+>>
+>> -static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
+>> -                                       struct vmcs12 *vmcs12)
+>> +static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
+>>  {
+>> +       struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>>         struct vcpu_vmx *vmx = to_vmx(vcpu);
+>>         struct page *page;
+>>         u64 hpa;
+>> @@ -11750,13 +11750,18 @@ static int check_vmentry_postreqs(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+>>         return 0;
+>>  }
+>>
+>> -static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
+>> +/*
+>> + * If p_exit_qual is NULL, this is being called from state restore (either
+>> + * kvm_set_nested_state or RSM).  Otherwise it's called from vmlaunch/vmresume.
+>> + */
+>> +static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *p_exit_qual)
+>>  {
+>>         struct vcpu_vmx *vmx = to_vmx(vcpu);
+>>         struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+>> +       bool from_vmentry = !!p_exit_qual;
+>>         u32 msr_entry_idx;
+>> -       u32 exit_qual;
+>> -       int r;
+>> +       u32 dummy_exit_qual;
+>> +       int r = 0;
+>>
+>>         enter_guest_mode(vcpu);
+>>
+>> @@ -11770,17 +11775,27 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
+>>                 vcpu->arch.tsc_offset += vmcs12->tsc_offset;
+>>
+>>         r = EXIT_REASON_INVALID_STATE;
+>> -       if (prepare_vmcs02(vcpu, vmcs12, &exit_qual))
+>> +       if (prepare_vmcs02(vcpu, vmcs12, from_vmentry ? p_exit_qual : &dummy_exit_qual))
+>>                 goto fail;
+>>
+>> -       nested_get_vmcs12_pages(vcpu, vmcs12);
+>> +       if (from_vmentry) {
+>> +               nested_get_vmcs12_pages(vcpu);
+>>
+>> -       r = EXIT_REASON_MSR_LOAD_FAIL;
+>> -       msr_entry_idx = nested_vmx_load_msr(vcpu,
+>> -                                           vmcs12->vm_entry_msr_load_addr,
+>> -                                           vmcs12->vm_entry_msr_load_count);
+>> -       if (msr_entry_idx)
+>> -               goto fail;
+>> +               r = EXIT_REASON_MSR_LOAD_FAIL;
+>> +               msr_entry_idx = nested_vmx_load_msr(vcpu,
+>> +                                                   vmcs12->vm_entry_msr_load_addr,
+>> +                                                   vmcs12->vm_entry_msr_load_count);
+>> +               if (msr_entry_idx)
+>> +                       goto fail;
+>> +       } else {
+>> +               /*
+>> +                * The MMU is not initialized to point at the right entities yet and
+>> +                * "get pages" would need to read data from the guest (i.e. we will
+>> +                * need to perform gpa to hpa translation). Request a call
+>> +                * to nested_get_vmcs12_pages before the next VM-entry.
+>> +                */
+>> +               kvm_make_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
+>> +       }
+> 
+> The from_vmentry variable seems unnecessary. Why not (a) hoist the
+> call to nested_vmx_load_msr() into nested_vmx_run and (b) always use
+> the deferred KVM_REQ_GET_VMCS12_PAGES?
 
-Yes, kmalloc objects are exempt from the check (see new_kmalloc_cache).
+Yeah, I thought about that.  from_vmentry is ugly.
 
-> Is VMCS12_SIZE better than sizeof(*vmcs12)? What if we are migrating
-> to a destination where sizeof(*vmcs12) is larger than it is on the
-> source?
-
-Either those fields won't be used by the destination due to the VMX MSR
-values, or migration should have failed due to invalid VMX MSR values.
-
-VMCS12_SIZE is consistent with handle_vmptrld and nested_release_vmcs12.
- If we use sizeof(*vmcs12) in vmx_get_nested_state, we will have to
-adjust the copy from/to cached_vmcs12 and cached_shadow_vmcs12 to also
-use sizeof(*vmcs12), otherwise:
-
-1) nested_release_vmcs12 can leak arbitrary kernel data to userspace,
-because the cached_vmcs12 and cached_shadow_vmcs12 are not zeroed when
-allocated.
-
-2) even if we zeroed the allocation in enter_vmx_operation, the guest
-could observe a migration because it would change the padding at the end
-of the VMCS changes to zeroes; this is strictly speaking not an issue,
-but it's ugly.
+However, for (a) you would have to duplicate the code at the "fail"
+label, which is uglier than from_vmentry; as to (b), it is a little bit
+slower and our nested vmentry is already slow enough...
 
 Paolo
-
-> If userspace doesn't zero the buffer before calling the ioctl,
-> then the destination may interpret nonsense as actual VMCS field
-> values. However, if we copy the entire page from the kernel, then we
-> know that anything beyond the source's sizeof(*vmcs12) will be zero.
