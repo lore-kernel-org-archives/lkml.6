@@ -2,88 +2,77 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538A1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4388C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 091FA208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091FA208A4
+	by mail.kernel.org (Postfix) with ESMTP id 8191B208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8191B208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731500AbeGaLFx (ORCPT
+        id S1731864AbeGaLGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:05:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:50756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729731AbeGaLFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:05:53 -0400
+        Tue, 31 Jul 2018 07:06:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50774 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729982AbeGaLGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:06:07 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FEAD7A9;
-        Tue, 31 Jul 2018 02:26:28 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 208F03F5BA;
-        Tue, 31 Jul 2018 02:26:28 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id F3B781AE30AF; Tue, 31 Jul 2018 10:26:29 +0100 (BST)
-Date:   Tue, 31 Jul 2018 10:26:29 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     James Morse <james.morse@arm.com>
-Cc:     Bhupesh Sharma <bhsharma@redhat.com>,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 763937A9;
+        Tue, 31 Jul 2018 02:26:42 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77DCA3F5BA;
+        Tue, 31 Jul 2018 02:26:37 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 10:26:34 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Alexandre Ghiti <alex@ghiti.fr>
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        jejb@parisc-linux.org, deller@gmx.de, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, arnd@arndb.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, bhupesh.linux@gmail.com,
-        takahiro.akashi@linaro.org, catalin.marinas@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2] arm64, kaslr: export offset in VMCOREINFO ELF notes
-Message-ID: <20180731092629.GD4680@arm.com>
-References: <1532931883-16132-1-git-send-email-bhsharma@redhat.com>
- <303e32f7-ff47-ea9b-d5a0-45a22e44d0a9@arm.com>
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+Message-ID: <20180731092634.m4wpbhyn54r7fxmb@armageddon.cambridge.arm.com>
+References: <20180731060155.16915-1-alex@ghiti.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <303e32f7-ff47-ea9b-d5a0-45a22e44d0a9@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:19:35AM +0100, James Morse wrote:
-> Hi Bhupesh,
-> 
-> On 30/07/18 07:24, Bhupesh Sharma wrote:
-> > Include KASLR offset in arm64 VMCOREINFO ELF notes to assist in
-> > debugging. vmcore parsing in user-space already expects this value in
-> > the notes and we are providing it for portability of those existing
-> > tools with x86.
-> > 
-> > Ideally we would like core code to do this (so that way this
-> > information won't be missed when an architecture adds KASLR support),
-> > but mips has CONFIG_RANDOMIZE_BASE, and doesn't provide kaslr_offset(),
-> > so I am not sure if this is needed for mips (and other such similar arch
-> > cases in future). So, lets keep this architecture specific for now.
-> 
-> (heh, I assumed you would rewrite my train-of-thought, but I guess this works!)
-> 
-> 
-> > As an example of a user-space use-case, consider the
-> > makedumpfile user-space utility which will need fixup to use this
-> > KASLR offset to work with cases where we need to find a way to
-> > translate symbol address from vmlinux to kernel run time address
-> > in case of KASLR boot on arm64.
-> 
-> Acked-by: James Morse <james.morse@arm.com>
-> 
-> If we want to send this to stable, it looks like it should have been part of the
-> KASLR series, f80fb3a3d5084 ("arm64: add support for kernel ASLR") was merged
-> for v4.6.
-> CC: <stable@vger.kernel.org> # 4.6.x
+On Tue, Jul 31, 2018 at 06:01:44AM +0000, Alexandre Ghiti wrote:
+> Alexandre Ghiti (11):
+>   hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+>   hugetlb: Introduce generic version of hugetlb_free_pgd_range
+>   hugetlb: Introduce generic version of set_huge_pte_at
+>   hugetlb: Introduce generic version of huge_ptep_get_and_clear
+>   hugetlb: Introduce generic version of huge_ptep_clear_flush
+>   hugetlb: Introduce generic version of huge_pte_none
+>   hugetlb: Introduce generic version of huge_pte_wrprotect
+>   hugetlb: Introduce generic version of prepare_hugepage_range
+>   hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+>   hugetlb: Introduce generic version of huge_ptep_set_access_flags
+>   hugetlb: Introduce generic version of huge_ptep_get
+[...]
+>  arch/arm64/include/asm/hugetlb.h             | 39 +++---------
 
-Hmm, does this warrant a stable backport? This hasn't ever worked, right?
+For the arm64 bits in this series:
 
-Will
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
