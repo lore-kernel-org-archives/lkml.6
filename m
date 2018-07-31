@@ -2,195 +2,100 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D198C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31410C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A9020862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B4720862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:00:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O94uiA2U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A9020862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTcpAf1U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B4720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732454AbeGaRkm (ORCPT
+        id S1732483AbeGaRk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:40:42 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53538 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732333AbeGaRkm (ORCPT
+        Tue, 31 Jul 2018 13:40:57 -0400
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:45259 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732331AbeGaRk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:40:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YArAK94z9j5FazqKnwnMMcSQsW2kq4dCAZK97+iATZs=; b=O94uiA2Uv/FtnFRrHi4TsCo1i
-        DzOY4cHAdnQouWGzNrlkbck7kjOEprUyIOSDjDpKKx7EeCRObVV9VjPCNk30QzzTJaGva33/CjUtS
-        M9M2Yoqcq5jxjldvObNBwCJCkJtvnrqvYmdhMJc47G/78CoRMmUxZFnjCXjmZqGr17mqI=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:45942)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fkX3Q-00072T-H8; Tue, 31 Jul 2018 16:59:20 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fkX3J-0007hB-RC; Tue, 31 Jul 2018 16:59:14 +0100
-Date:   Tue, 31 Jul 2018 16:59:09 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Anvin <hpa@zytor.com>,
-        Matt Porter <mporter@kernel.crashing.org>, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 0/6] rapidio: move Kconfig menu definition to
- subsystem
-Message-ID: <20180731155909.GO17271@n2100.armlinux.org.uk>
-References: <20180731142954.30345-1-acolin@isi.edu>
+        Tue, 31 Jul 2018 13:40:57 -0400
+Received: by mail-pg1-f173.google.com with SMTP id f1-v6so9295817pgq.12;
+        Tue, 31 Jul 2018 08:59:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ABMN9YvcXrVvyf3wkSOhp1MZzeTqrqmLeWr4KWtfpFQ=;
+        b=bTcpAf1UHCYkH+h2JLqXo7O95v9e/xQxAMCCM8v2uuMT3LTpNJj8hZjVBG0TfXjLrb
+         nI+fLXo6SmO19U+xtIKAJIRtDxCWbf59vsWd7KSTsQr0ltBoWbbBTFVCsbEv/G334FC+
+         /8ONyQEVg99uEOALnJSfydmbx2x/C5LDtwMLTD7PPBpgn8/JFfW/h+U8RyO+rkXs3uhC
+         MZaFJj+/Py9bCuM5KeUW+GsO1cqch+cx0rEikB5TnrlYI+DfhjEzXfj2ITs3YjDV6+H3
+         8oxfd1zneMa1YVxszxfhlvsHkSvb8GYWD+3ZAwQZOQvTIQ3iDIbMpns40mVVLUW8UJZU
+         j7hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ABMN9YvcXrVvyf3wkSOhp1MZzeTqrqmLeWr4KWtfpFQ=;
+        b=R/V63ZJd0acWIFY1JiVysnVrXish2XfQWNNgtFgecaK7nIQa9ZaVGw7Q+miO6DePoO
+         eEVpOhazDH+KugAtvd4I5hGOjDwFF2EP+Lu4LSAv+xLgPg2Z89WqnJpPoFJb+hlBp2sN
+         gb2hg6nsFtirBMMPQXLj66HskTwWzbk/HBdLRhjzil5GxNpCy98AC9NDMAiVrr6zc5nI
+         gl4/OC/r5p4EBh0IVHLe2syVFGEPChXesIZ2IIRRuj70eOCjdZ4Ct0uTyKwWgrXpEX6n
+         Z1PIAlZMiJHHyJtfc8ah7AVWOZJ7zo1evN/ykk+oNQEqmHGb1t//AK1NUs4ARlFdVWCm
+         jDgw==
+X-Gm-Message-State: AOUpUlGPs9QiZzgi0R2gnEYuKDmtl7UefrxKqiqQC8hvTqSnp+UB+OUQ
+        eNl1aXigJ/xZLBc22L3O16FI0BGx
+X-Google-Smtp-Source: AAOMgpeWhCU9/MshxQ5WQYAGlgX9Z+u0v+VUNGCz6WUB+TLfKV/sES2vyUF159vxed6/tx5AA+zWYg==
+X-Received: by 2002:aa7:87d0:: with SMTP id i16-v6mr22796627pfo.82.1533052799413;
+        Tue, 31 Jul 2018 08:59:59 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm26058854pfj.72.2018.07.31.08.59.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 08:59:58 -0700 (PDT)
+Subject: Re: PROBLEM: Kernel Oops in UDP stack
+To:     Marcel Hellwig <mhellwig@mut-group.com>,
+        "'davem@davemloft.net'" <davem@davemloft.net>,
+        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
+        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>
+Cc:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        Matthias Wystrik <mwystrik@mut-group.com>
+References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+Date:   Tue, 31 Jul 2018 08:59:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731142954.30345-1-acolin@isi.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the thread associated with this patch set, a review of a previous
-patch for ARM posted last Tuesday on this subject asked a series of
-questions about the PCI-nature of this.  The review has not been
-responded to.
 
-If it is inappropriate to offer RapidIO for any architecture that
-happens to has PCI, then it is inappropriate to offer it for any
-ARM machine that happens to have PCI.
 
-In light of the lack of explanation on this point so far, I'm naking
-the ARM part of this series for now.
+On 07/31/2018 08:06 AM, Marcel Hellwig wrote:
+> Dear all,
 
-I also think that the HAS_RAPIDIO thing is misleading and needs
-sorting out (as I've mentioned in other emails, including the one
-I refer to above) before rapidio becomes available more widely.
+> [ 1125.100000] [<c0228adc>] (udp_recvmsg+0x284/0x33c) from [<c02306e0>] (inet_recvmsg+0x38/0x4c)
+> [ 1125.100000] [<c02306e0>] (inet_recvmsg+0x38/0x4c) from [<c01d2c38>] (sock_recvmsg+0xa8/0xcc)
+> [ 1125.100000] [<c01d2c38>] (sock_recvmsg+0xa8/0xcc) from [<c01d3fac>] (___sys_recvmsg.part.4+0xe0/0x1bc)
+> [ 1125.100000] [<c01d3fac>] (___sys_recvmsg.part.4+0xe0/0x1bc) from [<c01d4fbc>] (__sys_recvmsg+0x50/0x80)
+> [ 1125.100000] [<c01d4fbc>] (__sys_recvmsg+0x50/0x80) from [<c000dfe0>] (ret_fast_syscall+0x0/0x2c)
 
-On Tue, Jul 31, 2018 at 10:29:48AM -0400, Alexei Colin wrote:
-> Resending the patchset from prior submission:
-> https://lkml.org/lkml/2018/7/30/911
-> 
-> The only change are the Cc tags in all patches now include the mailing
-> lists for all affected architectures, and patch 1/6 (which adds the menu
-> item to RapdidIO subsystem Kconfig) is CCed to all maintainers who are
-> getting this cover letter. The cover letter has been updated with
-> explanations to points raised in the feedback.
-> 
-> 
-> 
-> The top-level Kconfig entry for RapidIO subsystem is currently
-> duplicated in several architecture-specific Kconfig files. This set of
-> patches does two things:
-> 
-> 1. Move the Kconfig menu definition into the RapidIO subsystem and
-> remove the duplicate definitions from arch Kconfig files.
-> 
-> 2. Enable RapidIO Kconfig menu entry for arm and arm64 architectures,
-> where it was not enabled before. I tested that subsystem and drivers
-> build successfully for both architectures, and tested that the modules
-> load on a custom arm64 Qemu model.
-> 
-> For all architectures, RapidIO menu should be offered when either:
-> (1) The platform has a PCI bus (which host a RapidIO module on the bus).
-> (2) The platform has a RapidIO IP block (connected to a system bus, e.g.
-> AXI on ARM). In this case, 'select HAS_RAPIDIO' should be added to the
-> 'config ARCH_*' menu entry for the SoCs that offer the IP block.
-> 
-> Prior to this patchset, different architectures used different criteria:
-> * powerpc: (1) and (2)
-> * mips: (1) and (2) after recent commit into next that added (2):
->   https://www.linux-mips.org/archives/linux-mips/2018-07/msg00596.html
->   fc5d988878942e9b42a4de5204bdd452f3f1ce47
->   491ec1553e0075f345fbe476a93775eabcbc40b6
-> * x86: (1)
-> * arm,arm64: none (RapidIO menus never offered)
-> 
-> This set of architectures are the ones that implement support for
-> RapidIO as system bus. On some platforms RapidIO can be the only system
-> bus available replacing PCI/PCIe.  As it is done now, RapidIO is
-> configured in "Bus Options" (x86/PPC) or "Bus Support" (ARMs) sub-menu
-> and from system configuration option it should be kept this way.
-> Current location of RAPIDIO configuration option is familiar to users of
-> PowerPC and x86 platforms, and is similarly available in some ARM
-> manufacturers kernel code trees. (Alex Bounine)
-> 
-> HAS_RAPIDIO is not enabled unconditionally, because HAS_RAPIDIO option
-> is intended for SOCs that have built in SRIO controllers, like TI
-> KeyStoneII or FPGAs. Because RapidIO subsystem core is required during
-> RapidIO port driver initialization, having separate option allows us to
-> control available build options for RapidIO core and port driver (bool
-> vs.  tristate) and disable module option if port driver is configured as
-> built-in. (Alex Bounine)
-> 
-> Responses to feedback from prior submission (thanks for the reviews!):
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593347.html
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593349.html
-> 
-> Changelog:
->   * Moved Kconfig entry into RapidIO subsystem instead of duplicating
-> 
-> In the current patchset, I took the approach of adding '|| PCI' to the
-> depends in the subsystem. I did try the alterantive approach mentioned
-> in the reviews for v1 of this patch, where the subsystem Kconfig does
-> not add a '|| PCI' and each per-architecture Kconfig has to add a
-> 'select HAS_RAPIDIO if PCI' and SoCs with IP blocks have to also add
-> 'select HAS_RAPIDIO'. This works too but requires each architecture's
-> Kconfig to add the line for RapidIO (whereas current approach does not
-> require that involvement) and also may create a false impression that
-> the dependency on PCI is strict.
-> 
-> We appreciate the suggestion for also selecting the RapdiIO subsystem for
-> compilation with COMPILE_TEST, but hope to address it in a separate
-> patchset, localized to the subsystem, since it will need to change
-> depends on all drivers, not just on the top level, and since this
-> patch now spans multiple architectures.
-> 
-> Alexei Colin (6):
->   rapidio: define top Kconfig menu in driver subtree
->   x86: factor out RapidIO Kconfig menu
->   powerpc: factor out RapidIO Kconfig menu entry
->   mips: factor out RapidIO Kconfig entry
->   arm: enable RapidIO menu in Kconfig
->   arm64: enable RapidIO menu in Kconfig
-> 
->  arch/arm/Kconfig        |  2 ++
->  arch/arm64/Kconfig      |  2 ++
->  arch/mips/Kconfig       | 11 -----------
->  arch/powerpc/Kconfig    | 13 +------------
->  arch/x86/Kconfig        |  8 --------
->  drivers/rapidio/Kconfig | 15 +++++++++++++++
->  6 files changed, 20 insertions(+), 31 deletions(-)
-> 
-> -- 
-> 2.18.0
-> 
+Any idea how you could get file:line information ?
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+( like : udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2502 )
+
