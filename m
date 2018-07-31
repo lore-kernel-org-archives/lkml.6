@@ -2,127 +2,120 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C5BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877C8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E94420857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E94420857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38B1C20894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1gGAmQR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B1C20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbeHAAuN (ORCPT
+        id S1732802AbeHAAuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:50:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:33176 "EHLO foss.arm.com"
+        Tue, 31 Jul 2018 20:50:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732635AbeHAAuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:50:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEFCD80D;
-        Tue, 31 Jul 2018 16:07:36 -0700 (PDT)
-Received: from [10.37.10.25] (unknown [10.37.10.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E09803F5BA;
-        Tue, 31 Jul 2018 16:07:34 -0700 (PDT)
-Subject: Re: [PATCH v3 05/13] coresight: perf: Allow tracing on hotplugged
- CPUs
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mike.leach@linaro.org, robert.walker@arm.com,
-        coresight@lists.linaro.org
-References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
- <1532609691-16863-6-git-send-email-suzuki.poulose@arm.com>
- <20180731174643.GB11692@xps15>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <182ebcb4-dece-d6d0-965e-aa0d560bc6b7@arm.com>
-Date:   Wed, 1 Aug 2018 00:08:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1732635AbeHAAuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 20:50:18 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D88A220857;
+        Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533078462;
+        bh=Tj0TTvsQu9cMxyiuTNiJ9tswUX7YWNLEs3Chc+rDRxk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a1gGAmQRRLaibCQw1jxuJABok7OgCjZwgYtt5FL7ccF7+touSsALfIN0RjZhkhHhf
+         7z1tPUY7rstgWOg9t3tJuzeL3P0BKmIiDTgYrA+RJFYuH9Uuwp4jZxZC2NY3miENjn
+         sBRxhPOfg5thPBj5GsvGsmCXFUfMQzkt9MN9pwWc=
+Date:   Tue, 31 Jul 2018 18:07:40 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc:     bhelgaas@google.com, hch@infradead.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2] PCI: Unify pci and normal dma direction definition
+Message-ID: <20180731230740.GP45322@bhelgaas-glaptop.roam.corp.google.com>
+References: <1531878035-33147-1-git-send-email-shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <20180731174643.GB11692@xps15>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531878035-33147-1-git-send-email-shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31/2018 06:46 PM, Mathieu Poirier wrote:
-> On Thu, Jul 26, 2018 at 01:54:43PM +0100, Suzuki K Poulose wrote:
->> At the moment, if there is no CPU specified for a given
->> event, we use cpu_online_mask and try to build path for
->> each of the CPUs in the mask. This could prevent any CPU
->> that is turned online later to be used for the tracing.
->>
->> This patch changes to use the cpu_present_mask and tries
->> to build path for as much CPUs as possible ignoring the
->> failures in building path for some of the CPUs. If ever
->> we try to trace on those CPUs, we fail the operation.
->>
->> Based on a patch from Mathieu Poirier.
->>
->> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-etm-perf.c | 46 +++++++++++++++---------
->>   1 file changed, 30 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 6beb662..afe7e7f 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -127,11 +127,9 @@ static void free_event_data(struct work_struct *work)
->>   
->>   	event_data = container_of(work, struct etm_event_data, work);
->>   	mask = &event_data->mask;
->> -	/*
->> -	 * First deal with the sink configuration.  See comment in
->> -	 * etm_setup_aux() about why we take the first available path.
->> -	 */
->> -	if (event_data->snk_config) {
->> +
->> +	/* Free the sink buffers, if there are any */
->> +	if (event_data->snk_config && !WARN_ON(cpumask_empty(mask))) {
+On Wed, Jul 18, 2018 at 09:40:35AM +0800, Shunyong Yang wrote:
+> Current DMA direction definitions in pci-dma-compat.h and dma-direction.h
+> are mirrored in value. Unifying them to enhance readability and avoid
+> possible inconsistency.
 > 
-> I'm not sure the WARN_ON() is required.
+> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+
+Applied to pci/misc for v4.19, thanks!
+
+> ---
 > 
-> Here @mask can't be empty since you've added a check in setup_aux().  So if
-> @mask does end up being empty something has trampled the memory and we have
-> far bigger problems.
-
-And thats exactly why I have a WARN_ON(). The issue is, we can't free 
-the sink_config unless we are able to find the sink device. So, if we
-ever end up with a sink_config with an empty mask, there is something
-seriously wrong and hence the WARN_ON().
-
-
+> v2:
+>   Remove unnecessary comments and  braces according to Christoph's
+>   comments.
 > 
+> ---
+>  include/linux/dma-direction.h  | 6 ++----
+>  include/linux/pci-dma-compat.h | 8 ++++----
+>  2 files changed, 6 insertions(+), 8 deletions(-)
 > 
->>   		cpu = cpumask_first(mask);
->>   		sink = coresight_get_sink(etm_event_cpu_path(event_data, cpu));
->>   		if (sink_ops(sink)->free_buffer)
->> @@ -166,7 +164,7 @@ static void *alloc_event_data(int cpu)
-
-...
-
->> -	if (!sink_ops(sink)->alloc_buffer)
->> -		goto err;
->> -
->> +	/* If we don't have any CPUs ready for tracing, abort */
->>   	cpu = cpumask_first(mask);
->> -	/* Get the AUX specific data from the sink buffer */
->> +	if (cpu >= nr_cpu_ids)
->> +		goto err;
->> +
->> +	/* Allocate the sink buffer for this session */
->>   	event_data->snk_config =
->>   			sink_ops(sink)->alloc_buffer(sink, cpu, pages,
->>   						     nr_pages, overwrite);
-
-Suzuki
-
-
+> diff --git a/include/linux/dma-direction.h b/include/linux/dma-direction.h
+> index 3649a031893a..9c96e30e6a0b 100644
+> --- a/include/linux/dma-direction.h
+> +++ b/include/linux/dma-direction.h
+> @@ -1,14 +1,12 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  #ifndef _LINUX_DMA_DIRECTION_H
+>  #define _LINUX_DMA_DIRECTION_H
+> -/*
+> - * These definitions mirror those in pci.h, so they can be used
+> - * interchangeably with their PCI_ counterparts.
+> - */
+> +
+>  enum dma_data_direction {
+>  	DMA_BIDIRECTIONAL = 0,
+>  	DMA_TO_DEVICE = 1,
+>  	DMA_FROM_DEVICE = 2,
+>  	DMA_NONE = 3,
+>  };
+> +
+>  #endif
+> diff --git a/include/linux/pci-dma-compat.h b/include/linux/pci-dma-compat.h
+> index 0dd1a3f7b309..c3f1b44ade29 100644
+> --- a/include/linux/pci-dma-compat.h
+> +++ b/include/linux/pci-dma-compat.h
+> @@ -8,10 +8,10 @@
+>  #include <linux/dma-mapping.h>
+>  
+>  /* This defines the direction arg to the DMA mapping routines. */
+> -#define PCI_DMA_BIDIRECTIONAL	0
+> -#define PCI_DMA_TODEVICE	1
+> -#define PCI_DMA_FROMDEVICE	2
+> -#define PCI_DMA_NONE		3
+> +#define PCI_DMA_BIDIRECTIONAL	DMA_BIDIRECTIONAL
+> +#define PCI_DMA_TODEVICE	DMA_TO_DEVICE
+> +#define PCI_DMA_FROMDEVICE	DMA_FROM_DEVICE
+> +#define PCI_DMA_NONE		DMA_NONE
+>  
+>  static inline void *
+>  pci_alloc_consistent(struct pci_dev *hwdev, size_t size,
+> -- 
+> 1.8.3.1
+> 
