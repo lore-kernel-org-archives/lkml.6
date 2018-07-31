@@ -2,129 +2,161 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64601C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E758BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171EC208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DE44208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNqysKRB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171EC208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I10LxchS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE44208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732072AbeGaMes (ORCPT
+        id S1731638AbeGaMjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:34:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731428AbeGaMes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:34:48 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96E37208A2;
-        Tue, 31 Jul 2018 10:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533034502;
-        bh=55RG9NQM/u5eN/hioFHCKJQKp+lYMs65fhggjCo+PPc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mNqysKRB2FY++PbQJdzy594FRMRpoMOmxmcu2XmLUe6fFm+xMwcLRGH/i1i7GjWRv
-         2QuYmgzYZ7F+H/vS5jVpo15tzm68wrhbsSbPv7faIp+DFvr3SkZDy15ClaGpzdUWJS
-         u9RK1dX5mQhAjebgisv9mfOWsV10RzZcjKhQxlCE=
-Date:   Tue, 31 Jul 2018 05:54:59 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: call dma_debug_add_bus for pci_bus_type in common
- code
-Message-ID: <20180731105459.GH45322@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180730073842.16092-1-hch@lst.de>
+        Tue, 31 Jul 2018 08:39:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54810 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731261AbeGaMjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 08:39:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2OHHUznN7jB/GyqlBJCzOBJLBWN8f8+sPQnsPgyBxv0=; b=I10LxchS9grrIFLT6jCpfYrmu
+        M6R7lquL403wly61MVwzisv8ZRsPU2Jy+7D3wCGUHMdOf++RBe9J80JO7EZhUwOzzITmNX7P/LYh9
+        X/vdUMe25JI2QCx91v3Smb0sB+nDbFO6zqeGCjSnRLwZgKbdhUkswDlTJppqWVm0OOgUBWNFEztUk
+        +u3B0pMyVNrGBgE/vT4uHL48YEoZ1OnH78JnoS3Qze5XsjFJdX4BtCLHHaGgHtZ2lERm30ZpUawHE
+        4AT3DYAn9iPndNLdn90qafOoe+wUkfpV83zgjb9RqE5FrdcIB/J1n1BHxKhd8DpPqLyFmFEkkAed3
+        0BM9fJocA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkSN3-0005Qo-Cr; Tue, 31 Jul 2018 10:59:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1960A20268338; Tue, 31 Jul 2018 12:59:16 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 12:59:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Morten Rasmussen <morten.rasmussen@arm.com>
+Cc:     mingo@redhat.com, valentin.schneider@arm.com,
+        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
+        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 01/12] sched: Add static_key for asymmetric cpu
+ capacity optimizations
+Message-ID: <20180731105916.GR2476@hirez.programming.kicks-ass.net>
+References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+ <1530699470-29808-2-git-send-email-morten.rasmussen@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730073842.16092-1-hch@lst.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1530699470-29808-2-git-send-email-morten.rasmussen@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 09:38:42AM +0200, Christoph Hellwig wrote:
-> There is nothing arch specific about PCI or dma-debug, so move this
-> call to common code just after registering the bus type.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Applied with acks from Thomas and Michael to pci/misc for v4.19, thanks!
+Combined with that SD_ASYM.. rework I ended up with the below.
 
-> ---
->  arch/powerpc/kernel/dma.c | 3 ---
->  arch/sh/drivers/pci/pci.c | 2 --
->  arch/x86/kernel/pci-dma.c | 3 ---
->  drivers/pci/pci-driver.c  | 2 +-
->  4 files changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-> index 155170d70324..dbfc7056d7df 100644
-> --- a/arch/powerpc/kernel/dma.c
-> +++ b/arch/powerpc/kernel/dma.c
-> @@ -357,9 +357,6 @@ EXPORT_SYMBOL_GPL(dma_get_required_mask);
->  
->  static int __init dma_init(void)
->  {
-> -#ifdef CONFIG_PCI
-> -	dma_debug_add_bus(&pci_bus_type);
-> -#endif
->  #ifdef CONFIG_IBMVIO
->  	dma_debug_add_bus(&vio_bus_type);
->  #endif
-> diff --git a/arch/sh/drivers/pci/pci.c b/arch/sh/drivers/pci/pci.c
-> index e5b7437ab4af..8256626bc53c 100644
-> --- a/arch/sh/drivers/pci/pci.c
-> +++ b/arch/sh/drivers/pci/pci.c
-> @@ -160,8 +160,6 @@ static int __init pcibios_init(void)
->  	for (hose = hose_head; hose; hose = hose->next)
->  		pcibios_scanbus(hose);
->  
-> -	dma_debug_add_bus(&pci_bus_type);
-> -
->  	pci_initialized = 1;
->  
->  	return 0;
-> diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-> index ab5d9dd668d2..43f58632f123 100644
-> --- a/arch/x86/kernel/pci-dma.c
-> +++ b/arch/x86/kernel/pci-dma.c
-> @@ -155,9 +155,6 @@ static int __init pci_iommu_init(void)
->  {
->  	struct iommu_table_entry *p;
->  
-> -#ifdef CONFIG_PCI
-> -	dma_debug_add_bus(&pci_bus_type);
-> -#endif
->  	x86_init.iommu.iommu_init();
->  
->  	for (p = __iommu_table; p < __iommu_table_end; p++) {
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index 6792292b5fc7..bef17c3fca67 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1668,7 +1668,7 @@ static int __init pci_driver_init(void)
->  	if (ret)
->  		return ret;
->  #endif
-> -
-> +	dma_debug_add_bus(&pci_bus_type);
->  	return 0;
->  }
->  postcore_initcall(pci_driver_init);
-> -- 
-> 2.18.0
-> 
+Holler if you want it changed :-)
+
+
+---
+
+
+Subject: sched: Add static_key for asymmetric cpu capacity optimizations
+From: Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Wed, 4 Jul 2018 11:17:39 +0100
+
+The existing asymmetric cpu capacity code should cause minimal overhead
+for others. Putting it behind a static_key, it has been done for SMT
+optimizations, would make it easier to extend and improve without
+causing harm to others moving forward.
+
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>
+
+Cc: valentin.schneider@arm.com
+Cc: mingo@redhat.com
+Cc: vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com
+Cc: gaku.inami.xh@renesas.com
+Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1530699470-29808-2-git-send-email-morten.rasmussen@arm.com
+---
+ kernel/sched/fair.c     |    3 +++
+ kernel/sched/sched.h    |    1 +
+ kernel/sched/topology.c |    9 ++++++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6186,6 +6186,9 @@ static int wake_cap(struct task_struct *
+ {
+ 	long min_cap, max_cap;
+ 
++	if (!static_branch_unlikely(&sched_asym_cpucapacity))
++		return 0;
++
+ 	min_cap = min(capacity_orig_of(prev_cpu), capacity_orig_of(cpu));
+ 	max_cap = cpu_rq(cpu)->rd->max_cpu_capacity;
+ 
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1185,6 +1185,7 @@ DECLARE_PER_CPU(int, sd_llc_id);
+ DECLARE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DECLARE_PER_CPU(struct sched_domain *, sd_numa);
+ DECLARE_PER_CPU(struct sched_domain *, sd_asym);
++extern struct static_key_false sched_asym_cpucapacity;
+ 
+ struct sched_group_capacity {
+ 	atomic_t		ref;
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -398,6 +398,7 @@ DEFINE_PER_CPU(int, sd_llc_id);
+ DEFINE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
+ DEFINE_PER_CPU(struct sched_domain *, sd_numa);
+ DEFINE_PER_CPU(struct sched_domain *, sd_asym);
++DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
+ 
+ static void update_top_cache_domain(int cpu)
+ {
+@@ -1708,6 +1709,7 @@ build_sched_domains(const struct cpumask
+ 	struct rq *rq = NULL;
+ 	int i, ret = -ENOMEM;
+ 	struct sched_domain_topology_level *tl_asym;
++	bool has_asym = false;
+ 
+ 	alloc_state = __visit_domain_allocation_hell(&d, cpu_map);
+ 	if (alloc_state != sa_rootdomain)
+@@ -1723,8 +1725,10 @@ build_sched_domains(const struct cpumask
+ 		for_each_sd_topology(tl) {
+ 			int dflags = 0;
+ 
+-			if (tl == tl_asym)
++			if (tl == tl_asym) {
+ 				dflags |= SD_ASYM_CPUCAPACITY;
++				has_asym = true;
++			}
+ 
+ 			sd = build_sched_domain(tl, cpu_map, attr, sd, dflags, i);
+ 
+@@ -1776,6 +1780,9 @@ build_sched_domains(const struct cpumask
+ 	}
+ 	rcu_read_unlock();
+ 
++	if (has_asym)
++		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
++
+ 	if (rq && sched_debug_enabled) {
+ 		pr_info("root domain span: %*pbl (max cpu_capacity = %lu)\n",
+ 			cpumask_pr_args(cpu_map), rq->rd->max_cpu_capacity);
