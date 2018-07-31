@@ -2,90 +2,110 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9590DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDCFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C15C208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FF0F208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oSCTs9WE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RR1zj7Oj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C15C208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="kLojeWB0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF0F208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732370AbeGaIwu (ORCPT
+        id S1732042AbeGaIum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:52:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54908 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731785AbeGaIwu (ORCPT
+        Tue, 31 Jul 2018 04:50:42 -0400
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.101]:15294 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeGaIuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:52:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6CA8B60769; Tue, 31 Jul 2018 07:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533021237;
-        bh=kptixu+8OEH4LEaBRrCBaRSMgF8x3p8xniiiGbhWMLo=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=oSCTs9WEBP9x2N0JrrkgVCxb3TzMMGQ0T89w8u+cIwekvmNfKFg2FjWcPIifvX9t2
-         CXiJYgrCDUG04rTpqbDVPZjgIBhqZc3zkBQ2MrvgH4Y/po/D43R/B5jUnNf+iwybcx
-         KILDIXShG3h130sdZ/k3FQi1GGqrgXvXWm49SZU0=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 30A2860397;
-        Tue, 31 Jul 2018 07:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533021236;
-        bh=kptixu+8OEH4LEaBRrCBaRSMgF8x3p8xniiiGbhWMLo=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=RR1zj7Oj8VMta2q0HCKCwPT8zgpvheKRdNfnCldMX1LyakIfXG2bWBqQ30lblss/v
-         PO4dlCHdeGcWSLrHSXTiJojBx8+CTC0OjrNq3rKBBFZn7UBNFpo1akRGDB8a1yClXn
-         0jPn3HU6XVxr9iJQ1W3ZAX7w7/+zWCRqmnLwslPg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 30A2860397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] mwifiex: Fix skipped vendor specific IEs
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1532432847-2885-1-git-send-email-roman.stratiienko@globallogic.com>
-References: <1532432847-2885-1-git-send-email-roman.stratiienko@globallogic.com>
-To:     roman.stratiienko@globallogic.com
-Cc:     akarwar@marvell.com, nishants@marvell.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        Roman Stratiienko <roman.stratiienko@globallogic.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180731071357.6CA8B60769@smtp.codeaurora.org>
-Date:   Tue, 31 Jul 2018 07:13:57 +0000 (UTC)
+        Tue, 31 Jul 2018 04:50:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021105;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
+        Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=wb9GUVDBUPBqVrKu2Kw5cfkbPHUSSjd1I9vEXuwCyBA=;
+        b=kLojeWB0PvfmuetquyZvrxnC132WMYUyvNl10/eyzm9ai6R7boOoJgUUU6Se4f4eZ7
+        McA6IL49/tCucugAztQL3NgG2WELSntuPqcN8WWuYCPkXueQ6yLSEUwjZmwMtKLjltOZ
+        /B186cEJ/ngWeOJoDVws+/udJbih3U2cH5I61WHxRxptH4aaIGNkjl8dxqVgeIo0drb4
+        m75VAmZHCYkx9iRIUAoKPBQVYZSS2g7iGGJosUQ0s1Es9LoXgJgSYgM9cUftjZnXotWF
+        VrOQtjCw5KoVgXEK6XMEv/QjHRzMQqabPPoAB30HbARZy98maJ6u0Mh4S73IYjMwERvA
+        K3mQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
+        with ESMTPSA id 6047f4u6V7BdwOW
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 31 Jul 2018 09:11:39 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     ladis@linux-mips.org,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Marek Belisko <marek@goldelico.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 05/32] ARM: dts: omap3-gta04: add devconf1 setup for correct tvout pins
+Date:   Tue, 31 Jul 2018 09:11:08 +0200
+Message-Id: <67f5cb7d89001e0a3172844bad3e4150b6053afe.1533021093.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
+In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
+References: <cover.1533021093.git.hns@goldelico.com>
+In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
+References: <cover.1533021093.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-roman.stratiienko@globallogic.com wrote:
+The VENC with external OPA362 amplifier needs a special
+"pinmux" setup in DEVCONF1 (TVOUTBYPASS and TVOUTACEN).
 
-> From: Roman Stratiienko <roman.stratiienko@globallogic.com>
-> 
-> Mwifiex firmware inserts only Microsoft information element
-> Allow other vendor specific IEs to pass from userspace
-> 
-> Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ arch/arm/boot/dts/omap3-gta04.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-bfc83ea196ad mwifiex: Fix skipped vendor specific IEs
-
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index ed8aff515703..654faa7773a8 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -169,6 +169,24 @@
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&tca6507 0 GPIO_ACTIVE_LOW>;	/* W2CBW003 reset through tca6507 */
+ 	};
++
++	/* devconf1 setup for tvout pins */
++	pinmux_tv_out@480022d8 {
++		compatible = "pinctrl-single";
++		reg = <0x480022d8 4>;	/* CONTROL_DEVCONF1 */
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-single,bit-per-mux;
++		pinctrl-single,register-width = <32>;
++		pinctrl-single,function-mask = <0x81>;	/* TV out pin control */
++		#pinctrl-cells = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&tv_acbias_devconf1_pins>;
++		tv_acbias_devconf1_pins: pinmux_tv_acbias_devconf1_pins {
++			/*			offset	bits	mask */
++			pinctrl-single,bits = <0x00 0x40800 0x40800>;	/* set TVOUTBYPASS and TVOUTACEN */
++		};
++	};
+ };
+ 
+ &omap3_pmx_core {
 -- 
-https://patchwork.kernel.org/patch/10541923/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.12.2
 
