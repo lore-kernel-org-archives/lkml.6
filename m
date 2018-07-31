@@ -2,139 +2,158 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C823C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D7BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF3E220841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:28:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qf74dvWi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3E220841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4992320841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:30:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4992320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732483AbeHAALJ (ORCPT
+        id S1732603AbeHAANQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:11:09 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41895 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732244AbeHAALJ (ORCPT
+        Tue, 31 Jul 2018 20:13:16 -0400
+Received: from www62.your-server.de ([213.133.104.62]:37279 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732244AbeHAANQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:11:09 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so7785272ply.8
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 15:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tmbtfbzI6puP3QSpGYOfeeH32qqFkX4qrmc2EsmofsM=;
-        b=Qf74dvWiX9R3H0sqkdWIbUozChe8XjyxRtz7Mb4MMHrGydsuMAYtufmO3sABYjiS/J
-         WBbSba1iEslQMh6bFRI5qKhBcRtrD+X+qHzb648LU+449O0SX5OSbTfAOy/9ZMI7Rqav
-         E8vbFgwiG8XGqbbqzzYxS4staSU/pAVlbpS0c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tmbtfbzI6puP3QSpGYOfeeH32qqFkX4qrmc2EsmofsM=;
-        b=F0+bTqy3eKRaNQO6+OahqU1s0FNCSeX4WNLfpXJQ/U2rSfAfU4h+uFuRyCq2H2BHnZ
-         94DQlhcbIif6CJn+zZZtHLgb0FKsyf1mWd8MQBbeiDzNnC1pSF1m3hbwNfsA2shwT/oW
-         8YamRxw28cZQwO3jOpcMoTfGy60tbJ2FFUDxAlHj+EsRti0HR0ra5/p+JW0Jr1VLLg89
-         nH4fSpmy0OwdCGscor9+1S9AeO2JuJ37c+RbAik+mCmAt8uDURM4R+xd/yPRcSwzZQnR
-         bSWt00lmUdebN0CKdjDhc7cpGXbPvaK53qzM2t3O1GGtJomuOLjSyMJWLakrg2HggbgR
-         NKBA==
-X-Gm-Message-State: AOUpUlG1yFp0IPK/xufuS0Go3G7x+yydNofXJ+dlIMQG9DalgTILCzyx
-        +TsdnlJPblg0yt1fxy03Wo7P6Q==
-X-Google-Smtp-Source: AAOMgpeTe4l2D/5OeNk1/6/XcYRNDtRm913YYwglZjejeljMztHoo8oGLLpPlaTW4z8alMs+XvNeJg==
-X-Received: by 2002:a17:902:70cc:: with SMTP id l12-v6mr22328486plt.132.1533076119830;
-        Tue, 31 Jul 2018 15:28:39 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 2-v6sm27791062pfs.58.2018.07.31.15.28.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 15:28:39 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 15:29:28 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bhushan Shah <bshah@kde.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH] ARM: dts: qcom: msm8974-hammerhead: increase load on l20
- for sdhci
-Message-ID: <20180731222928.GA24465@builder>
-References: <20180709091628.GA8854@orion>
+        Tue, 31 Jul 2018 20:13:16 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fkdAB-0007Mz-Gj; Wed, 01 Aug 2018 00:30:43 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fkdAB-0006gi-Bb; Wed, 01 Aug 2018 00:30:43 +0200
+Subject: Re: [PATCH v2] Add BPF_SYNCHRONIZE_MAPS bpf(2) command
+To:     Joel Fernandes <joelaf@google.com>, Y Song <ys114321@gmail.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <ast@fb.com>
+References: <CAADnVQL4twmGF3d26TgLsQJvnqLnM0F6hqL_42DSs95OuZ1y9A@mail.gmail.com>
+ <20180731020122.GA22311@joelaf.mtv.corp.google.com>
+ <20180731020629.GB22311@joelaf.mtv.corp.google.com>
+ <CAH3MdRU5nn5g0bexrLWU3-UrxSJfrVF0-A2v2VJGAeBDKY=+Zg@mail.gmail.com>
+ <20180731215651.GA141321@joelaf.mtv.corp.google.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <4f192d7f-5279-5a1a-704a-8cac4f6df0e4@iogearbox.net>
+Date:   Wed, 1 Aug 2018 00:30:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709091628.GA8854@orion>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180731215651.GA141321@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24800/Tue Jul 31 18:43:36 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Jul 02:16 PDT 2018, Bhushan Shah wrote:
+On 07/31/2018 11:56 PM, Joel Fernandes wrote:
+> On Mon, Jul 30, 2018 at 09:03:18PM -0700, Y Song wrote:
+>> On Mon, Jul 30, 2018 at 7:06 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+>>> On Mon, Jul 30, 2018 at 07:01:22PM -0700, Joel Fernandes wrote:
+>>>> On Sun, Jul 29, 2018 at 06:51:18PM +0300, Alexei Starovoitov wrote:
+>>>>> On Thu, Jul 26, 2018 at 7:51 PM, Daniel Colascione <dancol@google.com> wrote:
+>>>>>> BPF_SYNCHRONIZE_MAPS waits for the release of any references to a BPF
+>>>>>> map made by a BPF program that is running at the time the
+>>>>>> BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command is
+>>>>>> to provide a means for userspace to replace a BPF map with another,
+>>>>>> newer version, then ensure that no component is still using the "old"
+>>>>>> map before manipulating the "old" map in some way.
+>>>>>>
+>>>>>> Signed-off-by: Daniel Colascione <dancol@google.com>
+>>>>>> ---
+>>>>>>  include/uapi/linux/bpf.h |  9 +++++++++
+>>>>>>  kernel/bpf/syscall.c     | 13 +++++++++++++
+>>>>>>  2 files changed, 22 insertions(+)
+>>>>>>
+>>>>>> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+>>>>>> index b7db3261c62d..5b27e9117d3e 100644
+>>>>>> --- a/include/uapi/linux/bpf.h
+>>>>>> +++ b/include/uapi/linux/bpf.h
+>>>>>> @@ -75,6 +75,14 @@ struct bpf_lpm_trie_key {
+>>>>>>         __u8    data[0];        /* Arbitrary size */
+>>>>>>  };
+>>>>>>
+>>>>>> +/* BPF_SYNCHRONIZE_MAPS waits for the release of any references to a
+>>>>>> + * BPF map made by a BPF program that is running at the time the
+>>>>>> + * BPF_SYNCHRONIZE_MAPS command is issued. The purpose of this command
+>>>>>
+>>>>> that doesn't sound right to me.
+>>>>> such command won't wait for the release of the references.
+>>>>> in case of map-in-map the program does not hold
+>>>>> the references to inner map (only to outer map).
+>>>>
+>>>> I didn't follow this completely.
+>>>>
+>>>> The userspace program is using the inner map per your description of the
+>>>> algorithm for using map-in-map to solve the race conditions that this patch
+>>>> is trying to address:
+>>>>
+>>>> If you don't mind, I copy-pasted it below from your netdev post:
+>>>>
+>>>> if you use map-in-map you don't need extra boolean map.
+>>>> 0. bpf prog can do
+>>>>    inner_map = lookup(map_in_map, key=0);
+>>>>    lookup(inner_map, your_real_key);
+>>>> 1. user space writes into map_in_map[0] <- FD of new map
+>>>> 2. some cpus are using old inner map and some a new
+>>>> 3. user space does sys_membarrier(CMD_GLOBAL) which will do synchronize_sched()
+>>>>    which in CONFIG_PREEMPT_NONE=y servers is the same as synchronize_rcu()
+>>>>    which will guarantee that progs finished.
+>>>> 4. scan old inner map
+>>>>
+>>>> In step 2, as you mentioned there are CPUs using different inner maps. So
+>>>> could you clarify how the synchronize_rcu mechanism will even work if you're
+>>>> now saying "program does not hold references to the inner maps"?
+>>
+>> The program only held references to the outer maps, and the outer map
+>> held references to the inner maps. The user space program can add/remove
+>> the inner map for a particular outer map while the prog <-> outer-map
+>> relationship is not changed.
+> 
+> My definition of "reference" in this context is protection by rcu_read_lock.
+> 
+> So I was concerned the above map-in-map access isn't protected as such when
+> Alexei said "program doesn't have reference on inner map" in the above steps.
+> Maybe I misunderstood what is the meaning of reference here.
+> 
+> To make the map-in-map thing to work for Chenbo/Lorenzo's usecase, both the
+> access of outer map at key=0 and the inner map have to protect by
+> rcu_read_lock so that the membarrier call will work.
+> 
+> So basically step 0 in the steps above should be rcu_read_lock protected to
+> satisfy Chenbo/Lorenzo's usecase.
+> 
+> I know today the entire program is run as preempt disabled (unless something
+> changed) so this shouldn't be a problem, but in the future if the verifier is
+> doing similar things at a finer grainer level, then the above has to be
+> taken into consideration.
+> 
+> Does that make sense or am I missing something?
 
-> The kernel would not boot on the hammerhead hardware due to the
-> following error:
-> 
-> mmc0: Timeout waiting for hardware interrupt.
-> mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-> mmc0: sdhci: Sys addr:  0x00000200 | Version:  0x00003802
-> mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000200
-> mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000023
-> mmc0: sdhci: Present:   0x03e80000 | Host ctl: 0x00000034
-> mmc0: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-> mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
-> mmc0: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
-> mmc0: sdhci: Int enab:  0x02ff900b | Sig enab: 0x02ff100b
-> mmc0: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-> mmc0: sdhci: Caps:      0x642dc8b2 | Caps_1:   0x00008007
-> mmc0: sdhci: Cmd:       0x00000c1b | Max curr: 0x00000000
-> mmc0: sdhci: Resp[0]:   0x00000c00 | Resp[1]:  0x00000000
-> mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-> mmc0: sdhci: Host ctl2: 0x00000008
-> mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x70040220
-> mmc0: sdhci: ============================================
-> mmc0: Card stuck in wrong state! mmcblk0 card_busy_detect status: 0xe00
-> mmc0: cache flush error -110
-> mmc0: Reset 0x1 never completed.
-> 
-> This patch increases the load on l20 to 0.2 amps for the sdhci
-> and allows the device to boot normally.
-> 
-> Signed-off-by: Bhushan Shah <bshah@kde.org>
-> Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Tested-by: Brian Masney <masneyb@onstation.org>
+All BPF programs are required to run under rcu_read_lock today, so that
+assumption holds. Should this ever change in future, then this constraint
+of course needs to be taken into consideration.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-> index 4dc0b347b1ee..c2dc9d09484a 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-> +++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-> @@ -189,6 +189,8 @@
->  						regulator-max-microvolt = <2950000>;
->  
->  						regulator-boot-on;
-> +						regulator-system-load = <200000>;
-> +						regulator-allow-set-load;
->  					};
->  
->  					l21 {
-> -- 
-> 2.17.1
-> 
+Thanks,
+Daniel
