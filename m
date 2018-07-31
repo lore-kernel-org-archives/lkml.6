@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501E2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD706C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE31D20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:29:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE31D20841
+	by mail.kernel.org (Postfix) with ESMTP id 66AD720841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66AD720841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732252AbeGaOJG (ORCPT
+        id S1732208AbeGaOJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:09:06 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:34908 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732111AbeGaOJA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 10:09:00 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:34907 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732069AbeGaOI7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 10:08:59 -0400
 Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fkTlh-0000tp-IT; Tue, 31 Jul 2018 13:28:49 +0100
+        id 1fkTli-0000tp-5U; Tue, 31 Jul 2018 13:28:50 +0100
 From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 To:     tiwai@suse.de
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/4] ALSA: usb-audio: AudioStreaming Power Domain parsing
-Date:   Tue, 31 Jul 2018 13:28:43 +0100
-Message-Id: <20180731122845.4859-3-jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v3 4/4] ALSA: usb-audio: Operate UAC3 Power Domains in PCM callbacks
+Date:   Tue, 31 Jul 2018 13:28:45 +0100
+Message-Id: <20180731122845.4859-5-jorge.sanjuan@codethink.co.uk>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180731122845.4859-1-jorge.sanjuan@codethink.co.uk>
 References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
@@ -41,224 +41,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Power Domains in the UAC3 spec are mainly intended to be
-associated to an Input or Output Terminal so the host
-changes the power state of the entire capture or playback
-path within the topology.
+Make use of UAC3 Power Domains associated to an Audio Streaming
+path within the PCM's logic. This means, when there is no audio
+being transferred (pcm is closed), the host will set the Power Domain
+associated to that substream to state D1. When audio is being transferred
+(from hw_params onwards), the Power Domain will be set to D0 state.
 
-This patch adds support for finding Power Domains associated
-to an Audio Streaming Interface (bTerminalLink) and adds a
-reference to them in the usb audio substreams (snd_usb_substream).
+This is the way the host lets the device know which Terminal
+is going to be actively used and it is for the device to
+manage its own internal resources on that UAC3 Power Domain.
+
+Note the resume method now sets the Power Domain to D1 state as
+resuming the device doesn't mean audio streaming will occur.
 
 Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 ---
- sound/usb/card.h   |  2 ++
- sound/usb/stream.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++-------
- 2 files changed, 60 insertions(+), 8 deletions(-)
+ sound/usb/pcm.c    | 24 +++++++++++++++++++-----
+ sound/usb/stream.c |  6 +++++-
+ 2 files changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/sound/usb/card.h b/sound/usb/card.h
-index 9b41b7dda84f..ac785d15ced4 100644
---- a/sound/usb/card.h
-+++ b/sound/usb/card.h
-@@ -37,6 +37,7 @@ struct audioformat {
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index 99ec9d5caa58..bbc7116c9543 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -748,11 +748,11 @@ int snd_usb_pcm_resume(struct snd_usb_stream *as)
+ {
+ 	int ret;
  
- struct snd_usb_substream;
- struct snd_usb_endpoint;
-+struct snd_usb_power_domain;
+-	ret = snd_usb_pcm_change_state(&as->substream[0], UAC3_PD_STATE_D0);
++	ret = snd_usb_pcm_change_state(&as->substream[0], UAC3_PD_STATE_D1);
+ 	if (ret < 0)
+ 		return ret;
  
- struct snd_urb_ctx {
- 	struct urb *urb;
-@@ -115,6 +116,7 @@ struct snd_usb_substream {
- 	int interface;	/* current interface */
- 	int endpoint;	/* assigned endpoint */
- 	struct audioformat *cur_audiofmt;	/* current audioformat pointer (for hw_params callback) */
-+	struct snd_usb_power_domain *str_pd;	/* UAC3 Power Domain for streaming path */
- 	snd_pcm_format_t pcm_format;	/* current audio format (for hw_params callback) */
- 	unsigned int channels;		/* current number of channels (for hw_params callback) */
- 	unsigned int channels_max;	/* max channels in the all audiofmts */
-diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-index 729afd808cc4..c0567fa1e84b 100644
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -37,6 +37,7 @@
- #include "format.h"
- #include "clock.h"
- #include "stream.h"
-+#include "power.h"
+-	ret = snd_usb_pcm_change_state(&as->substream[1], UAC3_PD_STATE_D0);
++	ret = snd_usb_pcm_change_state(&as->substream[1], UAC3_PD_STATE_D1);
+ 	if (ret < 0)
+ 		return ret;
  
- /*
-  * free a substream
-@@ -53,6 +54,7 @@ static void free_substream(struct snd_usb_substream *subs)
- 		kfree(fp);
- 	}
- 	kfree(subs->rate_list.list);
-+	kfree(subs->str_pd);
+@@ -803,16 +803,22 @@ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
+ 	ret = snd_usb_lock_shutdown(subs->stream->chip);
+ 	if (ret < 0)
+ 		return ret;
++
++	ret = snd_usb_pcm_change_state(subs, UAC3_PD_STATE_D0);
++	if (ret < 0)
++		goto unlock;
++
+ 	ret = set_format(subs, fmt);
+-	snd_usb_unlock_shutdown(subs->stream->chip);
+ 	if (ret < 0)
+-		return ret;
++		goto unlock;
+ 
+ 	subs->interface = fmt->iface;
+ 	subs->altset_idx = fmt->altset_idx;
+ 	subs->need_setup_ep = true;
+ 
+-	return 0;
++ unlock:
++	snd_usb_unlock_shutdown(subs->stream->chip);
++	return ret;
  }
  
+ /*
+@@ -869,6 +875,10 @@ static int snd_usb_pcm_prepare(struct snd_pcm_substream *substream)
+ 	snd_usb_endpoint_sync_pending_stop(subs->sync_endpoint);
+ 	snd_usb_endpoint_sync_pending_stop(subs->data_endpoint);
  
-@@ -82,7 +84,8 @@ static void snd_usb_audio_pcm_free(struct snd_pcm *pcm)
++	ret = snd_usb_pcm_change_state(subs, UAC3_PD_STATE_D0);
++	if (ret < 0)
++		goto unlock;
++
+ 	ret = set_format(subs, subs->cur_audiofmt);
+ 	if (ret < 0)
+ 		goto unlock;
+@@ -1313,6 +1323,7 @@ static int snd_usb_pcm_close(struct snd_pcm_substream *substream)
+ 	int direction = substream->stream;
+ 	struct snd_usb_stream *as = snd_pcm_substream_chip(substream);
+ 	struct snd_usb_substream *subs = &as->substream[direction];
++	int ret;
  
- static void snd_usb_init_substream(struct snd_usb_stream *as,
- 				   int stream,
--				   struct audioformat *fp)
-+				   struct audioformat *fp,
-+				   struct snd_usb_power_domain *pd)
- {
- 	struct snd_usb_substream *subs = &as->substream[stream];
+ 	stop_endpoints(subs, true);
  
-@@ -107,6 +110,9 @@ static void snd_usb_init_substream(struct snd_usb_stream *as,
+@@ -1321,7 +1332,10 @@ static int snd_usb_pcm_close(struct snd_pcm_substream *substream)
+ 	    !snd_usb_lock_shutdown(subs->stream->chip)) {
+ 		usb_set_interface(subs->dev, subs->interface, 0);
+ 		subs->interface = -1;
++		ret = snd_usb_pcm_change_state(subs, UAC3_PD_STATE_D1);
+ 		snd_usb_unlock_shutdown(subs->stream->chip);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	subs->pcm_substream = NULL;
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index c0567fa1e84b..8fe3b0e00e45 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -110,8 +110,12 @@ static void snd_usb_init_substream(struct snd_usb_stream *as,
  	if (fp->channels > subs->channels_max)
  		subs->channels_max = fp->channels;
  
-+	if (pd)
-+		subs->str_pd = pd;
-+
+-	if (pd)
++	if (pd) {
+ 		subs->str_pd = pd;
++		/* Initialize Power Domain to idle status D1 */
++		snd_usb_power_domain_set(subs->stream->chip, pd,
++					 UAC3_PD_STATE_D1);
++	}
+ 
  	snd_usb_preallocate_buffer(subs);
  }
- 
-@@ -468,9 +474,11 @@ snd_pcm_chmap_elem *convert_chmap_v3(struct uac3_cluster_header_descriptor
-  * fmt_list and will be freed on the chip instance release. do not free
-  * fp or do remove it from the substream fmt_list to avoid double-free.
-  */
--int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
--			     int stream,
--			     struct audioformat *fp)
-+static int __snd_usb_add_audio_stream(struct snd_usb_audio *chip,
-+				      int stream,
-+				      struct audioformat *fp,
-+				      struct snd_usb_power_domain *pd)
-+
- {
- 	struct snd_usb_stream *as;
- 	struct snd_usb_substream *subs;
-@@ -498,7 +506,7 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 		err = snd_pcm_new_stream(as->pcm, stream, 1);
- 		if (err < 0)
- 			return err;
--		snd_usb_init_substream(as, stream, fp);
-+		snd_usb_init_substream(as, stream, fp, pd);
- 		return add_chmap(as->pcm, stream, subs);
- 	}
- 
-@@ -526,7 +534,7 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 	else
- 		strcpy(pcm->name, "USB Audio");
- 
--	snd_usb_init_substream(as, stream, fp);
-+	snd_usb_init_substream(as, stream, fp, pd);
- 
- 	/*
- 	 * Keep using head insertion for M-Audio Audiophile USB (tm) which has a
-@@ -544,6 +552,21 @@ int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
- 	return add_chmap(pcm, stream, &as->substream[stream]);
- }
- 
-+int snd_usb_add_audio_stream(struct snd_usb_audio *chip,
-+			     int stream,
-+			     struct audioformat *fp)
-+{
-+	return __snd_usb_add_audio_stream(chip, stream, fp, NULL);
-+}
-+
-+static int snd_usb_add_audio_stream_v3(struct snd_usb_audio *chip,
-+				       int stream,
-+				       struct audioformat *fp,
-+				       struct snd_usb_power_domain *pd)
-+{
-+	return __snd_usb_add_audio_stream(chip, stream, fp, pd);
-+}
-+
- static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
- 					 struct usb_host_interface *alts,
- 					 int protocol, int iface_no)
-@@ -819,6 +842,7 @@ snd_usb_get_audioformat_uac12(struct snd_usb_audio *chip,
- static struct audioformat *
- snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 			     struct usb_host_interface *alts,
-+			     struct snd_usb_power_domain **pd_out,
- 			     int iface_no, int altset_idx,
- 			     int altno, int stream)
- {
-@@ -829,6 +853,7 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 	struct uac3_as_header_descriptor *as = NULL;
- 	struct uac3_hc_descriptor_header hc_header;
- 	struct snd_pcm_chmap_elem *chmap;
-+	struct snd_usb_power_domain *pd;
- 	unsigned char badd_profile;
- 	u64 badd_formats = 0;
- 	unsigned int num_channels;
-@@ -1008,12 +1033,28 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
- 		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
- 
-+		pd = kzalloc(sizeof(pd), GFP_KERNEL);
-+		if (!pd) {
-+			kfree(fp->rate_table);
-+			kfree(fp);
-+			return NULL;
-+		}
-+		pd->pd_id = (stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-+					UAC3_BADD_PD_ID10 : UAC3_BADD_PD_ID11;
-+		pd->pd_d1d0_rec = UAC3_BADD_PD_RECOVER_D1D0;
-+		pd->pd_d2d0_rec = UAC3_BADD_PD_RECOVER_D2D0;
-+
- 	} else {
- 		fp->attributes = parse_uac_endpoint_attributes(chip, alts,
- 							       UAC_VERSION_3,
- 							       iface_no);
-+
-+		pd = snd_usb_find_power_domain(chip->ctrl_intf,
-+					       as->bTerminalLink);
-+
- 		/* ok, let's parse further... */
- 		if (snd_usb_parse_audio_format_v3(chip, fp, as, stream) < 0) {
-+			kfree(pd);
- 			kfree(fp->chmap);
- 			kfree(fp->rate_table);
- 			kfree(fp);
-@@ -1021,6 +1062,9 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
- 		}
- 	}
- 
-+	if (pd)
-+		*pd_out = pd;
-+
- 	return fp;
- }
- 
-@@ -1032,6 +1076,7 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 	struct usb_interface_descriptor *altsd;
- 	int i, altno, err, stream;
- 	struct audioformat *fp = NULL;
-+	struct snd_usb_power_domain *pd = NULL;
- 	int num, protocol;
- 
- 	dev = chip->dev;
-@@ -1114,7 +1159,7 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 			break;
- 		}
- 		case UAC_VERSION_3:
--			fp = snd_usb_get_audioformat_uac3(chip, alts,
-+			fp = snd_usb_get_audioformat_uac3(chip, alts, &pd,
- 						iface_no, i, altno, stream);
- 			break;
- 		}
-@@ -1125,9 +1170,14 @@ int snd_usb_parse_audio_interface(struct snd_usb_audio *chip, int iface_no)
- 			return PTR_ERR(fp);
- 
- 		dev_dbg(&dev->dev, "%u:%d: add audio endpoint %#x\n", iface_no, altno, fp->endpoint);
--		err = snd_usb_add_audio_stream(chip, stream, fp);
-+		if (protocol == UAC_VERSION_3)
-+			err = snd_usb_add_audio_stream_v3(chip, stream, fp, pd);
-+		else
-+			err = snd_usb_add_audio_stream(chip, stream, fp);
-+
- 		if (err < 0) {
- 			list_del(&fp->list); /* unlink for avoiding double-free */
-+			kfree(pd);
- 			kfree(fp->rate_table);
- 			kfree(fp->chmap);
- 			kfree(fp);
 -- 
 2.11.0
 
