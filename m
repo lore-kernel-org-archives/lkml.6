@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC2BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF3AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15960208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15960208A3
+	by mail.kernel.org (Postfix) with ESMTP id 04E8B208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E8B208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbeGaIQO (ORCPT
+        id S1731564AbeGaIQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:16:14 -0400
+        Tue, 31 Jul 2018 04:16:16 -0400
 Received: from mga09.intel.com ([134.134.136.24]:59929 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeGaIQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:16:13 -0400
+        id S1726086AbeGaIQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:16:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 23:37:29 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 23:37:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,426,1526367600"; 
-   d="scan'208";a="61154191"
+   d="scan'208";a="61154204"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga008.jf.intel.com with ESMTP; 30 Jul 2018 23:37:27 -0700
+  by orsmga008.jf.intel.com with ESMTP; 30 Jul 2018 23:37:30 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next 04/12] mei: restrict dma ring support to hbm version 2.1
-Date:   Tue, 31 Jul 2018 09:35:36 +0300
-Message-Id: <20180731063544.25540-5-tomas.winkler@intel.com>
+Subject: [char-misc-next 06/12] mei: dma ring buffers allocation
+Date:   Tue, 31 Jul 2018 09:35:38 +0300
+Message-Id: <20180731063544.25540-7-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180731063544.25540-1-tomas.winkler@intel.com>
 References: <20180731063544.25540-1-tomas.winkler@intel.com>
@@ -47,84 +47,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only a firmware with version 2.1 and above supports dma ring feature.
+Allocate DMA ring buffers from managed coherent memory.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/misc/mei/debugfs.c | 2 ++
- drivers/misc/mei/hbm.c     | 6 ++++++
- drivers/misc/mei/hw.h      | 6 ++++++
- drivers/misc/mei/mei_dev.h | 2 ++
- 4 files changed, 16 insertions(+)
+ drivers/misc/mei/Makefile   |   1 +
+ drivers/misc/mei/dma-ring.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/misc/mei/hw-me.c    |   6 +++
+ drivers/misc/mei/mei_dev.h  |  20 +++++++++
+ 4 files changed, 130 insertions(+)
+ create mode 100644 drivers/misc/mei/dma-ring.c
 
-diff --git a/drivers/misc/mei/debugfs.c b/drivers/misc/mei/debugfs.c
-index c815da91089c..7b5df8fd6c5a 100644
---- a/drivers/misc/mei/debugfs.c
-+++ b/drivers/misc/mei/debugfs.c
-@@ -183,6 +183,8 @@ static ssize_t mei_dbgfs_read_devstate(struct file *fp, char __user *ubuf,
- 				 dev->hbm_f_fa_supported);
- 		pos += scnprintf(buf + pos, bufsz - pos, "\tOS: %01d\n",
- 				 dev->hbm_f_os_supported);
-+		pos += scnprintf(buf + pos, bufsz - pos, "\tDR: %01d\n",
-+				 dev->hbm_f_dr_supported);
- 	}
- 
- 	pos += scnprintf(buf + pos, bufsz - pos, "pg:  %s, %s\n",
-diff --git a/drivers/misc/mei/hbm.c b/drivers/misc/mei/hbm.c
-index b0086c4aefe4..09e233d4c0de 100644
---- a/drivers/misc/mei/hbm.c
-+++ b/drivers/misc/mei/hbm.c
-@@ -1007,6 +1007,12 @@ static void mei_hbm_config_features(struct mei_device *dev)
- 	/* OS ver message Support */
- 	if (dev->version.major_version >= HBM_MAJOR_VERSION_OS)
- 		dev->hbm_f_os_supported = 1;
+diff --git a/drivers/misc/mei/Makefile b/drivers/misc/mei/Makefile
+index cd6825afa8e1..d9215fc4e499 100644
+--- a/drivers/misc/mei/Makefile
++++ b/drivers/misc/mei/Makefile
+@@ -9,6 +9,7 @@ mei-objs += hbm.o
+ mei-objs += interrupt.o
+ mei-objs += client.o
+ mei-objs += main.o
++mei-objs += dma-ring.o
+ mei-objs += bus.o
+ mei-objs += bus-fixup.o
+ mei-$(CONFIG_DEBUG_FS) += debugfs.o
+diff --git a/drivers/misc/mei/dma-ring.c b/drivers/misc/mei/dma-ring.c
+new file mode 100644
+index 000000000000..368012116196
+--- /dev/null
++++ b/drivers/misc/mei/dma-ring.c
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
++/*
++ * Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved.
++ */
++#include <linux/dma-mapping.h>
++#include <linux/mei.h>
 +
-+	/* DMA Ring Support */
-+	if (dev->version.major_version > HBM_MAJOR_VERSION_DR ||
-+	    (dev->version.major_version == HBM_MAJOR_VERSION_DR &&
-+	     dev->version.minor_version >= HBM_MINOR_VERSION_DR))
-+		dev->hbm_f_dr_supported = 1;
++#include "mei_dev.h"
++
++/**
++ * mei_dmam_dscr_alloc - allocate a managed coherent buffer
++ *     for the dma descriptor
++ *
++ * @dev: mei_device
++ * @dscr: dma descriptor
++ *
++ * Return: 0 on success or zero allocation request
++ *         -EINVAL if size is not power of 2
++ *         -ENOMEM of allocation has failed
++ */
++static int mei_dmam_dscr_alloc(struct mei_device *dev,
++			       struct mei_dma_dscr *dscr)
++{
++	if (!dscr->size)
++		return 0;
++
++	if (WARN_ON(!is_power_of_2(dscr->size)))
++		return -EINVAL;
++
++	if (dscr->vaddr)
++		return 0;
++
++	dscr->vaddr = dmam_alloc_coherent(dev->dev, dscr->size, &dscr->daddr,
++					  GFP_KERNEL);
++	if (!dscr->vaddr)
++		return -ENOMEM;
++
++	return 0;
++}
++
++/**
++ * mei_dmam_dscr_free - free a managed coherent buffer
++ *     from the dma descriptor
++ *
++ * @dev: mei_device
++ * @dscr: dma descriptor
++ */
++static void mei_dmam_dscr_free(struct mei_device *dev,
++			       struct mei_dma_dscr *dscr)
++{
++	if (!dscr->vaddr)
++		return;
++
++	dmam_free_coherent(dev->dev, dscr->size, dscr->vaddr, dscr->daddr);
++	dscr->vaddr = NULL;
++}
++
++/**
++ * mei_dmam_ring_free - free dma ring buffers
++ *
++ * @dev: mei device
++ */
++void mei_dmam_ring_free(struct mei_device *dev)
++{
++	int i;
++
++	for (i = 0; i < DMA_DSCR_NUM; i++)
++		mei_dmam_dscr_free(dev, &dev->dr_dscr[i]);
++}
++
++/**
++ * mei_dmam_ring_alloc - allocate dma ring buffers
++ *
++ * @dev: mei device
++ *
++ * Return: -ENOMEM on allocation failure 0 otherwise
++ */
++int mei_dmam_ring_alloc(struct mei_device *dev)
++{
++	int i;
++
++	for (i = 0; i < DMA_DSCR_NUM; i++)
++		if (mei_dmam_dscr_alloc(dev, &dev->dr_dscr[i]))
++			goto err;
++
++	return 0;
++
++err:
++	mei_dmam_ring_free(dev);
++	return -ENOMEM;
++}
++
++/**
++ * mei_dma_ring_is_allocated - check if dma ring is allocated
++ *
++ * @dev: mei device
++ *
++ * Return: true if dma ring is allocated
++ */
++bool mei_dma_ring_is_allocated(struct mei_device *dev)
++{
++	return !!dev->dr_dscr[DMA_DSCR_HOST].vaddr;
++}
+diff --git a/drivers/misc/mei/hw-me.c b/drivers/misc/mei/hw-me.c
+index 0759c3a668de..3fbbadfa2ae1 100644
+--- a/drivers/misc/mei/hw-me.c
++++ b/drivers/misc/mei/hw-me.c
+@@ -1471,15 +1471,21 @@ struct mei_device *mei_me_dev_init(struct pci_dev *pdev,
+ {
+ 	struct mei_device *dev;
+ 	struct mei_me_hw *hw;
++	int i;
+ 
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(struct mei_device) +
+ 			   sizeof(struct mei_me_hw), GFP_KERNEL);
+ 	if (!dev)
+ 		return NULL;
++
+ 	hw = to_me_hw(dev);
+ 
++	for (i = 0; i < DMA_DSCR_NUM; i++)
++		dev->dr_dscr[i].size = cfg->dma_size[i];
++
+ 	mei_device_init(dev, &pdev->dev, &mei_me_hw_ops);
+ 	hw->cfg = cfg;
++
+ 	return dev;
  }
  
- /**
-diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
-index 5fb8844a6db5..65655925791a 100644
---- a/drivers/misc/mei/hw.h
-+++ b/drivers/misc/mei/hw.h
-@@ -80,6 +80,12 @@
- #define HBM_MINOR_VERSION_OS               0
- #define HBM_MAJOR_VERSION_OS               2
- 
-+/*
-+ * MEI version with dma ring support
-+ */
-+#define HBM_MINOR_VERSION_DR               1
-+#define HBM_MAJOR_VERSION_DR               2
-+
- /* Host bus message command opcode */
- #define MEI_HBM_CMD_OP_MSK                  0x7f
- /* Host bus message command RESPONSE */
 diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
-index 975afaa38a66..377397e1b5a5 100644
+index 377397e1b5a5..a6796e3f712b 100644
 --- a/drivers/misc/mei/mei_dev.h
 +++ b/drivers/misc/mei/mei_dev.h
-@@ -418,6 +418,7 @@ struct mei_fw_version {
-  * @hbm_f_fa_supported  : hbm feature fixed address client
-  * @hbm_f_ie_supported  : hbm feature immediate reply to enum request
-  * @hbm_f_os_supported  : hbm feature support OS ver message
-+ * @hbm_f_dr_supported  : hbm feature dma ring supported
-  *
-  * @fw_ver : FW versions
-  *
-@@ -495,6 +496,7 @@ struct mei_device {
- 	unsigned int hbm_f_fa_supported:1;
- 	unsigned int hbm_f_ie_supported:1;
- 	unsigned int hbm_f_os_supported:1;
-+	unsigned int hbm_f_dr_supported:1;
+@@ -122,6 +122,19 @@ struct mei_msg_data {
+ 	unsigned char *data;
+ };
  
- 	struct mei_fw_version fw_ver[MEI_MAX_FW_VER_BLOCKS];
++/**
++ * struct mei_dma_dscr - dma address descriptor
++ *
++ * @vaddr: dma buffer virtual address
++ * @daddr: dma buffer physical address
++ * @size : dma buffer size
++ */
++struct mei_dma_dscr {
++	void *vaddr;
++	dma_addr_t daddr;
++	size_t size;
++};
++
+ /* Maximum number of processed FW status registers */
+ #define MEI_FW_STATUS_MAX 6
+ /* Minimal  buffer for FW status string (8 bytes in dw + space or '\0') */
+@@ -409,6 +422,7 @@ struct mei_fw_version {
+  * @rd_msg_hdr  : read message header storage
+  *
+  * @hbuf_is_ready : query if the host host/write buffer is ready
++ * @dr_dscr: DMA ring descriptors: TX, RX, and CTRL
+  *
+  * @version     : HBM protocol version in use
+  * @hbm_f_pg_supported  : hbm feature pgi protocol
+@@ -488,6 +502,8 @@ struct mei_device {
+ 	/* write buffer */
+ 	bool hbuf_is_ready;
  
++	struct mei_dma_dscr dr_dscr[DMA_DSCR_NUM];
++
+ 	struct hbm_version version;
+ 	unsigned int hbm_f_pg_supported:1;
+ 	unsigned int hbm_f_dc_supported:1;
+@@ -578,6 +594,10 @@ int mei_restart(struct mei_device *dev);
+ void mei_stop(struct mei_device *dev);
+ void mei_cancel_work(struct mei_device *dev);
+ 
++int mei_dmam_ring_alloc(struct mei_device *dev);
++void mei_dmam_ring_free(struct mei_device *dev);
++bool mei_dma_ring_is_allocated(struct mei_device *dev);
++
+ /*
+  *  MEI interrupt functions prototype
+  */
 -- 
 2.14.4
 
