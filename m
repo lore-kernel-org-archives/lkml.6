@@ -2,127 +2,137 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FC7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73B3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60EBE2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D4852083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:29:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nVRRkfeX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EBE2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUtvH8Ze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4852083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732168AbeGaCGW (ORCPT
+        id S1732203AbeGaCG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:06:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54681 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732079AbeGaCGV (ORCPT
+        Mon, 30 Jul 2018 22:06:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42205 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732078AbeGaCG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:06:21 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so1144780wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 17:28:49 -0700 (PDT)
+        Mon, 30 Jul 2018 22:06:29 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so5265457pff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 17:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lZCTNO7l1zXWs/lTPNJh3hnDtpHCOLiA517x/IgDS2o=;
-        b=nVRRkfeXPb8nc3WyZDCd5n8sT1Jvji440Ws5c22rMNRaY4XpdC9vO6SeqwWCUkzWRG
-         fA9S9r69vL6IIX0XIv0NI+ro85EYeseYGke7Aya4zVz6hWZ2Z/cDPtfz8DZTSM6gYTsH
-         sbHRW/JTOZauTWbd3YkK2Bn7U5DS7ZZvUF63C0hXYBwyk1JVMFNINblrTVB71wzG8gr1
-         7Pg8J5w7fUTX+DBnBeNj1l5UUgP82Aa0TQL+MnpjTHzSXxWuIW2hjJFdK08yNp4Zz2rX
-         p+1LENuPDeH3QypYxi5Ry8SYLhwGOzwyIFEjgJ9cu+bFwPcxMg4gZ8RJtpVAaMnz4abp
-         sljQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WOEEzw6l0oxuJRtKoHZWTGuWWPrgJkNGEW0hNGZO7EU=;
+        b=RUtvH8ZelUucGqhKCV5IInr/pxCtefoPGZYinY006SyBz//4HKfhr/jXcxNJRv+Hp+
+         9z5osLajceLY87+1qali79Rx3llu1xb1S6ANYU5WXYPT9Sj4bYdZKC32/Ve8Hy86V+Oj
+         OgpKZ+yzc1X29n802oD+CPmNFwPOZv6GWKgG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lZCTNO7l1zXWs/lTPNJh3hnDtpHCOLiA517x/IgDS2o=;
-        b=ozvonDjjrlFQxLquCU2VWPysjrwqZiYaKUQpjOoMbgoPp9moAwaWikNzqeRa65j+P4
-         k+5t6Vf+/R1V/VcoXr2VSmSs44zASZI7BFmkW7kAG+9yRgpLhtZIKx4OMucjsEgTPxz/
-         D76YPvdW0Xv8Xdakah3RIGhcyKJES5+hTLxgbAjADET/ER45jbJAfpUGJd2pDKo7m0Pt
-         3WK98hn0uWUPXaehHMR1sahqsGdIx3dG1c0YZl79Pk94zm7JSnpTkeJFSNqV3iTPqEta
-         uFCaNmrg1IFiwqMip3XlLQxojjgwaeAoFRO0naBLWbv3vI+9XPm56ZsEdFfDH9xnfVwc
-         uSnA==
-X-Gm-Message-State: AOUpUlEXTTRcPoWATmrCk7JCsAQlFmOvD+jf53vra25BdAYTWQU50vYM
-        hWr8kWA/P/MX9Jdb5gaQwA3OLoOGg3DSqHkVvDIRvw==
-X-Google-Smtp-Source: AAOMgpfQ37r8cvVgTI9HQbfcf0FzWF1dwVer05CG/jgBXYnxzwrFQteqrETh2uv5mtXAN3RdNHduVpaaIoApz/bCmGw=
-X-Received: by 2002:a1c:f306:: with SMTP id q6-v6mr763965wmq.111.1532996928875;
- Mon, 30 Jul 2018 17:28:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=WOEEzw6l0oxuJRtKoHZWTGuWWPrgJkNGEW0hNGZO7EU=;
+        b=pFMUxZcdwYTiyrGfX7ogCW8zyXrNdcWmAl/8C2ngUzXPpiWpJJp6chtRP/T8+wBx7J
+         FvMQwa/x+ek+KQVXZMc7xtOyfdtzEQ/UU4iG1k6R4qvvCNlE4lQXbiwy7i25EhNZqHqa
+         pRvz63uF8Z2L9zPVeOFkRf0OJNvhkwXETmjHWu1uUFCJ6/lC3YrqtjF7Nkm2j25k50Po
+         wnsc78hiPNKCz0SxNwTe6rdKUsgCEffpYlGiUCTQ0ZFSY5tgkyUZqF1dqR0Py1m4GbvO
+         aMeatmA/yUYCy8EC3sG5sEY/3x8bKq9TzuY9PnQVVSruRTv2//28d1wjb9KFZI8dsmbM
+         zQhQ==
+X-Gm-Message-State: AOUpUlGbBOJU1VNDY4ZBh+AMHMjnySP0jPtbSUiV+DgLn0jQ2sODEkdk
+        nVxZsZ3QuMiCGqPFppHi19cB7g==
+X-Google-Smtp-Source: AAOMgpcKT3Qzt86dUVMBUk+fFSiF89dfDwYbwjq5XUEDl/d2WER1zZAy6lIGuk3KK2VzCkbtK75m9w==
+X-Received: by 2002:a63:e116:: with SMTP id z22-v6mr17620246pgh.89.1532996937654;
+        Mon, 30 Jul 2018 17:28:57 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id v4-v6sm13709038pgr.36.2018.07.30.17.28.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 17:28:57 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 09:28:31 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/1] arm64: kexec: machine_kexec should call
+ __flush_icache_range
+Message-ID: <20180731002830.GJ11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <faf6c7cb-d9da-9a9c-cc0f-43c95e864ca2@oracle.com>
+ <e07fc674-2a71-29ae-2212-46ee5f79593d@oracle.com>
+ <20180730161641.6zxxy3lxp27tznck@armageddon.cambridge.arm.com>
+ <20180730162235.GC4276@arm.com>
+ <2651847f-79ea-fe2a-c1d7-efe4d11702b4@oracle.com>
+ <20180730165757.GF4276@arm.com>
+ <d9bac115-794c-4225-bcaa-91b6847604a2@oracle.com>
 MIME-Version: 1.0
-References: <20180724210923.GA20168@bombadil.infradead.org>
- <20180725023728.44630-1-cannonmatthews@google.com> <20180730162926.GD11890@nazgul.tnic>
-In-Reply-To: <20180730162926.GD11890@nazgul.tnic>
-From:   Cannon Matthews <cannonmatthews@google.com>
-Date:   Mon, 30 Jul 2018 17:28:37 -0700
-Message-ID: <CAJfu=UcafhF4EEXxFAT+1v8F4i7GJ99z2wKc2Z5PJ8THst2VKw@mail.gmail.com>
-Subject: Re: [PATCH v2] RFC: clear 1G pages with streaming stores on x86
-To:     bp@alien8.de
-Cc:     mhocko@kernel.org, mike.kravetz@oracle.com,
-        akpm@linux-foundation.org, willy@infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Salman Qazi <sqazi@google.com>, Paul Turner <pjt@google.com>,
-        David Matlack <dmatlack@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Alain Trinh <nullptr@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9bac115-794c-4225-bcaa-91b6847604a2@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for all the feedback from everyone.
+On Mon, Jul 30, 2018 at 04:36:28PM -0500, Dave Kleikamp wrote:
+> On 07/30/2018 11:57 AM, Will Deacon wrote:
+> > On Mon, Jul 30, 2018 at 11:46:24AM -0500, Dave Kleikamp wrote:
+> >> On 07/30/2018 11:22 AM, Will Deacon wrote:
+> >>> On Mon, Jul 30, 2018 at 05:16:42PM +0100, Catalin Marinas wrote:
+> >>>> On Mon, Jul 30, 2018 at 10:29:21AM -0500, Dave Kleikamp wrote:
+> >>>>> machine_kexec flushes the reboot_code_buffer from the icache
+> >>>>> after stopping the other cpus.
+> >>>>>
+> >>>>> Commit 3b8c9f1cdfc5 ("arm64: IPI each CPU after invalidating the I-cache
+> >>>>> for kernel mappings") added an IPI call to flush_icache_range, which
+> >>>>> causes a hang here, so replace the call with __flush_icache_range
+> >>>>
+> >>>> While machine_kexec() may be called with interrupts disabled (IIUC) and
+> >>>> we shouldn't IPI other CPUs, I don't understand why it hangs here. Are
+> >>>> there any other CPUs online at this point?
+> >>>
+> >>> The BUG_ON and WARN_ON at the start of machine_kexec() suggest to me that
+> >>> this should only happen if we're kexec'ing a crash kernel and
+> >>> smp_crash_stop_failed(). Is that something we need to care about?
+> >>
+> >> I observed the hang trying to kexec a crash kernel and I did not see the
+> >> warning that smp_crash_stop_failed(). I'm not exactly sure why
+> >> flush_icache_range() hung (but it did), but I think that
+> >> __flush_icache_range() makes more sense here anyway.
+> > 
+> > Yeah, I'll pick the patch up, but it would be nice to understand the
+> > failure case you observed.
+> 
+> I see why it failed. ipi_cpu_crash_stop() does not call
+> set_cpu_online(cpu, false) the way ipi_cpu_stop() does. So
+> cpu_online_mask is still populated with the stopped cpus.
+> 
+> Any reason why it isn't called there?
 
-I am going to try to fix this up, and do some more robust benchmarking,
-including the 2MB case, and try to have an updated/non-RFC patch(es) in
-a few days.
+Because I wanted that saved cpu-related state be as close to as it was
+at panic.
+If cpus go offline, the core dump would show that all the cores but
+a panicked one be offline whether or not they actually were.
 
-Thanks!
-Cannon
-On Mon, Jul 30, 2018 at 9:29 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Jul 24, 2018 at 07:37:28PM -0700, Cannon Matthews wrote:
-> > diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-> > index 88acd349911b..81a39804ac72 100644
-> > --- a/arch/x86/lib/clear_page_64.S
-> > +++ b/arch/x86/lib/clear_page_64.S
-> > @@ -49,3 +49,23 @@ ENTRY(clear_page_erms)
-> >       ret
-> >  ENDPROC(clear_page_erms)
-> >  EXPORT_SYMBOL_GPL(clear_page_erms)
-> > +
-> > +/*
-> > + * Zero memory using non temporal stores, bypassing the cache.
-> > + * Requires an `sfence` (wmb()) afterwards.
-> > + * %rdi - destination.
-> > + * %rsi - page size. Must be 64 bit aligned.
-> > +*/
-> > +ENTRY(__clear_page_nt)
-> > +     leaq    (%rdi,%rsi), %rdx
-> > +     xorl    %eax, %eax
-> > +     .p2align 4,,10
-> > +     .p2align 3
-> > +.L2:
-> > +     movnti  %rax, (%rdi)
-> > +     addq    $8, %rdi
-> > +     cmpq    %rdx, %rdi
-> > +     jne     .L2
-> > +     ret
-> > +ENDPROC(__clear_page_nt)
-> > +EXPORT_SYMBOL(__clear_page_nt)
->
-> EXPORT_SYMBOL_GPL like the other functions in that file.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> ECO tip #101: Trim your mails when you reply.
-> --
+Thanks,
+-Takahiro AKASHI
+
+> Thanks,
+> Dave
+> 
+> > 
+> > Will
+> > 
