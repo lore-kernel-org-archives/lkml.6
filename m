@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020CFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65A6208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0403208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="a9FldlGX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65A6208A2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="U98U5rzM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0403208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731845AbeGaIul (ORCPT
+        id S1732223AbeGaIxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:41 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.102]:32706 "EHLO
+        Tue, 31 Jul 2018 04:53:42 -0400
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.102]:16865 "EHLO
         mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728701AbeGaIuk (ORCPT
+        with ESMTP id S1728607AbeGaIul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:50:40 -0400
+        Tue, 31 Jul 2018 04:50:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021107;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=N9zVZKfYd3xX6IS/2VlshfNUI2z0/6ZBbymotE1SfNk=;
-        b=a9FldlGX2WETsCsva+QnpHluPdv2TZnFYbkgvOMaGT0qkut2e1SUbKqC0t4HyHfJWf
-        Ehvnc8usD7gu6Xyy+44OD+PIKdkOdtCjcR+fizEmXqE5d0OUtm4P82AYa9h3JLseZaDO
-        DCjupfPkVC3kDoGj9jGJ0g/wCrnxo/Up21VVU+HzS2B+JqmHnZZrJF+wxbjbBjs9VlmF
-        GFytzBhE6DoMH3l9MbqmwONwmYM16Z22uyBV9Qzas4ZVgiCIduiBQmDZw70jpVNvrJNF
-        knJRDNFn9PimXoeR3jjZ6AaUtR1/KDbS9vucgu9JbfsxIyHUDMYyPnGZfqtXFFb5v/Bt
-        gBAA==
+        bh=1yEB419X6s35m8jwVJ1b6BK3DtIG1YrfZNqj31y0PO8=;
+        b=U98U5rzM3um1eZ4eBnkfLVYQguXDFesKd5gTEtJqmcnKsYxtiwh4F20deSXdxIcpd0
+        5Gb9j6Zt5PpugpsPBP+xq6WK6anHbzaUTF6t2qFFfeJYbDhe4mMcDyMKsNrhQtBQbctw
+        snWvKcihLNfzwwXtUcVpAISpMyhOTX9Vlzhv9EE1ROrdri3RehSOfPIZ1OOegU1OU0qs
+        oDB6dTsIw6F2GJfDvvsIeA+jFwfcuGcrcAeROelpwmnSe2fpoGxbTessowvOEgG8UaQS
+        /2W+UjS/AEe5JusbE65TY1nB/s1TDgZpKi0Gu1s/coTmwwmn0Y6JN8PXB+suqHQJvB5t
+        5IuA==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BewOa
+        with ESMTPSA id 6047f4u6V7BfwOb
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:40 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:41 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 09/32] ARM: dts: omap3-gta04: make NAND partitions compatible with recent U-Boot
-Date:   Tue, 31 Jul 2018 09:11:12 +0200
-Message-Id: <40d8cad9dfc3f96053e1a13905b88d05cd142f6c.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 10/32] ARM: dts: omap3-gta04: update gpmc NAND setup
+Date:   Tue, 31 Jul 2018 09:11:13 +0200
+Message-Id: <39dafcd863ec03a531ac86c602f96450ba3dd71b.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,53 +69,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vendor defined U-Boot has changed the partition scheme a while ago:
-
-* kernel partition 6MB
-* file system partition uses the remainder up to end of the NAND
-* increased size of the environment partition (to get an OneNAND compatible base address)
-* shrink the U-Boot partition
-
-Let's be compatible (e.g. Debian kernel built from upstream).
+to better match omap3-beagle.dts (which was the basis
+of designing the GTA04).
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/omap3-gta04.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index b22e35959c29..34e9a3c05cb5 100644
+index 34e9a3c05cb5..8e785cff539d 100644
 --- a/arch/arm/boot/dts/omap3-gta04.dtsi
 +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -645,22 +645,22 @@
+@@ -616,27 +616,27 @@
+ 		interrupt-parent = <&gpmc>;
+ 		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
+ 			     <1 IRQ_TYPE_NONE>;	/* termcount */
++		ti,nand-ecc-opt = "ham1";
++		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
+ 		nand-bus-width = <16>;
+-		ti,nand-ecc-opt = "bch8";
++		#address-cells = <1>;
++		#size-cells = <1>;
  
- 		bootloaders@80000 {
- 			label = "U-Boot";
--			reg = <0x80000 0x1e0000>;
-+			reg = <0x80000 0x1c0000>;
- 		};
+-		gpmc,sync-clk-ps = <0>;
++		gpmc,device-width = <2>;
+ 		gpmc,cs-on-ns = <0>;
+ 		gpmc,cs-rd-off-ns = <44>;
+ 		gpmc,cs-wr-off-ns = <44>;
+ 		gpmc,adv-on-ns = <6>;
+ 		gpmc,adv-rd-off-ns = <34>;
+ 		gpmc,adv-wr-off-ns = <44>;
+-		gpmc,we-off-ns = <40>;
+ 		gpmc,oe-off-ns = <54>;
++		gpmc,we-off-ns = <40>;
+ 		gpmc,access-ns = <64>;
+ 		gpmc,rd-cycle-ns = <82>;
+ 		gpmc,wr-cycle-ns = <82>;
+ 		gpmc,wr-access-ns = <40>;
+ 		gpmc,wr-data-mux-bus-ns = <0>;
+-		gpmc,device-width = <2>;
+-
+-		#address-cells = <1>;
+-		#size-cells = <1>;
++		gpmc,sync-clk-ps = <0>;
  
--		bootloaders_env@260000 {
-+		bootloaders_env@240000 {
- 			label = "U-Boot Env";
--			reg = <0x260000 0x20000>;
-+			reg = <0x240000 0x40000>;
- 		};
- 
- 		kernel@280000 {
- 			label = "Kernel";
--			reg = <0x280000 0x400000>;
-+			reg = <0x280000 0x600000>;
- 		};
- 
--		filesystem@680000 {
-+		filesystem@880000 {
- 			label = "File System";
--			reg = <0x680000 0xf980000>;
-+			reg = <0x880000 0>;	/* 0 = MTDPART_SIZ_FULL */
- 		};
- 	};
- };
+ 		x-loader@0 {
+ 			label = "X-Loader";
 -- 
 2.12.2
 
