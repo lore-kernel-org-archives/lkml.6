@@ -6,55 +6,91 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375FDC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C99C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D692083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D692083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id AD7E520841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7E520841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732395AbeGaP2h (ORCPT
+        id S1732446AbeGaP3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:28:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41912 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732379AbeGaP2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:28:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D940AD4C;
-        Tue, 31 Jul 2018 13:48:12 +0000 (UTC)
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        ard <ard@kwaak.net>, Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 0/3] scsi: fcoe: memleak fixes
-Date:   Tue, 31 Jul 2018 15:46:00 +0200
-Message-Id: <20180731134603.20089-1-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.4
+        Tue, 31 Jul 2018 11:29:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38709 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732256AbeGaP2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 11:28:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E28D720799; Tue, 31 Jul 2018 15:47:52 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AF4B0207AA;
+        Tue, 31 Jul 2018 15:47:42 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microsemi.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v2 3/6] i2c: designware: allow IP specific sda_hold_time
+Date:   Tue, 31 Jul 2018 15:47:37 +0200
+Message-Id: <20180731134740.441-4-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180731134740.441-1-alexandre.belloni@bootlin.com>
+References: <20180731134740.441-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ard reported a memory leak in FCoE at [1] and this patch set contains
-the fix for this leak, a second leak I discovered while hunting the
-first leak and a use-after-free in FCoE's debugging.
+Because some old designware IPs were not supporting setting an SDA hold
+time, vendors developed their own solution. Add a way for the final driver
+to provide its own SDA hold time handling.
 
-[1] https://marc.info/?l=linux-scsi&m=153261165228133&w=2
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-Johannes Thumshirn (3):
-  fcoe: fix use-after-free in fcoe_ctlr_els_send
-  scsi: fcoe: drop frames in ELS LOGO error path
-  scsi: fcoe: clear FC_RP_STARTED flags when receiving a LOGO
+Changes in v2:
+ - rebased on i2c-next
+ - moved the if (dev->set_sda_hold_time) after the version test
 
- drivers/scsi/fcoe/fcoe_ctlr.c | 6 +++---
- drivers/scsi/libfc/fc_rport.c | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-designware-common.c | 2 ++
+ drivers/i2c/busses/i2c-designware-core.h   | 1 +
+ 2 files changed, 3 insertions(+)
 
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index e67d6c7d552c..463906a02c7f 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -201,6 +201,8 @@ int i2c_dw_set_sda_hold(struct dw_i2c_dev *dev)
+ 		dev_dbg(dev->dev, "SDA Hold Time TX:RX = %d:%d\n",
+ 			dev->sda_hold_time & ~(u32)DW_IC_SDA_HOLD_RX_MASK,
+ 			dev->sda_hold_time >> DW_IC_SDA_HOLD_RX_SHIFT);
++	} else if (dev->set_sda_hold_time) {
++		dev->set_sda_hold_time(dev);
+ 	} else if (dev->sda_hold_time) {
+ 		dev_warn(dev->dev,
+ 			"Hardware too old to adjust SDA hold time.\n");
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index 70c188d6fb6b..870444bbbcc4 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -269,6 +269,7 @@ struct dw_i2c_dev {
+ 	void			(*disable)(struct dw_i2c_dev *dev);
+ 	void			(*disable_int)(struct dw_i2c_dev *dev);
+ 	int			(*init)(struct dw_i2c_dev *dev);
++	int			(*set_sda_hold_time)(struct dw_i2c_dev *dev);
+ 	int			mode;
+ 	struct i2c_bus_recovery_info rinfo;
+ };
 -- 
-2.16.4
+2.18.0
 
