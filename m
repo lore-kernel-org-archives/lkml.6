@@ -2,339 +2,159 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB91C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5022EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EDE02083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:45:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BIBKZuEv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BebyPh2A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EDE02083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E5B52083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5B52083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeHAA1S (ORCPT
+        id S1732769AbeHAA3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:27:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35952 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732563AbeHAA1R (ORCPT
+        Tue, 31 Jul 2018 20:29:05 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42824 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731637AbeHAA3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:27:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D7DF060714; Tue, 31 Jul 2018 22:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533077084;
-        bh=hIikZFeJwSAsQuu13Jv6oMfWXL41xeEyjfDNEyH8N4k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BIBKZuEvdwHQIYT11bxSP0ihyzz/4JvPwewu+zGs2k5HreAFlg5rvHj3s5cLREtpX
-         GvGQvLSEeey4FSF3F7OKFN11G2SlCeq897Kdy0ntq3iAd/fsw4VAE3gjR3r1D2BO4U
-         HTIqStlyIaWQTIVZ0OdFPBgsGl2XAynUnLJGz0VM=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BF05D60481;
-        Tue, 31 Jul 2018 22:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533077083;
-        bh=hIikZFeJwSAsQuu13Jv6oMfWXL41xeEyjfDNEyH8N4k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BebyPh2A768cftGd9S+fRmauVhybm6jQyV1vMRt6UKFqneu53gWxb7z3WMpbLO4Ga
-         zhDMwymygvI6Cvloka/cOFgzXTG0tXmavmgw3cnkjxshvNPcHBIxlOwtaO2pYAm0CL
-         paV3W9xy4PMbqD6Af+sxQhaQauxsYXZ5h3tt2+3w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF05D60481
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     marc.zyngier@arm.com, sboyd@chromium.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, bjorn.andersson@linaro.org
-Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC 1/4] drivers: pinctrl: qcom: add wakeup capability to GPIO
-Date:   Tue, 31 Jul 2018 16:44:18 -0600
-Message-Id: <20180731224421.29062-2-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180731224421.29062-1-ilina@codeaurora.org>
-References: <20180731224421.29062-1-ilina@codeaurora.org>
+        Tue, 31 Jul 2018 20:29:04 -0400
+Received: by mail-io0-f194.google.com with SMTP id g11-v6so14460592ioq.9;
+        Tue, 31 Jul 2018 15:46:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0GSyw6So1ZUz6/wjB/2yqHo+LxE26c9lLgFJOw4S2Os=;
+        b=hWpozF9BGVvtB7ZJpyikylgcxbyW4cv85XKtl5Vvuv6W1wDP1X5O7H2y5ak35O2G3j
+         pllmJrDdKpoE6TRRviDnC00ZeFnK1G/aJuPwys5XqdkZHQzPjRF0h0LduEaIDg5aa3lv
+         UExLhEYBaDMmBgvfWg2EAgNCvNMtZrwfd2voAKsiKzWgFEM8MYKxikuhb/WgQO4ueH38
+         X1pki4Z8CXsp4raA4cWcS3VoD6bTBXoraF7Ihd0gxLOOQis0BEF22MPfwvp8lQU7we0y
+         VYlIdJaz2Qx+vfPsNXhWgkFPXHsXbGYEBOZKFp6PglyzFUgxmUWiTSzTq4JDFi6oA/jW
+         kvEw==
+X-Gm-Message-State: AOUpUlF+xBUmbJ1mQ2p3C0f8HrGngseNpHvnGR9JCGlKG+Dr897xRh4P
+        /PHsXk6QLsCscDhk7MTs6g==
+X-Google-Smtp-Source: AAOMgpftyI79kgyhclyd+zjfwBoB2ASrmTu8OtuOTNXhgEZy/MKkBKNkF263MBupQTQFk6mYdJ128A==
+X-Received: by 2002:a5e:8b4c:: with SMTP id z12-v6mr1324624iom.230.1533077191717;
+        Tue, 31 Jul 2018 15:46:31 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id y25-v6sm2151210ita.17.2018.07.31.15.46.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 15:46:31 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 16:46:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH 6/6] dt-bindings: interrupt-controller: RISC-V PLIC
+ documentation
+Message-ID: <20180731224630.GB12168@rob-hp-laptop>
+References: <20180725093649.32332-1-hch@lst.de>
+ <20180725093649.32332-7-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725093649.32332-7-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
-domain can wakeup the SoC, when interrupts and GPIOs are routed to the
-its interrupt controller. Select GPIOs that are deemed wakeup capable are
-routed to specific PDC pins. The PDC wakes up the GIC and replays the
-interrupt at the GIC and the interrupt handler for the GPIO is invoked.
+On Wed, Jul 25, 2018 at 11:36:49AM +0200, Christoph Hellwig wrote:
+> From: Palmer Dabbelt <palmer@dabbelt.com>
+> 
+> This patch adds documentation for the platform-level interrupt
+> controller (PLIC) found in all RISC-V systems.  This interrupt
+> controller routes interrupts from all the devices in the system to each
+> hart-local interrupt controller.
+> 
+> Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
+> want to change how we're specifying holes in the hart list.
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+> ---
+>  .../interrupt-controller/riscv,plic0.txt      | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+> new file mode 100644
+> index 000000000000..99cd359dbd43
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+> @@ -0,0 +1,55 @@
+> +RISC-V Platform-Level Interrupt Controller (PLIC)
+> +-------------------------------------------------
+> +
+> +The RISC-V supervisor ISA specification allows for the presence of a
+> +platform-level interrupt controller (PLIC).   The PLIC connects all external
+> +interrupts in the system to all hart contexts in the system, via the external
+> +interrupt source in each hart's hart-local interrupt controller (HLIC).  A hart
+> +context is a privilege mode in a hardware execution thread.  For example, in
+> +an 4 core system with 2-way SMT, you have 8 harts and probably at least two
+> +privilege modes per hart; machine mode and supervisor mode.
+> +
+> +Each interrupt can be enabled on per-context basis. Any context can claim
+> +a pending enabled interrupt and then release it once it has been handled.
+> +
+> +Each interrupt has a configurable priority. Higher priority interrupts are
+> +serviced firs. Each context can specify a priority threshold. Interrupts
+> +with priority below this threshold will not cause the PLIC to raise its
+> +interrupt line leading to the context.
+> +
+> +While the PLIC supports both edge-triggered and level-triggered interrupts,
+> +interrupt handlers are oblivious to this distinction and therefor it is not
+> +specific in the PLIC device-tree binding.
+> +
+> +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
+> +"riscv,plic0" device is a concrete implementation of the PLIC that contains a
+> +specific memory layout.  More details about the memory layout of the
+> +"riscv,plic0" device can be found as a comment in the device driver, or as part
+> +of the SiFive U5 Coreplex Series Manual (page 22 of the PDF of version 1.0)
+> +<https://www.sifive.com/documentation/coreplex/u5-coreplex-series-manual/>
+> +
+> +Required properties:
+> +- compatible : "riscv,plic0"
 
-Setup the PDC IRQ when the GPIO's IRQ is requested and enable the PDC
-IRQ when the GPIO's IRQ is enabled.
+Perhaps this should be 'sifive,plic0'
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 163 +++++++++++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-msm.h |  14 +++
- 2 files changed, 177 insertions(+)
+Normally this would have an SoC specific compatible too. Sometimes we 
+can get away without, but it doesn't seem like the PLIC is very tightly 
+specified nor has common implementations.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 0e22f52b2a19..39c3934712f7 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -71,6 +71,13 @@ struct msm_pinctrl {
- 
- 	const struct msm_pinctrl_soc_data *soc;
- 	void __iomem *regs;
-+	struct list_head pdc_irqs;
-+};
-+
-+struct wakeup_gpio_irq_map {
-+	struct list_head list;
-+	unsigned gpio;
-+	unsigned pdc_irq;
- };
- 
- static int msm_get_groups_count(struct pinctrl_dev *pctldev)
-@@ -558,6 +565,39 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- #define msm_gpio_dbg_show NULL
- #endif
- 
-+static int msm_gpio_get_pdc_pin(struct msm_pinctrl *pctrl, unsigned hwirq)
-+{
-+	struct msm_pinctrl_pdc_map *map = pctrl->soc->pdc_map;
-+	int i;
-+
-+	for (i = 0; i < pctrl->soc->npdc_pins; i++) {
-+		if (map[i].hwirq == hwirq)
-+			return map[i].pdc_pin;
-+	}
-+
-+	return -ENOTCONN;
-+}
-+
-+static struct irq_data *msm_get_pdc_irq_data(struct irq_data *d)
-+{
-+	struct wakeup_gpio_irq_map *p;
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	struct irq_data *data = NULL;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+	list_for_each_entry(p, &pctrl->pdc_irqs, list) {
-+		if (p->gpio == d->hwirq) {
-+			data = irq_get_irq_data(p->pdc_irq);
-+			break;
-+		}
-+	}
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+	return data;
-+}
-+
- static const struct gpio_chip msm_gpio_template = {
- 	.direction_input  = msm_gpio_direction_input,
- 	.direction_output = msm_gpio_direction_output,
-@@ -687,6 +727,11 @@ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	const struct msm_pingroup *g;
- 	unsigned long flags;
- 	u32 val;
-+	struct irq_data *pdc_irqd = msm_get_pdc_irq_data(d);
-+
-+	// TODO: Lock PDC irq chip and set type?
-+	if (pdc_irqd)
-+		pdc_irqd->chip->irq_set_type(pdc_irqd, type);
- 
- 	g = &pctrl->soc->groups[d->hwirq];
- 
-@@ -779,9 +824,13 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
- 	unsigned long flags;
-+	struct irq_data *pdc_irqd = msm_get_pdc_irq_data(d);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
-+	if (pdc_irqd)
-+		irq_set_irq_wake(pdc_irqd->irq, on);
-+
- 	irq_set_irq_wake(pctrl->irq, on);
- 
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-@@ -863,6 +912,117 @@ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
- 	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
- }
- 
-+static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
-+{
-+	struct irq_data *irqd = data;
-+	struct irq_desc *desc = irq_data_to_desc(irqd);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	int irq_pin = irq_find_mapping(gc->irq.domain, irqd->hwirq);
-+
-+	chained_irq_enter(chip, desc);
-+	generic_handle_irq(irq_pin);
-+	chained_irq_exit(chip, desc);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int msm_gpio_pdc_pin_request(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	struct platform_device *pdev = to_platform_device(pctrl->dev);
-+	unsigned pin, npins, irq;
-+	struct wakeup_gpio_irq_map *p;
-+	unsigned long flags, trigger;
-+	const char *pin_name;
-+	int i, ret;
-+
-+	pin = msm_gpio_get_pdc_pin(pctrl, d->hwirq);
-+	if (pin < 0)
-+		return 0;
-+
-+	npins = platform_irq_count(pdev);
-+	if (npins <= 0)
-+		return npins;
-+
-+	for (i = 0; i < npins; i++) {
-+		irq = platform_get_irq(pdev, i);
-+		if (irq >= 0 && pin == irq_get_irq_data(irq)->hwirq)
-+			break;
-+	}
-+	if (i == npins)
-+		return 0;
-+
-+	pin_name = kasprintf(GFP_KERNEL, "gpio-%lu", d->hwirq);
-+	if (!pin_name)
-+		return -ENOMEM;
-+
-+	trigger = irqd_get_trigger_type(d) | IRQF_ONESHOT | IRQF_NO_SUSPEND;
-+	ret = request_irq(irq, wake_irq_gpio_handler, trigger, pin_name, d);
-+	if (ret) {
-+		pr_warn("GPIO-%lu could not be set up as wakeup", d->hwirq);
-+		return ret;
-+	}
-+
-+	p = kzalloc(sizeof(p), GFP_KERNEL);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	p->pdc_irq = irq;
-+	p->gpio = d->hwirq;
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+	list_add(&p->list, &pctrl->pdc_irqs);
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int msm_gpio_pdc_pin_release(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	struct wakeup_gpio_irq_map *p, *n, *t = NULL;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+	list_for_each_entry_safe(p, n, &pctrl->pdc_irqs, list) {
-+		if (p->gpio == d->hwirq) {
-+			list_del(&p->list);
-+			t = p;
-+			break;
-+		}
-+	}
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+	if (t) {
-+		free_irq(t->pdc_irq, NULL);
-+		kfree(t);
-+	}
-+
-+	return 0;
-+}
-+
-+static int msm_gpio_irq_reqres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
-+		dev_err(gc->parent,"unable to lock HW IRQ %lu for IRQ\n",
-+			irqd_to_hwirq(d));
-+		return -EINVAL;
-+	}
-+
-+	return msm_gpio_pdc_pin_request(d);
-+}
-+
-+static void msm_gpio_irq_relres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	msm_gpio_pdc_pin_release(d);
-+	gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
-+}
-+
- static int msm_gpio_init(struct msm_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
-@@ -887,6 +1047,9 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
- 	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
- 	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
-+	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
-+	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
-+	INIT_LIST_HEAD(&pctrl->pdc_irqs);
- 
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 9b9feea540ff..5b7f3160affe 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -97,6 +97,16 @@ struct msm_pingroup {
- 	unsigned intr_detection_width:5;
- };
- 
-+/**
-+ * struct msm_pinctrl_pdc_map - Map GPIOs to PDC pins on RPMH based SoCs
-+ * @hwirq:	   The GPIO that is mapped.
-+ * @pdc_pin:	   The PDC pin to with the GPIO IRQ line is routed.
-+ */
-+struct msm_pinctrl_pdc_map {
-+	u32 hwirq;
-+	u32 pdc_pin;
-+};
-+
- /**
-  * struct msm_pinctrl_soc_data - Qualcomm pin controller driver configuration
-  * @pins:	    An array describing all pins the pin controller affects.
-@@ -107,6 +117,8 @@ struct msm_pingroup {
-  * @ngroups:	    The numbmer of entries in @groups.
-  * @ngpio:	    The number of pingroups the driver should expose as GPIOs.
-  * @pull_no_keeper: The SoC does not support keeper bias.
-+ * @pdc_map:	    The map of GPIOs to the always-on PDC interrupt lines.
-+ * @npdc_pins:	    The number of GPIOs mapped to the PDC pins in @pdc_map.
-  */
- struct msm_pinctrl_soc_data {
- 	const struct pinctrl_pin_desc *pins;
-@@ -117,6 +129,8 @@ struct msm_pinctrl_soc_data {
- 	unsigned ngroups;
- 	unsigned ngpios;
- 	bool pull_no_keeper;
-+	struct msm_pinctrl_pdc_map *pdc_map;
-+	unsigned npdc_pins;
- };
- 
- int msm_pinctrl_probe(struct platform_device *pdev,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +- #address-cells : should be <0>
+> +- #interrupt-cells : should be <1>
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- reg : Should contain 1 register range (address and length)
+> +- interrupts-extended : Specifies which contexts are connected to the PLIC,
+> +  with "-1" specifying that a context is not present.
+> +
+> +Example:
+> +
+> +	plic: interrupt-controller@c000000 {
+> +		#address-cells = <0>;
+> +		#interrupt-cells = <1>;
+> +		compatible = "riscv,plic0";
+> +		interrupt-controller;
+> +		interrupts-extended = <
+> +			&cpu0-intc 11
+> +			&cpu1-intc 11 &cpu1-intc 9
+> +			&cpu2-intc 11 &cpu2-intc 9
+> +			&cpu3-intc 11 &cpu3-intc 9
+> +			&cpu4-intc 11 &cpu4-intc 9>;
+> +		reg = <0xc000000 0x4000000>;
+> +		riscv,ndev = <10>;
 
+Not documented.
+
+> +	};
+> -- 
+> 2.18.0
+> 
