@@ -5,82 +5,141 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2A6C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322CBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C79208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C79208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EB678208AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB678208AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732009AbeGaCnG (ORCPT
+        id S1732017AbeGaCnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:43:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728705AbeGaCnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:43:05 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3CFB77C6A9;
-        Tue, 31 Jul 2018 01:05:26 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CE8F112D199;
-        Tue, 31 Jul 2018 01:05:24 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     Karol Herbst <karolherbst@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/nouveau: Fix potential memory access error in nouveau_debugfs_pstate_get()
-Date:   Mon, 30 Jul 2018 21:05:23 -0400
-Message-Id: <20180731010523.22388-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 01:05:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 01:05:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Mon, 30 Jul 2018 22:43:51 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50716 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729138AbeGaCnv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 22:43:51 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fkJ6p-000106-FK; Mon, 30 Jul 2018 21:05:55 -0400
+Message-ID: <1532999155.28585.56.camel@surriel.com>
+Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
+ refcounting
+From:   Rik van Riel <riel@surriel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date:   Mon, 30 Jul 2018 21:05:55 -0400
+In-Reply-To: <20180730162653.GM2494@hirez.programming.kicks-ass.net>
+References: <20180728215357.3249-1-riel@surriel.com>
+         <20180728215357.3249-11-riel@surriel.com>
+         <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
+         <20180729155452.37eddc11@imladris.surriel.com>
+         <20180730095502.GG2494@hirez.programming.kicks-ass.net>
+         <1532961011.28585.30.camel@surriel.com>
+         <20180730162653.GM2494@hirez.programming.kicks-ass.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-E7KE3RR1bBJyyka+rda/"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nouveau_debugfs(drm) will never be NULL, because we're taking the value
-of the potentially null device pointer and adding to it so it isn't 0x0.
-So, check if drm is NULL instead.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Karol Herbst <karolherbst@gmail.com>
----
-Forgot to hit :w before committing, whoops!
+--=-E7KE3RR1bBJyyka+rda/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
- drivers/gpu/drm/nouveau/nouveau_debugfs.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
+>=20
+> So for ARCH_NO_ACTIVE_MM we never touch ->active_mm and therefore
+> ->active_mm =3D=3D ->mm.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-index 963a4dba8213..8e758c4cb4fd 100644
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-@@ -50,13 +50,15 @@ static int
- nouveau_debugfs_pstate_get(struct seq_file *m, void *data)
- {
- 	struct drm_device *drm = m->private;
--	struct nouveau_debugfs *debugfs = nouveau_debugfs(drm);
--	struct nvif_object *ctrl = &debugfs->ctrl;
-+	struct nouveau_debugfs *debugfs;
-+	struct nvif_object *ctrl;
- 	struct nvif_control_pstate_info_v0 info = {};
- 	int ret, i;
- 
--	if (!debugfs)
-+	if (!drm)
- 		return -ENODEV;
-+	debugfs = nouveau_debugfs(drm);
-+	ctrl = &debugfs->ctrl;
- 
- 	ret = nvif_mthd(ctrl, NVIF_CONTROL_PSTATE_INFO, &info, sizeof(info));
- 	if (ret)
--- 
-2.17.1
+Close, but not true for kernel threads, which have a=20
+NULL ->mm, but a non-null ->active_mm that gets passed
+to enter_lazy_tlb().
+
+I stuck to the structure of your code, but ended up
+removing all the ifdefs because the final mmdrop requires
+that we actually keep track of the ->active_mm across
+potentially several kernel->kernel context switches.
+
+Ifdefs around the reference counting code are also not
+needed, because grab_lazy_mm and drop_lazy_mm already
+contain the equivalent of an ifdef themselves.
+
+By morning I should know what the test results look
+like. I expect they will be identical to my patches,
+since the refcounting is disabled completely anyway :)
+
+> > +       /*
+> > +        * kernel -> kernel   lazy + transfer active
+> > +        *   user -> kernel   lazy + mmgrab() active
+> > +        *
+> > +        * kernel ->   user   switch + mmdrop() active
+> > +        *   user ->   user   switch
+> > +        */
+> > +       if (!next->mm) {                                // to
+> > kernel
+> > +               enter_lazy_tlb(prev->active_mm, next);
+> > +
+>=20
+> #ifndef ARCH_NO_ACTIVE_MM
+> > +               next->active_mm =3D prev->active_mm;
+> > +               if (prev->mm)                           // from
+> > user
+> > +                       mmgrab(prev->active_mm);
+>=20
+> 		else
+> 			prev->active_mm =3D NULL;
+> > +#endif
+> > +       } else {                                        // to user
+> > +               switch_mm_irqs_off(prev->active_mm, next->mm,
+> > next);
+> > +
+>=20
+> #ifndef ARCH_NO_ACTIVE_MM
+> > +               if (!prev->mm) {                        // from
+> > kernel
+> > +                       /* will mmdrop() in finish_task_switch().
+> > */
+> > +                       rq->prev_mm =3D prev->active_mm;
+> > +                       prev->active_mm =3D NULL;
+> > +               }
+> > +#endif
+>=20
+>=20
+--=20
+All Rights Reversed.
+--=-E7KE3RR1bBJyyka+rda/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltftfMACgkQznnekoTE
+3oPq/ggAuz6InKyTy2j2MY+yjCf8dKDUbsE/AYffIZfSRjj2k2SNu6fqx7VPPM4M
+UmAgECAp3RpBJFB0dH70GFb/dD+j1KLzCfNZA+1Qz+WZ7DdeylZcujos9Lph7nMw
+fD1MQFxO9bk+zt1XuVCChnNx1FphE2GVauZMDWRRYgs5oehegesRwQ5MC4HWhNe1
+AqhqSIg+FZx5EZo1vQmsBHPIS2ygMXHx8+6vQ84o1D+QNEDuMesmQmzWMozNZYak
+ar13GRAvo9+J41WMeaqq0zGh+jHBmzGwKYlMHkCwiN/79IDiodAscIJ+H8EUQY9v
+CxN+UM5kRBGsHW0Y4HY0nnTs04Jt/Q==
+=hkbD
+-----END PGP SIGNATURE-----
+
+--=-E7KE3RR1bBJyyka+rda/--
 
