@@ -2,231 +2,162 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18351C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 914ADC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B77A2083F
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3426E2083F
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:38:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c7YVbPkF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B77A2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7c7wakC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3426E2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732779AbeHABHJ (ORCPT
+        id S1732815AbeHABUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 21:07:09 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44018 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732720AbeHABHJ (ORCPT
+        Tue, 31 Jul 2018 21:20:45 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36682 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732751AbeHABUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 21:07:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17-v6so5385493pgv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:24:29 -0700 (PDT)
+        Tue, 31 Jul 2018 21:20:45 -0400
+Received: by mail-qt0-f196.google.com with SMTP id t5-v6so17976694qtn.3;
+        Tue, 31 Jul 2018 16:38:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=co53M4pK26ObFtC679l0n1ZIfgui7/vM89i+zffEc3s=;
-        b=c7YVbPkF3ISm7UCBQnKiptcjFYT8yTK6vZHcQiL23YAlZNWO7S4KfkdbkTVV5B+Di4
-         MT9u9twECt9LCFCB/yO/VvjSaviTj9CB1f/KXydOyCyhNvBOcmUCyqs6brCoRMUtZUDS
-         vuVyuE3g1axdDXAA/xr1CU86WOdLDL4ckRsLA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=0Mh6CzglfwR9+/6ax2kdCjDaeu56JDjGrKGB4irqV6M=;
+        b=s7c7wakCq7O75IR+xLzyHiMrNoLM3giBKXU0YrwHmHJDf1FjpLVVrZjN2lD/BYY7rm
+         ElklEQY5v64m+5+VM0Fxa0AC+0RAVADnwrj+5PIrhXWao9pkBwpzsdPw0hUHsB1s1ovR
+         43Wxt/20iHkES613MPPtNhjOJ3RzZv7crR6G71+Xr5+KyKjkqFU7Fa1r6uy+0ZmCrgXj
+         VYF+QHKUeSmV2XfRUPwvLk4zoT95Khieu/i7vcj4alZnaxY27/Ef9J5hp1ot14gSyvF1
+         ouFiSkxUh6LPrKTMKsO5sjO57Mud0qPirENYqF2JTjFZ7cZyt++m7VLvfEGnYDQeaVtg
+         oO3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=co53M4pK26ObFtC679l0n1ZIfgui7/vM89i+zffEc3s=;
-        b=KnkTJWTrDXJcN8P+kEY04TiEXqrTSwy5vFGHjFAp0PICryPAUORyBb2WMZ2+IHelem
-         QUoXBqaQzuPMcOt42zFRuMOCJ0kiUPOQlFvXbQMyLUbz8F6SZ0gGSghnyZY6CT/dTHb2
-         H2n6M3wOtKkTaQ0awrKwgvGhjd8EWyzs8xjuFrs6V2/fIkhkPRwxIDXA4RE755JUA7MG
-         dWrJ7JpJV23Mj6BveatWTAtxJHicG8Aqt499tn4swK8v0b1+hDbyB2LBzyFrCQoE4LNP
-         Gdd7uyWdQ59twHYITO5POry77OpolLuRXaDsupkuz31agHKVaPewEzh9Uhw9XrZ8kwTq
-         6mwA==
-X-Gm-Message-State: AOUpUlFVHRCprQj4l2fPbTzm9GHsmd1fgFWI4SYvSpgyxiwT7cu+lmX/
-        3xJwWMQi5jL78lXT2QOjoGMvKQ==
-X-Google-Smtp-Source: AAOMgpceqPBFKvSOACdstniFI9+vtpmrhItHPnvasSwwKcv7Q2teH8CB+XXNWxepveYfqhu11rQG8A==
-X-Received: by 2002:a63:943:: with SMTP id 64-v6mr21838244pgj.368.1533079468762;
-        Tue, 31 Jul 2018 16:24:28 -0700 (PDT)
-Received: from mortonm2.mtv.corp.google.com ([2620:0:1000:1611:d81e:d910:6031:4b81])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm28861752pgs.76.2018.07.31.16.24.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 16:24:28 -0700 (PDT)
-From:   Micah Morton <mortonm@chromium.org>
-To:     rdunlap@infradead.org
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, Micah Morton <mortonm@chromium.org>
-Subject: [PATCH] security: Add LSM fixup hooks to set*gid syscalls.
-Date:   Tue, 31 Jul 2018 16:23:51 -0700
-Message-Id: <20180731232351.122951-1-mortonm@chromium.org>
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
-In-Reply-To: <a5ce4d5d-833f-8994-9070-df0e587e5023@infradead.org>
-References: <a5ce4d5d-833f-8994-9070-df0e587e5023@infradead.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=0Mh6CzglfwR9+/6ax2kdCjDaeu56JDjGrKGB4irqV6M=;
+        b=YpCg8owwiLDvc/6uzISCZPj6BQJx5TSWRgmt1TUPvDl0oRwvNfl6oxwm0TtNn0uL9c
+         ceeZLcF+7vgLw6ug+t5r1aY4aELaN/N5Dnzcm5mLL4ev8W70PCC7l9QLRfWx+pvsWkX0
+         OPbGD5vK7u6GViJ9yKGC+afTlXuTmE9XuDlpyWxFvsA/nSEuByT5Cf1sMidO4uNyXie1
+         kFIgbyhzaq8jq3dpKUPm+Keyk5vcn8Oc0dt9ozw+LCtCXDOuHoKS97RiQUlzg0AQQAPw
+         T2ofDg/RhCykZh5d8e8ukonolh4cEkIqTBw9IZAjF4UphGLetyCeWc2KUy6J/XzpHM+K
+         obkQ==
+X-Gm-Message-State: AOUpUlGbenP/Jl16l+K99RwovpRAyqhqiUacbsE0dd8t7nCoooM19+gC
+        bQ42wHq86bxcoNZ2LM5cq6o=
+X-Google-Smtp-Source: AAOMgpcVXzBohmvsmgQ0gOSll+ZGiyoEI4y1FBnHGaxWlSPwFxUKbaPq2Ddw9sPK6JMu7QCF7xCS9A==
+X-Received: by 2002:aed:3f5d:: with SMTP id q29-v6mr22181190qtf.403.1533080282979;
+        Tue, 31 Jul 2018 16:38:02 -0700 (PDT)
+Received: from eaf ([181.47.179.0])
+        by smtp.gmail.com with ESMTPSA id k3-v6sm12706451qkl.95.2018.07.31.16.38.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 16:38:02 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 20:37:57 -0300
+From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        y2038@lists.linaro.org, Jeff Layton <jlayton@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] hfs: stop using timespec based interfaces
+Message-ID: <20180731233756.24555xk6dvs5hfjb@eaf>
+References: <20180619160223.4108556-1-arnd@arndb.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180619160223.4108556-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The set*uid system calls all call an LSM fixup hook called
-security_task_fix_setuid, which allows for altering the behavior of those
-calls by a security module. Comments explaining the LSM_SETID_* constants
-in /include/linux/security.h imply that the constants are to be used for
-both the set*uid and set*gid syscalls, but the set*gid syscalls do not
-have the relevant hooks, meaning a security module can only alter syscalls
-that change user identity attributes but not ones that change group
-identity attributes. This patch adds the necessary LSM hook, called
-security_task_fix_setgid, and calls the hook from the appropriate places
-in the set*gid syscalls.Tested by putting a print statement in the hook and
-seeing it triggered from the various set*gid syscalls.
+If you decide to go with this series after all:
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
-Acked-by: Kees Cook <keescook@chromium.org>
----
-NOTE: the security_task_fix_setgid line in sys_setfsgid is over 80
-characters, but I figured I'd just follow how it was done in sys_setfsuid
-rather than trying to wrap the line, since the functions are nearly
-identical.
----
- include/linux/lsm_hooks.h | 12 ++++++++++++
- include/linux/security.h  |  9 +++++++++
- kernel/sys.c              | 15 ++++++++++++++-
- security/security.c       |  6 ++++++
- 4 files changed, 41 insertions(+), 1 deletion(-)
+On Tue, Jun 19, 2018 at 06:02:07PM +0200, Arnd Bergmann wrote:
+> The native HFS timestamps overflow in year 2040, two years after the Unix
+> y2038 overflow. However, the way that the conversion between on-disk
+> timestamps and in-kernel timestamps was implemented, 64-bit machines
+> actually ended up converting negative UTC timestamps (1902 through 1969)
+> into times between 2038 and 2106.
+> 
+> Rather than making all machines faithfully represent timestamps in the
+> ancient past but break after 2040, this changes the file system to
+> always use the unsigned UTC interpretation, reading back times between
+> 1970 and 2106.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/hfs/hfs_fs.h | 6 ++++--
+>  fs/hfs/inode.c  | 4 ++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+> index 6d0783e2e276..ff432931a5b1 100644
+> --- a/fs/hfs/hfs_fs.h
+> +++ b/fs/hfs/hfs_fs.h
+> @@ -245,6 +245,8 @@ extern void hfs_mark_mdb_dirty(struct super_block *sb);
+>   *	Unix:	unsigned lil-endian since 00:00 GMT, Jan. 1, 1970
+>   *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1, 1904
+>   *
+> + * We treat all timestamps before 1970 as times after 2038, so this
+							 ^^^^
+Same as the hfsplus patch, I find this confusing. I think it should say 2040.
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..a2166c812a97 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -599,6 +599,15 @@
-  *	@old is the set of credentials that are being replaces
-  *	@flags contains one of the LSM_SETID_* values.
-  *	Return 0 on success.
-+ * @task_fix_setgid:
-+ *     Update the module's state after setting one or more of the group
-+ *     identity attributes of the current process.  The @flags parameter
-+ *     indicates which of the set*gid system calls invoked this hook.
-+ *     @new is the set of credentials that will be installed.  Modifications
-+ *     should be made to this rather than to @current->cred.
-+ *     @old is the set of credentials that are being replaced
-+ *     @flags contains one of the LSM_SETID_* values.
-+ *     Return 0 on success.
-  * @task_setpgid:
-  *	Check permission before setting the process group identifier of the
-  *	process @p to @pgid.
-@@ -1587,6 +1596,8 @@ union security_list_options {
- 				     enum kernel_read_file_id id);
- 	int (*task_fix_setuid)(struct cred *new, const struct cred *old,
- 				int flags);
-+	int (*task_fix_setgid)(struct cred *new, const struct cred *old,
-+				int flags);
- 	int (*task_setpgid)(struct task_struct *p, pid_t pgid);
- 	int (*task_getpgid)(struct task_struct *p);
- 	int (*task_getsid)(struct task_struct *p);
-@@ -1876,6 +1887,7 @@ struct security_hook_heads {
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
- 	struct hlist_head task_fix_setuid;
-+	struct hlist_head task_fix_setgid;
- 	struct hlist_head task_setpgid;
- 	struct hlist_head task_getpgid;
- 	struct hlist_head task_getsid;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..a82d97cf13ab 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -325,6 +325,8 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags);
-+int security_task_fix_setgid(struct cred *new, const struct cred *old,
-+			     int flags);
- int security_task_setpgid(struct task_struct *p, pid_t pgid);
- int security_task_getpgid(struct task_struct *p);
- int security_task_getsid(struct task_struct *p);
-@@ -929,6 +931,13 @@ static inline int security_task_fix_setuid(struct cred *new,
- 	return cap_task_fix_setuid(new, old, flags);
- }
- 
-+static inline int security_task_fix_setgid(struct cred *new,
-+					   const struct cred *old,
-+					   int flags)
-+{
-+	return 0;
-+}
-+
- static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return 0;
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 38509dc1f77b..f6ef922c6815 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -392,6 +392,10 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		new->sgid = new->egid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_RE);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -434,6 +438,10 @@ long __sys_setgid(gid_t gid)
- 	else
- 		goto error;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_ID);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -755,6 +763,10 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 		new->sgid = ksgid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setgid(new, old, LSM_SETID_RES);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -861,7 +873,8 @@ long __sys_setfsgid(gid_t gid)
- 	    ns_capable(old->user_ns, CAP_SETGID)) {
- 		if (!gid_eq(kgid, old->fsgid)) {
- 			new->fsgid = kgid;
--			goto change_okay;
-+			if (security_task_fix_setgid(new, old, LSM_SETID_FS) == 0)
-+				goto change_okay;
- 		}
- 	}
- 
-diff --git a/security/security.c b/security/security.c
-index 68f46d849abe..587786fc0aaa 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1062,6 +1062,12 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 	return call_int_hook(task_fix_setuid, 0, new, old, flags);
- }
- 
-+int security_task_fix_setgid(struct cred *new, const struct cred *old,
-+			     int flags)
-+{
-+	return call_int_hook(task_fix_setgid, 0, new, old, flags);
-+}
-+
- int security_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return call_int_hook(task_setpgid, 0, p, pgid);
--- 
-2.18.0.345.g5c9ce644c3-goog
 
+Everything else looks good.
+
+Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+
+> + * actually works until year 2106
+>   */
+>  #define __hfs_u_to_mtime(sec)	cpu_to_be32(sec + 2082844800U - sys_tz.tz_minuteswest * 60)
+>  #define __hfs_m_to_utime(sec)	(be32_to_cpu(sec) - 2082844800U  + sys_tz.tz_minuteswest * 60)
+> @@ -252,9 +254,9 @@ extern void hfs_mark_mdb_dirty(struct super_block *sb);
+>  #define HFS_I(inode)	(container_of(inode, struct hfs_inode_info, vfs_inode))
+>  #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
+>  
+> -#define hfs_m_to_utime(time)	(struct timespec){ .tv_sec = __hfs_m_to_utime(time) }
+> +#define hfs_m_to_utime(time)	(struct timespec64){ .tv_sec = __hfs_m_to_utime(time) }
+>  #define hfs_u_to_mtime(time)	__hfs_u_to_mtime((time).tv_sec)
+> -#define hfs_mtime()		__hfs_u_to_mtime(get_seconds())
+> +#define hfs_mtime()		__hfs_u_to_mtime(ktime_get_real_seconds())
+>  
+>  static inline const char *hfs_mdb_name(struct super_block *sb)
+>  {
+> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+> index 2a16111d312f..b3309b83371a 100644
+> --- a/fs/hfs/inode.c
+> +++ b/fs/hfs/inode.c
+> @@ -351,7 +351,7 @@ static int hfs_read_inode(struct inode *inode, void *data)
+>  		inode->i_mode &= ~hsb->s_file_umask;
+>  		inode->i_mode |= S_IFREG;
+>  		inode->i_ctime = inode->i_atime = inode->i_mtime =
+> -				timespec_to_timespec64(hfs_m_to_utime(rec->file.MdDat));
+> +				hfs_m_to_utime(rec->file.MdDat);
+>  		inode->i_op = &hfs_file_inode_operations;
+>  		inode->i_fop = &hfs_file_operations;
+>  		inode->i_mapping->a_ops = &hfs_aops;
+> @@ -362,7 +362,7 @@ static int hfs_read_inode(struct inode *inode, void *data)
+>  		HFS_I(inode)->fs_blocks = 0;
+>  		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+>  		inode->i_ctime = inode->i_atime = inode->i_mtime =
+> -				timespec_to_timespec64(hfs_m_to_utime(rec->dir.MdDat));
+> +				hfs_m_to_utime(rec->dir.MdDat);
+>  		inode->i_op = &hfs_dir_inode_operations;
+>  		inode->i_fop = &hfs_dir_operations;
+>  		break;
+> -- 
+> 2.9.0
+> 
