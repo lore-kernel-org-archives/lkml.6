@@ -2,106 +2,105 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964A7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D756BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466E720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:44:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="FZ794N57"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466E720870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 86530208AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:45:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86530208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbeGaKXu (ORCPT
+        id S1731845AbeGaKY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:23:50 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37008 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731428AbeGaKXt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:23:49 -0400
-Received: by mail-io0-f195.google.com with SMTP id z19-v6so12285761ioh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 01:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=y/S/8t87oaC2EBEMbM45S5rybsFc5/ycCKWIcl6QofU=;
-        b=FZ794N57KPW+MibMDJfuGaObupM2wXWofMViQab5fS1rxPUgbBpPiGGVpYRQsk8olK
-         5P0aotFOSs7MNH7aclSQr9CZ0NlmQ+DW3KEfje05Eq0lE/1TeOdOI5nisxytn4jc71gl
-         A6DgZvU3JN/3UmvaBiazTleF36lKeDQEVGjeRFn6lrs+pEs36x1QUV+4HpUcJ/sE34wL
-         8oNNJP9mgbofYDD79S1n4AyshSA995r3GSa6U1m1+oFbGRw/DrXme3PsNGOjBMYnYKH2
-         /Tydjm7zn7Ba8C56q7gTyaiJLrQiSG+Yrrlu3qxpsWesIAxde85sIMudokTf+2fvIra0
-         dl8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=y/S/8t87oaC2EBEMbM45S5rybsFc5/ycCKWIcl6QofU=;
-        b=J5F8ro3m9yKAJ5vLF5SYG6RAaUfP0X9Pk1UD3sYqorn0sev+oGAh77teRUyVUbEtgx
-         1judzLtz/nU9sgH+9SmwWVltWkFG8W/0dfZ9q9sYMb9K6kdOCVGlFfLe6/9LaLZpPyXI
-         NGUWbXOwPL84wMB7tchU1PqJoVtqnlMGJIAUGG8/3ddJr1A4T6jD35yu02+f/oCHYxgD
-         BDzv0nNuJG+XfZdZS6PzTVQdHVAgtGJX3TnmC+OOnXkEmdg7eLc3W0WGyIc8Z3Jjs2Iv
-         xo/rrrKJ8aL5XnaqAWmSorgSe3/mWyp/Cwcqi1gMuUaAm8+I3ZmFRXdQfB5N2j71a6uJ
-         KpSg==
-X-Gm-Message-State: AOUpUlF0/UDeJBif59TAP0373eN68henldsIg/ah2OxiyzJLJMRuxcD5
-        EcTnhKSq/yB7fOL8Zy8Sm1bAPZpurA2Nie0iVC8mFw==
-X-Google-Smtp-Source: AAOMgpdkQ/yIjGTon1U13VuNIcigRNLD2aBuKMLU31jthWA6caSxkyZOaeKx06PQHmlX7gYXv6y+NYCGPGTy6QEK8fk=
-X-Received: by 2002:a6b:b284:: with SMTP id b126-v6mr16102320iof.201.1533026674026;
- Tue, 31 Jul 2018 01:44:34 -0700 (PDT)
+        Tue, 31 Jul 2018 06:24:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46690 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731364AbeGaKY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 06:24:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 83903B00D;
+        Tue, 31 Jul 2018 08:45:10 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 10:45:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 1/3] mm: introduce mem_cgroup_put() helper
+Message-ID: <20180731084509.GE4557@dhcp22.suse.cz>
+References: <20180730180100.25079-1-guro@fb.com>
+ <20180730180100.25079-2-guro@fb.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:bb58:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 01:44:33
- -0700 (PDT)
-In-Reply-To: <20180730203633.GC12962@bombadil.infradead.org>
-References: <20180730143710.14413-1-christian@brauner.io> <20180730143710.14413-2-christian@brauner.io>
- <20180730163155.GA27761@infradead.org> <20180730203633.GC12962@bombadil.infradead.org>
-From:   Martijn Coenen <maco@android.com>
-Date:   Tue, 31 Jul 2018 10:44:33 +0200
-Message-ID: <CAB0TPYG5T_d32iwt8Lgq_nDO_COWfWBfuSzErraASSuTYGm3yQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] file: export __alloc_fd()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>, rlove@google.com,
-        ben@decadent.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730180100.25079-2-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 10:36 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> I'm not entirely sure I understand the binder code (... does anyone?)
-> but from what I can see, it intends to open a file descriptor in the
-> process which is the target of the message being sent.
+On Mon 30-07-18 11:00:58, Roman Gushchin wrote:
+> Introduce the mem_cgroup_put() helper, which helps to eliminate guarding
+> memcg css release with "#ifdef CONFIG_MEMCG" in multiple places.
 
-You're right.
+Is there any reason for this to be a separate patch? I usually do not
+like to add helpers without their users because this makes review
+harder. This one is quite trivial to fit into Patch3 easilly.
 
-> That strikes
-> me as wrong-headed; it should be allocating a struct file and passing
-> that file to the other process.  When that process receives the message,
-> *it* allocates a file descriptor for itself.ho
+> Link: http://lkml.kernel.org/r/20180623000600.5818-2-guro@fb.com
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/memcontrol.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 6c6fb116e925..e53e00cdbe3f 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -375,6 +375,11 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+>  	return css ? container_of(css, struct mem_cgroup, css) : NULL;
+>  }
+>  
+> +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+> +{
+> +	css_put(&memcg->css);
+> +}
+> +
+>  #define mem_cgroup_from_counter(counter, member)	\
+>  	container_of(counter, struct mem_cgroup, member)
+>  
+> @@ -837,6 +842,10 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
+>  	return true;
+>  }
+>  
+> +static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+> +{
+> +}
+> +
+>  static inline struct mem_cgroup *
+>  mem_cgroup_iter(struct mem_cgroup *root,
+>  		struct mem_cgroup *prev,
+> -- 
+> 2.14.4
+> 
 
-We're looking into cleaning this up (historically it was done this way
-because VIVT caches made this not very efficient), and this is indeed
-a very good candidate for fixing it.
-
->
-> But I think the binder user-space API relies on this.  The userspace API
-> seems to rely on passing fd numbers around ... but I'm having trouble
-> figuring most of this user API out.  Perhaps Martijn can help here.
-
-The UAPI does expect a file descriptor, but we may be able to do the
-mapping from fd to struct file (and vice-versa) in the kernel driver,
-so userspace wouldn't notice.
-
-Thanks,
-Martijn
+-- 
+Michal Hocko
+SUSE Labs
