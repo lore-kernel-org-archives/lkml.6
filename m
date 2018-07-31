@@ -2,121 +2,158 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE089C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCABC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74979208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D501208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:44:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O686Dkrf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74979208AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1HxeXfh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D501208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732457AbeGaQYo (ORCPT
+        id S1732490AbeGaQYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:24:44 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38986 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbeGaQYo (ORCPT
+        Tue, 31 Jul 2018 12:24:47 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40368 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732462AbeGaQYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:24:44 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VE992O077663
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:44:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=c1ZV7H/uOs1HL+FtnF8RFLT4VukUaGHB7RMWNK9NASA=;
- b=O686DkrfHYJPCAY14MPj66cVGuq2eIniGW4BDOc63GpMbmbhEDxLIizi+xXSihXqr6fY
- fT+SQHKOTo7GOT1dZuebUjWBgmMOi2lBtXRZaaHTuftXeoYMqT3Q/+bxnOkIL2Pv1fbF
- XiWvY1/jjB9AtPd4MivLeW1tZQ3a2BRW8HAIfDw3RO7srjIL06+IuTLgEjRJaX9SzKrD
- 16F8Er5ZOin2rEz/ix978ZlCLvqR7VwuVb4jLEXiZILuw1tkjtUVurKhQRvZsvJfEoNy
- q/E74uQOlUTsMm0psp70VoKnlTM7C2TWbASgxK6lJVrCSh7cG9ZxXKnxNJkyiep5/00w Bw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kggep1bt3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:44:04 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6VEi2Ld011148
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:44:02 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6VEi2RV018656
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 14:44:02 GMT
-Received: from mail-oi0-f52.google.com (/209.85.218.52)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 07:44:02 -0700
-Received: by mail-oi0-f52.google.com with SMTP id d189-v6so28374145oib.6
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:44:01 -0700 (PDT)
-X-Gm-Message-State: AOUpUlH+2aWf+iVNyED+Re06mwzKXediYaVLnk0MOmBNg25nAGNPACfS
-        NShiUDZCIX0uoBJxAM+CfQiNGccCcKWFOIlbgkw=
-X-Google-Smtp-Source: AAOMgpeaKZ9W6RBPp12+3iCY4cDgoJPCmqFkijVPlIzwHTdxNrEULbqPSO8tGPwG4OknoPCQ4bzrIKbzhMd1wYAcvjQ=
-X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr23941040oiy.191.1533048241442;
- Tue, 31 Jul 2018 07:44:01 -0700 (PDT)
+        Tue, 31 Jul 2018 12:24:46 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x5-v6so9199634pgp.7;
+        Tue, 31 Jul 2018 07:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i7L2twpfztAVOr5NniDLdECQ3Q8LQkGuEuPTTHNDSio=;
+        b=f1HxeXfht9Lgx1Brfyi/BP3Ek1zXxTZ5u/cPbRgrwt+dJku3usaWVcRT//kkIThKKp
+         XQSrtTHGs/IH3SHngufbCwK/39CoL8VhyYl6myb5fOemnqJXMS79hKS8lnKoFUwgE3MH
+         ssTXrnQrrssePjX9cHcQaX7wuQHHr+iIrEE/bXY/89cNEqNWUm0bBfnJ5M88+1znIHyE
+         XChV6wG+QihY4QCeofYOyaJSKOy2V+gdTb6EeRvKYxDSFcpf9wFSSjTu8N6UbNL4P/1X
+         TbZsUXo9E4WiiX+n+f9cD4ypj/xKOi4QyoY1jZw0BgUAWkwHUMaUPHdfucS0/lgRGgnN
+         6+KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i7L2twpfztAVOr5NniDLdECQ3Q8LQkGuEuPTTHNDSio=;
+        b=j+qm7T9Fg9K4yoe3thL9ip77gxwufhCyzn6rEM6/js1uz4Nw+sXIKB0kfOyJEoMtlB
+         x8BCDRnUr1YYX+JyGMAu3r2pRLnxUN3MEc56bAnhvZu6qvvsYmTfyV/mugRBhFckdFUL
+         Qv7V1KeyCUP7NQSwzxMW9AizSHaC0IBYdcjeoG7oHZEkIWNx5d1WkHRFDdBxmCKqxcEZ
+         rhGGBtxD8CVvBuZBGQASmLlMQT7mv6iUa022Blp8MalynBMiIewFAInTswwVL8OYWsHU
+         /xMODnadx3dy9mjOknY5NncyJdvPOOaNPMY1Crr6qBGr9pb/EwE4BP47R2f5A+mwSBaj
+         itfg==
+X-Gm-Message-State: AOUpUlEKzlaoBTqcW6LdpwRG/DYlPmXD0O+4ccaiuid98spwiXbs7tmD
+        QXcHzYUqYWtM7enJi/HZ05vETlhr
+X-Google-Smtp-Source: AAOMgpe9TuVv17TI14Z9YdEWxmLOFzaJvEhRA1VDjmwm1NR3N+1qcmBSD2c2lQ9WODY9Wz6BypUplQ==
+X-Received: by 2002:a63:8c51:: with SMTP id q17-v6mr21200913pgn.236.1533048246911;
+        Tue, 31 Jul 2018 07:44:06 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm25623446pfj.72.2018.07.31.07.44.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 07:44:05 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 07:44:04 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Jul 31
+Message-ID: <20180731144404.GA27893@roeck-us.net>
+References: <20180731182252.17831c15@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180731124504.27582-1-osalvador@techadventures.net>
- <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com> <20180731144157.GA1499@techadventures.net>
-In-Reply-To: <20180731144157.GA1499@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 31 Jul 2018 10:43:25 -0400
-X-Gmail-Original-Message-ID: <CAGM2reYmwqQDfk7Lx-whqxDnAb41VU=dusJjGrP3zhNyYQQJcg@mail.gmail.com>
-Message-ID: <CAGM2reYmwqQDfk7Lx-whqxDnAb41VU=dusJjGrP3zhNyYQQJcg@mail.gmail.com>
-Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
-To:     osalvador@techadventures.net
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
-        Mel Gorman <mgorman@suse.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=765
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731182252.17831c15@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oscar,
+On Tue, Jul 31, 2018 at 06:22:52PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180730:
+> 
+> The block tree gained a build failure so I used the version from
+> next-20180730.
+> 
+> The kvms390 tree gained a conflict against the kvm-arm tree.
+> 
+> The staging tree still had its build failure due to an interaction with
+> the vfs tree for which I disabled CONFIG_EROFS_FS.
+> 
+> The mux tree gained a conflict against the battery tree.
+> 
+> The pinctrl tree gained a conflict the devicetree tree.
+> 
+> The kspp tree still had its build failure so I have added a supplied
+> patch.
+> 
+> Non-merge commits (relative to Linus' tree): 9850
+>  8993 files changed, 412971 insertions(+), 175848 deletions(-)
+> 
 
-There is a simpler way. I will send it out in a bit. No need for your
-first function, only  setup_usemap() needs to be changed to __ref.
+In addition to some build failures, I see a large number of boot stalls
+with this image. Various architectures are affected (i386, x86_64, mips,
+some powerpc). Bisect is inconclusive due to a spurious build failure
+in mm code. For those interested, logs are available at
+http://kerneltests.org/builders/.
 
-Pavel
-On Tue, Jul 31, 2018 at 10:42 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
->
-> On Tue, Jul 31, 2018 at 08:49:11AM -0400, Pavel Tatashin wrote:
-> > Hi Oscar,
-> >
-> > Have you looked into replacing __paginginit via __meminit ? What is
-> > the reason to keep both?
-> Hi Pavel,
->
-> Actually, thinking a bit more about this, it might make sense to remove
-> __paginginit altogether and keep only __meminit.
-> Looking at the original commit, I think that it was put as a way to abstract it.
->
-> After the patchset [1] has been applied, only two functions marked as __paginginit
-> remain, so it will be less hassle to replace that with __meminit.
->
-> I will send a v2 tomorrow to be applied on top of [1].
->
-> [1] https://patchwork.kernel.org/patch/10548861/
->
-> Thanks
-> --
-> Oscar Salvador
-> SUSE L3
->
+Guenter
+
+---
+Build results:
+	total: 134 pass: 128 fail: 6
+Failed builds: 
+	alpha:allmodconfig 
+	arm64:allmodconfig 
+	parisc:allmodconfig 
+	sparc32:allmodconfig 
+	unicore32:defconfig 
+	unicore32:allnoconfig 
+Qemu test results:
+	total: 182 pass: 147 fail: 35
+Failed tests: 
+	mips:malta_defconfig:nosmp 
+	mips:malta_defconfig:smp 
+	mips64:malta_defconfig:nosmp 
+	mips64:malta_defconfig:smp 
+	mipsel:24Kf:malta_defconfig:nosmp:initrd 
+	mipsel:24Kf:malta_defconfig:smp:initrd 
+	mipsel:24Kf:malta_defconfig:smp:rootfs 
+	mipsel64:malta_defconfig:nosmp:rootfs 
+	mipsel64:malta_defconfig:smp:initrd 
+	mipsel64:malta_defconfig:smp:rootfs 
+	mipsel64:fuloong2e_defconfig:fulong2e:rootfs 
+	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:initrd 
+	powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:rootfs 
+	i386:Broadwell:q35:defconfig:smp:rootfs 
+	i386:Skylake-Client:q35:defconfig:smp:rootfs 
+	i386:SandyBridge:q35:defconfig:smp:rootfs 
+	i386:Haswell:pc:defconfig:smp:rootfs 
+	i386:Nehalem:q35:defconfig:smp:rootfs 
+	i386:phenom:pc:defconfig:smp:rootfs 
+	i386:Opteron_G5:q35:defconfig:smp:initrd 
+	i386:Westmere:q35:defconfig:smp:initrd 
+	i386:core2duo:q35:defconfig:nosmp:rootfs 
+	i386:Conroe:pc:defconfig:nosmp:rootfs 
+	i386:Opteron_G1:pc:defconfig:nosmp:initrd 
+	i386:n270:q35:defconfig:nosmp:rootfs 
+	x86_64:q35:Broadwell-noTSX:defconfig:smp:sata:rootfs 
+	x86_64:q35:IvyBridge:defconfig:smp:nvme:rootfs 
+	x86_64:q35:Nehalem:defconfig:smp:nvme:rootfs 
+	x86_64:pc:phenom:defconfig:smp:sata:rootfs 
+	x86_64:q35:Opteron_G1:defconfig:smp:scsi[DC395]:rootfs
+	x86_64:q35:Opteron_G5:defconfig:smp:initrd 
+	x86_64:q35:EPYC-IBPB:defconfig:smp:usbdisk:rootfs 
+	x86_64:q35:Skylake-Client:defconfig:smp:initrd 
+	x86_64:q35:Skylake-Server:defconfig:smp:usbdisk:rootfs 
+	x86_64:q35:Opteron_G3:defconfig:smp:initrd
