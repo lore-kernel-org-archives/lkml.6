@@ -2,153 +2,113 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C50C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB00C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA63208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D81DA20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LTEe+mQi";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bawUSZWR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA63208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbW4sjH/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81DA20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbeGaSnl (ORCPT
+        id S1732282AbeGaSn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:43:41 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:40354 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732212AbeGaSnl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:43:41 -0400
-Received: by mail-yw0-f196.google.com with SMTP id z143-v6so6047394ywa.7
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=p/AqqoLFA5OOxno2bAquEYYNyheGJAR9BUzscAZ3aqQ=;
-        b=LTEe+mQiCefZ6PPKlPaTrW9hK3foVe4Zkmc1L2dL3t55JrEBoAsR8tHNVRml3DKI8f
-         I8u3nB9qsDu0iL56tPOkHxH7cjufWfj04MjioIcBfFnYVx0nyOpgFxJesbgCuUypk5QL
-         12nbgqd9cHkXwcowez1VV4FmF28ZH0rhNO5P18yziKk+6gkjPGSxv2UI4+ZUDv/9F4of
-         eR69gifEoIKgPXTVaLPdZ8JkKvg5QxoARj246pT2wfDKI9lXL2LwB5NTwznVQMB2QH6c
-         29jvnhV5EMJ5DfzCF0cT5ZJfwGRL2ABbGv5e1hnnce44ZD+ZY/okMJ1mqhGfXEYxnTZA
-         Ca1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=p/AqqoLFA5OOxno2bAquEYYNyheGJAR9BUzscAZ3aqQ=;
-        b=bawUSZWRnQtfCh2smcY846V1vR2HdIBp1PjWF1YfoHN5vLRimOahfS6LKi5b9DvjvJ
-         I7Cn+msB//E9+PkgfdM6Kd1/goSU/T5E39gHHvj+XyPiPhB3gZ3F22+WYcZn2o4fpSrp
-         pQknf8+4U79gBEAcugzJCsIJDVCSsDNGQ8qxQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=p/AqqoLFA5OOxno2bAquEYYNyheGJAR9BUzscAZ3aqQ=;
-        b=dCU6uMxHA6Cx15OYdY00Wou1bldVcbvMHK7O9XOXpHhgFjtj5DM2Upu5Gl/mTTpwtt
-         ZbMTkV1BEAKY7j8pjR/wHtRYDYHIUabQglsRWlMjx3cKTqIMEfjelyts/MPsOn/GLSqT
-         XLQHzVRE6zShdKmAi6DyajLU7CJ2GOd9fmp20emYPqDFaWrfVxAnMPiT7WUEXgz0Qqwe
-         JjYu0+f31EhG+fQHdrT3nje6961wNTyaxm9/0/wM2ec0J4uB024v+MtcsrFLi+B0eBmz
-         TFkeeILE9+Wob38G+tNyEDoxDIf3d6O67FCpO9Y34p9djENWbUJTDxvwQGxpUK5hobL9
-         bYzg==
-X-Gm-Message-State: AOUpUlGJanKiJ0sokCPcAkK8TBkN1wmAZohCWnml4stfh7bqOvAdZ1oU
-        srWcMwvMpEsFT0DW0UeS3spPwrz4O8Jx2eg42G+W9w==
-X-Google-Smtp-Source: AAOMgpd46LHAm+lScOGK61uHtSxBtvtbCzYp7t0sh3TT4Tlkh+WWLZubSmH6ODa4N4GTj0hszTB3CSiyjftWq34Bdu4=
-X-Received: by 2002:a81:8742:: with SMTP id x63-v6mr11418646ywf.129.1533056547793;
- Tue, 31 Jul 2018 10:02:27 -0700 (PDT)
+        Tue, 31 Jul 2018 14:43:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732252AbeGaSn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 14:43:56 -0400
+Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C67E220841;
+        Tue, 31 Jul 2018 17:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533056563;
+        bh=Y4xZKAX+XF6CeJSF6/AZLu4SFGeSQ6tw5RGCYabIycE=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=QbW4sjH/h8OYQNDFDHDtM9Aeogw+9PRV4jqvibGSimlGNqnixcaOjafNAkN8rPDn5
+         hzm0r7c0naLDkaBLL+TBKOMPhNTjOpSPNPC3roDhK5dDVH64Tq82Lqs47lmpheXUEl
+         nUBFBH7yF0yGKlkzZQMQsqSBqwhdzsnz23c/3VAQ=
+Received: by mail-wm0-f53.google.com with SMTP id s9-v6so3890534wmh.3;
+        Tue, 31 Jul 2018 10:02:42 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHWVHjhY+z3uImIB+s6zXxBvC+2Uzwd8z+9uBVAlWv8ERRy/Ami
+        XZSp8wcSS6myBmlzahrHpNlBq8wwT8jXS9qBzmQ=
+X-Google-Smtp-Source: AAOMgpcoIKbxU2kZHRb2kgQ7H6fl6Fmaelz70dXtCYYXKoBJADfwO49Mju6fIilZjd5UrvAjD4dCJ3oVGrpE+yFoFXk=
+X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr352086wmm.117.1533056561353;
+ Tue, 31 Jul 2018 10:02:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 10:02:26
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 10:02:40
  -0700 (PDT)
-In-Reply-To: <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
-References: <20180730213412.242849-3-ndesaulniers@google.com>
- <201807311827.UpeCrGPC%fengguang.wu@intel.com> <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 31 Jul 2018 10:02:26 -0700
-X-Google-Sender-Auth: KnMd1eECOgxOcWuwZqh5ctsNjuU
-Message-ID: <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stafford Horne <shorne@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@suse.de>, NeilBrown <neilb@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        sandipan@linux.vnet.ibm.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Lawrence <paullawrence@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>, Andrew Vagin <avagin@openvz.org>
+In-Reply-To: <20180731164316.32696-5-angus@akkea.ca>
+References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
+ <20180731164316.32696-1-angus@akkea.ca> <20180731164316.32696-5-angus@akkea.ca>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 31 Jul 2018 19:02:40 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdGf643nW2p_wcMWQgmjwTs08Wy35+LXagRwuST335z3A@mail.gmail.com>
+Message-ID: <CAJKOXPdGf643nW2p_wcMWQgmjwTs08Wy35+LXagRwuST335z3A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] power: bq25890_charger.c: Read back the current
+ battery voltage
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 9:48 AM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> Does anyone understand this error?  The code looks just fine to me,
-> and the source file doesn't conflict with any of the macros I've added
-> (certainly not in any way that could cause an indentation error as
-> reported here).
+On 31 July 2018 at 18:43, Angus Ainslie (Purism) <angus@akkea.ca> wrote:
+> The part has the capability of reading the current battery voltage.
 
-It does _use_ the macro, but yeah, I'm stumped...
+Instead of "part": BQ25890-family of chargers? Chip?
 
-> On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
->>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
->> >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
->>      if (!(cmd->flags & CMD_ASYNC))
->>      ^~
->>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
->>       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
->>     ^ ~
->>
->> vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
->>
->> 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
->> 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
+Anyway,
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-#define lock_map_acquire_read(l)
-lock_acquire_shared_recursive(l, 0, 0, NULL, _THIS_IP_)
+Best regards,
+Krzysztof
 
-#define lock_acquire_shared_recursive(l, s, t, n, i)
-lock_acquire(l, s, t, 2, 1, n, i)
-
-The config doesn't have CONFIG_LOCKDEP, so it's not:
-
-extern void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
-                         int trylock, int read, int check,
-                         struct lockdep_map *nest_lock, unsigned long ip);
-
-but rather:
-
-# define lock_acquire(l, s, t, r, c, n, i)      do { } while (0)
-
-If you build with the same gcc and config, does it reproduce for you?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+>
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
+>  drivers/power/supply/bq25890_charger.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
+> index 23b39da07e56..1aa7872ddeb0 100644
+> --- a/drivers/power/supply/bq25890_charger.c
+> +++ b/drivers/power/supply/bq25890_charger.c
+> @@ -461,6 +461,15 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
+>                 val->intval = bq25890_find_val(bq->init_data.iterm, TBL_ITERM);
+>                 break;
+>
+> +       case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +               ret = bq25890_field_read(bq, F_SYSV); /* read measured value */
+> +               if (ret < 0)
+> +                       return ret;
+> +
+> +               /* converted_val = 2.304V + ADC_val * 20mV (table 10.3.15) */
+> +               val->intval = 2304000 + ret * 20000;
+> +               break;
+> +
+>         default:
+>                 return -EINVAL;
+>         }
+> @@ -669,6 +678,7 @@ static enum power_supply_property bq25890_power_supply_props[] = {
+>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+>         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
+>         POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
+>  };
+>
+>  static char *bq25890_charger_supplied_to[] = {
+> --
+> 2.17.1
+>
