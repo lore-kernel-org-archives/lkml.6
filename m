@@ -2,125 +2,95 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A898EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2E4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6DE208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:41:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TbbNxpCZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6DE208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 89DA5208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:42:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DA5208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732449AbeGaQW1 (ORCPT
+        id S1732474AbeGaQWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:22:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38230 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732326AbeGaQW1 (ORCPT
+        Tue, 31 Jul 2018 12:22:38 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51695 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732260AbeGaQWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=+tKErjDa7k0tUCr1xVGxXqv/OHAx8Dl5Yjkb0ZNTfJk=; b=TbbNxpCZHJuF
-        63mJ259oPb/nrccaQcsqj+NgjWXINkEPwp6LseCUMDcfN5GjQIhUV6pPE5xDLSY0GdsZmCJaEWrzx
-        hMXIuEJT91fx9qEz67a/80zkXsd8Z7mSMKo7aPZUC9lkU13szh0SB44fvBptaGHo53T2+B4rnKJ5w
-        2g62A=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkVqJ-0007DG-3T; Tue, 31 Jul 2018 14:41:43 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D81C811242BD; Tue, 31 Jul 2018 15:41:42 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org
-Subject: Applied "spi: dw: document Microsemi integration" to the spi tree
-In-Reply-To:  <20180731143855.7131-2-alexandre.belloni@bootlin.com>
-Message-Id: <20180731144142.D81C811242BD@debutante.sirena.org.uk>
-Date:   Tue, 31 Jul 2018 15:41:42 +0100 (BST)
+        Tue, 31 Jul 2018 12:22:38 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so3393425wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:41:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RbJ+aGLGSMCac7Wgu0IMv/i9lR0PcwraTmiIm3WpZIA=;
+        b=UojGpvreb+uqaImsp5lKQtyCIdoyqcR1bHVgWfvmbZPy9f7V4QnOle/QezkQrCjLwQ
+         72jnIJJWlZAJ9QSdVql3G/T/fwtohCBZM51Pf9bx/2DV3aqPCT2gr2v//GFwGjDsRmjG
+         Pae29c2o46ZEk8J4DEqT6/QQEtrmBlOlYO3xGPLDW3BDMUlLUIBxgVK03gzYcCd2mxxj
+         WhyWrMwka/dqjCfDAxWwKUfjBasK5vUvBeNOM/JddHHk3EzFvB8hDxktwnSsXTO5lfRM
+         ggNo8yF3Xkugyy1vFkCIRKBf71aAWRtSemb8M/ozFNEtoEA6zo060jpDFC782YdVo7iB
+         CpCw==
+X-Gm-Message-State: AOUpUlGMlrwSJEUuv8eXGGLOoy3rnkpgixlNx7OM74Eh9xHZ8ceWdN1x
+        E/B58gEzKOoZmlxpXSNtoQQ=
+X-Google-Smtp-Source: AAOMgpfvutgNVKDRnkb81OG5ET8R0RN3ANg06uiXtvSYM2pc4vJGw5UHPrVgkYONx1n5cYkqTublDg==
+X-Received: by 2002:a1c:f611:: with SMTP id w17-v6mr2351498wmc.143.1533048118912;
+        Tue, 31 Jul 2018 07:41:58 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm14703283wru.60.2018.07.31.07.41.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 07:41:58 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 842F01244E9; Tue, 31 Jul 2018 16:41:57 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 16:41:57 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
+        Mel Gorman <mgorman@suse.de>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
+Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
+Message-ID: <20180731144157.GA1499@techadventures.net>
+References: <20180731124504.27582-1-osalvador@techadventures.net>
+ <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Jul 31, 2018 at 08:49:11AM -0400, Pavel Tatashin wrote:
+> Hi Oscar,
+> 
+> Have you looked into replacing __paginginit via __meminit ? What is
+> the reason to keep both?
+Hi Pavel,
 
-   spi: dw: document Microsemi integration
+Actually, thinking a bit more about this, it might make sense to remove
+__paginginit altogether and keep only __meminit.
+Looking at the original commit, I think that it was put as a way to abstract it.
 
-has been applied to the spi tree at
+After the patchset [1] has been applied, only two functions marked as __paginginit
+remain, so it will be less hassle to replace that with __meminit.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+I will send a v2 tomorrow to be applied on top of [1].
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+[1] https://patchwork.kernel.org/patch/10548861/
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f09757ab401ff332030f8e3a41cec6a44e6d9461 Mon Sep 17 00:00:00 2001
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 31 Jul 2018 16:38:53 +0200
-Subject: [PATCH] spi: dw: document Microsemi integration
-
-The integration of the Designware SPI controller on Microsemi SoCs requires
-an extra register set to be able to give the IP control of the SPI
-interface.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-index 204b311e0400..642d3fb1ef85 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.txt
-@@ -1,8 +1,10 @@
- Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface.
- 
- Required properties:
--- compatible : "snps,dw-apb-ssi"
--- reg : The register base for the controller.
-+- compatible : "snps,dw-apb-ssi" or "mscc,<soc>-spi", where soc is "ocelot" or
-+  "jaguar2"
-+- reg : The register base for the controller. For "mscc,<soc>-spi", a second
-+  register set is required (named ICPU_CFG:SPI_MST)
- - interrupts : One interrupt, used by the controller.
- - #address-cells : <1>, as required by generic SPI binding.
- - #size-cells : <0>, also as required by generic SPI binding.
+Thanks
 -- 
-2.18.0
-
+Oscar Salvador
+SUSE L3
