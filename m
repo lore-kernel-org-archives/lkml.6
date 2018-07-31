@@ -2,115 +2,111 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE2FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959ECC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440C12083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:43:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="keh0dpNd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440C12083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 504F32083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F32083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbeGaOXO (ORCPT
+        id S1732171AbeGaOZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:23:14 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40216 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732084AbeGaOXO (ORCPT
+        Tue, 31 Jul 2018 10:25:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44218 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731652AbeGaOZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:23:14 -0400
-Received: by mail-io0-f194.google.com with SMTP id l14-v6so12854560iob.7
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 05:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yfDT0sjOo/OCrTR4HuaFIvKNgLRSC0E4B8UOHDYeBw8=;
-        b=keh0dpNdkGtVr+ZCIu/Y3NBwVRjzKOOIpr2Yi6fY9zBSmTLng76zLNyDYhlWYIj5k+
-         /kLUWtsHQqZzYGbYtK5GaVxUJ9oHkBXOUa+LmMTiqhEUMX9b/gDYGtE2bcGO9RVOOYvC
-         mBzHdLaA1y3u0bBzu1ABZNWOjNkC0j0WdUaLhLFlL22Hqb93rue4LxdRCs97AxFXqAUM
-         nuTlO5NaoP0MTMdoTziduhq5im98BcuQDXCwAGJ2oR+bSbhzZhh9hrhJo864eErAVV2g
-         Kxsa0ZFj4KWdu5UYhhFLR8fB8kKo765GRCuP1U+mt/m2epYxZx5/yY57pWpJ/1pAajCN
-         EuQQ==
+        Tue, 31 Jul 2018 10:25:25 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r16-v6so16495084wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 05:45:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yfDT0sjOo/OCrTR4HuaFIvKNgLRSC0E4B8UOHDYeBw8=;
-        b=bTfY37ThA/E1urtT2uv9doOoy9E3Cku081ChF1YlmkMjb1osXtFwS0n0XOWTRIo/KD
-         tCKtRbL4YNSrAZ63Rlui9NjjJg7+1j8JiqW7Z9/hD1tokJS1MyhWB+zrb/Wxy8ST45y5
-         np6amEUh3jMPRGAiateiDi9berNK7fL9pDibAT14IkdQeiOVAJSmrKR/yB2d+2TEEa61
-         YC3WgGU48AKQDR5f54dWA+k7vDtvt66+3KzzDW0iO8YWhs3VEnd83x9I5G8qj1H2j4fP
-         4v+qNeYaMdIu5ly1YVW12qfWQCE4cD6C6ErPKwRWrAzZnZz7qGy79ApUCHiM3q9Rn1BS
-         Jj0w==
-X-Gm-Message-State: AOUpUlEYtzP3sM+XwMOBNRlRsrDewyw69W+q9J0hzgg7ysVXkHH62RvH
-        NDsJy00EfXrPWlA31vyMaiw2RU/wKNU=
-X-Google-Smtp-Source: AAOMgpcA9OG+2TI5NHmPHalE5MkVt85+8ICkofl3OoEvEBjXN1IGsvCZB8hGRVjXLl+Mdi6WCHoKkQ==
-X-Received: by 2002:a6b:9303:: with SMTP id v3-v6mr16377563iod.264.1533040984332;
-        Tue, 31 Jul 2018 05:43:04 -0700 (PDT)
-Received: from [10.0.2.15] ([72.138.96.106])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm2024063ita.18.2018.07.31.05.43.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=r1CBh5En4n4Wn7J9Am2n5DoLoLM4u1BZ9VrK61wlxgE=;
+        b=qi1f7Tcm7+MuSoJM7FDrpNUCOZyfGHWPAyrgG0a5jca80K2OaoLj8y3Ha3Hzoi7x3k
+         d5+CFqKjJvTuLnQs9EyFDh6J12AosmFmp6DJgREI0O7bqqMnym4M9n9DW2mBPfmkIGHK
+         23UG9oAamWVUc8xolQz0gAmZCKgtSeJfmf+mic9uRv2mefpBRweuzYvHBmCoC+pwbamg
+         VYbPAFC7O0ACc9NEBzxSjmdPJwxLxBwqDJMDrssoebghktsAINnLSiI3hW08Y9hrieBG
+         UtX3ixrXEM1/t/oouBrN5xf25z1eoErRUAD+xqOAu/qDk/hV7o2A+Zq9whZemWX7jpNa
+         RIdA==
+X-Gm-Message-State: AOUpUlH6squzetJ/wxwIhorj5IMwNUeApHBNWI2LyRC3uulOwywDkRiu
+        dEX5RV88i2Evfoyg+CcT4Ys=
+X-Google-Smtp-Source: AAOMgpcW1KXz68RKY5jX8yJSJULd+rFg25AeMBH/XsUlVSl/lA3W7jZRQS+2Gq1ZlWvEHHkAkgy4sA==
+X-Received: by 2002:adf:cc0a:: with SMTP id x10-v6mr19939564wrh.242.1533041114347;
+        Tue, 31 Jul 2018 05:45:14 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id h5-v6sm17333140wrr.19.2018.07.31.05.45.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 05:43:03 -0700 (PDT)
-Subject: Re: [PATCH 5/6] arm: enable RapidIO menu in Kconfig
-To:     Christoph Hellwig <hch@infradead.org>,
-        Alexei Colin <acolin@isi.edu>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180730225035.28365-1-acolin@isi.edu>
- <20180730225035.28365-6-acolin@isi.edu> <20180731120428.GA5696@infradead.org>
-From:   Alex Bounine <alex.bou9@gmail.com>
-Message-ID: <3784698f-bd9d-6d02-6fa4-2f6057e4c93f@gmail.com>
-Date:   Tue, 31 Jul 2018 08:43:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180731120428.GA5696@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 31 Jul 2018 05:45:13 -0700 (PDT)
+Received: from d104.suse.de (charybdis-ext.suse.de [195.135.221.2])
+        by techadventures.net (Postfix) with ESMTPA id EBE2F1244CC;
+        Tue, 31 Jul 2018 14:45:12 +0200 (CEST)
+From:   osalvador@techadventures.net
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, kirill.shutemov@linux.intel.com,
+        pasha.tatashin@oracle.com, iamjoonsoo.kim@lge.com, mgorman@suse.de,
+        jrdr.linux@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
+Date:   Tue, 31 Jul 2018 14:45:04 +0200
+Message-Id: <20180731124504.27582-1-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-31 08:04 AM, Christoph Hellwig wrote:
-> On Mon, Jul 30, 2018 at 06:50:33PM -0400, Alexei Colin wrote:
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index afe350e5e3d9..602a61324890 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
->>   
->>   source "drivers/pci/Kconfig"
->>   
->> +source "drivers/rapidio/Kconfig"
-> 
-> Please include this from drivers/Kconfig instead of enabling it
-> for a completely random set of architectures.
-> 
-This is not a random set of architectures but only ones that implement 
-support for RapidIO as system bus.
+From: Oscar Salvador <osalvador@suse.de>
 
-On some platforms RapidIO can be the only system bus available replacing 
-PCI/PCIe.
+__pagininit macro is being used to mark functions for:
 
-As it is done now, RapidIO is configured in "Bus Options" (x86/PPC) or 
-"Bus Support" (ARMs) sub-menu and from system configuration option it 
-should be kept this way.
+a) Functions that we do not need to keep once the system is fully
+   initialized with regard to memory.
+b) Functions that will be needed for the memory-hotplug code,
+   and because of that we need to keep them after initialization.
 
-Current location of RAPIDIO configuration option is familiar to users of 
-PowerPC and x86 platforms, and is similarly available in some ARM 
-manufacturers kernel code trees.
+Right now, the condition to choose between one or the other is based on
+CONFIG_SPARSEMEM, but I think that this should be changed to be based
+on CONFIG_MEMORY_HOTPLUG.
+
+The reason behind this is that it can very well be that we have CONFIG_SPARSEMEM
+enabled, but not CONFIG_MEMORY_HOTPLUG, and thus, we will not need the
+functions marked as __paginginit to stay around, since no
+memory-hotplug code will call them.
+
+Although the amount of freed bytes is not that big, I think it will
+become more clear what __paginginit is used for.
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/internal.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 33c22754d282..c9170b4f7699 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -392,10 +392,11 @@ static inline struct page *mem_map_next(struct page *iter,
+ /*
+  * FLATMEM and DISCONTIGMEM configurations use alloc_bootmem_node,
+  * so all functions starting at paging_init should be marked __init
+- * in those cases. SPARSEMEM, however, allows for memory hotplug,
+- * and alloc_bootmem_node is not used.
++ * in those cases.
++ * In case that MEMORY_HOTPLUG is enabled, we need to keep those
++ * functions around since they can be called when hot-adding memory.
+  */
+-#ifdef CONFIG_SPARSEMEM
++#ifdef CONFIG_MEMORY_HOTPLUG
+ #define __paginginit __meminit
+ #else
+ #define __paginginit __init
+-- 
+2.13.6
 
