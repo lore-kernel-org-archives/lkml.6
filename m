@@ -2,121 +2,86 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC26C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E5FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E5820841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:20:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXh4d1hX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31E5820841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 31EEE208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EEE208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbeGaF7J (ORCPT
+        id S1727308AbeGaGBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 01:59:09 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:47099 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbeGaF7J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 01:59:09 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t17-v6so6538813ply.13
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 21:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8ttABI2g+B19JOYy2SH7b7iexeMIakFxlaB8lJHb7BA=;
-        b=LXh4d1hX4MzrRTkgNjFcO8VAtneHJrk0eE2lC15wVGw84ub1Ib2N8B2Zj6DZwIJnDM
-         tVStWpw23nuob9jraXe573fxLXL2nf89he2ucXSfExTCCvop8KfgcRauM7XBsviMnCc+
-         wus0yU+JV1/5J8CRv8T6/hQTXnWknFc9/J0z8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8ttABI2g+B19JOYy2SH7b7iexeMIakFxlaB8lJHb7BA=;
-        b=nydVDwMHPAaAd4GqWm5Euy/UyXtKw3rSgN2oIXYwRFIzwyAj+pbGhiCSN3oSr8CBMH
-         VxRNa4k2oZqpYcA70xAHXXhcvmhxyDj6kvYa+u7pBj/xr5ZF4wzrd7VG8h9+oCo+0Eeb
-         2fc+U2mr3deB0xqPPC1PFsCJVmSgSg78S9sZlFs71HXTST1rAmtX5eKPbxzOtHY/ZODF
-         XKGxE0TaIyR+sEtFDAhJivRDKIlf1ejsy5HVbe8InwBJ4nbEVUDomntx+OymBQrtY+yp
-         JC9LSIsiFQI26rdk/cpN1Uf1WFxyJSuZuQK1hWj0qC8p3QirDXZa0+iJ4uEV4s2Oy13S
-         pkQw==
-X-Gm-Message-State: AOUpUlECm1IJVnkzB0frg7zPokBayMbyyOwJ95yGdeqjauiplYlNQo6J
-        NMatZUKoGA6XBW8IKzrutEg/yw==
-X-Google-Smtp-Source: AAOMgpdpsBKFdTX1feL9EX4QrqsjuXD63DIpBPykuHmrB2C4G3JKN1Cm1fvlXDag/OIRcwe+iV3YwA==
-X-Received: by 2002:a17:902:8215:: with SMTP id x21-v6mr18760109pln.175.1533010852516;
-        Mon, 30 Jul 2018 21:20:52 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y63-v6sm20170483pgd.94.2018.07.30.21.20.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 21:20:51 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 21:21:40 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Sarangdhar Joshi <spjoshi@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
-Message-ID: <20180731042140.GD5090@builder>
-References: <20180718111730.3531477-1-arnd@arndb.de>
+        Tue, 31 Jul 2018 02:01:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33130 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbeGaGBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 02:01:14 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3TEN5p8FbiRO; Tue, 31 Jul 2018 06:22:56 +0200 (CEST)
+Received: from nazgul.tnic (95-42-131-245.ip.btc-net.bg [95.42.131.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D51331EC00F4;
+        Tue, 31 Jul 2018 06:22:55 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 06:22:59 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     vnkgutta@codeaurora.org
+Cc:     evgreen@chromium.org, robh@kernel.org, mchehab@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org
+Subject: Re: [PATCH v0 3/4] drivers: edac: Add cache erp driver for Last
+ Level Cache Controller (LLCC)
+Message-ID: <20180731042259.GD13258@nazgul.tnic>
+References: <1532540697-26630-1-git-send-email-vnkgutta@codeaurora.org>
+ <1532540697-26630-4-git-send-email-vnkgutta@codeaurora.org>
+ <20180729034927.GA2916@nazgul.tnic>
+ <090d55ef84af7bc6c750b93219408437@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180718111730.3531477-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <090d55ef84af7bc6c750b93219408437@codeaurora.org>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18 Jul 04:16 PDT 2018, Arnd Bergmann wrote:
+On Mon, Jul 30, 2018 at 02:38:01PM -0700, vnkgutta@codeaurora.org wrote:
+> Do you mean the Signed-off-by lines above? That's because
+> Channagoud is the one who is the original author of this driver,
+> and I'm the one who did the incremental changes (changes in llcc)
+> and uploading it upstream.
+> That's why the Signed-off is like that.
+> Which way do you think it should be?
 
-> A new driver got added that depends on QCOM_SMD and fails to link
-> as built-in with CONFIG_QCOM_SMD=m:
-> 
-> drivers/remoteproc/qcom_common.o: In function `smd_subdev_stop':
-> qcom_common.c:(.text+0x674): undefined reference to `qcom_smd_unregister_edge'
-> drivers/remoteproc/qcom_common.o: In function `smd_subdev_start':
-> qcom_common.c:(.text+0x700): undefined reference to `qcom_smd_register_edge'
-> 
-> We've fixed the same thing several times before, so use the same
-> dependency here.
-> 
+Then you need to figure out between you two who the author should be
+because we have single authorship. When you do, commit it in git with
 
-I have a change where I remove this inherited dependency, so I asked
-Sricharan to only depend on the ones he actually uses - but I forgot
-that I haven't pushed this.
+git commit --amend --author=...
 
-Sorry about screwing this up again. Thanks for catching it!
+so that that is reflected properly.
 
-Regards,
-Bjorn
+For expressing stuff like co-authorship we have
 
-> Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/remoteproc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0dde3753c3a5..052d4dd347f9 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -127,6 +127,7 @@ config QCOM_Q6V5_WCSS
->  	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
->  	depends on OF && ARCH_QCOM
->  	depends on QCOM_SMEM
-> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
->  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
->  	depends on QCOM_SYSMON || QCOM_SYSMON=n
->  	select MFD_SYSCON
-> -- 
-> 2.9.0
-> 
+Co-Developed-by:
+
+All explained in submitting-patches.rst.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
