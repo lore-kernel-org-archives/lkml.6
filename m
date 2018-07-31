@@ -2,155 +2,147 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDD3C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FCCC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98B9820894
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C07F208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:30:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LSAjMvvC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nzNMziGZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B9820894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJbjKI4o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C07F208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732330AbeGaWJn (ORCPT
+        id S1731399AbeGaWMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 18:09:43 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:37093 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729788AbeGaWJm (ORCPT
+        Tue, 31 Jul 2018 18:12:02 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:37238 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbeGaWMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 18:09:42 -0400
-Received: by mail-yw0-f195.google.com with SMTP id w76-v6so6304726ywg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:27:39 -0700 (PDT)
+        Tue, 31 Jul 2018 18:12:02 -0400
+Received: by mail-io0-f193.google.com with SMTP id z19-v6so14170939ioh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
-        b=LSAjMvvCwVKaooVO9TF9iqK6YNZQHhjSrOJr74LslZfUpOJwoZ05oiPRkeiGmmLmno
-         f0TIUCHvJ3oopTMPoXkWz4+pgOH1Ua4wqEYJxYR0qaB4MPmeC9lbgIlOqWwGUDPKz+sH
-         IQ99Z4shHcTWLPE47SckhgWpHh3YUSY3sJD2sqft4GPERMGlFPgdNpRx7XauA497c5hS
-         4MknSQRiGzmUSpqWNTB8a8zzDg0DMc58OwacAn0ocK/bmqZMD5a7qP+d94RNy7+D/xaa
-         t6AB2orxHvT22VKulzRd/UWsDrVrgOpZnlkqZdm5X8LIo4Q9SmxHZZc5lCj6zzBEHvcR
-         sPBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
-        b=nzNMziGZGd2DU0EXCSoA7SXPzt3pNZV7Ye84XiY19AtJF1qzDuD1waiSr5xDemrkC/
-         5TBKSMYp4LO84mI1VUcq11+gsGzbtuXD6SGsVLkbB9Xsyd5AaVemqywjDfokbhkiugPT
-         Bno7xIcRiNC20kHL197t4VrumwZ46vtj2NPb4=
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eJGJvzxl1mgg8IFlkdpTcnf4KED5RB3VdoSoE7cxg2k=;
+        b=eJbjKI4oH+Uz+14660OcFxFT/zM6z4VgUT8ogG01V/jWTb9QOJ2RzuBISkFu8F7Slo
+         PBMeqBWckxxEw3+LYRJwqV283uzCVQAq/gKO1eq/DBoJuRoxKrQRsH++ofNQlNwrIGmJ
+         GlAfrAto30ROFbPitep9QcFkkIPpZ6c1fTM0o2FJCcI/3Zqd/l1Sh2WpYo7C1vccTiuz
+         I90dX7BRlj19fvCmyujamQz4ag5pLGObbHNsNK0642SjlhTOwXyiQ6HLBtDdcrKzjr0t
+         sInRKR2JnKf5Q2oU6Vq83W9NOAJmEGz3FCoIHJF/tOl+g2G6llWTvPR9626L6snmNzkv
+         3fxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
-        b=RBYg7p1n7nk9RetIZ812AJqgyYkr3vCEMnZ9bAbuL4Pt+a9lFi38QX6AA+m/LwUAGE
-         Axrm1rLrNnyADzMg+k7i1RSYWkqsfWW5a1/L6RQFq+Aj8N9kuvyXNEHBkkOhVMglxUXj
-         PVDpM7AHYyY+gEID692B+Vsn2o3aUXHPH865gxn1krX+dz/2OrBOPojISS9MrtB1Ks7Y
-         RAxot2n5wyhXtGshy7aA29+kONcRxyoILD24HVXgqmG9XmZj8dbod3Z4N+lt0H0TJue/
-         YIIO9EVdTNConZ9qJoC54cW+nLbjtDmmFwiaFxSB3+to2EDufZH6UlyoiLlbV6YASO68
-         tPtw==
-X-Gm-Message-State: AOUpUlG0OvUV2gVzwf5EjOlId2Ob0/HJchUkg9khHgETJGOyiJAh6Ytr
-        2tcV/jqnKiTg7+AWUrlnpUP7ng6UV/6Dsc4KST1gdQ==
-X-Google-Smtp-Source: AAOMgpc5TSygvozy2Kkdfeh8fJAY5qI5qblcevwsD2aSv0HlEQ/RT2OZplhykCoxm4mxkBXZUF1zTPoIHw9GYblmeYs=
-X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr11539648ywn.88.1533068859243;
- Tue, 31 Jul 2018 13:27:39 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eJGJvzxl1mgg8IFlkdpTcnf4KED5RB3VdoSoE7cxg2k=;
+        b=ZNIvCCDExAs1eIZRRZVQ1ylEb+435cRubEQ3St6D7AG9uMUc9tzgb7CqjqibgCsRWG
+         OemQaCP9WmUWVCuBZ+PjYp54sHFYYVLjuA3+UcT7hsmJotjKdztmNEYq6Cinx4lDY70v
+         DHK3cQdNMCHyE/IsoYPU1/7TimoagR6ZahcdU3drhtWVgHL3w46rZmWmGLkG0zyc1rSK
+         YceelgUD+9QGU536EJOAAJ/aXra8PLvXoptkAq1R9buVP2mwTOsG8LKH49pmYxfolLwQ
+         tcrXvFz+cd1KdbupbH3/suapbTQKSss2yMPL8mQqoWIdGM7AIv+KAE9T/9rkQ4Txesmp
+         +k2w==
+X-Gm-Message-State: AOUpUlGfBYBWgaXRt/nly2xbcLhM7i2r4bLtEoRX3uJeLkZ2GRePkUhW
+        9w6E3WLG3jJfI8r/qpVu+WB7Vu95rhY=
+X-Google-Smtp-Source: AAOMgpez7zJbJBusq5VmUzlLI+Z3tr3DiReAiXPJ4c6xLCUc41X9u2vt+/WmjBmDSjg4KCQp79Tgvw==
+X-Received: by 2002:a5e:9242:: with SMTP id z2-v6mr1052217iop.278.1533068997265;
+        Tue, 31 Jul 2018 13:29:57 -0700 (PDT)
+Received: from [10.0.2.15] ([72.138.96.106])
+        by smtp.gmail.com with ESMTPSA id p84-v6sm1686879itc.2.2018.07.31.13.29.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 13:29:56 -0700 (PDT)
+Subject: Re: [PATCH 6/6] arm64: enable RapidIO menu in Kconfig
+From:   Alex Bounine <alex.bou9@gmail.com>
+To:     Will Deacon <will.deacon@arm.com>, Alexei Colin <acolin@isi.edu>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@armlinux.org.uk>,
+        John Paul Walters <jwalters@isi.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180730225035.28365-1-acolin@isi.edu>
+ <20180730225035.28365-7-acolin@isi.edu> <20180731084143.GA4680@arm.com>
+ <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
+Message-ID: <f2723578-f39d-27ac-b376-0f06905caa67@gmail.com>
+Date:   Tue, 31 Jul 2018 16:29:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 13:27:38
- -0700 (PDT)
-In-Reply-To: <CAPDyKFpi87UaKLScADOT_gkXkXpLR6r2J71G78zVn0hkc3ng5g@mail.gmail.com>
-References: <20180712195937.GA36007@beast> <CAPDyKFpi87UaKLScADOT_gkXkXpLR6r2J71G78zVn0hkc3ng5g@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 31 Jul 2018 13:27:38 -0700
-X-Google-Sender-Auth: CDrXIvW0mAjENKeWgoBSFIXQE9s
-Message-ID: <CAGXu5jJbS-P9X+6jPVkiVqDN1vF5ZFiwxRD0fHk+yYnhb9qKGQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mxcmmc: Fix missing parentheses and brace
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 3:11 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote=
-:
-> On 12 July 2018 at 21:59, Kees Cook <keescook@chromium.org> wrote:
->> Looks like the adjusted syntax wasn't fully build tested. This fixes
->> failures with powerpc builds:
+On 2018-07-31 08:54 AM, Alex Bounine wrote:
+> On 2018-07-31 04:41 AM, Will Deacon wrote:
+>> On Mon, Jul 30, 2018 at 06:50:34PM -0400, Alexei Colin wrote:
+>>> Platforms with a PCI bus will be offered the RapidIO menu since they may
+>>> be want support for a RapidIO PCI device. Platforms without a PCI bus
+>>> that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
+>>> in the platform-/machine-specific "config ARCH_*" Kconfig entry.
+>>>
+>>> Tested that kernel builds for arm64 with RapidIO subsystem and
+>>> switch drivers enabled, also that the modules load successfully
+>>> on a custom Aarch64 Qemu model.
+>>>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: Russell King <linux@armlinux.org.uk>
+>>> Cc: John Paul Walters <jwalters@isi.edu>
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: linux-kernel@vger.kernel.org,
+>>> Signed-off-by: Alexei Colin <acolin@isi.edu>
+>>> ---
+>>>   arch/arm64/Kconfig | 2 ++
+>>>   1 file changed, 2 insertions(+)
 >>
->> drivers/mmc/host/mxcmmc.c: In function =E2=80=98mxcmci_swap_buffers=E2=
-=80=99:
->> drivers/mmc/host/mxcmmc.c:296:51: error: expected =E2=80=98)=E2=80=99 be=
-fore =E2=80=98;=E2=80=99 token
->>    void *buf =3D kmap_atomic(sg_page(sg) + sg->offset;
->>                                                    ^
->> drivers/mmc/host/mxcmmc.c:299:1: error: expected =E2=80=98,=E2=80=99 or =
-=E2=80=98;=E2=80=99 before =E2=80=98}=E2=80=99 token
->>  }
->>  ^
+>> Thanks, this looks much cleaner than before:
 >>
->> Fixes: b189e7589f6d3 ("mmc: mxcmmc: handle highmem pages")
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> Thanks, applied for fixes!
-
-I just checked again, and while I see this in linux-next, I would
-expect this to be in 4.18, since this fixes a 4.18-introduced build
-failure for some PPC configurations. Can this please be included in
-4.18?
-
-Thanks!
-
--Kees
-
->
-> Kind regards
-> Uffe
->
->> ---
->>  drivers/mmc/host/mxcmmc.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> Acked-by: Will Deacon <will.deacon@arm.com>
 >>
->> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
->> index 75f781c11e89..de4e6e5bf304 100644
->> --- a/drivers/mmc/host/mxcmmc.c
->> +++ b/drivers/mmc/host/mxcmmc.c
->> @@ -293,9 +293,10 @@ static void mxcmci_swap_buffers(struct mmc_data *da=
-ta)
->>         int i;
+>> The only thing I'm not sure about is why we don't just select HAS_RAPIDIO
+>> unconditionally in the arm64 Kconfig. Does selecting only that option
+>> actually pull in new code to the build?
 >>
->>         for_each_sg(data->sg, sg, data->sg_len, i) {
->> -               void *buf =3D kmap_atomic(sg_page(sg) + sg->offset;
->> +               void *buf =3D kmap_atomic(sg_page(sg) + sg->offset);
->>                 buffer_swap32(buf, sg->length);
->>                 kunmap_atomic(buf);
->> +       }
->>  }
->>  #else
->>  static inline void mxcmci_swap_buffers(struct mmc_data *data) {}
->> --
->> 2.17.1
->>
->>
->> --
->> Kees Cook
->> Pixel Security
+> HAS_RAPIDIO option is intended for SOCs that have built in SRIO 
+> controllers, like TI KeyStoneII or FPGAs. Because RapidIO subsystem core 
+> is required during RapidIO port driver initialization, having separate 
+> option allows us to control available build options for RapidIO core and 
+> port driver (bool vs. tristate) and disable module option if port driver 
+> is configured as built-in.
+
+I am thinking about where HAS_RAPIDIO option can be set for arm64 
+branch. Having it set globally is too broad. For example we have Xilinx 
+Zinq US board with SRIO IP on it. Having it globally in arm64 branch - 
+bad. Probably having it set in drivers/soc/... is the best place.
+
+Will, Alexei what do you think?
 
 
-
---=20
-Kees Cook
-Pixel Security
+> 
+>> Will
+>>
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index a8f0c74e6f7f..5e8cf90505ec 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -308,6 +308,8 @@ config PCI_SYSCALL
+>>>   source "drivers/pci/Kconfig"
+>>> +source "drivers/rapidio/Kconfig"
+>>> +
+>>>   endmenu
+>>>   menu "Kernel Features"
+>>> -- 
+>>> 2.18.0
+>>>
