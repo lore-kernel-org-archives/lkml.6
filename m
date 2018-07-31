@@ -2,199 +2,170 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59813C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09462C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E95208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB24208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:47:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xl6jytFU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E95208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="h78zMBxQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB24208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeGaT2Z (ORCPT
+        id S1731912AbeGaT3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:28:25 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34604 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729645AbeGaT2L (ORCPT
+        Tue, 31 Jul 2018 15:29:21 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:43755 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729645AbeGaT3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:28:11 -0400
-Received: by mail-io0-f196.google.com with SMTP id l7-v6so13782720ioj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:46:47 -0700 (PDT)
+        Tue, 31 Jul 2018 15:29:21 -0400
+Received: by mail-yb0-f194.google.com with SMTP id y3-v6so735130ybo.10
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:47:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=xJeOYL3BXF6TIv3IemtbsQwe9f6MDwAvR23Hx8VlEIY=;
-        b=Xl6jytFUi6GfhHKHfXSSCa0pY63iiRUDXCZc8HmPx00RwsvU7tJbs4xvPV5pqdMACA
-         aUZMZPFFQ8hK7oTW8Ut4kDcUNCEI99cJFLTqN3uWd3q3DZVSSG4PGQKIklEzOFomuNyu
-         keqQj0ZLmgfO+qXY4Jl7OS6jw45W4Vtz7sQXU=
+        bh=SVe9hcyFwhLf6K6lt9pcEGSB7DPyqiY6bwyA75H/X18=;
+        b=h78zMBxQqwJu2tIZYP5CaMj6k0uOK2slaAdcgG4BeWo3qS4FfBj+GYJf+drn44qiK2
+         qKwWFkGKzE/Po00hgsVUxxUpQ9lAIPnw7xwLIjddERsfoXz5XUcaRN87hLC1N38npQZp
+         RTtsmdUjwLYfCNrPxx2NGezyWcnFpZygCMd7F1rVhvZkQ2/BOavdTnisUis02fXObVPW
+         OLwo1hs0U7ojBt00UI/NiwsgSVOqzc+vY//MvUWoo6sTTq1AzPRG1BWkyZAFCbe5bzK3
+         Lkf6vmWBmzNYLgOn0zrel+w8yKdhuha/cY5Jkocm01i1jLVg1W78ty2squdHnWpYTfi6
+         9UxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xJeOYL3BXF6TIv3IemtbsQwe9f6MDwAvR23Hx8VlEIY=;
-        b=lttNBz+wy5ZTvLSLYoruvT4bsVwu0r8Mui7Rawt2vvJCJs87jJwJvfw/rA83j3thDn
-         68q/lOgCrcy+0P+hllrEf0SDx9V7SBkAbNep+s3klygnKgJZz1OeSRE51RGOYnAnel3n
-         utlGNTcTQ+jNrDLk9x0ybqAyeGBoPzwZNVFxEwuJnYGtf3BzYGrVnkEVygjXll8ev+Ih
-         xgTMKQyumsNR56pikJ853l/zXYHHKLBmRblpIo/5vD+5A7cCBLcJg6X4AIiHxoi1tPkG
-         RTyns9yheu+14bCbKcp3/u72F0vK27vmw0fcHN0Ujo8NydN49soczlI4dKwTWXwqMjR2
-         CbZA==
-X-Gm-Message-State: AOUpUlF81OWOvujHx6UFpdIGxVfuc4dQmM4RKrVbK5Yin0TyBl2Z7SYV
-        vc5mEbTs5KmFIscXz7IKqGkwRQ==
-X-Google-Smtp-Source: AAOMgpc7hpY/NdYzuEXZ5mF7rrRXmTmkAMvSAR+aqtQUk+V4KaYDbFv1QBOymXVgj5SAyiu9teODhw==
-X-Received: by 2002:a6b:6607:: with SMTP id a7-v6mr630579ioc.145.1533059207018;
-        Tue, 31 Jul 2018 10:46:47 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id c141-v6sm2101673itc.42.2018.07.31.10.46.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 10:46:45 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 11:46:43 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mike.leach@linaro.org, robert.walker@arm.com,
-        coresight@lists.linaro.org
-Subject: Re: [PATCH v3 05/13] coresight: perf: Allow tracing on hotplugged
- CPUs
-Message-ID: <20180731174643.GB11692@xps15>
-References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
- <1532609691-16863-6-git-send-email-suzuki.poulose@arm.com>
+        bh=SVe9hcyFwhLf6K6lt9pcEGSB7DPyqiY6bwyA75H/X18=;
+        b=dB4QfLajzz9CuLKlEHr7RDwcuCD/tx/C4dFXdsjWZulO2/0gXfFe4Sk0HCqYjmUIij
+         J9jbFXNCiUh8ASw+tzQKxeuHKXH9gDUJGhCf6mM8kD2cRhzR1GBg1dxLyB4X9GHYj1ym
+         /B+fdTvWp1C9HDP+MjxbFUem5F7aq5G3pyPY7XEUkO2JSf3L+lsjtUwvJMk6xcxEM/25
+         /G7GYUzVFNh5LoANqbz++phjYMX/1ZdHxESHDd/Vh0v2XmGxFWFDSnC7gaPHf3Y74GDk
+         4m1grzL3XCMVlzVWF384X06Grj/DHm74TjO2YKFI8JPoUpylWWqYWA0m0yKwLjjfhaol
+         xm/w==
+X-Gm-Message-State: AOUpUlFzoTo8kIwxV8l2GaGqOq2UhKFh4RsMrHYPIt+5v61cb2FXZCEI
+        1UkdvC1G8Bp3tvoSEofqSRXbIA==
+X-Google-Smtp-Source: AAOMgpfpJkiful0IHBqzX4K8YjUgMH63KIS1pCYQC2yf1MNvpwqDwSY1jtdUHZMqbz47OCameH1kxg==
+X-Received: by 2002:a25:fc01:: with SMTP id v1-v6mr475449ybd.406.1533059276566;
+        Tue, 31 Jul 2018 10:47:56 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::3:e414])
+        by smtp.gmail.com with ESMTPSA id l4-v6sm6269229ywk.47.2018.07.31.10.47.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 10:47:55 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 13:50:50 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
+Subject: Re: [PATCH v2] mm: terminate the reclaim early when direct reclaiming
+Message-ID: <20180731175050.GA31657@cmpxchg.org>
+References: <1533035368-30911-1-git-send-email-zhaoyang.huang@spreadtrum.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1532609691-16863-6-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1533035368-30911-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2018 at 01:54:43PM +0100, Suzuki K Poulose wrote:
-> At the moment, if there is no CPU specified for a given
-> event, we use cpu_online_mask and try to build path for
-> each of the CPUs in the mask. This could prevent any CPU
-> that is turned online later to be used for the tracing.
+On Tue, Jul 31, 2018 at 07:09:28PM +0800, Zhaoyang Huang wrote:
+> This patch try to let the direct reclaim finish earlier than it used
+> to be. The problem comes from We observing that the direct reclaim
+> took a long time to finish when memcg is enabled. By debugging, we
+> find that the reason is the softlimit is too low to meet the loop
+> end criteria. So we add two barriers to judge if it has reclaimed
+> enough memory as same criteria as it is in shrink_lruvec:
+> 1. for each memcg softlimit reclaim.
+> 2. before starting the global reclaim in shrink_zone.
 > 
-> This patch changes to use the cpu_present_mask and tries
-> to build path for as much CPUs as possible ignoring the
-> failures in building path for some of the CPUs. If ever
-> we try to trace on those CPUs, we fail the operation.
-> 
-> Based on a patch from Mathieu Poirier.
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
 > ---
->  drivers/hwtracing/coresight/coresight-etm-perf.c | 46 +++++++++++++++---------
->  1 file changed, 30 insertions(+), 16 deletions(-)
+>  include/linux/memcontrol.h |  3 ++-
+>  mm/memcontrol.c            |  3 +++
+>  mm/vmscan.c                | 38 +++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 42 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index 6beb662..afe7e7f 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -127,11 +127,9 @@ static void free_event_data(struct work_struct *work)
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 6c6fb11..a7e82c7 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -325,7 +325,8 @@ void mem_cgroup_cancel_charge(struct page *page, struct mem_cgroup *memcg,
+>  void mem_cgroup_uncharge_list(struct list_head *page_list);
 >  
->  	event_data = container_of(work, struct etm_event_data, work);
->  	mask = &event_data->mask;
-> -	/*
-> -	 * First deal with the sink configuration.  See comment in
-> -	 * etm_setup_aux() about why we take the first available path.
-> -	 */
-> -	if (event_data->snk_config) {
-> +
-> +	/* Free the sink buffers, if there are any */
-> +	if (event_data->snk_config && !WARN_ON(cpumask_empty(mask))) {
-
-I'm not sure the WARN_ON() is required.
-
-Here @mask can't be empty since you've added a check in setup_aux().  So if
-@mask does end up being empty something has trampled the memory and we have
-far bigger problems.  
-
-
->  		cpu = cpumask_first(mask);
->  		sink = coresight_get_sink(etm_event_cpu_path(event_data, cpu));
->  		if (sink_ops(sink)->free_buffer)
-> @@ -166,7 +164,7 @@ static void *alloc_event_data(int cpu)
->  	if (cpu != -1)
->  		cpumask_set_cpu(cpu, mask);
->  	else
-> -		cpumask_copy(mask, cpu_online_mask);
-> +		cpumask_copy(mask, cpu_present_mask);
->  
->  	/*
->  	 * Each CPU has a single path between source and destination.  As such
-> @@ -218,19 +216,32 @@ static void *etm_setup_aux(int event_cpu, void **pages,
->  	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
->  	 */
->  	sink = coresight_get_enabled_sink(true);
-> -	if (!sink)
-> +	if (!sink || !sink_ops(sink)->alloc_buffer)
->  		goto err;
->  
->  	mask = &event_data->mask;
->  
-> -	/* Setup the path for each CPU in a trace session */
-> +	/*
-> +	 * Setup the path for each CPU in a trace session. We try to build
-> +	 * trace path for each CPU in the mask. If we don't find an ETM
-> +	 * for the CPU or fail to build a path, we clear the CPU from the
-> +	 * mask and continue with the rest. If ever we try to trace on those
-> +	 * CPUs, we can handle it and fail the session.
-> +	 */
->  	for_each_cpu(cpu, mask) {
->  		struct list_head *path;
->  		struct coresight_device *csdev;
->  
->  		csdev = per_cpu(csdev_src, cpu);
-> -		if (!csdev)
-> -			goto err;
-> +		/*
-> +		 * If there is no ETM associated with this CPU clear it from
-> +		 * the mask and continue with the rest. If ever we try to trace
-> +		 * on this CPU, we handle it accordingly.
-> +		 */
-> +		if (!csdev) {
-> +			cpumask_clear_cpu(cpu, mask);
-> +			continue;
-> +		}
->  
->  		/*
->  		 * Building a path doesn't enable it, it simply builds a
-> @@ -238,17 +249,20 @@ static void *etm_setup_aux(int event_cpu, void **pages,
->  		 * referenced later when the path is actually needed.
->  		 */
->  		path = coresight_build_path(csdev, sink);
-> -		if (IS_ERR(path))
-> -			goto err;
-> +		if (IS_ERR(path)) {
-> +			cpumask_clear_cpu(cpu, mask);
-> +			continue;
-> +		}
->  
->  		*etm_event_cpu_path_ptr(event_data, cpu) = path;
->  	}
->  
-> -	if (!sink_ops(sink)->alloc_buffer)
-> -		goto err;
+>  void mem_cgroup_migrate(struct page *oldpage, struct page *newpage);
 > -
-> +	/* If we don't have any CPUs ready for tracing, abort */
->  	cpu = cpumask_first(mask);
-> -	/* Get the AUX specific data from the sink buffer */
-> +	if (cpu >= nr_cpu_ids)
-> +		goto err;
-> +
-> +	/* Allocate the sink buffer for this session */
->  	event_data->snk_config =
->  			sink_ops(sink)->alloc_buffer(sink, cpu, pages,
->  						     nr_pages, overwrite);
-> -- 
-> 2.7.4
-> 
+> +bool direct_reclaim_reach_watermark(pg_data_t *pgdat, unsigned long nr_reclaimed,
+> +			unsigned long nr_scanned, gfp_t gfp_mask, int order);
+>  static struct mem_cgroup_per_node *
+>  mem_cgroup_nodeinfo(struct mem_cgroup *memcg, int nid)
+>  {
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 8c0280b..e4efd46 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2577,6 +2577,9 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+>  			(next_mz == NULL ||
+>  			loop > MEM_CGROUP_MAX_SOFT_LIMIT_RECLAIM_LOOPS))
+>  			break;
+> +		if (direct_reclaim_reach_watermark(pgdat, nr_reclaimed,
+> +					*total_scanned, gfp_mask, order))
+> +			break;
+>  	} while (!nr_reclaimed);
+>  	if (next_mz)
+>  		css_put(&next_mz->memcg->css);
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 03822f8..19503f3 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2518,6 +2518,34 @@ static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
+>  		(memcg && memcg_congested(pgdat, memcg));
+>  }
+>  
+> +bool direct_reclaim_reach_watermark(pg_data_t *pgdat, unsigned long nr_reclaimed,
+> +		unsigned long nr_scanned, gfp_t gfp_mask,
+> +		int order)
+> +{
+> +	struct scan_control sc = {
+> +		.gfp_mask = gfp_mask,
+> +		.order = order,
+> +		.priority = DEF_PRIORITY,
+> +		.nr_reclaimed = nr_reclaimed,
+> +		.nr_scanned = nr_scanned,
+> +	};
+> +	if (!current_is_kswapd())
+> +		return false;
+> +	if (!IS_ENABLED(CONFIG_COMPACTION))
+> +		return false;
+> +	/*
+> +	 * In fact, we add 1 to nr_reclaimed and nr_scanned to let should_continue_reclaim
+> +	 * NOT return by finding they are zero, which means compaction_suitable()
+> +	 * takes effect here to judge if we have reclaimed enough pages for passing
+> +	 * the watermark and no necessary to check other memcg anymore.
+> +	 */
+> +	if (!should_continue_reclaim(pgdat,
+> +				sc.nr_reclaimed + 1, sc.nr_scanned + 1, &sc))
+> +		return true;
+
+As per the previous submission, should_continue_reclaim() is really
+not an appropriate function to use. It's for the compaction policy.
+You might be able to hack around it with faking the reclaim progress,
+but this will fail in subtle ways when people change the compaction
+policy in that function in the future.
+
+If you use it only for the watermark check, check it explicitly.
+
+Other than that, I agree with Michal that we need much more data on
+this; what the configuration is like, what the memory situation is
+like when your problem happens, how long the stalls are, and how your
+patch helps with overreclaim etc.
