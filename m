@@ -2,147 +2,110 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074D6C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E280C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F85D208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 054EC208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="m8fkrXB6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F85D208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="te0YBWLX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054EC208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729762AbeGaIIQ (ORCPT
+        id S1729785AbeGaIIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:08:16 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34376 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbeGaIIP (ORCPT
+        Tue, 31 Jul 2018 04:08:32 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37242 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeGaIIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:08:15 -0400
-Received: by mail-pl0-f68.google.com with SMTP id f6-v6so6707248plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:29:33 -0700 (PDT)
+        Tue, 31 Jul 2018 04:08:32 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n11-v6so1795982wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:29:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4op/UZBvIySF+WDKzYy4Yd56uknU6JHQLEzUDmr7W94=;
-        b=m8fkrXB6wK/X0UMFDFyndbm9Z/ar0bRMzefDY6fTz60e1Ez2lbFo3v1aoVdfXTrq/S
-         dwtvg77BITfEIPsIU9lzNbP0fzXYk0/Cj6kWW3aGkgW7gQrVZlhgmUJNJza6xhqdNwqI
-         PLnr9/h2OWcVoukEZFWYRTVN1uiUU3HdAB2tHvpfXNir9/+tJcmgzgOmR8Os3WsbINIT
-         9L+ECm3wTNToX6UozSclQEDAZXf8uVGepcCkfxYdoJhgtHy17Yv85wn0aSLLC4Npo1jV
-         dkdyqQoqkJNt51Fxm9O/PDQHaijYY1haDUcWyuFRVsU4SKVD9D6IUMhTKyFEQUh4wCXt
-         VP5g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=By7sTNKS47yI0Hj1ZQ0nq0KjV4VrVGNwxp1FXxC5GB0=;
+        b=te0YBWLXB05whDXrclqDmVtr+ONuYVzWmr3ymVDicN2xn90KM6xwygii/AOYPpOrqf
+         ZrcBYvjkH0CvFz7xXvQPVj5lrjZ1n93NtaKzk/1fBQlxB9uDUicQfMmwJ8+OeC7En+xe
+         FhNCk1KuMxlJ5X9sYtK64ZrklHwkiFbWlFG21iLzGr98LMKc8ihLMOpn8xITS4ozp7ko
+         dbzcyW1rbfWXZZjbX6vEleSUmFQLNIv/19pzSHXBRDrrq3cA400omniYtt8QwBO9HzEV
+         jpE6Sv5WM0TRq/nFJsFjOMbIbY2KyECmkFTC9lsnAOvooimS2HdSxp2GTUyRJ3C9D4jI
+         jFcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4op/UZBvIySF+WDKzYy4Yd56uknU6JHQLEzUDmr7W94=;
-        b=r8s+pO2gOw/XgDXKLm7vvBTRYAiP98bingJwC9fCDNR9S6EYYW5tlvhbIpNaQ2At53
-         l99+1YG1bEE6zXHksDG4IzFlKn4+iz9QOwqTuuRyB8PcGqbQd2ITtLYCtLDFBcaN23zl
-         DQQ2ky4g76YaK+Fs3UOLKd0qnJ+7QU/LfnAKl5hXHo7Nxb2bGVp7Ec26rJ3su8pSLVBD
-         lpIzqKCuAHUJTfnaDzxC/XshAuI8ipUodLB1piSHkumRxn/rpt/0nqLhnyALbo3MGbbP
-         QyYUkCFwE+o/9XTIQ7XBp9BsCDOVF1cwPePW9KO/J1EI+VDL/LpozUjkig0WgYLj1/UJ
-         rC6w==
-X-Gm-Message-State: AOUpUlHJIjTscXposoKXt5vXFIR/0wMbKdjoCaSF60+1V3INaQtK8IiR
-        MfaY0WI8uRS+aeNg32SOVCv+Ug==
-X-Google-Smtp-Source: AAOMgpcmUy4qeW7M8OZ94th6u+dps5pWNHsOHonZQU9HZ3n4hWF7hL0kbcn7e6CAqpVXfQZW6bQDvg==
-X-Received: by 2002:a17:902:aa87:: with SMTP id d7-v6mr19208489plr.215.1533018573292;
-        Mon, 30 Jul 2018 23:29:33 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id m4-v6sm18577694pgn.82.2018.07.30.23.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 23:29:32 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id A8FD43002A5; Tue, 31 Jul 2018 09:29:27 +0300 (+03)
-Date:   Tue, 31 Jul 2018 09:29:27 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        youling257@gmail.com
-Subject: Re: Linux 4.18-rc7
-Message-ID: <20180731062927.hjknfcb2cj3bwd7b@kshutemo-mobl1>
-References: <CA+55aFxpFefwVdTGVML99PSFUqwpJXPx5LVCA3D=g2t2_QLNsA@mail.gmail.com>
- <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com>
- <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1>
- <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com>
- <alpine.LSU.2.11.1807301410470.4805@eggly.anvils>
- <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=By7sTNKS47yI0Hj1ZQ0nq0KjV4VrVGNwxp1FXxC5GB0=;
+        b=GUDSArJXA7ep71S5bODdhPcSuH1wV53S2uZSiVcCV3Rkkjj3/M7DbJ0mWzMDqRdW9u
+         Wmfi4vagzbvey3ApL0JXIjlDRduMMJDmEvyD1EYEVyEKBZx37j87NPYrwbP1p0xeoigU
+         f5J+Ecur0QFztw5/05c+JfA/d7ewYU9I5dV7MYq0Dp5joaVcn/tVmk54fEJTnqvkN9vg
+         gRUljNzqtKMD4O6q0oEaDsY4digTUc/ae+CIUoyDjpuSUAZmhGY7AhvdHIOa3X85FMz0
+         dVqQwtqB0vUKZLPPHMoW56bDErNYzVLs6p9inJKF2npGqd3xRGplXrGDT7igv+aqn1nm
+         yUMA==
+X-Gm-Message-State: AOUpUlH+UA6/4n7DqZTkMrdog2rx5WtbTtaZWRFZvi21GVyXZio1f+KD
+        trHqChGouXOfi1A8zSLezY8yZH750p85PjDKYnd6hw==
+X-Google-Smtp-Source: AAOMgpc0WsQWTOyCdfmVVrCqF472pF3hTqJgKizXkGCFNq5CGwW1COintMX0CdeaoxWeQfmVRWGs+UBiZHX4Gwsldwg=
+X-Received: by 2002:a1c:851:: with SMTP id 78-v6mr1236178wmi.11.1533018588161;
+ Mon, 30 Jul 2018 23:29:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20180729193646.201721-1-toddpoynor@gmail.com> <20180729193646.201721-2-toddpoynor@gmail.com>
+ <CAE_wzQ-VmW=X-HEFj4PouxUcH6jKqHR_XXhXfrQmx_-CPE_tWQ@mail.gmail.com>
+In-Reply-To: <CAE_wzQ-VmW=X-HEFj4PouxUcH6jKqHR_XXhXfrQmx_-CPE_tWQ@mail.gmail.com>
+From:   Todd Poynor <toddpoynor@google.com>
+Date:   Mon, 30 Jul 2018 23:29:37 -0700
+Message-ID: <CAAW3YpYQcn-=eU+UTst1u7oKpW2k8R9Yvd-8i91hCaRGySUHiQ@mail.gmail.com>
+Subject: Re: [PATCH 01/13] staging: gasket: core: hold reference to pci_dev
+ while used
+To:     Dmitry Torokhov <dtor@chromium.org>
+Cc:     "toddpoynor@gmail.com" <toddpoynor@gmail.com>,
+        Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>, benchan@chromium.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 06:01:26PM -0700, Linus Torvalds wrote:
-> On Mon, Jul 30, 2018 at 2:53 PM Hugh Dickins <hughd@google.com> wrote:
+On Mon, Jul 30, 2018 at 11:19 PM Dmitry Torokhov <dtor@chromium.org> wrote:
+>
+> On Sun, Jul 29, 2018 at 12:37 PM Todd Poynor <toddpoynor@gmail.com> wrote:
 > >
-> > I have no problem with reverting -rc7's vma_is_anonymous() series.
-> 
-> I don't think we need to revert the whole series: I think the rest are
-> all fairly obvious cleanups, and shouldn't really have any semantic
-> changes.
-> 
-> It's literally only that last patch in the series that then changes
-> that meaning of "vm_ops". And I don't really _mind_ that last step
-> either, but since we don't know exactly what it was that it broke, and
-> we're past rc7, I don't think we really have any option but the revert
-> it.
-> 
-> And if we revert it, I think we need to just remove the
-> VM_BUG_ON_VMA() that it was supposed to fix. Because I do think that
-> it is quite likely that the real bug is that overzealous BUG_ON(),
-> since I can't see any reason why anonymous mappings should be special
-> there.
-> 
-> But I'm certainly also ok with re-visiting that commit later.  I just
-> think that right _now_ the above is my preferred plan.
-> 
-> Kirill?
+> > From: Todd Poynor <toddpoynor@google.com>
+> >
+> > Hold a reference on the struct pci_dev while a pointer to it is held in
+> > the gasket data structures.
+> >
+> > Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> > ---
+> >  drivers/staging/gasket/gasket_core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> > index 2b484d067c38a..b832a4f529f27 100644
+> > --- a/drivers/staging/gasket/gasket_core.c
+> > +++ b/drivers/staging/gasket/gasket_core.c
+> > @@ -488,6 +488,7 @@ static void gasket_free_dev(struct gasket_dev *gasket_dev)
+> >         internal_desc->devs[gasket_dev->dev_idx] = NULL;
+> >         mutex_unlock(&internal_desc->mutex);
+> >         put_device(gasket_dev->dev);
+> > +       pci_dev_put(gasket_dev->pci_dev);
+>
+> gasket_free_dev() is called only from driver PCI probe and remove
+> function. I can assure you that that pci_dev structure is not going
+> anywhere, there is no need to take this additional reference.
 
-Considering the timing, I'm okay with reverting the last patch with
-dropping the VM_BUG_ON_VMA().
+WIll fix, thanks.
 
-But in the end I would like to see strong vma_is_anonymous().
-
-The VM_BUG_ON_VMA() is only triggerable by the test case because
-vma_is_anonymous() false-positive in fault path and we get anon-THP
-allocated in file-private mapping.
-
-I don't see immediately how this may trigger other crashes.
-But it definitely looks wrong.
-
-> > I'm all for deleting that VM_BUG_ON_VMA() in zap_pmd_range(), it was
-> > just a compromise with those who wanted to keep something there;
-> > I don't think we even need a WARN_ON_ONCE() now.
-> 
-> So to me it looks like a historical check that simply doesn't
-> "normally" trigger, but there's no reason I can see why we should care
-> about the case it tests against.
-
-I'll think more on what could go wrong with __split_huge_pmd() called on
-anon-THP page without mmap_sem(). It's not yet clear cut to me.
-
-
--- 
- Kirill A. Shutemov
+>
+> Thanks,
+> Dmitry
