@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D04C46460
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5ABC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB8F208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:37:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB8F208A4
+	by mail.kernel.org (Postfix) with ESMTP id 3B1AC208B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1AC208B6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeGaDPa (ORCPT
+        id S1731993AbeGaDPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 23:15:30 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:35549 "EHLO
+        Mon, 30 Jul 2018 23:15:34 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:35866 "EHLO
         mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729104AbeGaDP3 (ORCPT
+        with ESMTP id S1729104AbeGaDPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 23:15:29 -0400
-Received: by mail-yw0-f195.google.com with SMTP id t18-v6so5160687ywg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 18:37:43 -0700 (PDT)
+        Mon, 30 Jul 2018 23:15:33 -0400
+Received: by mail-yw0-f195.google.com with SMTP id v197-v6so5156344ywg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 18:37:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=U2LCrVKVY9vzDCsSqoMVxj5uiVG4tv++pLhoThxBZT4=;
-        b=c+Hr6X3lbiMrxrktTvvfVQGnsOLNMqp54uU4LQpQX0SNPuaRTNQ/87nJkxOqO0adax
-         t4zeUg8LiV5VTQWkumwKnZRpNk2zszQQnM+/4W79uoTsb6JfAlJ7IVq/l7IvAQUgXQQ3
-         HS4wHde4kYd5q5Gc1z5Qb4/fuyoXk0HPKsx2ewLmwwlzAii41D+RiME2wqK0E/EPdqTz
-         sjtN887/WqCqP4W+mEOBgkT9jvW0tpfh1pwEmD5Q8WqZn6s7W1Li+OLn+Li5Mhy5IjZt
-         IHqrWPRnFGSooyphhBnzyV3pUF1FZofMzoird72p2YJ/z7Xnj/TALm8PKGUXxG+esvgq
-         qGZA==
-X-Gm-Message-State: AOUpUlFwPDapKlKRgdEoonGLSOA5EzusP5uEEtp8wzjzKSpAQB9SS/zk
-        3MKanWQ5DnkVBM3CeNEaoQRrHQ==
-X-Google-Smtp-Source: AAOMgpdtIPRVsIrb2jflRppEwSj8Pedu5MIPsUWEu/J5rxX6Ln1DHCWmlSbV7kWumqxymmNGKzD54Q==
-X-Received: by 2002:a0d:c944:: with SMTP id l65-v6mr10003384ywd.414.1533001063520;
-        Mon, 30 Jul 2018 18:37:43 -0700 (PDT)
-Received: from builder.jcline.org ([2605:a601:80ce:4700:77a5:8983:ea8b:82ec])
-        by smtp.gmail.com with ESMTPSA id y133-v6sm13800287ywy.31.2018.07.30.18.37.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        bh=VvzPI77O91f6C4e11bmQuxuRY/YPGS2bBG30MPbG5KE=;
+        b=s0UNAs5L9W3/iVQZqOz+VoXlM+IrF6rDYgy5dPEHw1TSb89PWUdy3z24cjOjxi/JC1
+         rC25QNssvXsYKKMK3PmQqdSrqK4RZ9d1CTMFa++5+A+84VOxdf9FwkjfN/53+uaQrKVJ
+         LlWsun+z36VyJVkdAq6XJ6rHbMFsNRezuz0JqZ1x+xD1nJOBTPn5cIr7etsZ37GEE224
+         J5Zx7ELfJ0+xtkvJyQFvtzgwV/upWM6kV3Vjm7GTF2YM5u3gZjV4qaOrUqYYXT7FzRnQ
+         dc76uGrThA4riotpZl6gOc9vnGuUqRprIblRYzVfdH8XlJK3xTk6KGcJsuFc8HlqsGVe
+         IAxg==
+X-Gm-Message-State: AOUpUlE/THlhL9+d8F+YUooc62jkonc3Lf+r4GlZaj9Jp3xBkojvP3ch
+        KX+Q2mER/Ud0hIfj+TvWiJdvog==
+X-Google-Smtp-Source: AAOMgpf5C56sYwe7fuHPHncQ13Lz7QzkpbWPSYGImY+DO7OjtUSf6dpj9r7ADzcXx7qnuwrv5Nms4A==
+X-Received: by 2002:a0d:e501:: with SMTP id o1-v6mr9966939ywe.409.1533001062356;
         Mon, 30 Jul 2018 18:37:42 -0700 (PDT)
+Received: from builder.jcline.org ([2605:a601:80ce:4700:77a5:8983:ea8b:82ec])
+        by smtp.gmail.com with ESMTPSA id y133-v6sm13800287ywy.31.2018.07.30.18.37.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Jul 2018 18:37:41 -0700 (PDT)
 From:   Jeremy Cline <jcline@redhat.com>
 To:     Jan Kara <jack@suse.com>
 Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jeremy Cline <jcline@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2] fs/quota: Fix spectre gadget in do_quotactl
-Date:   Tue, 31 Jul 2018 01:37:31 +0000
-Message-Id: <20180731013731.1987-3-jcline@redhat.com>
+        Jeremy Cline <jcline@redhat.com>
+Subject: [PATCH 1/2] fs/quota: Replace XQM_MAXQUOTAS usage with MAXQUOTAS
+Date:   Tue, 31 Jul 2018 01:37:30 +0000
+Message-Id: <20180731013731.1987-2-jcline@redhat.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180731013731.1987-1-jcline@redhat.com>
 References: <20180731013731.1987-1-jcline@redhat.com>
@@ -60,79 +60,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'type' is user-controlled, so sanitize it after the bounds check to
-avoid using it in speculative execution. This covers the following
-potential gadgets detected with the help of smatch:
+XQM_MAXQUOTAS and MAXQUOTAS are, it appears, equivalent. Replace all
+usage of XQM_MAXQUOTAS and remove it along with the unused XQM_*QUOTA
+definitions.
 
-* fs/ext4/super.c:5741 ext4_quota_read() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/ext4/super.c:5778 ext4_quota_write() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/f2fs/super.c:1552 f2fs_quota_read() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/f2fs/super.c:1608 f2fs_quota_write() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/quota/dquot.c:412 mark_info_dirty() warn: potential spectre issue
-  'sb_dqopt(sb)->info' [w]
-* fs/quota/dquot.c:933 dqinit_needed() warn: potential spectre issue
-  'dquots' [r]
-* fs/quota/dquot.c:2112 dquot_commit_info() warn: potential spectre
-  issue 'dqopt->ops' [r]
-* fs/quota/dquot.c:2362 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->files' [w] (local cap)
-* fs/quota/dquot.c:2369 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->ops' [w] (local cap)
-* fs/quota/dquot.c:2370 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->info' [w] (local cap)
-* fs/quota/quota.c:110 quota_getfmt() warn: potential spectre issue
-  'sb_dqopt(sb)->info' [r]
-* fs/quota/quota_v2.c:84 v2_check_quota_file() warn: potential spectre
-  issue 'quota_magics' [w]
-* fs/quota/quota_v2.c:85 v2_check_quota_file() warn: potential spectre
-  issue 'quota_versions' [w]
-* fs/quota/quota_v2.c:96 v2_read_file_info() warn: potential spectre
-  issue 'dqopt->info' [r]
-* fs/quota/quota_v2.c:172 v2_write_file_info() warn: potential spectre
-  issue 'dqopt->info' [r]
-
-Additionally, a quick inspection indicates there are array accesses with
-'type' in quota_on() and quota_off() functions which are also addressed
-by this.
-
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Jeremy Cline <jcline@redhat.com>
 ---
-
-This patch isn't going to cleanly apply to stable without the "fs/quota:
-Replace XQM_MAXQUOTAS usage with MAXQUOTAS" patch, but I'm not sure that
-patch is really stable material and XQM_MAXQUOTAS has been 3 since
-pre-v4.4 so the end result will be the same even if that patch isn't
-backported.
-
- fs/quota/quota.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/quota/quota.c               | 12 +++++-------
+ include/linux/quota.h          |  8 +-------
+ include/uapi/linux/dqblk_xfs.h |  5 -----
+ 3 files changed, 6 insertions(+), 19 deletions(-)
 
 diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index d403392d8a0f..f0cbf58ad4da 100644
+index 860bfbe7a07a..d403392d8a0f 100644
 --- a/fs/quota/quota.c
 +++ b/fs/quota/quota.c
-@@ -18,6 +18,7 @@
- #include <linux/quotaops.h>
- #include <linux/types.h>
- #include <linux/writeback.h>
-+#include <linux/nospec.h>
+@@ -120,8 +120,6 @@ static int quota_getinfo(struct super_block *sb, int type, void __user *addr)
+ 	struct if_dqinfo uinfo;
+ 	int ret;
  
- static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
- 				     qid_t id)
-@@ -701,6 +702,7 @@ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
+-	/* This checks whether qc_state has enough entries... */
+-	BUILD_BUG_ON(MAXQUOTAS > XQM_MAXQUOTAS);
+ 	if (!sb->s_qcop->get_state)
+ 		return -ENOSYS;
+ 	ret = sb->s_qcop->get_state(sb, &state);
+@@ -354,10 +352,10 @@ static int quota_getstate(struct super_block *sb, struct fs_quota_stat *fqs)
+ 	 * GETXSTATE quotactl has space for just one set of time limits so
+ 	 * report them for the first enabled quota type
+ 	 */
+-	for (type = 0; type < XQM_MAXQUOTAS; type++)
++	for (type = 0; type < MAXQUOTAS; type++)
+ 		if (state.s_state[type].flags & QCI_ACCT_ENABLED)
+ 			break;
+-	BUG_ON(type == XQM_MAXQUOTAS);
++	BUG_ON(type == MAXQUOTAS);
+ 	fqs->qs_btimelimit = state.s_state[type].spc_timelimit;
+ 	fqs->qs_itimelimit = state.s_state[type].ino_timelimit;
+ 	fqs->qs_rtbtimelimit = state.s_state[type].rt_spc_timelimit;
+@@ -427,10 +425,10 @@ static int quota_getstatev(struct super_block *sb, struct fs_quota_statv *fqs)
+ 	 * GETXSTATV quotactl has space for just one set of time limits so
+ 	 * report them for the first enabled quota type
+ 	 */
+-	for (type = 0; type < XQM_MAXQUOTAS; type++)
++	for (type = 0; type < MAXQUOTAS; type++)
+ 		if (state.s_state[type].flags & QCI_ACCT_ENABLED)
+ 			break;
+-	BUG_ON(type == XQM_MAXQUOTAS);
++	BUG_ON(type == MAXQUOTAS);
+ 	fqs->qs_btimelimit = state.s_state[type].spc_timelimit;
+ 	fqs->qs_itimelimit = state.s_state[type].ino_timelimit;
+ 	fqs->qs_rtbtimelimit = state.s_state[type].rt_spc_timelimit;
+@@ -701,7 +699,7 @@ static int do_quotactl(struct super_block *sb, int type, int cmd, qid_t id,
+ {
+ 	int ret;
  
- 	if (type >= MAXQUOTAS)
+-	if (type >= (XQM_COMMAND(cmd) ? XQM_MAXQUOTAS : MAXQUOTAS))
++	if (type >= MAXQUOTAS)
  		return -EINVAL;
-+	type = array_index_nospec(type, MAXQUOTAS);
  	/*
  	 * Quota not supported on this fs? Check this before s_quota_types
- 	 * since they needn't be set if quota is not supported at all.
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index ca9772c8e48b..f32dd270b8e3 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -408,13 +408,7 @@ struct qc_type_state {
+ 
+ struct qc_state {
+ 	unsigned int s_incoredqs;	/* Number of dquots in core */
+-	/*
+-	 * Per quota type information. The array should really have
+-	 * max(MAXQUOTAS, XQM_MAXQUOTAS) entries. BUILD_BUG_ON in
+-	 * quota_getinfo() makes sure XQM_MAXQUOTAS is large enough.  Once VFS
+-	 * supports project quotas, this can be changed to MAXQUOTAS
+-	 */
+-	struct qc_type_state s_state[XQM_MAXQUOTAS];
++	struct qc_type_state s_state[MAXQUOTAS];  /* Per quota type information */
+ };
+ 
+ /* Structure for communicating via ->set_info */
+diff --git a/include/uapi/linux/dqblk_xfs.h b/include/uapi/linux/dqblk_xfs.h
+index 03d890b80ebc..a5846cde8272 100644
+--- a/include/uapi/linux/dqblk_xfs.h
++++ b/include/uapi/linux/dqblk_xfs.h
+@@ -27,11 +27,6 @@
+ #define XQM_CMD(x)	(('X'<<8)+(x))	/* note: forms first QCMD argument */
+ #define XQM_COMMAND(x)	(((x) & (0xff<<8)) == ('X'<<8))	/* test if for XFS */
+ 
+-#define XQM_USRQUOTA	0	/* system call user quota type */
+-#define XQM_GRPQUOTA	1	/* system call group quota type */
+-#define XQM_PRJQUOTA	2	/* system call project quota type */
+-#define XQM_MAXQUOTAS	3
+-
+ #define Q_XQUOTAON	XQM_CMD(1)	/* enable accounting/enforcement */
+ #define Q_XQUOTAOFF	XQM_CMD(2)	/* disable accounting/enforcement */
+ #define Q_XGETQUOTA	XQM_CMD(3)	/* get disk limits and usage */
 -- 
 2.17.1
 
