@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75E0C46462
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8D6C46463
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF1F208A5
+	by mail.kernel.org (Postfix) with ESMTP id 3D4F5208A4
 	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="s0q6qWYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF1F208A5
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WBlowHGn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D4F5208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbeGaIus (ORCPT
+        id S1732228AbeGaIur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:48 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:21562 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732178AbeGaIur (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 04:50:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021114;
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.223]:26364 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732104AbeGaIuq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:50:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021112;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=kgG6jLaR0ocYkLG3AJBnXJe0+VGK35gBIj4J0B+hBTw=;
-        b=s0q6qWYanFy2PMMRY7pZvj69M5chSnf1RTP5BUY4hqoV8q7w8pTfZa3Jj7Cj91hp8Z
-        YRO9l0hMB1O4rvS2sTDHtiTzSiOYhpCPkhhYzB/punpE2IR3mU3QmdDnFO+nKk5vgp02
-        pBzpRldRw6MN8zGfqtrTL72UHzzM8OPJVXhLEChOlr+2C84U8OMCTbg85D/nfK2yHrdf
-        yXv+xrirA3MZL3wSiuAH/IHetGPsGZB2EK69fmwgIWPfC6mcR6HXkYbQ/mutAC8i5equ
-        0qmgup4bzDIPAN4ETyQnLjeeQT4+MxljoOER0UO81g9U+nqzYzM+ptaUItsoDSAJpY07
-        xoQQ==
+        bh=NOGg6YDV4/o41HgluekAAxE0nFykZv+Fc1Eo94teG6E=;
+        b=WBlowHGnSIHx84xOlz+mUxjsGnrKjMEu9yLtkmRu9dc28lUAdo/RjR35ZNNjOj+Bae
+        JvSVb1G7e0+oExnZkm3s4cwiyAR8dce219I9J712tzzbl4OoPfCu+jGbsRLUjxscickN
+        R/EkTBJSt8vJB2d7qPqqoJWzREd4hUNLp+AE914O3odMcV+ZuEZST+M+zHKn2puLeQhx
+        b2edq17z2C3BZ3z3sEVEBD5j80F/hP7ALivdN8JOittsQQ/BrDiOZG59+MnKxyrMtHNm
+        M67ycE/pl7whLLq4qZdW4T34TylKdu74A1GOOhBxOwAwPmiv+fFkaLdVmwC/wScOSFDv
+        wdhg==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BmwOx
+        with ESMTPSA id 6047f4u6V7BkwOq
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:48 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:46 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 31/32] ARM: dts: omap3-gta04a5: define pinmux for bluetooth enable of ti,wl1837 module
-Date:   Tue, 31 Jul 2018 09:11:34 +0200
-Message-Id: <705c7cdd16520147f61229b3722680b97c5a8cf5.1533021094.git.hns@goldelico.com>
+Subject: [PATCH v2 25/32] ARM: dts: omap3-gta04a5: fix model name
+Date:   Tue, 31 Jul 2018 09:11:28 +0200
+Message-Id: <0f5a04c2c2e9fc39ce3e3b645363c34bf517d944.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,30 +69,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly pinmux the bluetooth enable so that it is not floating.
+GTA04 is the project name and Letux 2804 the product name.
+Report both.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04a5.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/omap3-gta04a5.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
-index 973d07d0b4c8..bd232b1b24cb 100644
+index b691e70773f9..c01b4715fb83 100644
 --- a/arch/arm/boot/dts/omap3-gta04a5.dts
 +++ b/arch/arm/boot/dts/omap3-gta04a5.dts
-@@ -48,6 +48,12 @@
- };
+@@ -9,7 +9,7 @@
+ #include "omap3-gta04.dtsi"
  
- &omap3_pmx_core {
-+	bt_pins: pinmux_bt_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x2166, PIN_OUTPUT | MUX_MODE4)	/* mmc2_dat5 = mmc3_dat1 = gpio137 */
-+		>;
-+	};
-+
- 	wlan_pins: pinmux_wlan_pins {
- 		pinctrl-single,pins = <
- 			OMAP3_CORE1_IOPAD(0x2168, PIN_OUTPUT | MUX_MODE4)	/* mmc2_dat6 = mmc3_dat2 = gpio138 */
+ / {
+-	model = "Goldelico GTA04A5";
++	model = "Goldelico GTA04A5/Letux 2804";
+ 
+ 	sound {
+ 		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;    /* GTA04A5 only */
 -- 
 2.12.2
 
