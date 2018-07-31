@@ -2,113 +2,198 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB00C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39432C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81DA20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2A7B20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbW4sjH/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81DA20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I48Pd9ma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A7B20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732282AbeGaSn4 (ORCPT
+        id S1732299AbeGaSoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:43:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732252AbeGaSn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:43:56 -0400
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C67E220841;
-        Tue, 31 Jul 2018 17:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533056563;
-        bh=Y4xZKAX+XF6CeJSF6/AZLu4SFGeSQ6tw5RGCYabIycE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=QbW4sjH/h8OYQNDFDHDtM9Aeogw+9PRV4jqvibGSimlGNqnixcaOjafNAkN8rPDn5
-         hzm0r7c0naLDkaBLL+TBKOMPhNTjOpSPNPC3roDhK5dDVH64Tq82Lqs47lmpheXUEl
-         nUBFBH7yF0yGKlkzZQMQsqSBqwhdzsnz23c/3VAQ=
-Received: by mail-wm0-f53.google.com with SMTP id s9-v6so3890534wmh.3;
-        Tue, 31 Jul 2018 10:02:42 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHWVHjhY+z3uImIB+s6zXxBvC+2Uzwd8z+9uBVAlWv8ERRy/Ami
-        XZSp8wcSS6myBmlzahrHpNlBq8wwT8jXS9qBzmQ=
-X-Google-Smtp-Source: AAOMgpcoIKbxU2kZHRb2kgQ7H6fl6Fmaelz70dXtCYYXKoBJADfwO49Mju6fIilZjd5UrvAjD4dCJ3oVGrpE+yFoFXk=
-X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr352086wmm.117.1533056561353;
- Tue, 31 Jul 2018 10:02:41 -0700 (PDT)
+        Tue, 31 Jul 2018 14:44:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41376 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732252AbeGaSoO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 14:44:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j5-v6so17437913wrr.8;
+        Tue, 31 Jul 2018 10:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bzPIsOxixV46MrDLqgR12pdODUsTABHyqtsYk95fGXE=;
+        b=I48Pd9ma1JFct8yOq316rSy83SI2kBrwgcZRbUZ3x6z8RcPvJG2C+bg72aYfSEQmuW
+         1ZtBtxLs+nAn69l6KjG0y5htuNDW7YNJNHSJiCZKWYBk64j5AU+vnMVAFvuZJn4+rXTk
+         PoJSI2IFanKG4c8CloRrj1dLrSFHlDTCgIxFsW6ynnAJJtXY+GsURGTxMJLPxIRVMeTw
+         6qMB6Nku7z8+tDFAfS26OcFFaaiKcNJLGCa2UDFbN9r2n8/9wOsCkMAgMQi+1NkmGlGU
+         oSb08uE3fR76nZciYvQCi60drxh49/ws11dx65LOP0n/OHI5OxSGWZK6mF/X0KaynhOY
+         9ZZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bzPIsOxixV46MrDLqgR12pdODUsTABHyqtsYk95fGXE=;
+        b=czz/xl2g3nofNTP6lFd+JK8wbDC8Pc8S8mTzMWbh+iZ5gLtuGmsqv72qY6CBXLdJpe
+         NZI7UcwVgBQAlaUPlY88+BaGXYT9f14atnQGxoCFddT1iYlR/P68Lql5WmAUwAL1/Qka
+         3vJ38IeJ6IrcvSfU97yXnCUvfvwqzX++DxuSsImAyQHGURai/PtJAabrqXCYy1uNq0AF
+         l67tJ6TXNoPP1YY6xZz8AKapqH2ANucuvUWBZqE2qtgUncylgipj69+ejwub5ON4K/Jl
+         m6lqAdbykMa2Q2/6Ja9qzCxKGSyH8I6CyI9gyLy0H7G5sdNvMpE50Nt8fuID47oJzThh
+         wnEw==
+X-Gm-Message-State: AOUpUlG3i8xyru3suXrfBZHCywdz8+xzxwLuy5TxcQqnnuuk+9viVuRQ
+        SlqijLYgCV5RZC3wz8YoxR4=
+X-Google-Smtp-Source: AAOMgpfLgQUpE9xQJblW6TovilMrtrc3HnaoBdo0eNoMlRl7fh5ugdGuRIFW8jN9rQz13ABrLEmZmg==
+X-Received: by 2002:adf:eb87:: with SMTP id t7-v6mr22647971wrn.123.1533056579789;
+        Tue, 31 Jul 2018 10:02:59 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id u185-v6sm3645856wmg.25.2018.07.31.10.02.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 10:02:58 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 10:02:56 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     lkp@intel.com, kbuild-all@01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
+        christophe.leroy@c-s.fr, shorne@gmail.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, rdunlap@infradead.org,
+        bp@suse.de, neilb@suse.com, LKML <linux-kernel@vger.kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
+        sandipan@linux.vnet.ibm.com, linux@rasmusvillemoes.dk,
+        Paul Lawrence <paullawrence@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Wei Wang <wvw@google.com>, avagin@openvz.org
+Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for
+ _THIS_IP_
+Message-ID: <20180731170256.GA23359@flashbox>
+References: <20180730213412.242849-3-ndesaulniers@google.com>
+ <201807311827.UpeCrGPC%fengguang.wu@intel.com>
+ <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 10:02:40
- -0700 (PDT)
-In-Reply-To: <20180731164316.32696-5-angus@akkea.ca>
-References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
- <20180731164316.32696-1-angus@akkea.ca> <20180731164316.32696-5-angus@akkea.ca>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 31 Jul 2018 19:02:40 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdGf643nW2p_wcMWQgmjwTs08Wy35+LXagRwuST335z3A@mail.gmail.com>
-Message-ID: <CAJKOXPdGf643nW2p_wcMWQgmjwTs08Wy35+LXagRwuST335z3A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] power: bq25890_charger.c: Read back the current
- battery voltage
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31 July 2018 at 18:43, Angus Ainslie (Purism) <angus@akkea.ca> wrote:
-> The part has the capability of reading the current battery voltage.
+On Tue, Jul 31, 2018 at 09:48:57AM -0700, Nick Desaulniers wrote:
+> Does anyone understand this error?  The code looks just fine to me,
+> and the source file doesn't conflict with any of the macros I've added
+> (certainly not in any way that could cause an indentation error as
+> reported here).
 
-Instead of "part": BQ25890-family of chargers? Chip?
+Unfortunately, I've been trying to work through it this morning and I
+can't understand it either. lock_map_acquire_read's defintion does
+include _THIS_IP_ and adding curly braces to the if statement fixes it
+but that doesn't explain why it's happening.
 
-Anyway,
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Maybe this is a GCC bug/issue?
 
-Best regards,
-Krzysztof
+Cheers,
+Nathan
 
->
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> ---
->  drivers/power/supply/bq25890_charger.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/supply/bq25890_charger.c
-> index 23b39da07e56..1aa7872ddeb0 100644
-> --- a/drivers/power/supply/bq25890_charger.c
-> +++ b/drivers/power/supply/bq25890_charger.c
-> @@ -461,6 +461,15 @@ static int bq25890_power_supply_get_property(struct power_supply *psy,
->                 val->intval = bq25890_find_val(bq->init_data.iterm, TBL_ITERM);
->                 break;
->
-> +       case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> +               ret = bq25890_field_read(bq, F_SYSV); /* read measured value */
-> +               if (ret < 0)
-> +                       return ret;
-> +
-> +               /* converted_val = 2.304V + ADC_val * 20mV (table 10.3.15) */
-> +               val->intval = 2304000 + ret * 20000;
-> +               break;
-> +
->         default:
->                 return -EINVAL;
->         }
-> @@ -669,6 +678,7 @@ static enum power_supply_property bq25890_power_supply_props[] = {
->         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
->         POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX,
->         POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
-> +       POWER_SUPPLY_PROP_VOLTAGE_NOW,
->  };
->
->  static char *bq25890_charger_supplied_to[] = {
-> --
-> 2.17.1
->
+> On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
+> >
+> > Hi Nick,
+> >
+> > Thank you for the patch! Perhaps something to improve:
+> >
+> > [auto build test WARNING on linus/master]
+> > [also build test WARNING on v4.18-rc7 next-20180727]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> >
+> > url:    https://github.com/0day-ci/linux/commits/Nick-Desaulniers/compiler-clang-h-Add-CLANG_VERSION-and-__diag-macros/20180731-161932
+> > config: x86_64-fedora-25 (attached as .config)
+> > compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> > reproduce:
+> >         # save the attached .config to linux build tree
+> >         make ARCH=x86_64
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> >    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
+> > >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+> >      if (!(cmd->flags & CMD_ASYNC))
+> >      ^~
+> >    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+> >       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
+> >     ^ ~
+> >
+> > vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
+> >
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  116
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  117  int iwl_trans_send_cmd(struct iwl_trans *trans, struct iwl_host_cmd *cmd)
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  118  {
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  119      int ret;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  120
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  121      if (unlikely(!(cmd->flags & CMD_SEND_IN_RFKILL) &&
+> > 326477e4 Johannes Berg     2017-04-25  122                   test_bit(STATUS_RFKILL_OPMODE, &trans->status)))
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  123              return -ERFKILL;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  124
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  125      if (unlikely(test_bit(STATUS_FW_ERROR, &trans->status)))
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  126              return -EIO;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  127
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  128      if (unlikely(trans->state != IWL_TRANS_FW_ALIVE)) {
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  129              IWL_ERR(trans, "%s bad state = %d\n", __func__, trans->state);
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  130              return -EIO;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  131      }
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  132
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  133      if (WARN_ON((cmd->flags & CMD_WANT_ASYNC_CALLBACK) &&
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  134                  !(cmd->flags & CMD_ASYNC)))
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  135              return -EINVAL;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  136
+> > 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  139
+> > 5b88792c Sara Sharon       2016-08-15  140      if (trans->wide_cmd_header && !iwl_cmd_groupid(cmd->id))
+> > 5b88792c Sara Sharon       2016-08-15  141              cmd->id = DEF_ID(cmd->id);
+> > 5b88792c Sara Sharon       2016-08-15  142
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  143      ret = trans->ops->send_cmd(trans, cmd);
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  144
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  145      if (!(cmd->flags & CMD_ASYNC))
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  146              lock_map_release(&trans->sync_cmd_lockdep_map);
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  147
+> > 0ec971fd Johannes Berg     2017-04-10  148      if (WARN_ON((cmd->flags & CMD_WANT_SKB) && !ret && !cmd->resp_pkt))
+> > 0ec971fd Johannes Berg     2017-04-10  149              return -EIO;
+> > 0ec971fd Johannes Berg     2017-04-10  150
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  151      return ret;
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  152  }
+> > 92fe8343 Emmanuel Grumbach 2015-12-01  153  IWL_EXPORT_SYMBOL(iwl_trans_send_cmd);
+> > 39bdb17e Sharon Dvir       2015-10-15  154
+> >
+> > :::::: The code at line 137 was first introduced by commit
+> > :::::: 92fe83430b899b786c837e5b716a328220d47ae5 iwlwifi: uninline iwl_trans_send_cmd
+> >
+> > :::::: TO: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+> > :::::: CC: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+> >
+> > ---
+> > 0-DAY kernel test infrastructure                Open Source Technology Center
+> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> 
+> 
+> -- 
+> Thanks,
+> ~Nick Desaulniers
