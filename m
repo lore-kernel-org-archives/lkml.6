@@ -2,348 +2,143 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A504DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CD4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3728220862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A64720841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q8PDl3wG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3728220862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e4eqVFHp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A64720841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbeGaRoY (ORCPT
+        id S1732481AbeGaRoi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:44:24 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39089 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbeGaRoX (ORCPT
+        Tue, 31 Jul 2018 13:44:38 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37453 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728042AbeGaRoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:44:23 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j8-v6so6325709pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:03:24 -0700 (PDT)
+        Tue, 31 Jul 2018 13:44:37 -0400
+Received: by mail-pl0-f65.google.com with SMTP id d5-v6so1823937pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:03:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MUa/j8KGWZmOQiIQam4lXdhDTs4tLc2sTpZ5p6j7LsU=;
-        b=Q8PDl3wGwXBg+f/5hUxwWBNnbcBonaTBm8TTCQIDBrFYoV34HjckxO8Q3egxHhCP0v
-         Mr92PSP9VYT4OpBgV2TbhvKL9mB99JWfQnCLDlAst7uHECVBJQCy5fIpVld4YVKjDmIN
-         tAduBh8cK+fRfg1VqnJOJia4rcGvZEejasX9I=
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MCCwJ+aQ3QluAcbv7Vnv7dpmLID9SHTC3R7LCcSvpZw=;
+        b=e4eqVFHpMWLgqb8r300mBWpvUhRfuPDu5cOG5bwFJNipHub1t1qRWQ8JNVjMh5ac4j
+         Ow/DQPSJyXC6M4IspXZlc0TFfveJE/is0rpnh45tkp+X5EzVny4DkUPK1JLIhuzXpglV
+         KruSmDEJsqezuHZAC0thQpHP68yX+sxfYDKgt89jw7KyuShaY1Mysv+7hU8A0PrQI6D4
+         PaS7w/xzCk+5S6qU6UWL76hH4RIxxc2lnuFW+jQ3ftUN9dwngrrUos0U/JGa/vD+JZLH
+         q2yo5N+OsgzSvgFWmpRnuhraEWBbt/aQ+aV8GDGorUf2n8SazudfWlnLRhXQtnt8l/xb
+         zWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MUa/j8KGWZmOQiIQam4lXdhDTs4tLc2sTpZ5p6j7LsU=;
-        b=ebAAV1LCxxbMxTFGzHuXbNeS0XY9EBvLd0Jo7lelQ7XqaUe+B6qBL9GQhKej7QgMe4
-         aqGXeNiS59Urnlq+ZDcMUtS6vyzLtwcyhPRmezxymZLs9U4N1oIKjHLUhjPvuADVpcVM
-         UVLw04bfV2b+5N/xv50GMlh/zpwnYoZO1tGZ4YPyXQr7Vs3rI32M9WT73Z4FR6KJRAEu
-         BhNjc6JalmxwnYvz7Yb7qYJIWMUa6fSxAzYpGyeDpgL3QLijsAb7idU3dvEFKlshz5+f
-         7y/p1ZMFE4OXRHOiNnTtZlSOImFn+1D1e65OadVxnMNY+c/H2/BcsQQiDB+J9x0puSnF
-         qsSw==
-X-Gm-Message-State: AOUpUlGxFPpKLc4GTQMRm3ik6GZHDlALmTtXaZDDpVvar2K8fowRKa0N
-        brnLP656NbsAf3avEocaZHWyPQ==
-X-Google-Smtp-Source: AAOMgpcctEq/qkiMii7R+0TsBZRcfRLKrxqz3JScsTT+7pJ4dMC7dQExybdqG1oAw+WGtzhd2nDnlA==
-X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr23015416pfd.32.1533053002933;
-        Tue, 31 Jul 2018 09:03:22 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id t88-v6sm39959757pfg.10.2018.07.31.09.03.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 09:03:22 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 09:03:21 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v10 7/7] Bluetooth: hci_qca: Add support for Qualcomm
- Bluetooth chip wcn3990
-Message-ID: <20180731160321.GD68975@google.com>
-References: <20180720133243.6851-1-bgodavar@codeaurora.org>
- <20180720133243.6851-8-bgodavar@codeaurora.org>
- <20180723195441.GM129942@google.com>
- <81c324ee9104508cf5c862de3f697e4c@codeaurora.org>
- <20180725183144.GQ129942@google.com>
- <0666f40967de21db9ef3df9d94517ac1@codeaurora.org>
- <20180726195129.GW129942@google.com>
- <ba5c7f6cc8ba7c010ccd6c3573a5d234@codeaurora.org>
- <20180730200703.GB68975@google.com>
- <5870107568955802c024f0a67c86ea8f@codeaurora.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MCCwJ+aQ3QluAcbv7Vnv7dpmLID9SHTC3R7LCcSvpZw=;
+        b=sb0OBLNGmXSf+nI4LD0GO467+2pmeWeZRlvkZ+gg6a0RoT/DKqFaPMUzZNlaqPXBo0
+         TEA0K9HmG4BRK5Xc4M0JFdIXoRJ9ABxF1lPG/Ueba+60u7FxNxug2s/dU2Qj0QIwPwOg
+         CsWRXi/HDdLFhmTNBATOTQxw+zIiX94AHPXe5fGJHKancy3jEikVN/sUK9+sfZLqYhvF
+         vFfZoMPuNHgeMflf3weEixBuwiQQVahwRvmAHaiZkfgsLUNv3PqJgepNX9KeIj8VmEag
+         3rEcf+2whI9PDoBqyO4KxT2vDDDi59OiZ5n5yV2GlaD3bSMPTORtKj9WYk/oJAfIYlUu
+         DEJw==
+X-Gm-Message-State: AOUpUlHy1vI5zG99euNMlKDNooXFnQPVpFyR8WrEUNRTRNs38zyYdNNH
+        xoIcdItpv7b31TaWkB+IIuHLQMGRzz5v/sYEUSSYAA==
+X-Google-Smtp-Source: AAOMgpf2idFMvU35lou06YRyZn4DlX/1O2jUwcXHj78PgU/JoKGFofBFTp9Iux7o+TnYGVZyb4nqmZSbvTsKfpHNVI8=
+X-Received: by 2002:a17:902:740b:: with SMTP id g11-v6mr21160189pll.85.1533053017437;
+ Tue, 31 Jul 2018 09:03:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5870107568955802c024f0a67c86ea8f@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 31 Jul 2018 09:03:16
+ -0700 (PDT)
+In-Reply-To: <01000164f0fd5abc-df9ea911-9701-498c-adce-9f833e6df3ed-000000@email.amazonses.com>
+References: <cover.1530018818.git.andreyknvl@google.com> <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
+ <09cb5553-d84a-0e62-5174-315c14b88833@arm.com> <CAAeHK+yC3XRPoTByhH1QPrX45pG3QY_2Q4gz=dfDgxfzu1Fyfw@mail.gmail.com>
+ <8240d4f9-c8df-cfe9-119d-6e933f8b13df@virtuozzo.com> <CACT4Y+Y=61VwwETQP3FwAN16ompSNJOCyDCG6Ew1Bm5f_Fe1Lw@mail.gmail.com>
+ <01000164f0fd5abc-df9ea911-9701-498c-adce-9f833e6df3ed-000000@email.amazonses.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 31 Jul 2018 18:03:16 +0200
+Message-ID: <CACT4Y+b6_d6b5Q4oScXuoXhsnkJPG+UZ1QxqPPGuM4_aU3n4mA@mail.gmail.com>
+Subject: Re: [PATCH v4 13/17] khwasan: add hooks implementation
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        vincenzo.frascino@arm.com, Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 08:08:40PM +0530, Balakrishna Godavarthi wrote:
-> Hi Matthias,
-> 
-> On 2018-07-31 01:37, Matthias Kaehlcke wrote:
-> > On Fri, Jul 27, 2018 at 05:09:02PM +0530, Balakrishna Godavarthi wrote:
-> > > Hi Matthias,
-> > > 
-> > > On 2018-07-27 01:21, Matthias Kaehlcke wrote:
-> > > > On Thu, Jul 26, 2018 at 07:51:13PM +0530, Balakrishna Godavarthi wrote:
-> > > > > Hi Matthias,
-> > > > >
-> > > > > On 2018-07-26 00:01, Matthias Kaehlcke wrote:
-> > > > > > On Tue, Jul 24, 2018 at 09:25:16PM +0530, Balakrishna Godavarthi wrote:
-> > > > > > > Hi Matthias,
-> > > > > > >
-> > > > > > > On 2018-07-24 01:24, Matthias Kaehlcke wrote:
-> > > > > > > > On Fri, Jul 20, 2018 at 07:02:43PM +0530, Balakrishna Godavarthi wrote:
-> > > > > > > > > +	 * sometimes we will face communication synchronization issues,
-> > > > > > > > > +	 * like reading version command timeouts. In which HCI_SETUP fails,
-> > > > > > > > > +	 * to overcome these issues, we try to communicate by performing an
-> > > > > > > > > +	 * COLD power OFF and ON.
-> > > > > > > > > +	 */
-> > > > > > > > > +	for (i = 1; i <= 10 && ret; i++) {
-> > > > > > > >
-> > > > > > > > Is it really that bad that more than say 3 iterations might be needed?
-> > > > > > > >
-> > > > > > > [Bala]: will restrict to 3 iterations.
-> > > > > >
-> > > > > > Is 3x expected to be enough to 'guarantee' as successful
-> > > > > > initialization? Just wondered about the 10x since it suddendly changed
-> > > > > > from 1x. What is the failure rate without retries?
-> > > > > >
-> > > > > > Could you provide more information about the 'communication
-> > > > > > synchronization issues'? Is the root cause understood? Maybe there is
-> > > > > > a better way than retries.
-> > > > > >
-> > > > >
-> > > > > [Bala]: basically before sending a every patch series we run a
-> > > > > stress test
-> > > > > to the driver to detect the bugs.
-> > > > >         in recent test results found one interesting bug that BT
-> > > > > setups
-> > > > > fails with version request timeouts,
-> > > > >         after we do a reboot for the device.
-> > > > >         we debugged the issue and found that wcn3900 is not
-> > > > > responding to
-> > > > > the version request commands
-> > > > >         sent by HOST. this is because before reboot, wcn3990 is in
-> > > > > on state
-> > > > > i.e. we are communicating to device.
-> > > > >         then we did a reboot and HOST is not sending a power off
-> > > > > request to
-> > > > > the regulators to turn off.
-> > > > >         so after reboot wcn3990 is still in ON state where it will not
-> > > > > respond to version request commands which in turn fails HCI_SETUP.
-> > > > >         so we are sending the power off pulse and then sending the
-> > > > > power on
-> > > > > pulse.
-> > > > >         coming back to 3x or 10x iteration this is to avoid any such
-> > > > > synchronization issues.
-> > > > >         i agreed for 3x because of stress test results. we have
-> > > > > success rate
-> > > > > of 99% for single iteration, where as 3x iterations will helps to
-> > > > > handle 1%
-> > > > > fails cases.
-> > > >
-> > > > Thanks for the clarification. Couldn't you assure the device is in a
-> > > > defined state by calling qca_power_shutdown() as one of the first
-> > > > things in qca_wcn3990_init()?
-> > > 
-> > > [Bala]:  we have reasons behind writing qca_power_setup(true) at the
-> > > start.
-> > > 
-> > >         1. the reason to add iteration here, is to handle BT fails
-> > > cases
-> > > either due to communication failure of wcn3900 or due to regulator
-> > > issues.
-> > >            before calling qca_setup(), we have our regulator turned
-> > > on and
-> > > in qca_setup i.e. init routine if we added power_shutdown as first
-> > > statement
-> > > before
-> > >            communicating with chip then regulator will be off and
-> > > again we
-> > > need to call function to ON regulators.
-> > >            so it could be some thing like this
-> > > 
-> > >            init(){
-> > > 
-> > >                for () {
-> > >                      shutdown() // regs are off
-> > >                      poweron(true) // regs are on.
-> > >                      if(!start communicating with chip()) {
-> > >                         break;
-> > >                       }
-> > > 
-> > >                }
-> > >            }
-> > >            as the reason to add the iteration handling is to
-> > > overcome 1% of
-> > > fail cases, so every time when we call it will turn off the regs and
-> > > turn it
-> > > back. which require an turning in off regs and on it back for 99% pass
-> > >             cases.
-> > 
-> > But would turning off the regs really add a significant delay here?
-> > The setup is already really slow, with a 100ms delay in the
-> > loop (still wonder if booting the chip without loading firmware really
-> > takes that long) and later the firmware is loaded.
-> > 
-> [Bala]: By default we will have an firmware loaded in ROM of wcn3990, 100 ms
-> delay will help wcn3990 boot up with default firmware.
+On Tue, Jul 31, 2018 at 5:38 PM, Christopher Lameter <cl@linux.com> wrote:
+> On Tue, 31 Jul 2018, Dmitry Vyukov wrote:
+>
+>> > Actually you should do this for SLAB_TYPESAFE_BY_RCU slabs. Usually they are with ->ctors but there
+>> > are few without constructors.
+>> > We can't reinitialize or even retag them. The latter will definitely cause false-positive use-after-free reports.
+>>
+>> Somewhat offtopic, but I can't understand how SLAB_TYPESAFE_BY_RCU
+>> slabs can be useful without ctors or at least memset(0). Objects in
+>> such slabs need to be type-stable, but I can't understand how it's
+>> possible to establish type stability without a ctor... Are these bugs?
+>> Or I am missing something subtle? What would be a canonical usage of
+>> SLAB_TYPESAFE_BY_RCU slab without a ctor?
+>
+> True that sounds fishy. Would someone post a list of SLAB_TYPESAFE_BY_RCU
+> slabs without ctors?
 
-Ok, thanks.
+https://elixir.bootlin.com/linux/latest/source/fs/jbd2/journal.c#L2395
+https://elixir.bootlin.com/linux/latest/source/fs/kernfs/mount.c#L415
+https://elixir.bootlin.com/linux/latest/source/net/netfilter/nf_conntrack_core.c#L2065
+https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/i915/i915_gem.c#L5501
+https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/i915/selftests/mock_gem_device.c#L212
+https://elixir.bootlin.com/linux/latest/source/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c#L1131
 
->         Once it is booted up with default firmware on ROM, we will download
-> the firmware from the firmware files, these firmware files
->         contains bug fixes of wcn3990. Once the firmware files are loaded we
-> will send the reset command to wcn3990.
->         wcn3990 will start working with latest firmware which is loaded.
-> 
-> > If the chip needs to be in a defined state we should make sure to put
-> > in into that state, unless there is a significant overhead wrt 'try
-> > first and only reset in case of failure'. As a nice side effect the
-> > code would be cleaner and we probably could get rid of the loop
-> > completely, since it's supposed to address the case where the chip
-> > wasn't properly reset on a reboot.
-> > 
-> 
-> [Bala]: i too agree with you, Now we have observed issue because of reboot.
-> But let us take a real time example here.
->         if clocks of UART are not stable or there is an issue of UART GPIO's
-> or some thing related might have broken in UART. Then will have
-> communication issues with BT chip.
->         where HCI_SETUP fails, instead of giving a fails status, we are
-> trying to communicate once again and these is also be in 1% of fail cases.
+Also these in proto structs:
+https://elixir.bootlin.com/linux/latest/source/net/dccp/ipv4.c#L959
+https://elixir.bootlin.com/linux/latest/source/net/dccp/ipv6.c#L1048
+https://elixir.bootlin.com/linux/latest/source/net/ipv4/tcp_ipv4.c#L2461
+https://elixir.bootlin.com/linux/latest/source/net/ipv6/tcp_ipv6.c#L1980
+https://elixir.bootlin.com/linux/latest/source/net/llc/af_llc.c#L145
+https://elixir.bootlin.com/linux/latest/source/net/smc/af_smc.c#L105
 
-If there are issues with unstable clocks, GPIOs or similar the problem
-should be fixed at it's root, instead of papering over it in the BT
-driver. Kernel drivers would be a complete mess if they tried to
-recover from all possible problems in other subsystems.
-
-I don't have general objections agains a retry loop when it is really
-needed, but I don't have the impressions this is the case here. If
-your stress tests reveal problems that can't be addresses otherwise
-please let us know and we might end up with the retry loop after all.
-
-> > >         2. this is the one of the main reason for adding
-> > > qca_power_setup(true) in the init() function first.
-> > >            as we know that power management is so critical for long
-> > > lasting
-> > > of battery.
-> > >            now present implementation is when we off BT from UI i.e.
-> > > hci0
-> > > down, we put BT into an suspend or low power mode, as soon as we
-> > > turn ON the
-> > > BT back from UI we make hci0 up.
-> > >            the above is putting device into suspend state and bring
-> > > it back
-> > > where the regulator are still on state. so we will have leakage
-> > > currents
-> > > which can be minimal or may be in few mA.
-> > >            to over come the above case, we want to do an cold on/off
-> > > for BT
-> > > chip wcn3990. i.e. when bt is off from UI, we will off the
-> > > regulators and
-> > > turn on it again once the BT is ON from UI.
-> > >            every time we disable i.e. off BT from UI we will call
-> > > hdev->shutdown() i.e. completely powering off the chip.
-> > >            so it require an reprogram again, when we turn ON BT from
-> > > UI. it
-> > > will call qca_setup()--> init().. so here actually
-> > > qca_power_on(true) will
-> > > turn on the chip and dump the fw files into it.
-> > >            so that is also a reason behind to write power on first.
-> > > 
-> > >            the above feature is under testing state, will post a patch
-> > > series once the driver code merged to bt-next.
-> > 
-> > Thanks for the info.
-> > 
-> > If I understand correctly what you describe isn't incompatible with
-> > performing a proper reset. 'vregs_on' can be checked to avoid
-> > disabling already disabled regulators:
-> > 
-> >   if (qcadev->bt_power->vregs_on)
-> >           qca_power_shutdown(hdev);
-> > 
-> >   // short delay needed here?
-> > 
-> >   qca_power_setup(hu, true);
-> > 
-> > Unless there are drawbacks that I'm missing I think that's preferable
-> > over the retry loop.
-> > 
-> > > > The code flow with the gotos and the error handling at the end of the
-> > > > loop is a bit messy. Moving the power down to the top of the loop
-> > > > (basically in line with my comment above to get rid of the loop) would
-> > > > help here. In this case checking 'ret' in the loop condition (which I
-> > > > suggested to remove) would make sense, since it elimninates the need
-> > > > for the break/return in the success case. But if we can do without the
-> > > > loop even better :)
-> > > >
-> > > 
-> > > [Bala]: there is a reason to add the loop here, here we go with
-> > > reason to
-> > > add.
-> > >         let us assume that qca_setup fails to establish a
-> > > communication with
-> > > wcn3990
-> > >         then next steps will not be pass and we can't populate hci0
-> > > rfkill
-> > > entry.
-> > >         in traditional bluez stack i.e. bluetoothd daemon will looks
-> > > for
-> > > hci0, if we have entry for hci0
-> > >         then only BT option is visible in UI or else BT option will
-> > > not be
-> > > available in UI.
-> > >         we don't have any mechanism handled in bluez user space to
-> > > reinitiate the communication at latest to try for second time to
-> > > make hci0
-> > > up.
-> > >         so that is reason behind to add so that we can handle fault
-> > > handling
-> > > of wcn3990 and establish the communication to make BT option
-> > > available in
-> > > BT.
-> > 
-> > The loop is supposed to address the following case (quoting you from
-> > earlier discussion in the thread):
-> > 
-> > > found one interesting bug that BT setups fails with version request
-> > > timeouts, after we do a reboot for the device. we debugged the issue
-> > > and found that wcn3900 is not responding to the version request
-> > > commands sent by HOST. this is because before reboot, wcn3990 is in
-> > > on state i.e. we are communicating to device. then we did a reboot
-> > > and HOST is not sending a power off request to the regulators to
-> > > turn off. so after reboot wcn3990 is still in ON state where it will
-> > > not respond to version request commands which in turn fails
-> > > HCI_SETUP. so we are sending the power off pulse and then sending the
-> > > power on pulse.
-> > 
-> > My suggestion to address this failure case is to reset/power off the
-> > chip before initializing it. With that the loop shouldn't be needed,
-> > actually it wasn't there before you found this specific error.
-> 
-> [Bala]: I will update loop according to your suggestions, But i am little
-> bit worried, if the HCI_SETUP fails due to some
->         external issue of UART, so in that cases we can't able to handle
-> with out loop and as i said, some operating system,
->        will not handle HCI SETUP failures, we at the driver need to handle
-> such cases too.
-
-As I said above, in most cases the problem should be addressed in the
-driver that causes it. Not hiding issues may allow to fix them
-properly, which also benefits other users of the UART/component.
-
-Cheers
-
-Matthias
+They later created in net/core/sock.c without ctor.
