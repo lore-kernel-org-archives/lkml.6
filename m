@@ -5,75 +5,154 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AB3C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85602C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED82C208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:57:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED82C208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lab.ntt.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id 18529208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18529208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=d-silva.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbeGaLh2 (ORCPT
+        id S1731811AbeGaLkg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:37:28 -0400
-Received: from tama50.ecl.ntt.co.jp ([129.60.39.147]:35399 "EHLO
-        tama50.ecl.ntt.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729784AbeGaLh2 (ORCPT
+        Tue, 31 Jul 2018 07:40:36 -0400
+Received: from ushosting.nmnhosting.com ([167.160.173.127]:49530 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730422AbeGaLkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:37:28 -0400
-Received: from vc1.ecl.ntt.co.jp (vc1.ecl.ntt.co.jp [129.60.86.153])
-        by tama50.ecl.ntt.co.jp (8.13.8/8.13.8) with ESMTP id w6V9vpTw014342;
-        Tue, 31 Jul 2018 18:57:51 +0900
-Received: from vc1.ecl.ntt.co.jp (localhost [127.0.0.1])
-        by vc1.ecl.ntt.co.jp (Postfix) with ESMTP id 81B17EA81AB;
-        Tue, 31 Jul 2018 18:57:51 +0900 (JST)
-Received: from jcms-pop21.ecl.ntt.co.jp (jcms-pop21.ecl.ntt.co.jp [129.60.87.134])
-        by vc1.ecl.ntt.co.jp (Postfix) with ESMTP id 77104EA7FCE;
-        Tue, 31 Jul 2018 18:57:51 +0900 (JST)
-Received: from [IPv6:::1] (unknown [129.60.241.146])
-        by jcms-pop21.ecl.ntt.co.jp (Postfix) with ESMTPSA id 6FE204009C9;
-        Tue, 31 Jul 2018 18:57:51 +0900 (JST)
-Subject: Re: [PATCH net-next 1/2] virtio-net: correctly update XDP_TX counters
-References: <1533030219-9904-1-git-send-email-jasowang@redhat.com>
-From:   Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Message-ID: <2cdb8081-90a8-3a87-b6a6-4395825594a1@lab.ntt.co.jp>
-Date:   Tue, 31 Jul 2018 18:57:21 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 07:40:36 -0400
+X-Greylist: delayed 456 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Jul 2018 07:40:35 EDT
+Received: from mail2.nmnhosting.com (unknown [202.78.40.170])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 8BDF42F202BE;
+        Tue, 31 Jul 2018 05:53:22 -0400 (EDT)
+Received: from Hawking (202-78-40-170.lei.net.au [202.78.40.170] (may be forged))
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id w6V9qf9v055147
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 31 Jul 2018 19:52:56 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     "'Michael Ellerman'" <mpe@ellerman.id.au>,
+        "'Murilo Opsfelder Araujo'" <muriloo@linux.ibm.com>,
+        "'LEROY Christophe'" <christophe.leroy@c-s.fr>
+Cc:     <linux-kernel@vger.kernel.org>,
+        "'Andrew Donnellan'" <andrew.donnellan@au1.ibm.com>,
+        "'Balbir Singh'" <bsingharora@gmail.com>,
+        "'Benjamin Herrenschmidt'" <benh@kernel.crashing.org>,
+        "'Cyril Bur'" <cyrilbur@gmail.com>,
+        "'Eric W . Biederman'" <ebiederm@xmission.com>,
+        "'Joe Perches'" <joe@perches.com>,
+        "'Michael Neuling'" <mikey@neuling.org>,
+        "'Nicholas Piggin'" <npiggin@gmail.com>,
+        "'Paul Mackerras'" <paulus@samba.org>,
+        "'Simon Guo'" <wei.guo.simon@gmail.com>,
+        "'Sukadev Bhattiprolu'" <sukadev@linux.vnet.ibm.com>,
+        "'Tobin C . Harding'" <me@tobin.cc>,
+        <linuxppc-dev@lists.ozlabs.org>
+References: <20180727145811.12334-1-muriloo@linux.ibm.com> <20180727145811.12334-5-muriloo@linux.ibm.com> <20180727184023.Horde.KRXPzZpG18uxt_B9sy_FBg5@messagerie.si.c-s.fr> <20180730152838.GA23704@kermit-br-ibm-com> <20180730183047.Horde.g9hQ_3EXmF6St0upNs2DDw1@messagerie.si.c-s.fr> <20180730231738.GA20351@kermit-br-ibm-com> <87va8vhhsj.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87va8vhhsj.fsf@concordia.ellerman.id.au>
+Subject: RE: [PATCH v2 04/10] powerpc/traps: Use REG_FMT in show_signal_msg()
+Date:   Tue, 31 Jul 2018 19:52:35 +1000
+Message-ID: <072401d428b4$4c0f4340$e42dc9c0$@d-silva.org>
 MIME-Version: 1.0
-In-Reply-To: <1533030219-9904-1-git-send-email-jasowang@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CC-Mail-RelayStamp: 1
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-X-TM-AS-MML: disable
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFlYMq3IkjUBeR9VdpWQycT384V2gEpXXI7AnHVZmwB7lZhVQHpdJOTAf5UMQ0CS/hRwaUou+oA
+Content-Language: en-au
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Tue, 31 Jul 2018 19:53:15 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/31 18:43, Jason Wang wrote:
-> Commit 5b8f3c8d30a6 ("virtio_net: Add XDP related stats") tries to
-> count TX XDP stats in virtnet_receive(). This will cause several
-> issues:
+> -----Original Message-----
+> From: Michael Ellerman <mpe@ellerman.id.au>
+> Sent: Tuesday, 31 July 2018 7:32 PM
+> To: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>; LEROY Christophe
+> <christophe.leroy@c-s.fr>
+> Cc: linux-kernel@vger.kernel.org; Alastair D'Silva <alastair@d-silva.org>;
+> Andrew Donnellan <andrew.donnellan@au1.ibm.com>; Balbir Singh
+> <bsingharora@gmail.com>; Benjamin Herrenschmidt
+> <benh@kernel.crashing.org>; Cyril Bur <cyrilbur@gmail.com>; Eric W .
+> Biederman <ebiederm@xmission.com>; Joe Perches <joe@perches.com>;
+> Michael Neuling <mikey@neuling.org>; Nicholas Piggin
+> <npiggin@gmail.com>; Paul Mackerras <paulus@samba.org>; Simon Guo
+> <wei.guo.simon@gmail.com>; Sukadev Bhattiprolu
+> <sukadev@linux.vnet.ibm.com>; Tobin C . Harding <me@tobin.cc>; linuxppc-
+> dev@lists.ozlabs.org
+> Subject: Re: [PATCH v2 04/10] powerpc/traps: Use REG_FMT in
+> show_signal_msg()
 > 
-> - virtnet_xdp_sq() was called without checking whether or not XDP is
->   set. This may cause out of bound access when there's no enough txq
->   for XDP.
-> - Stats were updated even if there's no XDP/XDP_TX.>
-> Fixing this by reusing virtnet_xdp_xmit() for XDP_TX which can counts
-> TX XDP counter itself and remove the unnecessary tx stats embedded in
-> rx stats.
+> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
+> > On Mon, Jul 30, 2018 at 06:30:47PM +0200, LEROY Christophe wrote:
+> >> Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+> >> > On Fri, Jul 27, 2018 at 06:40:23PM +0200, LEROY Christophe wrote:
+> >> > > Murilo Opsfelder Araujo <muriloo@linux.ibm.com> a écrit :
+> >> > >
+> >> > > > Simplify the message format by using REG_FMT as the register
+> >> > > > format.  This avoids having two different formats and avoids
+> checking for MSR_64BIT.
+> >> > >
+> >> > > Are you sure it is what we want ?
+> >> >
+> >> > Yes.
+> >> >
+> >> > > Won't it change the behaviour for a 32 bits app running on a 64bits
+> kernel ?
+> >> >
+> >> > In fact, this changes how many zeroes are prefixed when displaying
+> >> > the registers (%016lx vs. %08lx format).  For example, 32-bits
+> >> > userspace, 64-bits kernel:
+> >>
+> >> Indeed that's what I suspected. What is the real benefit of this change ?
+> >> Why not keep the current format for 32bits userspace ? All those
+> >> leading zeroes are pointless to me.
+> >
+> > One of the benefits is simplifying the code by removing some checks.
+> > Another is deduplicating almost identical format strings in favor of a unified
+> one.
+> >
+> > After reading Joe's comment [1], %px seems to be the format we're
+> looking for.
+> > An extract from Documentation/core-api/printk-formats.rst:
+> >
+> >   "%px is functionally equivalent to %lx (or %lu). %px is preferred because it
+> >   is more uniquely grep'able."
+> >
+> > So I guess we don't need to worry about the format (%016lx vs. %08lx),
+> > let's just use %px, as per the guideline.
+> 
+> I don't think I like %px.
 
-Thanks for fixing this.
-I wanted to avoid calling u64_stats_update_begin() (i.e. smp_wmb() in 32
-bit systems) for every packet. So I'd like to keep sq stats in
-virtnet_rx_stats.
+Me neither, semantically, it's for pointers, and the data being displayed is not a pointer.
+
+> It makes the format string cleaner, but it means we have to cast everything
+> to void * which is ugly as heck.
+> 
+> I actually don't think the leading zeroes are helpful at all in the signal
+> message, ie. we should just use %lx there.
+> 
+> They are useful in show_regs() because we want everything to line up.
+> 
+> So I think I'll drop patch 3 and use 0x%lx in show_signal_msg(), meaning we
+> end up with, eg:
+> 
+>   [   73.414535] segv[3759]: segfault (11) at 0x0 nip 0x10000420 lr 0xfe61854
+> code 0x1 in segv[10000000+10000]
+>   [   73.414641] segv[3759]: code: 4e800421 80010014 38210010 7c0803a6
+> 4bffff30 9421ffd0 93e1002c 7c3f0b78
+>   [   73.414665] segv[3759]: code: 39200000 913f001c 813f001c 39400001
+> <91490000> 39200000 7d234b78 397f0030
+
+Or better yet, "%#lx" - the hash adds the appropriate prefix in the right case for the format.
 
 -- 
-Toshiaki Makita
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva     msn: alastair@d-silva.org
+blog: http://alastair.d-silva.org    Twitter: @EvilDeece
+
+
 
