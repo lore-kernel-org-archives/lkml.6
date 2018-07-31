@@ -3,103 +3,231 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE1AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5BDC46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD26420841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD26420841
+	by mail.kernel.org (Postfix) with ESMTP id 44654208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44654208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbeGaOI7 (ORCPT
+        id S1732230AbeGaOJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:08:59 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:34911 "EHLO
+        Tue, 31 Jul 2018 10:09:00 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:34909 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732115AbeGaOI7 (ORCPT
+        with ESMTP id S1732104AbeGaOJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:08:59 -0400
+        Tue, 31 Jul 2018 10:09:00 -0400
 Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
         by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fkTlg-0000tp-VA; Tue, 31 Jul 2018 13:28:49 +0100
+        id 1fkTlh-0000tp-88; Tue, 31 Jul 2018 13:28:49 +0100
 From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
 To:     tiwai@suse.de
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/4] usb-audio: Add UAC3 Power Domains
-Date:   Tue, 31 Jul 2018 13:28:41 +0100
-Message-Id: <20180731122845.4859-1-jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v3 1/4] ALSA: usb-audio: Initial Power Domain support
+Date:   Tue, 31 Jul 2018 13:28:42 +0100
+Message-Id: <20180731122845.4859-2-jorge.sanjuan@codethink.co.uk>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
+In-Reply-To: <20180731122845.4859-1-jorge.sanjuan@codethink.co.uk>
 References: <20180719112215.4219-1-jorge.sanjuan@codethink.co.uk>
+ <20180731122845.4859-1-jorge.sanjuan@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is what's new in this v3:
- - Add proper SPDX identifier for new source file.
- - Add delay unit in comment for BADD inferred recovery
-   times and specify the actual delay time for them.
- - Suspend the usb stream *after* alsa has supended its stuff.
- - Make sure Power State changes to D0 happen *before* stream
-   format is set.
- - Try to set the Power State to D0 on .prepare callback too as
-   recovery from suspend state doesn't need .hw_params call.
+Thee USB Audio Class 3 (UAC3) introduces Power Domains as a new
+feature to let a host turn individual parts of an audio function
+to different power states via USB requests. This lets the device
+get to know a bit amore about what the host is up to in order to
+optimize power consumption efficiently.
 
-This patchset adds support for UAC3 Power Domains. This feature
-of the USB audio class 3 allows the host to notify the device 
-what it is making use of so power comsumption can be optimized.
+The Power Domains are optional for UAC3 configuration but all
+UAC3 devices shall include at least one BADD configuration where
+the support for Power Domains is compulsory.
 
-This proposal implements this feature for Power Domains
-that include an Input/Output Terminal associated to an
-audio Streaming interface. This is the main usage of this
-feature according to the spec. For that reason, the logic
-for the Power Domain state change has been implemented
-within the ALSA PCMs logic and the suspend/resume callbacks
-of the usb_driver. The behaviour would be as follows:
+This patch adds a set of features/helpers to parse these power
+domains and change their status.
 
-* Power Domain State D0: A Power Domain will reach this state
-  only when the audio substream associated to that domain is
-  being used (i,e. Audio playback/capture is happening).
-* Power Domain State D1: This is the Idle state where the driver
-  is going to always want to be in order to reduce power
-  consumption.
-* Power Domain State D2: This state is only set when the usb driver
-  asumes the device is not going to be used anymore and hence, it
-  wont care about getting any interrupts from the device. This
-  will only happen when power level is set to "auto" in sysfs
-  so the usb driver gets suspended when the interfaces are not in use.
- 
-NOTE: The way this has been implemented will always try to put the 
-Power Domain in state D1 if the Power Domain exists. The patch
-"ALSA: usb-audio: Operate UAC3 Power Domains in PCM callbacks"
-puts the logic for doing so inside the PCM's logic. Something to
-improve on that is to also tie up those D1<->D0 state changes
-to runtime PM maybe.
-
-
-Jorge Sanjuan (4):
-  ALSA: usb-audio: Initial Power Domain support
-  ALSA: usb-audio: AudioStreaming Power Domain parsing
-  ALSA: usb-audio: Add UAC3 Power Domains to suspend/resume
-  ALSA: usb-audio: Operate UAC3 Power Domains in PCM callbacks
-
+Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+---
  include/linux/usb/audio-v3.h |   4 ++
  sound/usb/Makefile           |   1 +
- sound/usb/card.c             |   9 ++++
- sound/usb/card.h             |   2 +
- sound/usb/pcm.c              |  68 ++++++++++++++++++++++++++--
- sound/usb/pcm.h              |   2 +
  sound/usb/power.c            | 104 +++++++++++++++++++++++++++++++++++++++++++
  sound/usb/power.h            |  19 ++++++++
- sound/usb/stream.c           |  70 +++++++++++++++++++++++++----
- 9 files changed, 268 insertions(+), 11 deletions(-)
+ 4 files changed, 128 insertions(+)
  create mode 100644 sound/usb/power.c
 
+diff --git a/include/linux/usb/audio-v3.h b/include/linux/usb/audio-v3.h
+index 334bfa6dfb47..6b708434b7f9 100644
+--- a/include/linux/usb/audio-v3.h
++++ b/include/linux/usb/audio-v3.h
+@@ -447,4 +447,8 @@ struct uac3_interrupt_data_msg {
+ /* BADD sample rate is always fixed to 48kHz */
+ #define UAC3_BADD_SAMPLING_RATE				48000
+ 
++/* BADD power domains recovery times in 50us increments */
++#define UAC3_BADD_PD_RECOVER_D1D0			0x0258	/* 30ms */
++#define UAC3_BADD_PD_RECOVER_D2D0			0x1770	/* 300ms */
++
+ #endif /* __LINUX_USB_AUDIO_V3_H */
+diff --git a/sound/usb/Makefile b/sound/usb/Makefile
+index 05440e2df8d9..d330f74c90e6 100644
+--- a/sound/usb/Makefile
++++ b/sound/usb/Makefile
+@@ -13,6 +13,7 @@ snd-usb-audio-objs := 	card.o \
+ 			mixer_scarlett.o \
+ 			mixer_us16x08.o \
+ 			pcm.o \
++			power.o \
+ 			proc.o \
+ 			quirks.o \
+ 			stream.o
+diff --git a/sound/usb/power.c b/sound/usb/power.c
+new file mode 100644
+index 000000000000..bd303a1ba1b7
+--- /dev/null
++++ b/sound/usb/power.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *   UAC3 Power Domain state management functions
++ */
++
++#include <linux/slab.h>
++#include <linux/usb.h>
++#include <linux/usb/audio.h>
++#include <linux/usb/audio-v2.h>
++#include <linux/usb/audio-v3.h>
++
++#include "usbaudio.h"
++#include "helper.h"
++#include "power.h"
++
++struct snd_usb_power_domain *
++snd_usb_find_power_domain(struct usb_host_interface *ctrl_iface,
++			  unsigned char id)
++{
++	struct snd_usb_power_domain *pd;
++	void *p;
++
++	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
++	if (!pd)
++		return NULL;
++
++	p = NULL;
++	while ((p = snd_usb_find_csint_desc(ctrl_iface->extra,
++					    ctrl_iface->extralen,
++					    p, UAC3_POWER_DOMAIN)) != NULL) {
++		struct uac3_power_domain_descriptor *pd_desc = p;
++		int i;
++
++		for (i = 0; i < pd_desc->bNrEntities; i++) {
++			if (pd_desc->baEntityID[i] == id) {
++				pd->pd_id = pd_desc->bPowerDomainID;
++				pd->pd_d1d0_rec =
++					le16_to_cpu(pd_desc->waRecoveryTime1);
++				pd->pd_d2d0_rec =
++					le16_to_cpu(pd_desc->waRecoveryTime2);
++				return pd;
++			}
++		}
++	}
++
++	kfree(pd);
++	return NULL;
++}
++
++int snd_usb_power_domain_set(struct snd_usb_audio *chip,
++			     struct snd_usb_power_domain *pd,
++			     unsigned char state)
++{
++	struct usb_device *dev = chip->dev;
++	unsigned char current_state;
++	int err, idx;
++
++	idx = snd_usb_ctrl_intf(chip) | (pd->pd_id << 8);
++
++	err = snd_usb_ctl_msg(chip->dev, usb_rcvctrlpipe(chip->dev, 0),
++			      UAC2_CS_CUR,
++			      USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_IN,
++			      UAC3_AC_POWER_DOMAIN_CONTROL << 8, idx,
++			      &current_state, sizeof(current_state));
++	if (err < 0) {
++		dev_err(&dev->dev, "Can't get UAC3 power state for id %d\n",
++			pd->pd_id);
++		return err;
++	}
++
++	if (current_state == state) {
++		dev_dbg(&dev->dev, "UAC3 power domain id %d already in state %d\n",
++			pd->pd_id, state);
++		return 0;
++	}
++
++	err = snd_usb_ctl_msg(chip->dev, usb_sndctrlpipe(chip->dev, 0), UAC2_CS_CUR,
++			      USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_OUT,
++			      UAC3_AC_POWER_DOMAIN_CONTROL << 8, idx,
++			      &state, sizeof(state));
++	if (err < 0) {
++		dev_err(&dev->dev, "Can't set UAC3 power state to %d for id %d\n",
++			state, pd->pd_id);
++		return err;
++	}
++
++	if (state == UAC3_PD_STATE_D0) {
++		switch (current_state) {
++		case UAC3_PD_STATE_D2:
++			udelay(pd->pd_d2d0_rec * 50);
++			break;
++		case UAC3_PD_STATE_D1:
++			udelay(pd->pd_d1d0_rec * 50);
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	dev_dbg(&dev->dev, "UAC3 power domain id %d change to state %d\n",
++		pd->pd_id, state);
++
++	return 0;
++}
+diff --git a/sound/usb/power.h b/sound/usb/power.h
+index b2e25f60c5a2..6004231a7c75 100644
+--- a/sound/usb/power.h
++++ b/sound/usb/power.h
+@@ -2,6 +2,25 @@
+ #ifndef __USBAUDIO_POWER_H
+ #define __USBAUDIO_POWER_H
+ 
++struct snd_usb_power_domain {
++	int pd_id;              /* UAC3 Power Domain ID */
++	int pd_d1d0_rec;        /* D1 to D0 recovery time */
++	int pd_d2d0_rec;        /* D2 to D0 recovery time */
++};
++
++enum {
++	UAC3_PD_STATE_D0,
++	UAC3_PD_STATE_D1,
++	UAC3_PD_STATE_D2,
++};
++
++int snd_usb_power_domain_set(struct snd_usb_audio *chip,
++			     struct snd_usb_power_domain *pd,
++			     unsigned char state);
++struct snd_usb_power_domain *
++snd_usb_find_power_domain(struct usb_host_interface *ctrl_iface,
++			  unsigned char id);
++
+ #ifdef CONFIG_PM
+ int snd_usb_autoresume(struct snd_usb_audio *chip);
+ void snd_usb_autosuspend(struct snd_usb_audio *chip);
 -- 
 2.11.0
 
