@@ -2,143 +2,178 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB0AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BEEC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FF3208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:01:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8+ZRWjA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FF3208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 65164208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 04:01:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65164208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbeGaFjd (ORCPT
+        id S1728140AbeGaFkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 01:39:33 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45200 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeGaFjd (ORCPT
+        Tue, 31 Jul 2018 01:40:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33084 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727097AbeGaFj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 01:39:33 -0400
-Received: by mail-pl0-f68.google.com with SMTP id j8-v6so6523519pll.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 21:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MvRrQWR7Q/fxZSpd4e7e/XaLSCLKGgGe8Oa4VsFPWBI=;
-        b=a8+ZRWjAfzqV/E3aqyW7CzPLraqmbE0fsEjUgAKZQhdrF1yu+zJlxMy8MZKxapuvfH
-         mBP9UyFAfctSLf86VcohI+V+jZAW4qVut2P/ctcd53ef3A0eGQvr85R4vF+wj0casgt4
-         9FH0i19fAR4/QhPeaJc7OQKGJDZqcLZ+Ip1UE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MvRrQWR7Q/fxZSpd4e7e/XaLSCLKGgGe8Oa4VsFPWBI=;
-        b=HSOF559WGFR/Hg2pYpDwZ7BBsz/84+YXEFXKkFA26z0R+2PF94DyvSCsjKE05BjagK
-         EKtsfm2Jqczw3Ehov4vEjMqZx5tSuoHx0O3OB0PHbZNDhhyM7L+aQdPW/EQ62JfmmEy5
-         U/DjDUPQTZPS13/Dh3HrXI7K7kMpkczokPkjhvUJllmIJDt8IbXueeE8C00mGtzzsEMv
-         acZf4S5uN9EuEZ73FPo1Fs0XxRUredq/TkZDzg4ktkjHqGoK3tp9xDR5NbYgmZypqZyE
-         qDMgXSoNNLpdH0Q+GAp9T0GL/ACietyiLqutWQlYSR5TJtO7FzkezLEjAHEfUODeTts8
-         W0pg==
-X-Gm-Message-State: AOUpUlGYx7hTIRxctZi8WaeotLhaq0IKD6Y4aP77AyRLxTtthdEG9RI/
-        ydr6xT12PCd1hsmH5jDDbuoxxg==
-X-Google-Smtp-Source: AAOMgpdJ2DGHK32TJ7dcMwFEOGV5VFx9o0OXQpegLYzM7UtpoXssbrOYmXCI1vaoYlRKbpkK9hzVxQ==
-X-Received: by 2002:a17:902:b709:: with SMTP id d9-v6mr18985261pls.138.1533009680703;
-        Mon, 30 Jul 2018 21:01:20 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v22-v6sm30731842pfi.60.2018.07.30.21.01.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Jul 2018 21:01:19 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 21:02:08 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] hwspinlock: Fix incorrect return pointers
-Message-ID: <20180731040208.GB5090@builder>
-References: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
- <CAMz4kuKGaMh=M9=P4TkpF4w0onJZJcRaPd+twMyEpj56KNVJLA@mail.gmail.com>
+        Tue, 31 Jul 2018 01:39:59 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6V3xxAd058257
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:01:46 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjgb583ce-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:01:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Tue, 31 Jul 2018 05:01:44 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Jul 2018 05:01:39 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6V41c6c38863028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 04:01:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB549A405D;
+        Tue, 31 Jul 2018 07:01:49 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF44DA4055;
+        Tue, 31 Jul 2018 07:01:45 +0100 (BST)
+Received: from [9.202.14.95] (unknown [9.202.14.95])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jul 2018 07:01:45 +0100 (BST)
+Subject: Re: [RFC 1/4] virtio: Define virtio_direct_dma_ops structure
+To:     Christoph Hellwig <hch@infradead.org>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-2-khandual@linux.vnet.ibm.com>
+ <20180730092419.GA26245@infradead.org>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        mst@redhat.com, linuxram@us.ibm.com, haren@linux.vnet.ibm.com,
+        paulus@samba.org, srikar@linux.vnet.ibm.com
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Tue, 31 Jul 2018 09:31:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuKGaMh=M9=P4TkpF4w0onJZJcRaPd+twMyEpj56KNVJLA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180730092419.GA26245@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18073104-4275-0000-0000-000002A10B27
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073104-4276-0000-0000-000037A91999
+Message-Id: <fd5738a9-163c-f1ab-c646-12b6367eeded@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807310043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30 Jul 04:34 PDT 2018, Baolin Wang wrote:
+On 07/30/2018 02:54 PM, Christoph Hellwig wrote:
+>> +/*
+>> + * Virtio direct mapping DMA API operations structure
+>> + *
+>> + * This defines DMA API structure for all virtio devices which would not
+>> + * either bring in their own DMA OPS from architecture or they would not
+>> + * like to use architecture specific IOMMU based DMA OPS because QEMU
+>> + * expects GPA instead of an IOVA in absence of VIRTIO_F_IOMMU_PLATFORM.
+>> + */
+>> +dma_addr_t virtio_direct_map_page(struct device *dev, struct page *page,
+>> +			    unsigned long offset, size_t size,
+>> +			    enum dma_data_direction dir,
+>> +			    unsigned long attrs)
+> 
+> All these functions should probably be marked static.
 
-> Hi Bjorn,
-> 
-> On 28 June 2018 at 10:32, Baolin Wang <baolin.wang@linaro.org> wrote:
-> > The commit 4f1acd758b08 ("hwspinlock: Add devm_xxx() APIs to request/free
-> > hwlock") introduces one bug, that will return one error pointer if failed
-> > to request one hwlock, but we expect NULL pointer on error for consumers.
-> > This patch will fix this issue.
-> >
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> 
-> Could you pick up this patch which fixes the incorrect return value
-> issue? Thanks.
-> 
+Sure.
 
-I thought I had picked this already, it's applied now. Sorry about the
-delay.
+> 
+>> +void virtio_direct_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
+>> +			size_t size, enum dma_data_direction dir,
+>> +			unsigned long attrs)
+>> +{
+>> +}
+> 
+> No need to implement no-op callbacks in struct dma_map_ops.
 
-Regards,
-Bjorn
+Okay.
 
-> > ---
-> >  drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> > index e16d648..2bad40d 100644
-> > --- a/drivers/hwspinlock/hwspinlock_core.c
-> > +++ b/drivers/hwspinlock/hwspinlock_core.c
-> > @@ -877,10 +877,10 @@ struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
-> >
-> >         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
-> >         if (!ptr)
-> > -               return ERR_PTR(-ENOMEM);
-> > +               return NULL;
-> >
-> >         hwlock = hwspin_lock_request();
-> > -       if (!IS_ERR(hwlock)) {
-> > +       if (hwlock) {
-> >                 *ptr = hwlock;
-> >                 devres_add(dev, ptr);
-> >         } else {
-> > @@ -913,10 +913,10 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
-> >
-> >         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
-> >         if (!ptr)
-> > -               return ERR_PTR(-ENOMEM);
-> > +               return NULL;
-> >
-> >         hwlock = hwspin_lock_request_specific(id);
-> > -       if (!IS_ERR(hwlock)) {
-> > +       if (hwlock) {
-> >                 *ptr = hwlock;
-> >                 devres_add(dev, ptr);
-> >         } else {
-> > --
-> > 1.7.9.5
-> >
 > 
+>> +
+>> +int virtio_direct_mapping_error(struct device *hwdev, dma_addr_t dma_addr)
+>> +{
+>> +	return 0;
+>> +}
 > 
+> Including this one.
 > 
-> -- 
-> Baolin Wang
-> Best Regards
+>> +void *virtio_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>> +		gfp_t gfp, unsigned long attrs)
+>> +{
+>> +	void *queue = alloc_pages_exact(PAGE_ALIGN(size), gfp);
+>> +
+>> +	if (queue) {
+>> +		phys_addr_t phys_addr = virt_to_phys(queue);
+>> +		*dma_handle = (dma_addr_t)phys_addr;
+>> +
+>> +		if (WARN_ON_ONCE(*dma_handle != phys_addr)) {
+>> +			free_pages_exact(queue, PAGE_ALIGN(size));
+>> +			return NULL;
+>> +		}
+>> +	}
+>> +	return queue;
+> 
+> queue is a very odd name in a generic memory allocator.
+
+Will change it to addr.
+
+> 
+>> +void virtio_direct_free(struct device *dev, size_t size, void *vaddr,
+>> +		dma_addr_t dma_addr, unsigned long attrs)
+>> +{
+>> +	free_pages_exact(vaddr, PAGE_ALIGN(size));
+>> +}
+>> +
+>> +const struct dma_map_ops virtio_direct_dma_ops = {
+>> +	.alloc			= virtio_direct_alloc,
+>> +	.free			= virtio_direct_free,
+>> +	.map_page		= virtio_direct_map_page,
+>> +	.unmap_page		= virtio_direct_unmap_page,
+>> +	.mapping_error		= virtio_direct_mapping_error,
+>> +};
+> 
+> This is missing a dma_map_sg implementation.  In general this is
+> mandatory for dma_ops.  So either you implement it or explain in
+> a common why you think you can skip it.
+
+Hmm. IIUC virtio core never used dma_map_sg(). Am I missing something
+here ? The only reference to dma_map_sg() is inside a comment.
+
+$git grep dma_map_sg drivers/virtio/
+drivers/virtio/virtio_ring.c:    * We can't use dma_map_sg, because we don't use scatterlists in
+
+> 
+>> +EXPORT_SYMBOL(virtio_direct_dma_ops);
+> 
+> EXPORT_SYMBOL_GPL like all virtio symbols, please.
+
+I am planning to drop EXPORT_SYMBOL from virtio_direct_dma_ops structure.
+
