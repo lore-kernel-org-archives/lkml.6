@@ -2,116 +2,418 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA3CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550AEC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE792208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6705208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:15:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0fDCauQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE792208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="w7l1UcxM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6705208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbeGaKwi (ORCPT
+        id S1730513AbeGaKzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:52:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53566 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729485AbeGaKwi (ORCPT
+        Tue, 31 Jul 2018 06:55:07 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55300 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729767AbeGaKzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:52:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5UZwBIW7S3NpZ8DmRAnDwkmVrQbw4ELPeSjCQikn/JI=; b=0fDCauQhdJBhQFOtLJA+0GUxs
-        UjSJ9DZyrnqdG1CeKEqOFEyrNrCaeiUl+4YtjbvWIfmwIXbjXK50I6Ab4HQk9MvjK8Hyq8U1AJP/T
-        DTRPA3zRbJ8uxjdSevY2KvUkbfmONdXeYqAVjglRzE0BUVpq9YA9blVVYurtm4ik4K729OzdjY1Tf
-        Pb93ZQ5XNuy+szE19qlGLPLOq+LGbx0XUZYiUDEfIfoZxBwsNYgImTQePyRgolnW2FUcOkZ0ayK1s
-        M2Ben5/wmMxhha1jEhqwEEKf4XExCGNQlzIpzdX7CB9mb/Dw+1Y8dNXhlWftNWHjo/FN5KzwGSaSH
-        8PCsFrqeg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkQi3-0004pP-6c; Tue, 31 Jul 2018 09:12:51 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B82C62027585B; Tue, 31 Jul 2018 11:12:48 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 11:12:48 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
- refcounting
-Message-ID: <20180731091248.GS2494@hirez.programming.kicks-ass.net>
-References: <20180728215357.3249-1-riel@surriel.com>
- <20180728215357.3249-11-riel@surriel.com>
- <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
- <20180729155452.37eddc11@imladris.surriel.com>
- <20180730095502.GG2494@hirez.programming.kicks-ass.net>
- <1532961011.28585.30.camel@surriel.com>
- <20180730162653.GM2494@hirez.programming.kicks-ass.net>
- <1532999155.28585.56.camel@surriel.com>
+        Tue, 31 Jul 2018 06:55:07 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 23DBC5C01C4;
+        Tue, 31 Jul 2018 11:15:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533028541;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=6wAdJjTaAjHou3MGxqf7ki61MZQrlbSNO8zGa3yTqkI=;
+        b=w7l1UcxM69/98mFhizismNl4A/xADZWThBcAOaHZrGJUQXRDXMyddFSAo1rCkQfC3asDpF
+        gRLWkKG4Ms3WfKRN6sAOpMF5UvSGBUjKk/FsbvdlKQxecJnNDsZUX3YCWKvL4MsD3HLvok
+        u7UvT5io+Zym+FicbUTPTiFKJh7ayjY=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nbjgUHX6eyHhY7pW"
-Content-Disposition: inline
-In-Reply-To: <1532999155.28585.56.camel@surriel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 31 Jul 2018 11:15:41 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra-owner@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] mmc: tegra: Reconfigure pad voltages during
+ voltage switching
+Message-ID: <f11437bcf65c4b9a711b0411509e07c9@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27.07.2018 10:44, Aapo Vienamo wrote:
+> On Thu, 26 Jul 2018 15:33:11 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+> 
+>> On 26.07.2018 14:19, Aapo Vienamo wrote:
+>> > Parse the pinctrl state and nvidia,only-1-8-v properties from the device
+>> > tree and implement pad voltage state reconfiguration in the mmc
+>> > start_signal_voltage_switch() callback. Validate the pinctrl and
+>> > regulator configuration before unmasking UHS modes. Add
+>> > NVQUIRK_NEEDS_PAD_CONTROL and add set it for Tegra210 and Tegra186.
+>> >
+>> > The pad configuration is done in the mmc callback because the order of
+>> > pad reconfiguration and sdhci voltage switch depend on the voltage to
+>> > which the transition occurs.
+>> >
+>> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+>> > ---
+>> >  drivers/mmc/host/sdhci-tegra.c | 140 +++++++++++++++++++++++++++++++++++++----
+>> >  1 file changed, 127 insertions(+), 13 deletions(-)
+>> >
+>> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>> > index ddf00166..9587365 100644
+>> > --- a/drivers/mmc/host/sdhci-tegra.c
+>> > +++ b/drivers/mmc/host/sdhci-tegra.c
+>> > @@ -21,6 +21,7 @@
+>> >  #include <linux/io.h>
+>> >  #include <linux/of.h>
+>> >  #include <linux/of_device.h>
+>> > +#include <linux/pinctrl/consumer.h>
+>> >  #include <linux/reset.h>
+>> >  #include <linux/mmc/card.h>
+>> >  #include <linux/mmc/host.h>
+>> > @@ -55,6 +56,7 @@
+>> >  #define NVQUIRK_ENABLE_SDR104		BIT(4)
+>> >  #define NVQUIRK_ENABLE_DDR50		BIT(5)
+>> >  #define NVQUIRK_HAS_PADCALIB		BIT(6)
+>> > +#define NVQUIRK_NEEDS_PAD_CONTROL	BIT(7)
+>> >
+>> >  struct sdhci_tegra_soc_data {
+>> >  	const struct sdhci_pltfm_data *pdata;
+>> > @@ -66,8 +68,13 @@ struct sdhci_tegra {
+>> >  	struct gpio_desc *power_gpio;
+>> >  	bool ddr_signaling;
+>> >  	bool pad_calib_required;
+>> > +	bool pad_control_available;
+>> > +	bool only_1v8;
+>> >
+>> >  	struct reset_control *rst;
+>> > +	struct pinctrl *pinctrl_sdmmc;
+>> > +	struct pinctrl_state *pinctrl_state_3v3;
+>> > +	struct pinctrl_state *pinctrl_state_1v8;
+>> >  };
+>> >
+>> >  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+>> > @@ -138,12 +145,47 @@ static unsigned int tegra_sdhci_get_ro(struct
+>> > sdhci_host *host)
+>> >  	return mmc_gpio_get_ro(host->mmc);
+>> >  }
+>> >
+>> > +static bool tegra_sdhci_is_uhs_valid(struct sdhci_host *host)
+>> > +{
+>> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> > +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+>> > +	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+>> > +
+>> > +	/*
+>> > +	 * The 1.8 V only host controllers don't need to have configurable
+>> > +	 * regulators and pad voltages. In this case the UHS modes can be
+>> > +	 * enabled regardless.
+>> > +	 */
+>> > +	if (tegra_host->only_1v8)
+>> > +		return true;
+>>
+>> Hm, SD always needs 3.3V capabilities, not?
+> 
+> Yes, the controllers used for eMMCs should have the only_1v8 property
+> set and they exit the function here. With controllers used for SD cards,
+> the regulator and pad configurations are verified later in the function.
+> 
 
---nbjgUHX6eyHhY7pW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+By returning true you ask the controller to enable UHS modes. However,
+if you have 1.8V only, there should be no UHS modes advertised (since SD
+cards require 1.8V).
 
-On Mon, Jul 30, 2018 at 09:05:55PM -0400, Rik van Riel wrote:
-> On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
-> >=20
-> > So for ARCH_NO_ACTIVE_MM we never touch ->active_mm and therefore
-> > ->active_mm =3D=3D ->mm.
->=20
-> Close, but not true for kernel threads, which have a=20
-> NULL ->mm, but a non-null ->active_mm that gets passed
-> to enter_lazy_tlb().
+That assumes that UHS modes are a SD card thing only (which I think
+strictly speaking should be the case).
 
-I'm confused on the need for this. We mark the CPU lazy, why do we still
-care about this?
+However, at least on Tegra 3 it seems that enabling SD 3.0 is also
+required for higher eMMC speeds:
+https://patchwork.kernel.org/patch/10521147/
 
---nbjgUHX6eyHhY7pW
-Content-Type: application/pgp-signature; name="signature.asc"
+So UHS is probably not so much about SD card UHS modes but more about
+higher speed modes in general...
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAltgKBAACgkQdkfhpEvA
-5LpkOA/9HofxxAGk4yCPZieMG6ZtvJtm03yMFVawa69JXBQjBPODAXoeU0tWK4vt
-JmutdWiY+mOzjTxUpYXHDl2b1ZLolfOPRorFRYbSa9mEVbeYDBJjqNKqmOhnJon5
-bylGhZKMENE7WoRO8uHXuN7sItUnLEH0c9HB2oo6ko2RnhmWleyMnO21TMmRa1Ru
-QTQexQaWm1wyUc47Ja6qnhEzfcwfvcZkJ34Ng5WJMPjbc9QREuwJ5E3BDTEt+rNd
-Mk0EWyoUXIIAT4gvrJtGREwNc8IctUzkWIu4p9vwtzlpPUdbVyi/6AQJZKKyxmKb
-x+tHKtUaYD9PxUZVwj8KceG8IXyQzyZZrkxGSdIdm5HppUGiBwryUhOvnI9ohaY2
-83XIoSmZDr9PBJxhOgwXBA3DUwBucKxkUhvSjUSXSkJQJsx8+t/cgMsLsrJtf4x+
-nXpYBm6PgfWJpEDnqcpLk64ZzC67jZ4OyvAb6ChM1k5pYbtEZtTBu0T2u9vwdApv
-JVpLRf4NM9B+ecESLs3Qa/QlmrQtMdDuEdElq5842jao/pZV7SHB3efDUrfiGcfF
-b4etfMvtUCbmiTtyCLcWRzo+8fwskdsdpiNGqkfKwx8BnpiX2r3FvHNuaaV/DVqW
-/5ZHjIESpZicSamhEx3wIxjRoi/54Tu5U8z5KSBeduP6OHjDE2g=
-=3wx1
------END PGP SIGNATURE-----
+>> So if the controller is 1.8V only, then only eMMC modes are allowed.
+>>
+>> You can use MMC_CAP2_HSX00_1_8V in caps2.
+> 
+> I can't quite follow you, how this should be used here?
+> 
 
---nbjgUHX6eyHhY7pW--
+Similar to 
+
+        if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)      
+                                                                   
+                host->mmc->caps |= MMC_CAP_1_8V_DDR
+
+You can enable higher speed eMMC modes without advertising SD card
+modes.
+
+
+>> So far the Tegra SDHCI driver did not use device tree to indicate modes,
+>> but maybe we should start doing that. In this case you can use
+>> mmc-hs200-1_8v/mmc-hs400-1_8v to indicate higher eMMC speed modes.
+>>
+>> > +
+>> > +	/*
+>> > +	 * If the board does not define a regulator for the SDHCI IO voltage,
+>> > +	 * then don't advertise support for UHS modes even if the device
+>> > +	 * supports it because the IO voltage cannot be configured.
+>> > +	 */
+>> > +	if (IS_ERR(host->mmc->supply.vqmmc))
+>> > +		return false;
+>>
+>> The stack should already check that and mask caps1 accordingly (see
+>> sdhci_setup_host).
+> 
+> True, the logic seems to be duplicated here. Although also
+> tegra_sdhci_reset() needs to be change so that the bits masked off by
+> sdhci_setup_host() aren't set if this check is removed.
+> 
+
+sdhci_setup_host() calls reset before doing initialization (e.g. in
+__sdhci_read_caps).
+
+Checking just for vqmmc presence is bogus IMHO. It does not say anything
+about the exact capabilities of that regulator.
+
+I think we should do something like this:
+
+	if (there is a host->mmc->supply.vqmmc) {
+		if (host->mmc->supply.vqmmc can do 1.8V (or/and also 1.2V?)) {
+			/* 
+			 * Enable SDHCI spec v3.00 support
+			 * This is required for SD UHS modes as well as higher eMMC speeds
+			 */
+			if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
+				misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
+
+			if (host->mmc->supply.vqmmc can do 3.3V) {
+				/*
+				 * Proper SD voltage switching is possible, advertise SD UHS 
+				 * modes as supported by host
+				 */
+				if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
+					misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
+				if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+					misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
+				if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
+					misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
+				if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
+					clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
+			}
+		}
+	}
+
+
+
+
+>> > +
+>> > +	/*
+>> > +	 * Later SoC generations require software pad voltage configuration.
+>> > +	 * The UHS modes should only be enabled if the pad configuration states
+>> > +	 * are available on platforms where they are required in order to switch
+>> > +	 * the signaling voltage.
+>> > +	 */
+>> > +	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL)
+>> > +		return tegra_host->pad_control_available;
+>> > +
+>> > +	return false;
+>> > +}
+>> > +
+>> >  static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+>> >  {
+>> >  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> >  	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+>> >  	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+>> >  	u32 misc_ctrl, clk_ctrl;
+>> > +	bool uhs_valid;
+>> >
+>> >  	sdhci_reset(host, mask);
+>> >
+>> > @@ -160,13 +202,8 @@ static void tegra_sdhci_reset(struct sdhci_host
+>> > *host, u8 mask)
+>> >
+>> >  	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
+>> >
+>> > -	/*
+>> > -	 * If the board does not define a regulator for the SDHCI
+>> > -	 * IO voltage, then don't advertise support for UHS modes
+>> > -	 * even if the device supports it because the IO voltage
+>> > -	 * cannot be configured.
+>> > -	 */
+>> > -	if (!IS_ERR(host->mmc->supply.vqmmc)) {
+>> > +	uhs_valid = tegra_sdhci_is_uhs_valid(host);
+>> > +	if (uhs_valid) {
+>> >  		/* Erratum: Enable SDHCI spec v3.00 support */
+>> >  		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
+>> >  			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
+>> > @@ -286,14 +323,80 @@ static int tegra_sdhci_execute_tuning(struct
+>> > sdhci_host *host, u32 opcode)
+>> >  	return mmc_send_tuning(host->mmc, opcode, NULL);
+>> >  }
+>> >
+>> > -static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+>> > +static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
+>> >  {
+>> >  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> >  	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+>> > -	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+>> > +	int ret;
+>> > +
+>> > +	if (!tegra_host->pad_control_available)
+>> > +		return 0;
+>> > +
+>> > +	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+>> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+>> > +					   tegra_host->pinctrl_state_1v8);
+>> > +		if (ret < 0)
+>> > +			dev_err(mmc_dev(host->mmc),
+>> > +				"setting 1.8V failed, ret: %d\n", ret);
+>> > +	} else {
+>> > +		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+>> > +					   tegra_host->pinctrl_state_3v3);
+>> > +		if (ret < 0)
+>> > +			dev_err(mmc_dev(host->mmc),
+>> > +				"setting 3.3V failed, ret: %d\n", ret);
+>> > +	}
+>> >
+>> > -	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
+>> > -		tegra_host->pad_calib_required = true;
+
+Is this really not needed anymore?
+
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+>> > +						   struct mmc_ios *ios)
+>> > +{
+>> > +	struct sdhci_host *host = mmc_priv(mmc);
+>> > +	int ret = 0;
+>> > +
+>> > +	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+>> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+>> > +		if (ret < 0)
+>> > +			return ret;
+>> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+>> > +	} else if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
+>> > +		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+>> > +		if (ret < 0)
+>> > +			return ret;
+>> > +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+>>
+>> So depending on voltage you first set the pads setting and then do the
+>> signaling voltage switch. Is this necessary? Why?
+> 
+> This is done to enforce the constraint of keeping the signaling voltage
+> always less or equal to the pad voltage. Driving 3.3 V into a pad that
+> has been configured to 1.8 V will damage it. This is stated in the
+> Tegra210 and Tegra186 TRMs in SDMMC Initialization Sequece sections of
+> controllers supporting voltage switching.
+> 
+> Here when switching from 3.3 V to 1.8 V the regulator is first
+> configured to 1.8 V by sdhci_start_signal_voltage_switch() and after
+> that the pad is configured to 1.8 V. When going in the other direction
+> the pad needs to be first configured to 3.3 V before the regulator
+> voltage can be raised.
+
+Ok makes sense. Can you add a comment, e.g. /* Order of operation
+matters, it make sure to keep signaling voltage below pad voltage */
+
+> 
+>> > +	}
+>> > +
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static void tegra_sdhci_init_pinctrl_info(struct device *dev,
+>> > +					  struct sdhci_tegra *tegra_host)
+>> > +{
+>> > +	tegra_host->pinctrl_sdmmc = devm_pinctrl_get(dev);
+>> > +	if (IS_ERR(tegra_host->pinctrl_sdmmc)) {
+>> > +		dev_dbg(dev, "No pinctrl info, err: %ld\n",
+>> > +			PTR_ERR(tegra_host->pinctrl_sdmmc));
+>> > +		return;
+>> > +	}
+>> > +
+>> > +	tegra_host->pinctrl_state_3v3 =
+>> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
+>> > +	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
+>> > +		dev_err(dev, "Missing 3.3V pad state, err: %ld\n",
+>> > +			PTR_ERR(tegra_host->pinctrl_state_3v3));
+>> > +		return;
+>> > +	}
+>> > +
+>> > +	tegra_host->pinctrl_state_1v8 =
+>> > +		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-1v8");
+>> > +	if (IS_ERR(tegra_host->pinctrl_state_1v8)) {
+>> > +		dev_err(dev, "Missing 1.8V pad state, err: %ld\n",
+>> > +			  PTR_ERR(tegra_host->pinctrl_state_3v3));
+>>
+>> Is missing pad states considered as error? If yes, we should return a
+>> error code and make the probe function fail.
+>>
+>> If it is ok to run it without the states, then this should be dev_warn
+>> or dev_info.
+> 
+> I don't think failing probe due to missing pinctrl entries can be done
+> because it would break backwards compatibility with pre-existing dtbs.
+> Also SDHCI controllers with fixed signaling voltage don't support pad
+> voltage reconfiguration and therefore the pinctrl properties won't be
+> there either. In the case of fixed voltage SDHCI controllers the
+> "nvidia,only-1-8-v" property is used to signal that pad reconfiguration
+> doesn't need to be performed.
+
+Ok, if they are not mandatory, just use dev_warn(...).
+
+Btw,
+
++    if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
++        host->mmc_host_ops.start_signal_voltage_switch =
++            sdhci_tegra_start_signal_voltage_switch;
++        tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
++    }
++
+
+Can we make tegra_sdhci_init_pinctrl_info return a boolean and do the
+tegra_host->pad_control_available assignment here? I think this would be
+cleaner.
+
+It also won't assign host->mmc_host_ops.start_signal_voltage_switch if
+not needed.
+
+	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL &&
+	    tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host)) {
+		host->mmc_host_ops.start_signal_voltage_switch =
+			sdhci_tegra_start_signal_voltage_switch;
+		tegra_host->pad_control_available = true;
+	}
+
+--
+Stefan
