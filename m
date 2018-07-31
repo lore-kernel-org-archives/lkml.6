@@ -2,144 +2,240 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED82C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11234C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742C520862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 742C520862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9F861208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:05:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLmS1oLz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F861208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbeGaIm7 (ORCPT
+        id S1729636AbeGaIoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:42:59 -0400
-Received: from nov-007-i652.relay.mailchannels.net ([46.232.183.206]:30605
-        "EHLO nov-007-i652.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726591AbeGaIm6 (ORCPT
+        Tue, 31 Jul 2018 04:44:15 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44000 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeGaIoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:42:58 -0400
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 986A91B6027D;
-        Tue, 31 Jul 2018 07:04:03 +0000 (UTC)
-Received: from srv17.tophost.ch (swiss-ingress-2.mailchannels.ch [46.232.183.6])
-        by relay.mailchannels.net (Postfix) with ESMTPA id 7F11E1B60282;
-        Tue, 31 Jul 2018 07:04:00 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.15.2);
-        Tue, 31 Jul 2018 07:04:03 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Print-Stop: 6430aced53d64932_1533020643175_615042603
-X-MC-Loop-Signature: 1533020643175:205961080
-X-MC-Ingress-Time: 1533020643175
-Received: from [80.219.231.201] (port=42542 helo=jzen.bitron.ch)
-        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <j@bitron.ch>)
-        id 1fkOhK-009EZM-0v; Tue, 31 Jul 2018 09:03:58 +0200
-From:   =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=BCrg=20Billeter?= <j@bitron.ch>
-Subject: [PATCH v2] prctl: add PR_[GS]ET_KILLABLE
-Date:   Tue, 31 Jul 2018 09:03:37 +0200
-Message-Id: <20180731070337.61004-1-j@bitron.ch>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180730075241.24002-1-j@bitron.ch>
-References: <20180730075241.24002-1-j@bitron.ch>
+        Tue, 31 Jul 2018 04:44:14 -0400
+Received: by mail-lf1-f66.google.com with SMTP id f135-v6so9933097lfg.10;
+        Tue, 31 Jul 2018 00:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cxeDHlHSH07d/NsXw1qbkGcF6sG69w86Br4Njn1GKwM=;
+        b=hLmS1oLzcPfe7hJyzTdWL2425F0nWNc1w18Sh6vJk97/MRJK7Ed2pUN5N92fGT/nFl
+         dDSq8cW45k0IEeJHyuhGfkEynvAIt5g83LHDY9ZDb7CebuhWYpLSdawWxs2ORzN5LQZg
+         KDRmBPnGltHwK2K6WLxT1ozYE8UkR2pMkUoj4r2yEoqoZqYOLIXYry9SUWfDI8w7dbVd
+         9rgFICnDbJo2ZjVa71U658cYdXMw7DAc8ZuLXPnojVpaJ6V9GxwWvyFklmsZkfBoMRTU
+         ialqMTs9k4owxJGI1otHvfXXaEdmPiXGIByg0fcEfRhr8f8hX9VoPZqCqhPWObVU60k5
+         m3uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cxeDHlHSH07d/NsXw1qbkGcF6sG69w86Br4Njn1GKwM=;
+        b=N2Ki8WbG0AfGsdETXm2cSeEkC40BvNpyUQRj7EcORrvXA9aZ+caD08/I6hiD2nTRk5
+         HLqFycvUpohkV46+Z/QGAXRjDhdW87Uw3j4YD0ENaRCMnvKkQOQ0n3pdLYf+Q2LIlfdx
+         96B47fC5sd9uFUBbWrp2F8QOYXlkLiJcKoyRsLN3Wj4GmaQrLzFHjNqly1sd0hpg58Pf
+         5mLrQhxoXGLG1xbh4PKy3/VFmvaeSDYakW0TSdyWXucILCCELzUARllepNDnAECxxhWh
+         Wf6kLiZ777hDyAJnDVNZgyTKQkCtnHtC09L9FQffg2DXjFDGPvr9SvAW2nao2gXEvt8S
+         1C6g==
+X-Gm-Message-State: AOUpUlHrAIXh/NBNjL/7FoX9BqJ/9UGKBcib2I1rZhpS/3aCnwtnG3va
+        R/hATkcF23DLlYm5a3KH+MF3bsozczlGGyN5ukg=
+X-Google-Smtp-Source: AAOMgpeNP/tcwwrVBaUShPlpBn6UDMNdKC3c3m5Akte2/CPVDbVsLZiy/XKs8zIGrvCx9kPwtzK+YTRXskW8zhO7Fjo=
+X-Received: by 2002:a19:c742:: with SMTP id x63-v6mr11881729lff.9.1533020721617;
+ Tue, 31 Jul 2018 00:05:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AuthUser: juerg@bitron.ch
+Received: by 2002:ab3:631a:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 00:04:41
+ -0700 (PDT)
+In-Reply-To: <33ceb61c-3e09-c336-e9b9-87c01336f56c@intel.com>
+References: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
+ <1532340508-8749-6-git-send-email-zhang.chunyan@linaro.org> <33ceb61c-3e09-c336-e9b9-87c01336f56c@intel.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Tue, 31 Jul 2018 15:04:41 +0800
+Message-ID: <CAAfSe-vVEve63y-Pc0QF6w7vc37cbbbOknGkp9SmocXyNX3J4g@mail.gmail.com>
+Subject: Re: [PATCH V4 5/7] mmc: sdhci: add Auto CMD Auto Select support
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Jason Wu <jason.wu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PR_SET_KILLABLE clears the SIGNAL_UNKILLABLE flag. This allows
-CLONE_NEWPID tasks to restore normal signal behavior, opting out of the
-special signal protection for init processes. This prctl does not allow
-setting the SIGNAL_UNKILLABLE flag, only clearing.
+Hi Adrian,
 
-The SIGNAL_UNKILLABLE flag, which is implicitly set for tasks cloned
-with CLONE_NEWPID, has the effect of ignoring all signals (from
-userspace) if the corresponding handler is set to SIG_DFL. The only
-exceptions are SIGKILL and SIGSTOP and they are only accepted if raised
-from an ancestor namespace.
+On 30 July 2018 at 21:06, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 23/07/18 13:08, Chunyan Zhang wrote:
+>> As SD Host Controller Specification v4.10 documents:
+>> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
+>> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
+>> Control 2 register which indicates whether card supports CMD23. If CMD23
+>> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
+>> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
+>> recommended rather than use of Auto CMD12 Enable or Auto CMD23
+>> Enable.
+>>
+>> This patch add this new mode support.
+>>
+>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>> ---
+>>  drivers/mmc/host/sdhci.c | 61 +++++++++++++++++++++++++++++++++++++++---------
+>>  drivers/mmc/host/sdhci.h |  2 ++
+>>  2 files changed, 52 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>> index 5acea3d..5c60590 100644
+>> --- a/drivers/mmc/host/sdhci.c
+>> +++ b/drivers/mmc/host/sdhci.c
+>> @@ -311,6 +311,23 @@ static void sdhci_config_dma(struct sdhci_host *host)
+>>       sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+>>  }
+>>
+>> +static void sdhci_enable_cmd23(struct sdhci_host *host)
+>> +{
+>> +     u16 ctrl2;
+>> +
+>> +     /*
+>> +      * This is used along with "Auto CMD Auto Select" feature,
+>> +      * which is introduced from v4.10, if card supports CMD23,
+>> +      * Auto CMD23 should be used instead of Auto CMD12.
+>> +      */
+>> +     if (host->version >= SDHCI_SPEC_410 &&
+>> +         (host->mmc->caps & MMC_CAP_CMD23)) {
+>
+> That is the host capability.  It needs to be the card capability.
 
-SIGINT, SIGQUIT and SIGTSTP are used in job control for ^C, ^\, ^Z.
-While a task with the SIGNAL_UNKILLABLE flag could install handlers for
-these signals, this is not sufficient to implement a shell that uses
-CLONE_NEWPID for child processes:
+Could you please elaborate the issue?
 
- * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
-   itself, it's not possible to implement the stop action in a custom
-   SIGTSTP handler.
- * Many applications do not install handlers for these signals and
-   thus, job control won't work properly with unmodified applications.
+I thought we're setting for host here.  Do you mean we need to see the
+card capability?
 
-There are other scenarios besides job control in a shell where
-applications rely on the default actions as described in signal(7) and
-PID isolation may be useful. This new prctl makes the signal protection
-for "init" processes optional, without breaking backward compatibility.
+>
+>> +             ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>> +             ctrl2 |= SDHCI_CMD23_ENABLE;
+>> +             sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+>> +     }
+>> +}
+>> +
+>>  static void sdhci_init(struct sdhci_host *host, int soft)
+>>  {
+>>       struct mmc_host *mmc = host->mmc;
+>> @@ -329,6 +346,8 @@ static void sdhci_init(struct sdhci_host *host, int soft)
+>>               host->clock = 0;
+>>               mmc->ops->set_ios(mmc, &mmc->ios);
+>>       }
+>> +
+>> +     sdhci_enable_cmd23(host);
+>>  }
+>>
+>>  static void sdhci_reinit(struct sdhci_host *host)
+>> @@ -1093,6 +1112,36 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>>              !mrq->cap_cmd_during_tfr;
+>>  }
+>>
+>> +static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
+>> +                                      struct mmc_command *cmd,
+>> +                                      u16 *mode)
+>> +{
+>> +     bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
+>> +                      (cmd->opcode != SD_IO_RW_EXTENDED);
+>> +     bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
+>> +
+>> +     /*
+>> +      * In case of Version 4.10 or later, use of 'Auto CMD Auto
+>> +      * Select' is recommended rather than use of 'Auto CMD12
+>> +      * Enable' or 'Auto CMD23 Enable'.
+>> +      */
+>> +     if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
+>> +             *mode |= SDHCI_TRNS_AUTO_SEL;
+>
+> As noted in patch 4, the CMD23 argument is not just the block count for eMMC.
 
-Signed-off-by: Jürg Billeter <j@bitron.ch>
----
- v2: Hold siglock for PR_SET_KILLABLE, expand commit message.
+Probably I haven't got your point...
 
- include/uapi/linux/prctl.h |  4 ++++
- kernel/sys.c               | 13 +++++++++++++
- 2 files changed, 17 insertions(+)
+From what I understand, auto_sel mode doesn't need argument2. Doesn't
+this work for eMMC?
 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index c0d7ea0bf5b6..92afb63da727 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -219,4 +219,8 @@ struct prctl_mm_map {
- # define PR_SPEC_DISABLE		(1UL << 2)
- # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
- 
-+/* Control SIGNAL_UNKILLABLE */
-+#define PR_GET_KILLABLE			54
-+#define PR_SET_KILLABLE			55
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 38509dc1f77b..92c9322cfb98 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2484,6 +2484,19 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			return -EINVAL;
- 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
- 		break;
-+	case PR_GET_KILLABLE:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = put_user(!(me->signal->flags & SIGNAL_UNKILLABLE),
-+				 (int __user *)arg2);
-+		break;
-+	case PR_SET_KILLABLE:
-+		if (arg2 != 1 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		spin_lock_irq(&me->sighand->siglock);
-+		me->signal->flags &= ~SIGNAL_UNKILLABLE;
-+		spin_unlock_irq(&me->sighand->siglock);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
--- 
-2.18.0
+The test platform I used was just eMMC only, haven't found problem.
 
+Thanks,
+Chunyan
+
+>
+>> +             return;
+>> +     }
+>> +
+>> +     /*
+>> +      * If we are sending CMD23, CMD12 never gets sent
+>> +      * on successful completion (so no Auto-CMD12).
+>> +      */
+>> +     if (use_cmd12) {
+>> +             *mode |= SDHCI_TRNS_AUTO_CMD12;
+>> +     } else if (use_cmd23) {
+>> +             *mode |= SDHCI_TRNS_AUTO_CMD23;
+>> +             sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>> +     }
+>> +}
+>> +
+>>  static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>       struct mmc_command *cmd)
+>>  {
+>> @@ -1119,17 +1168,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>
+>>       if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
+>>               mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
+>> -             /*
+>> -              * If we are sending CMD23, CMD12 never gets sent
+>> -              * on successful completion (so no Auto-CMD12).
+>> -              */
+>> -             if (sdhci_auto_cmd12(host, cmd->mrq) &&
+>> -                 (cmd->opcode != SD_IO_RW_EXTENDED))
+>> -                     mode |= SDHCI_TRNS_AUTO_CMD12;
+>> -             else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+>> -                     mode |= SDHCI_TRNS_AUTO_CMD23;
+>> -                     sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>> -             }
+>> +             sdhci_auto_cmd_select(host, cmd, &mode);
+>>       }
+>>
+>>       if (data->flags & MMC_DATA_READ)
+>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>> index 81aae07..a8f4ec2 100644
+>> --- a/drivers/mmc/host/sdhci.h
+>> +++ b/drivers/mmc/host/sdhci.h
+>> @@ -42,6 +42,7 @@
+>>  #define  SDHCI_TRNS_BLK_CNT_EN       0x02
+>>  #define  SDHCI_TRNS_AUTO_CMD12       0x04
+>>  #define  SDHCI_TRNS_AUTO_CMD23       0x08
+>> +#define  SDHCI_TRNS_AUTO_SEL 0x0C
+>>  #define  SDHCI_TRNS_READ     0x10
+>>  #define  SDHCI_TRNS_MULTI    0x20
+>>
+>> @@ -185,6 +186,7 @@
+>>  #define   SDHCI_CTRL_DRV_TYPE_D              0x0030
+>>  #define  SDHCI_CTRL_EXEC_TUNING              0x0040
+>>  #define  SDHCI_CTRL_TUNED_CLK                0x0080
+>> +#define  SDHCI_CMD23_ENABLE          0x0800
+>>  #define  SDHCI_CTRL_V4_MODE          0x1000
+>>  #define  SDHCI_CTRL_64BIT_ADDR               0x2000
+>>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE        0x8000
+>>
+>
