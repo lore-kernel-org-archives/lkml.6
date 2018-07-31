@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CCFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FD1C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456DA20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A4D20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Co+P6W3x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456DA20844
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TQWFdBoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26A4D20844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732289AbeGaUl3 (ORCPT
+        id S1732310AbeGaUlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:41:29 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34919 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732211AbeGaUl1 (ORCPT
+        Tue, 31 Jul 2018 16:41:31 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43784 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732274AbeGaUl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:41:27 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w3-v6so7568018plq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:59:47 -0700 (PDT)
+        Tue, 31 Jul 2018 16:41:29 -0400
+Received: by mail-pl0-f67.google.com with SMTP id x6-v6so7559783plv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q/YRFKb3RzI0H1RpA3VS7FFvDUztiE2CUhFcLa1cepw=;
-        b=Co+P6W3x0rRIdXLxPhw37GtUJOLtELbw1BmXWuPGvPEKehgO3bw176RwaVhdSJeoTq
-         UeUUlzE5ieYrVo4IhMQwUQJiyj4RQhSRZ0/0FwucGnrwIiLHj6egBZPsypuqicCx+3Cm
-         OGVruMmy1k05jzDM3VdMejFzp30WxfnJ63Fnw=
+        bh=gF9UpcqWCQAPpTAYxBGWl2YKXDfCJhhLRmXour3w3OY=;
+        b=TQWFdBoE6fDW3+ojfccdOKCF4n+hPOnUqIpUomM77kF65HNnzRy3s4Cg4XdoQEj9m+
+         R5zj9gOIqHAuT9bBPI0Rd4m6QEuy7PnlUmbtzdvOpzExAM5cTIYqmOHLCu3IvMa+akjK
+         n7WbASlFcJDSJo2EZHIJQap9WLiZV/vWZeU4E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q/YRFKb3RzI0H1RpA3VS7FFvDUztiE2CUhFcLa1cepw=;
-        b=JxTLsGpSkot9dCyq01W9QiHHVjjStf3kmqMM1j8LR6ZmWXo2jxtc5+A4xVYq1sMaQh
-         1YrOxvWSRLKdnVckLH+X44w9Oh+T17D/LT0VEMkFjiagBKmtcPj4ocV6Q8vU6llBj5xF
-         UeWaLnpeQQEELseaiq1QfB5vtgwNrf1ckG1zuKnN8ztk6ZWCfgK3P3yIJrCPUqCn1ojq
-         Xw/8xL0FprTCD7EkEJQ6Hl4fD7BDDwuxctLEkv85y3zdVmI0YIJpTU86h43E+cIaZ70A
-         oNR1l5mGf//I2yt0KYXMJjeoCiGXUBi1/mteUiuDZeuHGWXE7Q0jxrHxu4LiCnTtG2BY
-         e3gw==
-X-Gm-Message-State: AOUpUlGK+cEIDTRM9BJ2g3+kiQD9XwndInU5/S8y00p++Bx94u5JSnID
-        X+ixRu3QcnSEF8AV/j62Xj8nFw==
-X-Google-Smtp-Source: AAOMgpfFW4Gt+KqY6N9twDF2khBOVOCCmU1VN/EIeExomBUxU0dkXXQoHw/waIKKKq9W4QhBIxRXzw==
-X-Received: by 2002:a17:902:184:: with SMTP id b4-v6mr21941058plb.340.1533063586567;
-        Tue, 31 Jul 2018 11:59:46 -0700 (PDT)
+        bh=gF9UpcqWCQAPpTAYxBGWl2YKXDfCJhhLRmXour3w3OY=;
+        b=S7knymP6NodB+2LQNu9y9ddEU5H1Komr34UW4uG6yYgjViMyOu1IeOLousmPg8XwPT
+         CT9FV/K1fmqO/7QW8eHSuTMCFBdziyD6T6OrOoOqbF+awW05b8ahgHET/SIRE1qX29CY
+         d7Kete6CKdOlgJS9Q+PjPVyGuan3+gkp84ZXjIUPlWZrZjpEHkn6kyrQm3WzqPr2wUhY
+         pJcoe0TNIO/JNDRs0GR7RiOqOvPiIU0ZbOp4gafxt8MN6Ug1tkmo6H/ATAp/kK9xf+M+
+         Ef84otFJQ+4UNByGntMIUIy1rjWV3uuBzooGQer0BMDyorJqDlKLJ1J1CWtyRaRFdf2i
+         M+Pg==
+X-Gm-Message-State: AOUpUlGQiWJwIIGPVBeeOLm7OX+88mcYhApx0WqGE0PV5PLtIdi/19Xx
+        24L0VMiFeqrAEqDnsQ2lShdzfw==
+X-Google-Smtp-Source: AAOMgpcqzJc3hmXPEdwz13ByOlAarWASYs+m/Q4qcT9wftzAhBtfdbuPziO/G7gZsw26X4RIlk7YDw==
+X-Received: by 2002:a17:902:aa07:: with SMTP id be7-v6mr21362210plb.109.1533063589092;
+        Tue, 31 Jul 2018 11:59:49 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id e132-v6sm27797567pfc.49.2018.07.31.11.59.45
+        by smtp.gmail.com with ESMTPSA id e132-v6sm27797567pfc.49.2018.07.31.11.59.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 11:59:45 -0700 (PDT)
+        Tue, 31 Jul 2018 11:59:48 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -71,9 +71,9 @@ Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 3/5] thermal: qcom-spmi: Use PMIC thermal stage 2 for critical trip points
-Date:   Tue, 31 Jul 2018 11:59:15 -0700
-Message-Id: <20180731185917.176074-3-mka@chromium.org>
+Subject: [PATCH v6 5/5] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
+Date:   Tue, 31 Jul 2018 11:59:17 -0700
+Message-Id: <20180731185917.176074-5-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
 In-Reply-To: <20180731185917.176074-1-mka@chromium.org>
 References: <20180731185917.176074-1-mka@chromium.org>
@@ -85,340 +85,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three thermal stages defined in the PMIC:
+The thermal zone uses spmi-temp-alarm as sensor, the trip points
+correspond to the PMIC thermal stages 1 and 2. The critical trip
+point at 125°C disables the partial PMIC shutdown at stage 2.
 
-stage 1: warning
-stage 2: system should shut down
-stage 3: emergency shut down
+Without an IIO input the sensor only reports a limited number of
+temperatures:
 
-By default the PMIC assumes that the OS isn't doing anything and thus
-at stage 2 it does a partial PMIC shutdown and at stage 3 it kills
-all power. When switching between thermal stages the PMIC generates an
-interrupt which is handled by the driver. The partial PMIC shutdown at
-stage 2 can be disabled by software, which allows the OS to initiate a
-shutdown at stage 2 with a thermal zone configured accordingly.
+- 37°C for temperatures below 105°C
+- 107°C for temperatures >= 105°C and < 125°C
+- 127°C for temperatures >= 125°C
 
-If a critical trip point is configured in the thermal zone the driver
-adjusts the stage 1-3 temperature thresholds to (closely) match the
-critical temperature with a stage 2 threshold (125/130/135/140 °C).
-If a suitable match is found the partial shutdown at stage 2 is
-disabled. If for some reason the system doesn't shutdown at stage 2
-the emergency shutdown at stage 3 kicks in.
+(the numbers correspond to a stage 1 threshold of 105°C)
 
-The partial shutdown at stage 2 remains enabled in these cases:
-- no critical trip point defined
-- the temperature of the critical trip point is < 125°C
-- the temperature of the critical trip point is > 140°C and no
-  ADC channel is configured (thus the OS is not notified when the critical
-  temperature is reached)
-
-Suggested-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 Changes in v6:
-- fixed condition to check if ADC is configured in
-  qpnp_tm_update_critical_trip_temp()
-- changed °C in logs to C
-- removed needless evaluation of qpnp_tm_write() return value in
-  qpnp_tm_update_critical_trip_temp()
-- move assignment of chip->initialized to true to qpnp_tm_init(),
-  where the lock is held
-- call thermal_zone_device_update() after initialization is
-  completed
-- split some #define + comment in two lines to avoid exceeding
-  chars per line limit
-- removed extra closing parenthesis in qpnp_tm_get_temp()
-- remove unnecessary parentheses around conditions in
-  qpnp_tm_update_critical_trip_temp() and qpnp_tm_get_critical_trip_temp()
-- fixed indentation of call devm_thermal_zone_of_sensor_register() call
-  in qpnp_tm_probe()
+- added 'Reviewed-by: Douglas Anderson <dianders@chromium.org>' tag
 
 Changes in v5:
-- patch added to the series
----
- drivers/thermal/qcom-spmi-temp-alarm.c | 158 ++++++++++++++++++++++---
- 1 file changed, 140 insertions(+), 18 deletions(-)
+- removed 'stage2-shutdown-disabled' property from spmi-temp-alarm
+- updated commit message
 
-diff --git a/drivers/thermal/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom-spmi-temp-alarm.c
-index ad4f3a8d6560..b2d5d5bf4a9b 100644
---- a/drivers/thermal/qcom-spmi-temp-alarm.c
-+++ b/drivers/thermal/qcom-spmi-temp-alarm.c
-@@ -23,6 +23,8 @@
- #include <linux/regmap.h>
- #include <linux/thermal.h>
+Changes in v4:
+- updated trip point temperatures to match stage 1 and 2 ones
+- disabled stage 2 shutdown
+- updated commit message
+
+Changes in v3:
+- moved 'thermal-zones' node to the beginning of the .dtsi
+
+Changes in v2:
+- defined 'thermal-zones' node in pm8998.dtsi instead of using a label
+  to refer to it
+- use 105°C hardware trip point as critical trip point
+- reduced number of trip points to 2
+- lowered temperature of passive trip point
+- updated trip point names and added labels
+- updated commit message
+---
+ arch/arm64/boot/dts/qcom/pm8998.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+index 7eea94701b23..34c259ba3919 100644
+--- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+@@ -3,6 +3,31 @@
  
-+#include "thermal_core.h"
+ #include <dt-bindings/spmi/spmi.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/thermal/thermal.h>
 +
- #define QPNP_TM_REG_TYPE		0x04
- #define QPNP_TM_REG_SUBTYPE		0x05
- #define QPNP_TM_REG_STATUS		0x08
-@@ -37,9 +39,11 @@
- #define STATUS_GEN2_STATE_MASK		GENMASK(6, 4)
- #define STATUS_GEN2_STATE_SHIFT		4
++/ {
++	thermal-zones {
++		pm8998 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&pm8998_temp>;
++
++			trips {
++				pm8998_alert0: pm8998-alert0 {
++					temperature = <105000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				pm8998_crit: pm8998-crit {
++					temperature = <125000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++};
  
--#define SHUTDOWN_CTRL1_OVERRIDE_MASK	GENMASK(7, 6)
-+#define SHUTDOWN_CTRL1_OVERRIDE_S2	BIT(6)
- #define SHUTDOWN_CTRL1_THRESHOLD_MASK	GENMASK(1, 0)
- 
-+#define SHUTDOWN_CTRL1_RATE_25HZ	BIT(3)
-+
- #define ALARM_CTRL_FORCE_ENABLE		BIT(7)
- 
- /*
-@@ -56,12 +60,19 @@
- #define TEMP_THRESH_STEP		5000	/* Threshold step: 5 C */
- 
- #define THRESH_MIN			0
-+#define THRESH_MAX			3
-+
-+/* Stage 2 Threshold Min: 125 C */
-+#define STAGE2_THRESHOLD_MIN		125000
-+/* Stage 2 Threshold Max: 140 C */
-+#define STAGE2_THRESHOLD_MAX		140000
- 
- /* Temperature in Milli Celsius reported during stage 0 if no ADC is present */
- #define DEFAULT_TEMP			37000
- 
- struct qpnp_tm_chip {
- 	struct regmap			*map;
-+	struct device			*dev;
- 	struct thermal_zone_device	*tz_dev;
- 	unsigned int			subtype;
- 	long				temp;
-@@ -69,6 +80,10 @@ struct qpnp_tm_chip {
- 	unsigned int			stage;
- 	unsigned int			prev_stage;
- 	unsigned int			base;
-+	/* protects .thresh, .stage and chip registers */
-+	struct mutex			lock;
-+	bool				initialized;
-+
- 	struct iio_channel		*adc;
- };
- 
-@@ -125,6 +140,8 @@ static int qpnp_tm_update_temp_no_adc(struct qpnp_tm_chip *chip)
- 	unsigned int stage, stage_new, stage_old;
- 	int ret;
- 
-+	WARN_ON(!mutex_is_locked(&chip->lock));
-+
- 	ret = qpnp_tm_get_temp_stage(chip);
- 	if (ret < 0)
- 		return ret;
-@@ -163,8 +180,15 @@ static int qpnp_tm_get_temp(void *data, int *temp)
- 	if (!temp)
- 		return -EINVAL;
- 
-+	if (!chip->initialized) {
-+		*temp = DEFAULT_TEMP;
-+		return 0;
-+	}
-+
- 	if (!chip->adc) {
-+		mutex_lock(&chip->lock);
- 		ret = qpnp_tm_update_temp_no_adc(chip);
-+		mutex_unlock(&chip->lock);
- 		if (ret < 0)
- 			return ret;
- 	} else {
-@@ -180,8 +204,72 @@ static int qpnp_tm_get_temp(void *data, int *temp)
- 	return 0;
- }
- 
-+static int qpnp_tm_update_critical_trip_temp(struct qpnp_tm_chip *chip,
-+					     int temp)
-+{
-+	u8 reg;
-+	bool disable_s2_shutdown = false;
-+
-+	WARN_ON(!mutex_is_locked(&chip->lock));
-+
-+	/*
-+	 * Default: S2 and S3 shutdown enabled, thresholds at
-+	 * 105C/125C/145C, monitoring at 25Hz
-+	 */
-+	reg = SHUTDOWN_CTRL1_RATE_25HZ;
-+
-+	if (temp == THERMAL_TEMP_INVALID ||
-+	    temp < STAGE2_THRESHOLD_MIN) {
-+		chip->thresh = THRESH_MIN;
-+		goto skip;
-+	}
-+
-+	if (temp <= STAGE2_THRESHOLD_MAX) {
-+		chip->thresh = THRESH_MAX -
-+			((STAGE2_THRESHOLD_MAX - temp) /
-+			 TEMP_THRESH_STEP);
-+		disable_s2_shutdown = true;
-+	} else {
-+		chip->thresh = THRESH_MAX;
-+
-+		if (chip->adc)
-+			disable_s2_shutdown = true;
-+		else
-+			dev_warn(chip->dev,
-+				 "No ADC is configured and critical temperature is above the maximum stage 2 threshold of 140 C! Configuring stage 2 shutdown at 140 C.\n");
-+	}
-+
-+skip:
-+	reg |= chip->thresh;
-+	if (disable_s2_shutdown)
-+		reg |= SHUTDOWN_CTRL1_OVERRIDE_S2;
-+
-+	return qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
-+}
-+
-+static int qpnp_tm_set_trip_temp(void *data, int trip, int temp)
-+{
-+	struct qpnp_tm_chip *chip = data;
-+	const struct thermal_trip *trip_points;
-+	int ret;
-+
-+	trip_points = of_thermal_get_trip_points(chip->tz_dev);
-+	if (!trip_points)
-+		return -EINVAL;
-+
-+	if (trip_points[trip].type != THERMAL_TRIP_CRITICAL)
-+		return 0;
-+
-+	mutex_lock(&chip->lock);
-+	ret = qpnp_tm_update_critical_trip_temp(chip, temp);
-+	mutex_unlock(&chip->lock);
-+
-+	return ret;
-+}
-+
- static const struct thermal_zone_of_device_ops qpnp_tm_sensor_ops = {
- 	.get_temp = qpnp_tm_get_temp,
-+	.set_trip_temp = qpnp_tm_set_trip_temp,
- };
- 
- static irqreturn_t qpnp_tm_isr(int irq, void *data)
-@@ -193,6 +281,29 @@ static irqreturn_t qpnp_tm_isr(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static int qpnp_tm_get_critical_trip_temp(struct qpnp_tm_chip *chip)
-+{
-+	int ntrips;
-+	const struct thermal_trip *trips;
-+	int i;
-+
-+	ntrips = of_thermal_get_ntrips(chip->tz_dev);
-+	if (ntrips <= 0)
-+		return THERMAL_TEMP_INVALID;
-+
-+	trips = of_thermal_get_trip_points(chip->tz_dev);
-+	if (!trips)
-+		return THERMAL_TEMP_INVALID;
-+
-+	for (i = 0; i < ntrips; i++) {
-+		if (of_thermal_is_trip_valid(chip->tz_dev, i) &&
-+		    trips[i].type == THERMAL_TRIP_CRITICAL)
-+			return trips[i].temperature;
-+	}
-+
-+	return THERMAL_TEMP_INVALID;
-+}
-+
- /*
-  * This function initializes the internal temp value based on only the
-  * current thermal stage and threshold. Setup threshold control and
-@@ -203,17 +314,20 @@ static int qpnp_tm_init(struct qpnp_tm_chip *chip)
- 	unsigned int stage;
- 	int ret;
- 	u8 reg = 0;
-+	int crit_temp;
-+
-+	mutex_lock(&chip->lock);
- 
- 	ret = qpnp_tm_read(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, &reg);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 
- 	chip->thresh = reg & SHUTDOWN_CTRL1_THRESHOLD_MASK;
- 	chip->temp = DEFAULT_TEMP;
- 
- 	ret = qpnp_tm_get_temp_stage(chip);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 	chip->stage = ret;
- 
- 	stage = chip->subtype == QPNP_TM_SUBTYPE_GEN1
-@@ -224,21 +338,19 @@ static int qpnp_tm_init(struct qpnp_tm_chip *chip)
- 			     (stage - 1) * TEMP_STAGE_STEP +
- 			     TEMP_THRESH_MIN;
- 
--	/*
--	 * Set threshold and disable software override of stage 2 and 3
--	 * shutdowns.
--	 */
--	chip->thresh = THRESH_MIN;
--	reg &= ~(SHUTDOWN_CTRL1_OVERRIDE_MASK | SHUTDOWN_CTRL1_THRESHOLD_MASK);
--	reg |= chip->thresh & SHUTDOWN_CTRL1_THRESHOLD_MASK;
--	ret = qpnp_tm_write(chip, QPNP_TM_REG_SHUTDOWN_CTRL1, reg);
-+	crit_temp = qpnp_tm_get_critical_trip_temp(chip);
-+	ret = qpnp_tm_update_critical_trip_temp(chip, crit_temp);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 
- 	/* Enable the thermal alarm PMIC module in always-on mode. */
- 	reg = ALARM_CTRL_FORCE_ENABLE;
- 	ret = qpnp_tm_write(chip, QPNP_TM_REG_ALARM_CTRL, reg);
- 
-+	chip->initialized = true;
-+
-+out:
-+	mutex_unlock(&chip->lock);
- 	return ret;
- }
- 
-@@ -257,6 +369,9 @@ static int qpnp_tm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	dev_set_drvdata(&pdev->dev, chip);
-+	chip->dev = &pdev->dev;
-+
-+	mutex_init(&chip->lock);
- 
- 	chip->map = dev_get_regmap(pdev->dev.parent, NULL);
- 	if (!chip->map)
-@@ -302,6 +417,18 @@ static int qpnp_tm_probe(struct platform_device *pdev)
- 
- 	chip->subtype = subtype;
- 
-+	/*
-+	 * Register the sensor before initializing the hardware to be able to
-+	 * read the trip points. get_temp() returns the default temperature
-+	 * before the hardware initialization is completed.
-+	 */
-+	chip->tz_dev = devm_thermal_zone_of_sensor_register(
-+		&pdev->dev, 0, chip, &qpnp_tm_sensor_ops);
-+	if (IS_ERR(chip->tz_dev)) {
-+		dev_err(&pdev->dev, "failed to register sensor\n");
-+		return PTR_ERR(chip->tz_dev);
-+	}
-+
- 	ret = qpnp_tm_init(chip);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "init failed\n");
-@@ -313,12 +440,7 @@ static int qpnp_tm_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	chip->tz_dev = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, chip,
--							&qpnp_tm_sensor_ops);
--	if (IS_ERR(chip->tz_dev)) {
--		dev_err(&pdev->dev, "failed to register sensor\n");
--		return PTR_ERR(chip->tz_dev);
--	}
-+	thermal_zone_device_update(chip->tz_dev, THERMAL_EVENT_UNSPECIFIED);
- 
- 	return 0;
- }
+ &spmi_bus {
+ 	pm8998_lsid0: pmic@0 {
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
