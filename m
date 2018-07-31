@@ -2,96 +2,113 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DF2C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62973C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B07D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F9D420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eoU7DyD/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B07D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="deSePhgY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9D420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeGaQpg (ORCPT
+        id S1732376AbeGaQrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:45:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35906 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732302AbeGaQpg (ORCPT
+        Tue, 31 Jul 2018 12:47:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37069 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732266AbeGaQrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:45:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+cMdTyIUVDzKVmgmL9p6STfx6PrfnxOtk/KHQV6RXrs=; b=eoU7DyD/HVjH82aESm5LIahaw
-        krIFJkBf5X1zx4X91YAjtNJMj78MvElQIaiXv9YSqZanrP6ZL0zX2VgkWw7kLuwSv3ykg9hkXJVuF
-        fnVc5MvIxfk31X6giXH84MVIwOgUHF5bulmOjMt75Y8XcE0ZSzr0FvjwIi7gPCVSUB+eJ01ipzADL
-        XsnLQgI7UxckE/8CXg6Dk5cQGCXYXaw1LMRu2OB9ks5RixfKrKRd0HiQmNnpOxDCC6k2UTvwYZsyX
-        bBWZb0F7CRMDf10hTWz1kPjEIUu4dsnayWL+KDQofberpMNUX0D40CCpvKQ/KUfydLzyy/d2aU9iM
-        yngi3zK6w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkWCW-0001o0-Iy; Tue, 31 Jul 2018 15:04:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CA41720532353; Tue, 31 Jul 2018 17:04:38 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 17:04:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     Eero Tamminen <eero.t.tamminen@intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Francisco Jerez <currojerez@riseup.net>, lenb@kernel.org,
-        rjw@rjwysocki.net, ggherdovich@suse.cz, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-        viresh.kumar@linaro.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
-Message-ID: <20180731150438.GE2458@hirez.programming.kicks-ass.net>
-References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
- <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
- <87bmarhqk4.fsf@riseup.net>
- <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
- <e7388bf4-deb1-34b6-97d7-89ced8e78ef1@intel.com>
- <605cfcb3f315917c5970f452fab988ae1dc946ff.camel@linux.intel.com>
+        Tue, 31 Jul 2018 12:47:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j8-v6so11005517lfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uOyZ/HhD3i22N6PdNepBmB8YpRctB9CHi6QdKJkqAyc=;
+        b=deSePhgYwZT4KBiSRw6d5bE4SIHdYIkhIAHloKpiN+edvMLD/V6svlg2aiHND2XJWf
+         mfpeQa+GaMllCQnjtvs5B2MtThutnTqreNmUVNLmmubt0RcJ3n1OpYZIsVXPampMCcJK
+         gYg7nw/FB4+j2/DimQqePZCgFAp+J2lxYMuOc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uOyZ/HhD3i22N6PdNepBmB8YpRctB9CHi6QdKJkqAyc=;
+        b=R+8PjujpMTZ7c46YeshJ/N6crrF3SYTDAMJpU2pBrbQu+fEfBYWe/MSeWJWFC7/Gpp
+         sV7wY2TigBmeb0b5Mg2XsdDT6F9ZPxh7EvtmntFpmZYRAgRPwqOAhLaElbnM9RDS6sd1
+         JXMcvbICusFbAdMX5A/UIqOvjuCWqc24LlZufq0bACLQI3QRvRMIVE0ZquOSFUZa/AIm
+         gmuzLul7tmAnbiwzgXKOIgvUjvR9OkwKJDXQ+tDL9Yb4qqcneqPE2dVTblS4/DfrMDum
+         YnmimmG5U67JvXWK94gZaEKcs68v0CxZg6uMnd8DgUPUWd6TAUwYbfbBwtItZBqUywcT
+         TeQA==
+X-Gm-Message-State: AOUpUlF+G3AJ2wKiVvEWNM98jKskGiCZmxLPaqE78nJvswBB4iv0vS4b
+        QbG44vKiz9DsAv3MDT5WAs/D/3QkNc5TiANKvTOVcA==
+X-Google-Smtp-Source: AAOMgpeLsJS9uSYCuXeTFyts1rNJCA70gdEERLiZFPeGvs22V2VyaTpruo6Um3X25Mnny6MyBn/CZ2IUMVWxxi8vZHI=
+X-Received: by 2002:a19:f104:: with SMTP id p4-v6mr11191932lfh.137.1533049628905;
+ Tue, 31 Jul 2018 08:07:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <605cfcb3f315917c5970f452fab988ae1dc946ff.camel@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1532686537-12380-1-git-send-email-suzuki.poulose@arm.com> <20180730200232.GA31755@xps15>
+In-Reply-To: <20180730200232.GA31755@xps15>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 31 Jul 2018 09:06:57 -0600
+Message-ID: <CANLsYkzBfCydwDO-KyDub4X=GTy_dtv-478RyMReBEH6VybSAg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] coresight: Update device tree bindings
+To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        coresight@lists.linaro.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Matt Sealey <matt.sealey@arm.com>,
+        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
+        John Horley <john.horley@arm.com>, Al Grant <al.grant@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 07:06:21AM -0700, Srinivas Pandruvada wrote:
-> On Mon, 2018-07-30 at 14:16 +0300, Eero Tamminen wrote:
-> > Questions:
-> > 
-> > * Does currently kernel CPU freq management have any idea which IO
-> >    devices share TDP with the CPU cores?
+[...]
 
-> No. The requests we do to hardware is just indication only (HW can
-> ignore it). The HW has a bias register to adjust and distribute power
-> among users.
-> We can have several other active device on servers beside CPU which
-> when runs need extra power. So the HW arbitrates power.
+> >
+> > Suzuki K Poulose (9):
+> >   coresight: Document error handling in coresight_register
+> >   coresight: platform: Refactor graph endpoint parsing
+> >   coresight: platform: Fix refcounting for graph nodes
+> >   coresight: platform: Fix leaking device reference
+> >   coresight: Fix remote endpoint parsing
+> >   coresight: Add helper to check if the endpoint is input
+> >   coresight: platform: Cleanup coresight connection handling
+> >   coresight: Cleanup coresight DT bindings
+> >   dts: juno: Update coresight bindings
+> >
+> >  .../devicetree/bindings/arm/coresight.txt          |  95 +++++---
+> >  arch/arm64/boot/dts/arm/juno-base.dtsi             | 161 ++++++------
+> >  arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  52 ++--
+> >  arch/arm64/boot/dts/arm/juno.dts                   |  13 +-
+> >  drivers/hwtracing/coresight/coresight.c            |  35 +--
+> >  drivers/hwtracing/coresight/of_coresight.c         | 269 ++++++++++++++-------
+> >  include/linux/coresight.h                          |   9 +-
+> >  7 files changed, 359 insertions(+), 275 deletions(-)
+> >
+>
+> Good day,
+>
+> I have applied patches 1 to 7.  I will wait for Rob's ACK before doing the same
+> with 8 and 9.
 
-That's not entirely accurate AFAIK. "No" is accurate for Intel, but the
-ARM people have their IPA thing (not a beer):
+I just applied patch 8 and 9.
 
-  https://developer.arm.com/open-source/intelligent-power-allocation
-
-  drivers/thermal/power_allocator.c
-
-which IIUC interacts with their cpufreq driver to disallow certain OPP
-states.
-
-And note that I discourage intel_pstate active mode.
+>
+> Thanks,
+> Mathieu
+>
+> > --
+> > 2.7.4
+> >
