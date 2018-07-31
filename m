@@ -2,136 +2,116 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861DFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA3CC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3412B208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:11:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3412B208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BE792208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:13:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0fDCauQh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE792208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730595AbeGaKvR (ORCPT
+        id S1731210AbeGaKwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:51:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58036 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729485AbeGaKvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:51:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 444B720756; Tue, 31 Jul 2018 11:11:52 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1F06206A8;
-        Tue, 31 Jul 2018 11:11:51 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 11:11:51 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     f.fainelli@gmail.com, davem@davemloft.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, alexandre.belloni@bootlin.com,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 3/4] dt-bindings: net: phy: mscc: vsc8531: fix missing
- "/bits/ 8" in example
-Message-ID: <20180731091151.mfgxxnz6kye4cvfv@qschulz>
-References: <20180730130236.3837-1-quentin.schulz@bootlin.com>
- <20180730130236.3837-3-quentin.schulz@bootlin.com>
- <20180730135813.GH13198@lunn.ch>
+        Tue, 31 Jul 2018 06:52:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53566 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729485AbeGaKwi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 06:52:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5UZwBIW7S3NpZ8DmRAnDwkmVrQbw4ELPeSjCQikn/JI=; b=0fDCauQhdJBhQFOtLJA+0GUxs
+        UjSJ9DZyrnqdG1CeKEqOFEyrNrCaeiUl+4YtjbvWIfmwIXbjXK50I6Ab4HQk9MvjK8Hyq8U1AJP/T
+        DTRPA3zRbJ8uxjdSevY2KvUkbfmONdXeYqAVjglRzE0BUVpq9YA9blVVYurtm4ik4K729OzdjY1Tf
+        Pb93ZQ5XNuy+szE19qlGLPLOq+LGbx0XUZYiUDEfIfoZxBwsNYgImTQePyRgolnW2FUcOkZ0ayK1s
+        M2Ben5/wmMxhha1jEhqwEEKf4XExCGNQlzIpzdX7CB9mb/Dw+1Y8dNXhlWftNWHjo/FN5KzwGSaSH
+        8PCsFrqeg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkQi3-0004pP-6c; Tue, 31 Jul 2018 09:12:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B82C62027585B; Tue, 31 Jul 2018 11:12:48 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 11:12:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
+ refcounting
+Message-ID: <20180731091248.GS2494@hirez.programming.kicks-ass.net>
+References: <20180728215357.3249-1-riel@surriel.com>
+ <20180728215357.3249-11-riel@surriel.com>
+ <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
+ <20180729155452.37eddc11@imladris.surriel.com>
+ <20180730095502.GG2494@hirez.programming.kicks-ass.net>
+ <1532961011.28585.30.camel@surriel.com>
+ <20180730162653.GM2494@hirez.programming.kicks-ass.net>
+ <1532999155.28585.56.camel@surriel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vwalimjjmzvj7stw"
+        protocol="application/pgp-signature"; boundary="nbjgUHX6eyHhY7pW"
 Content-Disposition: inline
-In-Reply-To: <20180730135813.GH13198@lunn.ch>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1532999155.28585.56.camel@surriel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---vwalimjjmzvj7stw
+--nbjgUHX6eyHhY7pW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
-
-On Mon, Jul 30, 2018 at 03:58:13PM +0200, Andrew Lunn wrote:
-> On Mon, Jul 30, 2018 at 03:02:35PM +0200, Quentin Schulz wrote:
-> > The "vsc8531,led-N-mode" property is read as a u8 in the driver and
-> > there aren't a lot of modes anyway.
+On Mon, Jul 30, 2018 at 09:05:55PM -0400, Rik van Riel wrote:
+> On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
 > >=20
-> > Without the "/bits/ 8" in front of the value of the property, the
-> > value is stored as an u32 resulting in of_read_property_u8 to always
-> > return 0.
+> > So for ARCH_NO_ACTIVE_MM we never touch ->active_mm and therefore
+> > ->active_mm =3D=3D ->mm.
 >=20
-> Hi Quentin
->=20
-> on big endian systems. I'm expect this worked on little endian ARM. I
-> think the development work was done on a hacked RPi, if i remember
-> correctly.
->=20
-> >=20
-> > Fix the example so that people using the property can actually use it.
-> >=20
-> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > ---
-> >  Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt=
- b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> > index 664d9d0543fc..4c7d1d384df0 100644
-> > --- a/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> > +++ b/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
-> > @@ -63,6 +63,6 @@ Example:
-> >                  compatible =3D "ethernet-phy-id0007.0570";
-> >                  vsc8531,vddmac		=3D <3300>;
-> >                  vsc8531,edge-slowdown	=3D <7>;
-> > -                vsc8531,led-0-mode	=3D <LINK_1000_ACTIVITY>;
-> > -                vsc8531,led-1-mode	=3D <LINK_100_ACTIVITY>;
-> > +                vsc8531,led-0-mode	=3D /bits/ 8 <LINK_1000_ACTIVITY>;
-> > +                vsc8531,led-1-mode	=3D /bits/ 8 <LINK_100_ACTIVITY>;
->=20
-> I don't know the device tree language well enough...
->=20
-> Would this work?
->=20
-> vsc8531,led-1-mode	=3D < /bits/ 8  LINK_100_ACTIVITY>;
->=20
-> If so, you can make it part of the #define.
+> Close, but not true for kernel threads, which have a=20
+> NULL ->mm, but a non-null ->active_mm that gets passed
+> to enter_lazy_tlb().
 
-It does not compile unfortunately. According to the documentation of
-DTC[1], /bits/ 8 should prefix the value/array so I guess we're out of
-luck for using the same define in the kernel and DTS if we want to
-abstract this prefix.
+I'm confused on the need for this. We mark the CPU lazy, why do we still
+care about this?
 
-Quentin
-
-[1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dts=
--format.txt#n46
-
---vwalimjjmzvj7stw
+--nbjgUHX6eyHhY7pW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAltgJ9cACgkQhLiadT7g
-8aNRxQ//W8xcDndtBdAN0lAb2dm2Cfqk/37IFbAPMJdPLvQCzoOU3lZjfjFJhj+/
-f07+JU4zrrZd84Vg7b1398L7pi1leB2XQa3HtHFhHu0V9OZ+95VkjIdpU5cBCcdM
-Obd757fXFhC5ekPBxffdm9FLpIWDYZv7s9KdhgjSjJHe5B9v3V5GMiW0wcVFWu/3
-Ut4Mebuf8POqvtLjp0IUZcdaNwEfpaLAmHjtibyUfMp7SRFl2JQ+ELV/TtPAwB5E
-KmBv+a1E6em3qfNETg7mCzKScXD7m0+RDHin/mf6zgi/bYKD9/94qrNIFJvLqgCU
-FrO/zwE/aY1NW5jG35GprpFrl0xBQVf0WcIUpX9Y9CyXglLM4PUPQqyWDItBjZ9H
-q3+LKH0tOp3cHM1VQcZZO5KWAyrwWadmuohcONNDj2XzA0xySzIq47f6aAkmoUBO
-aq/1f8V7DtkJo2GWrrziChgcMd/SZzB7WSa1QqpVZ5UDFPc2rFgA6GXMgDnWUVOS
-5lW/Stms2YT+SwnFOxZlbadrwp/jNwTHGOinz/GWFQRo6iiNoLdWT1/AkZBf2KEh
-59TFhlM7XiSiKZTsFsEoQ+umNI5XPFCrFodlSthQWZJYDS7EZEq69824FOUh8Rx6
-/eYB17PHZHy/FwCpCGZrdpvOrC/Rg5IEvs89Xi/SWpEuIukxN48=
-=eird
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAltgKBAACgkQdkfhpEvA
+5LpkOA/9HofxxAGk4yCPZieMG6ZtvJtm03yMFVawa69JXBQjBPODAXoeU0tWK4vt
+JmutdWiY+mOzjTxUpYXHDl2b1ZLolfOPRorFRYbSa9mEVbeYDBJjqNKqmOhnJon5
+bylGhZKMENE7WoRO8uHXuN7sItUnLEH0c9HB2oo6ko2RnhmWleyMnO21TMmRa1Ru
+QTQexQaWm1wyUc47Ja6qnhEzfcwfvcZkJ34Ng5WJMPjbc9QREuwJ5E3BDTEt+rNd
+Mk0EWyoUXIIAT4gvrJtGREwNc8IctUzkWIu4p9vwtzlpPUdbVyi/6AQJZKKyxmKb
+x+tHKtUaYD9PxUZVwj8KceG8IXyQzyZZrkxGSdIdm5HppUGiBwryUhOvnI9ohaY2
+83XIoSmZDr9PBJxhOgwXBA3DUwBucKxkUhvSjUSXSkJQJsx8+t/cgMsLsrJtf4x+
+nXpYBm6PgfWJpEDnqcpLk64ZzC67jZ4OyvAb6ChM1k5pYbtEZtTBu0T2u9vwdApv
+JVpLRf4NM9B+ecESLs3Qa/QlmrQtMdDuEdElq5842jao/pZV7SHB3efDUrfiGcfF
+b4etfMvtUCbmiTtyCLcWRzo+8fwskdsdpiNGqkfKwx8BnpiX2r3FvHNuaaV/DVqW
+/5ZHjIESpZicSamhEx3wIxjRoi/54Tu5U8z5KSBeduP6OHjDE2g=
+=3wx1
 -----END PGP SIGNATURE-----
 
---vwalimjjmzvj7stw--
+--nbjgUHX6eyHhY7pW--
