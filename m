@@ -2,142 +2,97 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8CAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9028DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14375208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:13:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGiZKn6R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14375208A4
+	by mail.kernel.org (Postfix) with ESMTP id 3B70920857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B70920857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbeGaMxI (ORCPT
+        id S1731913AbeGaMzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729273AbeGaMxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:53:08 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A29020857;
-        Tue, 31 Jul 2018 11:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533035599;
-        bh=Ta9mUt7JoXTn+MX98LaHbbt1IWNFTW2IT7A5DNowgb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bGiZKn6Rx3sYDOQOlmobE1bUkEGUkFtM0gnCeQHie5zSLwmv0Pu3ifIxP0w+14Wij
-         wqI5litrS1SlkykLSAxpv/WZ/jiVEWwvEl4sSZY+EdFigD7W0WbFX1b3KmeiV2Y71i
-         8W7/r5PS/CXa8H/Nlw0ntMzYIaABH3cXXRte0b+Y=
-Date:   Tue, 31 Jul 2018 06:13:17 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sebastian Reichel <sre@kernel.org>, Milo Kim <milo.kim@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] PCI: let pci_request_irq properly deal with threaded
- interrupts
-Message-ID: <20180731111317.GJ45322@bhelgaas-glaptop.roam.corp.google.com>
-References: <d004975f-03a8-59f5-56ef-f4e1f8e12dfb@gmail.com>
- <20180730213028.GC45322@bhelgaas-glaptop.roam.corp.google.com>
- <20180730224252.GE45322@bhelgaas-glaptop.roam.corp.google.com>
- <alpine.DEB.2.21.1807310047320.1725@nanos.tec.linutronix.de>
- <20180731080111.GG17271@n2100.armlinux.org.uk>
+        Tue, 31 Jul 2018 08:55:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44590 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729273AbeGaMzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 08:55:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F208AE92;
+        Tue, 31 Jul 2018 11:15:20 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 13:15:19 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <20180731111519.GH4557@dhcp22.suse.cz>
+References: <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
+ <20180730144647.GX24267@dhcp22.suse.cz>
+ <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
+ <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
+ <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
+ <20180730185110.GB24267@dhcp22.suse.cz>
+ <20180730191005.GC24267@dhcp22.suse.cz>
+ <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
+ <20180731050928.GA4557@dhcp22.suse.cz>
+ <b03f09c2-f749-9c80-b4f6-d0b4a9634013@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180731080111.GG17271@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <b03f09c2-f749-9c80-b4f6-d0b4a9634013@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:01:12AM +0100, Russell King - ARM Linux wrote:
-> On Tue, Jul 31, 2018 at 12:50:21AM +0200, Thomas Gleixner wrote:
-> > On Mon, 30 Jul 2018, Bjorn Helgaas wrote:
+On Tue 31-07-18 19:47:45, Tetsuo Handa wrote:
+> On 2018/07/31 14:09, Michal Hocko wrote:
+> > On Tue 31-07-18 06:01:48, Tetsuo Handa wrote:
+> >> On 2018/07/31 4:10, Michal Hocko wrote:
+> >>> Since should_reclaim_retry() should be a natural reschedule point,
+> >>> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
+> >>> order to guarantee that other pending work items are started. This will
+> >>> workaround this problem and it is less fragile than hunting down when
+> >>> the sleep is missed. E.g. we used to have a sleeping point in the oom
+> >>> path but this has been removed recently because it caused other issues.
+> >>> Having a single sleeping point is more robust.
+> >>
+> >> linux.git has not removed the sleeping point in the OOM path yet. Since removing the
+> >> sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
 > > 
-> > > [+cc maintainers of possibly erroneous callers of request_threaded_irq()]
-> > > 
-> > > On Mon, Jul 30, 2018 at 04:30:28PM -0500, Bjorn Helgaas wrote:
-> > > > [+cc Thomas, Christoph, LKML]
-> > > > 
-> > > > On Mon, Jul 30, 2018 at 12:03:42AM +0200, Heiner Kallweit wrote:
-> > > > > If we have a threaded interrupt with the handler being NULL, then
-> > > > > request_threaded_irq() -> __setup_irq() will complain and bail out
-> > > > > if the IRQF_ONESHOT flag isn't set. Therefore check for the handler
-> > > > > being NULL and set IRQF_ONESHOT in this case.
-> > > > > 
-> > > > > This change is needed to migrate the mei_me driver to
-> > > > > pci_alloc_irq_vectors() and pci_request_irq().
-> > > > > 
-> > > > > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> > > > 
-> > > > I'd like an ack from Thomas because this requirement about IRQF_ONESHOT
-> > > > usage isn't mentioned in the request_threaded_irq() function doc or
-> > > > Documentation/
-> > > 
-> > > Possibly these other request_threaded_irq() callers are similarly
-> > > broken?  I can't tell for sure about tda998x_create(), but all the
-> > > others certainly call request_threaded_irq() with "handler == NULL"
-> > > and irqflags that do not contain IRQF_ONESHOT:
-> > > 
-> > >   tda998x_create()
-> > >     request_threaded_irq(client->irq, NULL, ..., irqd_get_trigger_type(), ...)
-> > >     (I can't tell what irqd_get_trigger_type() does)
-> > 
-> > It reads the trigger type back from the irq chip (level/edge/polarity) but
-> > does not return with the ONESHOT bit set.
+> > is this an {Acked,Reviewed,Tested}-by?
 > 
-> What tree are you (Bjorn) using there?  Looking in my git history,
-> request_threaded_irq() was added in January 2014, as:
-> 
-> +               irqf_trigger =
-> +                       irqd_get_trigger_type(irq_get_irq_data(client->irq));
-> +               ret = request_threaded_irq(client->irq, NULL,
-> +                                          tda998x_irq_thread,
-> +                                          irqf_trigger | IRQF_ONESHOT,
-> +                                          "tda998x", priv);
-> 
-> and updated more recently for the CEC support in ae81553c30ef
-> ("drm/i2c: tda998x: allow interrupt to be shared") to be:
-> 
-> -               irqf_trigger =
-> +               irq_flags =
->                         irqd_get_trigger_type(irq_get_irq_data(client->irq));
-> +               irq_flags |= IRQF_SHARED | IRQF_ONESHOT;
->                 ret = request_threaded_irq(client->irq, NULL,
-> -                                          tda998x_irq_thread,
-> -                                          irqf_trigger | IRQF_ONESHOT,
-> +                                          tda998x_irq_thread, irq_flags,
->                                            "tda998x", priv);
-> 
-> In all cases, IRQF_ONESHOT has been set for this threaded interrupt.
-> 
-> I've also checked drm-next, and it doesn't show anything like what
-> Bjorn quoted.
-> 
-> Confused.  Bjorn, can you double check that what you think are
-> erroneous request_threaded_irq() calls are actually as per what
-> you quoted please?
+> I'm saying that "we used to have a sleeping point in the oom path but this has been
+> removed recently" is not true. You need to send that patch to linux.git first if you
+> want to refer that patch in this patch.
 
-I was looking at v4.18-rc1, but in the case of tda998x_create(), I
-overlooked this line:
+That patch is already sitting in mmotm tree and this one will go on top.
+I do not really see any reason to rush it to Linus tree. A dubious CVE
+doesn't really raise the priority if you ask me.
 
-  irq_flags |= IRQF_SHARED | IRQF_ONESHOT;
+On the other hand, having a confirmation, either of the above tags would
+help to raise the credibility of the change.
 
-Sorry!
+> > I will send the patch to Andrew if the patch is ok. 
+> 
+> Andrew, can we send the "we used to have a sleeping point in the oom path but this has
+> been removed recently" patch to linux.git ?
+
+This can really wait for the next merge window IMHO.
+-- 
+Michal Hocko
+SUSE Labs
