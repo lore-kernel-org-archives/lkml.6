@@ -2,106 +2,120 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6952C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978EBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620E3208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 620E3208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 49E24208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:48:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="idcKZh/p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="idcKZh/p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E24208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731928AbeGaM1o (ORCPT
+        id S1732019AbeGaM2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:27:44 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61309 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731264AbeGaM1o (ORCPT
+        Tue, 31 Jul 2018 08:28:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55036 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731264AbeGaM2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:27:44 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6VAlxXT001629;
-        Tue, 31 Jul 2018 19:47:59 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Tue, 31 Jul 2018 19:47:59 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6VAln17001609
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 31 Jul 2018 19:47:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
- <20180730093257.GG24267@dhcp22.suse.cz>
- <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
- <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
- <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
- <20180730185110.GB24267@dhcp22.suse.cz>
- <20180730191005.GC24267@dhcp22.suse.cz>
- <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
- <20180731050928.GA4557@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <b03f09c2-f749-9c80-b4f6-d0b4a9634013@i-love.sakura.ne.jp>
-Date:   Tue, 31 Jul 2018 19:47:45 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 08:28:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DBF8D60117; Tue, 31 Jul 2018 10:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533034098;
+        bh=h/lb3QojtQzob1smCZ5jMt759yTtwNQ0abCgAG2EOgw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=idcKZh/pzUY1zu9hVJCA5w4kmLaXO5xX8FoIGxxv01O0OT6+7Ep0NpTczFwZr5ges
+         A56JGw1U3IGxIAnVs24KXuquO4GAbhjWvKALfOkXDwnoxz9jthw0lvGPy4StGXu7JG
+         uzzK9yguF1GkyUXymj1CBWeD/+Jg20W4VI5mOFec=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6563660117;
+        Tue, 31 Jul 2018 10:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533034098;
+        bh=h/lb3QojtQzob1smCZ5jMt759yTtwNQ0abCgAG2EOgw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=idcKZh/pzUY1zu9hVJCA5w4kmLaXO5xX8FoIGxxv01O0OT6+7Ep0NpTczFwZr5ges
+         A56JGw1U3IGxIAnVs24KXuquO4GAbhjWvKALfOkXDwnoxz9jthw0lvGPy4StGXu7JG
+         uzzK9yguF1GkyUXymj1CBWeD/+Jg20W4VI5mOFec=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6563660117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers 2018-07-31
+Date:   Tue, 31 Jul 2018 13:48:15 +0300
+Message-ID: <87bmanadg0.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180731050928.GA4557@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/31 14:09, Michal Hocko wrote:
-> On Tue 31-07-18 06:01:48, Tetsuo Handa wrote:
->> On 2018/07/31 4:10, Michal Hocko wrote:
->>> Since should_reclaim_retry() should be a natural reschedule point,
->>> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
->>> order to guarantee that other pending work items are started. This will
->>> workaround this problem and it is less fragile than hunting down when
->>> the sleep is missed. E.g. we used to have a sleeping point in the oom
->>> path but this has been removed recently because it caused other issues.
->>> Having a single sleeping point is more robust.
->>
->> linux.git has not removed the sleeping point in the OOM path yet. Since removing the
->> sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
-> 
-> is this an {Acked,Reviewed,Tested}-by?
+Hi Dave,
 
-I'm saying that "we used to have a sleeping point in the oom path but this has been
-removed recently" is not true. You need to send that patch to linux.git first if you
-want to refer that patch in this patch.
+two small patches I still would like to get to the net tree for v4.18.
+Please let me know if you have any problems.
 
-> 
-> I will send the patch to Andrew if the patch is ok. 
+Kalle
 
-Andrew, can we send the "we used to have a sleeping point in the oom path but this has
-been removed recently" patch to linux.git ?
 
-> 
->> (And that change will conflict with Roman's cgroup aware OOM killer patchset. But it
->> should be easy to rebase.)
-> 
-> That is still a WIP so I would lose sleep over it.
-> 
+The following changes since commit 144fe2bfd236dc814eae587aea7e2af03dbdd755:
+
+  sock: fix sg page frag coalescing in sk_alloc_sg (2018-07-23 21:28:45 -07=
+00)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git =
+tags/wireless-drivers-for-davem-2018-07-31
+
+for you to fetch changes up to 299b6365a3b7cf7f5ea1c945a420e9ee4841d6f7:
+
+  brcmfmac: fix regression in parsing NVRAM for multiple devices (2018-07-2=
+5 10:30:36 +0300)
+
+----------------------------------------------------------------
+wireless-drivers fixes for 4.18
+
+Last set of fixes before 4.18 is released
+
+iwlwifi
+
+* add new IDs for cards already available on the market
+
+brcmfmac
+
+* fix a regression introduced in v4.17
+
+----------------------------------------------------------------
+Emmanuel Grumbach (1):
+      iwlwifi: add more card IDs for 9000 series
+
+Rafa=C5=82 Mi=C5=82ecki (1):
+      brcmfmac: fix regression in parsing NVRAM for multiple devices
+
+ .../wireless/broadcom/brcm80211/brcmfmac/pcie.c    |  3 +-
+ drivers/net/wireless/intel/iwlwifi/cfg/9000.c      | 69 ++++++++++++++++++=
+++++
+ drivers/net/wireless/intel/iwlwifi/iwl-config.h    |  5 ++
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c      | 22 +++++++
+ 4 files changed, 98 insertions(+), 1 deletion(-)
+
+--=20
+Kalle Valo
