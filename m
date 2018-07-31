@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4391C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8597CC46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63FC520844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FC520844
+	by mail.kernel.org (Postfix) with ESMTP id 4253C20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4253C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeGaS43 (ORCPT
+        id S1731854AbeGaS4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:56:29 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41378 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727135AbeGaS43 (ORCPT
+        Tue, 31 Jul 2018 14:56:31 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54100 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730730AbeGaS4a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:56:29 -0400
-X-UUID: ae7bdcfe755c44a886be8e1a1045292a-20180801
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Tue, 31 Jul 2018 14:56:30 -0400
+X-UUID: 3e3e950854884b67b6b829439113d0a1-20180801
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1383639138; Wed, 01 Aug 2018 01:15:03 +0800
+        with ESMTP id 256005292; Wed, 01 Aug 2018 01:15:03 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Wed, 1 Aug 2018 01:15:01 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 1 Aug 2018 01:15:02 +0800
+ Transport; Wed, 1 Aug 2018 01:15:01 +0800
 From:   <sean.wang@mediatek.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <marcel@holtmann.org>, <johan.hedberg@gmail.com>
@@ -41,12 +41,10 @@ CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v7 1/3] dt-bindings: net: bluetooth: Add mediatek-bluetooth
-Date:   Wed, 1 Aug 2018 01:14:58 +0800
-Message-ID: <a3e8870dfb1302a60b041077a05c44faa42675b6.1533056925.git.sean.wang@mediatek.com>
+Subject: [PATCH v7 0/3] add support for Bluetooth on MT7622 SoC
+Date:   Wed, 1 Aug 2018 01:14:57 +0800
+Message-ID: <cover.1533056925.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1533056925.git.sean.wang@mediatek.com>
-References: <cover.1533056925.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -57,57 +55,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add binding document for a SoC built-in device using MediaTek protocol.
-Which could be found on MT7622 SoC or other similar MediaTek SoCs.
+v7 and changes since v6:
+ - drop already applied patches
+ - move clk_* and pm_* operation to ->open and ->close 
+ - label this driver as BT_MTKUART
+ - make code style aligned with the other drivers and code better to read
+   as these suggestions and fixes are mentioned in [1]
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+[1] http://lists.infradead.org/pipermail/linux-mediatek/2018-July/014458.html
+
+v6 and changes since v5:
+ - make btmtkuart become a separate driver.
+ - drop already applied patches and the patch for btuart driver
+ - refine comments in driver allowing people know that mtk extra header
+   + length doesn't indicate a full H:4 frame, things can fragment.
+ - enhance dt-binding document with removing mistaken added " and improve
+   English sentence.
+ - remove unnecessary '\n' with bt_dev_err.
+ - refine code style.
+ - set hdev->manufacturer as mtk id.
+
+v5 and changes since v4:
+ - add Reviewed-by Tag from Ulf Hansson for patch 2
+ - remove default y in Kconfig for btmtkuart selection to avoid overkill for
+   users which would like to have less an amount on stuff in kernel.
+ - list header declarations in alphabetical order and add a proper blank line
+   within.
+ - remove unused macro.
+ - use sizeof to calculate structure size instead of an aextra macro to hardcode.
+ - use struct hci_dev * as input paraments for mtk_hci_wmt_sync and mtk_setup_fw
+   for that can be reused in mtk bluetooth with other interfaces.
+ - remove unused local variabled in mtk_btuart_recv.
+ - remove superfluous :8 for dlen2 in struct mtk_stp_hdr definition.
+ - give a reasonable naming for these labels and add a pm_runtime_put_noidle()
+   in the path undoing failing pm_runtime_get_sync().
+ - Turn __u8 into u8 in struct mtk_stp_hdr.
+
+ Really thanks for these reviews by Johan Hovold and Andy Shevchenko
+
+v4 and changes since v3:
+ - refine patch 2 based on commit 919b7308fcc4 to allow that
+   dev_pm_domain_attach() will return better error codes. 
+
+v3 and changes since v2
+* all changes happen on patch 6
+ - fix up SPDX license style for btmtkuart.h.
+ - change firmware download from in ACL data to in HCI commands
+   and then remove unused mtk_acl_wmt_sync and related code.
+ - add a workaround replacing bad vendor event id 0xe4 with 0xff every
+   vendor should use.
+ - add a sanity check for mtk_hci_wmt_sync to verifying if
+   input parameters are valid.
+ - add an atomic_inc(&bdev->hdev->cmd_cnt) for __hci_cmd_sync_ev.
+ - be changed to use firmware with a header called mt7622pr2h.bin.
+
+v2 and changes since v1
+ - Dropped patches already being applied
+ - Rewirte the whole driver using btuart [1], and add slight extension
+   of btuart to fit into btmtkuart driver. Beware that [1] is also pulled
+   into one part of the series for avoiding any breakage when the patchset
+   is being compiled.
+
+[1] btuart 
+	https://www.spinics.net/lists/linux-bluetooth/msg74918.html
+
+v1:
+
+Hi,
+
+This patchset introduces built-in Bluetooth support on MT7622 SoC.
+And, it should be simple to make an extension to support other
+MediaTek SoCs with adjusting a few of changes on the initialization
+sequence of the device.
+
+Before the main driver is being introduced, a few of things about
+power-domain management should be re-worked for serdev core and MediaTek
+SCPSYS to allow the Bluetooth to properly power up.
+
+Patch 2: add a generic way attaching power domain to serdev
+Patch 3 and 4: add cleanups with reuse APIs from Linux core
+Patch 5: fix a limitation about power enablement Bluetooth depends on
+Patch 1, 6 and 7: the major part of adding Bluetooth support to MT7622
+	
+	Sean
+
+Sean Wang (3):
+  dt-bindings: net: bluetooth: Add mediatek-bluetooth
+  Bluetooth: mediatek: Add protocol support for MediaTek serial devices
+  MAINTAINERS: add an entry for MediaTek Bluetooth driver
+
+ .../devicetree/bindings/net/mediatek-bluetooth.txt |  35 ++
+ MAINTAINERS                                        |   8 +
+ drivers/bluetooth/Kconfig                          |  11 +
+ drivers/bluetooth/Makefile                         |   2 +
+ drivers/bluetooth/btmtkuart.c                      | 591 +++++++++++++++++++++
+ 5 files changed, 647 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+ create mode 100644 drivers/bluetooth/btmtkuart.c
 
-diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-new file mode 100644
-index 0000000..14ceb2a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-@@ -0,0 +1,35 @@
-+MediaTek SoC built-in Bluetooth Devices
-+==================================
-+
-+This device is a serial attached device to BTIF device and thus it must be a
-+child node of the serial node with BTIF. The dt-bindings details for BTIF
-+device can be known via Documentation/devicetree/bindings/serial/8250.txt.
-+
-+Required properties:
-+
-+- compatible:	Must be
-+		  "mediatek,mt7622-bluetooth": for MT7622 SoC
-+- clocks:	Should be the clock specifiers corresponding to the entry in
-+		clock-names property.
-+- clock-names:	Should contain "ref" entries.
-+- power-domains: Phandle to the power domain that the device is part of
-+
-+Example:
-+
-+	btif: serial@1100c000 {
-+		compatible = "mediatek,mt7622-btif",
-+			     "mediatek,mtk-btif";
-+		reg = <0 0x1100c000 0 0x1000>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_BTIF_PD>;
-+		clock-names = "main";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+
-+		bluetooth {
-+			compatible = "mediatek,mt7622-bluetooth";
-+			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
-+			clocks = <&clk25m>;
-+			clock-names = "ref";
-+		};
-+	};
 -- 
 2.7.4
 
