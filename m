@@ -2,291 +2,71 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF9AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91CDC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D1E208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:13:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D1E208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EF8F208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 12:15:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF8F208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732257AbeGaNxY (ORCPT
+        id S1732160AbeGaNzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:53:24 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:58849 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731913AbeGaNxX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:53:23 -0400
-Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1fkTVs-0000X0-L2 from Jiada_Wang@mentor.com ; Tue, 31 Jul 2018 05:12:28 -0700
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Tue, 31 Jul 2018 05:12:25 -0700
-From:   <jiada_wang@mentor.com>
-To:     <mingo@redhat.com>, <peterz@infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <george_davis@mentor.com>,
-        <erosca@de.adit-jv.com>
-Subject: [PATCH v2 1/1] sched/debug: fix potential deadlock when write to sched_features
-Date:   Tue, 31 Jul 2018 21:12:22 +0900
-Message-ID: <20180731121222.26195-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 31 Jul 2018 09:55:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53240 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730031AbeGaNzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:55:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14AD880D;
+        Tue, 31 Jul 2018 05:15:03 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E9163F5D0;
+        Tue, 31 Jul 2018 05:15:01 -0700 (PDT)
+Subject: Re: [PATCHv4 00/12] sched/fair: Migrate 'misfit' tasks on asymmetric
+ capacity systems
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, gaku.inami.xh@renesas.com,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
+ <CAKfTPtB9tRb6vWAHf-CyMpZjMaRtOzUnB7PCuWwAmfsJf_Y6pA@mail.gmail.com>
+ <20180709150839.GA19287@e105550-lin.cambridge.arm.com>
+ <98eb0daf-4467-3790-ec80-90b746807392@arm.com>
+ <7bad2238-369c-f61c-0a51-eb14204e0429@arm.com>
+ <CAKfTPtCVDJqj64HNKnOM0ZN5d8BXycJj86Sm7ZOyEPCiAHhB_Q@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <0205e147-00cc-bc8b-104a-9cb4392ac0f8@arm.com>
+Date:   Tue, 31 Jul 2018 14:14:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+In-Reply-To: <CAKfTPtCVDJqj64HNKnOM0ZN5d8BXycJj86Sm7ZOyEPCiAHhB_Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On 07/31/2018 02:13 PM, Vincent Guittot wrote:
+> On Mon, 30 Jul 2018 at 16:30, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 07/26/2018 07:14 PM, Valentin Schneider wrote:
 
-Following lockdep report can be triggered by write to
-/sys/kernel/debug/sched_features
+[...]
 
-[   43.094116] ======================================================
-[   43.100345] WARNING: possible circular locking dependency detected
-[   43.106581] 4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18 Not tainted
-[   43.112635] ------------------------------------------------------
-[   43.118864] sh/3358 is trying to acquire lock:
-[   43.123351] 000000004ad3989d (cpu_hotplug_lock.rw_sem){++++}, at: static_key_enable+0x14/0x30
-[   43.132008]
-[   43.132008] but task is already holding lock:
-[   43.137893] 00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
-[   43.146886]
-[   43.146886] which lock already depends on the new lock.
-[   43.146886]
-[   43.155136]
-[   43.155136] the existing dependency chain (in reverse order) is:
-[   43.162681]
-[   43.162681] -> #3 (&sb->s_type->i_mutex_key#3){+.+.}:
-[   43.169314]        lock_acquire+0xb8/0x148
-[   43.173462]        down_write+0xac/0x140
-[   43.177430]        start_creating+0x5c/0x168
-[   43.181743]        debugfs_create_dir+0x18/0x220
-[   43.186414]        opp_debug_register+0x8c/0x120
-[   43.191077]        _add_opp_dev+0x104/0x1f8
-[   43.195306]        dev_pm_opp_get_opp_table+0x174/0x340
-[   43.200581]        _of_add_opp_table_v2+0x110/0x760
-[   43.205508]        dev_pm_opp_of_add_table+0x5c/0x240
-[   43.210609]        dev_pm_opp_of_cpumask_add_table+0x5c/0x100
-[   43.216409]        cpufreq_init+0x160/0x430
-[   43.220634]        cpufreq_online+0x1cc/0xe30
-[   43.225033]        cpufreq_add_dev+0x78/0x198
-[   43.229439]        subsys_interface_register+0x168/0x270
-[   43.234803]        cpufreq_register_driver+0x1c8/0x278
-[   43.239990]        dt_cpufreq_probe+0xdc/0x1b8
-[   43.244482]        platform_drv_probe+0xb4/0x168
-[   43.249145]        driver_probe_device+0x318/0x4b0
-[   43.253982]        __device_attach_driver+0xfc/0x1f0
-[   43.258994]        bus_for_each_drv+0xf8/0x180
-[   43.263480]        __device_attach+0x164/0x200
-[   43.267968]        device_initial_probe+0x10/0x18
-[   43.272716]        bus_probe_device+0x110/0x178
-[   43.277298]        device_add+0x6d8/0x908
-[   43.281351]        platform_device_add+0x138/0x3d8
-[   43.286191]        platform_device_register_full+0x1cc/0x1f8
-[   43.291910]        cpufreq_dt_platdev_init+0x174/0x1bc
-[   43.297102]        do_one_initcall+0xb8/0x310
-[   43.301508]        kernel_init_freeable+0x4b8/0x56c
-[   43.306433]        kernel_init+0x10/0x138
-[   43.310485]        ret_from_fork+0x10/0x18
-[   43.314616]
-[   43.314616] -> #2 (opp_table_lock){+.+.}:
-[   43.320189]        lock_acquire+0xb8/0x148
-[   43.324329]        __mutex_lock+0x104/0xf50
-[   43.328557]        mutex_lock_nested+0x1c/0x28
-[   43.333047]        _of_add_opp_table_v2+0xb4/0x760
-[   43.337886]        dev_pm_opp_of_add_table+0x5c/0x240
-[   43.342988]        dev_pm_opp_of_cpumask_add_table+0x5c/0x100
-[   43.348786]        cpufreq_init+0x160/0x430
-[   43.353011]        cpufreq_online+0x1cc/0xe30
-[   43.357410]        cpufreq_add_dev+0x78/0x198
-[   43.361811]        subsys_interface_register+0x168/0x270
-[   43.367175]        cpufreq_register_driver+0x1c8/0x278
-[   43.372362]        dt_cpufreq_probe+0xdc/0x1b8
-[   43.376852]        platform_drv_probe+0xb4/0x168
-[   43.381515]        driver_probe_device+0x318/0x4b0
-[   43.386352]        __device_attach_driver+0xfc/0x1f0
-[   43.391363]        bus_for_each_drv+0xf8/0x180
-[   43.395850]        __device_attach+0x164/0x200
-[   43.400338]        device_initial_probe+0x10/0x18
-[   43.405088]        bus_probe_device+0x110/0x178
-[   43.409665]        device_add+0x6d8/0x908
-[   43.413718]        platform_device_add+0x138/0x3d8
-[   43.418559]        platform_device_register_full+0x1cc/0x1f8
-[   43.424270]        cpufreq_dt_platdev_init+0x174/0x1bc
-[   43.429457]        do_one_initcall+0xb8/0x310
-[   43.433857]        kernel_init_freeable+0x4b8/0x56c
-[   43.438782]        kernel_init+0x10/0x138
-[   43.442834]        ret_from_fork+0x10/0x18
-[   43.446965]
-[   43.446965] -> #1 (subsys mutex#6){+.+.}:
-[   43.452545]        lock_acquire+0xb8/0x148
-[   43.456684]        __mutex_lock+0x104/0xf50
-[   43.460911]        mutex_lock_nested+0x1c/0x28
-[   43.465400]        subsys_interface_register+0xd8/0x270
-[   43.470677]        cpufreq_register_driver+0x1c8/0x278
-[   43.475864]        dt_cpufreq_probe+0xdc/0x1b8
-[   43.480354]        platform_drv_probe+0xb4/0x168
-[   43.485017]        driver_probe_device+0x318/0x4b0
-[   43.489854]        __device_attach_driver+0xfc/0x1f0
-[   43.494865]        bus_for_each_drv+0xf8/0x180
-[   43.499352]        __device_attach+0x164/0x200
-[   43.503840]        device_initial_probe+0x10/0x18
-[   43.508589]        bus_probe_device+0x110/0x178
-[   43.513166]        device_add+0x6d8/0x908
-[   43.517218]        platform_device_add+0x138/0x3d8
-[   43.522058]        platform_device_register_full+0x1cc/0x1f8
-[   43.527768]        cpufreq_dt_platdev_init+0x174/0x1bc
-[   43.532955]        do_one_initcall+0xb8/0x310
-[   43.537356]        kernel_init_freeable+0x4b8/0x56c
-[   43.542281]        kernel_init+0x10/0x138
-[   43.546333]        ret_from_fork+0x10/0x18
-[   43.550464]
-[   43.550464] -> #0 (cpu_hotplug_lock.rw_sem){++++}:
-[   43.556822]        __lock_acquire+0x203c/0x21d0
-[   43.561397]        lock_acquire+0xb8/0x148
-[   43.565543]        cpus_read_lock+0x58/0x1c8
-[   43.569857]        static_key_enable+0x14/0x30
-[   43.574347]        sched_feat_write+0x314/0x428
-[   43.578924]        full_proxy_write+0xa0/0x138
-[   43.583415]        __vfs_write+0xd8/0x388
-[   43.587465]        vfs_write+0xdc/0x318
-[   43.591340]        ksys_write+0xb4/0x138
-[   43.595302]        sys_write+0xc/0x18
-[   43.599004]        __sys_trace_return+0x0/0x4
-[   43.603397]
-[   43.603397] other info that might help us debug this:
-[   43.603397]
-[   43.611473] Chain exists of:
-[   43.611473]   cpu_hotplug_lock.rw_sem --> opp_table_lock --> &sb->s_type->i_mutex_key#3
-[   43.611473]
-[   43.623971]  Possible unsafe locking scenario:
-[   43.623971]
-[   43.629943]        CPU0                    CPU1
-[   43.634510]        ----                    ----
-[   43.639077]   lock(&sb->s_type->i_mutex_key#3);
-[   43.643667]                                lock(opp_table_lock);
-[   43.649733]                                lock(&sb->s_type->i_mutex_key#3);
-[   43.656854]   lock(cpu_hotplug_lock.rw_sem);
-[   43.661175]
-[   43.661175]  *** DEADLOCK ***
-[   43.661175]
-[   43.667157] 2 locks held by sh/3358:
-[   43.670765]  #0: 00000000a8c4b363 (sb_writers#10){.+.+}, at: vfs_write+0x238/0x318
-[   43.678444]  #1: 00000000c1b31a88 (&sb->s_type->i_mutex_key#3){+.+.}, at: sched_feat_write+0x160/0x428
-[   43.687872]
-[   43.687872] stack backtrace:
-[   43.692284] CPU: 5 PID: 3358 Comm: sh Not tainted 4.18.0-rc6-00152-gcd3f77d74ac3-dirty #18
-[   43.700616] Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
-[   43.708684] Call trace:
-[   43.711169]  dump_backtrace+0x0/0x288
-[   43.714873]  show_stack+0x14/0x20
-[   43.718226]  dump_stack+0x13c/0x1ac
-[   43.721754]  print_circular_bug.isra.10+0x270/0x438
-[   43.726679]  check_prev_add.constprop.16+0x4dc/0xb98
-[   43.731690]  __lock_acquire+0x203c/0x21d0
-[   43.735740]  lock_acquire+0xb8/0x148
-[   43.739357]  cpus_read_lock+0x58/0x1c8
-[   43.743147]  static_key_enable+0x14/0x30
-[   43.747112]  sched_feat_write+0x314/0x428
-[   43.751163]  full_proxy_write+0xa0/0x138
-[   43.755125]  __vfs_write+0xd8/0x388
-[   43.758651]  vfs_write+0xdc/0x318
-[   43.762001]  ksys_write+0xb4/0x138
-[   43.765438]  sys_write+0xc/0x18
-[   43.768615]  __sys_trace_return+0x0/0x4
+>> The task layout of the test looks like n=85 always running tasks (each
+>> for ~ 1.25ms on big or little) and they all get created and run one
+> 
+> How mistfit task can make a difference for a benchmark which uses 1.25ms tasks ?
 
-This is because load of cpufreq_dt module firstly acquires
-cpu_hotplug_lock.rw_sem lock, then in cpufreq_init, it holds
-&sb->s_type->i_mutex_key lock.
-
-But write to /sys/kernel/debug/sched_features, cpu_hotplug_lock.rw_sem lock
-depends on &sb->s_type->i_mutex_key lock.
-
-This patch by reversing the lock acquisition order when write to
-sched_features, this way cpu_hotplug_lock.rw_sem no longer depends on
-&sb->s_type->i_mutex_key.
-
-Cc: George G. Davis <george_davis@mentor.com>
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
-Changes since v1:
- - v1 can be viewed here: https://lkml.org/lkml/2018/7/31/297
- - v2 rebased to tip/sched/core
-
- kernel/sched/debug.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 60caf1fb94e0..7b2997d4a349 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -87,21 +87,21 @@ struct static_key sched_feat_keys[__SCHED_FEAT_NR] = {
- 
- #undef SCHED_FEAT
- 
--static void sched_feat_disable(int i)
-+static void sched_feat_disable_cpuslocked(int i)
- {
--	static_key_disable(&sched_feat_keys[i]);
-+	static_key_disable_cpuslocked(&sched_feat_keys[i]);
- }
- 
--static void sched_feat_enable(int i)
-+static void sched_feat_enable_cpuslocked(int i)
- {
--	static_key_enable(&sched_feat_keys[i]);
-+	static_key_enable_cpuslocked(&sched_feat_keys[i]);
- }
- #else
--static void sched_feat_disable(int i) { };
--static void sched_feat_enable(int i) { };
-+static void sched_feat_disable_cpuslocked(int i) { };
-+static void sched_feat_enable_cpuslocked(int i) { };
- #endif /* HAVE_JUMP_LABEL */
- 
--static int sched_feat_set(char *cmp)
-+static int sched_feat_set_cpuslocked(char *cmp)
- {
- 	int i;
- 	int neg = 0;
-@@ -117,10 +117,10 @@ static int sched_feat_set(char *cmp)
- 
- 	if (neg) {
- 		sysctl_sched_features &= ~(1UL << i);
--		sched_feat_disable(i);
-+		sched_feat_disable_cpuslocked(i);
- 	} else {
- 		sysctl_sched_features |= (1UL << i);
--		sched_feat_enable(i);
-+		sched_feat_enable_cpuslocked(i);
- 	}
- 
- 	return 0;
-@@ -146,9 +146,11 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
- 
- 	/* Ensure the static_key remains in a consistent state */
- 	inode = file_inode(filp);
-+	cpus_read_lock();
- 	inode_lock(inode);
--	ret = sched_feat_set(cmp);
-+	ret = sched_feat_set_cpuslocked(cmp);
- 	inode_unlock(inode);
-+	cpus_read_unlock();
- 	if (ret < 0)
- 		return ret;
- 
--- 
-2.17.0
-
+Ah, sorry! This was a typo. It should be ~ 1.25s.
