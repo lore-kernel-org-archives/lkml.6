@@ -4,108 +4,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B30DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF3FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFD6420844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2532620844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QVtu5cwW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD6420844
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tz1fYdTw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2532620844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbeGaUkJ (ORCPT
+        id S1732178AbeGaUki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:40:09 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43680 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729772AbeGaUkJ (ORCPT
+        Tue, 31 Jul 2018 16:40:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46769 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729772AbeGaUki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:40:09 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f135-v6so11504574lfg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:58:28 -0700 (PDT)
+        Tue, 31 Jul 2018 16:40:38 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t17-v6so7559687ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fRgwtGzP4BGq/IE1NVc5YHcQza/GfYwCd3ep7yjYZwI=;
-        b=QVtu5cwW5Ca6Dnj1/ouOYv6yFsb9+nMjGdlCmdptKZEqtLMRBHcp/FkdDHz4i/2IDL
-         awZCr3PemvZnHaESNge1AbE2jWSm6EgpIJ7RWUDeqf7G0TlQyQgUUDdHt4re6r+ENmRg
-         gqAlVY6RcTw2SE1Cnvcn10xcjfj9dYT/U2Dzth0aKmvCN59cEO7onht24bCkcBvlyCUm
-         cHuFCkJOrypXkSRqvoOJXWL+aY7gEIyNGPoYIR/x7PrsWFBw1vXFps22zI7xGYWepUHy
-         sxuM4lgSuiBrP9P4gMUMYt+ZhQw3VDgohyBv7lPQ2Ho4cZv2k+u7s4g44WkcoRDkA3Ag
-         QD+A==
+        bh=mpHcqNaN5pHfT/bJjWP0xHK7kxdSYEPGBJT4HyqS9TY=;
+        b=tz1fYdTw/1efGYkUCYC88qKM+G4adAPpfORb9lWGba5/wCrT/zuGcEKSkQcLcA6DNJ
+         2XUzjyLxC8yOcHS0QLa5aDamlpC5iSeJrdAcmBUD0WSPjlOuIsrUR0KRLY+C3oWztV2O
+         crGtIiUNICHyrp4RW6LvWuSf7JLU+Sdjm7Cq5xH/Sp6gJRYaXNKAad8FS3dyp3dqzPH1
+         D8Bo36nmkGz672MOuCmMD/8QIQ285omm4RMjIm2WolmwynVQ2+A80BJRSTiQubta88Q5
+         iBWvlGbt78SZ4Ow+Tbii308TAqw19DY6scEhvqmNtc4n18QPJ+Iua1vGS14rxIHCkyGJ
+         m1WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fRgwtGzP4BGq/IE1NVc5YHcQza/GfYwCd3ep7yjYZwI=;
-        b=QoD/xs368+mHeoBI2NjXNrXz/jJ4SkdHpf+nJz2TqevgeRC7L1T+xw7i4llib3FIi3
-         ajx+CdgBcx3Z36sFv30XKkBcDOA91vwBozrX6pI9IbA/o3umYXpl96ya1io1iMO2O99H
-         UidadED7Tzl43x9y4rj/9CypVXXileg8pmKEoVluB97dEU/1tVe+qG+wFyHCY+xFTkwL
-         ChUK+puSy1UBG7brTVrhcy8N65qZ1cejuhhm2JoPYeDCodCIrUN28fnqlqcqH3ZojkOD
-         nkh6PQNSXoytHXYRFTz3m+Mgss6ROHvPVJJ4EODgMuu7LYXyxQkABM3ZbAYUpytYqQye
-         uS2A==
-X-Gm-Message-State: AOUpUlGG73kr+s6T7Iuh8ej4omhmFlO7cdffdc94qf/7Vf8NO+e/eeul
-        mnV4li8T8x46tHmqZiOPSQnnFCUnfvbtVZ8NSki0Ig==
-X-Google-Smtp-Source: AAOMgpelE3JeMvfM0TkV6EKC5gykjD2LbkhTncncB8/DlVrJJ+BJNFEfTzxilfCaLVmy6nqUlWvd6doVlcvXIg6cV1c=
-X-Received: by 2002:a19:1888:: with SMTP id 8-v6mr13244748lfy.121.1533063507536;
- Tue, 31 Jul 2018 11:58:27 -0700 (PDT)
+        bh=mpHcqNaN5pHfT/bJjWP0xHK7kxdSYEPGBJT4HyqS9TY=;
+        b=H5UEKMRr5mc5uZIA6Y+AKAdYfJO4fbElbqHwTDW2fY8n+4l2Qoi23E2klRZve8/Pd0
+         P2+GOb9beSYryf6368wwd3fdfHSCr30EvyjQBDbyOAKnyzUDz6GoDBK+XgtlPQW6t14f
+         Bhhx81kz8bOMJV9ApWftM7RyXC5TdwlxUe3LAAd+B64gIYcRJe83rTyXV7GVbG7JjnFS
+         DYmY9E8ftKR8FyjD6VnbThyaIsEs4ePyTV/V2NDZszYh4AQ/Hh+JWqCcbSWMkHFlvudH
+         vDJD7MQA+yrhpqQpqdXZt9pw4KXGI0r9lNpnwi7+GSOPEForrcGVQ3eCjulJ8po+5jQf
+         ZaIA==
+X-Gm-Message-State: AOUpUlGomCuQ/cMcjwcu7VJYBKae5GUCk9YqtbdeY+HkwDlUCjoBiuqX
+        xVvShUH6/ywf2rfjV/yXYh0sqTFlKJC6LsQpSO+hyw==
+X-Google-Smtp-Source: AAOMgpfHxbAUanFHxpcHsd1nNDPVRtBbvVxbgFs//sfGwKqZkpFIH9kqaKwo4vD/HHsQvofdKsWLkFEBciiQbRP8dkw=
+X-Received: by 2002:a17:902:b08a:: with SMTP id p10-v6mr21348264plr.217.1533063537584;
+ Tue, 31 Jul 2018 11:58:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180723224727.120952-1-rkir@google.com>
-In-Reply-To: <20180723224727.120952-1-rkir@google.com>
-From:   Roman Kiryanov <rkir@google.com>
-Date:   Tue, 31 Jul 2018 11:58:15 -0700
-Message-ID: <CAOGAQera-YQTvyPtwOmot=hbwWG_g6Y2dyTZDYepeLH3Pw+Hzw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] goldfish: Add missing includes to goldfish.h
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Todd Kjos <tkjos@google.com>
+References: <20180730213412.242849-3-ndesaulniers@google.com>
+ <201807311827.UpeCrGPC%fengguang.wu@intel.com> <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
+ <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
+In-Reply-To: <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 31 Jul 2018 11:58:46 -0700
+Message-ID: <CAKwvOdneN9xG5iegvfnn9XUm_-qUHxx--7k3j-UthwvsXmZOjg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
+To:     Kees Cook <keescook@chromium.org>
+Cc:     lkp@intel.com, kbuild-all@01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
+        christophe.leroy@c-s.fr, shorne@gmail.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, rdunlap@infradead.org,
+        bp@suse.de, neilb@suse.com, LKML <linux-kernel@vger.kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
+        sandipan@linux.vnet.ibm.com, linux@rasmusvillemoes.dk,
+        Paul Lawrence <paullawrence@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Wei Wang <wvw@google.com>, avagin@openvz.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Tue, Jul 31, 2018 at 10:02 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Jul 31, 2018 at 9:48 AM, Nick Desaulniers
+> > On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
+> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
+> >> >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+> >>      if (!(cmd->flags & CMD_ASYNC))
+> >>      ^~
+> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+> >>       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
+> >>     ^ ~
+> >>
+> >> vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
+> >>
+> >> 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
+> >> 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
+>
+> #define lock_map_acquire_read(l)
+> lock_acquire_shared_recursive(l, 0, 0, NULL, _THIS_IP_)
+>
+> #define lock_acquire_shared_recursive(l, s, t, n, i)
+> lock_acquire(l, s, t, 2, 1, n, i)
+>
+> The config doesn't have CONFIG_LOCKDEP, so it's not:
+>
+> extern void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+>                          int trylock, int read, int check,
+>                          struct lockdep_map *nest_lock, unsigned long ip);
+>
+> but rather:
+>
+> # define lock_acquire(l, s, t, r, c, n, i)      do { } while (0)
 
-could you please confirm you received my patch?
+This is tricky, if I preprocess that translation unit with the exact
+flags used during compilation, I get:
 
-Regards,
-Roman.
-On Mon, Jul 23, 2018 at 3:47 PM <rkir@google.com> wrote:
->
-> From: Roman Kiryanov <rkir@google.com>
->
-> goldfish.h refers to external symbols such as
-> dma_addr_t and writel. This causes compilation errors
-> if this file is included before other header files.
->
-> The mentioned symbols are defined in types.h (dma_addr_t)
-> and io.h (writel).
->
-> Signed-off-by: Roman Kiryanov <rkir@google.com>
-> ---
->  include/linux/goldfish.h | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/include/linux/goldfish.h b/include/linux/goldfish.h
-> index 2835c150c3ff..159b4191f15d 100644
-> --- a/include/linux/goldfish.h
-> +++ b/include/linux/goldfish.h
-> @@ -2,6 +2,9 @@
->  #ifndef __LINUX_GOLDFISH_H
->  #define __LINUX_GOLDFISH_H
->
-> +#include <linux/types.h>
-> +#include <linux/io.h>
-> +
->  /* Helpers for Goldfish virtual platform */
->
->  static inline void gf_write_ptr(const void *ptr, void __iomem *portl,
-> --
-> 2.18.0.233.g985f88cf7e-goog
->
+```
+ if (!(cmd->flags & CMD_ASYNC))
+
+#pragma GCC diagnostic push
+
+#pragma GCC diagnostic pop
+ do { } while (0);
+```
+
+Which is not enough to trigger -Wmisleading-indentation alone.  It is
+curious that if we add braces to that if statement (as Nathan notes in
+a sibling post) or removing the pop (not shippable) seems to fix the
+warning.
+
+-- 
+Thanks,
+~Nick Desaulniers
