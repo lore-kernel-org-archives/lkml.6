@@ -2,167 +2,285 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF54C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712B620841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02D5720841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:01:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="URzU77u6";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="eKM3b9CK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712B620841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEddYV67"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D5720841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732562AbeGaVnX (ORCPT
+        id S1732595AbeGaVn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:43:23 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:48156 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732094AbeGaVnW (ORCPT
+        Tue, 31 Jul 2018 17:43:26 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33564 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732498AbeGaVnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:43:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533067287; x=1564603287;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=b1Dwz7p4yG2v77t0rEONpBrKOwkCmHDuBfhTb820LfU=;
-  b=URzU77u6/gmhGKnTOQHg6VbWZCssv6/WBmRCF0S3q+Kh7NHDquKtjdNP
-   4JkcVCW0iUEG78um4m46G/Yjg9TTPSORA8mLlVFC46uzFI4tOtDiErkUw
-   G6s4J2NXQSfwlX5QTcxv0TK634+T4uXoCW5CF6AfkUV4bz1sTvE4eM6Zw
-   RETvP6VUq0pYl8ZdKXL+C7NwjEGLceD/OZqEjQRifJHfPZ4qYEmAEBfTO
-   vaiIwE41vpuDOBW9tBy0hXv6uqtMh0PnqOb69d7Nb3SdFiSdxnhNHMSUA
-   yP9Jw3xVOQ17nIAsdz8zgzaSPfUkVPPWak8gPb1gngv432wb2Hl9nDvOI
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,428,1526313600"; 
-   d="scan'208";a="87124428"
-Received: from mail-by2nam05lp0245.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([216.32.181.245])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Aug 2018 04:01:22 +0800
+        Tue, 31 Jul 2018 17:43:25 -0400
+Received: by mail-it0-f65.google.com with SMTP id d16-v6so13383334itj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w3DGUitK5tnWF0ecbC5sA7FBVmTmvbi2Um9G6a03nnI=;
- b=eKM3b9CKJmQHKN+jQ3Zfjv/WNAsK3P8pbDFLJ+nwJdSErRzLjedF86Qu5S6k7Q7TWXCZsOHFnDOYp6tYCmRiVoKdINnrbHPJU5Y3kHnXA62mAjmV9baqk1kQTaMoNhx/Q6WaKzf1P1owALKeNbLCVru4BFnivcnNI9Xo++PKUAs=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0367.namprd04.prod.outlook.com (10.173.48.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.19; Tue, 31 Jul 2018 20:01:17 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::29a0:6668:ccc3:c397]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::29a0:6668:ccc3:c397%4]) with mapi id 15.20.0995.020; Tue, 31 Jul 2018
- 20:01:17 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "keescook@chromium.org" <keescook@chromium.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     "vinod.koul@intel.com" <vinod.koul@intel.com>,
-        "david.kershner@unisys.com" <david.kershner@unisys.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hch@lst.de" <hch@lst.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "manoj@linux.vnet.ibm.com" <manoj@linux.vnet.ibm.com>,
-        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "cyrille.pitchen@free-electrons.com" 
-        <cyrille.pitchen@free-electrons.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "mrochs@linux.vnet.ibm.com" <mrochs@linux.vnet.ibm.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ukrishn@linux.vnet.ibm.com" <ukrishn@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi passthrough
- request users
-Thread-Topic: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi
- passthrough request users
-Thread-Index: AQHUKQf8q9qBS8n6RUKN2MmwqU0cx6SpwGaA
-Date:   Tue, 31 Jul 2018 20:01:16 +0000
-Message-ID: <a5b545eade66f95c9a9ecf37676306a8d395187c.camel@wdc.com>
-References: <20180731195155.46664-1-keescook@chromium.org>
-         <20180731195155.46664-4-keescook@chromium.org>
-In-Reply-To: <20180731195155.46664-4-keescook@chromium.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0367;20:PiEnxrgbmCWl2ana1Z8RRDfwy6qt/BorsJxdAvSn1q4CrW0mpOQdKDXMi2+AmA+mcFLd7sl0WrAEDfBl/nsE7W6X4g+o0bE00oIdHOvb+P1JlDYZcAsNCM9WPWGWYchDtanWx0EK+kJf35O+sL/OqZzf5Wx6Vrr7CTbj5vVYAPg=
-x-ms-office365-filtering-correlation-id: e8c425a4-7788-4c3b-d87a-08d5f720605a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0367;
-x-ms-traffictypediagnostic: MWHPR04MB0367:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0367C07FE78A4CF5AF4A9A88982E0@MWHPR04MB0367.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0367;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0367;
-x-forefront-prvs: 0750463DC9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(366004)(346002)(39860400002)(396003)(189003)(199004)(7416002)(105586002)(5660300001)(97736004)(4326008)(2906002)(66066001)(8676002)(25786009)(6246003)(316002)(6436002)(53936002)(6512007)(229853002)(6116002)(2501003)(6486002)(2616005)(5250100002)(26005)(76176011)(256004)(68736007)(99286004)(102836004)(11346002)(446003)(81156014)(36756003)(6506007)(8936002)(81166006)(110136005)(186003)(118296001)(476003)(3846002)(72206003)(54906003)(86362001)(486006)(7736002)(106356001)(305945005)(14454004)(2900100001)(478600001)(26730200005)(19860200003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0367;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: ZDUDwxAV/7GWJouzsOhkAKrORfWrtaqCBZpqxrFpGfLfZRV2yjv47AXnmVuA709pxLY2QH0GJitLvf857z5YvkU49N8vsdaR8iekr9yifyGi4W3Mxu3bwYFODlQtYtQYNzNmlxdkzxOWNAmzTMYxL5RagrOQGdorKynh0YXHuqjKZESqrThiWdzMLGScwYTYDxld4WqaN/9MkJjtZxu0w2oGW8EKsUBjGxvQYw2dKG/EFoT7e/nrFGI5cuSz9eXCCtAP2D1m+mL0RFcd7RpVPTXqAq6CdtS6EbHZhIPqAx6LouHJ/c7W7Pbe+7vVluf/xuLAuT66hlL7FyJJ6ZeMMcwZrRf+X6YURS46/zos3vQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <8F9E7D0EF0A4754382FB1A62F847D9D8@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1xTMFlxyM/rzgBRYUKXUbkRBxujoYMpzm2IIxrfdjz4=;
+        b=DEddYV67Gh62AGZz+PNs9g2Y16cVdNyy888pUgV607rRiH4RMjU6VaaPLPSlVX9X0G
+         CUfg2xPjNyOwX0rrku8odOZyMEJxg9cCJ37yxvVdqIG+/mOmPhiiexsWewFW/2WtVHXQ
+         FqNu4zId3uJwQ8SjXHaYbqA+PNG7aEXqmUSKAYfPxuwzf1jNS656hXEUp5Ihz6fza9/Y
+         9L6CpsAMphzH28Rykbnr2sjkCVKVv8utp47BOZG9pIMmSjs4A8fWOMlfw7JB1Ch3J5cO
+         SxM5WYpnGJiSu/B3pr02FqpucsxG8pQz1p0D8uPN96z0Pb7d5BUtlUzIYkS+TJ03zvdz
+         HfFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1xTMFlxyM/rzgBRYUKXUbkRBxujoYMpzm2IIxrfdjz4=;
+        b=OD04f7gvQCTpC0ax87cXUs/7az6mPTo93RiDLS9kpp2aLo3JU0jldckuhAe49a54qx
+         dnYCd8WB+L7T0U55M7u92uObww4TGrQdp+/aZuIgY3NZTbtopghbFTuII88CE3hX3Qo4
+         PvbAmRGpSZ52I2M7R0FK7nHzGcgWz4ZTSxbAVH7h0C18h+1xmRiZCOsVfkFXph4FqeiK
+         NtJpuz8TIhYRFh5HXfy5oFsqq5JlDn2USVw2MQp51SBBNcyxA80hX8B/wjsW4u9F3mmz
+         QTLCkmyQ2gJmfP5nzFi1HllSwFjdhi0DNyGwKORsokJ4/FTjmIl+R1U6cNVX8dDg+ZiV
+         v5vQ==
+X-Gm-Message-State: AOUpUlFonuoK1KoGz/1KMHUHKKTFIyb8kvX/47IapXugYmK4d9AiTB2S
+        AvybStfP597hOmAsdB7SzWA=
+X-Google-Smtp-Source: AAOMgpfrJ6tR9VfyIEvCZobY+z3DVjTsdKBzTIlGTDMQpbY2HhnDlTfcQn8AycFV1kUHo7O1VnoDjw==
+X-Received: by 2002:a24:7c4a:: with SMTP id a71-v6mr1043931itd.69.1533067289233;
+        Tue, 31 Jul 2018 13:01:29 -0700 (PDT)
+Received: from [10.0.2.15] ([72.138.96.106])
+        by smtp.gmail.com with ESMTPSA id c141-v6sm2266504itc.42.2018.07.31.13.01.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 13:01:28 -0700 (PDT)
+Subject: Re: [PATCH 6/6] arm64: enable RapidIO menu in Kconfig
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, John Paul Walters <jwalters@isi.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Colin <acolin@isi.edu>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180730225035.28365-1-acolin@isi.edu>
+ <20180730225035.28365-7-acolin@isi.edu> <20180731084143.GA4680@arm.com>
+ <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
+ <20180731155228.GN17271@n2100.armlinux.org.uk>
+ <044af717-3883-a7a6-c346-18fa8cebce76@gmail.com>
+ <20180731181834.GA30658@n2100.armlinux.org.uk>
+From:   Alex Bounine <alex.bou9@gmail.com>
+Message-ID: <570ad147-3c58-8911-0111-29e21087ca7a@gmail.com>
+Date:   Tue, 31 Jul 2018 16:01:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8c425a4-7788-4c3b-d87a-08d5f720605a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2018 20:01:16.6840
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0367
+In-Reply-To: <20180731181834.GA30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-31 at 12:51 -0700, Kees Cook wrote:
-+AD4- diff --git a/drivers/Makefile b/drivers/Makefile
-+AD4- index 24cd47014657..a6abd7a856c6 100644
-+AD4- --- a/drivers/Makefile
-+AD4- +-+-+- b/drivers/Makefile
-+AD4- +AEAAQA- -76,7 +-76,7 +AEAAQA- obj-+ACQ-(CONFIG+AF8-DMA+AF8-SHARED+AF=
-8-BUFFER) +-+AD0- dma-buf/
-+AD4-  obj-+ACQ-(CONFIG+AF8-NUBUS)		+-+AD0- nubus/
-+AD4-  obj-y				+-+AD0- macintosh/
-+AD4-  obj-+ACQ-(CONFIG+AF8-IDE)		+-+AD0- ide/
-+AD4- -obj-+ACQ-(CONFIG+AF8-SCSI)		+-+AD0- scsi/
-+AD4- +-obj-y				+-+AD0- scsi/
-+AD4-  obj-y				+-+AD0- nvme/
-+AD4-  obj-+ACQ-(CONFIG+AF8-ATA)		+-+AD0- ata/
-+AD4-  obj-+ACQ-(CONFIG+AF8-TARGET+AF8-CORE)	+-+AD0- target/
+On 2018-07-31 02:18 PM, Russell King - ARM Linux wrote:
+> On Tue, Jul 31, 2018 at 01:59:27PM -0400, Alex Bounine wrote:
+>> On 2018-07-31 11:52 AM, Russell King - ARM Linux wrote:
+>>> On Tue, Jul 31, 2018 at 08:54:14AM -0400, Alex Bounine wrote:
+>>>> On 2018-07-31 04:41 AM, Will Deacon wrote:
+>>>>> On Mon, Jul 30, 2018 at 06:50:34PM -0400, Alexei Colin wrote:
+>>>>>> Platforms with a PCI bus will be offered the RapidIO menu since they may
+>>>>>> be want support for a RapidIO PCI device. Platforms without a PCI bus
+>>>>>> that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
+>>>>>> in the platform-/machine-specific "config ARCH_*" Kconfig entry.
+>>>>>>
+>>>>>> Tested that kernel builds for arm64 with RapidIO subsystem and
+>>>>>> switch drivers enabled, also that the modules load successfully
+>>>>>> on a custom Aarch64 Qemu model.
+>>>>>>
+>>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>>>> Cc: Russell King <linux@armlinux.org.uk>
+>>>>>> Cc: John Paul Walters <jwalters@isi.edu>
+>>>>>> Cc: linux-arm-kernel@lists.infradead.org
+>>>>>> Cc: linux-kernel@vger.kernel.org,
+>>>>>> Signed-off-by: Alexei Colin <acolin@isi.edu>
+>>>>>> ---
+>>>>>>   arch/arm64/Kconfig | 2 ++
+>>>>>>   1 file changed, 2 insertions(+)
+>>>>>
+>>>>> Thanks, this looks much cleaner than before:
+>>>>>
+>>>>> Acked-by: Will Deacon <will.deacon@arm.com>
+>>>>>
+>>>>> The only thing I'm not sure about is why we don't just select HAS_RAPIDIO
+>>>>> unconditionally in the arm64 Kconfig. Does selecting only that option
+>>>>> actually pull in new code to the build?
+>>>>>
+>>>> HAS_RAPIDIO option is intended for SOCs that have built in SRIO controllers,
+>>>> like TI KeyStoneII or FPGAs. Because RapidIO subsystem core is required
+>>>> during RapidIO port driver initialization, having separate option allows us
+>>>> to control available build options for RapidIO core and port driver (bool
+>>>> vs. tristate) and disable module option if port driver is configured as
+>>>> built-in.
+>>>
+>>> Your explanation doesn't make much sense to me.
+>>>
+>>> RAPIDIO is the bus-level support, right?  So drivers that depend on
+>>> the bus-level support should depend on RAPIDIO, and so, if RAPIDIO
+>>> is configured as a module, they will also be allowed to be disabled
+>>> or a module, but not built-in if tristate.  If it is boolean, and
+>>> causes the driver to be built-in to the kernel, then you need to use
+>>> "RAPIDIO=y" so that it's dependency is only satisfied when the core
+>>> is built-in.
+>>>
+>>
+>> RapidIO host controllers (on local bus like SoC internal or PCIe) are
+>> serviced by MPORT device drivers that are subsystem specific and communicate
+>> with RapidIO core using set of callbacks. Depending on HW architecture these
+>> drivers may be defined as built-in or module.
+> 
+> Why does hardware architecture define whether something has to be built
+> in or can be modular?
+> 
+> It is the case today that (eg) on-SoC hardware _can_ be built as a module
+> if desired - just because it's on the SoC does not mean it has to be
+> built in to the kernel.  Why is RapidIO any different?
+>
 
-The above change not only selects scsi+AF8-common.o but also the following =
-object
-files: scsi.o hosts.o scsi+AF8-ioctl.o scsicam.o scsi+AF8-error.o scsi+AF8-=
-lib.o scsi+AF8-scan.o
-scsi+AF8-sysfs.o scsi+AF8-devinfo.o scsi+AF8-trace.o scsi+AF8-logging.o. Th=
-at is a change that
-has not been mentioned in the patch description. That makes me wonder wheth=
-er
-this is an intended change? Wouldn't a cleaner solution have been to move
-scsi+AF8-common.c into a new directory?
+Not HW architecture - legacy can be blamed as well. Freescale's FSL_RIO 
+driver still exist as built-in so far. Intent of this patch set is to 
+allow RapidIO support in more architectures without reworking old stuff.
+I do not think that anyone will be updating FSL_RIO driver soon.
 
-Bart.
+Also we cannot dictate to developers of future drivers which method to 
+use - they may have built-in option only for the first release.
 
+Unfortunately we have on hands dependency between mport driver build 
+mode and  RapidIO core which we need to respect.
+
+
+>> Built-in driver will require presence of the RapidIO core during its
+>> initialization time and therefore we have to set CONFIG_RAPIDIO=y.
+>> Also we have PCIe based host controllers and their drivers are OK to be
+>> built as module like for any other PCI device.
+>>
+>> Based on requirements and available resources/HW_configuration the platform
+>> can have on-chip host controller enabled or disabled (or simply not
+>> implemented in case of FPGA). This leads us to combination of on-chip and
+>> PCIe host controllers. For example, if PCIe bus is required for other
+>> devices, we may have to use PCIe-to_SRIO bridge because all available
+>> on-chip SerDes lines are assigned to PCIe.
+>>
+>> If we use CONFIG_RAPIDIO as a single indicator of possible configuration, we
+>> can make visible config menu entry for on-chip controller that is not
+>> available on given platform due to HW setup. For example on KeystoneII or
+>> MPC85xx/86xx. The option HAS_RAPIDIO tells us that given platform really
+>> uses on-chip RapidIO host controller. This is why FSL_RIO depends on
+>> HAS_RAPIDIO.
+>>
+>> Also having PCIe enabled in any form is not a good option to control support
+>> for on-chip controller.
+> 
+> I'm not saying that - can you please read my suggestion below and
+> respond to that.  I'm giving you technical feedback, but it seems
+> all I'm getting back is "this is how we're doing it" rather than a
+> constructive discussion.
+
+I am trying to explain why we are doing it this way, not how.
+
+> 
+> For example, can you point out why my idea I present below would not
+> work?
+
+See below.
+
+> 
+>> For peripheral devices attached to the RapidIO fabric such dependency on
+>> local mport implementation does not exist and therefore they all can be
+>> treated as tristate.
+>>
+>>> HAS_RAPIDIO gives the impression that it defines whether or not
+>>> the rapidio core code is allowable or not - it doesn't suggest that
+>>> it has anything to do with drivers. However, reading the PowerPC
+>>> Kconfig files, it seems to be used that way.  That's confusing, and
+>>> ought to be fixed.  From what I can tell, it's only used for FSL_RIO,
+>>> so I suggest that gets converted to:
+>>>
+>>> config HAS_RAPIDIO
+>>> 	bool PCI
+
+PCI and RAPIDIO can be mutually exclusive.
+
+>>>
+>>> config RAPIDIO
+>>> 	tristate "RapidIO support"
+>>> 	depends on HAS_RAPIDIO
+>>>
+>>> config HAS_FSL_RIO
+>>> 	bool
+>>> 	select HAS_RAPIDIO
+
+Introducing new variable HAS_FSL_RIO here. Do you suggest having one for 
+each ARM-based board that has on-chip RIO?
+
+>>>
+>>> config FSL_RIO
+>>> 	bool "Freescale Embedded SRIO Controller support"
+>>> 	depends on RAPIDIO = y && HAS_FSL_RIO
+>>>
+>>> This frees up HAS_RAPIDIO to operate as one would expect - to define
+>>> whether or not RAPIDIO should be offered.  This also allows:
+>>>
+>>> config ARM
+>>> 	select HAS_RAPIDIO if PCI
+
+Some SOCs can be configured without PCI. We have confusing action here - 
+we have to enable PCI on platform that does not have it.
+
+Above, you had to introduce HAS_FSL_RIO. The same will be needed for 
+each ARM-based platform that supports RapidIO. E.g. HAS_KS2_RIO or 
+HAS_XZINQ_RIO.
+
+How this improves things? Right now HAS_RAPIDIO is single option that 
+has to be selected for given board (plus enabling specific mport option).
+
+Why we cannot use "select HAS_RAPIDIO" HW-specific Kconfig file 
+(mach-*/Kconfig)? And have on-chip port selection in the same 
+board-specific place.
+
+This is the right place because chips like Keystone have an internal 
+RapidIO controller specific to them. If you got with any type of global
+
+The same for Xilinx. Other platforms unlock RAPIDIO selection if they 
+have PCI.
+
+Having HAS_RAPIDIO directly in the board-specific Kconfig looks to me 
+more descriptive for end user as well.
+
+>>>
+>>> to be added to arch/arm/Kconfig if appropriate.  However, I'm not yet
+>>> convinced that _just because_ we have PCI does not mean that RAPIDIO
+>>> should be offered.  I stated a series of questions about that last
+>>> Tuesday in response to an individual patch adding rapidio to arch/arm,
+>>> and that email seems to have been ignored - at least as far as the
+>>> questions go.
+>>>
+>>> Please ensure that you respond to your reviewers questions, otherwise
+>>> you will start receiving plain NAKs to your patches instead (since
+>>> it becomes a waste of time for reviewers to put any further effort
+>>> in to explain why they don't like the patch.)
+>>>
+>>> Thanks.
+>>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
