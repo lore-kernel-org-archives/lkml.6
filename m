@@ -2,337 +2,176 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9CDC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389D7C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0779208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:05:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0779208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id E904F208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:05:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E904F208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbeGaHnx (ORCPT
+        id S1730230AbeGaHoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:43:53 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:52431 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbeGaHnw (ORCPT
+        Tue, 31 Jul 2018 03:44:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52979 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeGaHoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:43:52 -0400
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id CEE4924000A;
-        Tue, 31 Jul 2018 06:05:08 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v5 02/11] hugetlb: Introduce generic version of hugetlb_free_pgd_range
-Date:   Tue, 31 Jul 2018 06:01:46 +0000
-Message-Id: <20180731060155.16915-3-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
-References: <20180731060155.16915-1-alex@ghiti.fr>
+        Tue, 31 Jul 2018 03:44:00 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6V63nvN2594685
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 30 Jul 2018 23:03:49 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6V63nGm2594682;
+        Mon, 30 Jul 2018 23:03:49 -0700
+Date:   Mon, 30 Jul 2018 23:03:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-156c8b58ef5cfd97245928c95669fd4cb0f9c388@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, vincent.weaver@maine.edu,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        m.mizuma@jp.fujitsu.com, peterz@infradead.org, acme@redhat.com,
+        mingo@kernel.org, kan.liang@linux.intel.com, jolsa@redhat.com,
+        eranian@google.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: kan.liang@linux.intel.com, mingo@kernel.org, acme@redhat.com,
+          peterz@infradead.org, eranian@google.com, tglx@linutronix.de,
+          jolsa@redhat.com, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+          torvalds@linux-foundation.org, m.mizuma@jp.fujitsu.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1532953688-15008-1-git-send-email-kan.liang@linux.intel.com>
+References: <1532953688-15008-1-git-send-email-kan.liang@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/x86/intel/uncore: Fix hardcoded index of
+ Broadwell extra PCI devices
+Git-Commit-ID: 156c8b58ef5cfd97245928c95669fd4cb0f9c388
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, arm64, mips, parisc, sh, x86 architectures use the
-same version of hugetlb_free_pgd_range, so move this generic
-implementation into asm-generic/hugetlb.h.
+Commit-ID:  156c8b58ef5cfd97245928c95669fd4cb0f9c388
+Gitweb:     https://git.kernel.org/tip/156c8b58ef5cfd97245928c95669fd4cb0f9c388
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Mon, 30 Jul 2018 08:28:08 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 31 Jul 2018 07:43:37 +0200
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+perf/x86/intel/uncore: Fix hardcoded index of Broadwell extra PCI devices
+
+Masayoshi Mizuma reported that a warning message is shown while a CPU is
+hot-removed on Broadwell servers:
+
+  WARNING: CPU: 126 PID: 6 at arch/x86/events/intel/uncore.c:988
+  uncore_pci_remove+0x10b/0x150
+  Call Trace:
+   pci_device_remove+0x42/0xd0
+   device_release_driver_internal+0x148/0x220
+   pci_stop_bus_device+0x76/0xa0
+   pci_stop_root_bus+0x44/0x60
+   acpi_pci_root_remove+0x1f/0x80
+   acpi_bus_trim+0x57/0x90
+   acpi_bus_trim+0x2e/0x90
+   acpi_device_hotplug+0x2bc/0x4b0
+   acpi_hotplug_work_fn+0x1a/0x30
+   process_one_work+0x174/0x3a0
+   worker_thread+0x4c/0x3d0
+   kthread+0xf8/0x130
+
+This bug was introduced by:
+
+  commit 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
+
+The index of "QPI Port 2 filter" was hardcode to 2, but this conflicts with the
+index of "PCU.3" which is "HSWEP_PCI_PCU_3", which equals to 2 as well.
+
+To fix the conflict, the hardcoded index needs to be cleaned up:
+
+ - introduce a new enumerator "BDX_PCI_QPI_PORT2_FILTER" for "QPI Port 2
+   filter" on Broadwell,
+ - increase UNCORE_EXTRA_PCI_DEV_MAX by one,
+ - clean up the hardcoded index.
+
+Debugged-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: msys.mizuma@gmail.com
+Cc: stable@vger.kernel.org
+Fixes: 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs")
+Link: http://lkml.kernel.org/r/1532953688-15008-1-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/arm/include/asm/hugetlb.h     |  9 ---------
- arch/arm64/include/asm/hugetlb.h   | 10 ----------
- arch/ia64/include/asm/hugetlb.h    |  5 +++--
- arch/mips/include/asm/hugetlb.h    | 13 ++-----------
- arch/parisc/include/asm/hugetlb.h  | 12 ++----------
- arch/powerpc/include/asm/hugetlb.h |  4 +++-
- arch/sh/include/asm/hugetlb.h      | 12 ++----------
- arch/sparc/include/asm/hugetlb.h   |  4 +++-
- arch/x86/include/asm/hugetlb.h     |  8 --------
- include/asm-generic/hugetlb.h      | 11 +++++++++++
- 10 files changed, 26 insertions(+), 62 deletions(-)
+ arch/x86/events/intel/uncore.h       |  2 +-
+ arch/x86/events/intel/uncore_snbep.c | 10 +++++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
-index 7d26f6c4f0f5..537660891f9f 100644
---- a/arch/arm/include/asm/hugetlb.h
-+++ b/arch/arm/include/asm/hugetlb.h
-@@ -27,15 +27,6 @@
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index c9e1e0bef3c3..e17ab885b1e9 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -28,7 +28,7 @@
+ #define UNCORE_PCI_DEV_TYPE(data)	((data >> 8) & 0xff)
+ #define UNCORE_PCI_DEV_IDX(data)	(data & 0xff)
+ #define UNCORE_EXTRA_PCI_DEV		0xff
+-#define UNCORE_EXTRA_PCI_DEV_MAX	3
++#define UNCORE_EXTRA_PCI_DEV_MAX	4
  
- #include <asm/hugetlb-3level.h>
+ #define UNCORE_EVENT_CONSTRAINT(c, n) EVENT_CONSTRAINT(c, n, 0xff)
  
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
--
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr, unsigned long len)
- {
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 3fcf14663dfa..4af1a800a900 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -25,16 +25,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return READ_ONCE(*ptep);
- }
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 87dc0263a2e1..51d7c117e3c7 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -1029,6 +1029,7 @@ void snbep_uncore_cpu_init(void)
+ enum {
+ 	SNBEP_PCI_QPI_PORT0_FILTER,
+ 	SNBEP_PCI_QPI_PORT1_FILTER,
++	BDX_PCI_QPI_PORT2_FILTER,
+ 	HSWEP_PCI_PCU_3,
+ };
  
--
--
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr, unsigned long len)
- {
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index 74d2a5540aaf..afe9fa4d969b 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -3,9 +3,8 @@
- #define _ASM_IA64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
-@@ -70,4 +69,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_IA64_HUGETLB_H */
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 982bc0685330..53764050243e 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -10,8 +10,6 @@
- #define __ASM_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr,
-@@ -38,15 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr,
--					  unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-@@ -114,4 +103,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* __ASM_HUGETLB_H */
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 58e0f4620426..28c23b68d38d 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -3,8 +3,6 @@
- #define _ASM_PARISC64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
-@@ -32,14 +30,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-@@ -71,4 +61,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_PARISC64_HUGETLB_H */
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 3225eb6402cc..a7d5c739df9b 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -4,7 +4,6 @@
- 
- #ifdef CONFIG_HUGETLB_PAGE
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- extern struct kmem_cache *hugepte_cache;
- 
-@@ -113,6 +112,7 @@ static inline void flush_hugetlb_page(struct vm_area_struct *vma,
- void flush_hugetlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
- #endif
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
-@@ -179,6 +179,8 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #else /* ! CONFIG_HUGETLB_PAGE */
- static inline void flush_hugetlb_page(struct vm_area_struct *vma,
- 				      unsigned long vmaddr)
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 735939c0f513..f6a51b609409 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -4,8 +4,6 @@
- 
- #include <asm/cacheflush.h>
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
--
- 
- static inline int is_hugepage_only_range(struct mm_struct *mm,
- 					 unsigned long addr,
-@@ -27,14 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-@@ -85,4 +75,6 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- 	clear_bit(PG_dcache_clean, &page->flags);
- }
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_SH_HUGETLB_H */
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 300557c66698..59d89b52ccb7 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -3,7 +3,6 @@
- #define _ASM_SPARC64_HUGETLB_H
- 
- #include <asm/page.h>
--#include <asm-generic/hugetlb.h>
- 
- #ifdef CONFIG_HUGETLB_PAGE
- struct pud_huge_patch_entry {
-@@ -84,8 +83,11 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- {
- }
- 
-+#define __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
- void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
- 			    unsigned long end, unsigned long floor,
- 			    unsigned long ceiling);
- 
-+#include <asm-generic/hugetlb.h>
-+
- #endif /* _ASM_SPARC64_HUGETLB_H */
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 5ed826da5e07..398da3b3414c 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -28,14 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
--					  unsigned long addr, unsigned long end,
--					  unsigned long floor,
--					  unsigned long ceiling)
--{
--	free_pgd_range(tlb, addr, end, floor, ceiling);
--}
--
- static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 				   pte_t *ptep, pte_t pte)
- {
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 3da7cff52360..c697ca9dda18 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -40,4 +40,15 @@ static inline void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGETLB_FREE_PGD_RANGE
-+static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
-+		unsigned long addr, unsigned long end,
-+		unsigned long floor, unsigned long ceiling)
-+{
-+	free_pgd_range(tlb, addr, end, floor, ceiling);
-+}
-+
-+
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
-
+@@ -3286,15 +3287,18 @@ static const struct pci_device_id bdx_uncore_pci_ids[] = {
+ 	},
+ 	{ /* QPI Port 0 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f86),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 0),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   SNBEP_PCI_QPI_PORT0_FILTER),
+ 	},
+ 	{ /* QPI Port 1 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f96),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 1),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   SNBEP_PCI_QPI_PORT1_FILTER),
+ 	},
+ 	{ /* QPI Port 2 filter  */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
+-		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   BDX_PCI_QPI_PORT2_FILTER),
+ 	},
+ 	{ /* PCU.3 (for Capability registers) */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
