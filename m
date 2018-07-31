@@ -2,91 +2,164 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6B9C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EEFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6416B20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6416B20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 4FDDB20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:54:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="DfBpkHMq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FDDB20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731990AbeGaSd6 (ORCPT
+        id S1732036AbeGaSfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:33:58 -0400
-Received: from verein.lst.de ([213.95.11.211]:58173 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727471AbeGaSd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:33:58 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 8632768D64; Tue, 31 Jul 2018 18:57:12 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 18:57:12 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
-Message-ID: <20180731165712.GA2521@lst.de>
-References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-8-hch@lst.de> <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com> <dc69d688-f765-74cc-3234-563fecff6002@wdc.com>
+        Tue, 31 Jul 2018 14:35:37 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:38512 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbeGaSfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 14:35:36 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D7B1D25AD5C;
+        Wed,  1 Aug 2018 02:54:23 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1533056064; bh=XNXJS4tHsNmYTDWeXNHXQGpmX1RfWhVl449EjLmdtt4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DfBpkHMqe0W4sXmzLqxqh8iAnt5lfEwpr2TmpKluP9f651CknPZjsZGm2c59AJrJ/
+         uAcMSOvwydvQjVkse4hysKJzNaEOy+RflmVt7unxveWPUhva/Ub1c8ftzYFokZNZeh
+         AUuVwX4I1ydRZ+IaUdwE9+LgPcAMV19sSnb9hcEk=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id BC7CA940355; Tue, 31 Jul 2018 18:54:21 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 18:54:21 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Tan Hu <tan.hu@zte.com.cn>, wensong@linux-vs.org,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn
+Subject: Re: [PATCH v3] ipvs: fix race between ip_vs_conn_new() and
+ ip_vs_del_dest()
+Message-ID: <20180731165421.ee265xghmbqcy54g@verge.net.au>
+References: <1532503387-3800-1-git-send-email-tan.hu@zte.com.cn>
+ <alpine.LFD.2.20.1807252208320.2437@ja.home.ssi.bg>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc69d688-f765-74cc-3234-563fecff6002@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <alpine.LFD.2.20.1807252208320.2437@ja.home.ssi.bg>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 08:21:33PM -0700, Atish Patra wrote:
-> I found the issue. As per PLIC documentation, a hart context is a given 
-> privilege mode on a given hart. Thus, cpu context ID & cpu numbers are not 
-> same. Here is the PLIC register Maps in U54 core:
->
-> Ref: https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf
->
-> Memory address for Interrupt enable
-> Address
-> 0x0C00-2080   Hart 1 M-mode enables
-> 0x0C00 2094   End of Hart 1 M-mode enables
->
-> 0x0C00-2100   Hart 1 S-mode enables
-> 0x0C00-2114   End of Hart 1 S-mode enables
->
-> Memory map Claim/Threshold
-> Address
-> 0x0C20-1000 4B 	 M-mode priority threshold
-> 0x0C20-1004 4B   M-mode claim/complete
-> 0x0C20-2000 4B   S-mode priority threshold
-> 0x0C20-2004 4B   S-mode claim/complete
->
-> The original PLIC patch was calculating based on handle->contextid which 
-> will assume numbers on a HighFive Unleashed board as 2 4 6 8.
->
-> In this patch, context id is assigned as cpu numbers which will be 1 2 3 4. 
-> Thus it will lead to incorrect plic address access as shown below.
+On Wed, Jul 25, 2018 at 10:12:48PM +0300, Julian Anastasov wrote:
+> 
+> 	Hello,
+> 
+> On Wed, 25 Jul 2018, Tan Hu wrote:
+> 
+> > We came across infinite loop in ipvs when using ipvs in docker
+> > env.
+> > 
+> > When ipvs receives new packets and cannot find an ipvs connection,
+> > it will create a new connection, then if the dest is unavailable
+> > (i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
+> > 
+> > But if the dropped packet is the first packet of this connection,
+> > the connection control timer never has a chance to start and the
+> > ipvs connection cannot be released. This will lead to memory leak, or
+> > infinite loop in cleanup_net() when net namespace is released like
+> > this:
+> > 
+> >     ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+> >     __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+> >     ops_exit_list at ffffffff81567a49
+> >     cleanup_net at ffffffff81568b40
+> >     process_one_work at ffffffff810a851b
+> >     worker_thread at ffffffff810a9356
+> >     kthread at ffffffff810b0b6f
+> >     ret_from_fork at ffffffff81697a18
+> > 
+> > race condition:
+> >     CPU1                           CPU2
+> >     ip_vs_in()
+> >       ip_vs_conn_new()
+> >                                    ip_vs_del_dest()
+> >                                      __ip_vs_unlink_dest()
+> >                                        ~IP_VS_DEST_F_AVAILABLE
+> >       cp->dest && !IP_VS_DEST_F_AVAILABLE
+> >       __ip_vs_conn_put
+> >     ...
+> >     cleanup_net  ---> infinite looping
+> > 
+> > Fix this by checking whether the timer already started.
+> > 
+> > Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+> > Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+> 
+> 	v3 looks good to me,
+> 
+> Acked-by: Julian Anastasov <ja@ssi.bg>
+> 
+> 	Simon and Pablo, this can be applied to ipvs/nf tree...
 
-Indeed.  Can you try this branch, which puts back the OF contextid
-parsing from the original code:
+Acked-by: Simon Horman <horms@verge.net.au>
 
-   git://git.infradead.org/users/hch/riscv.git riscv-irq-simple.2
+Pablo, please consider this for the nf tree.
 
-Gitweb:
-
-   http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple.2
-
+> 
+> > ---
+> > v2: fix use-after-free in CONN_ONE_PACKET case suggested by Julian Anastasov
+> > v3: remove trailing whitespace for patch checking 
+> > 
+> >  net/netfilter/ipvs/ip_vs_core.c | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+> > index 0679dd1..a17104f 100644
+> > --- a/net/netfilter/ipvs/ip_vs_core.c
+> > +++ b/net/netfilter/ipvs/ip_vs_core.c
+> > @@ -1972,13 +1972,20 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
+> >  	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+> >  		/* the destination server is not available */
+> > 
+> > -		if (sysctl_expire_nodest_conn(ipvs)) {
+> > +		__u32 flags = cp->flags;
+> > +
+> > +		/* when timer already started, silently drop the packet.*/
+> > +		if (timer_pending(&cp->timer))
+> > +			__ip_vs_conn_put(cp);
+> > +		else
+> > +			ip_vs_conn_put(cp);
+> > +
+> > +		if (sysctl_expire_nodest_conn(ipvs) &&
+> > +		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+> >  			/* try to expire the connection immediately */
+> >  			ip_vs_conn_expire_now(cp);
+> >  		}
+> > -		/* don't restart its timer, and silently
+> > -		   drop the packet. */
+> > -		__ip_vs_conn_put(cp);
+> > +
+> >  		return NF_DROP;
+> >  	}
+> > 
+> > --
+> > 1.8.3.1
+> 
+> Regards
+> 
+> --
+> Julian Anastasov <ja@ssi.bg>
+> 
