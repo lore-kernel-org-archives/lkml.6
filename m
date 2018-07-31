@@ -2,98 +2,155 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A51C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDD3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78137208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B9820894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:27:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="mfCJ2nTD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78137208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LSAjMvvC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nzNMziGZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B9820894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732198AbeGaWJI (ORCPT
+        id S1732330AbeGaWJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 18:09:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43650 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbeGaWJI (ORCPT
+        Tue, 31 Jul 2018 18:09:43 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:37093 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729788AbeGaWJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 18:09:08 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d17-v6so5195458pgv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:27:05 -0700 (PDT)
+        Tue, 31 Jul 2018 18:09:42 -0400
+Received: by mail-yw0-f195.google.com with SMTP id w76-v6so6304726ywg.4
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jvFeZXrk3oKikBKgA6HGG1zqb2rUCE9zVZ5+CocYrd0=;
-        b=mfCJ2nTDWD9WuQ/sE+y4Et5i27NIiPtxDTgTCW/9PU/HnGmyfWtukUYhTepiyRkqQE
-         fH0piCszw3Jf2AkcstdjhKbfo3v7Lfm0mtx4Gje+WGWGD5/Wj+64ie9MohCmn9eKsInJ
-         SwJykvQezW6y0etkq9z1Pi1Q/GmuaRyYOy1y6hMAAzHBrWo2+EpjkMy191/1uZXH0l6O
-         SmchUY9b22aSLFgAReT7WEYRVlPg4M50AaW7dbFvWnPNIgEXQUDpt14SNNJ0xAMQCVFA
-         CEuYyvlo5+5b5A88RLNCAzz6sfgnYAdwCDA8Tb2wlqhgtu/EjSmr8GST7rVhXJABYPLv
-         RTIA==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
+        b=LSAjMvvCwVKaooVO9TF9iqK6YNZQHhjSrOJr74LslZfUpOJwoZ05oiPRkeiGmmLmno
+         f0TIUCHvJ3oopTMPoXkWz4+pgOH1Ua4wqEYJxYR0qaB4MPmeC9lbgIlOqWwGUDPKz+sH
+         IQ99Z4shHcTWLPE47SckhgWpHh3YUSY3sJD2sqft4GPERMGlFPgdNpRx7XauA497c5hS
+         4MknSQRiGzmUSpqWNTB8a8zzDg0DMc58OwacAn0ocK/bmqZMD5a7qP+d94RNy7+D/xaa
+         t6AB2orxHvT22VKulzRd/UWsDrVrgOpZnlkqZdm5X8LIo4Q9SmxHZZc5lCj6zzBEHvcR
+         sPBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
+        b=nzNMziGZGd2DU0EXCSoA7SXPzt3pNZV7Ye84XiY19AtJF1qzDuD1waiSr5xDemrkC/
+         5TBKSMYp4LO84mI1VUcq11+gsGzbtuXD6SGsVLkbB9Xsyd5AaVemqywjDfokbhkiugPT
+         Bno7xIcRiNC20kHL197t4VrumwZ46vtj2NPb4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jvFeZXrk3oKikBKgA6HGG1zqb2rUCE9zVZ5+CocYrd0=;
-        b=jDnDEiLqgOs9TvUUvIYxvVE+JY09MCLTC0Z2zfTrnqmlIpEp761vOi1uZt1/BLVvqr
-         ldOYtLrvb+j6SLieR20hz6YZ4YcPQSO/vLuOH7wKDxxXKLveW0fSYY8mFmODedxrgFGU
-         nXbeoRW9624QwEvDBe0g3jKcrLEO5yUmUnJbTL8wLB3rSHCV+SxIAiG5mD2ohwCDi/zM
-         i2BB9Hg4QA3YMbHHz+ydJcihqmXDwehf8HiSIeJNhOnpRrueFfa0x37we54+eV5B2Fqv
-         7bE8x3qE/JebyaF8Gkvv35ZuLSy8Vp8lVlgYqB2nwh/RAaOO5wdvRA7+atTka3jK8WWi
-         Utdw==
-X-Gm-Message-State: AOUpUlFqXQHNuZJtjEpCdZFbtr+ROIFMBEWNjzCbX62/juMlx9WL9bPJ
-        M7l1bTDqWXW/D+IXaju9Isv5NQ==
-X-Google-Smtp-Source: AAOMgpd37JN4izayhUj/mpZ9DhidIOshpzo8JrMoKhLLcVQPmmPdRq56ZrvP+qhtxqUujc3gRmeBZA==
-X-Received: by 2002:a65:4849:: with SMTP id i9-v6mr21802128pgs.350.1533068824818;
-        Tue, 31 Jul 2018 13:27:04 -0700 (PDT)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id u83-v6sm2025493pfj.37.2018.07.31.13.27.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 13:27:04 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 13:27:01 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 3/3] net: WireGuard secure network tunnel
-Message-ID: <20180731132701.522b55e2@xeon-e3>
-In-Reply-To: <20180731191102.2434-4-Jason@zx2c4.com>
-References: <20180731191102.2434-1-Jason@zx2c4.com>
-        <20180731191102.2434-4-Jason@zx2c4.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=dxg+trRwEOCbCT4ni9KW0QNSXJrWblj40sKdGV825z4=;
+        b=RBYg7p1n7nk9RetIZ812AJqgyYkr3vCEMnZ9bAbuL4Pt+a9lFi38QX6AA+m/LwUAGE
+         Axrm1rLrNnyADzMg+k7i1RSYWkqsfWW5a1/L6RQFq+Aj8N9kuvyXNEHBkkOhVMglxUXj
+         PVDpM7AHYyY+gEID692B+Vsn2o3aUXHPH865gxn1krX+dz/2OrBOPojISS9MrtB1Ks7Y
+         RAxot2n5wyhXtGshy7aA29+kONcRxyoILD24HVXgqmG9XmZj8dbod3Z4N+lt0H0TJue/
+         YIIO9EVdTNConZ9qJoC54cW+nLbjtDmmFwiaFxSB3+to2EDufZH6UlyoiLlbV6YASO68
+         tPtw==
+X-Gm-Message-State: AOUpUlG0OvUV2gVzwf5EjOlId2Ob0/HJchUkg9khHgETJGOyiJAh6Ytr
+        2tcV/jqnKiTg7+AWUrlnpUP7ng6UV/6Dsc4KST1gdQ==
+X-Google-Smtp-Source: AAOMgpc5TSygvozy2Kkdfeh8fJAY5qI5qblcevwsD2aSv0HlEQ/RT2OZplhykCoxm4mxkBXZUF1zTPoIHw9GYblmeYs=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr11539648ywn.88.1533068859243;
+ Tue, 31 Jul 2018 13:27:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 13:27:38
+ -0700 (PDT)
+In-Reply-To: <CAPDyKFpi87UaKLScADOT_gkXkXpLR6r2J71G78zVn0hkc3ng5g@mail.gmail.com>
+References: <20180712195937.GA36007@beast> <CAPDyKFpi87UaKLScADOT_gkXkXpLR6r2J71G78zVn0hkc3ng5g@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 31 Jul 2018 13:27:38 -0700
+X-Google-Sender-Auth: CDrXIvW0mAjENKeWgoBSFIXQE9s
+Message-ID: <CAGXu5jJbS-P9X+6jPVkiVqDN1vF5ZFiwxRD0fHk+yYnhb9qKGQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mxcmmc: Fix missing parentheses and brace
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018 21:11:02 +0200
-"Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
+On Mon, Jul 16, 2018 at 3:11 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote=
+:
+> On 12 July 2018 at 21:59, Kees Cook <keescook@chromium.org> wrote:
+>> Looks like the adjusted syntax wasn't fully build tested. This fixes
+>> failures with powerpc builds:
+>>
+>> drivers/mmc/host/mxcmmc.c: In function =E2=80=98mxcmci_swap_buffers=E2=
+=80=99:
+>> drivers/mmc/host/mxcmmc.c:296:51: error: expected =E2=80=98)=E2=80=99 be=
+fore =E2=80=98;=E2=80=99 token
+>>    void *buf =3D kmap_atomic(sg_page(sg) + sg->offset;
+>>                                                    ^
+>> drivers/mmc/host/mxcmmc.c:299:1: error: expected =E2=80=98,=E2=80=99 or =
+=E2=80=98;=E2=80=99 before =E2=80=98}=E2=80=99 token
+>>  }
+>>  ^
+>>
+>> Fixes: b189e7589f6d3 ("mmc: mxcmmc: handle highmem pages")
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> Thanks, applied for fixes!
 
-> +#define push(stack, p, len) ({ \
-> +	if (rcu_access_pointer(p)) { \
-> +		BUG_ON(len >= 128); \
-> +		stack[len++] = rcu_dereference_protected(p, lockdep_is_held(lock)); \
-> +	} \
-> +	true; \
-> +})
-> +static void free_root_node(struct allowedips_node __rcu *top, struct mutex *lock)
-> +{
-> +	struct allowedips_node *stack[128], *node;
-> +	unsigned int len;
-> +
-> +	for (len = 0, push(stack, top, len); len > 0 && (node = stack[--len]) && push(stack, node->bit[0], len) && push(stack, node->bit[1], len);)
-> +		call_rcu_bh(&node->rcu, node_free_rcu);
-> +}
+I just checked again, and while I see this in linux-next, I would
+expect this to be in 4.18, since this fixes a 4.18-introduced build
+failure for some PPC configurations. Can this please be included in
+4.18?
 
-This looks like you are doing traversal to free a tree.  The stack is there so that you do the rcu callbacks
-in the proper order. Won't this create an lot of RCU work at once?
+Thanks!
+
+-Kees
+
+>
+> Kind regards
+> Uffe
+>
+>> ---
+>>  drivers/mmc/host/mxcmmc.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+>> index 75f781c11e89..de4e6e5bf304 100644
+>> --- a/drivers/mmc/host/mxcmmc.c
+>> +++ b/drivers/mmc/host/mxcmmc.c
+>> @@ -293,9 +293,10 @@ static void mxcmci_swap_buffers(struct mmc_data *da=
+ta)
+>>         int i;
+>>
+>>         for_each_sg(data->sg, sg, data->sg_len, i) {
+>> -               void *buf =3D kmap_atomic(sg_page(sg) + sg->offset;
+>> +               void *buf =3D kmap_atomic(sg_page(sg) + sg->offset);
+>>                 buffer_swap32(buf, sg->length);
+>>                 kunmap_atomic(buf);
+>> +       }
+>>  }
+>>  #else
+>>  static inline void mxcmci_swap_buffers(struct mmc_data *data) {}
+>> --
+>> 2.17.1
+>>
+>>
+>> --
+>> Kees Cook
+>> Pixel Security
+
+
+
+--=20
+Kees Cook
+Pixel Security
