@@ -2,492 +2,762 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C2AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97E6C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B12F208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:50:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B12F208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 645C020862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:52:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIgA4Vcc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645C020862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbeGaI3S (ORCPT
+        id S1729770AbeGaIbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:29:18 -0400
-Received: from mga01.intel.com ([192.55.52.88]:56918 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbeGaI3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:29:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 23:50:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,426,1526367600"; 
-   d="gz'50?scan'50,208,50";a="77408120"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga001.jf.intel.com with ESMTP; 30 Jul 2018 23:50:26 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fkOUD-000UbF-Ss; Tue, 31 Jul 2018 14:50:25 +0800
-Date:   Tue, 31 Jul 2018 14:50:21 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     kbuild-all@01.org, akpm@linux-foundation.org, mka@chromium.org,
-        ghackmann@android.com, ghackmann@google.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        NeilBrown <neilb@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-Message-ID: <201807311449.6TXkRCfh%fengguang.wu@intel.com>
-References: <20180730170622.99349-1-ndesaulniers@google.com>
+        Tue, 31 Jul 2018 04:31:37 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44137 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbeGaIbh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:31:37 -0400
+Received: by mail-oi0-f68.google.com with SMTP id s198-v6so25975833oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uUIpzbpeyEYt471cC8KcgTQV8d0C2HJ/MEN72wcuvPQ=;
+        b=UIgA4VccD4BkDMKnPzKtzaiqoKXw1YuNhSVcsHVso4TDNoEgOjqaXKtapoUxhEzj3f
+         vaAMwtsWHH+oVa4DTTUz/IpKbaOros+JALtQL9+0Kj3qfvMd4MKjBOctBzq5njg7sTI5
+         enOS60c633IuDD7otnyqMQUUXlWgPP7DxF53g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uUIpzbpeyEYt471cC8KcgTQV8d0C2HJ/MEN72wcuvPQ=;
+        b=bbQM2DsKWFnGvqxIvmEDe/7bh9rN1Hy+JRfU6yU8XCsn4bb/PfhEnNdhbCjss0Kpm0
+         oZw3VDOpJDdBQ/0cxZgnRkn1ouudy1p1K5rQZmk9rWPF/pvzaBDSDflDgBLLIEAGT8A9
+         Q+9yEOGIoMyPRDrY3j+lbeotuD1m492va/rQ++acVNvpdJ6NYHAhLfDStt1tseMhu8Zs
+         yBDkuepX8yAki3VHzBlJ79BdFlysS2PBALFbKiHCK7YE6tJzrXWbJApzD/0ZebJnHUmF
+         wPdvAPqDYYAG9TzETv+YYrJWTSHmGMufGrH4oPHI7RMX3/KgHoh83PEGhxSx/4AFZJXS
+         BKKQ==
+X-Gm-Message-State: AOUpUlEDUCM0XZTt6n3CZDppXhRHBpAN0bnQp33JuXJCdSO6ZvaCjZg+
+        VSjbPP7TyyhEsxO8gqQc2QJt3LJ0wGXFScdflkI20A==
+X-Google-Smtp-Source: AAOMgpd7r537+snzcX9Ytzz9ZxOyWD/QGn2cble75MogbK07/kB0R5UqK3SwPRqrF8qSPIuB6F5tQ78DtvuYmLZjIq0=
+X-Received: by 2002:aca:e142:: with SMTP id y63-v6mr22591857oig.128.1533019967524;
+ Mon, 30 Jul 2018 23:52:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-In-Reply-To: <20180730170622.99349-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Mon, 30 Jul 2018 23:52:46
+ -0700 (PDT)
+In-Reply-To: <CAMz4kuJ9hQw-GWfHc2XLV0YOQBJyVDKdNtnsn1P1Jw0jdk4DKg@mail.gmail.com>
+References: <e74c21120d89dd645377761e6c9995eab6eb00ca.1532953083.git.baolin.wang@linaro.org>
+ <20180731035418.GA3334@tuxbook-pro> <CAMz4kuJ9hQw-GWfHc2XLV0YOQBJyVDKdNtnsn1P1Jw0jdk4DKg@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 31 Jul 2018 14:52:46 +0800
+Message-ID: <CAMz4kuKpeciThaXNN6zww0v1yxuUQkOPdsNuPj=-zw_kWUwKuw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] leds: core: Introduce LED pattern trigger
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        David Lechner <david@lechnology.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 31 July 2018 at 14:22, Baolin Wang <baolin.wang@linaro.org> wrote:
+> Hi Bjorn,
+>
+> On 31 July 2018 at 11:54, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+>> On Mon 30 Jul 05:29 PDT 2018, Baolin Wang wrote:
+>>
+>>> Some LED controllers have support for autonomously controlling
+>>> brightness over time, according to some preprogrammed pattern or
+>>> function.
+>>>
+>>> This patch adds pattern trigger that LED device can configure the
+>>> pattern and trigger it.
+>>>
+>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>> ---
+>>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   21 ++
+>>>  drivers/leds/trigger/Kconfig                       |   10 +
+>>>  drivers/leds/trigger/Makefile                      |    1 +
+>>>  drivers/leds/trigger/ledtrig-pattern.c             |  349 ++++++++++++++++++++
+>>>  include/linux/leds.h                               |   19 ++
+>>>  5 files changed, 400 insertions(+)
+>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>> new file mode 100644
+>>> index 0000000..c52da34
+>>> --- /dev/null
+>>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>> @@ -0,0 +1,21 @@
+>>> +What:                /sys/class/leds/<led>/pattern
+>>> +Date:                August 2018
+>>> +KernelVersion:       4.19
+>>> +Description:
+>>> +             Specify a pattern for the LED, for LED hardware that support
+>>> +             altering the brightness as a function of time.
+>>> +
+>>> +             The pattern is given by a series of tuples, of brightness and
+>>> +             duration (ms). The LED is expected to traverse the series and
+>>> +             each brightness value for the specified duration. Duration of
+>>> +             0 means brightness should immediately change to new value.
+>>> +
+>>> +             The format of the pattern values should be:
+>>> +             "brightness_1 duration_1, brightness_2 duration_2, brightness_3
+>>> +             duration_3, ...".
+>>> +
+>>> +What:                /sys/class/leds/<led>/repeat
+>>> +Date:                August 2018
+>>> +KernelVersion:       4.19
+>>> +Description:
+>>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
+>>
+>> If 0 means infinity, does 1 mean "repeat 1 time"? If so how would I
+>
+> Right.
+>
+>> specify that I want the pattern to run one time (i.e. 0 repetitions).
+>
+> If you set repeat to 1 to make the driver clear the  is_indefinite
+> flag. So when the repeat number decreases to 0, it will stop.
+>
+>>
+>>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>>> index a2559b4..a03afcd 100644
+>>> --- a/drivers/leds/trigger/Kconfig
+>>> +++ b/drivers/leds/trigger/Kconfig
+>>> @@ -125,6 +125,16 @@ config LEDS_TRIGGER_CAMERA
+>>>         This enables direct flash/torch on/off by the driver, kernel space.
+>>>         If unsure, say Y.
+>>>
+>>> +config LEDS_TRIGGER_PATTERN
+>>> +       tristate "LED Pattern Trigger"
+>>> +       depends on LEDS_TRIGGERS
+>>> +       help
+>>> +         This allows LEDs blinking with an arbitrary pattern. Can be useful
+>>> +         on embedded systems with no screen to give out a status code to
+>>> +         a human.
+>>
+>> While the pattern mechanism could be used to communicate some message
+>> the use cases we've seen so far is all about enabling hardware to pulse
+>> LEDs instead of blinking them...
+>
+> Right. I will improve the message here.
+>
+>>
+>>> +
+>>> +         If unsure, say N
+>>> +
+>>>  config LEDS_TRIGGER_PANIC
+>>>       bool "LED Panic Trigger"
+>>>       depends on LEDS_TRIGGERS
+>>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+>>> index f3cfe19..c5d180e 100644
+>>> --- a/drivers/leds/trigger/Makefile
+>>> +++ b/drivers/leds/trigger/Makefile
+>>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
+>>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
+>>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
+>>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
+>>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)     += ledtrig-pattern.o
+>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+>>> new file mode 100644
+>>> index 0000000..b709aa1
+>>> --- /dev/null
+>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>>> @@ -0,0 +1,349 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +/*
+>>> + * LED pattern trigger
+>>> + *
+>>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+>>> + * the first version, Baolin Wang simplified and improved the approach.
+>>
+>> Might be a coincidence, but parts of this patch looks pretty close to
+>> mine...
+>>
+>>> + */
+>>> +
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/leds.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/mutex.h>
+>>> +#include <linux/slab.h>
+>>> +#include <linux/timer.h>
+>>> +
+>>> +/*
+>>> + * The "pattern" attribute contains at most PAGE_SIZE characters. Each line
+>>> + * in this attribute is at least 4 characters long (a 1-digit number for the
+>>> + * led brighntess, a space, a 1-digit number for the time, a semi-colon).
+>>> + * Therefore, there is at most PAGE_SIZE/4 patterns.
+>>> + */
+>>
+>> The brightness is a number between 0 and LED_FULL (or max_brightness)
+>> and delta_t is measured in ms. So neither of these are likely to be a
+>> single digit very often.
+>
+> OK. Will fix these comments.
+>
+>>
+>>> +#define MAX_PATTERNS         (PAGE_SIZE / 4)
+>>> +#define PATTERN_SEPARATOR    ","
+>>> +
+>>> +struct pattern_trig_data {
+>>> +     struct led_classdev *led_cdev;
+>>> +     struct led_pattern *patterns;
+>>> +     struct led_pattern *curr;
+>>> +     struct led_pattern *next;
+>>> +     struct mutex lock;
+>>> +     u32 npatterns;
+>>> +     u32 repeat;
+>>> +     bool is_indefinite;
+>>> +     struct timer_list timer;
+>>> +};
+>>> +
+>>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+>>
+>> I think you should just inline this logic into
+>> pattern_trig_timer_function() to make it obvious that this is only
+>> invoked from the timer function.
+>>
+>> And if you do this you can decrement data->repeat unconditionally after
+>> the check for !is_indefinite && repeat == 0.
+>
+> OK.
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We can not remove the condition, since we still should make sure the
+data->curr points the fist pattern again.
 
-Hi Nick,
+>
+>>
+>>> +{
+>>> +     data->curr = data->next;
+>>> +     if (!data->is_indefinite && data->curr == data->patterns)
+>>> +             data->repeat--;
+>>> +
+>>> +     if (data->next == data->patterns + data->npatterns - 1)
+>>> +             data->next = data->patterns;
+>>> +     else
+>>> +             data->next++;
+>>
+>> How about replacing this conditional with:
+>>
+>>         data->next = (data->next + 1) % data->npatterns;
+>
+> Good suggestion. Will do in next version.
 
-Thank you for the patch! Perhaps something to improve:
+Re-think about this. The data->next is one pointer which points next
+pattern not one index. So I think I can not do like this.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.18-rc7 next-20180727]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+>>
+>>> +}
+>>> +
+>>> +static void pattern_trig_timer_function(struct timer_list *t)
+>>> +{
+>>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
+>>> +
+>>> +     mutex_lock(&data->lock);
+>>> +
+>>> +     if (!data->is_indefinite && !data->repeat) {
+>>> +             mutex_unlock(&data->lock);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     led_set_brightness(data->led_cdev, data->curr->brightness);
+>>> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+>>> +     pattern_trig_update_patterns(data);
+>>> +
+>>> +     mutex_unlock(&data->lock);
+>>> +}
+>>> +
+>>> +static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>>> +                                    struct led_classdev *led_cdev)
+>>> +{
+>>> +     if (!data->npatterns)
+>>> +             return 0;
+>>> +
+>>> +     if (led_cdev->pattern_clear)
+>>> +             led_cdev->pattern_clear(led_cdev);
+>>> +
+>>> +     if (led_cdev->pattern_set) {
+>>
+>> In my proposal setting an empty pattern would invoke pattern_clear() and
+>> setting a pattern would invoke pattern_set(), this allows the driver to
+>> fail the pattern_set() without clearing the old pattern.
+>
+> Pavel wanted "echo none > trigger" to clear the pattern. So I am fine
+> remove the 'pattern_clear' operation in this function.
+>
+>>
+>>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
+>>> +                                          data->npatterns, data->repeat);
+>>
+>> repeat is communicated to the driver, but is_indefinite is not. At least
+>> in my driver the latter
 
-url:    https://github.com/0day-ci/linux/commits/Nick-Desaulniers/kernel-h-Disable-Wreturn-stack-address-for-_THIS_IP_/20180731-135818
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+Sorry I missed this comments. I think the repeat number can be easily
+converted to decide if is indefinite in your driver.
 
-All warnings (new ones prefixed by >>):
+>>
+>>> +     }
+>>
+>> I think it would be useful to put the rest in an else statement, to
+>> clarify that the patterns is either implemented by the driver or by the
+>> software timer. It might also make sense to group the check for
+>> pattern_clear() and pattern_set(), as it wouldn't make sense for the
+>> driver to implement only one of these.
+>
+> But checkpatch will complain the 'else' statement is redundant, maybe
+> add some comments here to make things clear?
+>
+>>
+>>> +
+>>> +     data->curr = data->patterns;
+>>> +     data->next = data->patterns + 1;
+>>> +     data->timer.expires = jiffies;
+>>> +     add_timer(&data->timer);
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static ssize_t pattern_trig_show_repeat(struct device *dev,
+>>> +                                     struct device_attribute *attr,
+>>> +                                     char *buf)
+>>> +{
+>>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +     int err;
+>>> +     u32 repeat;
+>>> +
+>>> +     mutex_lock(&data->lock);
+>>> +
+>>> +     if (led_cdev->pattern_get) {
+>>> +             err = led_cdev->pattern_get(led_cdev, data->patterns,
+>>> +                                         &data->npatterns, &data->repeat);
+>>
+>> I don't see why "repeat" would have changed since you told the driver,
+>> so data->repeat should have the right value already.
+>
+> Some drivers don't care about the repeat, and it will always repeat
+> indefinitely. So no matter what values set from userspace, driver can
+> set it to 0.
+>
+>>
+>>> +             if (err) {
+>>> +                     mutex_unlock(&data->lock);
+>>> +                     return err;
+>>> +             }
+>>> +     }
+>>> +
+>>> +     repeat = data->repeat;
+>>> +     mutex_unlock(&data->lock);
+>>> +
+>>> +     return scnprintf(buf, PAGE_SIZE, "%u\n", repeat);
+>>> +}
+>>> +
+>>> +static ssize_t pattern_trig_store_repeat(struct device *dev,
+>>> +                                      struct device_attribute *attr,
+>>> +                                      const char *buf, size_t count)
+>>> +{
+>>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +     unsigned long res;
+>>> +     int err;
+>>> +
+>>> +     err = kstrtoul(buf, 10, &res);
+>>> +     if (err)
+>>> +             return err;
+>>> +
+>>> +     del_timer_sync(&data->timer);
+>>> +
+>>> +     mutex_lock(&data->lock);
+>>> +     data->repeat = res;
+>>> +
+>>> +     /* 0 means repeat indefinitely */
+>>
+>> I think that it would be better to specify indefinite by writing e.g.
+>> "Inf" to the repeat.
+>>
+>> Also note that it's possible that there might be hardware restrictions
+>> that only allows specific combinations of these; e.g. the Qualcomm
+>> hardware can only do no-repeat or repeat-forever.
+>
+> Can you set repeat to 1 to represent no-repeat and set to 0 to
+> represent repeat-forever?
+>
+>>
+>>> +     if (!data->repeat)
+>>> +             data->is_indefinite = true;
+>>> +     else
+>>> +             data->is_indefinite = false;
+>>> +
+>>> +     err = pattern_trig_start_pattern(data, led_cdev);
+>>> +     if (err) {
+>>> +             mutex_unlock(&data->lock);
+>>> +             return err;
+>>> +     }
+>>> +
+>>> +     mutex_unlock(&data->lock);
+>>> +     return count;
+>>> +}
+>>> +
+>>> +static DEVICE_ATTR(repeat, 0644, pattern_trig_show_repeat,
+>>> +                pattern_trig_store_repeat);
+>>> +
+>>> +static ssize_t pattern_trig_show_pattern(struct device *dev,
+>>> +                                      struct device_attribute *attr,
+>>> +                                      char *buf)
+>>> +{
+>>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +     ssize_t count = 0;
+>>> +     int err, i;
+>>> +
+>>> +     mutex_lock(&data->lock);
+>>> +
+>>> +     if (led_cdev->pattern_get) {
+>>> +             err = led_cdev->pattern_get(led_cdev, data->patterns,
+>>> +                                         &data->npatterns, &data->repeat);
+>>> +             if (err) {
+>>> +                     mutex_unlock(&data->lock);
+>>> +                     return err;
+>>> +             }
+>>> +     }
+>>
+>> Rather than sometimes calling pattern_get() here, how about defining
+>> that pattern_set() should update data->patterns before returning and
+>> just rely on data->patterns being right.
+>>
+>> (The reason for the pattern not being the same as passed in store would
+>> be to allow the driver to adjust the parameters to the match the
+>> hardware requirements and present this to the user)
+>
+> Hmmm, so we can remove the 'pattern_get' interface and always trust
+> data->patterns.
+>
+>>
+>>> +
+>>> +     if (!data->npatterns) {
+>>> +             mutex_unlock(&data->lock);
+>>> +             return -EINVAL;
+>>> +     }
+>>
+>> Rather than failing I think you should return the empty string if the
+>> pattern is empty.
+>
+> Sure.
+>
+>>
+>>> +
+>>> +     for (i = 0; i < data->npatterns; i++) {
+>>> +             count += scnprintf(buf + count, PAGE_SIZE - count,
+>>> +                                "%d %d" PATTERN_SEPARATOR,
+>>> +                                data->patterns[i].brightness,
+>>> +                                data->patterns[i].delta_t);
+>>> +     }
+>>> +
+>>> +     buf[count - 1] = '\n';
+>>> +     buf[count] = '\0';
+>>> +
+>>> +     mutex_unlock(&data->lock);
+>>> +     return count + 1;
+>>
+>> As you're returning a string I think you should return the number of
+>> chars in the string, not including the '\0'.
+>
+> Sure.
+>
+>>
+>>> +}
+>>> +
+>>> +static ssize_t pattern_trig_store_pattern(struct device *dev,
+>>> +                                       struct device_attribute *attr,
+>>> +                                       const char *buf, size_t count)
+>>> +{
+>>> +     struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +     int err, cr, ccount, tcr = 0;
+>>> +
+>>> +     del_timer_sync(&data->timer);
+>>> +
+>>> +     mutex_lock(&data->lock);
+>>> +
+>>> +     for (data->npatterns = 0; data->npatterns < MAX_PATTERNS;
+>>> +          data->npatterns++) {
+>>> +             /* Characters read on one conversion */
+>>> +             cr = 0;
+>>> +             /* Number of successful conversions */
+>>> +             ccount = sscanf(buf + tcr, "%d %d " PATTERN_SEPARATOR "%n",
+>>> +                             &data->patterns[data->npatterns].brightness,
+>>> +                             &data->patterns[data->npatterns].delta_t, &cr);
+>>
+>> I'm not fond of the use of sscanf() here, but at least you should make
+>> sure that tcr doesn't go past PAGE_SIZE.
+>
+> Yes.
+>
+>>
+>>> +
+>>> +             /* Total characters read */
+>>> +             tcr += cr;
+>>> +             if (cr)
+>>> +                     continue;
+>>
+>> This loop is non-intuitive...
+>>
+>> You loop while npatterns is less than MAX_PATTERNS and the first half
+>> will loop if sscanf() matched the pattern otherwise you'll return from
+>> withing the loop.
+>
+> OK. Will improve this loop here in next version.
+>
+>>
+>>> +
+>>> +             /* Invalid syntax or end of pattern */
+>>> +             if (ccount == 2)
+>>
+>> I guess you'll get here if you match the two %d, but not the
+>> PATTERN_SEPARATOR? Wouldn't it be useful to fail here if ccount is !2.
+>
+> Yes. OK, I will fail it if ccount is !2.
+>
+>>
+>>> +                     data->npatterns++;
+>>> +
+>>> +             err = pattern_trig_start_pattern(data, led_cdev);
+>>> +             if (err) {
+>>> +                     mutex_unlock(&data->lock);
+>>> +                     return err;
+>>> +             }
+>>> +
+>>> +             mutex_unlock(&data->lock);
+>>> +             return count;
+>>> +     }
+>>> +
+>>> +     /* Shouldn't reach that */
+>>
+>> This means that you failed to set the pattern, so you probably shouldn't
+>> return count - but rather -EINVAL or something.
+>
+> Right.
+>
+>>
+>>> +     WARN(1, "MAX_NSTEP too small. Please report\n");
+>>> +     mutex_unlock(&data->lock);
+>>> +     return count;
+>>> +}
+>>> +
+>>> +static DEVICE_ATTR(pattern, 0644, pattern_trig_show_pattern,
+>>> +                pattern_trig_store_pattern);
+>>> +
+>>> +static int pattern_trig_create_sysfs_files(struct device *dev)
+>>> +{
+>>> +     int err;
+>>> +
+>>> +     err = device_create_file(dev, &dev_attr_repeat);
+>>> +     if (err)
+>>> +             return err;
+>>> +
+>>> +     err = device_create_file(dev, &dev_attr_pattern);
+>>> +     if (err)
+>>> +             device_remove_file(dev, &dev_attr_repeat);
+>>> +
+>>> +     return err;
+>>> +}
+>>> +
+>>> +static void pattern_trig_remove_sysfs_files(struct device *dev)
+>>> +{
+>>> +     device_remove_file(dev, &dev_attr_pattern);
+>>> +     device_remove_file(dev, &dev_attr_repeat);
+>>> +}
+>>> +
+>>> +static int pattern_trig_initialize_data(struct pattern_trig_data *data)
+>>
+>> These two functions would be better to just inline, but...
+>
+> Will re-consider these two functions.
+>
+>>
+>>> +{
+>>> +     data->patterns = kcalloc(MAX_PATTERNS, sizeof(struct led_pattern),
+>>> +                              GFP_KERNEL);
+>>
+>> ...as this always allocate 1024 entries of led_pattern associated with
+>> the pattern_trig_data you should just add 1024 entries of led_pattern to
+>> the pattern_trig_data struct.
+>
+> Right.
+>
+>>
+>>> +     if (!data->patterns)
+>>> +             return -ENOMEM;
+>>> +
+>>> +     data->is_indefinite = true;
+>>> +     mutex_init(&data->lock);
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static void pattern_trig_clear_data(struct pattern_trig_data *data)
+>>> +{
+>>> +     kfree(data->patterns);
+>>> +}
+>>> +
+>>> +static void pattern_trig_activate(struct led_classdev *led_cdev)
+>>> +{
+>>> +     struct pattern_trig_data *data;
+>>> +     int err;
+>>> +
+>>> +     data = kzalloc(sizeof(*data), GFP_KERNEL);
+>>> +     if (!data)
+>>> +             return;
+>>> +
+>>> +     err = pattern_trig_initialize_data(data);
+>>> +     if (err) {
+>>> +             kfree(data);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     err = pattern_trig_create_sysfs_files(led_cdev->dev);
+>>> +     if (err) {
+>>> +             pattern_trig_clear_data(data);
+>>> +             kfree(data);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     data->led_cdev = led_cdev;
+>>> +     led_cdev->trigger_data = data;
+>>> +     timer_setup(&data->timer, pattern_trig_timer_function, 0);
+>>> +     led_cdev->activated = true;
+>>> +}
+>>> +
+>>> +static void pattern_trig_deactivate(struct led_classdev *led_cdev)
+>>> +{
+>>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>>> +
+>>> +     if (!led_cdev->activated)
+>>> +             return;
+>>> +
+>>> +     if (led_cdev->pattern_clear)
+>>> +             led_cdev->pattern_clear(led_cdev);
+>>> +
+>>> +     del_timer_sync(&data->timer);
+>>
+>> This should only happen when not having using the driver based
+>> mechanism, so put this in an else to clarify this.
+>
+> OK.
+>
+>>
+>>> +     pattern_trig_remove_sysfs_files(led_cdev->dev);
+>>
+>> Inline this and one doesn't have to jump around to figure out what's
+>> going on.
+>
+> Sure. Thanks for your useful comments.
+>
+>>
+>>> +     led_set_brightness(led_cdev, LED_OFF);
+>>> +     pattern_trig_clear_data(data);
+>>> +     kfree(data);
+>>> +     led_cdev->trigger_data = NULL;
+>>> +     led_cdev->activated = false;
+>>> +}
+>>> +
+>>> +static struct led_trigger pattern_led_trigger = {
+>>> +     .name = "pattern",
+>>> +     .activate = pattern_trig_activate,
+>>> +     .deactivate = pattern_trig_deactivate,
+>>> +};
+>>> +
+>>> +static int __init pattern_trig_init(void)
+>>> +{
+>>> +     return led_trigger_register(&pattern_led_trigger);
+>>> +}
+>>> +
+>>> +static void __exit pattern_trig_exit(void)
+>>> +{
+>>> +     led_trigger_unregister(&pattern_led_trigger);
+>>> +}
+>>> +
+>>> +module_init(pattern_trig_init);
+>>> +module_exit(pattern_trig_exit);
+>>> +
+>>> +MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
+>>> +MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org");
+>>> +MODULE_DESCRIPTION("LED Pattern trigger");
+>>> +MODULE_LICENSE("GPL v2");
+>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>> index b7e8255..bea02f0 100644
+>>> --- a/include/linux/leds.h
+>>> +++ b/include/linux/leds.h
+>>> @@ -22,6 +22,7 @@
+>>>  #include <linux/workqueue.h>
+>>>
+>>>  struct device;
+>>> +struct led_pattern;
+>>>  /*
+>>>   * LED Core
+>>>   */
+>>> @@ -88,6 +89,14 @@ struct led_classdev {
+>>>                                    unsigned long *delay_on,
+>>>                                    unsigned long *delay_off);
+>>>
+>>> +     int (*pattern_set)(struct led_classdev *led_cdev,
+>>> +                        struct led_pattern *pattern, int len,
+>>> +                        unsigned repeat);
+>>> +     int (*pattern_get)(struct led_classdev *led_cdev,
+>>> +                        struct led_pattern *pattern, int *len,
+>>> +                        unsigned *repeat);
+>>> +     int (*pattern_clear)(struct led_classdev *led_cdev);
+>>> +
+>>>       struct device           *dev;
+>>>       const struct attribute_group    **groups;
+>>>
+>>> @@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+>>>       struct led_classdev *led_cdev, enum led_brightness brightness) { }
+>>>  #endif
+>>>
+>>> +/**
+>>> + * struct led_pattern - brightness value in a pattern
+>>> + * @delta_t: delay until next entry, in milliseconds
+>>> + * @brightness: brightness at time = 0
+>>> + */
+>>> +struct led_pattern {
+>>> +     int delta_t;
+>>> +     int brightness;
+>>> +};
+>>> +
+>>>  #endif               /* __LINUX_LEDS_H_INCLUDED */
+>>> --
+>>> 1.7.9.5
+>>>
+>
+>
+>
+> --
+> Baolin Wang
+> Best Regards
 
-   In file included from include/linux/spinlock.h:58:0,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:6,
-                    from include/linux/slab.h:15,
-                    from include/linux/crypto.h:24,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   include/linux/bottom_half.h: In function 'local_bh_disable':
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h: In function 'local_bh_enable':
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   In file included from include/linux/mmzone.h:8:0,
-                    from include/linux/gfp.h:6,
-                    from include/linux/slab.h:15,
-                    from include/linux/crypto.h:24,
-                    from arch/x86/kernel/asm-offsets.c:9:
-   include/linux/spinlock.h: In function 'spin_lock_bh':
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_lock_bh(&lock->rlock);
-    
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_unlock_bh':
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_unlock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_trylock_bh':
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     return raw_spin_trylock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
---
-   In file included from include/linux/rcupdate.h:41:0,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from kernel//sched/sched.h:5,
-                    from kernel//sched/core.c:8:
-   include/linux/bottom_half.h: In function 'local_bh_disable':
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h: In function 'local_bh_enable':
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   In file included from include/linux/seqlock.h:36:0,
-                    from include/linux/time.h:6,
-                    from include/linux/ktime.h:24,
-                    from include/linux/rcutiny.h:28,
-                    from include/linux/rcupdate.h:210,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from kernel//sched/sched.h:5,
-                    from kernel//sched/core.c:8:
-   include/linux/spinlock.h: In function 'spin_lock_bh':
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_lock_bh(&lock->rlock);
-    
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_unlock_bh':
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_unlock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_trylock_bh':
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     return raw_spin_trylock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel//sched/core.c: In function 'prepare_lock_switch':
->> kernel//sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
-    
->> kernel//sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> kernel//sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel//sched/core.c: In function 'finish_lock_switch':
-   kernel//sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     spin_acquire(&rq->lock.dep_map, 0, 0, _THIS_IP_);
-    
-   kernel//sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel//sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
---
-   In file included from include/linux/spinlock.h:58:0,
-                    from include/linux/irq.h:14,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:9,
-                    from kernel//time/timer.c:22:
-   include/linux/bottom_half.h: In function 'local_bh_disable':
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h: In function 'local_bh_enable':
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   In file included from include/linux/irq.h:14:0,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:9,
-                    from kernel//time/timer.c:22:
-   include/linux/spinlock.h: In function 'spin_lock_bh':
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_lock_bh(&lock->rlock);
-    
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_unlock_bh':
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_unlock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_trylock_bh':
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     return raw_spin_trylock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel//time/timer.c: In function 'call_timer_fn':
->> kernel//time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     lock_map_acquire(&lockdep_map);
-    
->> kernel//time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> kernel//time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
---
-   In file included from include/linux/rcupdate.h:41:0,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from kernel///sched/sched.h:5,
-                    from kernel///sched/core.c:8:
-   include/linux/bottom_half.h: In function 'local_bh_disable':
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h: In function 'local_bh_enable':
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   In file included from include/linux/seqlock.h:36:0,
-                    from include/linux/time.h:6,
-                    from include/linux/ktime.h:24,
-                    from include/linux/rcutiny.h:28,
-                    from include/linux/rcupdate.h:210,
-                    from include/linux/rculist.h:11,
-                    from include/linux/pid.h:5,
-                    from include/linux/sched.h:14,
-                    from kernel///sched/sched.h:5,
-                    from kernel///sched/core.c:8:
-   include/linux/spinlock.h: In function 'spin_lock_bh':
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_lock_bh(&lock->rlock);
-    
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_unlock_bh':
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_unlock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_trylock_bh':
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     return raw_spin_trylock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///sched/core.c: In function 'prepare_lock_switch':
-   kernel///sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     spin_release(&rq->lock.dep_map, 1, _THIS_IP_);
-    
-   kernel///sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///sched/core.c:2590:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///sched/core.c: In function 'finish_lock_switch':
-   kernel///sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     spin_acquire(&rq->lock.dep_map, 0, 0, _THIS_IP_);
-    
-   kernel///sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///sched/core.c:2604:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
---
-   In file included from include/linux/spinlock.h:58:0,
-                    from include/linux/irq.h:14,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:9,
-                    from kernel///time/timer.c:22:
-   include/linux/bottom_half.h: In function 'local_bh_disable':
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/bottom_half.h:19:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h: In function 'local_bh_enable':
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-    
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/bottom_half.h:32:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   In file included from include/linux/irq.h:14:0,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:9,
-                    from kernel///time/timer.c:22:
-   include/linux/spinlock.h: In function 'spin_lock_bh':
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_lock_bh(&lock->rlock);
-    
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
->> include/linux/spinlock.h:315:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_unlock_bh':
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     raw_spin_unlock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:355:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h: In function 'spin_trylock_bh':
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     return raw_spin_trylock_bh(&lock->rlock);
-    
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   include/linux/spinlock.h:370:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///time/timer.c: In function 'call_timer_fn':
-   kernel///time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-     lock_map_acquire(&lockdep_map);
-    
-   kernel///time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
-   kernel///time/timer.c:1323:0: warning: ignoring #pragma clang diagnostic [-Wunknown-pragmas]
 
-vim +19 include/linux/bottom_half.h
 
-0bd3a173 Peter Zijlstra 2013-11-19  16  
-0bd3a173 Peter Zijlstra 2013-11-19  17  static inline void local_bh_disable(void)
-0bd3a173 Peter Zijlstra 2013-11-19  18  {
-0bd3a173 Peter Zijlstra 2013-11-19 @19  	__local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-0bd3a173 Peter Zijlstra 2013-11-19  20  }
-0bd3a173 Peter Zijlstra 2013-11-19  21  
-
-:::::: The code at line 19 was first introduced by commit
-:::::: 0bd3a173d711857fc9f583eb5825386cc08f3948 sched/preempt, locking: Rework local_bh_{dis,en}able()
-
-:::::: TO: Peter Zijlstra <peterz@infradead.org>
-:::::: CC: Ingo Molnar <mingo@kernel.org>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---C7zPtVaVf+AK4Oqc--
+-- 
+Baolin Wang
+Best Regards
