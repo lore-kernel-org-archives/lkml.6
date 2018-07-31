@@ -2,146 +2,263 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_ADSP_ALL,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E25C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D048C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841AE20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F6720841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="Cu/xmHJt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841AE20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATose/Wt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F6720841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731342AbeGaUQI (ORCPT
+        id S1731781AbeGaUXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:16:08 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:51288 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729680AbeGaUQI (ORCPT
+        Tue, 31 Jul 2018 16:23:00 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42561 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729645AbeGaUXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:16:08 -0400
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 66CE03BCEF1;
-        Tue, 31 Jul 2018 20:34:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1533062071;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references;
-        bh=zHzXNYUzUEt8oTi7rU9nsw1TzLNtCLrx/potDoaPMEM=;
-        b=Cu/xmHJtHxkk3Vba5DKd3+iuATZMyai4UNGjGG98si6ne8xo5RK2q7xkgsD6RGkbcES8EQ
-        Ue4bGUjWYwlq1Va4oLJ9c4M7D0658G2quvUnjkxKoKjBcfTFGu5rl9h70CUVxukmcNPIda
-        MngHk7tgq7NVgTTKtlWLKYZBfBROK24=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 66CE03BCEF1
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Tue, 31 Jul 2018 16:23:00 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u202-v6so11478147lff.9;
+        Tue, 31 Jul 2018 11:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8NOJpxsmR9ReBXFbLY4RBjZ5vXvjiuyG+zrpa/tFRYg=;
+        b=ATose/WtqhJbjF4h5kb/GYn0JShittC1Vu0dcOpEHIfmD4RiAkKO6Cuo6Nvv+518QA
+         XKpn8OA968zpQHPkpXgdS3G+E9M3pRR8FJ7S51EK8LM0wEJgeObtyW4YOSXQenFmUMyc
+         vyyuBcDysRZjzg7FmUTl0+35kADFAwykrHmb1jOQTb9X4ecVyhcLVzoNvfak3lkC1Tnv
+         /kdH1HnxxfWOD8wTWhbeLWI2GkessNiUJvfPF8wL0RF3y/sB6cdZly0vlgXwC/VYHDs1
+         JTgXlGL1hA73oZ8caJQuDfuaA3sIcjIM6XBOzmg2ZpUgmHTqDhPTCRQnLQaQ0l0vhgmo
+         AY7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8NOJpxsmR9ReBXFbLY4RBjZ5vXvjiuyG+zrpa/tFRYg=;
+        b=iVagrvf4sl49s1LQllxWOlA3EN2b6UGi7h7KhBhmqxJjXOZcqsHHC4XjOHzl09hweX
+         47rMJu/I3m1/gFETM1rYvtzv4N5JmjpV+HHRP9d+3s7QEEDb+aEh/gORk//Q8NSCvp20
+         YHLlZEgYrV8zEB3hQ2UsXcNo1aRID4r3vBho9T/O+Nse4STLrvZFeihbe7hEY9ejGqN7
+         GEDYk0wgybh/l3FEbhT6att+vjUVBRQbgeGD1UZP9zeJC2rd2uhx5sRatHyG6MZ1tzxj
+         WvsnnbwddvwDeQSuXHw+fvmvp4SJVvFikQ6YUmnrABNJXBpIz0gDfgOOQUSAvu8KlQ4L
+         pSwQ==
+X-Gm-Message-State: AOUpUlGe7Sm8MEyzW/CNaJxT3XIIAWLmpdZNMmoyX017Ulzf4s5nLmYd
+        ErFIGLfzZfGOdxppW49c87OtcoGngP8bG2XyObA=
+X-Google-Smtp-Source: AAOMgpdPTo8lZqC+b86AD7G2eKyGm6qawISlDNi7mS82KfNeAl1dgY9QwbRiLeIZ9b3yxFNfSXKObPHijvVAKSqrGw0=
+X-Received: by 2002:a19:e119:: with SMTP id y25-v6mr14784677lfg.3.1533062482245;
+ Tue, 31 Jul 2018 11:41:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 31 Jul 2018 20:34:31 +0200
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     kai.heng.feng@canonical.com
-Cc:     arnd@arndb.de, bauer.chen@realtek.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        ricky_wu@realtek.com, stern@rowland.harvard.edu,
-        ulf.hansson@linaro.org
-Subject: Re: [PATCH 0/5 v4] Keep rtsx_usb suspended when there's no card
-In-Reply-To:  <<20180731061721.15831-1-kai.heng.feng@canonical.com>>
-Message-ID: <17ae77968909919de05cdfb7d53ced3f@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.6
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1533062071;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references;
-        bh=zHzXNYUzUEt8oTi7rU9nsw1TzLNtCLrx/potDoaPMEM=;
-        b=Xc2ZWW/00TvVTjsv4nj/lqyN9JOacrOu1WudsSlgH/hw6Ek4U4pJpBEFPznU/sJut2vueh
-        wXsi7QujA5RfGq5qhTp+ja1U475IiNpJdN7TpKtRYAQRWzJnvDv/exDJDHtgnYe7Y9m6EG
-        zqxmz6D/FxKS9Aypiv2uNSRlFrkqcyA=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1533062071; a=rsa-sha256;
-        cv=none;
-        b=Rg+hAWGjinCJ9/HMrty7UEIEBxmTNxXdxIBZevwpbAsarF63wPiorTqtDvIsRJzbbJn//N3WEv+SdU0taZVP9/QXRsHaKUX5rdlSOaFk87fiI4Smc8bSZdx15YfbTE2iFvqyKRiMsk2Y4QHdliVhGrPA0DWomnbwqrIhVbgEi68=
-ARC-Authentication-Results: i=1; vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 11:41:21
+ -0700 (PDT)
+In-Reply-To: <20180731103440.GD17455@e110455-lin.cambridge.arm.com>
+References: <20180730190137.GA25420@jordon-HP-15-Notebook-PC> <20180731103440.GD17455@e110455-lin.cambridge.arm.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Wed, 1 Aug 2018 00:11:21 +0530
+Message-ID: <CAFqt6zbEur=h4pRxs-XNZhTbtwQMdbwwOLmiFDQmhNDVx3msJA@mail.gmail.com>
+Subject: Re: [PATCH] drm: Convert drm_atomic_helper_suspend/resume()
+To:     Liviu Dudau <liviu.dudau@arm.com>
+Cc:     Brian Starkey <brian.starkey@arm.com>, malidp@foss.arm.com,
+        airlied@linux.ie, Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Tue, Jul 31, 2018 at 4:04 PM, Liviu Dudau <liviu.dudau@arm.com> wrote:
+> Hi Souptick,
+>
+> On Tue, Jul 31, 2018 at 12:31:37AM +0530, Souptick Joarder wrote:
+>> convert drm_atomic_helper_suspend/resume() to use
+>> drm_mode_config_helper_suspend/resume().
+>>
+>> With this conversion, drm_fbdev_cma_set_suspend_unlocked()
+>> will left with no consumer. So this function can be removed.
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+>> ---
+>>  drivers/gpu/drm/arm/hdlcd_drv.c       | 26 ++------------------------
+>>  drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
+>>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
+>>  include/drm/drm_fb_cma_helper.h       |  2 --
+>>  4 files changed, 4 insertions(+), 63 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd=
+_drv.c
+>> index feaa8bc..4e617e0 100644
+>> --- a/drivers/gpu/drm/arm/hdlcd_drv.c
+>> +++ b/drivers/gpu/drm/arm/hdlcd_drv.c
+>> @@ -427,37 +427,15 @@ static int hdlcd_remove(struct platform_device *pd=
+ev)
+>>  static int __maybe_unused hdlcd_pm_suspend(struct device *dev)
+>>  {
+>>       struct drm_device *drm =3D dev_get_drvdata(dev);
+>> -     struct hdlcd_drm_private *hdlcd =3D drm ? drm->dev_private : NULL;
+>>
+>> -     if (!hdlcd)
+>> -             return 0;
+>> -
+>> -     drm_kms_helper_poll_disable(drm);
+>> -     drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 1);
+>> -
+>> -     hdlcd->state =3D drm_atomic_helper_suspend(drm);
+>> -     if (IS_ERR(hdlcd->state)) {
+>> -             drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 0);
+>> -             drm_kms_helper_poll_enable(drm);
+>> -             return PTR_ERR(hdlcd->state);
+>> -     }
+>> -
+>> -     return 0;
+>> +     return drm_mode_config_helper_suspend(drm);
+>>  }
+>>
+>>  static int __maybe_unused hdlcd_pm_resume(struct device *dev)
+>>  {
+>>       struct drm_device *drm =3D dev_get_drvdata(dev);
+>> -     struct hdlcd_drm_private *hdlcd =3D drm ? drm->dev_private : NULL;
+>> -
+>> -     if (!hdlcd)
+>> -             return 0;
+>>
+>> -     drm_atomic_helper_resume(drm, hdlcd->state);
+>> -     drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 0);
+>> -     drm_kms_helper_poll_enable(drm);
+>> -
+>> -     return 0;
+>> +     return drm_mode_config_helper_resume(drm);
+>>  }
+>
+> This patch is similar to the one Noralf Tr=C3=B8nnes submitted, and his i=
+s
+> also cleaning up the state variable in hdlcd_drm_private. The patch has
+> been queued as commit f69d9686e5d9 in git://linux-arm.org/linux-ld.git
+> for-upstream/hdlcd and I will send a pull request today for it.
+>
+> Best regards,
+> Liviu
 
-> Hi,
-> 
-> This is based on Ulf's work [1] [2].
-> 
-> This patch series can keep rtsx_usb suspended, to save ~0.5W on Intel
-> platforms and ~1.5W on AMD platforms.
-> 
-> [1] https://patchwork.kernel.org/patch/10440583/
-> [2] https://patchwork.kernel.org/patch/10445725/
-> 
-> Kai-Heng Feng (5):
->   misc: rtsx_usb: Use USB remote wakeup signaling for card insertion
->     detection
->   memstick: Prevent memstick host from getting runtime suspended during
->     card detection
->   memstick: rtsx_usb_ms: Use ms_dev() helper
->   memstick: rtsx_usb_ms: Support runtime power management
->   misc: rtsx_usb: / memstick: rtsx_usb_ms: Avoid long delay before
->     system suspend
-> 
-> v4: Use pm_runtime_put() in memstick_check().
-> 
-> v3: Skip parent device check in rtsx_usb_resume_child().
->     Remove dev_dbg() if it only prints function name.
->     Use ms_dev() helper at more places.
->     Remove const qualifier for UNIVERSAL_DEV_PM_OPS.
-> 
-> v2: Resend to linux-usb and LKML.
-> 
-> ---
-> 
-> Kai-Heng Feng (5):
->   misc: rtsx_usb: Use USB remote wakeup signaling for card insertion
->     detection
->   memstick: Prevent memstick host from getting runtime suspended during
->     card detection
->   memstick: rtsx_usb_ms: Use ms_dev() helper
->   memstick: rtsx_usb_ms: Support runtime power management
->   misc: rtsx_usb: / memstick: rtsx_usb_ms: Avoid long delay before
->     system suspend
-> 
->  drivers/memstick/core/memstick.c    |   4 +
->  drivers/memstick/host/rtsx_usb_ms.c | 148 +++++++++++++++-------------
->  drivers/misc/cardreader/rtsx_usb.c  |   9 ++
->  3 files changed, 91 insertions(+), 70 deletions(-)
-> 
+unable to clone this repository.
+can you please post the patchwork link ?
+
+>
+>>
+>>  static SIMPLE_DEV_PM_OPS(hdlcd_pm_ops, hdlcd_pm_suspend, hdlcd_pm_resum=
+e);
+>> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_f=
+b_cma_helper.c
+>> index 186d00a..f604a84 100644
+>> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+>> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+>> @@ -529,21 +529,3 @@ void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma=
+ *fbdev_cma, bool state)
+>>               drm_fb_helper_set_suspend(&fbdev_cma->fb_helper, state);
+>>  }
+>>  EXPORT_SYMBOL(drm_fbdev_cma_set_suspend);
+>> -
+>> -/**
+>> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
+>> - *                                      drm_fb_helper_set_suspend_unloc=
+ked
+>> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
+>> - * @state: desired state, zero to resume, non-zero to suspend
+>> - *
+>> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
+>> - * fb_set_suspend implemented by fbdev core.
+>> - */
+>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma=
+,
+>> -                                     bool state)
+>> -{
+>> -     if (fbdev_cma)
+>> -             drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
+>> -                                                state);
+>> -}
+>> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rca=
+r-du/rcar_du_drv.c
+>> index 02aee6c..288220f 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+>> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device *d=
+ev)
+>>  static int rcar_du_pm_suspend(struct device *dev)
+>>  {
+>>       struct rcar_du_device *rcdu =3D dev_get_drvdata(dev);
+>> -     struct drm_atomic_state *state;
+>>
+>> -     drm_kms_helper_poll_disable(rcdu->ddev);
+>> -     drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+>> -
+>> -     state =3D drm_atomic_helper_suspend(rcdu->ddev);
+>> -     if (IS_ERR(state)) {
+>> -             drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+>> -             drm_kms_helper_poll_enable(rcdu->ddev);
+>> -             return PTR_ERR(state);
+>> -     }
+>> -
+>> -     rcdu->suspend_state =3D state;
+>> -
+>> -     return 0;
+>> +     return drm_mode_config_helper_suspend(rcdu->ddev);
+>>  }
+>>
+>>  static int rcar_du_pm_resume(struct device *dev)
+>>  {
+>>       struct rcar_du_device *rcdu =3D dev_get_drvdata(dev);
+>>
+>> -     drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
+>> -     drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
+>> -     drm_kms_helper_poll_enable(rcdu->ddev);
+>> -
+>> -     return 0;
+>> +     return drm_mode_config_helper_resume(rcdu->ddev);
+>>  }
+>>  #endif
+>>
+>> diff --git a/include/drm/drm_fb_cma_helper.h b/include/drm/drm_fb_cma_he=
+lper.h
+>> index d532f88a..15c4569 100644
+>> --- a/include/drm/drm_fb_cma_helper.h
+>> +++ b/include/drm/drm_fb_cma_helper.h
+>> @@ -33,8 +33,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_de=
+vice *dev,
+>>  void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
+>>  void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
+>>  void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool st=
+ate);
+>> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma=
+,
+>> -                                     bool state);
+>>
+>>  struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct drm_framebuffe=
+r *fb,
+>>       unsigned int plane);
+>> --
+>> 1.9.1
+>>
+>
 > --
-> 2.17.1
-
-For the following device:
-
-$ lsusb | grep Realtek
-Bus 001 Device 004: ID 0bda:0129 Realtek Semiconductor Corp. RTS5129 
-Card Reader Controller
-
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-
-No smoke.
-
-Thanks.
-
--- 
-   Oleksandr Natalenko (post-factum)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> | I would like to |
+> | fix the world,  |
+> | but they're not |
+> | giving me the   |
+>  \ source code!  /
+>   ---------------
+>     =C2=AF\_(=E3=83=84)_/=C2=AF
