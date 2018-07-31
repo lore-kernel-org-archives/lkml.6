@@ -5,123 +5,132 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD0AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3503AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD30320841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:33:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD30320841
+	by mail.kernel.org (Postfix) with ESMTP id E2D5820894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 22:37:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2D5820894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732678AbeHAAQR (ORCPT
+        id S1732690AbeHAATq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:16:17 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:40900 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732549AbeHAAQR (ORCPT
+        Tue, 31 Jul 2018 20:19:46 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40230 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732649AbeHAATq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:16:17 -0400
-Received: by mail-io0-f196.google.com with SMTP id l14-v6so14421454iob.7;
-        Tue, 31 Jul 2018 15:33:47 -0700 (PDT)
+        Tue, 31 Jul 2018 20:19:46 -0400
+Received: by mail-it0-f68.google.com with SMTP id h23-v6so6658969ita.5;
+        Tue, 31 Jul 2018 15:37:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IUi7EKquHvJ3g6za1/zjw7Q107dmvKFQhrJJZZaiMTg=;
-        b=CQOvVvPFDN3Y9mRvCWXEKqFW8NHpUuuIzyhV6hBR88t7cIqa4fFpwDlpSyvs10n+Xq
-         sYSszKQjQ1LC3/XMRxzDdpdltuid5fV6J3p18EY9PBDQsu7jutD1+Kk/IjOKQl6ERmv6
-         /Otv6JAEG7JNugDHpPVjt/knYC0biXd20IG7h7oQ0vUeLlCHvBCBtEruC2UWn8bRweGk
-         Z8vlb0HDLeJraOmF4RlvdeT9yvvNGHHeQDT0fIIBZ0BVduwgUUL+p23/QnP2nFEyq7ot
-         SXs2+UcR63uyRdV9qdjy8ICi9LdAfIawzCr0xWxMXeQaLBLsI/JPXpd6/90T9ufKvd/L
-         80sA==
-X-Gm-Message-State: AOUpUlFcCIFboTRj5Me9Eo9wA49yRc1ZZIX/lGw0/UZ59ffqbEc/m0Lw
-        SLyeuzVl2nzVh0H10KCj0cUUPuJXNw==
-X-Google-Smtp-Source: AAOMgpdAph6YFD+vLHDasMijvtUj2lsIqYVXWHyiIoDUBYDkAoFkk1EXyBRsCjlmc56LUVf7w/XsfQ==
-X-Received: by 2002:a6b:6e19:: with SMTP id d25-v6mr1406744ioh.55.1533076426865;
-        Tue, 31 Jul 2018 15:33:46 -0700 (PDT)
+        bh=8A9IFqvUJjVsChVBVOp0LAMbEStsABcXzU9z+UMOfkY=;
+        b=RzwZaKCfJnaiwGZMbX/tG9gZccjpbpZ8I2nzAY6Zf2ng/69GX/DEMtsoRw1u6EFlTg
+         lFybG0/hAdb77IbYGftZ5ANhIcLgyFRHwC/V5DtBIx30Ymg22z+iHL85ZDpyNXtE4nJZ
+         BDgRNhjOIihDrmQw+gtOywiEVl239u5K1C/UJfB3XDE4CQ6kd/jb0TF9Lq0/Sn6hxBAG
+         MREhvY2lCT4R0iipewqqag+6O31EIe4hY4+kdcwkU4M9ljwHq1qF69VOSswvaN/AZlGI
+         WQX9KkKmOTkLv4hnX+1P+Slo9bYJRJFOBVjoEUxwRevr1sNDm2bCSP4qCHxFHTAIbTqc
+         1gFw==
+X-Gm-Message-State: AOUpUlFK0ACVtp+95S7YIm+qmHT+cBkvDq2mCJxvdbOzRmTAP3/4S9NI
+        Ke0SYKcUKR8hC8M1UOphwA==
+X-Google-Smtp-Source: AAOMgpfzBZT0WgIy+JEOaPRiByBmw7bmIYAPWo6oJLVGdFLWfdUPKeoLc5YCvfdgnEDpumoV5fQNBA==
+X-Received: by 2002:a24:118f:: with SMTP id 137-v6mr1462555itf.30.1533076636012;
+        Tue, 31 Jul 2018 15:37:16 -0700 (PDT)
 Received: from localhost ([24.51.61.72])
-        by smtp.gmail.com with ESMTPSA id f204-v6sm2050256itc.13.2018.07.31.15.33.45
+        by smtp.gmail.com with ESMTPSA id 125-v6sm2249210itm.29.2018.07.31.15.37.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 15:33:46 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 16:33:45 -0600
+        Tue, 31 Jul 2018 15:37:15 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 16:37:14 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     John Crispin <john@phrozen.org>
-Cc:     Alban Bedel <albeu@free.fr>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: phy-qcom-ipq4019-usb: add binding
- document
-Message-ID: <20180731223345.GA23086@rob-hp-laptop>
-References: <20180725054059.19506-1-john@phrozen.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH 4/6] dt-bindings: interrupt-controller: RISC-V local
+ interrupt controller docs
+Message-ID: <20180731223714.GA12168@rob-hp-laptop>
+References: <20180725093649.32332-1-hch@lst.de>
+ <20180725093649.32332-5-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180725054059.19506-1-john@phrozen.org>
+In-Reply-To: <20180725093649.32332-5-hch@lst.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 07:40:57AM +0200, John Crispin wrote:
-> This patch adds the binding documentation for the HS/SS USB PHY found
-> inside Qualcom Dakota SoCs.
-
-Qualcomm
-
+On Wed, Jul 25, 2018 at 11:36:47AM +0200, Christoph Hellwig wrote:
+> From: Palmer Dabbelt <palmer@dabbelt.com>
 > 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: John Crispin <john@phrozen.org>
+> This patch adds documentation on the RISC-V local interrupt controller,
+> which is a per-hart interrupt controller that manages all interrupts
+> entering a RISC-V hart.  This interrupt controller is present on all
+> RISC-V systems.
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
 > ---
->  .../bindings/phy/phy-qcom-ipq4019-usb.txt           | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
+>  .../interrupt-controller/riscv,cpu-intc.txt   | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+
+My questions and comments on the prior version from Palmer remain.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt b/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
 > new file mode 100644
-> index 000000000000..362877fcafed
+> index 000000000000..61900e2e3868
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
-> @@ -0,0 +1,21 @@
-> +Qualcom Dakota HS/SS USB PHY
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+> @@ -0,0 +1,41 @@
+> +RISC-V Hart-Level Interrupt Controller (HLIC)
+> +---------------------------------------------
+> +
+> +RISC-V cores include Control Status Registers (CSRs) which are local to each
+> +hart and can be read or written by software. Some of these CSRs are used to
+> +control local interrupts connected to the core.  Every interrupt is ultimately
+> +routed through a hart's HLIC before it interrupts that hart.
+> +
+> +The RISC-V supervisor ISA manual specifies three interrupt sources that are
+> +attached to every HLIC: software interrupts, the timer interrupt, and external
+> +interrupts.  Software interrupts are used to send IPIs between cores.  The
+> +timer interrupt comes from an architecturally mandated real-time timer that is
+> +controller via SBI calls and CSR reads.  External interrupts connect all other
+> +device interrupts to the HLIC, which are routed via the platform-level
+> +interrupt controller (PLIC).
+> +
+> +All RISC-V systems that conform to the supervisor ISA specification are
+> +required to have a HLIC with these three interrupt sources present.  Since the
+> +interrupt map is defined by the ISA it's not listed in the HLIC's device tree
+> +entry, though external interrupt controllers (like the PLIC, for example) will
+> +need to define how their interrupts map to the relevant HLICs.
 > +
 > +Required properties:
-> + - compatible: "qcom,usb-ss-ipq4019-phy",
-> +	       "qcom,usb-hs-ipq4019-phy"
-
-<vendor>,<soc>-<block> is the usual order.
-
-> + - reg: offset and length of the registers
-> + - #phy-cells: should be 0
-> + - resets: the reset controllers as listed below
-> + - reset-names: the names of the reset controllers
-> +	"por_rst" - the POR reset line for SS and HS phys
-> +	"srif_rst" - the SRIF reset line for HS phys
-
-'_rst' is redundant.
-
-> +Example:
+> +- compatible : "riscv,cpu-intc"
+> +- #interrupt-cells : should be <1>
+> +- interrupt-controller : Identifies the node as an interrupt controller
 > +
-> +hsphy@a8000 {
-
-usb-phy@...
-
-> +	compatible = "qcom,usb-hs-ipq4019-phy";
-> +	phy-cells = <0>;
-> +	reg = <0xa8000 0x40>;
-> +	resets = <&gcc USB2_HSPHY_POR_ARES>,
-> +		 <&gcc USB2_HSPHY_S_ARES>;
-> +	reset-names = "por_rst", "srif_rst";
-> +};
+> +Furthermore, this interrupt-controller MUST be embedded inside the cpu
+> +definition of the hart whose CSRs control these local interrupts.
+> +
+> +An example device tree entry for a HLIC is show below.
+> +
+> +	cpu1: cpu@1 {
+> +		compatible = "riscv";
+> +		...
+> +		cpu1-intc: interrupt-controller {
+> +			#interrupt-cells = <1>;
+> +			compatible = "riscv,cpu-intc";
+> +			interrupt-controller;
+> +		};
+> +	};
 > -- 
-> 2.11.0
+> 2.18.0
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
