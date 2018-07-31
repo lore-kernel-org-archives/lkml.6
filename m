@@ -2,231 +2,259 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B79DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A6BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D889F20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D889F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2693A20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:43:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmoZxou1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2693A20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbeGaJTE (ORCPT
+        id S1729580AbeGaJWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:19:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50251 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbeGaJTE (ORCPT
+        Tue, 31 Jul 2018 05:22:49 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33540 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbeGaJWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:19:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1937713wmc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:40:02 -0700 (PDT)
+        Tue, 31 Jul 2018 05:22:48 -0400
+Received: by mail-vk0-f66.google.com with SMTP id y70-v6so7033031vkc.0;
+        Tue, 31 Jul 2018 00:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=aKQiLLuW4DpWJnlD9EIEKvcLbFU/4kAI5GS0dKACVLM=;
+        b=kmoZxou1RO5etsGi8LUAcgU5U7a2L6Aq+NplItV6V/S8pnYrGfvCwETmcIlhVK7OGk
+         Zn2xdm88vSetgHtAwn8qM9cQRmkn2stZSwuWsAfmjd0lMZYHHJHAg9AlzlQGUaFeQLJQ
+         O8MgJTwuYynULPitoc/spniV6t2pFKhkN0vI5brucc96dAjB9KZo/QzxtOds6MPy59nH
+         RSXy0jml/uwF4Ll6NYwy3/fBSkzhDpxaA1xqk8aCtyosffFXvTdrq8DcEFf2iYsuBNRq
+         Sc1b2/BlkOOKr3Lp+8/sPTwmIbyNwqf0YMuZBfC3KOmbpqe5QXuQmf/V1U/G6tmYa5Mg
+         DRLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=lAR5c89RF4kZpy9i5eg3akklRziFgxCZNrQKCbYez+M=;
-        b=uimUkPkI3N5hPtwDlzGj+LPWIfuKyPu16Xq7j+EhQunFLbeFNJ7gy+pP7qHJGpZGua
-         UNy+fAT5M+ZcH0QJGsLoU1EuE2I49O3TDSCjgsetnqY+viC1lg9idBEVbgHP9hY4cf3V
-         JDkVfWdztzT/iFLzAU7yXTOMBiMjBw+0Zj/YxvJsIS99SP9j9AdyD5uaKRHQhZJetrTp
-         e96jgmvD84GmvBIneu6DG6sqcwdxPHN5VE1Pl7MVsUIbsNQbKb+sYNxd7XVDC9C0e/oZ
-         ingET5hEmM2gcuJU9XnUZGE0LXayuDGAgB+rg5JP8T4aMTjEZKzlnxGJe0yAIr2dVQ8k
-         kuOw==
-X-Gm-Message-State: AOUpUlEvRvVIWvXQrDoLx45ItJ6HRD+qk1uOckmtTt47edKtANaq4EnI
-        0WteBT2QxzmQF9zfydciBFqhhw==
-X-Google-Smtp-Source: AAOMgpd08XrcN3Et/8X+xoiQ6kBocTeoauJ4mWumckGKA4bEi9VWmbAcWeIy1nkPMRbFxjYvNNYn1g==
-X-Received: by 2002:a1c:92:: with SMTP id 140-v6mr1353415wma.87.1533022802250;
-        Tue, 31 Jul 2018 00:40:02 -0700 (PDT)
-Received: from [192.168.10.150] (94-36-184-250.adsl-ull.clienti.tiscali.it. [94.36.184.250])
-        by smtp.gmail.com with ESMTPSA id l16-v6sm1135989wme.36.2018.07.31.00.40.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 00:40:01 -0700 (PDT)
-Subject: Re: [PATCH 06/10] KVM: x86: do not load vmcs12 pages while still in
- SMM
-To:     Jim Mattson <jmattson@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1532819412-51357-1-git-send-email-pbonzini@redhat.com>
- <1532819412-51357-7-git-send-email-pbonzini@redhat.com>
- <CALMp9eREhbUc73qDnNnriG+AgfXNTkmJuChbVepmCRxo+TSaaA@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1e89e7a8-01cb-69d7-043c-425a66b36500@redhat.com>
-Date:   Tue, 31 Jul 2018 09:40:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=aKQiLLuW4DpWJnlD9EIEKvcLbFU/4kAI5GS0dKACVLM=;
+        b=iJKlS0Et0djU9R8ni6C3JStzWA0h0dkHnlj5b3NZsRYtR6eRFQ+4en7saBxWqWahEv
+         tem2IihzyiQU7ikL9tqCZLcxgHWWPxBceQOMM790Q23oXdSjWQIzDr67Ow7NJQtgnd+X
+         Eo/MbOD5gqHUPqpP6zjwaFG5zcEVvVLNDE7WE3e8QIj0DTrnKS2NGvb3lza1nQTPtQ1j
+         5DLC2f2Prhv1jTGpPlItnf70gFZQVtBDmem3IB8+sysyjnF43lTe/1Nn+1deiNuulODG
+         aoPjuicgw6R8R6iE8IgPKzzB5ItsEWX0e1HFX9t44/RAb/vOsjdzt0X0PpEPoKT/iFL0
+         y+QQ==
+X-Gm-Message-State: AOUpUlGWuKsOYmSeDT0+AfzYZ4vgV1/MtdffYpz8j+O8fBVBBShkpOz0
+        vd4UdsFOqjOH7t9cewZ8AcbXu3C88awxGllztDo=
+X-Google-Smtp-Source: AAOMgpeEM3aJuksX1MvFSPmMeO4dK6+B+X8nyIdMRebuoPfH/feZKF/cR2JMnD+wLZ4hdlR08QaRyXdWDOIDb0KtDgw=
+X-Received: by 2002:a1f:5981:: with SMTP id n123-v6mr13216185vkb.43.1533023026686;
+ Tue, 31 Jul 2018 00:43:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eREhbUc73qDnNnriG+AgfXNTkmJuChbVepmCRxo+TSaaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a67:7cc8:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 00:43:26
+ -0700 (PDT)
+In-Reply-To: <CAGXu5jJCwAO1u4U0hAqAnd3ktgR-WcDzNUTpTeGoiUNVOzbYFg@mail.gmail.com>
+References: <1531935483-30784-1-git-send-email-s.mesoraca16@gmail.com>
+ <CAGXu5jK4q6HLDZ6jokTeDABbzVasY85Jo0HFNKYeaKWZYPjPKg@mail.gmail.com>
+ <CAJHCu1+S_tv8Ju4m_QuWPm5Ke6rmByxT7jVhSo2kfVoCO_wMFg@mail.gmail.com> <CAGXu5jJCwAO1u4U0hAqAnd3ktgR-WcDzNUTpTeGoiUNVOzbYFg@mail.gmail.com>
+From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date:   Tue, 31 Jul 2018 09:43:26 +0200
+Message-ID: <CAJHCu1LN4YkLqqT6TBEDw8YoW81VCvKnQam+v0NTvu1kDLMvsQ@mail.gmail.com>
+Subject: Re: [RFC] kconfig: add hardened defconfig helpers
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Laura Abbott <labbott@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2018 21:27, Jim Mattson wrote:
-> On Sat, Jul 28, 2018 at 4:10 PM, Paolo Bonzini <pbonzini@redhat.com> wrote:
->> If the vCPU enters system management mode while running a nested guest,
->> RSM starts processing the vmentry while still in SMM.  In that case,
->> however, the pages pointed to by the vmcs12 might be incorrectly
->> loaded from SMRAM.  To avoid this, delay the handling of the pages
->> until just before the next vmentry.  This is done with a new request
->> and a new entry in kvm_x86_ops, which we will be able to reuse for
->> nested VMX state migration.
+2018-07-30 18:54 GMT+02:00 Kees Cook <keescook@chromium.org>:
+> On Mon, Jul 30, 2018 at 9:11 AM, Salvatore Mesoraca
+> <s.mesoraca16@gmail.com> wrote:
+>> I'm sorry for the late response, I've been unexpectedly busy in the last week.
 >>
->> Extracted from a patch by Jim Mattson and KarimAllah Ahmed.
+>> 2018-07-20 7:15 GMT+02:00 Kees Cook <keescook@chromium.org>:
+>>> +lkml, Masahiro, and linux-doc, just for wider review/thoughts.
+>>>
+>>> On Wed, Jul 18, 2018 at 10:38 AM, Salvatore Mesoraca
+>>> <s.mesoraca16@gmail.com> wrote:
+>>> [...]
+>>>> +CONFIG_CC_STACKPROTECTOR_STRONG=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** Medium
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +Functions will have the stack-protector canary logic added in any
+>>>> +of the following conditions:
+>>>> +
+>>>> +- local variable's address used as part of the right hand side of an
+>>>> +assignment or function argument
+>>>> +- local variable is an array (or union containing an array),
+>>>> +regardless of array type or length
+>>>> +- uses register local variables
+>>>> +
+>>>> +This feature requires gcc version 4.9 or above, or a distribution
+>>>> +gcc with the feature backported ("-fstack-protector-strong").
+>>>> +
+>>>> +On an x86 "defconfig" build, this feature adds canary checks to
+>>>> +about 20% of all kernel functions, which increases the kernel code
+>>>> +size by about 2%.
+>>>
+>>> bikeshed: I think both stack protector items should be "Low", but
+>>> that's just me.
 >>
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->>  arch/x86/include/asm/kvm_host.h |  3 +++
->>  arch/x86/kvm/vmx.c              | 53 +++++++++++++++++++++++++++--------------
->>  arch/x86/kvm/x86.c              |  2 ++
->>  3 files changed, 40 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index c13cd28d9d1b..da957725992d 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -75,6 +75,7 @@
->>  #define KVM_REQ_HV_EXIT                        KVM_ARCH_REQ(21)
->>  #define KVM_REQ_HV_STIMER              KVM_ARCH_REQ(22)
->>  #define KVM_REQ_LOAD_EOI_EXITMAP       KVM_ARCH_REQ(23)
->> +#define KVM_REQ_GET_VMCS12_PAGES       KVM_ARCH_REQ(24)
->>
->>  #define CR0_RESERVED_BITS                                               \
->>         (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
->> @@ -1085,6 +1086,8 @@ struct kvm_x86_ops {
->>
->>         void (*setup_mce)(struct kvm_vcpu *vcpu);
->>
->> +       void (*get_vmcs12_pages)(struct kvm_vcpu *vcpu);
->> +
->>         int (*smi_allowed)(struct kvm_vcpu *vcpu);
->>         int (*pre_enter_smm)(struct kvm_vcpu *vcpu, char *smstate);
->>         int (*pre_leave_smm)(struct kvm_vcpu *vcpu, u64 smbase);
->> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->> index 2630ab38d72c..17aede06ae0e 100644
->> --- a/arch/x86/kvm/vmx.c
->> +++ b/arch/x86/kvm/vmx.c
->> @@ -10636,9 +10636,9 @@ static void vmx_inject_page_fault_nested(struct kvm_vcpu *vcpu,
->>  static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
->>                                                  struct vmcs12 *vmcs12);
->>
->> -static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
->> -                                       struct vmcs12 *vmcs12)
->> +static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
->>  {
->> +       struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
->>         struct vcpu_vmx *vmx = to_vmx(vcpu);
->>         struct page *page;
->>         u64 hpa;
->> @@ -11750,13 +11750,18 @@ static int check_vmentry_postreqs(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
->>         return 0;
->>  }
->>
->> -static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
->> +/*
->> + * If p_exit_qual is NULL, this is being called from state restore (either
->> + * kvm_set_nested_state or RSM).  Otherwise it's called from vmlaunch/vmresume.
->> + */
->> +static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, u32 *p_exit_qual)
->>  {
->>         struct vcpu_vmx *vmx = to_vmx(vcpu);
->>         struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
->> +       bool from_vmentry = !!p_exit_qual;
->>         u32 msr_entry_idx;
->> -       u32 exit_qual;
->> -       int r;
->> +       u32 dummy_exit_qual;
->> +       int r = 0;
->>
->>         enter_guest_mode(vcpu);
->>
->> @@ -11770,17 +11775,27 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
->>                 vcpu->arch.tsc_offset += vmcs12->tsc_offset;
->>
->>         r = EXIT_REASON_INVALID_STATE;
->> -       if (prepare_vmcs02(vcpu, vmcs12, &exit_qual))
->> +       if (prepare_vmcs02(vcpu, vmcs12, from_vmentry ? p_exit_qual : &dummy_exit_qual))
->>                 goto fail;
->>
->> -       nested_get_vmcs12_pages(vcpu, vmcs12);
->> +       if (from_vmentry) {
->> +               nested_get_vmcs12_pages(vcpu);
->>
->> -       r = EXIT_REASON_MSR_LOAD_FAIL;
->> -       msr_entry_idx = nested_vmx_load_msr(vcpu,
->> -                                           vmcs12->vm_entry_msr_load_addr,
->> -                                           vmcs12->vm_entry_msr_load_count);
->> -       if (msr_entry_idx)
->> -               goto fail;
->> +               r = EXIT_REASON_MSR_LOAD_FAIL;
->> +               msr_entry_idx = nested_vmx_load_msr(vcpu,
->> +                                                   vmcs12->vm_entry_msr_load_addr,
->> +                                                   vmcs12->vm_entry_msr_load_count);
->> +               if (msr_entry_idx)
->> +                       goto fail;
->> +       } else {
->> +               /*
->> +                * The MMU is not initialized to point at the right entities yet and
->> +                * "get pages" would need to read data from the guest (i.e. we will
->> +                * need to perform gpa to hpa translation). Request a call
->> +                * to nested_get_vmcs12_pages before the next VM-entry.
->> +                */
->> +               kvm_make_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
->> +       }
-> 
-> The from_vmentry variable seems unnecessary. Why not (a) hoist the
-> call to nested_vmx_load_msr() into nested_vmx_run and (b) always use
-> the deferred KVM_REQ_GET_VMCS12_PAGES?
+>> I tried to be cautious when selecting the levels, but if nobody is
+>> against it, I can change the level.
+>
+> My thought about the "Low" stuff was: if a distro has it enabled by
+> default, it must have been decided it was a sane default. So for
+> things that distros have enabled, set it to "Low" here. (Which is why
+> I cringed with KPTI: distros have it, but wow does it hurt...)
 
-Yeah, I thought about that.  from_vmentry is ugly.
+mmm, I think you are right.
 
-However, for (a) you would have to duplicate the code at the "fail"
-label, which is uglier than from_vmentry; as to (b), it is a little bit
-slower and our nested vmentry is already slow enough...
+>>>> [...]
+>>>> +CONFIG_DEVMEM=n
+>>>> +~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** Extreme
+>>>
+>>> Why is this extreme?
+>>
+>> I tried to be very cautious and I had the impression that this option
+>> could break many programs,
+>> isn't Xorg one of these?
+>
+> These days, (almost?) all graphics drivers run without needing
+> userspace access to these things (and I think they never needed _RAM_
+> access, just IO space). Setting this to Medium or High seems better to
+> me. (The STRICT_DEVMEM, though, should be Low, since that's been a
+> distro setting forever.)
 
-Paolo
+Yes, agreed.
+
+>>> [...]
+>>>> +CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** High
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +With this pluging, the kernel will instrument some kernel code to
+>>>> +extract some entropy from both original and artificially created
+>>>> +program state. This will help especially embedded systems where
+>>>> +there is little 'natural' source of entropy normally.  The cost
+>>>> +is some slowdown of the boot process (about 0.5%) and fork and
+>>>
+>>> This doesn't feel like "high" to me.
+>>
+>> Medium maybe?
+>
+> Sounds good.
+>
+>>> [...]
+>>>> +CONFIG_PAGE_POISONING=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** High
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +Fill the pages with poison patterns after free_pages() and verify
+>>>> +the patterns before alloc_pages. The filling of the memory helps
+>>>> +reduce the risk of information leaks from freed data. This does
+>>>> +have a potential performance impact.
+>>>> +Needs "page_poison=1" command line.
+>>>> +
+>>>> +
+>>>> +CONFIG_PAGE_POISONING_NO_SANITY=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** High
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +Skip the sanity checking on alloc, only fill the pages with
+>>>> +poison on free. This reduces some of the overhead of the
+>>>> +poisoning feature.
+>
+> So, I spent some time looking at these again for unrelated reasons and
+> rediscovered that enable CONFIG_PAGE_POISONING has virtual zero
+> overhead since the actual poisoning doesn't happen unless you turn it
+> on with a command line argument. So I would classify both of these as
+> "Low".
+
+Ah, OK.
+
+>>>> +CONFIG_PAGE_POISONING_NO_SANITY=n
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** Extreme
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +Skip the sanity checking on alloc, only fill the pages with
+>>>> +poison on free. This reduces some of the overhead of the
+>>>> +poisoning feature.
+>
+> This one, though, yes, Extreme or High. It makes things much slower.
+>
+>>>> +CONFIG_PAGE_POISONING_ZERO=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** High
+>>>> +**- Protection type:** Self-protection
+>>>> +
+>>>> +Instead of using the existing poison value, fill the pages with
+>>>> +zeros. This makes it harder to detect when errors are occurring
+>>>> +due to sanitization but the zeroing at free means that it is
+>>>> +no longer necessary to write zeros when GFP_ZERO is used on
+>>>> +allocation.
+>
+> This one is interesting: enabling it with poisoning means you gain
+> back some of the performance hit (since now GFP_ZERO allocations don't
+> need to do any work: the space was already freed), but you lose a bit
+> of coverage since a write-after-free will not get zeroed at allocation
+> time. So I think I would set this as:
+>
+> CONFIG_PAGE_POISONING_ZERO=y
+> at Low
+>
+> CONFIG_PAGE_POISONING_ZERO=n
+> at High (or Medium?)
+
+Oh, I didn't think about this. OK.
+
+>>> [...]
+>>>> +CONFIG_STATIC_USERMODEHELPER=y
+>>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>> +
+>>>> +**Negative side effects level:** Extreme
+>>>
+>>> I mean, this SHOULD be Low but no distro has actually implemented a
+>>> helper to do this yet.
+>>
+>> Infact I set it as extreme because I expect very few people to make an
+>> use of it.
+>> Maybe I could just drop it.
+>
+> Until it's actually usable, yeah, I'd say drop it.
+>
+>> [...]
+>> Thank you very very much for taking the time to look at this very long patch!
+>
+> You're welcome! Thanks for _writing_ it. :)
+>
+> -Kees
+>
+> --
+> Kees Cook
+> Pixel Security
