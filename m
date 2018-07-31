@@ -2,199 +2,216 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E048EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E514EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69B8F20841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B5120862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="htlmeyXj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B8F20841
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DG0nYZZs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B5120862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732446AbeGaRuR (ORCPT
+        id S1732428AbeGaRwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:50:17 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38804 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729589AbeGaRuQ (ORCPT
+        Tue, 31 Jul 2018 13:52:46 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:47343 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729589AbeGaRwp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:50:16 -0400
-Received: by mail-pl0-f66.google.com with SMTP id u11-v6so1826572plq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:09:16 -0700 (PDT)
+        Tue, 31 Jul 2018 13:52:45 -0400
+Received: by mail-qt0-f201.google.com with SMTP id b7-v6so13513299qtp.14
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:11:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZG1+GrXHehi6qJK10k7idwFQ2rL3SWU7/hMPdsm4gPA=;
-        b=htlmeyXjMf0WQ2ZklaAgnvll6vjsufkm6iWttBfDbphgFF98ZQSqEXIsPZ5yrufRg6
-         kmzUdwcGXVkUQoQ3MTLE+JYcjOMyu4QhrjZsujWx4ITLzQU/IYzeHaOm+fg7f7YitEIX
-         KhANoR4g47xXQ8n7dZOnVbnficp9t0rs6tKkjiKvTyHYmdCzJmZstj+nKxKtd8NmfVTT
-         rRZnAIU3hQ/LrzXzhQyu//WAc/H30mMaE+xui6KDdCV+Vdlx9vhDixqUieiNjqrYUxsk
-         PyM49xp3nJUMq5xjYsi3ess+xGjJuKatJLA9BlR1C5NpuiEHHIuDB5LgkXkda3tShhHg
-         SJqg==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=j/sV6dXvNZxplbBedVac4Z0WyJu+MmPT6ZQzfhIbe7I=;
+        b=DG0nYZZsyf9vHLscxZ8CBdZ9OKVftHlwgzukZ0rYr51n/QoIu4mT6gbyXkWO/R1Enj
+         5YRqzkvnNd20crav7vWTq5k3q+qCaiTmrPDf7/7wHP7Ilvegjv72rA1TtV2WjlZXInJv
+         wtZGAPHF/iUkBGYRukZF/pSAmHNFyTvhJvzBiwJdeTp2kBxDxWN1esLsjBGRdl0a2tPS
+         kTqKaPYhjngpyZt9z50x7Bt7HDvaAhZRb12lqzwtvgSO/Fan3WfUFa1OOgm0oZU+A2LD
+         5uaZYLgoqyrh/1+TPrf0QdHxisVJ8XfTXGL/FOjuhQ9168x+M88TO+23pt/8dxGGZ+PW
+         tWBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZG1+GrXHehi6qJK10k7idwFQ2rL3SWU7/hMPdsm4gPA=;
-        b=G5qG8xxE8gT2NjG3p1agqrxKnyxunJzcjmHn6kFGpACf8RR0AH++ENqASG7oSjPJ0t
-         EMP6DGR7OwBYzBlojtQuZV6EeJxfWdf6P9yZ78o0pyByEG8yOYhaBDlpkBjltqEJy/UW
-         nEw2jlkc7wNRzh1orq9LFTuS8gq++8ut6vMOydB3lqiyuF4fv5XGhdVW+/ZxsyU/Jk9g
-         6rH9DmEt6dOyWjSp7RshZYF2uLX+zbfifYnhJ1/QQbO7v7rPw0a/TxCffnaFvIvGR6C/
-         N3kk9qz7bUbmRjY1R3GTU3mzXAFrqmvt1voiGi78w/FOVwG++LtWJo7sK1yTpP0A/1Ej
-         EszQ==
-X-Gm-Message-State: AOUpUlE56g3Da5W3/UMQ29sNj2o0SNgx52OmYo1vaRHFlKnYr5UDRegg
-        M3TH1ULv9+Xo4ZyUBQ0umxJ2+0GVwV7WxBn+xpsrcA==
-X-Google-Smtp-Source: AAOMgpefWauVE0VT+ZbsLcDB30ljjLb12nw3sHpAVO6egXGDMovYPGwwOflWZTDEgSn1deepqwVLcRVLGrEu7YuzlU8=
-X-Received: by 2002:a17:902:ab95:: with SMTP id f21-v6mr20635636plr.264.1533053355559;
- Tue, 31 Jul 2018 09:09:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 31 Jul 2018 09:08:54
- -0700 (PDT)
-In-Reply-To: <b6b58786-85c9-e831-5571-58b5580c84ba@virtuozzo.com>
-References: <cover.1530018818.git.andreyknvl@google.com> <a2a93370d43ec85b02abaf8d007a15b464212221.1530018818.git.andreyknvl@google.com>
- <09cb5553-d84a-0e62-5174-315c14b88833@arm.com> <CAAeHK+yC3XRPoTByhH1QPrX45pG3QY_2Q4gz=dfDgxfzu1Fyfw@mail.gmail.com>
- <8240d4f9-c8df-cfe9-119d-6e933f8b13df@virtuozzo.com> <CACT4Y+Y=61VwwETQP3FwAN16ompSNJOCyDCG6Ew1Bm5f_Fe1Lw@mail.gmail.com>
- <b6b58786-85c9-e831-5571-58b5580c84ba@virtuozzo.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 31 Jul 2018 18:08:54 +0200
-Message-ID: <CACT4Y+aUs0YMTaQx4x9QiQsMjFNZ5gUFNuMkG_hneDPTb3Nu=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 13/17] khwasan: add hooks implementation
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        vincenzo.frascino@arm.com, Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=j/sV6dXvNZxplbBedVac4Z0WyJu+MmPT6ZQzfhIbe7I=;
+        b=nJmzIetzkxtc7CiLMW8DaMr58shpyun3eSWzkwVfNuVYHuMx397/FsObZE6FHT3xb/
+         iZn03xXR3Gr789ymx4PmpR6imwlin2Qk8rJv+ZcMIl4KyyxKQqsmVdfRFFfj9n4WC5C7
+         JBp0aAtABcBOiOlFsBFGn2JhVBfX/ijXZjhMa6h6zvM2rrbK7mgBT0SW7oFfh7h0HpUd
+         gMtTgr+BzY6mkpdNu+0yX/Rc7L0Urw+XlVIMdR7m3VlojIRXtnV7tFfLPuNrB4hrRVQ7
+         CaBW4WUGYUW6e/tBWZTd6Crg6Ekt8uKfCeRPUSluBbkZEWDOghZQecedI792CVCTrTlK
+         iY0g==
+X-Gm-Message-State: AOUpUlEnFQILWxCdlXYvZvpEkLCn8f9/xPWYfaLMgRv5Tf3nFPn8corH
+        D9jVgAS+33JkOp6fM6+X3DTla6AQVQ==
+X-Google-Smtp-Source: AAOMgpdw7qUYXHKgR/7fM71gh/QN6AiNMjuk/KsCdysA5FSMwAZ8Z5izeOFs2XrBZnJAgrzeIwPc1+SxXA==
+X-Received: by 2002:a0c:e801:: with SMTP id y1-v6mr12086529qvn.55.1533053503442;
+ Tue, 31 Jul 2018 09:11:43 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 18:10:27 +0200
+Message-Id: <20180731161025.189534-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+Subject: [PATCH v2] fs: don't let getdents return bogus names
+From:   Jann Horn <jannh@google.com>
+To:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, jannh@google.com
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>, Pavel Machek <pavel@ucw.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 6:04 PM, Andrey Ryabinin
-<aryabinin@virtuozzo.com> wrote:
->>>>>> @@ -325,18 +341,41 @@ void kasan_init_slab_obj(struct kmem_cache *cache,
->>>>>> const void *object)
->>>>>>     void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t
->>>>>> flags)
->>>>>>   {
->>>>>> -       return kasan_kmalloc(cache, object, cache->object_size, flags);
->>>>>> +       object = kasan_kmalloc(cache, object, cache->object_size, flags);
->>>>>> +       if (IS_ENABLED(CONFIG_KASAN_HW) && unlikely(cache->ctor)) {
->>>>>> +               /*
->>>>>> +                * Cache constructor might use object's pointer value to
->>>>>> +                * initialize some of its fields.
->>>>>> +                */
->>>>>> +               cache->ctor(object);
->>>>>>
->>>>> This seams breaking the kmem_cache_create() contract: "The @ctor is run when
->>>>> new pages are allocated by the cache."
->>>>> (https://elixir.bootlin.com/linux/v3.7/source/mm/slab_common.c#L83)
->>>>>
->>>>> Since there might be preexisting code relying on it, this could lead to
->>>>> global side effects. Did you verify that this is not the case?
->>>>>
->>>>> Another concern is performance related if we consider this solution suitable
->>>>> for "near-production", since with the current implementation you call the
->>>>> ctor (where present) on an object multiple times and this ends up memsetting
->>>>> and repopulating the memory every time (i.e. inode.c: inode_init_once). Do
->>>>> you know what is the performance impact?
->>>>
->>>> We can assign tags to objects with constructors when a slab is
->>>> allocated and call constructors once as usual. The downside is that
->>>> such object would always have the same tag when it is reallocated, so
->>>> we won't catch use-after-frees.
->>>
->>> Actually you should do this for SLAB_TYPESAFE_BY_RCU slabs. Usually they are with ->ctors but there
->>> are few without constructors.
->>> We can't reinitialize or even retag them. The latter will definitely cause false-positive use-after-free reports.
->>
->> Somewhat offtopic, but I can't understand how SLAB_TYPESAFE_BY_RCU
->> slabs can be useful without ctors or at least memset(0). Objects in
->> such slabs need to be type-stable, but I can't understand how it's
->> possible to establish type stability without a ctor... Are these bugs?
->
-> Yeah, I puzzled by this too. However, I think it's hard but possible to make it work, at least in theory.
-> There must be an initializer, which consists of two parts:
-> a) initilize objects fields
-> b) expose object to the world (add it to list or something like that)
->
-> (a) part must somehow to be ok to race with another cpu which might already use the object.
-> (b) part must must use e.g. barriers to make sure that racy users will see previously inilized fields.
-> Racy users must have parring barrier of course.
->
-> But it sound fishy, and very easy to fuck up.
+When you e.g. run `find` on a directory for which getdents returns
+"filenames" that contain slashes, `find` passes those "filenames" back to
+the kernel, which then interprets them as paths. That could conceivably
+cause userspace to do something bad when accessing something like an
+untrusted USB stick, but I'm not aware of any specific example.
 
+Instead of returning bogus filenames to userspace, return -EUCLEAN.
 
-Agree on both fronts: theoretically possible but easy to fuck up. Even
-if it works, complexity of the code should be brain damaging and there
-are unlikely good reasons to just not be more explicit and use a ctor.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+changed in v2:
+ - move bogus_dirent_name() out of the #ifdef where it doesn't belong
+   (kbuild test robot)
 
+@Al: Given what Dave and Pavel said, are you okay with this?
 
-> I won't be surprised if every single one SLAB_TYPESAFE_BY_RCU user
-> without ->ctor is bogus. It certainly would be better to convert those to use ->ctor.
+ arch/alpha/kernel/osf_sys.c |  3 +++
+ fs/readdir.c                | 33 +++++++++++++++++++++++++++++++++
+ include/linux/fs.h          |  3 +++
+ 3 files changed, 39 insertions(+)
 
-I have another hypothesis: they are not bogus, just don't need
-SLAB_TYPESAFE_BY_RCU :)
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index c210a25dd6da..e04e51a2320d 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -40,6 +40,7 @@
+ #include <linux/vfs.h>
+ #include <linux/rcupdate.h>
+ #include <linux/slab.h>
++#include <linux/fs.h>
+ 
+ #include <asm/fpu.h>
+ #include <asm/io.h>
+@@ -117,6 +118,8 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	unsigned int reclen = ALIGN(NAME_OFFSET + namlen + 1, sizeof(u32));
+ 	unsigned int d_ino;
+ 
++	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
++		return -EUCLEAN;
+ 	buf->error = -EINVAL;	/* only used if we fail */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+diff --git a/fs/readdir.c b/fs/readdir.c
+index d97f548e6323..fa0ac1e33230 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -64,6 +64,29 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+ }
+ EXPORT_SYMBOL(iterate_dir);
+ 
++/*
++ * Most filesystems don't filter out bogus directory entry names, and userspace
++ * can get very confused by such names. Behave as if a low-level IO error had
++ * happened while reading directory entries.
++ */
++bool bogus_dirent_name(int *errp, const char *name, int namlen,
++		       const char *caller)
++{
++	if (namlen == 0) {
++		pr_err_once("%s: filesystem returned bogus empty name\n",
++			    caller);
++		*errp = -EUCLEAN;
++		return true;
++	}
++	if (memchr(name, '/', namlen)) {
++		pr_err_once("%s: filesystem returned bogus name '%*pEhp' (contains slash)\n",
++			    caller, namlen, name);
++		*errp = -EUCLEAN;
++		return true;
++	}
++	return false;
++}
++
+ /*
+  * Traditional linux readdir() handling..
+  *
+@@ -98,6 +121,8 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
+ 
+ 	if (buf->result)
+ 		return -EINVAL;
++	if (bogus_dirent_name(&buf->result, name, namlen, __func__))
++		return -EUCLEAN;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+@@ -173,6 +198,8 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
+ 		sizeof(long));
+ 
++	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
++		return -EUCLEAN;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -259,6 +286,8 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+ 		sizeof(u64));
+ 
++	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
++		return -EUCLEAN;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+@@ -358,6 +387,8 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
+ 
+ 	if (buf->result)
+ 		return -EINVAL;
++	if (bogus_dirent_name(&buf->result, name, namlen, __func__))
++		return -EUCLEAN;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+ 		buf->result = -EOVERFLOW;
+@@ -427,6 +458,8 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
+ 	int reclen = ALIGN(offsetof(struct compat_linux_dirent, d_name) +
+ 		namlen + 2, sizeof(compat_long_t));
+ 
++	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
++		return -EUCLEAN;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 805bf22898cf..62ad476563f0 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1680,6 +1680,9 @@ struct dir_context {
+ 	loff_t pos;
+ };
+ 
++bool bogus_dirent_name(int *errp, const char *name, int namlen,
++		       const char *caller);
++
+ struct block_device_operations;
+ 
+ /* These macros are for out of kernel modules to test that
+-- 
+2.18.0.345.g5c9ce644c3-goog
 
-
-> Such caches seems used by networking subsystem in proto_register():
->
->                 prot->slab = kmem_cache_create_usercopy(prot->name,
->                                         prot->obj_size, 0,
->                                         SLAB_HWCACHE_ALIGN | SLAB_ACCOUNT |
->                                         prot->slab_flags,
->                                         prot->useroffset, prot->usersize,
->                                         NULL);
->
-> And certain protocols specify SLAB_TYPESAFE_BY_RCU in ->slab_flags, such as:
-> llc_proto, smc_proto, smc_proto6, tcp_prot, tcpv6_prot, dccp_v6_prot, dccp_v4_prot.
->
->
-> Also nf_conntrack_cachep, kernfs_node_cache, jbd2_journal_head_cache and i915_request cache.
->
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/b6b58786-85c9-e831-5571-58b5580c84ba%40virtuozzo.com.
-> For more options, visit https://groups.google.com/d/optout.
