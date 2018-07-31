@@ -6,95 +6,98 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF1AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B189C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC6E208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC6E208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 27CBC208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CBC208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732260AbeGaPOX (ORCPT
+        id S1732196AbeGaPS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:14:23 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44696 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729723AbeGaPOX (ORCPT
+        Tue, 31 Jul 2018 11:18:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33228 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729723AbeGaPS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:14:23 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fkUmW-0006tW-0O; Tue, 31 Jul 2018 13:33:44 +0000
-Date:   Tue, 31 Jul 2018 14:33:43 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
- [ver #10]
-Message-ID: <20180731133343.GI30522@ZenIV.linux.org.uk>
-References: <20180730183847.GB5544@bombadil.infradead.org>
- <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
- <20180730194938.GA12962@bombadil.infradead.org>
- <20180730210209.GY21725@thunk.org>
- <20180730235849.GA19692@bombadil.infradead.org>
- <20180731005802.GB21725@thunk.org>
- <18974.1533031913@warthog.procyon.org.uk>
- <20180731113422.GA22939@amd>
- <20180731120752.GA23378@bombadil.infradead.org>
- <20180731122801.GA14972@amd>
+        Tue, 31 Jul 2018 11:18:58 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VDJG6o111811
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:38:36 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjqapmdu5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:38:35 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Tue, 31 Jul 2018 14:38:33 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Jul 2018 14:38:30 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6VDcT7b37683344
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 13:38:29 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F42395204F;
+        Tue, 31 Jul 2018 16:38:40 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.176])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 53AFE5204E;
+        Tue, 31 Jul 2018 16:38:40 +0100 (BST)
+Date:   Tue, 31 Jul 2018 16:38:27 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-um@lists.infradead.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] um: switch to NO_BOOTMEM
+References: <1532438594-4530-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180731122801.GA14972@amd>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1532438594-4530-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18073113-0020-0000-0000-000002AEC918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073113-0021-0000-0000-000020FAE9AE
+Message-Id: <20180731133827.GC23494@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=759 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807310133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 02:28:01PM +0200, Pavel Machek wrote:
-> > Your proposal means that userspace needs to detect "%s file", determine
-> > if the corresponding string consists of ^[0-9]*$, then parse the string
-> > to figure out which of the plik* words is the correct one to use.
+Any comments on this?
+
+On Tue, Jul 24, 2018 at 04:23:12PM +0300, Mike Rapoport wrote:
+> Hi,
 > 
-> Have you actually used computer set in slavic language?
+> These patches convert UML to use NO_BOOTMEM.
+> Tested on x86-64.
+> 
+> Mike Rapoport (2):
+>   um: setup_physmem: stop using global variables
+>   um: switch to NO_BOOTMEM
+> 
+>  arch/um/Kconfig.common   |  2 ++
+>  arch/um/kernel/physmem.c | 22 ++++++++++------------
+>  2 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-I have.
+-- 
+Sincerely yours,
+Mike.
 
-> Receiving "5
-> soubor(u) zkopirovano" is still preferable to message in english.
-
-*snort*
-
-How about "5 pilník(u)"?  And yes, I've seen an equivalent "translation"
-to Russian ("этот вызов возвращает рукоятку напильника"[1]).  For real.
-Granted, they tend to recognize that one these days, but if I ever
-get too optimistic about i18n... hopes, all I need to do is to run
-with LANG=ru_RU.UTF8 for an hour or so and those delusions will go
-away.
-
-_Very_ often the best strategy of figuring out WTF does a completely inane
-message mean is to try and guess what English sentence could've been
-mistranslated that way.  And that's relatively benign case - much worse
-is when message *does* make sense, but has critically different meaning.
-
-I don't know about .cz translation quality, but .ru translations tend to be
-atrocious.  And even when they are not wrong... they are clumsy - wrong
-word order, unnatural syntax in general, unidiomatic constructs all over
-the place...  BTW, slavic is not the worst in that respect - there the
-wrong word order will usually just fuck the flow, but for something with
-*fixed* word order you'll get worse than distraction for readers.
-Sure, you can use the things like %2$s in translated formats, but
-seeing how brittle and rife with limitations that is... maintaining such
-translations is going to be paiful as hell.
-
-[1] amusingly enough, it _is_ a cognate of "file" - just the wrong omonym
-used.  Not that cognate of the right omonym would've been any better ("žíla"
-for Lat. "filum", which gave Eng. "file" by way of 'sheaf of documents strung
-together')
