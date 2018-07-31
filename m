@@ -1,122 +1,163 @@
-Return-Path: <SRS0=qqIy=KO=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96213C43142
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D94C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B4F20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 30 Jul 2018 23:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Sl+hj25v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B4F20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D792208AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:02:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D792208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbeGaBgZ (ORCPT
+        id S1732101AbeGaBji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 21:36:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35374 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731995AbeGaBgY (ORCPT
+        Mon, 30 Jul 2018 21:39:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729477AbeGaBji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 21:36:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=y8kyAMJC+vnEiH43I2YSFJRTK5hqfYZ4yzphLf8U+9Q=; b=Sl+hj25vnjCU1m5xPyq1MH9aW
-        Dvans+q3UA6lgH2hdDDi5MW7qayh2NhWDQEXVTR+JSWxhKoc+MvQM5hgxs6GO/YI0GvMxC69atBqK
-        3ijgeTrfRAafiCYquEhBniDEYwpABnnX+d1wuPXCkL3L3Lig/vPdQdBG7Jf0eDEkcoE3mO1CztUIG
-        9Dd558612+T4mITKUSmr0nIa6/YQL7DHC6q/5ifT9pbrne13VVaqiPnk6l6QdBXUf/0SovPHdx0sc
-        WiFSApYFsjFzkshtzalB+/Iq52tFXBDscTIty5wJkM3kjP+S1ZjdgJZGS7pNlfKa5zMcE9YmR2Uew
-        abp41YlSg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkI3t-0008Dc-KL; Mon, 30 Jul 2018 23:58:49 +0000
-Date:   Mon, 30 Jul 2018 16:58:49 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API
- [ver #10]
-Message-ID: <20180730235849.GA19692@bombadil.infradead.org>
-References: <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk>
- <153271292330.9458.14583488053811372222.stgit@warthog.procyon.org.uk>
- <25489.1532953411@warthog.procyon.org.uk>
- <20180730143104.GB24051@amd>
- <20180730180842.GA5544@bombadil.infradead.org>
- <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com>
- <20180730183847.GB5544@bombadil.infradead.org>
- <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com>
- <20180730194938.GA12962@bombadil.infradead.org>
- <20180730210209.GY21725@thunk.org>
+        Mon, 30 Jul 2018 21:39:38 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UNxJin049610
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 20:02:11 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kj97w73b9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 20:02:11 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Mon, 30 Jul 2018 18:02:10 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Jul 2018 18:02:07 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6V026dU62521374
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Jul 2018 17:02:06 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5064DC605D;
+        Mon, 30 Jul 2018 18:02:06 -0600 (MDT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3DF78C6062;
+        Mon, 30 Jul 2018 18:02:03 -0600 (MDT)
+Received: from morokweng.localdomain (unknown [9.85.203.167])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 30 Jul 2018 18:02:02 -0600 (MDT)
+References: <20180725024209.32586-1-bauerman@linux.ibm.com> <20180725024209.32586-4-bauerman@linux.ibm.com> <20180725141849.GE25188@rapoport-lnx>
+User-agent: mu4e 1.0; emacs 25.3.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>
+Subject: Re: [PATCH 3/3] userfaultfd: selftest: Report XFAIL if shmem doesn't support zeropage
+In-reply-to: <20180725141849.GE25188@rapoport-lnx>
+Date:   Mon, 30 Jul 2018 21:01:56 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730210209.GY21725@thunk.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18073100-0016-0000-0000-0000090FEAFD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009459; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068253; UDB=6.00549142; IPR=6.00846386;
+ MB=3.00022414; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-31 00:02:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073100-0017-0000-0000-00003FD19783
+Message-Id: <87zhy89ssr.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807300251
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 05:02:09PM -0400, Theodore Y. Ts'o wrote:
-> On Mon, Jul 30, 2018 at 12:49:38PM -0700, Matthew Wilcox wrote:
-> > > That said, people have wanted these kinds of extended error
-> > > descriptors forever, and the reason we haven't added them is that it
-> > > generally is more pain than it is necessarily worth. I'm not actually
-> > > at all convinced that has magically changed with the mount
-> > > configuration thing.
-> > 
-> > I'm not convinced we want to do this either, but if there's anywhere we
-> > do want to do it then mount seems like one of the few places it might be
-> > worth doing.  The reasons that a mount failed are many, and it doesn't
-> > seem like a good idea to introduce a new errno every time a network
-> > filesystem finds a new failure mode.
-> 
-> We've lived without VMS-style error reporting for a long time, and it
-> *that* much of a real problem.  Even with network file systems, I
-> don't think it's been that hard of a problem.
 
-Way to poison the well by calling it VMS-style error reporting!  As I
-understand it though, VMS reported errors in English with an error code
-that could be looked up in The Wall of documentation.  I'd see David's
-proposal as closer to plan9-style error reporting.
+Mike Rapoport <rppt@linux.vnet.ibm.com> writes:
 
-But I think it has been a real problem.  I mean, look at ext4.
+> Hi,
+>
+> On Tue, Jul 24, 2018 at 11:42:09PM -0300, Thiago Jung Bauermann wrote:
+>> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
+>> shared memory, it currently ends with error code 1 which indicates test
+>> failure:
+>>
+>>   # ./userfaultfd shmem 10 10
+>>   nr_pages: 160, nr_pages_per_cpu: 80
+>>   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
+>>   # echo $?
+>>   1
+>>
+>> This is a real failure, but expected so signal that to the test harness:
+>
+> I don't think its a real failure. If the kernel does not support
+> UFFDIO_ZEROPAGE for shared memory the userfaultfd_zeropage_test can be
+> simply skipped.
 
-                if (test_opt2(sb, EXPLICIT_DELALLOC)) {
-                        ext4_msg(sb, KERN_ERR, "can't mount with "
-                                 "both data=journal and delalloc");
-                        goto failed_mount;
-...
-                        ext4_msg(sb, KERN_ERR, "can't mount with "
-                                 "both data=journal and dioread_nolock");
-                        ext4_msg(sb, KERN_ERR, "can't mount with "
-                                 "both data=journal and dax");
+Ok, good point. I'll make that change in v2.
 
-                                 "The Hurd can't support 64-bit file systems");
-                                 "ea_inode feature is not supported for Hurd");
-                        ext4_msg(sb, KERN_ERR, "couldn't mount as ext2 due "
-                                 "to feature incompatibilities");
-                        ext4_msg(sb, KERN_ERR, "couldn't mount as ext3 due "
-                                 "to feature incompatibilities");
-                       "Unsupported filesystem blocksize %d (%d log_block_size)",
-                         "Invalid log block size: %u",
-                         "Number of reserved GDT blocks insanely large: %d",
-                ext4_msg(sb, KERN_ERR, "Unsupported encryption level %d",
+>>   # ./userfaultfd shmem 10 10
+>>   nr_pages: 160, nr_pages_per_cpu: 80
+>>   bounces: 9, mode: rnd poll, UFFDIO_ZEROPAGE unsupported in shmem VMAs
+>>   # echo $?
+>>   2
+>>
+>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> ---
+>>  tools/testing/selftests/vm/userfaultfd.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+>> index bc9ec38fbc34..686fe96f617f 100644
+>> --- a/tools/testing/selftests/vm/userfaultfd.c
+>> +++ b/tools/testing/selftests/vm/userfaultfd.c
+>> @@ -1115,6 +1115,14 @@ static int userfaultfd_stress(void)
+>>  		expected_ioctls = uffd_test_ops->expected_ioctls;
+>>  		if ((uffdio_register.ioctls & expected_ioctls) !=
+>>  		    expected_ioctls) {
+>> +			if (test_type == TEST_SHMEM &&
+>> +			    (uffdio_register.ioctls & expected_ioctls) ==
+>> +			    UFFD_API_RANGE_IOCTLS_BASIC) {
+>> +				fprintf(stderr,
+>> +					"UFFDIO_ZEROPAGE unsupported in shmem VMAs\n");
+>> +				return KSFT_XFAIL;
+>> +			}
+>> +
+>
+> By all means, this check should be moved to userfaultfd_zeropage_test().
 
-The list goes on, but there're 11 reasons we'd ideally like to report to
-the user from mount(8) without forcing the user to grovel through dmesg.
+I made that change in v2.
+
+> Ideally, we should call here ksft_test_result_skip() and simply return from
+> the function.
+
+In my understanding, calling ksft_test_result_skip() would require
+converting the testcase to use the functions that generate TAP output.
+
+Also, returning here isn't actually necessary: from my testing
+userfaultfd_stress() doesn't require zeropage support in shmem so if the
+only bit missing from uffdio_register.ioctls is the one for
+UFFDIO_ZEROPAGE then this error can simply be ignored and the test can
+continue. Do you agree?
+
+>>  			fprintf(stderr,
+>>  				"unexpected missing ioctl for anon memory\n");
+>>  			return 1;
+
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
