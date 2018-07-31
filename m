@@ -5,169 +5,92 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94322C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0645BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A778208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A778208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A8EF3208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EF3208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732115AbeGaBpd (ORCPT
+        id S1732131AbeGaBv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 21:45:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:31170 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732038AbeGaBpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 21:45:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 17:08:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,425,1526367600"; 
-   d="scan'208";a="68768493"
-Received: from khuang2-desk.gar.corp.intel.com ([10.254.180.23])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Jul 2018 17:08:04 -0700
-Message-ID: <1532995683.27283.12.camel@linux.intel.com>
-Subject: Re: [PATCHv5 08/19] x86/mm: Introduce variables to store number,
- shift and mask of KeyIDs
-From:   Kai Huang <kai.huang@linux.intel.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Date:   Tue, 31 Jul 2018 12:08:03 +1200
-In-Reply-To: <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
-References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
-         <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Jul 2018 21:51:26 -0400
+Received: from www62.your-server.de ([213.133.104.62]:50144 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731941AbeGaBvZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 21:51:25 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fkIIT-000782-1Z; Tue, 31 Jul 2018 02:13:53 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fkIIS-000Nzh-T9; Tue, 31 Jul 2018 02:13:52 +0200
+Subject: Re: [PATCH v3] perf build: Build error in libbpf with
+ EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Cc:     ast@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com
+References: <20180730085323.75738-1-tmricht@linux.ibm.com>
+ <20180730123509.0ffa4737@cakuba.netronome.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ac172898-1d27-9ab5-5ff1-4f33c79e5191@iogearbox.net>
+Date:   Tue, 31 Jul 2018 02:13:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180730123509.0ffa4737@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24797/Mon Jul 30 18:42:33 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 14:20 +0300, Kirill A. Shutemov wrote:
-> mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
-> KeyID zero which used by TME. MKTME KeyIDs start from 1.
-> 
-> mktme_keyid_shift holds shift of KeyID within physical address.
-> 
-> mktme_keyid_mask holds mask to extract KeyID from physical address.
+On 07/30/2018 09:35 PM, Jakub Kicinski wrote:
+> On Mon, 30 Jul 2018 10:53:23 +0200, Thomas Richter wrote:
+>> commit 531b014e7a2f ("tools: bpf: make use of reallocarray")
+>> causes a compiler error when building the perf tool in the linux-next
+>> tree.  Compile file tools/lib/bpf/libbpf.c on a FEDORA 28
+>> installation with gcc compiler
+>> version: gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+>> shows this error message:
+>>
+>> [root@p23lp27] # make V=1 EXTRA_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -O2"
+>> [...]
+>> make -f /home6/tmricht/linux-next/tools/build/Makefile.build
+>> 	dir=./util/scripting-engines obj=libperf
+>> libbpf.c: In function ‘bpf_object__elf_collect’:
+>> libbpf.c:811:15: error: ignoring return value of ‘strerror_r’,
+>> 		declared with attribute warn_unused_result [-Werror=unused-result]
+>>      strerror_r(-err, errmsg, sizeof(errmsg));
+>>                ^
+>> cc1: all warnings being treated as errors
+>> mv: cannot stat './.libbpf.o.tmp': No such file or directory
+>> /home6/tmricht/linux-next/tools/build/Makefile.build:96: recipe for target 'libbpf.o' failed
+>>
+>> Replace all occurrences of strerror() by calls to strerror_r().
+>> To keep the compiler quiet also use the return value from strerror_r()
+>> otherwise a 'variable set but not use' warning which is treated as error
+>> terminates the compile.
+>>
+>> Cc: Alexei Starovoitov <ast@kernel.org>
+>> Cc: Daniel Borkmann <daniel@iogearbox.net>
+>> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+>> Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>> Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+>> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 
-Sorry to bring this up, but AMD SME already introduced sme_me_mask, and
-__sme_{set/clr} in linux/mem_encrypt.h, should we try to merge MKTME
-and SME to have common variables, and reuse mem_encrypt.h? IMHO
-sme_me_mask is sort of equivalent to'keyID=1'. And w/ different names
-for SME and MKTME, in other components which want to use memory
-encryption (ex, DMA API), we have to have explict code to distinguish
-MKTME and SME IMO, which is not good.
-
-Thanks,
--Kai
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/include/asm/mktme.h | 16 ++++++++++++++++
->  arch/x86/kernel/cpu/intel.c  | 12 ++++++++----
->  arch/x86/mm/Makefile         |  2 ++
->  arch/x86/mm/mktme.c          |  5 +++++
->  4 files changed, 31 insertions(+), 4 deletions(-)
->  create mode 100644 arch/x86/include/asm/mktme.h
->  create mode 100644 arch/x86/mm/mktme.c
-> 
-> diff --git a/arch/x86/include/asm/mktme.h
-> b/arch/x86/include/asm/mktme.h
-> new file mode 100644
-> index 000000000000..df31876ec48c
-> --- /dev/null
-> +++ b/arch/x86/include/asm/mktme.h
-> @@ -0,0 +1,16 @@
-> +#ifndef	_ASM_X86_MKTME_H
-> +#define	_ASM_X86_MKTME_H
-> +
-> +#include <linux/types.h>
-> +
-> +#ifdef CONFIG_X86_INTEL_MKTME
-> +extern phys_addr_t mktme_keyid_mask;
-> +extern int mktme_nr_keyids;
-> +extern int mktme_keyid_shift;
-> +#else
-> +#define mktme_keyid_mask	((phys_addr_t)0)
-> +#define mktme_nr_keyids		0
-> +#define mktme_keyid_shift	0
-> +#endif
-> +
-> +#endif
-> diff --git a/arch/x86/kernel/cpu/intel.c
-> b/arch/x86/kernel/cpu/intel.c
-> index bf2caf9d52dd..efc9e9fc47d4 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -573,6 +573,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  
->  #ifdef CONFIG_X86_INTEL_MKTME
->  	if (mktme_status == MKTME_ENABLED && nr_keyids) {
-> +		mktme_nr_keyids = nr_keyids;
-> +		mktme_keyid_shift = c->x86_phys_bits - keyid_bits;
-> +
->  		/*
->  		 * Mask out bits claimed from KeyID from physical
-> address mask.
->  		 *
-> @@ -580,10 +583,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  		 * and number of bits claimed for KeyID is 6, bits
-> 51:46 of
->  		 * physical address is unusable.
->  		 */
-> -		phys_addr_t keyid_mask;
-> -
-> -		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c-
-> >x86_phys_bits - keyid_bits);
-> -		physical_mask &= ~keyid_mask;
-> +		mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1,
-> mktme_keyid_shift);
-> +		physical_mask &= ~mktme_keyid_mask;
->  	} else {
->  		/*
->  		 * Reset __PHYSICAL_MASK.
-> @@ -591,6 +592,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  		 * between CPUs.
->  		 */
->  		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-> +		mktme_keyid_mask = 0;
-> +		mktme_keyid_shift = 0;
-> +		mktme_nr_keyids = 0;
->  	}
->  #endif
->  
-> diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-> index 4b101dd6e52f..4ebee899c363 100644
-> --- a/arch/x86/mm/Makefile
-> +++ b/arch/x86/mm/Makefile
-> @@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+
-> = pti.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-> +
-> +obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
-> diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-> new file mode 100644
-> index 000000000000..467f1b26c737
-> --- /dev/null
-> +++ b/arch/x86/mm/mktme.c
-> @@ -0,0 +1,5 @@
-> +#include <asm/mktme.h>
-> +
-> +phys_addr_t mktme_keyid_mask;
-> +int mktme_nr_keyids;
-> +int mktme_keyid_shift;
+Applied to bpf-next, thanks Thomas!
