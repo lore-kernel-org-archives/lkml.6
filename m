@@ -2,123 +2,129 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38848C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AE3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E033720862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:46:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E033720862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E65C320862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:48:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="sygdlpEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65C320862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbeGaJZY (ORCPT
+        id S1728140AbeGaJ1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:25:24 -0400
-Received: from mga14.intel.com ([192.55.52.115]:45074 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbeGaJZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:25:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 00:46:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,426,1526367600"; 
-   d="scan'208";a="71329441"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga003.jf.intel.com with ESMTP; 31 Jul 2018 00:46:19 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id F27C820790; Tue, 31 Jul 2018 10:46:18 +0300 (EEST)
-Date:   Tue, 31 Jul 2018 10:46:18 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Satendra Singh Thakur <satendra.t@samsung.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, vineet.j@samsung.com,
-        hemanshu.s@samsung.com, sst2005@gmail.com
-Subject: Re: [PATCH] videobuf2/vb2_buffer_done: Changing the position of
- spinlock to protect only the required code
-Message-ID: <20180731074618.ef6n7qulhlhoqwxb@paasikivi.fi.intel.com>
-References: <CGME20180727082146epcas5p10374c04f0767dbbe409c8171c49d7c9a@epcas5p1.samsung.com>
- <20180727082146epcas5p10374c04f0767dbbe409c8171c49d7c9a~FLBKL7utW2249922499epcas5p1c@epcas5p1.samsung.com>
+        Tue, 31 Jul 2018 05:27:22 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:55809 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbeGaJ1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 05:27:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1533023300; x=1564559300;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=x7y7yCTyd4HXV730zrufQ4JceMulZHEDh3P8TEWNRTw=;
+  b=sygdlpEiKi3Kl+Dp9YucMkAb7NLTUD5Fn8CcNe2tDWllrd54MBAyLXRx
+   R1H9x6Yp35SUUqP+jIXDYTHuc0IT/r8VILQy9cAtRoEEnvHj30ceywxZ1
+   bXNuz9DJD11zekUz3qVt5N2jB19fk3L7P54r6YJXjHRWrVx97hhRq8BZk
+   8=;
+X-IronPort-AV: E=Sophos;i="5.51,426,1526342400"; 
+   d="scan'208";a="747137890"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jul 2018 07:44:15 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w6V7hgpp080031
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 07:43:48 GMT
+Received: from EX13D02EUC004.ant.amazon.com (10.43.164.117) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 31 Jul 2018 07:43:47 +0000
+Received: from EX13D02EUC001.ant.amazon.com (10.43.164.92) by
+ EX13D02EUC004.ant.amazon.com (10.43.164.117) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 31 Jul 2018 07:43:47 +0000
+Received: from EX13D02EUC001.ant.amazon.com ([10.43.164.92]) by
+ EX13D02EUC001.ant.amazon.com ([10.43.164.92]) with mapi id 15.00.1367.000;
+ Tue, 31 Jul 2018 07:43:47 +0000
+From:   "Sironi, Filippo" <sironi@amazon.de>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Prarit Bhargava <prarit@redhat.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Subject: Re: [PATCH] x86/MCE: Fix CPU microcode version output
+Thread-Topic: [PATCH] x86/MCE: Fix CPU microcode version output
+Thread-Index: AQHUExbi8uypSsTACk266VWFhyGxKqSoDE4AgAAOvgCAAQMzgA==
+Date:   Tue, 31 Jul 2018 07:43:46 +0000
+Message-ID: <391F9020-01AA-43FF-88D6-A2CC994962F2@amazon.de>
+References: <20180703164844.9742-1-prarit@redhat.com>
+ <20180703165849.GA17773@agluck-desk> <20180703214300.GA15087@zn.tnic>
+ <e76c74b6-4008-9f7d-83bf-dd48433a7ea3@redhat.com>
+ <20180730161604.GC11890@nazgul.tnic>
+In-Reply-To: <20180730161604.GC11890@nazgul.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.213]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A56A7AECF0C8D148BABEFF8FADD3D91B@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727082146epcas5p10374c04f0767dbbe409c8171c49d7c9a~FLBKL7utW2249922499epcas5p1c@epcas5p1.samsung.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Satendra,
 
-Thanks for the patch.
+> On 30. Jul 2018, at 18:16, Borislav Petkov <bp@alien8.de> wrote:
+> =
 
-On Fri, Jul 27, 2018 at 01:51:36PM +0530, Satendra Singh Thakur wrote:
-> 1.Currently, in the func vb2_buffer_done, spinlock protects
-> following code
-> vb->state = VB2_BUF_STATE_QUEUED;
-> list_add_tail(&vb->done_entry, &q->done_list);
-> spin_unlock_irqrestore(&q->done_lock, flags);
-> vb->state = state;
-> atomic_dec(&q->owned_by_drv_count);
-> 2.The spinlock is mainly needed to protect list related ops and
-> vb->state = STATE_ERROR or STATE_DONE as in other funcs
-> vb2_discard_done
-> __vb2_get_done_vb
-> vb2_core_poll.
-> 3. Therefore, spinlock is mainly needed for
->    list_add, list_del, list_first_entry ops
->    and state = STATE_DONE and STATE_ERROR to protect
->    done_list queue.
-> 3. Hence, state = STATE_QUEUED doesn't need spinlock protection.
-> 4. Also atomic_dec dones't require the same as its already atomic.
-> 
-> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-> ---
->  drivers/media/common/videobuf2/videobuf2-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-> index f32ec73..968b403 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -923,17 +923,17 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
->  			call_void_memop(vb, finish, vb->planes[plane].mem_priv);
->  	}
->  
-> -	spin_lock_irqsave(&q->done_lock, flags);
->  	if (state == VB2_BUF_STATE_QUEUED ||
->  	    state == VB2_BUF_STATE_REQUEUEING) {
->  		vb->state = VB2_BUF_STATE_QUEUED;
->  	} else {
+> On Mon, Jul 30, 2018 at 11:23:18AM -0400, Prarit Bhargava wrote:
+>> Filippo & Borislav, did the patch get committed to a -next tree?
+> =
 
-You could move flags here as well. I wonder what others think.
+> No, I'm still waiting for it - looks like Filippo is busy.
+> =
 
->  		/* Add the buffer to the done buffers list */
-> +		spin_lock_irqsave(&q->done_lock, flags);
->  		list_add_tail(&vb->done_entry, &q->done_list);
->  		vb->state = state;
+> Care to send one instead as suggested here?
+> =
 
-The state could be assigned without holding the lock here.
+> https://lore.kernel.org/lkml/20180601121939.GA23298@nazgul.tnic/
+> =
 
-> +		spin_unlock_irqrestore(&q->done_lock, flags);
->  	}
->  	atomic_dec(&q->owned_by_drv_count);
-> -	spin_unlock_irqrestore(&q->done_lock, flags);
->  
->  	trace_vb2_buf_done(q, vb);
->  
+> -- =
 
--- 
-Kind regards,
+> Regards/Gruss,
+>    Boris.
+> =
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+> ECO tip #101: Trim your mails when you reply.
+> --
+
+Sorry, I was out of office for a while.
+I'll look into this today.
+
+Filippo
+
+
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+
