@@ -2,120 +2,110 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877C8C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B9BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38B1C20894
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C1620841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1gGAmQR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B1C20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YTgZR/68"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C1620841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732802AbeHAAuT (ORCPT
+        id S1732827AbeHAAv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:50:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732635AbeHAAuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:50:18 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D88A220857;
-        Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533078462;
-        bh=Tj0TTvsQu9cMxyiuTNiJ9tswUX7YWNLEs3Chc+rDRxk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a1gGAmQRRLaibCQw1jxuJABok7OgCjZwgYtt5FL7ccF7+touSsALfIN0RjZhkhHhf
-         7z1tPUY7rstgWOg9t3tJuzeL3P0BKmIiDTgYrA+RJFYuH9Uuwp4jZxZC2NY3miENjn
-         sBRxhPOfg5thPBj5GsvGsmCXFUfMQzkt9MN9pwWc=
-Date:   Tue, 31 Jul 2018 18:07:40 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc:     bhelgaas@google.com, hch@infradead.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [PATCH v2] PCI: Unify pci and normal dma direction definition
-Message-ID: <20180731230740.GP45322@bhelgaas-glaptop.roam.corp.google.com>
-References: <1531878035-33147-1-git-send-email-shunyong.yang@hxt-semitech.com>
+        Tue, 31 Jul 2018 20:51:56 -0400
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:46212 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732720AbeHAAvz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 20:51:55 -0400
+Received: by mail-pf1-f171.google.com with SMTP id u24-v6so6811885pfn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6VzOzblINlAwOt9Z3Tc0L0XEgO1pcUZqBpt6BgFfo/A=;
+        b=YTgZR/68I0zouGJYpSC/shI4ShROXVy7T/S6KvZC1lF3R9LLzhfL5WFy5VZ7JApHZH
+         uZyQnbZPTOqbxKgYsCp8LXiBP2evfS4CgaiL84twL6rD7zATWQ91D6tQAoVriy9yThZp
+         5PrX0mnOZfSGNzmE64YZ8D85AF1DrQYHU+fcMwy63ggd2neiRqZ90jWsEvgNyJIwm1z6
+         mV7fgy7NgOgHbz/1czOktjcQdRx4cBXs7SxpmgPzyg1AJcLhZMAaC+LNB5YYe2AuPdd0
+         hWWvOUYHaKiY/FVAdVnj6H77DQJgY1t0gGDDc1CNYhqoxFwPd3oiKJfAH36/7zRpif95
+         LONg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6VzOzblINlAwOt9Z3Tc0L0XEgO1pcUZqBpt6BgFfo/A=;
+        b=gKcL1IwRIIfcjKxA7kClW7Y0rv2QYPGr8k+TLYzE6zBRcEgxqf6kzwp2D0Z7UzaSKw
+         3Hiidzzz5e1HoPfo7Nl/9jYGldtNWWB9MPDrw19LeIEBGG7RRTvPQmbARjfgsEDX3pDh
+         ZtdXpJ35p0uq/EFotzdo1rohxNC4Xv4++j6pzS8d6prTydg2afcYgk5oJQHSulv0U1uF
+         K0sSIVclxF7U2BT+rU40Q6nSnDf9brko6JqMUgBbyeS+7nw6meUyE26Bb/bWb09PQGvf
+         VpqmfkIDwTgA3DSH0FDVxMT0nEQ2Qf+9xuExnzhS2y8/5Wlv976mE/eAzIraFmuTfTCd
+         4QlA==
+X-Gm-Message-State: AOUpUlHIAP791tpMjKPjSUwnFL3kSPpBSzfPTWSTf7bwgLF1ITy9uvUu
+        8rehNRLJ8pAA1cm2ghpP0MD0X1FU8dHVay1Dr5WaQw==
+X-Google-Smtp-Source: AAOMgpcjE2KXQ52wiHCfEDbj4WLlTirlWeV3fTht4jUZouOMkcHRPo49gfbdWuIrps9XWCuwf1xim0L8siUf6S70+0Q=
+X-Received: by 2002:a62:8d7:: with SMTP id 84-v6mr24214435pfi.172.1533078557859;
+ Tue, 31 Jul 2018 16:09:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531878035-33147-1-git-send-email-shunyong.yang@hxt-semitech.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <CAKwvOdku_BOi6m2ugaef6=8+VH_+KAHH-Ch+uZZqMr8WAKARCw@mail.gmail.com>
+In-Reply-To: <CAKwvOdku_BOi6m2ugaef6=8+VH_+KAHH-Ch+uZZqMr8WAKARCw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 31 Jul 2018 16:09:06 -0700
+Message-ID: <CAKwvOdn1Ri2VP9hNfKwQ3WMzL278e7-3DGusZc1cwQZbk9H6nw@mail.gmail.com>
+Subject: Re: Getting the instruction pointer on a per arch basis
+To:     schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, tony.luck@intel.com,
+        fenghua.yu@intel.com, msalter@redhat.com,
+        jacquiot.aurelien@gmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com
+Cc:     Pirama Arumuga Nainar <pirama@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Mark Salyzyn <salyzyn@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 09:40:35AM +0800, Shunyong Yang wrote:
-> Current DMA direction definitions in pci-dma-compat.h and dma-direction.h
-> are mirrored in value. Unifying them to enhance readability and avoid
-> possible inconsistency.
-> 
-> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
++ More maintainers and lists for visibility
 
-Applied to pci/misc for v4.19, thanks!
-
-> ---
-> 
-> v2:
->   Remove unnecessary comments and  braces according to Christoph's
->   comments.
-> 
-> ---
->  include/linux/dma-direction.h  | 6 ++----
->  include/linux/pci-dma-compat.h | 8 ++++----
->  2 files changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/dma-direction.h b/include/linux/dma-direction.h
-> index 3649a031893a..9c96e30e6a0b 100644
-> --- a/include/linux/dma-direction.h
-> +++ b/include/linux/dma-direction.h
-> @@ -1,14 +1,12 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  #ifndef _LINUX_DMA_DIRECTION_H
->  #define _LINUX_DMA_DIRECTION_H
-> -/*
-> - * These definitions mirror those in pci.h, so they can be used
-> - * interchangeably with their PCI_ counterparts.
-> - */
-> +
->  enum dma_data_direction {
->  	DMA_BIDIRECTIONAL = 0,
->  	DMA_TO_DEVICE = 1,
->  	DMA_FROM_DEVICE = 2,
->  	DMA_NONE = 3,
->  };
-> +
->  #endif
-> diff --git a/include/linux/pci-dma-compat.h b/include/linux/pci-dma-compat.h
-> index 0dd1a3f7b309..c3f1b44ade29 100644
-> --- a/include/linux/pci-dma-compat.h
-> +++ b/include/linux/pci-dma-compat.h
-> @@ -8,10 +8,10 @@
->  #include <linux/dma-mapping.h>
->  
->  /* This defines the direction arg to the DMA mapping routines. */
-> -#define PCI_DMA_BIDIRECTIONAL	0
-> -#define PCI_DMA_TODEVICE	1
-> -#define PCI_DMA_FROMDEVICE	2
-> -#define PCI_DMA_NONE		3
-> +#define PCI_DMA_BIDIRECTIONAL	DMA_BIDIRECTIONAL
-> +#define PCI_DMA_TODEVICE	DMA_TO_DEVICE
-> +#define PCI_DMA_FROMDEVICE	DMA_FROM_DEVICE
-> +#define PCI_DMA_NONE		DMA_NONE
->  
->  static inline void *
->  pci_alloc_consistent(struct pci_dev *hwdev, size_t size,
-> -- 
-> 1.8.3.1
-> 
+On Tue, Jul 31, 2018 at 3:32 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> I'm currently looking into cleaning up the code duplication between
+> current_text_addr() and _THIS_IP_, virtually every implementation of
+> current_text_addr() and _THIS_IP_ itself are basically:
+>
+> #define _THIS_IP_ ({ __label__ _l; _l: &&_l; })
+>
+> For a few arch's, they have inline assembly instead (for
+> current_text_addr()).  Examples:
+> * s390
+> * sh
+> * ia64
+> * x86 (um and 32b)
+> * c6x
+> * sparc
+>
+> I have a patch that cuts down on the duplication, but I don't
+> understand why the few arch specific implementations are necessary.  I
+> could reduce the duplication further if it's ok to just use the
+> statement expression.
+>
+> Does anyone know why this is the case?
+> --
+> Thanks,
+> ~Nick Desaulniers
