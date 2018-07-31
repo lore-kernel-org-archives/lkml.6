@@ -2,116 +2,103 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C951BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E81EC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81AF820841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB2220841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOLIxHIs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81AF820841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YKclMVW5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB2220841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeGaTUZ (ORCPT
+        id S1731181AbeGaTX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:20:25 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37841 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728327AbeGaTUY (ORCPT
+        Tue, 31 Jul 2018 15:23:29 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43560 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729634AbeGaTX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:20:24 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a26-v6so6455810pfo.4;
-        Tue, 31 Jul 2018 10:39:02 -0700 (PDT)
+        Tue, 31 Jul 2018 15:23:29 -0400
+Received: by mail-io0-f196.google.com with SMTP id y10-v6so13732706ioa.10
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:42:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IWu0hHJ60IJFxovi5QHYRpuAWtEB4yJPWtSw9el28Lc=;
-        b=UOLIxHIslXEp5sZTABPIEC/oLs9sdH/IMWsEmrDV5//q0/xdRq1M8/OQre3YAdKRUe
-         FFnIN0Ed7J4Wta9VaBTTiRFtB7iD3gap+Ce8DS9jJkw+ZPzUfWHHc0CKfvNQUlGL3Iwb
-         8eJ8RY63kEjyr22qjeMAOb8rUkQwxUsLD3LcGS5Pxk1oEgDUlhHmB/raTq002jZAoXrI
-         utbmjmbGNDgvrPTZtSpFWWMwAOVDN0d6xhzaTPzz8/FbOhRaWdj2r0R+ipu3THthgmsP
-         iqOjMHOfbsiuZY0docjX5zIsUgCvGPw4ZJ5L+GpA6G29c19LhP7+EA/XkFqwfBVrHQtD
-         4jPw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dZPiLSVij48Ml7RyMFdOOkoCd/1f7/lix5KTpWVZDok=;
+        b=YKclMVW54MIH2TrUVfJUGUOKzcLzesXUTCHwt6/wl+qTNoR4eOj+j0zfkMIjX42iEk
+         m9zhb1l3yKW08YXn6kJnYsFzL0vcSDyK/+YSmYQ2KyepPQxglVzdYc7qvjv8gwyWkCtR
+         shdXLVVrycSvOZBGEf/cYcrGVkGoTQPTF4JnvLFb6y05xSoDrQv7bRYiN7vI/TdSWD+u
+         AhwE5hKo+k9NxJhlDfybxjEKsjviA4pNL075f5wFi+JTUuip6oMMUt2wukGrnidLjSDt
+         IKI8STY2PZRBfZUgKzxRCAHrfVVnDAEAxuOZ2ohIRfuzFcDy2cePi/qs5w1HJ5qXlAlF
+         pIgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IWu0hHJ60IJFxovi5QHYRpuAWtEB4yJPWtSw9el28Lc=;
-        b=HwDeEc+7yr/X+uD/XltyjbL4cjI1WtB3WmGeeRkMA4NdiMS/dV/D/VtNUiP9+MyK3w
-         oZ6wW+g0jNA7KKJPARAAjgEznhEv5q5ZH6IvpeXyTCFx3Kraj3FX3vXC+H9hD+vdRxOm
-         aZiy/z8Xf5cyXwwgvATeZOglDc0DPwk8NJG417CBlRAoOAF9iEY1o+40OnSC/f5S0XJE
-         eIGtPFjqHdv3iecYspH6tC/KyvZVa/2TgwIYtZT2UdFwSEBVohIsoP9SDRIv6Fpwhz7f
-         eJopk3KQLeKJxY1C94cPyk/kDLUNk6O/yG+C+9jPGRLjYWrg5xayEgFkToDsK51cKxRj
-         hwZA==
-X-Gm-Message-State: AOUpUlHBqLG1s9K0R1mw2OCH88Wc4APaiNLy7oJCfkkJ7YpbfKtE4CIp
-        UJlS9wXntx4bhP63yvOFeuKiWjfP
-X-Google-Smtp-Source: AAOMgpfQWBAZlkuzLHhO6+la5wwBbNV+dBB3y9QBwdnrdDrubDx6k8Vu1R/qJgEKBBmtaMIXGA40Vg==
-X-Received: by 2002:a62:5a01:: with SMTP id o1-v6mr23454899pfb.0.1533058742289;
-        Tue, 31 Jul 2018 10:39:02 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm22310811pfn.59.2018.07.31.10.39.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 10:39:01 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 10:38:59 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Stefan Agner <stefan@agner.ch>, Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-Message-ID: <20180731173859.GA17007@roeck-us.net>
-References: <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
- <20180727140448.GA29001@lst.de>
- <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
- <f67628ad-4cae-96cd-d0c4-3b2f7d12a822@roeck-us.net>
- <4ce17098-850f-3bb0-b977-8d7932e74e06@arm.com>
- <20180731154353.GA29601@roeck-us.net>
- <10c2ca4d-d587-2705-2802-b6df3dc72fd4@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dZPiLSVij48Ml7RyMFdOOkoCd/1f7/lix5KTpWVZDok=;
+        b=Y+1BXT84VrNKC5JbuJrbjrOrUoztjgwl8dV9ytbBPyxhgJcoowHn7I6KbkQtr2tVeS
+         Zu6tL1fEZj86DIDCMDivP2Ji9alN3zWeH/Kiehmm1un5syykE4UQR7VMGj0FncwMyv/Y
+         b9IkmifECMuY5XG//lcw5eq4Ann0XYTk56KMJ/kMIUcpC3zYMBQuSyBMgFgA1sDOM3Dt
+         W19TIwubMDuChdO30CRAJnpTkNfI/3lGkwIQjZHeEmEKl3s78BGCxJ62QiZnuCozP/U4
+         XxGaNaoQY5dx4OZ0arHdJkNvjYKzsr5cQ+CKwDDh6xY9NAI7uJySVI0zG1ao/KjjEl7G
+         Aptg==
+X-Gm-Message-State: AOUpUlFcM4X+TJotv24EWFtUOz26a8B99dO1OqvQbIoI50xLuILiAh5n
+        M4X3bknV+kkA8R3dt3fYE+BecYgzQAqmKXFfq951IQ==
+X-Google-Smtp-Source: AAOMgpdYt/HTWx2J1qu7l91noLsrW/v+rrHTl1YFYDF0Io1IOeb+pJx+ZQtBSDpt2dpDgN+CwS57MsiWKs5e70uxghE=
+X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr532662iog.271.1533058925770;
+ Tue, 31 Jul 2018 10:42:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10c2ca4d-d587-2705-2802-b6df3dc72fd4@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com> <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
+In-Reply-To: <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 31 Jul 2018 10:41:54 -0700
+Message-ID: <CANn89iLLQP2vA+2J-zxL3Fa75zNw=yRmv3Jg6vcEc=fYeEZ2ow@mail.gmail.com>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+To:     Christoph Lameter <cl@linux.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, jack@suse.com,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        David Miller <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev <netdev@vger.kernel.org>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 04:58:41PM +0100, Robin Murphy wrote:
-> On 31/07/18 16:43, Guenter Roeck wrote:
-> >On Tue, Jul 31, 2018 at 03:09:34PM +0100, Robin Murphy wrote:
-> >>>Please note that sparc images still generate the warning (next-20180731).
-> >>
-> >>Ugh, OK, any ideas what sparc does to create these platform devices that
-> >>isn't of_platform_device_create_pdata() and has somehow grown an implicit
-> >>dependency on of_dma_configure() since 4.12? I'm looking, but nothing jumps
-> >>out...
-> >>
-> >
-> >I suspect it might be of_device_register(), called from
-> >	arch/sparc/kernel/of_device_64.c:scan_one_device()
-> >	arch/sparc/kernel/of_device_32.c:scan_one_device()
-> 
-> Right, that's as far as I got as well, so I'm struggling to see how these
-> things ever got DMA masks set before the of_dma_configure() call moved out
-> of of_platform_device_create_pdata(), or why it wasn't a problem prior to
-> the generic dma_ops rework if they didn't :/
-> 
-Ah, ok. No idea, sorry. All I know is that the messages were first seen
-with next-20180727.
+On Tue, Jul 31, 2018 at 10:36 AM Christopher Lameter <cl@linux.com> wrote:
 
-Guenter
+>
+> If there is refcounting going on then why use SLAB_TYPESAFE_BY_RCU?
+
+To allow fast reuse of objects, without going through call_rcu() and
+reducing cache efficiency.
+
+I believe this is mentioned in Documentation/RCU/rculist_nulls.txt
