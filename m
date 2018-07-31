@@ -2,109 +2,280 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8C2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E9720862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6BAF20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Sfq/GwEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E9720862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YjLERdFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6BAF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732467AbeGaRya (ORCPT
+        id S1732499AbeGaRyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:54:30 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35790 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbeGaRya (ORCPT
+        Tue, 31 Jul 2018 13:54:46 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40760 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728052AbeGaRyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:54:30 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VG3uxs144246
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:13:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=IcI8ibE+Ha5Pd5oNHyYIBCp6EXyQSgkTDgReWWpWI8s=;
- b=Sfq/GwEaoNTLD4H3dD92rSJBnj+ol6526saD925mOOB7rg1XiDpGaXRnPCCBT0iJ+0Cd
- ffLtH1JAnI9jCzw06Ja8oZa7IuAc66zrYemjluq9e/jfgw2NeEE4sHVDwbYNJwHypS2T
- C+/2KbZsD/uyUy6h6jrPDB2YvOI3whOIFbd0R0oRcD8gHz62BkMJkBllXDF4s/jLBUwK
- V8y+WRhItQyXDMLvrumMIYKtS84lYgdYNcbFUO7iWNFNzGspGDD6eGXDmbB1sOMgQYSj
- eDg0qIVTolcPUSdBGSiuLxuxpuyjdS1k/zh0NrNlwwaoEroglo1+tc+kV1tRBL9Ng6Im ag== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2kgfwt1uq1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:13:27 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6VGDQmv008533
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:13:26 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6VGDP0U005280
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 16:13:26 GMT
-Received: from mail-oi0-f54.google.com (/209.85.218.54)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 09:13:25 -0700
-Received: by mail-oi0-f54.google.com with SMTP id n84-v6so28959639oib.9
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:13:25 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFUzkxkMaORxGuVdvKNo5TsnFCkGIV7chp9XqHCvg2oHph6Vt5k
-        lahGouwHsfmi2qwYCw4nxozaWCo2iTa3ysBLoKk=
-X-Google-Smtp-Source: AAOMgpey84GHmeg5uG6SqHYGoed/6FsuNXBvHN8ADytCFeD5rxZcuw+tfo74ujIlXZ8Dwo8uYPBbHPESdQxuuCK2ZCU=
-X-Received: by 2002:aca:b541:: with SMTP id e62-v6mr24993842oif.136.1533053604934;
- Tue, 31 Jul 2018 09:13:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180730101757.28058-1-osalvador@techadventures.net>
- <20180730101757.28058-5-osalvador@techadventures.net> <20180731101752.GA473@techadventures.net>
-In-Reply-To: <20180731101752.GA473@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 31 Jul 2018 12:12:49 -0400
-X-Gmail-Original-Message-ID: <CAGM2reade9+=5+qoCkmYrtMxDnQzoAi3u0nnHV-K5_iFmnOXmA@mail.gmail.com>
-Message-ID: <CAGM2reade9+=5+qoCkmYrtMxDnQzoAi3u0nnHV-K5_iFmnOXmA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mm/page_alloc: Introduce free_area_init_core_hotplug
-To:     osalvador@techadventures.net
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, mgorman@techsingularity.net,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, dan.j.williams@intel.com,
-        david@redhat.com, osalvador@suse.de
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=869
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310148
+        Tue, 31 Jul 2018 13:54:46 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h15-v6so17260322wrs.7
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Bz3G3p5Hkg4TXYwqTjT6qNuoVx3+KMbVy7giaEmfv+I=;
+        b=YjLERdFg541lODcMb7d3wqMEHXKRAGnGCLH0SiVxax45nssG4BTtZzNdzJ/eIAWyk+
+         Yqhx3IVJBW2yJG3E7MRNWhdLMKuAWoa7KdLFdL6XitPfbc9Ls+6WSixJ/WZvQS6/0gfx
+         QrSXXEs5+TS76RfmoBO/qN7Kf6/2eXC7ZTHlQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Bz3G3p5Hkg4TXYwqTjT6qNuoVx3+KMbVy7giaEmfv+I=;
+        b=uRBurbb/LbJzaYczYoGmjrJts8St1BX2As6GMAc+8NDnb0eFFyvoR+s0yKrD6e6Xnq
+         OUr+tULSqEJo8mjoMO3+ed54BR/hOclee4ZdnL55FdO3rvQX/4EgmZZVd6iMeuBJPb1I
+         RrlPWyNi7IJeb7myki0I5pkkCBWr14gKlptp/eXQPhrVpj1KIdWERILmCJa3nxLk2iuY
+         y6RKujmBXdbszBp4QZPL568Y0X90DldHqG3Jpdm1J1ChW+c3RoA4tQUbw9uQjev+NxBj
+         weaFeYmVZo1noRywlpJnif6vsiEjcG/TbGo+C3TE5ljEK4/qlDkyYf8asmDUAEJHjm8u
+         qN/Q==
+X-Gm-Message-State: AOUpUlGDOmeRWegCWsoV9aZVQvz7g5Y2OeKfZuVsX4sLg2kgxP7FjRRd
+        lzA6ymDNXSBInq8SxmP3ATxLsw==
+X-Google-Smtp-Source: AAOMgpfBZRyyhJHU/8QGpyFLMmIDMOlH9FT7XBL9/77EFwV9qkz8kry/gs5R4zVnx9j4a/j2Oo+H8w==
+X-Received: by 2002:a5d:41c1:: with SMTP id e1-v6mr21218627wrq.25.1533053622395;
+        Tue, 31 Jul 2018 09:13:42 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id t186-v6sm3643457wmf.14.2018.07.31.09.13.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 31 Jul 2018 09:13:41 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v7 0/8] Introduce on-chip interconnect API
+Date:   Tue, 31 Jul 2018 19:13:32 +0300
+Message-Id: <20180731161340.13000-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 6:17 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
->
-> On Mon, Jul 30, 2018 at 12:17:57PM +0200, osalvador@techadventures.net wrote:
-> > From: Oscar Salvador <osalvador@suse.de>
-> ...
-> > Also, since free_area_init_core/free_area_init_node will now only get called during early init, let us replace
-> > __paginginit with __init, so their code gets freed up.
-> >
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> > Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
->
-> Andrew, could you please fold the following cleanup into this patch?
-> thanks
->
-> Pavel, since this has your Reviewed-by, are you ok with the following on top?
+Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+graphics, modem). These cores are talking to each other and can generate a
+lot of data flowing through the on-chip interconnects. These interconnect
+buses could form different topologies such as crossbar, point to point buses,
+hierarchical buses or use the network-on-chip concept.
 
-Yes, Looks good to me.
+These buses have been sized usually to handle use cases with high data
+throughput but it is not necessary all the time and consume a lot of power.
+Furthermore, the priority between masters can vary depending on the running
+use case like video playback or CPU intensive tasks.
 
-Thank you,
-Pavel
+Having an API to control the requirement of the system in terms of bandwidth
+and QoS, so we can adapt the interconnect configuration to match those by
+scaling the frequencies, setting link priority and tuning QoS parameters.
+This configuration can be a static, one-time operation done at boot for some
+platforms or a dynamic set of operations that happen at run-time.
+
+This patchset introduce a new API to get the requirement and configure the
+interconnect buses across the entire chipset to fit with the current demand.
+The API is NOT for changing the performance of the endpoint devices, but only
+the interconnect path in between them.
+
+The API is using a consumer/provider-based model, where the providers are
+the interconnect buses and the consumers could be various drivers.
+The consumers request interconnect resources (path) to an endpoint and set
+the desired constraints on this data flow path. The provider(s) receive
+requests from consumers and aggregate these requests for all master-slave
+pairs on that path. Then the providers configure each participating in the
+topology node according to the requested data flow path, physical links and
+constraints. The topology could be complicated and multi-tiered and is SoC
+specific.
+
+Below is a simplified diagram of a real-world SoC topology. The interconnect
+providers are the NoCs.
+
++----------------+    +----------------+
+| HW Accelerator |--->|      M NoC     |<---------------+
++----------------+    +----------------+                |
+                        |      |                    +------------+
+ +-----+  +-------------+      V       +------+     |            |
+ | DDR |  |                +--------+  | PCIe |     |            |
+ +-----+  |                | Slaves |  +------+     |            |
+   ^ ^    |                +--------+     |         |   C NoC    |
+   | |    V                               V         |            |
++------------------+   +------------------------+   |            |   +-----+
+|                  |-->|                        |-->|            |-->| CPU |
+|                  |-->|                        |<--|            |   +-----+
+|     Mem NoC      |   |         S NoC          |   +------------+
+|                  |<--|                        |---------+    |
+|                  |<--|                        |<------+ |    |   +--------+
++------------------+   +------------------------+       | |    +-->| Slaves |
+  ^  ^    ^    ^          ^                             | |        +--------+
+  |  |    |    |          |                             | V
++------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+| CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
++------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+          |
+      +-------+
+      | Modem |
+      +-------+
+
+TODO:
+* Create icc_set_extended() to handle parameters such as latency and other
+  QoS values.
+* Convert from using global node identifiers to local per provider ids.
+* Cache the path between the nodes instead of walking the graph on each get().
+* Sync interconnect requests with the idle state of the device.
+
+Changes since patchset v6 (https://lkml.org/lkml/2018/7/9/698)
+* [patches 1,6]: Move the aggregation within the provider from the framework to
+  the platform driver's set() callback, as the aggregation point could be SoC
+  specific.
+* [patch 1]: Include missing header, reset state only of the traversed nodes,
+  move more code into path_init(), add more asserts, move misplaced mutex,
+  simplify icc_link_destroy() (Evan)
+* [patch 1]: Fix the order of requests to go from source to destination. (Alex)
+* [patch 7]: Use better wording in the documentation. (Evan)
+* [patch 6]: Reorder struct members, sort nodes alphabetically, improve naming
+  of variables , add missing clk_disable_unprepare() in error paths. (Matthias)
+* [patch 6]: Remove redundant NULL pointer check in msm8916 driver. (Alex)
+* [patch 6]: Add missing depend on QCOM_SMD_RPM in Kconfig. (Evan)
+* [patch 3]: Don't check for errors on debugfs calls, remove debugfs directory
+  when module is unloaded (Greg)
+
+Changes since patchset v5 (https://lkml.org/lkml/2018/6/20/453)
+* Fix the modular build, make rpm-smd driver a module.
+* Optimize locking and move to higher level. (Evan)
+* Code cleanups. Fix typos. (Evan, Matthias)
+* Add the source node to the path. (Evan)
+* Rename path_allocate() to path_init() with minor refactoring. (Evan)
+* Rename *_remove() functions to *_destroy().
+* Return fixed errors in icc_link_destroy(). (Evan)
+* Fix krealloc() usage in icc_link_destroy(). (Evan)
+* Add missing kfree() in icc_node_create(). (Matthias)
+* Make icc_node_add() return void. (Matthias)
+* Change mutex_init to mutex_lock in icc_provider_add(). (Matthias)
+* Add new icc_node_del() function to delete nodes from provider.
+* Fix the header guard to reflect the path in smd-rpm.h. (Evan)
+* Check for errors returned by qcom_icc_rpm_smd_send(). (Evan)
+* Propagate the error of icc_provider_del(). (Evan)
+
+Changes since patchset v4 (https://lkml.org/lkml/2018/3/9/856)
+* Simplified locking by using a single global mutex. (Evan)
+* Changed the aggregation function interface.
+* Implemented functions for node, link, provider removal. (Evan)
+* Naming changes on variables and functions, removed redundant code. (Evan)
+* Fixes and clarifications in the docs. (Matthias, Evan, Amit, Alexandre)
+* Removed mandatory reg DT property, made interconnect-names optional. (Bjorn)
+* Made interconnect-cells property required to align with other bindings. (Neil)
+* Moved msm8916 specific bindings into a separate file and patch. (Bjorn)
+* Use the names, instead of the hardcoded ids for topology. (Matthias)
+* Init the node before creating the links. (Evan)
+* Added icc_units_to_bps macro. (Amit)
+
+Changes since patchset v3 (https://lkml.org/lkml/2017/9/8/544)
+* Refactored the constraints aggregation.
+* Use the IDR API.
+* Split the provider and consumer bindings into separate patches and propose
+  new bindings for consumers, which allows to specify the local source port.
+* Adopted the icc_ prefix for API functions.
+* Introduced separate API functions for creating interconnect nodes and links.
+* Added DT lookup support in addition to platform data.
+* Dropped the event tracing patch for now.
+* Added a patch to provide summary via debugfs.
+* Use macro for the list of topology definitions in the platform driver.
+* Various minor changes.
+
+Changes since patchset v2 (https://lkml.org/lkml/2017/7/20/825)
+* Split the aggregation into per node and per provider. Cache the
+  aggregated values.
+* Various small refactorings and cleanups in the framework.
+* Added a patch introducing basic tracepoint support for monitoring
+  the time required to update the interconnect nodes.
+
+Changes since patchset v1 (https://lkml.org/lkml/2017/6/27/890)
+* Updates in the documentation.
+* Changes in request aggregation, locking.
+* Dropped the aggregate() callback and use the default as it currently
+  sufficient for the single vendor driver. Will add it later when needed.
+* Dropped the dt-bindings draft patch for now.
+
+Changes since RFC v2 (https://lkml.org/lkml/2017/6/12/316)
+* Converted documentation to rst format.
+* Fixed an incorrect call to mutex_lock. Renamed max_bw to peak_bw.
+
+Changes since RFC v1 (https://lkml.org/lkml/2017/5/15/605)
+* Refactored code into shorter functions.
+* Added a new aggregate() API function.
+* Rearranged some structs to reduce padding bytes.
+
+Changes since RFC v0 (https://lkml.org/lkml/2017/3/1/599)
+* Removed DT support and added optional Patch 3 with new bindings proposal.
+* Converted the topology into internal driver data.
+* Made the framework modular.
+* interconnect_get() now takes (src and dst ports as arguments).
+* Removed public declarations of some structs.
+* Now passing prev/next nodes to the vendor driver.
+* Properly remove requests on _put().
+* Added refcounting.
+* Updated documentation.
+* Changed struct interconnect_path to use array instead of linked list.
+
+Georgi Djakov (8):
+  interconnect: Add generic on-chip interconnect API
+  dt-bindings: Introduce interconnect provider bindings
+  interconnect: Add debugfs support
+  interconnect: qcom: Add RPM communication
+  dt-bindings: interconnect: Document qcom,msm8916 NoC bindings
+  interconnect: qcom: Add msm8916 interconnect provider driver
+  dt-bindings: Introduce interconnect consumers bindings
+  interconnect: Allow endpoints translation via DT
+
+ .../bindings/interconnect/interconnect.txt    |  60 ++
+ .../bindings/interconnect/qcom-msm8916.txt    |  39 +
+ .../bindings/interconnect/qcom-smd.txt        |  32 +
+ Documentation/interconnect/interconnect.rst   |  96 +++
+ drivers/Kconfig                               |   2 +
+ drivers/Makefile                              |   1 +
+ drivers/interconnect/Kconfig                  |  15 +
+ drivers/interconnect/Makefile                 |   3 +
+ drivers/interconnect/core.c                   | 709 ++++++++++++++++++
+ drivers/interconnect/qcom/Kconfig             |  23 +
+ drivers/interconnect/qcom/Makefile            |   4 +
+ drivers/interconnect/qcom/msm8916.c           | 510 +++++++++++++
+ drivers/interconnect/qcom/smd-rpm.c           |  91 +++
+ drivers/interconnect/qcom/smd-rpm.h           |  16 +
+ include/dt-bindings/interconnect/qcom.h       | 187 +++++
+ include/linux/interconnect-provider.h         | 125 +++
+ include/linux/interconnect.h                  |  49 ++
+ 17 files changed, 1962 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-msm8916.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+ create mode 100644 Documentation/interconnect/interconnect.rst
+ create mode 100644 drivers/interconnect/Kconfig
+ create mode 100644 drivers/interconnect/Makefile
+ create mode 100644 drivers/interconnect/core.c
+ create mode 100644 drivers/interconnect/qcom/Kconfig
+ create mode 100644 drivers/interconnect/qcom/Makefile
+ create mode 100644 drivers/interconnect/qcom/msm8916.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ create mode 100644 include/dt-bindings/interconnect/qcom.h
+ create mode 100644 include/linux/interconnect-provider.h
+ create mode 100644 include/linux/interconnect.h
+
