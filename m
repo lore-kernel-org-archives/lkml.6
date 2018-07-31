@@ -2,454 +2,159 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBD0C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87D9C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E4320857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E4320857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 524AE208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:18:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="p/uhHREH";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="SbA7pq+6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524AE208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbeGaV5X (ORCPT
+        id S1732432AbeGaWAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:57:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33564 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726582AbeGaV5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:57:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C39477C6A9;
-        Tue, 31 Jul 2018 20:15:20 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3601E215670D;
-        Tue, 31 Jul 2018 20:15:19 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghau51/ghau40 v4 4/6] add ausearch containerid support
-Date:   Tue, 31 Jul 2018 16:11:39 -0400
-Message-Id: <1533067901-21817-5-git-send-email-rgb@redhat.com>
-In-Reply-To: <1533067901-21817-1-git-send-email-rgb@redhat.com>
-References: <1533067901-21817-1-git-send-email-rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 20:15:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 20:15:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+        Tue, 31 Jul 2018 18:00:36 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:24031 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732119AbeGaWAg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 18:00:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1533068315; x=1564604315;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=hxfxe9cHgBKq4EK6sDIacGgOuQdc7gT5yAlSbu8F7oo=;
+  b=p/uhHREHG8cH/FIkUrm8poq/IyCGF/1uHV9kJqJ9KTMpqZtOklUrEsaq
+   h9DMd9IN2NfUXj1PLgYxZF/NcA+/kqHcY6Hq3cTsDFXpjASQzxUO7KyGJ
+   NTLSJsHN3kU7Z6upT5UKK63ocDBd5evGdssn87NBvCnMQePAPX19Ndu2s
+   vFGPk2GbeUDL1NU3Ozv7cXbELEfDB52Ry56IPptIkI9uasZ3GroqVICkI
+   8En2KXoMHqvLUwDHVrRjCUkJwwabU+UsrM7zBx6rlurcwTzynu011Ni01
+   5Z7qTu96Er+c/JJLZPAXHltX+wTijqeO1kvtrsmBU22vIaRVcPDNpMxBB
+   g==;
+X-IronPort-AV: E=Sophos;i="5.51,428,1526313600"; 
+   d="scan'208";a="189457647"
+Received: from mail-co1nam03lp0017.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([216.32.181.17])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Aug 2018 04:18:33 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qVt4hJXdWtHASq2XSxpzagz/cYlbr3JeAs3eJIXi9hk=;
+ b=SbA7pq+6ephm0I218QlSz/QJArzMpCzZ6WlsXYhGS+znbyKyLPXgNgwtEh6Rgk27pEB9AIL1AY4V2hadxXBy57myYsiRWlZwuAgjJBrTgP/XE8hf7PEqEq9wdXLLglrvI9uRnGzAuM7HyYq+hR4ZuJn3bXkCLpa22IK1UJKY6sk=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0657.namprd04.prod.outlook.com (10.172.166.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.17; Tue, 31 Jul 2018 20:18:30 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::29a0:6668:ccc3:c397]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::29a0:6668:ccc3:c397%4]) with mapi id 15.20.0995.020; Tue, 31 Jul 2018
+ 20:18:30 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>
+CC:     "vinod.koul@intel.com" <vinod.koul@intel.com>,
+        "david.kershner@unisys.com" <david.kershner@unisys.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hch@lst.de" <hch@lst.de>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "manoj@linux.vnet.ibm.com" <manoj@linux.vnet.ibm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "cyrille.pitchen@free-electrons.com" 
+        <cyrille.pitchen@free-electrons.com>,
+        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "mrochs@linux.vnet.ibm.com" <mrochs@linux.vnet.ibm.com>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "ukrishn@linux.vnet.ibm.com" <ukrishn@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi passthrough
+ request users
+Thread-Topic: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi
+ passthrough request users
+Thread-Index: AQHUKQf8q9qBS8n6RUKN2MmwqU0cx6SpwGaAgAADIoCAAAGwAA==
+Date:   Tue, 31 Jul 2018 20:18:30 +0000
+Message-ID: <6c04fc087bae896bf00b94184def3d7697a22d6c.camel@wdc.com>
+References: <20180731195155.46664-1-keescook@chromium.org>
+         <20180731195155.46664-4-keescook@chromium.org>
+         <a5b545eade66f95c9a9ecf37676306a8d395187c.camel@wdc.com>
+         <20180731201225.GA1989@infradead.org>
+In-Reply-To: <20180731201225.GA1989@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0657;20:OFHP15Rs17oTnp23PVJQu8/UAMvP5uN6ZggiK1luc2/hSEs/J0FlPD5krccVIoGmaXo5yp6tZw5YyhR7E0w8aRyHFPBbgxwIaDiuzYFnj8ItfBthhlTx6dfv3SPxkoSEsZ4z5nBAUtR38nkYuS+S/+khPbhGHp5kC6aoO4a6aQs=
+x-ms-office365-filtering-correlation-id: 41677d09-7461-45a4-bf5f-08d5f722c892
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0657;
+x-ms-traffictypediagnostic: MWHPR04MB0657:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0657F7DF268132A4E4458A33982E0@MWHPR04MB0657.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0657;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0657;
+x-forefront-prvs: 0750463DC9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(39860400002)(136003)(366004)(189003)(199004)(68736007)(2501003)(36756003)(14454004)(6116002)(7736002)(3846002)(2906002)(6246003)(72206003)(5660300001)(106356001)(6486002)(6436002)(305945005)(11346002)(229853002)(6512007)(446003)(316002)(186003)(256004)(4326008)(5640700003)(5250100002)(2900100001)(105586002)(476003)(99286004)(478600001)(6506007)(93886005)(76176011)(486006)(2616005)(6916009)(7416002)(25786009)(86362001)(8676002)(8936002)(54906003)(81166006)(81156014)(26005)(102836004)(53936002)(66066001)(1730700003)(97736004)(2351001)(118296001)(26730200005)(19860200003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0657;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: znGkOU015ru1AmMFi+A/ZNhbeZeWakxX7qHAItvWm9EzMvcPWxZjOtgYkN+V4hCnQHciOcFZ6gYxqgEyvkFjYvJrDHQGpa8hViG5af+61zDEMgt6CBiIP9KsBoEESDHKrWKvtYVGPQsjlVP9nHOa4FZqT71JktlRJTGOCNhpVhAKstj8n1B2iIQX3V9Z+OPMSdYu4/28NNQUSm3xOIbD1elS8FzyU/wYam2uRGzUbl9SkEoqSwjgOp2UPXGnSO5g6jnXInJH+DZOSEFTPJuyZC8BNUHphfpXaFMOwRKJ8cXbEdSR9B1Z7fbxVVPD68WlLUy/P4HN6y4jqfXoFyZcFuxxYMVDAUXvUYqp4CbH24s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <0AF1FA13400D144B90C65F56A5693E36@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41677d09-7461-45a4-bf5f-08d5f722c892
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2018 20:18:30.5049
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0657
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to ausearch for searching on the containerid field in
-records.
+On Tue, 2018-07-31 at 13:12 -0700, hch+AEA-infradead.org wrote:
++AD4- It shouldn't.  All these are built into scsi+AF8-mod.o, which is only=
+ built
++AD4- when CONFIG+AF8-SCSI is set.  Under what circumstances do you see the=
+m built?
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- src/aureport-options.c |   1 +
- src/ausearch-llist.c   |   2 +
- src/ausearch-llist.h   |   1 +
- src/ausearch-match.c   |   3 +
- src/ausearch-options.c |  47 +++++++++++-
- src/ausearch-options.h |   1 +
- src/ausearch-parse.c   | 199 +++++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 253 insertions(+), 1 deletion(-)
+Although I think you are right, I still prefer that the scsi+AF8-common.c f=
+ile
+would be moved to a new directory. That will prevent confusion later on for
+people who want to add additional code. This patch makes it nontrivial to
+figure out which code is built when SCSI target functionality is enabled bu=
+t
+SCSI initiator functionality is not selected. I think moving scsi+AF8-commo=
+n.c
+into a new directory would make it much easier to figure out which code is
+built depending on the kernel configuration.
 
-diff --git a/src/aureport-options.c b/src/aureport-options.c
-index 9b914ed..c7c03b9 100644
---- a/src/aureport-options.c
-+++ b/src/aureport-options.c
-@@ -62,6 +62,7 @@ const char *event_vmname = NULL;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int event_ppid = -1, event_session_id = -2;
-+unsigned long long int event_contid = -1;
- int event_debug = 0, event_machine = -1;
- 
- /* These are used by aureport */
-diff --git a/src/ausearch-llist.c b/src/ausearch-llist.c
-index ef5503c..0901452 100644
---- a/src/ausearch-llist.c
-+++ b/src/ausearch-llist.c
-@@ -60,6 +60,7 @@ void list_create(llist *l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.contid = -2;
- 	l->s.uuid = NULL;
- 	l->s.vmname = NULL;
- 	l->s.tuid = NULL;
-@@ -211,6 +212,7 @@ void list_clear(llist* l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.contid = -2;
- 	free(l->s.uuid);
- 	l->s.uuid = NULL;
- 	free(l->s.vmname);
-diff --git a/src/ausearch-llist.h b/src/ausearch-llist.h
-index 64e4ee1..2d1f522 100644
---- a/src/ausearch-llist.h
-+++ b/src/ausearch-llist.h
-@@ -56,6 +56,7 @@ typedef struct
-   int arch;             // arch
-   int syscall;          // syscall
-   uint32_t session_id;  // Login session id
-+  __u64 contid;         // Container id
-   long long exit;       // Syscall exit code
-   int exit_is_set;      // Syscall exit code is valid
-   char *hostname;       // remote hostname
-diff --git a/src/ausearch-match.c b/src/ausearch-match.c
-index 61a11d3..47c1258 100644
---- a/src/ausearch-match.c
-+++ b/src/ausearch-match.c
-@@ -113,6 +113,9 @@ int match(llist *l)
- 				if ((event_session_id != -2) &&
- 					(event_session_id != l->s.session_id))
- 					return 0;
-+				if ((event_contid != -1) &&
-+					(event_contid != l->s.contid))
-+					return 0;
- 				if (event_exit_is_set) {
- 					if (l->s.exit_is_set == 0)
- 						return 0;
-diff --git a/src/ausearch-options.c b/src/ausearch-options.c
-index a3f08e7..fddd999 100644
---- a/src/ausearch-options.c
-+++ b/src/ausearch-options.c
-@@ -60,6 +60,7 @@ int event_syscall = -1, event_machine = -1;
- int event_ua = 0, event_ga = 0, event_se = 0;
- int just_one = 0;
- uint32_t event_session_id = -2;
-+unsigned long long int event_contid = -1;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int line_buffered = 0;
-@@ -88,7 +89,7 @@ struct nv_pair {
- 
- enum { S_EVENT, S_COMM, S_FILENAME, S_ALL_GID, S_EFF_GID, S_GID, S_HELP,
- S_HOSTNAME, S_INTERP, S_INFILE, S_MESSAGE_TYPE, S_PID, S_SYSCALL, S_OSUCCESS,
--S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID,
-+S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID, S_CONTID,
- S_VERSION, S_EXACT_MATCH, S_EXECUTABLE, S_CONTEXT, S_SUBJECT, S_OBJECT,
- S_PPID, S_KEY, S_RAW, S_NODE, S_IN_LOGS, S_JUST_ONE, S_SESSION, S_EXIT,
- S_LINEBUFFERED, S_UUID, S_VMNAME, S_DEBUG, S_CHECKPOINT, S_ARCH, S_FORMAT,
-@@ -100,6 +101,7 @@ static struct nv_pair optiontab[] = {
- 	{ S_EVENT, "--event" },
- 	{ S_COMM, "-c" },
- 	{ S_COMM, "--comm" },
-+	{ S_CONTID, "--contid" },
- 	{ S_CHECKPOINT, "--checkpoint" },
- 	{ S_DEBUG, "--debug" },
- 	{ S_EXIT, "-e" },
-@@ -197,6 +199,7 @@ static void usage(void)
- 	"\t-a,--event <Audit event id>\tsearch based on audit event id\n"
- 	"\t--arch <CPU>\t\t\tsearch based on the CPU architecture\n"
- 	"\t-c,--comm  <Comm name>\t\tsearch based on command line name\n"
-+	"\t--contid <audit container id>\tsearch based on the task's audit container id\n"
- 	"\t--checkpoint <checkpoint file>\tsearch from last complete event\n"
- 	"\t--debug\t\t\tWrite malformed events that are skipped to stderr\n"
- 	"\t-e,--exit  <Exit code or errno>\tsearch based on syscall exit code\n"
-@@ -1182,6 +1185,48 @@ int check_params(int count, char *vars[])
- 			}
- 			c++;
- 			break;
-+		case S_CONTID:
-+			if (!optarg) {
-+				if ((c+1 < count) && vars[c+1])
-+					optarg = vars[c+1];
-+				else {
-+					fprintf(stderr,
-+						"Argument is required for %s\n",
-+						vars[c]);
-+					retval = -1;
-+					break;
-+				}
-+			}
-+			{
-+			size_t len = strlen(optarg);
-+			if (isdigit(optarg[0])) {
-+				errno = 0;
-+				event_contid = strtoull(optarg,NULL,0);
-+				if (errno) {
-+					fprintf(stderr, 
-+			"Numeric container ID conversion error (%s) for %s\n",
-+						strerror(errno), optarg);
-+					retval = -1;
-+				}
-+			} else if (len >= 2 && *(optarg)=='-' &&
-+					(isdigit(optarg[1]))) {
-+				errno = 0;
-+				event_contid = strtoll(optarg, NULL, 0);
-+				if (errno) {
-+					retval = -1;
-+					fprintf(stderr, "Error converting %s\n",
-+						optarg);
-+				}
-+			} else {
-+				fprintf(stderr, 
-+			"Container ID is non-numeric and unknown (%s)\n",
-+						optarg);
-+				retval = -1;
-+				break;
-+			}
-+			}
-+			c++;
-+			break;
- 		case S_UUID:
- 			if (!optarg) {
- 				fprintf(stderr,
-diff --git a/src/ausearch-options.h b/src/ausearch-options.h
-index 1372762..c03256e 100644
---- a/src/ausearch-options.h
-+++ b/src/ausearch-options.h
-@@ -40,6 +40,7 @@ extern int line_buffered;
- extern int event_debug;
- extern pid_t event_ppid;
- extern uint32_t event_session_id;
-+extern unsigned long long int event_contid;
- extern ilist *event_type;
- 
- /* Data type to govern output format */
-diff --git a/src/ausearch-parse.c b/src/ausearch-parse.c
-index e915165..09daa9c 100644
---- a/src/ausearch-parse.c
-+++ b/src/ausearch-parse.c
-@@ -52,6 +52,8 @@ static int parse_path(const lnode *n, search_items *s);
- static int parse_user(const lnode *n, search_items *s);
- static int parse_obj(const lnode *n, search_items *s);
- static int parse_login(const lnode *n, search_items *s);
-+static int parse_container_op(const lnode *n, search_items *s);
-+static int parse_container(const lnode *n, search_items *s);
- static int parse_daemon1(const lnode *n, search_items *s);
- static int parse_daemon2(const lnode *n, search_items *s);
- static int parse_sockaddr(const lnode *n, search_items *s);
-@@ -112,6 +114,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_LOGIN:
- 				ret = parse_login(n, s);
- 				break;
-+			case AUDIT_CONTAINER_OP:
-+				ret = parse_container_op(n, s);
-+				break;
- 			case AUDIT_IPC:
- 			case AUDIT_OBJ_PID:
- 				ret = parse_obj(n, s);
-@@ -177,6 +182,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_TTY:
- 				ret = parse_tty(n, s);
- 				break;
-+			case AUDIT_CONTAINER:
-+				ret = parse_container(n, s);
-+				break;
- 			default:
- 				if (event_debug)
- 					fprintf(stderr,
-@@ -1408,6 +1416,197 @@ static int parse_login(const lnode *n, search_items *s)
- 	return 0;
- }
- 
-+static int parse_container_op(const lnode *n, search_items *s)
-+{
-+	char *ptr, *str, *term = n->message;
-+
-+	// skip op
-+	// skip opid
-+	// skip old-contid
-+	// get contid
-+	if (event_contid != -1) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL) {
-+			return 45;
-+		} else
-+			ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 46;
-+		*term = 0;
-+		errno = 0;
-+		s->contid = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 47;
-+		*term = ' ';
-+	}
-+	// get pid
-+	if (event_pid != -1) {
-+		str = strstr(term, "pid=");
-+		if (str == NULL)
-+			return 48;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 49;
-+		*term = 0;
-+		errno = 0;
-+		s->pid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 50;
-+		*term = ' ';
-+	}
-+	// get loginuid
-+	if (event_loginuid != -2 || event_tauid) {
-+		str = strstr(term, "auid=");
-+		if (str == NULL) {
-+			return 51;
-+		} else
-+			ptr = str + 5;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 52;
-+		*term = 0;
-+		errno = 0;
-+		s->loginuid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 53;
-+		*term = ' ';
-+		s->tauid = lookup_uid("auid", s->loginuid);
-+	}
-+	// get uid
-+	if (event_uid != -1 || event_tuid) {
-+		str = strstr(term, "uid=");
-+		if (str == NULL)
-+			return 54;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 55;
-+		*term = 0;
-+		errno = 0;
-+		s->uid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 56;
-+		*term = ' ';
-+		s->tuid = lookup_uid("uid", s->uid);
-+	}
-+	// skip tty
-+	// ses
-+	if (event_session_id != -2 ) {
-+		str = strstr(term, "ses=");
-+		if (str == NULL)
-+			return 57;
-+		else
-+			ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 58;
-+		*term = 0;
-+		errno = 0;
-+		s->session_id = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 59;
-+		*term = ' ';
-+	}
-+	// get subj
-+	if (event_subject) {
-+		str = strstr(term, "subj=");
-+		if (str == NULL)
-+			return 60;
-+		ptr = str + 5;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 61;
-+		*term = 0;
-+		if (audit_avc_init(s) == 0) {
-+			anode an;
-+
-+			anode_init(&an);
-+			an.scontext = strdup(str);
-+			alist_append(s->avc, &an);
-+			*term = ' ';
-+		} else
-+			return 62;
-+		*term = ' ';
-+	}
-+	// get comm
-+	if (event_comm) {
-+		str = strstr(ptr, "comm=");
-+		if (str == NULL)
-+			return 63;
-+		str += 5;
-+		if (*str == '"') {
-+			str++;
-+			term = strchr(str, '"');
-+			if (term == NULL)
-+				return 64;
-+			*term = 0;
-+			s->comm = strdup(str);
-+			*term = '"';
-+		} else 
-+			s->comm = unescape(str);
-+	}
-+	// get exe
-+	if (event_exe) {
-+		str = strstr(term, "exe=");
-+		if (str == NULL)
-+			return 65;
-+		str += 4;
-+		if (*str == '"') {
-+			str++;
-+			term = strchr(str, '"');
-+			if (term == NULL)
-+				return 66;
-+			*term = 0;
-+			s->exe = strdup(str);
-+			*term = '"';
-+		} else 
-+			s->exe = unescape(str);
-+	}
-+	// success
-+	if (event_success != S_UNSET) {
-+		str = strstr(term, "res=");
-+		if (str == NULL)
-+			return 67;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			return 68;
-+		*term = 0;
-+		errno = 0;
-+		s->success = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 69;
-+		*term = ' ';
-+	}
-+	return 0;
-+}
-+
-+static int parse_container(const lnode *n, search_items *s)
-+{
-+	char *ptr, *str, *term = n->message;
-+
-+	// skip op
-+	// get contid
-+	if (event_contid != -1) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL)
-+			return 70;
-+		ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 71;
-+		*term = 0;
-+		errno = 0;
-+		s->contid = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 72;
-+		*term = ' ';
-+	}
-+	return 0;
-+}
-+
- static int parse_daemon1(const lnode *n, search_items *s)
- {
- 	char *ptr, *str, *term, saved, *mptr;
--- 
-1.8.3.1
+Bart.
 
