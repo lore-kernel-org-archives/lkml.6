@@ -2,128 +2,153 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865D6C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A109DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C04820841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:30:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5365F20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jtDsTya5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C04820841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="cYa18H3w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5365F20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732356AbeGaRLR (ORCPT
+        id S1732403AbeGaRL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 13:11:17 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53134 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732274AbeGaRLR (ORCPT
+        Tue, 31 Jul 2018 13:11:59 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:35883 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732274AbeGaRL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 13:11:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uzA2YWrmuXYxpLQ/QgxCCJXdgMu026iXDFkbtuUHvwM=; b=jtDsTya5MqcN5bOmJ9JbZywRJ
-        I5dv2Q77dqE/tWj/yDmn5rC6dNdY57THdtkQNdDZ5na+82IY3gW+SFeIgxA9y4B8LXMet6upfCmJz
-        TbqzxC9thfsWoAxEn92j9dMta19LjiMiEU/DyFqRl3GYqu4DQLZQYo0XnZxKJ2jPauwIY=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:60900)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fkWar-0006uP-5T; Tue, 31 Jul 2018 16:29:49 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fkWao-0007ME-3E; Tue, 31 Jul 2018 16:29:46 +0100
-Date:   Tue, 31 Jul 2018 16:29:44 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Alexandre Bounine <alex.bou9@gmail.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Paul Walters <jwalters@isi.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Anvin <hpa@zytor.com>, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 1/6] rapidio: define top Kconfig menu in driver
- subtree
-Message-ID: <20180731152944.GL17271@n2100.armlinux.org.uk>
-References: <20180731142954.30345-1-acolin@isi.edu>
- <20180731142954.30345-2-acolin@isi.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731142954.30345-2-acolin@isi.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 31 Jul 2018 13:11:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1533051067; x=1564587067;
+  h=from:to:subject:date:message-id;
+  bh=qFQnasX9Jg0BaeXrjfwWFyeG5Rcmffh9Jg8D2l/Zc1A=;
+  b=cYa18H3wA/ijzbY2TujMQmC50WQe3wNI21T51OsD3CtmB/+mkBLQYRqN
+   2VEF5cqbnFPXXmM1erDcPIGigcPwsqgF+0y1lR8uvEiWuz5DtJs0qGRIS
+   Wx/IYrmZa+jgyJBJoa7y5lGKffyJUi/T+qGBMYJ6SXyaOygWdWq0kf03v
+   A=;
+X-IronPort-AV: E=Sophos;i="5.51,427,1526342400"; 
+   d="scan'208";a="731450687"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jul 2018 15:31:04 +0000
+Received: from uf8b156e456a5587c9af4.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w6VFTfFS105140
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 31 Jul 2018 15:29:43 GMT
+Received: from uf8b156e456a5587c9af4.ant.amazon.com (localhost [127.0.0.1])
+        by uf8b156e456a5587c9af4.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w6VFTe5Q014583;
+        Tue, 31 Jul 2018 17:29:40 +0200
+Received: (from sironi@localhost)
+        by uf8b156e456a5587c9af4.ant.amazon.com (8.15.2/8.15.2/Submit) id w6VFTerA014580;
+        Tue, 31 Jul 2018 17:29:40 +0200
+From:   Filippo Sironi <sironi@amazon.de>
+To:     sironi@amazon.de, bp@alien8.de, prarit@redhat.com,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] x86/microcode: Don't duplicate code to update ucode cpu info and cpu info
+Date:   Tue, 31 Jul 2018 17:29:30 +0200
+Message-Id: <1533050970-14385-1-git-send-email-sironi@amazon.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:29:49AM -0400, Alexei Colin wrote:
-> The top-level Kconfig entry for RapidIO subsystem is currently
-> duplicated in several architecture-specific Kconfigs. This
-> commit re-defines it in the driver subtree, and subsequent
-> commits, one per architecture, will remove the duplicated
-> definitions from respective per-architecture Kconfigs.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: John Paul Walters <jwalters@isi.edu>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Anvin <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Alexei Colin <acolin@isi.edu>
-> ---
->  drivers/rapidio/Kconfig | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/rapidio/Kconfig b/drivers/rapidio/Kconfig
-> index d6d2f20c4597..98e301847584 100644
-> --- a/drivers/rapidio/Kconfig
-> +++ b/drivers/rapidio/Kconfig
-> @@ -1,6 +1,21 @@
->  #
->  # RapidIO configuration
->  #
-> +
-> +config HAS_RAPIDIO
-> +	bool
-> +	default n
+... on late microcode loading when handling a CPU that's already been
+updated and a CPU that's yet to be updated.
 
-There's no need to specify this default - the default default defaults to
-'n' anyway, so "default n" just respecifies what's already the default.
-(next time I'll try to add more "default"s into that! ;) )
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+---
+ arch/x86/kernel/cpu/microcode/amd.c   | 15 +++++++++------
+ arch/x86/kernel/cpu/microcode/intel.c | 10 ++++++----
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 0624957aa068..77758e10f16f 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -505,6 +505,7 @@ static enum ucode_state apply_microcode_amd(int cpu)
+ 	struct ucode_cpu_info *uci;
+ 	struct ucode_patch *p;
+ 	u32 rev, dummy;
++	enum ucode_state ret;
+ 
+ 	BUG_ON(raw_smp_processor_id() != cpu);
+ 
+@@ -521,9 +522,8 @@ static enum ucode_state apply_microcode_amd(int cpu)
+ 
+ 	/* need to apply patch? */
+ 	if (rev >= mc_amd->hdr.patch_id) {
+-		c->microcode = rev;
+-		uci->cpu_sig.rev = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
+ 	}
+ 
+ 	if (__apply_microcode_amd(mc_amd)) {
+@@ -534,10 +534,13 @@ static enum ucode_state apply_microcode_amd(int cpu)
+ 	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+ 		mc_amd->hdr.patch_id);
+ 
+-	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+-	c->microcode = mc_amd->hdr.patch_id;
++	ret = UCODE_UPDATED;
++	rev = mc_amd->hdr.patch_id;
++out:
++	uci->cpu_sig.rev = rev;
++	c->microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 97ccf4c3b45b..4bc869e829eb 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -797,6 +797,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 	struct microcode_intel *mc;
+ 	static int prev_rev;
+ 	u32 rev;
++	enum ucode_state ret;
+ 
+ 	/* We should bind the task to the CPU */
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+@@ -817,9 +818,8 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 	 */
+ 	rev = intel_get_microcode_revision();
+ 	if (rev >= mc->hdr.rev) {
+-		uci->cpu_sig.rev = rev;
+-		c->microcode = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -848,10 +848,12 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 		prev_rev = rev;
+ 	}
+ 
++	ret = UCODE_UPDATED;
++out:
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+2.7.4
+
