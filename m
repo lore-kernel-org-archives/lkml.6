@@ -2,66 +2,118 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12460C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDB2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C099820894
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:57:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C099820894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B998E20894
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:01:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B998E20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbeGaPiK (ORCPT
+        id S1732274AbeGaPmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:38:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45180 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732310AbeGaPiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:38:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF427AFE0;
-        Tue, 31 Jul 2018 13:57:41 +0000 (UTC)
-Date:   Tue, 31 Jul 2018 15:57:40 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mmoese@suse.de
-Subject: Re: [PATCH v2] watchdog: add driver for the MEN 16z069 IP-Core
-Message-ID: <20180731135740.yfk7k2jy2f4magbo@linux-x5ow.site>
-References: <20180716072510.6939-1-jthumshirn@suse.de>
+        Tue, 31 Jul 2018 11:42:25 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48557 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732173AbeGaPmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 11:42:25 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E8D626002D;
+        Tue, 31 Jul 2018 14:01:54 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 16:01:53 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][media-next] media: i2c: mt9v111: fix off-by-one array
+ bounds check
+Message-ID: <20180731140153.GE370@w540>
+References: <20180731133343.22337-1-colin.king@canonical.com>
+ <20180731135341.GD370@w540>
+ <c2684aa2-71d7-b82e-df18-65ea3f026d97@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180716072510.6939-1-jthumshirn@suse.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <c2684aa2-71d7-b82e-df18-65ea3f026d97@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 09:25:10AM +0200, Johannes Thumshirn wrote:
-> Add a driver for the MEN 16z069 Watchdog and Reset Controller IP-Core.
-> 
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 
-Wim,
-Any comments about this driver? The merge window is about to open and
-I haven't heard any statement from you if you want to take it for
-4.19.
+--cPi+lWm09sJ+d57q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Hi Colin,
+
+On Tue, Jul 31, 2018 at 02:55:25PM +0100, Colin Ian King wrote:
+> On 31/07/18 14:53, jacopo mondi wrote:
+> > Hi Colin,
+> >    thanks for the patch.
+> >
+> > On Tue, Jul 31, 2018 at 02:33:43PM +0100, Colin King wrote:
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The check of fse->index is off-by-one and should be using >= rather
+> >> than > to check the maximum allowed array index. Fix this.
+> >>
+> >> Detected by CoverityScan, CID#172122 ("Out-of-bounds read")
+> >>
+> >> Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >
+> > Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > Thanks
+> >   j
+> >
+>
+> Just to note, I also got a build warning on this driver, so that's
+> something that should be fixed up too.
+>
+> drivers/media/i2c/mt9v111.c:887:15: warning: 'idx' may be used
+> uninitialized in this function [-Wmaybe-uninitialized]
+>   unsigned int idx;
+
+Yes, that's false positive but indeed gcc doesn't know about that.
+
+A patch has already been sent and will hopefully be collected soon:
+https://patchwork.linuxtv.org/patch/51259/
+
+Thanks for noticing
+   j
+
+--cPi+lWm09sJ+d57q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbYGvRAAoJEHI0Bo8WoVY8rS8QAJOIcceLmLJW2x1mtyw4zFJ4
+sn6jRcKEzBgWjTT2FuLgKXyGXCeDXCy3q0oqLhWjAOd0EwXP6DBEr9AHfDVuCpAj
+ZFQEJ41Whvq63wBDtCOZaJH9a/A3SSp6Jy7uOTYL1xdmZQrwbcS4y+eodhm9aFcE
+2klEOc4wfGanUjwLI4yUVNMQS7J694j4PyA+7gCXU01bh0vtJ6VuAudscTvWIr99
+pn7XY8yYwSWl/6MIWCWTOXpxeq7ujRRcmg6N5VZFNowkD2xGUE1skfEQaunSPMZ9
+U1bDaglzbB7NhXqQB/T3u6BiD/Y/dM2ICC+gDsw6/hpr1z0gEtRqSLqZPefDJC6R
+8BQdneF1uNDZRB7LrBlbn1qbRCBpQ3tKreJXmw6tce9OA3KZcM8lJqzKZhVJey2+
+pA+JGZo/Ukdk3DkbpPGglDcrZgxKBS75H999h0CgMImAy1PsRs8hIwgy/ltr6lgR
+vfheY6q2vKofHioXs3xUHaATeIxdG/gioQtwdnyKQ+Qwh7ImNy46sUgICxoCFHBj
+De5N2AcYqU9NdZQVXQYwzGy8GlRs1UOdcar5gvTbJ+3VEpZxmtG3jMD4TQozeemI
+2lGDLJCCsr7m1IdO0gxXBdf69iDaFBP6RNP/PG+l/Y8iHcb6PdNYJ4Yr9yFqmarU
+FLhsFNiQmeFvwcAQafq8
+=FtHl
+-----END PGP SIGNATURE-----
+
+--cPi+lWm09sJ+d57q--
