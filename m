@@ -6,92 +6,166 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB83AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38126C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:31:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E94120841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:29:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4F7F20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:31:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pNUTqcGm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GM9qpOcp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E94120841
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ONpeYoK9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fClClPhE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F7F20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732315AbeGaVLS (ORCPT
+        id S1732350AbeGaVNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:11:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38086 "EHLO
+        Tue, 31 Jul 2018 17:13:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39168 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730113AbeGaVLS (ORCPT
+        with ESMTP id S1731385AbeGaVNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:11:18 -0400
+        Tue, 31 Jul 2018 17:13:08 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2703960585; Tue, 31 Jul 2018 19:29:31 +0000 (UTC)
+        id 64F6660AD9; Tue, 31 Jul 2018 19:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533065371;
-        bh=c/GM2cjHDfXOclKo3+J/QnCvB60x8LGTbxAsCdgDgow=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pNUTqcGmumilDa1cfQB8avR5/4VoK2MTnH6Z7KRaA4dQftD4JQuwMMxlstUznskRk
-         05sV/xaV3UXVEfax/WcVGIyoxRlB17CcVgn8/gsVU/1NSOUvX7sOpbSosZrYAkzM97
-         7ApZsJimBSd3SPFqYZWuEDnGlSJ0YRt513rWoINk=
-Received: from [10.63.172.127] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tsoni@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B16C60397;
-        Tue, 31 Jul 2018 19:29:30 +0000 (UTC)
+        s=default; t=1533065479;
+        bh=uU92Ke4EGYVTiA1iI1e+Lk2GeL79fmKn1gDPf7HHbl0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ONpeYoK9oexPBtdnAty1Z9+hhcw7bnrs1eWyf1y4L19tDBhMkhI/j4wVkq7V1Hzqc
+         tgnHg+5tdOh59GuuUvqVjXxh8oUJqMGudA9r5TK6CGBpUwCByMIAIB7Lq1EeeFyfp+
+         gKHQWYiwyn53XrMhirKGiu4Qikt4SBwOwii8ju2U=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E5EB560376;
+        Tue, 31 Jul 2018 19:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533065370;
-        bh=c/GM2cjHDfXOclKo3+J/QnCvB60x8LGTbxAsCdgDgow=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GM9qpOcpy5D31ROvTx0e9955q15nllSlF6F4UpzISpmD3Qo7MOuwlKxn47uEIwlGz
-         NQYKw+/NfZpgHI1p78LgoD6jlgNO/dFXAZ0TJH8r0Z7SoxPh5tuRvBVjh6Oy+gjS1Q
-         gshS9vcHvHhIxJuxqXmFX7isf7F99bQyTsgTOc98=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B16C60397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
-Subject: Re: [PATCH 2/2] Embedded USB Debugger (EUD) driver
-To:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        bryanh@codeaurora.org, psodagud@codeaurora.org,
-        Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>
-References: <1533061333-7680-1-git-send-email-pheragu@codeaurora.org>
- <1533061333-7680-3-git-send-email-pheragu@codeaurora.org>
-From:   Trilok Soni <tsoni@codeaurora.org>
-Message-ID: <1a34e079-929c-5ac1-c4e9-85ce707c42e0@codeaurora.org>
-Date:   Tue, 31 Jul 2018 12:29:29 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        s=default; t=1533065478;
+        bh=uU92Ke4EGYVTiA1iI1e+Lk2GeL79fmKn1gDPf7HHbl0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fClClPhE3bj+I8EWhFwAOZ9knNriJ1LcKIf9Cqp8iVglq7CbxjZ0MzvEFwy4otqpR
+         ++tzpqZ9pF2ab8IMs4UanFYvBginwlKEte7+O5JRZ28hwIUPK3SP4NNnLMleAnZnFY
+         AGK8YNDJVqsVTnOP5ZUMUYYQ0rgc2wpn2CmEM3Co=
 MIME-Version: 1.0
-In-Reply-To: <1533061333-7680-3-git-send-email-pheragu@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Tue, 31 Jul 2018 12:31:17 -0700
+From:   skannan@codeaurora.org
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
+ aggregation method
+In-Reply-To: <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-11-quentin.perret@arm.com>
+ <331552975e858911db66bc78c2c8e720@codeaurora.org>
+ <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
+Message-ID: <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
+X-Sender: skannan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Prakruthi,
+On 2018-07-31 00:59, Quentin Perret wrote:
+> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org 
+> wrote:
+> [...]
+>> If it's going to be a different aggregation from what's done for 
+>> frequency
+>> guidance, I don't see the point of having this inside schedutil. Why 
+>> not
+>> keep it inside the scheduler files?
+> 
+> This code basically results from a discussion we had with Peter on v4.
+> Keeping everything centralized can make sense from a maintenance
+> perspective, I think. That makes it easy to see the impact of any 
+> change
+> to utilization signals for both EAS and schedutil.
 
-On 7/31/2018 11:22 AM, Prakruthi Deepak Heragu wrote:
-> Add support for control peripheral of EUD (Embedded USB Debugger) to
-> listen to events such as USB attach/detach, charger enable/disable, pet
-> EUD to indicate software is functional.
+In that case, I'd argue it makes more sense to keep the code centralized 
+in the scheduler. The scheduler can let schedutil know about the 
+utilization after it aggregates them. There's no need for a cpufreq 
+governor to know that there are scheduling classes or how many there 
+are. And the scheduler can then choose to aggregate one way for task 
+packing and another way for frequency guidance.
 
-We should CC linux-usb mailing list too?
+It just seems so weird to have logic that's very essential for task 
+placement to be inside a cpufreq governor.
 
-> +
-> +config QCOM_EUD
-> +	tristate "QTI Embedded USB Debugger (EUD)"
-> +	depends on ARCH_QCOM
-> +	select SERIAL_CORE
+>> Also, it seems weird to use a governor's
+>> code when it might not actually be in use. What if someone is using
+>> ondemand, conservative, performance, etc?
+> 
+> Yeah I thought about that too ... I would say that even if you don't
+> use schedutil, it is probably a fair assumption from the scheduler's
+> standpoint to assume that somewhat OPPs follow utilization (in a very
+> loose way). So yes, if you use ondemand with EAS you won't have a
+> perfectly consistent match between the frequency requests and what EAS
+> predicts, and that might result in sub-optimal decisions in some cases,
+> but I'm not sure if we can do anything better at this stage.
+> 
+> Also, if you do use schedutil, EAS will accurately predict what will be
+> the frequency _request_, but that gives you no guarantee whatsoever 
+> that
+> you'll actually get it for real (because you're throttled, or because 
+> of
+> thermal capping, or simply because the HW refuses it for some reason 
+> ...).
+> 
+> There will be inconsistencies between EAS' predictions and the actual
+> frequencies, and we have to live with that. The best we can do is make
+> sure we're at least internally consistent from the scheduler's
+> standpoint, and that's why I think it can make sense to factorize as
+> many things as possible with schedutil where applicable.
+> 
+>> > +	if (type == frequency_util) {
+>> > +		/*
+>> > +		 * Bandwidth required by DEADLINE must always be granted
+>> > +		 * while, for FAIR and RT, we use blocked utilization of
+>> > +		 * IDLE CPUs as a mechanism to gracefully reduce the
+>> > +		 * frequency when no tasks show up for longer periods of
+>> > +		 * time.
+>> > +		 *
+>> > +		 * Ideally we would like to set bw_dl as min/guaranteed
+>> > +		 * freq and util + bw_dl as requested freq. However,
+>> > +		 * cpufreq is not yet ready for such an interface. So,
+>> > +		 * we only do the latter for now.
+>> > +		 */
+>> > +		util += cpu_bw_dl(rq);
+>> > +	}
+>> 
+>> Instead of all this indentation, can't you just return early without 
+>> doing
+>> the code inside the if?
+> 
+> But then I'll need to duplicate the 'min' below, so not sure if it's
+> worth it ?
 
-We don't need to select SERIAL_CORE since there is nothing related to 
-serial console in this driver.
--- 
----Trilok Soni
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+I feel like less indentation where reasonably possible leads to more 
+readability. But I don't have a strong opinion in this specific case.
+
+>> > +enum schedutil_type {
+>> > +	frequency_util,
+>> > +	energy_util,
+>> > +};
+>> 
+>> Please don't use lower case for enums. It's extremely confusing.
+> 
+> Ok, I'll change that in v6.
+
+Thanks.
+
+-Saravana
