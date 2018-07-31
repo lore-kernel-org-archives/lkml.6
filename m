@@ -2,102 +2,100 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B189C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F259AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CBC208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CBC208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AA68F208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:38:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ag8YXgH+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA68F208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbeGaPS7 (ORCPT
+        id S1732248AbeGaPTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:18:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729723AbeGaPS6 (ORCPT
+        Tue, 31 Jul 2018 11:19:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46322 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732206AbeGaPTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:18:58 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VDJG6o111811
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:38:36 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjqapmdu5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:38:35 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Tue, 31 Jul 2018 14:38:33 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 31 Jul 2018 14:38:30 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6VDcT7b37683344
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 31 Jul 2018 13:38:29 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F42395204F;
-        Tue, 31 Jul 2018 16:38:40 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.176])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 53AFE5204E;
-        Tue, 31 Jul 2018 16:38:40 +0100 (BST)
-Date:   Tue, 31 Jul 2018 16:38:27 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-um@lists.infradead.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] um: switch to NO_BOOTMEM
-References: <1532438594-4530-1-git-send-email-rppt@linux.vnet.ibm.com>
+        Tue, 31 Jul 2018 11:19:09 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p23-v6so9088013pgv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 06:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=arRYX+faxIVWKV6ncBx8cRCRNTaQptImg6E9dYZpUa0=;
+        b=ag8YXgH+g8XODe7c5oSBEzRNUNRhIzDV9A/zMH896OroBl039Wl6o7mam1OJfgWB7b
+         r3rVefDFoX7nvJgPfWlfd/ISJvXS9ssWixlPad/rtLn4JJ42aBJDP9zzUrjnxTbeMe4S
+         /+Pt6uFs7BIAHfSUAgrHscUWPSgHZED+GX/EE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=arRYX+faxIVWKV6ncBx8cRCRNTaQptImg6E9dYZpUa0=;
+        b=sRMW+yVItpHjxk3XxVuiKcnDu+fDQqHpTW2pKdKo3QDTRbVOaDjGAUDLKQaiKmsxhT
+         iGaZEmPJqYWlcNqrPCcU4RVmgEzD3qyCnelOLJGudkVi0aKMTK4eIEUDk91AtlUDuI70
+         2GTHKD998o6o/Z8zzu6RydVukPqJefqlZBkGAmM8/PcS99myHkH7KRl2ym89veaiyebv
+         2/FwmdSQLQ6gERw7Wqmt6UxtQjhdA5bvsWqkUNwYL/dxM8cosvpLtRYLzCewuKnhzd1d
+         BjAJz/9U5cc4NOYUSsv+vffXT98R/BIMlCx7Ui07keTYwTYGLr6ddAAOAcXh8f3YeKsT
+         AKfQ==
+X-Gm-Message-State: AOUpUlGWXUHKEGqu0q5zlTdvZ9HSkKsFXgVKU2ik7uy3PPN0mWLTkeQq
+        ly5nDXptsNdDdebSb/GPw8/SwA==
+X-Google-Smtp-Source: AAOMgpeDsT1YjzJkYIQ4Lqw/dOeevVJN5+Ume6/WC/eLnZaOXK2IBKHQO+MnJgPhWl4kEEwxI7igcg==
+X-Received: by 2002:a65:5288:: with SMTP id y8-v6mr20271907pgp.284.1533044326838;
+        Tue, 31 Jul 2018 06:38:46 -0700 (PDT)
+Received: from localhost.localdomain ([115.97.182.108])
+        by smtp.gmail.com with ESMTPSA id b20-v6sm38633408pfc.178.2018.07.31.06.38.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 06:38:46 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH] arm64: defconfig: Enable MFD_AXP20X_I2C
+Date:   Tue, 31 Jul 2018 19:08:28 +0530
+Message-Id: <20180731133828.2582-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532438594-4530-1-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18073113-0020-0000-0000-000002AEC918
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073113-0021-0000-0000-000020FAE9AE
-Message-Id: <20180731133827.GC23494@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=759 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807310133
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any comments on this?
+The Allwinner H6 SoC is paired with the X-Powers AXP805 PMIC
+connected via I2C.
 
-On Tue, Jul 24, 2018 at 04:23:12PM +0300, Mike Rapoport wrote:
-> Hi,
-> 
-> These patches convert UML to use NO_BOOTMEM.
-> Tested on x86-64.
-> 
-> Mike Rapoport (2):
->   um: setup_physmem: stop using global variables
->   um: switch to NO_BOOTMEM
-> 
->  arch/um/Kconfig.common   |  2 ++
->  arch/um/kernel/physmem.c | 22 ++++++++++------------
->  2 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Enable the driver for this PMIC.
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index f9a186f6af8a..2fdf01f11af8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -370,6 +370,7 @@ CONFIG_MESON_WATCHDOG=m
+ CONFIG_RENESAS_WDT=y
+ CONFIG_UNIPHIER_WATCHDOG=y
+ CONFIG_BCM2835_WDT=y
++CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_I2C=y
 -- 
-Sincerely yours,
-Mike.
+2.18.0.321.gffc6fa0e3
 
