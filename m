@@ -2,103 +2,110 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FBDC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45011C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7746A208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UJEl19t/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UJEl19t/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7746A208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 03A5D208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:11:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A5D208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732156AbeGaLtU (ORCPT
+        id S1731836AbeGaLvc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:49:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48560 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732045AbeGaLtT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:49:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7B17F60714; Tue, 31 Jul 2018 10:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533031784;
-        bh=rTEGC+iSrndGS2iVfqP5OSHCCYmWoO57iyS8vbGdkIY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJEl19t/2akcCVlU92QQlTb4E5PX+Bz9GeNlOT+bDSIZhU2p81X8SeymfxaBeAtPY
-         K9nxwacIAWRxYbsDorQQ2u3zoUCg92EGH2+9HcoEY3l1J0lA1YAGCLyEXR3nqV/BC4
-         6VZSbdDweyPnaSrKyzITwWQeI2Wu69A3j3xH279A=
-Received: from CANG02.ap.qualcomm.com (unknown [180.166.53.21])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Tue, 31 Jul 2018 07:51:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727409AbeGaLvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:51:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D882760264;
-        Tue, 31 Jul 2018 10:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533031784;
-        bh=rTEGC+iSrndGS2iVfqP5OSHCCYmWoO57iyS8vbGdkIY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJEl19t/2akcCVlU92QQlTb4E5PX+Bz9GeNlOT+bDSIZhU2p81X8SeymfxaBeAtPY
-         K9nxwacIAWRxYbsDorQQ2u3zoUCg92EGH2+9HcoEY3l1J0lA1YAGCLyEXR3nqV/BC4
-         6VZSbdDweyPnaSrKyzITwWQeI2Wu69A3j3xH279A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D882760264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>
-Subject: [PATCH v8 5/5] dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
-Date:   Tue, 31 Jul 2018 18:09:14 +0800
-Message-Id: <20180731100914.19856-6-cang@codeaurora.org>
-X-Mailer: git-send-email 2.15.0.windows.1
-In-Reply-To: <20180731100914.19856-1-cang@codeaurora.org>
-References: <20180731100914.19856-1-cang@codeaurora.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id BD7E97C6A9;
+        Tue, 31 Jul 2018 10:11:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 64048111AF3D;
+        Tue, 31 Jul 2018 10:11:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180731094021.GC9836@amd>
+References: <20180731094021.GC9836@amd> <25489.1532953411@warthog.procyon.org.uk> <20180730143104.GB24051@amd> <20180730180842.GA5544@bombadil.infradead.org> <CA+55aFwY1nQ0LG8CeC8chugWO40kOGKpovBOadpGOOMBinNhbg@mail.gmail.com> <20180730183847.GB5544@bombadil.infradead.org> <CA+55aFzpisX0+T_ipwUdOCXY+tkhe2Ao3KDZxx+UPpguVmirnQ@mail.gmail.com> <20180730194938.GA12962@bombadil.infradead.org> <20180730210209.GY21725@thunk.org> <20180730235849.GA19692@bombadil.infradead.org> <20180731005802.GB21725@thunk.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     dhowells@redhat.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 36/38] vfs: Add a sample program for the new mount API [ver #10]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <18973.1533031913.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 31 Jul 2018 11:11:53 +0100
+Message-ID: <18974.1533031913@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 10:11:55 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 10:11:55 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the compatible string for UFS QMP PHY on SDM845.
+Pavel Machek <pavel@ucw.cz> wrote:
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Proposal is "message %s foo %s\0param 1\0param2\0", only strings
+> allowed.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index cef8765..930d94c 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -11,7 +11,8 @@ Required properties:
- 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
- 	       "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
--	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
-+	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
-+	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
- 
-  - reg: offset and length of register set for PHY's common serdes block.
- 
-@@ -29,6 +30,7 @@ Required properties:
- 		"aux" for phy aux clock,
- 		"ref" for 19.2 MHz ref clk,
- 		"com_aux" for phy common block aux clock,
-+		"ref_aux" for phy reference aux clock,
- 		For "qcom,msm8996-qmp-pcie-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain:
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I think that's too strict and you will need to allow integer values, IP
+addresses and possibly other things also.  It could certainly have a limited
+set (e.g. no kernel pointers).
 
+You also haven't proposed what you think the internal interface should look
+like.
+
+> That's simple enough, yet allows translations.
+
+Yes and no.  From the point of view of translating it, yes, it's easier, but
+from the point of view of actually writing these things in the kernel, it's
+not.
+
+So, currently, I have, say:
+
+	cg_invalf(fc, "option or name mismatch, new: 0x%x \"%s\", old: 0x%x \"%s\"", ...);
+
+Now I can split that to separate out the option change error from the option
+change error:
+
+	cg_invalf(fc, "Name mismatch, new: \"%s\", old: \"%s\"", ...);
+	cg_invalf(fc, "Option mismatch, new: 0x%x, old: 0x%x", ...);
+
+but we still need to communicate to the logging function how many arguments
+we're actually passing.  Now, I wouldn't consider this a fast-path, so
+actually counting the arguments encoded in the format string is probably fine
+- otherwise we have to actually pass the number of arguments in, e.g.:
+
+	cg_invalf(fc, "Option mismatch, new: 0x%x, old: 0x%x", 2, ...);
+
+and then the kernel has to render the whole lot into 
+
+Another example, in ext4 we have:
+
+	printk(KERN_NOTICE "EXT4-fs (%s): last error at time %u: %.*s:%d",
+
+so we could do something like:
+
+	infof(fc, "EXT4-fs (%s): last error at time %u: %.*s:%d", ...);
+
+on mount.  But the use of "%.*s" is a pain for your interface.  We can't pass
+qualifiers like "*" to userspace, so either the caller would have to copy the
+string first or the logging routines would have to edit the format string.
+Though I suppose we could leave the editing to userspace.
+
+David
