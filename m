@@ -2,235 +2,137 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C55C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722BFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BDE20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:06:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BDE20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2BCCE20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:07:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4BVfX+n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCCE20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbeGaHpD (ORCPT
+        id S1729674AbeGaHpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:45:03 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49625 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727283AbeGaHpD (ORCPT
+        Tue, 31 Jul 2018 03:45:34 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:42569 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeGaHpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:45:03 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E01BE6000B;
-        Tue, 31 Jul 2018 06:06:14 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v5 03/11] hugetlb: Introduce generic version of set_huge_pte_at
-Date:   Tue, 31 Jul 2018 06:01:47 +0000
-Message-Id: <20180731060155.16915-4-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
-References: <20180731060155.16915-1-alex@ghiti.fr>
+        Tue, 31 Jul 2018 03:45:33 -0400
+Received: by mail-yb0-f195.google.com with SMTP id c10-v6so5716945ybf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e5caXUogE0rfXz6bwSVzTjVit3uhCHDvkJZvyD1/m7M=;
+        b=j4BVfX+nwa6N73KBg1YAiZfOyWojL23a4xTgaiRmUsMNn75WAsFIIXhQv1W4j1PNsm
+         UqHB9mC2yj8xDqXyeaoTT5/swidkFT3va5ig/WsN2xo053ZjLeyeNa3bLcJmYgyVcx2n
+         qumlYtr92Ws4pUDzCDo0Ktss7LIDnB6Ixkd5w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e5caXUogE0rfXz6bwSVzTjVit3uhCHDvkJZvyD1/m7M=;
+        b=eU6HDDiNae66oW3zgHhEFlbVJZQADlxgr+kL8AtIELhh6e/vFUnexbm/nLT89hMCvn
+         5mbliMdfsc60bBliSNfn41CITio1SSnA8CvqDUPAaJ03La6nECgtD52ahAK6Kgd+eNLK
+         u+mh0e4b+0EavbYkoYVDATCu8AyCuwcwI/Xxl4PAKi34wvs/WvHaoBpHWw8zWohvR69Q
+         XTcrHCt8x/zK0itPe4QrwZQeNA/y9RGFcBnnWPZFsNcJEnKvAc2IcKTJNt904wYcWcZn
+         i4GpBczvlqx/pTvRnaOVGYmMnuOFoYKjl3/h60V1UeJKRndecfZwG6Z7zsO2/PjXjEvP
+         +bXQ==
+X-Gm-Message-State: AOUpUlF6FcFZA/H1jbBdA0iiZgLdAPra0fqZOAynDn+aHrF4ngK5O6id
+        t9UoUFo8+hez6x+AsrxM1+FXtvD2EtI=
+X-Google-Smtp-Source: AAOMgpfAXCpPDFR7c7z7VHprskoQPTzXeTO7QAkk2qLMUEfAyNmedZzDBttbBUvOqFzBnf9wv+KrZw==
+X-Received: by 2002:a25:aea5:: with SMTP id b37-v6mr10631644ybj.303.1533017217116;
+        Mon, 30 Jul 2018 23:06:57 -0700 (PDT)
+Received: from mail-yw0-f180.google.com (mail-yw0-f180.google.com. [209.85.161.180])
+        by smtp.gmail.com with ESMTPSA id w143-v6sm21865975yww.49.2018.07.30.23.06.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
+Received: by mail-yw0-f180.google.com with SMTP id c135-v6so5338192ywa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
+X-Received: by 2002:a0d:dcc3:: with SMTP id f186-v6mr10001707ywe.66.1533017216195;
+ Mon, 30 Jul 2018 23:06:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180617143625.32133-1-matwey@sai.msu.ru> <20180617143625.32133-2-matwey@sai.msu.ru>
+ <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
+ <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
+ <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com> <20180730130702.27664d15@coco.lan>
+In-Reply-To: <20180730130702.27664d15@coco.lan>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 31 Jul 2018 15:06:45 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A6hDdPR87r5mq=-JxeSGGwaiTjHFBH04q7tEcd3oZJdQ@mail.gmail.com>
+Message-ID: <CAAFQd5A6hDdPR87r5mq=-JxeSGGwaiTjHFBH04q7tEcd3oZJdQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Alan Stern <stern@rowland.harvard.edu>, hdegoede@redhat.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        rostedt@goodmis.org, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, mips, powerpc, sh, x86 architectures use the
-same version of set_huge_pte_at, so move this generic
-implementation into asm-generic/hugetlb.h.
+On Tue, Jul 31, 2018 at 1:07 AM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> Em Tue, 17 Jul 2018 17:10:22 -0300
+> Ezequiel Garcia <ezequiel@collabora.com> escreveu:
+>
+> > Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
+> > create DMA mappings and use the streaming API. Which makes more
+> > sense in hardware without hardware coherency.
+> >
+> > The only thing that bothers me with this patch is that it's not
+> > really something specific to this driver. If this fix is valid
+> > for pwc, then it's valid for all the drivers allocating coherent
+> > memory.
+>
+> We're actually doing this change on other drivers:
+>         https://git.linuxtv.org/media_tree.git/commit/?id=d571b592c6206
+>
+> I suspect that the reason why all USB media drivers were using
+> URB_NO_TRANSFER_DMA_MAP is just because the first media USB driver
+> upstream used it.
+>
+> On that time, I remember I tried once to not use this flag, but there
+> was something that broke (perhaps I just didn't know enough about the
+> USB layer - or perhaps some fixes happened at USB core - allowing it
+> to be used with ISOC transfers).
+>
+> Anyway, nowadays, I fail to see a reason why not let the USB core
+> do the DMA maps. On my tests after this patch, at the boards I tested
+> (arm and x86), I was unable to see any regressions.
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- arch/arm/include/asm/hugetlb-3level.h | 6 ------
- arch/arm64/include/asm/hugetlb.h      | 1 +
- arch/ia64/include/asm/hugetlb.h       | 6 ------
- arch/mips/include/asm/hugetlb.h       | 6 ------
- arch/parisc/include/asm/hugetlb.h     | 1 +
- arch/powerpc/include/asm/hugetlb.h    | 6 ------
- arch/sh/include/asm/hugetlb.h         | 6 ------
- arch/sparc/include/asm/hugetlb.h      | 1 +
- arch/x86/include/asm/hugetlb.h        | 6 ------
- include/asm-generic/hugetlb.h         | 8 +++++++-
- 10 files changed, 10 insertions(+), 37 deletions(-)
+I can see one reason:
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index d4014fbe5ea3..398fb06e8207 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					 unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 4af1a800a900..874661a1dff1 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -60,6 +60,7 @@ static inline void arch_clear_hugepage_flags(struct page *page)
- extern pte_t arch_make_huge_pte(pte_t entry, struct vm_area_struct *vma,
- 				struct page *page, int writable);
- #define arch_make_huge_pte arch_make_huge_pte
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 			    pte_t *ptep, pte_t pte);
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index afe9fa4d969b..a235d6f60fb3 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -20,12 +20,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 53764050243e..8ea439041d5d 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -36,12 +36,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 28c23b68d38d..77c8adbac7c3 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/page.h>
- 
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
- 
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index a7d5c739df9b..0794b53439d4 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -132,12 +132,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index f6a51b609409..bc552e37c1c9 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -25,12 +25,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 59d89b52ccb7..16b0c53ea6c9 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -12,6 +12,7 @@ struct pud_huge_patch_entry {
- extern struct pud_huge_patch_entry __pud_huge_patch, __pud_huge_patch_end;
- #endif
- 
-+#define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte);
- 
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 398da3b3414c..8db9a761964d 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -28,12 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
--				   pte_t *ptep, pte_t pte)
--{
--	set_pte_at(mm, addr, ptep, pte);
--}
--
- static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 					    unsigned long addr, pte_t *ptep)
- {
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index c697ca9dda18..ee010b756246 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -47,8 +47,14 @@ static inline void hugetlb_free_pgd_range(struct mmu_gather *tlb,
- {
- 	free_pgd_range(tlb, addr, end, floor, ceiling);
- }
-+#endif
- 
--
-+#ifndef __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
-+static inline void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
-+		pte_t *ptep, pte_t pte)
-+{
-+	set_pte_at(mm, addr, ptep, pte);
-+}
- #endif
- 
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+usb_alloc_coherent() would use dma_pool_alloc() with a fallback to
+dma_alloc_coherent() to do the allocation. I'm not sure what a typical
+size for an URB buffer is, but I assume that it's definitely more than
+1 page. Order >0 allocations with page allocator (and SLAB, which
+eventually just falls back to page allocator for such large
+allocations) are generally considered costly. With allocation through
+DMA API, mechanisms such as CMA or IOMMU can be used (if available),
+making it much more likely to have the allocation satisfied on heavy
+load / long uptime systems.
 
+Best regards,
+Tomasz
