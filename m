@@ -2,73 +2,82 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51181C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AA3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F4920862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E78720862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n9qK8tNL";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EaA+/PtC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F4920862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sM0SaMUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E78720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732336AbeGaOx5 (ORCPT
+        id S1732190AbeGaO4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:53:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53290 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732153AbeGaOx4 (ORCPT
+        Tue, 31 Jul 2018 10:56:17 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38710 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732127AbeGaO4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:53:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9972460585; Tue, 31 Jul 2018 13:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533042819;
-        bh=GCcJhS9KMn/i9viEhHre98Jr9hBsvsB9RrVVgBfsiic=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=n9qK8tNLKlToHYWD83j7INqhn02H/0vYVr0khi6s8o1xHaOAvapLCuxoGJGl1y2Pn
-         ZyDcBI2mJNO40gJY68lEkoYaI1X+BJ7o3+x6AvuetDJ4T0AVE6CEcWsbnUS6nxttA/
-         xpze3VSV20tf0Q21Hyye7CHS33XmfbgzPoe09u8c=
-Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 307F360264;
-        Tue, 31 Jul 2018 13:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533042818;
-        bh=GCcJhS9KMn/i9viEhHre98Jr9hBsvsB9RrVVgBfsiic=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EaA+/PtCuYNL04S094tUWYRUzeVA9hGPVWxHBDlpO3oa8+cTr7P4LJaP4k9vUlF0N
-         jFtwfI/aVTRU2ZzwgCCu/pqo+dqelPPxMFLNpD/QH9sEXFtRrH2Tnw6jLaqkOyxK7i
-         50/37Q0pSQJTJhMOXv51Apb+p11OQwv+3rkbk1ig=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 307F360264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Add PDC restart for modem
- on SDM845 SoCs
-To:     Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <20180727152811.15258-4-sibis@codeaurora.org>
- <1533027272.3444.9.camel@pengutronix.de>
-From:   Sibi S <sibis@codeaurora.org>
-Message-ID: <1040c360-3fdf-0657-95ee-0ee669e7b252@codeaurora.org>
-Date:   Tue, 31 Jul 2018 18:43:33 +0530
+        Tue, 31 Jul 2018 10:56:17 -0400
+Received: by mail-it0-f68.google.com with SMTP id v71-v6so4262439itb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 06:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gd6FczKcgRIMaz12jc53L8a0wxLtWSErqNudX5G3JIE=;
+        b=sM0SaMUOWsJtoBqvx1bQs7tppqv+SNRFYqNLIud8lVrzk5Mw5IsItUdYhDzhhsFQcS
+         m99tKdyR1hH5F/lbHp4Fk8Gxzh3bg+K8FXED0XSkWR1xawDsrU5n4MgH9Sl9or22bIm0
+         9ARKC32K2eprmZx/HXmakRIXPUTmdvZrb2nN22IKXF8gBKrfwssZIfWmDJTmz1Tsb4ax
+         NAQf0sUSvIn68kWIpXJ5OFhI11wzRXCrE6cwinp5HOSehC+g6JjPkTsXqifxtG456xkg
+         kBJSwgk8w0NRqAcfdWog9eWSm3uvikTjT+phP8fFNGBFSzJTjRSjeKiaGYuyNJSM0fWN
+         QxDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gd6FczKcgRIMaz12jc53L8a0wxLtWSErqNudX5G3JIE=;
+        b=N9gMZVVwjY3veja2ZW2FY0sS6/AF/JDQ4mlEV/8oJ42hhpR1TwW/ABKjC/Qlx0JCYV
+         8LEeBGqgkSgRKkNJyVBcuEDZGiODkmiqINSSM7W/25AeMGa2EQce4ZHJYIYDr3f9+uvq
+         L9UmuFwuIcZzPg48kKN8M8GfcafrHvJNj7SFa7wal81gEl8LC/oFzzXQ3YqCqhRHeqAT
+         WL7YkuApYr+W3jE1/9Eh9QDC6oFyeRJlVCxeR1h8Yzeoj9U9VrRGrUr2IVorvLbG9KvE
+         eHhjowNQteJQtH2nw1x+mz5R7nz3OkqsNWnLjnJFSQiEHCTyezEiYGMZJp2vTVrD/EpF
+         b46A==
+X-Gm-Message-State: AOUpUlEy6D9TarbDAupMmhHS0FcspMhLX6iv2NP5sr/mEwzP3BtbVrV6
+        4WqV6CTNcq6AVFulnvgfKBk=
+X-Google-Smtp-Source: AAOMgpfj9x52nwh0rAIR6yRdpctmUWc+yi9QQIVnKqZq6cGbNaeSPFgnFWp0Iyjy71/XG/eR1IzocQ==
+X-Received: by 2002:a24:d442:: with SMTP id x63-v6mr3094415itg.152.1533042960164;
+        Tue, 31 Jul 2018 06:16:00 -0700 (PDT)
+Received: from [10.0.2.15] ([72.138.96.106])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm4501860iop.78.2018.07.31.06.15.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 06:15:59 -0700 (PDT)
+Subject: Re: [PATCH 5/6] arm: enable RapidIO menu in Kconfig
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexei Colin <acolin@isi.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Paul Walters <jwalters@isi.edu>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180730225035.28365-1-acolin@isi.edu>
+ <20180730225035.28365-6-acolin@isi.edu> <20180731120428.GA5696@infradead.org>
+ <3784698f-bd9d-6d02-6fa4-2f6057e4c93f@gmail.com>
+ <20180731124815.GK17271@n2100.armlinux.org.uk>
+From:   Alex Bounine <alex.bou9@gmail.com>
+Message-ID: <bfc9daa3-6dd6-55ed-6a2b-f12f07fc6021@gmail.com>
+Date:   Tue, 31 Jul 2018 09:15:58 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533027272.3444.9.camel@pengutronix.de>
+In-Reply-To: <20180731124815.GK17271@n2100.armlinux.org.uk>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,52 +86,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
-Thanks for the review!
-
-On 07/31/2018 02:24 PM, Philipp Zabel wrote:
-> On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
->> In the presence of a PDC block working with subsystem RSC,
->> assert/deassert PDC restart in modem start/stop path.
+On 2018-07-31 08:48 AM, Russell King - ARM Linux wrote:
+> On Tue, Jul 31, 2018 at 08:43:02AM -0400, Alex Bounine wrote:
+>> On 2018-07-31 08:04 AM, Christoph Hellwig wrote:
+>>> On Mon, Jul 30, 2018 at 06:50:33PM -0400, Alexei Colin wrote:
+>>>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>>>> index afe350e5e3d9..602a61324890 100644
+>>>> --- a/arch/arm/Kconfig
+>>>> +++ b/arch/arm/Kconfig
+>>>> @@ -1278,6 +1278,8 @@ config PCI_HOST_ITE8152
+>>>>   source "drivers/pci/Kconfig"
+>>>> +source "drivers/rapidio/Kconfig"
+>>>
+>>> Please include this from drivers/Kconfig instead of enabling it
+>>> for a completely random set of architectures.
+>>>
+>> This is not a random set of architectures but only ones that implement
+>> support for RapidIO as system bus.
 >>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   .../bindings/remoteproc/qcom,q6v5.txt         |  4 +++
->>   drivers/remoteproc/qcom_q6v5_pil.c            | 27 ++++++++++++++++---
->>   2 files changed, 27 insertions(+), 4 deletions(-)
+>> On some platforms RapidIO can be the only system bus available replacing
+>> PCI/PCIe.
 >>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> index 601dd9f389aa..124fb1dc6fb8 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> [...]
->> @@ -1182,6 +1192,15 @@ static int q6v5_init_reset(struct q6v5 *qproc)
->>   		return PTR_ERR(qproc->mss_restart);
->>   	}
->>   
->> +	if (qproc->has_alt_reset) {
->> +		qproc->pdc_restart = devm_reset_control_get(qproc->dev,
->> +							    "pdc_restart");
+>> As it is done now, RapidIO is configured in "Bus Options" (x86/PPC) or "Bus
+>> Support" (ARMs) sub-menu and from system configuration option it should be
+>> kept this way.
+>>
+>> Current location of RAPIDIO configuration option is familiar to users of
+>> PowerPC and x86 platforms, and is similarly available in some ARM
+>> manufacturers kernel code trees.
 > 
-> Please use devm_reset_control_get_exclusive() instead.
-> 
+> ... which is why you have a HAS_RAPIDIO thing and select it from
+> arch/*/Kconfig as I suggested in my original review of your patch
+> set.
 
-will replace it in the next re-spin.
+Correct, this option will be selected as soon as board that supports it 
+is added.
 
->> +		if (IS_ERR(qproc->pdc_restart)) {
->> +			dev_err(qproc->dev, "failed to acquire pdc restart\n");
->> +			return PTR_ERR(qproc->pdc_restart);
->> +		}
->> +	}
->> +
->>   	return 0;
->>   }
 > 
-> regards
-> Philipp
+> As I've also said, I'm unable to review what you've sent this time
+> around because I don't have all your patches.
 > 
+I think Alexei will resend full set soon.
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
