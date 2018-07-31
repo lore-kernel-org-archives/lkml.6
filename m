@@ -4,147 +4,219 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC53C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2D3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677B920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82436208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 15:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eb5X8p/J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677B920870
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHa3YaO2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82436208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbeGaQvc (ORCPT
+        id S1732527AbeGaQvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:51:32 -0400
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:44732 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732393AbeGaQva (ORCPT
+        Tue, 31 Jul 2018 12:51:39 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:43579 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeGaQvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:51:30 -0400
-Received: by mail-oi0-f44.google.com with SMTP id s198-v6so28581091oih.11;
-        Tue, 31 Jul 2018 08:10:44 -0700 (PDT)
+        Tue, 31 Jul 2018 12:51:38 -0400
+Received: by mail-oi0-f67.google.com with SMTP id b15-v6so28562646oib.10
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 08:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1t1++1cAKJxVbqQe5CKwgjcwIXiKfuwg4JUapYmVcUA=;
-        b=Eb5X8p/Jserc2TqJgjxOstjaKQygQk8amfyGyk2BK7BOgVl8DsEpVWar6MG+j2MLH6
-         aLHGnb5rYwv+AZ8hepp0rHJrp/4hrjFLLF904VY1NGnCWATktZH/7OoclfIO15D5m8/a
-         A4p+gaBhgw8ZudHu/ij/gdFvCCN9zse+Ru7eW36wU/Auo+tP2wW6V4on+fXLtOyYPzm+
-         y6QlITmCo5onhdiolqk6TZHdykD+SfVkp8eL0yb6qKK2npBXmoq+NHS6Uwnb2fXVNGMZ
-         CdNC51TOFQ/mBL42ZMzFDil8kA+tR3TNpWgE8ROw2q+x4r6bBnC/spAGUzA9bx1k3Iqx
-         BSfw==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sbU84qR9p+ckrPPjiQWNlhCjaT2KFj49dIL/8wYrRLc=;
+        b=IHa3YaO2GjuR51O3UmBDnkbXxVpsAx/vxceI1CTXD95eurkzULsRy5Ex3Qc6cgWUhc
+         MQ2tfPO1arQOFwfQI1yeFAx+5EfINB2/GDsJkygNmiq37UBjMNuBc8vqBMi6pCAw3qjV
+         Htl9vcnMbDi/kcIUartcVnoXBcIavPpWRO+E9EBPloLIUt6cst9DtMI0Endd1Tz6iTes
+         ex0JUcNYFW8HxiQbLGGMoDu3kmPItNiDrykGiCCNYXmmT4Kmcq4Gc5kjihFXTqZoXUh5
+         r3FSi8ZHcAtbn/e1pmq1I84+oJE7VwCZPihkfOjmFatkjjveb42pTvVkdmS4+INoaJ1b
+         Sy8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1t1++1cAKJxVbqQe5CKwgjcwIXiKfuwg4JUapYmVcUA=;
-        b=T1vQ9xuwshHnVfQ+dnKxTnTcT8JS/s6l9xOG9Hu2P9OBV7uILyav0xluRnpt8BNzsZ
-         UytvNQGTs3qk1UGMSFLpClSnX2ZNFiH6Nq/tGOKKl2T5uE8uBeTnkElgQaO3YTpCGW+I
-         UatTvU6KUp0QHxO8pnChdVpTtYkWOdevJKJwfFNonBCpsS5Tf0xJRRiJ0SBEelLzLCpw
-         mKASMOerfzJjdjkgk4KW2h1dLAtYKEYWLT4KtzcE1+Sm6+edsTo7kjoQTWSaTWBxQvfa
-         cfpAjTxNOicJYFUCIB7/uzzAs/ZHBVseyqh1V3pmdjDMmHExhyBRqbdlVjEZEP4rACBX
-         gP8g==
-X-Gm-Message-State: AOUpUlETJUCQQOz16oRGzo7msj3LgOUwSIKXC7tKaMShxJ2308AzjRhO
-        cD98FKas0uIjuf0pUKB26cBljZxHR9c=
-X-Google-Smtp-Source: AAOMgpeXSwSL7Dohw7P3RromKY10SbYFO7E3hcaVD2lmek3HEoHMXbQ7TDYqpdIUNpBKY83wl1xPCw==
-X-Received: by 2002:aca:7203:: with SMTP id p3-v6mr21093747oic.194.1533049843664;
-        Tue, 31 Jul 2018 08:10:43 -0700 (PDT)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id s65-v6sm12139118oia.46.2018.07.31.08.10.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 08:10:43 -0700 (PDT)
-Subject: Re: [PATCH v5] PCI: Check for PCIe downtraining conditions
-To:     Tal Gilboa <talgi@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
-        "austin_bolen@dell.com" <austin_bolen@dell.com>,
-        "shyam_iyer@dell.com" <shyam_iyer@dell.com>,
-        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "ariel.elior@cavium.com" <ariel.elior@cavium.com>,
-        "michael.chan@broadcom.com" <michael.chan@broadcom.com>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "airlied@gmail.com" <airlied@gmail.com>,
-        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
-        "mike.marciniszyn@intel.com" <mike.marciniszyn@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180718215359.GG128988@bhelgaas-glaptop.roam.corp.google.com>
- <20180723200339.23943-1-mr.nuke.me@gmail.com>
- <20180723140143.1a46902f@cakuba.netronome.com>
- <b9a6b3b8-56cf-8bb5-2568-071ccd8a4f28@mellanox.com>
- <fc04618a-3b3b-58bd-edd5-cbde11638d7b@mellanox.com>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <1b914780-e342-6aee-ffb2-ef81ac3ddd29@gmail.com>
-Date:   Tue, 31 Jul 2018 10:10:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sbU84qR9p+ckrPPjiQWNlhCjaT2KFj49dIL/8wYrRLc=;
+        b=oAP5W/aIm2zmFyeMJLoY6Z7mlxgN3zmqGdfDXsIiijQrBKEckJK1TunoMGd2aEpWQm
+         IOWHgDL8tZt4KG9ZeuBHXoA8J7JfUy1WCOxEirNbCsL9qgbYYB4/RU/WxyxKKc5b5Uzv
+         pE3JrOSozsYb6P8ZGcARrq1Q6RxmZSGe76T8B53EJJGB0X/cmJO2YxD59Z2gv11dVy+Z
+         seilgnZWj9OBH2J8pPtb1lDQIYl4Zstvf4Mex5gFxNcsuiTqvmddS4NsYpMje4l+7ZHm
+         QirDWgnRXZEI5MdOeNC5J5vVXG91+p1hPmk+A4pVqlR4BxRmtpP2TUm2Vv4qP/YhdwIx
+         BSJw==
+X-Gm-Message-State: AOUpUlHBDaip4Qr/QjHyjJ9CTqmmTmqocJwHkl0R7gKX5RHFy0AakNbt
+        62TKEQ7nyG9gxRJgrMU2tcGAamE141DjoK458/M=
+X-Google-Smtp-Source: AAOMgpc4zyYwzt3I+VxiXg2nApua9aq8SBYsF84GxAmXBIMJFx9YpgQc2EmWEkNpo9QVLAB9pEi3I34ovGCh/dTmFYw=
+X-Received: by 2002:aca:4e50:: with SMTP id c77-v6mr20962635oib.254.1533049852353;
+ Tue, 31 Jul 2018 08:10:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fc04618a-3b3b-58bd-edd5-cbde11638d7b@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:7702:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 08:10:51
+ -0700 (PDT)
+In-Reply-To: <20180731142835.GC4909@kernel.org>
+References: <20180731100251.23575-1-ganapatrao.kulkarni@cavium.com> <20180731142835.GC4909@kernel.org>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Tue, 31 Jul 2018 20:40:51 +0530
+Message-ID: <CAKTKpr7ZLru2wvtarq01p6PqJKQLEhCFtoo=tw45Svh-V_vFag@mail.gmail.com>
+Subject: Re: [PATCH] perf vendor events arm64: Update ThunderX2 implementation
+ defined pmu core events
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, namhyung@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31/2018 01:40 AM, Tal Gilboa wrote:
-[snip]
->>>> @@ -2240,6 +2258,9 @@ static void pci_init_capabilities(struct 
->>>> pci_dev *dev)
->>>>       /* Advanced Error Reporting */
->>>>       pci_aer_init(dev);
->>>> +    /* Check link and detect downtrain errors */
->>>> +    pcie_check_upstream_link(dev);
+Hi Arnaldo,
+
+On Tue, Jul 31, 2018 at 7:58 PM, Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+> Em Tue, Jul 31, 2018 at 03:32:51PM +0530, Ganapatrao Kulkarni escreveu:
+>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>
+> Can you please consider to provide an example of such counters being
+> used, i.e. with a simple C synthetic test that causes these events to
+> take place, then run it via 'perf stat' to show that indeed, they are
+> being programmed and read correctly?
+>
+> Ideally for all of them, but if that becomes too burdensome, for a few
+> of them?
+
+It may be tedious for all, certainly I will provide the test
+results/log for some of them(as many as possible).
+
+>
+> Thanks,
+>
+> - Arnaldo
+>
+>> ---
+>>  .../arch/arm64/cavium/thunderx2/core-imp-def.json  | 87 +++++++++++++++++++++-
+>>  1 file changed, 84 insertions(+), 3 deletions(-)
 >>
->> This is called for every PCIe device right? Won't there be a 
->> duplicated print in case a device loads with lower PCIe bandwidth than 
->> needed?
-> 
-> Alex, can you comment on this please?
+>> diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+>> index bc03c06..752e47e 100644
+>> --- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+>> +++ b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+>> @@ -12,6 +12,21 @@
+>>          "ArchStdEvent": "L1D_CACHE_REFILL_WR",
+>>      },
+>>      {
+>> +        "ArchStdEvent": "L1D_CACHE_REFILL_INNER",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L1D_CACHE_REFILL_OUTER",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L1D_CACHE_WB_VICTIM",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L1D_CACHE_WB_CLEAN",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L1D_CACHE_INVAL",
+>> +    },
+>> +    {
+>>          "ArchStdEvent": "L1D_TLB_REFILL_RD",
+>>      },
+>>      {
+>> @@ -24,9 +39,75 @@
+>>          "ArchStdEvent": "L1D_TLB_WR",
+>>      },
+>>      {
+>> +        "ArchStdEvent": "L2D_TLB_REFILL_RD",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L2D_TLB_REFILL_WR",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L2D_TLB_RD",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "L2D_TLB_WR",
+>> +    },
+>> +    {
+>>          "ArchStdEvent": "BUS_ACCESS_RD",
+>> -   },
+>> -   {
+>> +    },
+>> +    {
+>>          "ArchStdEvent": "BUS_ACCESS_WR",
+>> -   }
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "MEM_ACCESS_RD",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "MEM_ACCESS_WR",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "UNALIGNED_LD_SPEC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "UNALIGNED_ST_SPEC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "UNALIGNED_LDST_SPEC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_UNDEF",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_SVC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_PABORT",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_DABORT",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_IRQ",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_FIQ",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_SMC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_HVC",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_TRAP_PABORT",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_TRAP_DABORT",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_TRAP_OTHER",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_TRAP_IRQ",
+>> +    },
+>> +    {
+>> +        "ArchStdEvent": "EXC_TRAP_FIQ",
+>> +    }
+>>  ]
+>> --
+>> 2.9.4
 
-Of course I can.
-
-There's one print at probe() time, which happens if bandwidth < max. I 
-would think that's fine. There is a way to duplicate it, and that is if 
-the driver also calls print_link_status(). A few driver maintainers who 
-call it have indicated they'd be fine with removing it from the driver, 
-and leaving it in the core PCI.
-
-Should the device come back at low speed, go away, then come back at 
-full speed we'd still only see one print from the first probe. Again, if 
-driver doesn't also call the function.
-There's the corner case where the device come up at < max, goes away, 
-then comes back faster, but still < max. There will be two prints, but 
-they won't be true duplicates -- each one will indicate different BW.
-
-Alex
-
->>>> +
->>>>       if (pci_probe_reset_function(dev) == 0)
->>>>           dev->reset_fn = 1;
->>>>   }
->>>> diff --git a/include/linux/pci.h b/include/linux/pci.h
->>>> index abd5d5e17aee..15bfab8f7a1b 100644
->>>> --- a/include/linux/pci.h
->>>> +++ b/include/linux/pci.h
->>>> @@ -1088,6 +1088,7 @@ int pcie_set_mps(struct pci_dev *dev, int mps);
->>>>   u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev 
->>>> **limiting_dev,
->>>>                    enum pci_bus_speed *speed,
->>>>                    enum pcie_link_width *width);
->>>> +void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
->>>>   void pcie_print_link_status(struct pci_dev *dev);
->>>>   int pcie_flr(struct pci_dev *dev);
->>>>   int __pci_reset_function_locked(struct pci_dev *dev);
->>>
+thanks
+Ganapat
