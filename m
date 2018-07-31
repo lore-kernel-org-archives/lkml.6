@@ -1,305 +1,174 @@
 Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F06C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C37C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31522208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:45:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31522208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 65997208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:46:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="oMNX+jWl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65997208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbeGaIXt (ORCPT
+        id S1729643AbeGaIZ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:23:49 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:52545 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbeGaIXt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:23:49 -0400
-Received: by mail-it0-f70.google.com with SMTP id l185-v6so1724386ite.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=EXONjntXEDGY8iVr9Z0BayiCCHMrvTQCNO3RyzK/qB8=;
-        b=k3K10mtXxavToyTpKPrdY8C4XdZq2d9PFwNdB9lIHjrP8/f8nlf/OQ6PrX2X4HsKuz
-         QxKux63PRXGx743xWmGKTx3O5xAGDUo6/IDVwxLhVE/MDp7ZXUlFHZS7aTQVDDjKNd/7
-         ZKBNyq2YB3DeeFYWzR+WXqLAqzoszKeSt4xVYm20anpu3okckrJUOb00m0o1mgnjVf9Q
-         MfiSVKyeIIw9brFwvtW7HWRnyD0Kknc5E55FFsTp7IN+OKXyBqqlxu1iR4KCyKPZ8hZC
-         Q8laBqmL7pEIQTYBdVQdDb0PYHa1JL9oahaba8c70CMG+G4jNOgKiR68uVlB5u/SbyRy
-         KhHg==
-X-Gm-Message-State: AOUpUlFboH/X/BmgKnnhafl1WAStT2qizowFdlK5AwxDC+vvWJsQcrYe
-        6rkR1az7hc5WnQvyfZGCoCxLyhDP6puWFiG4IWwD9BHOyfsJ
-X-Google-Smtp-Source: AAOMgpemFRmMGuInKf49QP8ggsi8aHzommEmSefKwwBsX/AhuqWcQ3u1RMt/bwecp1Q7W2v8Nnef06izCZh2LaaoOzFnWcRJc0YC
+        Tue, 31 Jul 2018 04:25:29 -0400
+Received: from mail-by2nam03on0079.outbound.protection.outlook.com ([104.47.42.79]:52191
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726369AbeGaIZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:25:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v7EuIa0QWvfq5m1Q9KzT/O0B32tqsH26YmVqevv7ZH0=;
+ b=oMNX+jWl/xHWhK/ERnIVt3EJlLP3fLDK+jc40uFVsfbCXOggrI3noOwFHm/tzyzTCVDpNt1ewrVEs4f/Ewqf9/w34o3qBmxqztW6+CLS9a2XatO+lawfRdUBsqYhIQYrpquqLA7Rz0A3l9tw4cU35uc1SY2jy08aI6absjEiLUA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+Received: from [IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740]
+ (2a02:908:1257:4460:1ab8:55c1:a639:6740) by
+ BN6PR12MB1714.namprd12.prod.outlook.com (2603:10b6:404:106::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Tue, 31 Jul
+ 2018 06:46:19 +0000
+Subject: Re: [PATCH] drm/amdgpu/pm: Fix potential Spectre v1
+To:     Alex Deucher <alexdeucher@gmail.com>,
+        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>
+References: <20180723163232.GA17358@embeddedor.com>
+ <CADnq5_Ons4y+sweZGg4LgJpfn8wzgg8xdpytLt-78PVqqg-LpA@mail.gmail.com>
+ <50f9f4f3-76e1-401a-bd84-6ae746fe4647@daenzer.net>
+ <CADnq5_MKR=qYCX-m4wKA47F0EejNcUmS7jsnY9=1nyKKEQhqJQ@mail.gmail.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <658cd654-be3e-659a-20a7-f33034c231ce@amd.com>
+Date:   Tue, 31 Jul 2018 08:46:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:28d4:: with SMTP id o203-v6mr7640428ioo.135.1533019501872;
- Mon, 30 Jul 2018 23:45:01 -0700 (PDT)
-Date:   Mon, 30 Jul 2018 23:45:01 -0700
-In-Reply-To: <000000000000ea418a0572384417@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d7d640057245ea2d@google.com>
-Subject: Re: WARNING: ODEBUG bug in vsock_stream_connect
-From:   syzbot <syzbot+8a9b1bd330476a4f3db6@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dvlasenk@redhat.com, jhansen@vmware.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        stefanha@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CADnq5_MKR=qYCX-m4wKA47F0EejNcUmS7jsnY9=1nyKKEQhqJQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
+X-ClientProxiedBy: DB6P193CA0016.EURP193.PROD.OUTLOOK.COM (2603:10a6:6:29::26)
+ To BN6PR12MB1714.namprd12.prod.outlook.com (2603:10b6:404:106::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e90662a5-72d1-46c4-7179-08d5f6b154f1
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1714;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1714;3:AIva6w1KzYcU8g6px/SCZ/aUNw0V5c8WTXaMET3/vQYgALwBVRlILcQlrhykawL97IRwF/83lrlLTgfQ1ZhaltCLK4VBMRzkm21M8SYIg//0MjAT9LMqriT+Hdrx7Dx6gGPAxvn4T/IgqJYIIXYkcokDKtkECpV6jGkAi0siIjm5W7ovrogExbeIvmd0NMq0mjTZu2apwJvykx/h7sqytdCEC9GZm4iJh4IX/ZP6R17k6dXbH3fpv5uCyEIrs2RG;25:tAqfoOpeVdRQVU/PlO9SQQ9XMvGRZukeH6cdWpCL/yReJIccduA07quhOit5p3yzfgXZ1nGXsrj0He1zJfzKG9ovuCzoROJmPPW8Jv7kPvLqcWRGrPC2Nv1C1CCJqvT6OqbJ6swyNGFbZBVOk7SWTWJ0+dU45azqtSya2B81YgiaVN5/N280YNUS4VJaKVDyJChkeoI4rQCPd7zx9Z4/bsNQbk4zJgP46Ms7kNuGooEGTCdk78m0rKIxBCVitFrWHRxSc/IZtA70PeDjkWQkFojSj5T5mCa2+rR3KK68odpS7lH9X6ZKEX3rLZOdS9R1JYSUX85ERvLg5C9RJ4NvOw==;31:HZI6sEPT9AqAxIBRku816ujiNVErp95w3GOBMns0T8vy6BuO6exoTN5BYDYqYSjhnEb5F9mdeUCRMrjlpCCjFqHN+IAihKk7P22JQQqr7p1+zkeMSPk2yTfskSkOCVaxakRKlcgncI0aLZiJoYvOAzYsMXHcirK2A/J8g0TNm5HKxEYm0jIgAcT64SMhrCAE0CzikjBw7BVC6JKSa4rJtFDQ//Dk2wAhgbAo0v4mAa8=
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1714:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1714;20:f+kSbGC8E9EuvPfOd7r+QYzh2y5E9NLeKQ3HkaqYP1udtkOc650d50pYviDdVWyUbyyIvMz68ZKC3englNRiWPlV+2nBD7aLSMbcwBvDxegMTuxPl+dfBtHn172tKXuny7s5AOWsxFppQMT5B+r3R9utQplTdGrXm5behNYukDc4WEPZqezCiYf8Pyq4CSS9Q9Z/0tVSBVP+kAHb1Q3MkIxfsVsQoB3t25kImSBZ83ltNQHstks0/DlIOh+aDYYMbpTQoWBf/Zmn+hpsLxCGsqI2OynrM9R5hjaZiPrFshV1DItGcmXlPWWSy2JrfNGbXB1Ua2tn5s3bU/TnbGTNzurKEIqsvYsCzRY/NSobhY0s8GKKiUBbv+Dhnt2Y0v2c8+kGgfRh/2JQ1ycehlQUSBVmwkuByHx5rXi/Tgkv7+93slNM+3FyOe98cPtHDyFv3rFNi7traJFAIOf0UBFhDEzLov3H8qmKgIdQB7+iIFcmRdcRAvTb1j6aDVg+NBWC;4:oPLqnhkvkJAdWWRvD7JS3/7/zrVFz2miKfgGdlBpClCUjwBilhrihkRvCRXwo7b5iAi1trlpUjiasSY4OkPRvh93Hh6MuP1WZvoBmJyzMEy0CVPD/kRWRo1K3WFB4xpIRGWhhI9i5noBCVFESO5Kajv5EdYUaKrkxCOM9NZP/DMMVOtlCM29ENnprojQkE/PfDplnEx4NLOEmBpOZDVcN59zoaaQ1iYLjmhMRjp5fDa742KDoMv3LO3dFc4qKmE4TV+FKEa7xIPnJVWHFoej/w==
+X-Microsoft-Antispam-PRVS: <BN6PR12MB1714E92BA2E28E564067EA97832E0@BN6PR12MB1714.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BN6PR12MB1714;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1714;
+X-Forefront-PRVS: 0750463DC9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(136003)(396003)(189003)(199004)(6116002)(53936002)(2906002)(1706002)(31686004)(8676002)(2870700001)(81156014)(81166006)(8936002)(478600001)(6666003)(65826007)(93886005)(72206003)(36756003)(5660300001)(50466002)(68736007)(6246003)(486006)(6486002)(65806001)(25786009)(4326008)(39060400002)(229853002)(52116002)(105586002)(106356001)(2486003)(52146003)(97736004)(46003)(23676004)(64126003)(305945005)(76176011)(52396003)(386003)(53546011)(65956001)(16526019)(67846002)(316002)(476003)(2616005)(54906003)(7736002)(110136005)(11346002)(86362001)(47776003)(58126008)(446003)(31696002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1714;H:[IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjZQUjEyTUIxNzE0OzIzOmV0MWduMUVGd3VIcVNCSmdHZnhLMkZXeG5D?=
+ =?utf-8?B?eUsvRytidFVoY1ZHdXYzOXJVQTdlT1dYMFBCdEljOEM3Uk5HdkdFOWY1T0ZG?=
+ =?utf-8?B?WEVSM2U3ZWFyS3U0aXlyd3VVWmFya05kdE8vU1dBU2JGV0V2MlMzMVFDWjc4?=
+ =?utf-8?B?NC80bnkzaDNWTG5UZ3QybURSVVJkY21kMVRHNTlMZ3ZSWGFzSWxjR2ZPWDF5?=
+ =?utf-8?B?aHVUZVhlRVRQMVlOTThkcjBCczEySHIreUF5NmRWWHRobjkzQnoyZDRna1A2?=
+ =?utf-8?B?WlAwaHJHb2NUSytrd0dKUkF2bkpyMEZNT2tJbUJZdE9MS3U4a3hGZEtQMFpL?=
+ =?utf-8?B?Nmg4TzZEU0RMQ0EzbTdYdGU5d2J6bGZ4KzhacmpKWXMxSzRvZ0dYWUFFV0hJ?=
+ =?utf-8?B?RTNSbEorNUNzb0F2cng4QzBrRUZDUjZlKzZnR3QvYkNhNHJCWVVqZWZsS1pE?=
+ =?utf-8?B?azF5THV4OEdyNUZmb05HTWR2RWtzc0tPNm85dTY4Q1BrSGR5OUNWK2pBcGhi?=
+ =?utf-8?B?Tno4WUNhaWdTSWZQV05ZelJmSjBhbm91cEl1bzBld3NLb1l6bmNWMXBReWw0?=
+ =?utf-8?B?TGdvdUhDWEtQbzRXSDZkNVJ4Nk9WMitNS2srSW4wZktmRHJTdW1VajVNZHpa?=
+ =?utf-8?B?WGQwK3ZqVzhiYnc4K0FDK0tHbFk1ZzNyWlNiTnJVckF1MUNkNDNEY0pZamVV?=
+ =?utf-8?B?TEhkZVNEQmdyemJCVWtuZjdlS1c1cVFXSDBWRE01Z3g4ZTFYeFRaRW9rOXlj?=
+ =?utf-8?B?cmhmY0Vuc2I4endCcVBIRWV5RXFYZ2F1bUpLZG0wTDRjcFRYNUpBeUViYWFF?=
+ =?utf-8?B?WmhCYks1YXNmeDVLeTB2ZVR6NlNkcFU3bXNLSEpPZTRqbldCc2Q5dHVudGNL?=
+ =?utf-8?B?dHpQYU15YmNHRlEySnlRRFBKWWR3Mk9vOTNBUVlJTzNyK0pQa1pqYzRYdWZX?=
+ =?utf-8?B?VzZDT3NTdFpHZ1pOc1dzSjZkKytZTWJteHdwMnlBc1luVVd6TGZnbFp5UEta?=
+ =?utf-8?B?RlZHRmNKMGVSRlJ1V3hSMHJ1cmtWaHJxeDd5WjJRZHd6WHYwVTFPRTFreHJa?=
+ =?utf-8?B?ckRjQU1YTU1uUUQ3N0lWUHRBVmFXVmJSNnVxRkNQOW42eHByV0x5RDg2Yzds?=
+ =?utf-8?B?N2JXR1FJZDZjUTh0L09EVHdQWEZxR3o5dVE3NzI5NjVuTThjTFlKdnlKdWZZ?=
+ =?utf-8?B?L1h5dzBoSEVSZmdaMkNvVVdGQ3R1YjQyK2xLUlFrOWZJUTM5cWprT01rYVpP?=
+ =?utf-8?B?Tk9XcmwyMTNvQUF6YjdkdUlGSlFjalYzdit5Q2o3ano0MzJsZVI3eTNvTTVy?=
+ =?utf-8?B?eVpiSis4aHpwMzFtbUV6TVp5UXZYVXRJcHlDMkVjbytVaC90cFFMM3lRbW42?=
+ =?utf-8?B?QlNUeXlObERydStPbUZJU0xTWmFRa2p3UHpMN3pmMUFzWnk5Q3BJMHZ5RHlz?=
+ =?utf-8?B?OTZjVHQ5NCtyS0RlcytyZVRZUVVPL1o5T3FPZ1ZESjd4eXIyTDVvdXl3cU1h?=
+ =?utf-8?B?UVlOMTRIT2lueVh1endtSlBGNDRxQ1ZhVGRXWHVuVi8vZmNkSXJEc2I2UmlJ?=
+ =?utf-8?B?VnZ0ZXJ5U0xTRDVnc0pQdHFhbFNRWWNQcVZybm9uY0lNNnVOWUtqU1pneTNt?=
+ =?utf-8?B?MDM3QzVFL2N5QWxTaldkZEdpaE1SYnQxZmZsendPc0ZJM3N6ZFZlUTI5SHNL?=
+ =?utf-8?B?UHlxYjZyeS9OTnQrTlhvL3hVRCtCbEdUS1lFamJRQ1FPTEE5UFZRUnUxN2dP?=
+ =?utf-8?B?UHdwTUk5TCs4d0FtWjlpYU4vZzNDS1Q5aDRiRmJsbGFXa3lhY3BvM3BOeEt2?=
+ =?utf-8?B?VjZwajlyeVpndDZTMVZuRlk1TnlkYUdaL21DcXBJUWt3Qk5pbnAzSUUrOFh5?=
+ =?utf-8?B?SElMZlhEc0pzdnBwdDNqMXQ4UmNzcTJYYk9BOVd1bFFYbXd0UTBxc2l5WUxV?=
+ =?utf-8?B?S3lKZGFRS0pnPT0=?=
+X-Microsoft-Antispam-Message-Info: RXWc93l6MAdnsO+6OEQPT3JSn2qMkq1ActnIijC7yVGTcUFrIOmracffdemkEtYhxp1pqkNwDFeoouAmUju0e/U/d5Dy7nxTsZ2MHzP+OsjEGrkqMrL8f4lvfSv/KqON677kXxySgUjrpl+dv9EYiS3VS5V5kA2DTOWOJWSFHLNEMRrIE/77eHfp9/eUdk/oKj7jgK6WBYct45OhUdMVVNLibspou6sPXivc+5ZwyP1sjUMduiIbYRosothpDv6Q29IRzyVh1JjJQqHKkI4BlLGKbPGjDOpX2xUqB9/JoXgKm9BgXMho5Sx6RQbjcwN2nJVqKfXp0aIgNLx+V4kBjM/8xQTZlhIGncyXsRgMMrw=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1714;6:RT8T+ZsH7eTDMfqMX/FX5nzBqrgttPQ77xtH1fT38qxzy17mGuqz8UMXA6aDC/LqUQjJhe1B01tq+NEr+BxxVpl6Ab3uWUJ3WRCg9bxKqIyihzrCyfJ74vWlso/ju+uAW1OVD6NDcEaWvCwnXv7RGfJLpDFgvALbis+N4aBw6hOoVrTw23wcaulGsr9rzuai9BiIQSK1G+XHPCf7IGjznWIs/o/YyzJG2FlbfivA0jaP0N82DdEIp8wt6NI9xlOAm+7euNARnSTf4ZVc5vtKMhVae/bBEI4h061BtpV+bf4ATyXx4UqPhMyKJcWm7jRBEQfzA7CmDDho13W7TfjhbF7CLWoQ389wbiFv4UxLvtY3gnPt+b6XimAGvIrs8QTuI6JOvzXQ4F2fCzQDk9Uedh/31IfWvjbgFap+Z9ky5lVkujcc3FdjSdGDAvwlLXjBPEHXokkdECYOQdrUzBtE3g==;5:Coa5x26xRT/2QJcMx/25u7jKP64wjoU8rSug+NJ0EIXBNIDf6P1S3+PeuOn83Y3UQRixioW/OFZauBxq4vzbinPDEBRjduRw1zawgrxQ72D4Y3qFN2Qvj9MNjZ/QlJIUJN3DWWPL+Z8qDbP3B//iyJJb56l+VWnnz4PCn/77N2g=;7:1oRuzXx0bmuW7mZEDCDjMicseWpjE8FkUts7j7pt8cOIf53xXLi8SOGbi5wEKCeeYaBDTGgr8wSdp6r8Xhzx1zrnNOwcwaAZ7ni5dP8WmhcXwYJse3MD81XSIe+zvDFbiy0pk9uBQZLKzvdbALyOqjiEOB0egHmVEbTSYLZBUogJ68/rlRYyEKazSMveS50I3O6VJWfnimBlKhYD4h1H9vgqN7f5eQyQPdPtrh/C3Vkr0WNgE7iqmSNiASeoKXGL
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1714;20:pTr+pbn1nGcjaGv4IGLC2VC13b4Cj/hmWIvjjJVRCr+1eQUYZt0a9UqykrxrrxcSyBHhRVkHqZxGUbjOoo9tZdnniYzvAiENkowDNukORpSvrWqj/xKch902H+v0P5+tROFspnmXD5+dyux/SbGTNYJSRxGp895RCZPavnfhz81Ythl9At56KFmKHtk2HwnLpYcKUFjITu7oBdjIDwz3QKFsjrsjlK3IF5u3n2XlTWbrEFvL6Sq3BoLP7X9kvPbw
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2018 06:46:19.2879 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e90662a5-72d1-46c4-7179-08d5f6b154f1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1714
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Am 30.07.2018 um 22:14 schrieb Alex Deucher:
+> On Mon, Jul 30, 2018 at 5:55 AM, Michel Dänzer <michel@daenzer.net> wrote:
+>> On 2018-07-24 10:53 PM, Alex Deucher wrote:
+>>> On Mon, Jul 23, 2018 at 12:32 PM, Gustavo A. R. Silva
+>>> <gustavo@embeddedor.com> wrote:
+>>>> idx can be indirectly controlled by user-space, hence leading to a
+>>>> potential exploitation of the Spectre variant 1 vulnerability.
+>>>>
+>>>> This issue was detected with the help of Smatch:
+>>>>
+>>>> drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c:408 amdgpu_set_pp_force_state()
+>>>> warn: potential spectre issue 'data.states'
+>>>>
+>>>> Fix this by sanitizing idx before using it to index data.states
+>>> Is this actually necessary?  We already check that idx is valid a few
+>>> lines before:
+>>>          if (ret || idx >= ARRAY_SIZE(data.states)) {
+>>>                          count = -EINVAL;
+>>>                          goto fail;
+>>>                  }
+>> A Spectre attack would be based on idx ending up too large, but the CPU
+>> speculatively executing the following code assuming idx <
+>> ARRAY_SIZE(data.states), and extracting information from the incorrectly
+>> speculated code via side channels.
+>>
+>> I'm not sure if that's actually possible in this case, but better safe
+>> than sorry?
+> Yeah, I'm not sure.  I guess this can't hurt.
 
-HEAD commit:    527838d470e3 Merge branch 'x86-urgent-for-linus' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17abacf0400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc0cd7c2eefb46f
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a9b1bd330476a4f3db6
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16c0cc54400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1747bb62400000
+Well is idx actually controlable by userspace in an IOCTL? I guess the 
+answer is no.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8a9b1bd330476a4f3db6@syzkaller.appspotmail.com
+On the other hand the array_index_nospec() macro makes the overhead 
+absolute negligible.
 
-------------[ cut here ]------------
-ODEBUG: init active (active state 0) object type: timer_list hint:  
-delayed_work_timer_fn+0x0/0x90 kernel/workqueue.c:1414
-WARNING: CPU: 0 PID: 17364 at lib/debugobjects.c:329  
-debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-Kernel panic - not syncing: panic_on_warn set ...
+So I agree that we should be better safe than sorry.
 
-CPU: 0 PID: 17364 Comm: syz-executor746 Not tainted 4.18.0-rc7+ #170
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-Code: 3a 87 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd  
-20 74 3a 87 4c 89 f6 48 c7 c7 c0 69 3a 87 e8 c6 b0 e6 fd <0f> 0b 83 05 a9  
-e6 29 05 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
-RSP: 0018:ffff8801c535f658 EFLAGS: 00010082
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81632481 RDI: 0000000000000001
-RBP: ffff8801c535f698 R08: ffff8801b5638440 R09: ffffed003b603ec2
-R10: ffffed003b603ec2 R11: ffff8801db01f617 R12: 0000000000000001
-R13: ffffffff87f9c9e0 R14: ffffffff873a6fc0 R15: ffffffff816918a0
-  __debug_object_init+0x8e9/0x12e0 lib/debugobjects.c:403
-  debug_object_init+0x16/0x20 lib/debugobjects.c:429
-  debug_timer_init kernel/time/timer.c:704 [inline]
-  debug_init kernel/time/timer.c:757 [inline]
-  init_timer_key+0xa9/0x490 kernel/time/timer.c:806
-  vsock_stream_connect+0xc7a/0xfc0 net/vmw_vsock/af_vsock.c:1224
-  __sys_connect+0x37d/0x4c0 net/socket.c:1673
-  __do_sys_connect net/socket.c:1684 [inline]
-  __se_sys_connect net/socket.c:1681 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1681
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d59
-Code: e8 ac e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 0d fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fe17fb16da8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00000000006dac38 RCX: 0000000000445d59
-RDX: 0000000000000010 RSI: 0000000020000100 RDI: 0000000000000004
-RBP: 00000000006dac30 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac3c
-R13: 6b636f73762d7473 R14: 6f68762f7665642f R15: 0000000000000001
+Christian.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-rc7+ #170 Not tainted
-------------------------------------------------------
-syz-executor746/17364 is trying to acquire lock:
-(____ptrval____) ((console_sem).lock){-...}, at: down_trylock+0x13/0x70  
-kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-(____ptrval____) (&obj_hash[i].lock){-.-.}, at:  
-__debug_object_init+0x127/0x12e0 lib/debugobjects.c:381
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&obj_hash[i].lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        __debug_object_init+0x127/0x12e0 lib/debugobjects.c:381
-        debug_object_init+0x16/0x20 lib/debugobjects.c:429
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x97/0x480 kernel/time/hrtimer.c:1308
-        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1056
-        __sched_fork+0x2ae/0x590 kernel/sched/core.c:2185
-        init_idle+0x75/0x7a0 kernel/sched/core.c:5405
-        sched_init+0xbf3/0xd2c kernel/sched/core.c:6103
-        start_kernel+0x47d/0x949 init/main.c:602
-        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1812 [inline]
-        task_fork_fair+0x93/0x680 kernel/sched/fair.c:9952
-        sched_fork+0x446/0xb40 kernel/sched/core.c:2381
-        copy_process.part.39+0x1bf5/0x70b0 kernel/fork.c:1796
-        copy_process kernel/fork.c:1639 [inline]
-        _do_fork+0x291/0x12a0 kernel/fork.c:2122
-        kernel_thread+0x34/0x40 kernel/fork.c:2181
-        rest_init+0x22/0xe4 init/main.c:408
-        start_kernel+0x90e/0x949 init/main.c:738
-        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xd2/0x12a0 kernel/sched/core.c:1985
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2148
-        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
-        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:242
-        console_unlock+0x7a2/0x10b0 kernel/printk/printk.c:2411
-        vprintk_emit+0x6c6/0xdf0 kernel/printk/printk.c:1907
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
-        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
-        printk+0xa7/0xcf kernel/printk/printk.c:1981
-        load_umh+0x51/0xbd net/bpfilter/bpfilter_kern.c:98
-        do_one_initcall+0x127/0x913 init/main.c:884
-        do_initcall_level init/main.c:952 [inline]
-        do_initcalls init/main.c:960 [inline]
-        do_basic_setup init/main.c:978 [inline]
-        kernel_init_freeable+0x49b/0x58e init/main.c:1135
-        kernel_init+0x11/0x1b3 init/main.c:1061
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
--> #0 ((console_sem).lock){-...}:
-        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:225
-        console_trylock+0x15/0xa0 kernel/printk/printk.c:2230
-        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-        vprintk_emit+0x6ad/0xdf0 kernel/printk/printk.c:1906
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
-        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
-        printk+0xa7/0xcf kernel/printk/printk.c:1981
-        __warn_printk+0x8c/0xe0 kernel/panic.c:590
-        debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-        __debug_object_init+0x8e9/0x12e0 lib/debugobjects.c:403
-        debug_object_init+0x16/0x20 lib/debugobjects.c:429
-        debug_timer_init kernel/time/timer.c:704 [inline]
-        debug_init kernel/time/timer.c:757 [inline]
-        init_timer_key+0xa9/0x490 kernel/time/timer.c:806
-        vsock_stream_connect+0xc7a/0xfc0 net/vmw_vsock/af_vsock.c:1224
-        __sys_connect+0x37d/0x4c0 net/socket.c:1673
-        __do_sys_connect net/socket.c:1684 [inline]
-        __se_sys_connect net/socket.c:1681 [inline]
-        __x64_sys_connect+0x73/0xb0 net/socket.c:1681
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&obj_hash[i].lock);
-                                lock(&rq->lock);
-                                lock(&obj_hash[i].lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-2 locks held by syz-executor746/17364:
-  #0: (____ptrval____) (sk_lock-AF_VSOCK){+.+.}, at: lock_sock  
-include/net/sock.h:1474 [inline]
-  #0: (____ptrval____) (sk_lock-AF_VSOCK){+.+.}, at:  
-vsock_stream_connect+0x1e3/0xfc0 net/vmw_vsock/af_vsock.c:1152
-  #1: (____ptrval____) (&obj_hash[i].lock){-.-.}, at:  
-__debug_object_init+0x127/0x12e0 lib/debugobjects.c:381
-
-stack backtrace:
-CPU: 0 PID: 17364 Comm: syz-executor746 Not tainted 4.18.0-rc7+ #170
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_circular_bug.isra.36.cold.57+0x1bd/0x27d  
-kernel/locking/lockdep.c:1227
-  check_prev_add kernel/locking/lockdep.c:1867 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
-  validate_chain kernel/locking/lockdep.c:2421 [inline]
-  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3435
-  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:225
-  console_trylock+0x15/0xa0 kernel/printk/printk.c:2230
-  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-  vprintk_emit+0x6ad/0xdf0 kernel/printk/printk.c:1906
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1948
-  vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:382
-  printk+0xa7/0xcf kernel/printk/printk.c:1981
-  __warn_printk+0x8c/0xe0 kernel/panic.c:590
-  debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-  __debug_object_init+0x8e9/0x12e0 lib/debugobjects.c:403
-  debug_object_init+0x16/0x20 lib/debugobjects.c:429
-  debug_timer_init kernel/time/timer.c:704 [inline]
-  debug_init kernel/time/timer.c:757 [inline]
-  init_timer_key+0xa9/0x490 kernel/time/timer.c:806
-  vsock_stream_connect+0xc7a/0xfc0 net/vmw_vsock/af_vsock.c:1224
-  __sys_connect+0x37d/0x4c0 net/socket.c:1673
-  __do_sys_connect net/socket.c:1684 [inline]
-  __se_sys_connect net/socket.c:1681 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1681
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d59
-Code: e8 ac e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 0d fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fe17fb16da8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00000000006dac38 RCX: 0000000000445d59
-RDX: 0000000000000010 RSI: 0000000020000100 RDI: 0000000000000004
-RBP: 00000000006dac30 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac3c
-R13: 6b636f73762d7473 R14: 6f68762f7665642f R15: 0000000000000001
-Shutting down cpus with NMI
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+>
+> Alex
 
