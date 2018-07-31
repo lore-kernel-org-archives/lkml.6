@@ -2,92 +2,162 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05A1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C51C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE62208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44F70208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NnS3nhTS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E8bWo2Us"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE62208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXl8g5aW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F70208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeGaJHF (ORCPT
+        id S1729622AbeGaJIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:07:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbeGaJHE (ORCPT
+        Tue, 31 Jul 2018 05:08:47 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35648 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbeGaJIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:07:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A69D760714; Tue, 31 Jul 2018 07:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533022087;
-        bh=DIv5x41wOSg8iGCXjamDGzKA+txeFBzgTwVu3T/7YUI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=NnS3nhTSZu6bYw2zSOURybLsKNm13fi4cG5WqISLsuFLBbE1dZmmE9qEzVG9tL7qg
-         bI0BOQql+bMd8FyAel4+LOa6zty3e1Zm0R3omXdXEWBpaM+zDiJtvZr65oo7jpAWso
-         muyIudVhxkRZYvkumTUnKtxGUSY5bIXz4U8QWE/M=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1095560376;
-        Tue, 31 Jul 2018 07:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533022078;
-        bh=DIv5x41wOSg8iGCXjamDGzKA+txeFBzgTwVu3T/7YUI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=E8bWo2UsvUM8NddhxeXJ/9LIyp3jrXBBMzJyTRRl36HvE0AO5lOAqfkR4tyLtRslR
-         bNJhcZ23e56L+EIIST+4ACefrJDl2v4W2u3wSIHiK4fzjAgf86MUsX8C4d08lisPCa
-         zIWYOiT5gQab8698dsG80whMXyuUXIAOmiYDViCU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1095560376
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 31 Jul 2018 05:08:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a3-v6so15468628wrt.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 00:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xwUjl8S0V+k9vEsEOJ8G0vl/IVJCGGJD6TgbJaIuK1g=;
+        b=ZXl8g5aWRoXfOKnzcdh5WiAifPQ39ZHyKAUlEoaHZN/gdcdYo1qlKLfbp8WuGYkyho
+         kdke+OnG3sgEuIZ1jyqnP/Bwtud1qtpbz7xMJTUSPqkc5WYjjmDBLl7C1iHbGjNoUsKq
+         VQX+9fs9WV3xiDOV5K0FusnJETIL+vMw5/3HY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xwUjl8S0V+k9vEsEOJ8G0vl/IVJCGGJD6TgbJaIuK1g=;
+        b=ZZFDrLiTV4IjpNHWVEbq5Xmnx90XDSPnmCjREEQArLcbe+j1e+Zta5Y7KxRbS/EXW6
+         2y6s7E1ZDAM3i81wAPr5AtQ7wBcWxRlFgcqIv9LOmsLISAbdmzNzxfXBmAp2FAv51oCN
+         xwpZHsmunxI6lMTcrdsNW50yoZKt3mRNzEGHtl6Z1xV51UVybqiBOAPUScFm1gTTX/Bu
+         lNaC3xxB4w6lWyqMo+Ho2G5yAIQUsK9I26s7DWzh79E/3EvZgWeYKfyaejsvdEk0S1SV
+         M9NTX/yTSQbHsyFMpFdSOTCRBMPlYED4U3rE00mvp6jiQPlwUZziKeag6aMJ7dJ1MUR4
+         Xa8Q==
+X-Gm-Message-State: AOUpUlEPlNyaB/wOz78xvbGdYsIOsdUgDt29pVaqVDg2s8zY6ZrPTZlB
+        hfOiSXZYvih2CspIaxG3rnku0g==
+X-Google-Smtp-Source: AAOMgpcFIIbRolyLfjhbfWRR0JxB5DCb0gxHGflSg9/Abma0EGOfFfnG9HuUw0V0lvFMxjdzYKlxcA==
+X-Received: by 2002:adf:93a3:: with SMTP id 32-v6mr19604925wrp.140.1533022188372;
+        Tue, 31 Jul 2018 00:29:48 -0700 (PDT)
+Received: from dell ([95.149.160.4])
+        by smtp.gmail.com with ESMTPSA id q188-v6sm2448794wmd.36.2018.07.31.00.29.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 00:29:47 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 08:29:45 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, Milo Kim <milo.kim@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] PCI: let pci_request_irq properly deal with threaded
+ interrupts
+Message-ID: <20180731072945.GF4662@dell>
+References: <d004975f-03a8-59f5-56ef-f4e1f8e12dfb@gmail.com>
+ <20180730213028.GC45322@bhelgaas-glaptop.roam.corp.google.com>
+ <20180730224252.GE45322@bhelgaas-glaptop.roam.corp.google.com>
+ <alpine.DEB.2.21.1807310047320.1725@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rt2x00: remove redundant functions
- rt2x00mac_sta_{add/remove}
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180727130549.12980-1-yuehaibing@huawei.com>
-References: <20180727130549.12980-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <sgruszka@redhat.com>,
-        <helmut.schaa@googlemail.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180731072807.A69D760714@smtp.codeaurora.org>
-Date:   Tue, 31 Jul 2018 07:28:07 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1807310047320.1725@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+On Tue, 31 Jul 2018, Thomas Gleixner wrote:
 
-> Only rt2800 subdriver of rt2x00 implement sta_add() and sta_remove(),
-> rt2x00mac_sta_add and rt2x00mac_sta_remove has no callers after
-> commit 9c87758cf089 ("rt2x00: call sta_add/remove directly in rt2800").
-> So can be removed.
+> On Mon, 30 Jul 2018, Bjorn Helgaas wrote:
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+> > [+cc maintainers of possibly erroneous callers of request_threaded_irq()]
+> > 
+> > On Mon, Jul 30, 2018 at 04:30:28PM -0500, Bjorn Helgaas wrote:
+> > > [+cc Thomas, Christoph, LKML]
+> > > 
+> > > On Mon, Jul 30, 2018 at 12:03:42AM +0200, Heiner Kallweit wrote:
+> > > > If we have a threaded interrupt with the handler being NULL, then
+> > > > request_threaded_irq() -> __setup_irq() will complain and bail out
+> > > > if the IRQF_ONESHOT flag isn't set. Therefore check for the handler
+> > > > being NULL and set IRQF_ONESHOT in this case.
+> > > > 
+> > > > This change is needed to migrate the mei_me driver to
+> > > > pci_alloc_irq_vectors() and pci_request_irq().
+> > > > 
+> > > > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> > > 
+> > > I'd like an ack from Thomas because this requirement about IRQF_ONESHOT
+> > > usage isn't mentioned in the request_threaded_irq() function doc or
+> > > Documentation/
+> > 
+> > Possibly these other request_threaded_irq() callers are similarly
+> > broken?  I can't tell for sure about tda998x_create(), but all the
+> > others certainly call request_threaded_irq() with "handler == NULL"
+> > and irqflags that do not contain IRQF_ONESHOT:
+> > 
+> >   max8997_muic_probe()
+> >     request_threaded_irq(virq, NULL, ..., IRQF_NO_SUSPEND, ...)
+> > 
+> >   tda998x_create()
+> >     request_threaded_irq(client->irq, NULL, ..., irqd_get_trigger_type(), ...)
+> >     (I can't tell what irqd_get_trigger_type() does)
+> 
+> It reads the trigger type back from the irq chip (level/edge/polarity) but
+> does not return with the ONESHOT bit set.
+> 
+> >   ab8500_btemp_probe()
+> >   ab8500_charger_probe()
+> >     request_threaded_irq(irq, NULL, ..., IRQF_SHARED | IRQF_NO_SUSPEND, ...)
+> 
+> SHARED is interesting ....
+> 
+> >   lp8788_set_irqs()
+> >     request_threaded_irq(virq, NULL, ..., 0, ...)
+> > 
+> >   max77686_rtc_probe()
+> >     request_threaded_irq(info->virq, NULL, ..., 0, ...)
+> > 
+> >   wm8350_register_irq()
+> >     request_threaded_irq(irq + wm8350->irq_base, NULL, ..., flags, ...)
+> >     (I think all callers of wm8350_register_irq() supply 0 for "flags")
+> 
+> Indeed. This all looks pretty much wrong. No idea why nobody ever noticed.
 
-Patch applied to wireless-drivers-next.git, thanks.
+I guess not many people (myself included) know the intricacies well
+enough to have noticed.  This probably coupled with insufficient
+checking/warning about such practices in the IRQ subsystem.
 
-24ebfcbdd1ba rt2x00: remove redundant functions rt2x00mac_sta_{add/remove}
+There are quite a few different devices here, so my assumption would
+be that interrupt handling still works in these cases.
+
+If we know certain configurations are incorrect or incompatible, might
+I suggest we add some form of alert to bring these to the attention of
+unknowing contributors?
 
 -- 
-https://patchwork.kernel.org/patch/10547141/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
