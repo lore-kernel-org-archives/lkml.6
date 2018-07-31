@@ -2,116 +2,127 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2CBC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C5BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58D6B20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:03:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfpOMOIF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D6B20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E94420857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 23:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E94420857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732754AbeHAAqC (ORCPT
+        id S1732759AbeHAAuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 20:46:02 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40782 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732635AbeHAAqC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 20:46:02 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x5-v6so9801258pgp.7;
-        Tue, 31 Jul 2018 16:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VdDueqK6PylNDDUcXZW53jNcTL6y61lbYsweGP8iE50=;
-        b=TfpOMOIFpHFvfgcKyT1oSnoc12CZ2kzFzRlxUX3a6nd+3lL47Hj9o+I/B80QpGgVPH
-         c8VRxYFgXs7QJOl/d6uObrg1KKWgDPGm2hErCTil6uKc71rT8zOJB4pM5rjAI4qTZgwC
-         y1Cwi3TypK9UHxYFe6HlWCveOybCzw441cNvRKSVbCN2Lar+Rx3XBISbD0Nm1XLo9Pzd
-         sgj+GpiAV+miGr0CUheig96bnjkWOakSO2vgl85a5W2lJ1i3oT7lmz4Tg+YuOJD7bJE1
-         l7qiRF1V+/i3g0VG5GqfqJCXeuODjZ56wu1Vgq3eZqTuS/HzVPx9pBAU6CM13fpgTjZL
-         j0ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VdDueqK6PylNDDUcXZW53jNcTL6y61lbYsweGP8iE50=;
-        b=iZUp+OcmJdG9sNXZCvdNI4XOJn3rX8DZQzG48DrkjMKZMDneT6DD/bbwP4S6AamPKc
-         h706XB8jEi20vLmhr+PMu5pceyjTfeSRpEQOc/QePhPlyuatpcgX82XofoZSN77aHMBT
-         m2RPXNPcT33NVu1UUUwNvYjp8iOnhLAwE4+pg/26IWOu0OGg7LJmegpRlE5agCy9phmT
-         9/zgHhOEYwFvc2qyl/W3q2MTnYB+rKBa8qs+jBtySmG0KOXzKGOX0PRpaMdIzawO9rQx
-         2v6mmPbIx6BOBM73V6kzVHXpgt6Umr+Rk0N6/2j2jcMtPvkRSw0q1BwUCcsLLrVm0Q34
-         Q+jw==
-X-Gm-Message-State: AOUpUlG1mnaNuRwzIoGyDxoM+gfgmHqqutydLibtFtuoHbqpkutyBS/7
-        hFYJfuyOopeI7fRGinNFgk+7RFo47CPXdcUQQtE=
-X-Google-Smtp-Source: AAOMgpd8ZHBjRNiSRK3mYYhEyW7wSW+VrTWO8qSSO3f2mbm8omn8RFT5tx/QDc8nYLNe2N2nQ6xIlHXqsFIui4zWduw=
-X-Received: by 2002:a63:b445:: with SMTP id n5-v6mr22545841pgu.104.1533078205813;
- Tue, 31 Jul 2018 16:03:25 -0700 (PDT)
+        Tue, 31 Jul 2018 20:50:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:33176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732635AbeHAAuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 20:50:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEFCD80D;
+        Tue, 31 Jul 2018 16:07:36 -0700 (PDT)
+Received: from [10.37.10.25] (unknown [10.37.10.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E09803F5BA;
+        Tue, 31 Jul 2018 16:07:34 -0700 (PDT)
+Subject: Re: [PATCH v3 05/13] coresight: perf: Allow tracing on hotplugged
+ CPUs
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mike.leach@linaro.org, robert.walker@arm.com,
+        coresight@lists.linaro.org
+References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
+ <1532609691-16863-6-git-send-email-suzuki.poulose@arm.com>
+ <20180731174643.GB11692@xps15>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <182ebcb4-dece-d6d0-965e-aa0d560bc6b7@arm.com>
+Date:   Wed, 1 Aug 2018 00:08:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <0000000000004fe2be05724ac084@google.com> <c8ffd001-8c67-19b9-7223-34ca8d436db2@gmail.com>
- <20180731134014.GA32114@bistromath.localdomain>
-In-Reply-To: <20180731134014.GA32114@bistromath.localdomain>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Tue, 31 Jul 2018 16:03:13 -0700
-Message-ID: <CAM_iQpURKOMAaPfs9v7FzhqqQPzj71sQD2LS0eU8cuqTML-YoA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in rtnetlink_put_metrics
-To:     Sabrina Dubroca <sd@queasysnail.net>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com,
-        christian.brauner@ubuntu.com, David Miller <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        lucien xin <lucien.xin@gmail.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180731174643.GB11692@xps15>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 6:41 AM Sabrina Dubroca <sd@queasysnail.net> wrote:
->
-> 2018-07-31, 05:41:56 -0700, Eric Dumazet wrote:
-> >
-> >
-> > On 07/31/2018 05:31 AM, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    61f4b23769f0 netlink: Don't shift with UB on nlk->ngroups
-> > > git tree:       net
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a9de58400000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=41f9c04b50ef70c66947
-> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> [...]
->
-> > Probably also caused by :
-> >
-> >
-> > commit df18b50448fab1dff093731dfd0e25e77e1afcd1
-> > Author: Sabrina Dubroca <sd@queasysnail.net>
-> > Date:   Mon Jul 30 16:23:10 2018 +0200
-> >
-> >     net/ipv6: fix metrics leak
->
-> Yeah, I'm looking into both those reports :/
+On 07/31/2018 06:46 PM, Mathieu Poirier wrote:
+> On Thu, Jul 26, 2018 at 01:54:43PM +0100, Suzuki K Poulose wrote:
+>> At the moment, if there is no CPU specified for a given
+>> event, we use cpu_online_mask and try to build path for
+>> each of the CPUs in the mask. This could prevent any CPU
+>> that is turned online later to be used for the tracing.
+>>
+>> This patch changes to use the cpu_present_mask and tries
+>> to build path for as much CPUs as possible ignoring the
+>> failures in building path for some of the CPUs. If ever
+>> we try to trace on those CPUs, we fail the operation.
+>>
+>> Based on a patch from Mathieu Poirier.
+>>
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-etm-perf.c | 46 +++++++++++++++---------
+>>   1 file changed, 30 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index 6beb662..afe7e7f 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -127,11 +127,9 @@ static void free_event_data(struct work_struct *work)
+>>   
+>>   	event_data = container_of(work, struct etm_event_data, work);
+>>   	mask = &event_data->mask;
+>> -	/*
+>> -	 * First deal with the sink configuration.  See comment in
+>> -	 * etm_setup_aux() about why we take the first available path.
+>> -	 */
+>> -	if (event_data->snk_config) {
+>> +
+>> +	/* Free the sink buffers, if there are any */
+>> +	if (event_data->snk_config && !WARN_ON(cpumask_empty(mask))) {
+> 
+> I'm not sure the WARN_ON() is required.
+> 
+> Here @mask can't be empty since you've added a check in setup_aux().  So if
+> @mask does end up being empty something has trampled the memory and we have
+> far bigger problems.
 
-Looks like this commit is completely unnecessary,
-fib6_drop_pcpu_from() calls fib6_info_release()
-which calls fib6_info_destroy_rcu(), so this metrics
-will be released twice...
+And thats exactly why I have a WARN_ON(). The issue is, we can't free 
+the sink_config unless we are able to find the sink device. So, if we
+ever end up with a sink_config with an empty mask, there is something
+seriously wrong and hence the WARN_ON().
+
+
+> 
+> 
+>>   		cpu = cpumask_first(mask);
+>>   		sink = coresight_get_sink(etm_event_cpu_path(event_data, cpu));
+>>   		if (sink_ops(sink)->free_buffer)
+>> @@ -166,7 +164,7 @@ static void *alloc_event_data(int cpu)
+
+...
+
+>> -	if (!sink_ops(sink)->alloc_buffer)
+>> -		goto err;
+>> -
+>> +	/* If we don't have any CPUs ready for tracing, abort */
+>>   	cpu = cpumask_first(mask);
+>> -	/* Get the AUX specific data from the sink buffer */
+>> +	if (cpu >= nr_cpu_ids)
+>> +		goto err;
+>> +
+>> +	/* Allocate the sink buffer for this session */
+>>   	event_data->snk_config =
+>>   			sink_ops(sink)->alloc_buffer(sink, cpu, pages,
+>>   						     nr_pages, overwrite);
+
+Suzuki
+
+
