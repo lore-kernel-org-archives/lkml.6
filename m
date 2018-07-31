@@ -2,203 +2,154 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6691AC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5DEC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B97D208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:39:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="sPTBV7Fp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B97D208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+	by mail.kernel.org (Postfix) with ESMTP id C764C208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:40:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C764C208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730644AbeGaISY (ORCPT
+        id S1731482AbeGaISn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:18:24 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41742 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbeGaISX (ORCPT
+        Tue, 31 Jul 2018 04:18:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726591AbeGaISm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:18:23 -0400
-Received: by mail-io0-f195.google.com with SMTP id q9-v6so12024140ioj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 23:39:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=WOSrughz8sHEt+Ic1xQG2QZB6nVIIH2vVO5/u2/GqAQ=;
-        b=sPTBV7FpO5bHL7NV2o0/IA0hMTzEFoFdln1W6/GxDGjKmd9HC8qQIKjQtdpiVA+fV5
-         hsIXjYGSAf97vd1CvRYIZC/L+8VfyoHOxgXbPZfPNIvsyh8VzKOT7QWmbQ/4F/po2HMV
-         RRdA6wvjnnWqLtKY6gfEKWm++LMpC4sRaTJRp63oJZsW0fMu3hMvjkCXftrCesI/USTu
-         8QenVFxgSRbwBpGGVVxUgS+ogeqF2euHGzfFIgvlhaeTBJH5y+0vtqzDEDpBrFM74Cnr
-         REwmoTg1gzx7c4xN7kY8EATTTAvlhHb/g1sAhbO03kTyoHQbL3BFMrNtLPxy5OA9VFeE
-         5LZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=WOSrughz8sHEt+Ic1xQG2QZB6nVIIH2vVO5/u2/GqAQ=;
-        b=D96jaiKYw7NBE5k9GuerCybCIDZx/VGYLBK5WLk6rZHcEdVUkD0O81iY2i+HNVPyMm
-         Fsa3EkvzVzCRoIoFX60UZMaHCP0FTKTNfgvpIp0q75kENgUDCVNZSSyvKHgfutSk6vsF
-         95EuhT7SHkV5ZgjpLfOJMEIkWcdCm5XC578ONHcwzVfDNiE6jpKOlN8rDMuSY9c9B/U4
-         Cd/TJiGePf32GWRYQU0YyiPtgS+ZLLTT2UJpkxgxzXrH9mOWeOGCvARGbW2qxyTRCviS
-         jYX66FtDBJ5sCZldkAQsjGKc3LN6FXtXbkk8ldmpixHtcU3PCO0k/n3Fv6GRwBSW8Hku
-         GNMw==
-X-Gm-Message-State: AOUpUlF1Z+FmtvvX4d9obN/ioQYIvIhyDeeNcOgaPKvM6utQao1iijHV
-        NXdz0ufkbs8Ykp6T9PEEEWIz9g==
-X-Google-Smtp-Source: AAOMgpejEfcuNNPe6AwgEly1tZXLpoe5TQKQKI5AaMMCXHBqlzXSygPHnDhRefGk09EG5bkc2G0dUQ==
-X-Received: by 2002:a6b:8c41:: with SMTP id o62-v6mr15948550iod.84.1533019178604;
-        Mon, 30 Jul 2018 23:39:38 -0700 (PDT)
-Received: from cabot.hitronhub.home (S0106bc4dfb596de3.ek.shawcable.net. [174.0.67.248])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm842901itg.6.2018.07.30.23.39.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 23:39:37 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <E3E7B6AF-3819-4998-9B12-DACB4EBC14F1@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_10DC5A89-BDD9-4578-B2E7-CA670E54AF27";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 1/3] ext4: super: Fix spectre gadget in ext4_quota_on
-Date:   Tue, 31 Jul 2018 00:39:41 -0600
-In-Reply-To: <20180727174654.bnooz26puuo7456w@treble>
-Cc:     Jeremy Cline <jcline@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-References: <20180727162357.30801-1-jcline@redhat.com>
- <20180727162357.30801-2-jcline@redhat.com>
- <20180727174654.bnooz26puuo7456w@treble>
-X-Mailer: Apple Mail (2.3273)
+        Tue, 31 Jul 2018 04:18:42 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6V6dOnp091798
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 02:39:57 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjhrkhx3u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 02:39:56 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Tue, 31 Jul 2018 07:39:54 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Jul 2018 07:39:50 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6V6dnIi41812104
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 06:39:49 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0F8E4C04E;
+        Tue, 31 Jul 2018 09:40:01 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A32114C04A;
+        Tue, 31 Jul 2018 09:39:58 +0100 (BST)
+Received: from [9.202.14.95] (unknown [9.202.14.95])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jul 2018 09:39:58 +0100 (BST)
+Subject: Re: [RFC 2/4] virtio: Override device's DMA OPS with
+ virtio_direct_dma_ops selectively
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
+ <20180720035941.6844-3-khandual@linux.vnet.ibm.com>
+ <c443ad8c-fb81-302d-edb2-5521831d38da@linux.vnet.ibm.com>
+ <20180729001344-mutt-send-email-mst@kernel.org>
+ <20180730093027.GC26245@infradead.org>
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        linuxram@us.ibm.com, haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com
+From:   Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Tue, 31 Jul 2018 12:09:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180730093027.GC26245@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18073106-0012-0000-0000-0000029161A1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073106-0013-0000-0000-000020C3632F
+Message-Id: <52dcdcf5-971f-a53d-6cee-603668033596@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807310072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/30/2018 03:00 PM, Christoph Hellwig wrote:
+>>> +
+>>> +	if (xen_domain())
+>>> +		goto skip_override;
+>>> +
+>>> +	if (virtio_has_iommu_quirk(dev))
+>>> +		set_dma_ops(dev->dev.parent, &virtio_direct_dma_ops);
+>>> +
+>>> + skip_override:
+>>> +
+>>
+>> I prefer normal if scoping as opposed to goto spaghetti pls.
+>> Better yet move vring_use_dma_api here and use it.
+>> Less of a chance something will break.
+> 
+> I agree about avoid pointless gotos here, but we can do things
+> perfectly well without either gotos or a confusing helper here
+> if we structure it right. E.g.:
+> 
+> 	// suitably detailed comment here
+> 	if (!xen_domain() &&
+> 	    !virtio_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM))
+> 		set_dma_ops(dev->dev.parent, &virtio_direct_dma_ops);
 
---Apple-Mail=_10DC5A89-BDD9-4578-B2E7-CA670E54AF27
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+I had updated this patch calling vring_use_dma_api() as a helper
+as suggested by Michael but yes we can have the above condition
+with a comment block. I will change this patch accordingly.
 
+> 
+> and while we're at it - modifying dma ops for the parent looks very
+> dangerous.  I don't think we can do that, as it could break iommu
+> setup interactions.  IFF we set a specific dma map ops it has to be
+> on the virtio device itself, of which we have full control.
 
-> On Jul 27, 2018, at 11:46 AM, Josh Poimboeuf <jpoimboe@redhat.com> =
-wrote:
->=20
-> On Fri, Jul 27, 2018 at 04:23:55PM +0000, Jeremy Cline wrote:
->> 'type' is a user-controlled value used to index into 's_qf_names', =
-which
->> can be used in a Spectre v1 attack. Clamp 'type' to the size of the
->> array to avoid a speculative out-of-bounds read.
->>=20
->> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Jeremy Cline <jcline@redhat.com>
->> ---
->> fs/ext4/super.c | 2 ++
->> 1 file changed, 2 insertions(+)
->>=20
->> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> index 6480e763080f..c04a09b51742 100644
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -40,6 +40,7 @@
->> #include <linux/crc16.h>
->> #include <linux/dax.h>
->> #include <linux/cleancache.h>
->> +#include <linux/nospec.h>
->> #include <linux/uaccess.h>
->> #include <linux/iversion.h>
->>=20
->> @@ -5559,6 +5560,7 @@ static int ext4_quota_on(struct super_block =
-*sb, int type, int format_id,
->> 	if (path->dentry->d_sb !=3D sb)
->> 		return -EXDEV;
->> 	/* Journaling quota? */
->> +	type =3D array_index_nospec(type, EXT4_MAXQUOTAS);
+I understand your concern. At present virtio core calls parent's DMA
+ops callbacks when device has VIRTIO_F_IOMMU_PLATFORM flag set. Most
+likely those DMA OPS are architecture specific ones which can really
+configure IOMMU. Most probably all devices and their parents share
+the same DMA ops callback. IIUC as long as the entire system has a
+single DMA ops structure, it should be okay. But I may be missing
+other implications. I tried changing virtio core so that it always
+calls device's DMA ops instead of it's parent DMA ops, it hit the
+following WARN_ON for devices without IOMMU flag and hit both the
+WARN_ON and BUG_ON for devices with the IOMMU flag.
 
-This check just papers over the issue, but AFAICS doesn't actually
-solve any problems.  It ends up squashing an invalid value to be
-the same as EXT4_MAXQUOTAS, rather than returning an error to the
-caller as it should.
+static inline void *dma_alloc_attrs(struct device *dev, size_t size,
+                                       dma_addr_t *dma_handle, gfp_t flag,
+                                       unsigned long attrs)
+{
+        const struct dma_map_ops *ops = get_dma_ops(dev);
+        void *cpu_addr;
 
->> 	if (EXT4_SB(sb)->s_qf_names[type]) {
->> 		/* Quotafile not in fs root? */
->> 		if (path->dentry->d_parent !=3D sb->s_root)
->=20
-> Generally we try to put the array_index_nospec() close to the bounds
-> check for which it's trying to prevent speculation past.
->=20
-> In this case, I'd expect the EXT4_MAXQUOTAS bounds check to be in
-> do_quotactl(), but it seems to be missing:
->=20
-> 	if (type >=3D (XQM_COMMAND(cmd) ? XQM_MAXQUOTAS : MAXQUOTAS))
-> 		return -EINVAL;
+        BUG_ON(!ops);
+        WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
 
-Agreed that this should be checked at the highest layer possible.
-IMHO, this means one check in the VFS/quota layer, and a separate
-check in the filesystem layer.
+--------
 
-> Also it looks like XQM_MAXQUOTAS, MAXQUOTAS, and EXT4_MAXQUOTAS all =
-have the same value (3).  Maybe they can be consolidated to just use
-> MAXQUOTAS everywhere?
+Seems like virtio device's DMA ops and coherent_dma_mask was never
+set correctly assuming that virtio core always called parent's DMA
+OPS all the time. We may have to change virtio device init to fix
+this. Any thoughts ?
 
-No, the filesystem-specific MAXQUOTAS values were separated from
-the kernel MAXQUOTAS value for a good reason.  This allows some
-filesystems to support new quota types (e.g. project quotas) that
-not all other filesystems can handle.  This may potentially change
-again in the future, so they shouldn't be tightly coupled.
-
->  Then the nospec would be simple:
->=20
-> 	if (type >=3D MAXQUOTAS)
-> 		return -EINVAL;
-> 	type =3D array_index_nospec(type, MAXQUOTAS);
->=20
-> Otherwise I think we may need to disperse the array_index_nospec calls
-> deeper in the callchain.
->=20
-> --
-> Josh
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_10DC5A89-BDD9-4578-B2E7-CA670E54AF27
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAltgBC4ACgkQcqXauRfM
-H+Cu6xAAs5ILnj4vwZJw2+rJDtGADMRHQJO0tvEuhc6ual0yh6SVi8DH92s8Z3gd
-u3omxJCNQNlQamxys9VBUDaUOHbJOt1EvZzlvp6stmEHPHkJ6othYZB7i5octvAO
-HboxA2dhE1bFHfizcs9eYM6BtyzJ+xtNixyG+MUMJQZf+v4KNWm8YaQYOkKtJ5YS
-9XWA5sS8Gcds4Jn+ZEWWETaJrjdKf4I3olsO2DHdwrCUirvkN0NRB5l/of29bYWs
-tPddwKz3pZWQOkIFOnF6tIMgE7ViFHPjsd8I/CPo6kM6L2ngbFb9jbIBp0ZWIm9i
-BmDPua2UbxMmkgnKzswuO/M0libkTvOyDEJ3/q1g+wdfnD1etLD+5dmxwdS0ZddI
-I8qMNypv4LJmD+1ty4UHuBg9gD8Nwu8cUmgCOZqFKJ3ZaVF/JOaz2I8d25UYar1c
-c6Mu8xlBPd6itP4wom5KXG9a7kE6eINXwOXGsPcHhj485LMei4z6rkRrpPL+hzDM
-/4fi9/3mFPd+ZS6oi8trE4Hf706CHZqtpD0vFsOYKyxIMPPf1p3fHAiddwpZBv7n
-K+6OBII6tli1GS136uq2SEXnTrZkfdC/HktXpkvkukcX0hcRd8WH1sN9hxTh5RaO
-UZ1hAyntV4cyyNtiHBfy7wTX75CkwJsor1NZKNUx0N+0JlwWod8=
-=BMKy
------END PGP SIGNATURE-----
-
---Apple-Mail=_10DC5A89-BDD9-4578-B2E7-CA670E54AF27--
