@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EA7C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6457BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D268208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11CF1208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="REGTiutZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="REGTiutZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D268208A2
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m5/YLmQl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j/6ZeSiH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CF1208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbeGaLtF (ORCPT
+        id S1732076AbeGaLtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:49:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48190 "EHLO
+        Tue, 31 Jul 2018 07:49:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48310 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbeGaLtF (ORCPT
+        with ESMTP id S1727409AbeGaLtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:49:05 -0400
+        Tue, 31 Jul 2018 07:49:09 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BD40B60B19; Tue, 31 Jul 2018 10:09:29 +0000 (UTC)
+        id BB0FA60481; Tue, 31 Jul 2018 10:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533031769;
-        bh=9TaJT/jh32MNAfbqU6Iwa704Nc/844JyOTeJMp1o+bM=;
+        s=default; t=1533031773;
+        bh=YI6a5Q0HGLwKjizFSW2cEEIaRoKPDm3Mpw28U05ro6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=REGTiutZc/M3eU5jvFGYtbJqKG+93wEnmsofXhHDrcv8V+PnuMDHM8Wdl+8kqGvYl
-         1P0KSy6f4rgWRWJ6vSEXYt2kV/Qvub8uMoZBv0qwOMu5NCTXFsulCBnzJAPwVNLKUE
-         OCqflPy7kk5YAElTP5sZAlInyiIJuRVnE5pAF14c=
+        b=m5/YLmQl6TFdaLH4cQf1nj6I625sCE+SJkeUWG5QpZskItKADgkHXmSRWQkHpNcAz
+         SRgxdCmHZm6rPWjKRneMDB3vtArAlhDPo6hVD+E+WflG3o+GU6CgLiwxrjLvlvH2Cp
+         edQxjuL4cxBZzXLRcteyQZ23vbOCfMHVrMibc1IY=
 Received: from CANG02.ap.qualcomm.com (unknown [180.166.53.21])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: cang@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3B17E60585;
-        Tue, 31 Jul 2018 10:09:27 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7BA0E60585;
+        Tue, 31 Jul 2018 10:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533031769;
-        bh=9TaJT/jh32MNAfbqU6Iwa704Nc/844JyOTeJMp1o+bM=;
+        s=default; t=1533031772;
+        bh=YI6a5Q0HGLwKjizFSW2cEEIaRoKPDm3Mpw28U05ro6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=REGTiutZc/M3eU5jvFGYtbJqKG+93wEnmsofXhHDrcv8V+PnuMDHM8Wdl+8kqGvYl
-         1P0KSy6f4rgWRWJ6vSEXYt2kV/Qvub8uMoZBv0qwOMu5NCTXFsulCBnzJAPwVNLKUE
-         OCqflPy7kk5YAElTP5sZAlInyiIJuRVnE5pAF14c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B17E60585
+        b=j/6ZeSiHt5fEMa+R6oo8+KKHsFnjIaeZuaP+4XNkO1MbNyCNGRS1M35aCtHsf6JVq
+         X5Wr/p1dRa9N8blmyldzfOWlU4zmHfuPovKnxnqEQhNHwkXnrratjbiR2uKbATKgcc
+         fCyXem8LsgJTzIQ/43H5bncy7z++GTecpbbWmA4Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BA0E60585
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
 From:   Can Guo <cang@codeaurora.org>
@@ -57,9 +57,9 @@ To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>
-Subject: [PATCH v8 1/5] phy: Update PHY power control sequence
-Date:   Tue, 31 Jul 2018 18:09:10 +0800
-Message-Id: <20180731100914.19856-2-cang@codeaurora.org>
+Subject: [PATCH v8 2/5] phy: General struct and field cleanup
+Date:   Tue, 31 Jul 2018 18:09:11 +0800
+Message-Id: <20180731100914.19856-3-cang@codeaurora.org>
 X-Mailer: git-send-email 2.15.0.windows.1
 In-Reply-To: <20180731100914.19856-1-cang@codeaurora.org>
 References: <20180731100914.19856-1-cang@codeaurora.org>
@@ -68,78 +68,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All PHYs should be powered on before register configuration starts. And
-only PCIe PHYs need an extra power control before deasserts reset state.
+Move MSM8996 specific PHY vreg list struct name to a genernal one as it is
+used by all PHYs. Add a specific field to handle dual lane situation.
 
 Signed-off-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
 Reviewed-by: Manu Gautam <mgautam@codeaurora.org>
 Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index 97ef942..ccb8578 100644
+index ccb8578..9be9754 100644
 --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
 +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -935,10 +935,12 @@ static void qcom_qmp_phy_configure(void __iomem *base,
- 	}
- }
+@@ -649,6 +649,8 @@ struct qmp_phy_cfg {
  
--static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
-+static int qcom_qmp_phy_com_init(struct qmp_phy *qphy)
- {
-+	struct qcom_qmp *qmp = qphy->qmp;
- 	const struct qmp_phy_cfg *cfg = qmp->cfg;
- 	void __iomem *serdes = qmp->serdes;
-+	void __iomem *pcs = qphy->pcs;
- 	void __iomem *dp_com = qmp->dp_com;
- 	int ret, i;
+ 	/* true, if PHY has a separate DP_COM control block */
+ 	bool has_phy_dp_com_ctrl;
++	/* true, if PHY has secondary tx/rx lanes to be configured */
++	bool is_dual_lane_phy;
+ 	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
+ 	unsigned int tx_b_lane_offset;
+ 	unsigned int rx_b_lane_offset;
+@@ -758,7 +760,7 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ };
  
-@@ -979,10 +981,6 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
- 		goto err_rst;
- 	}
+ /* list of regulators */
+-static const char * const msm8996_phy_vreg_l[] = {
++static const char * const qmp_phy_vreg_l[] = {
+ 	"vdda-phy", "vdda-pll",
+ };
  
--	if (cfg->has_phy_com_ctrl)
--		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
--			     SW_PWRDN);
--
- 	if (cfg->has_phy_dp_com_ctrl) {
- 		qphy_setbits(dp_com, QPHY_V3_DP_COM_POWER_DOWN_CTRL,
- 			     SW_PWRDN);
-@@ -1000,6 +998,12 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
- 			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
- 	}
+@@ -778,8 +780,8 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.num_clks		= ARRAY_SIZE(msm8996_phy_clk_l),
+ 	.reset_list		= msm8996_pciephy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(msm8996_pciephy_reset_l),
+-	.vreg_list		= msm8996_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(msm8996_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= pciephy_regs_layout,
  
-+	if (cfg->has_phy_com_ctrl)
-+		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
-+			     SW_PWRDN);
-+	else
-+		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
-+
- 	/* Serdes configuration */
- 	qcom_qmp_phy_configure(serdes, cfg->regs, cfg->serdes_tbl,
- 			       cfg->serdes_tbl_num);
-@@ -1090,7 +1094,7 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 	.start_ctrl		= PCS_START | PLL_READY_GATE_EN,
+@@ -809,8 +811,8 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.num_clks		= ARRAY_SIZE(msm8996_phy_clk_l),
+ 	.reset_list		= msm8996_usb3phy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
+-	.vreg_list		= msm8996_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(msm8996_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= usb3phy_regs_layout,
  
- 	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+ 	.start_ctrl		= SERDES_START | PCS_START,
+@@ -870,8 +872,8 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.num_clks		= ARRAY_SIZE(qmp_v3_phy_clk_l),
+ 	.reset_list		= msm8996_usb3phy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
+-	.vreg_list		= msm8996_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(msm8996_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= qmp_v3_usb3phy_regs_layout,
  
--	ret = qcom_qmp_phy_com_init(qmp);
-+	ret = qcom_qmp_phy_com_init(qphy);
- 	if (ret)
- 		return ret;
+ 	.start_ctrl		= SERDES_START | PCS_START,
+@@ -883,6 +885,7 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.pwrdn_delay_max	= POWER_DOWN_DELAY_US_MAX,
  
-@@ -1127,7 +1131,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 	 * Pull out PHY from POWER DOWN state.
- 	 * This is active low enable signal to power-down PHY.
- 	 */
--	qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
-+	if(cfg->type == PHY_TYPE_PCIE)
-+		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
+ 	.has_phy_dp_com_ctrl	= true,
++	.is_dual_lane_phy	= true,
+ 	.tx_b_lane_offset	= 0x400,
+ 	.rx_b_lane_offset	= 0x400,
+ };
+@@ -903,8 +906,8 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.num_clks		= ARRAY_SIZE(qmp_v3_phy_clk_l),
+ 	.reset_list		= msm8996_usb3phy_reset_l,
+ 	.num_resets		= ARRAY_SIZE(msm8996_usb3phy_reset_l),
+-	.vreg_list		= msm8996_phy_vreg_l,
+-	.num_vregs		= ARRAY_SIZE(msm8996_phy_vreg_l),
++	.vreg_list		= qmp_phy_vreg_l,
++	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+ 	.regs			= qmp_v3_usb3phy_regs_layout,
  
- 	if (cfg->has_pwrdn_delay)
- 		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+ 	.start_ctrl		= SERDES_START | PCS_START,
+@@ -1116,12 +1119,12 @@ static int qcom_qmp_phy_init(struct phy *phy)
+ 	/* Tx, Rx, and PCS configurations */
+ 	qcom_qmp_phy_configure(tx, cfg->regs, cfg->tx_tbl, cfg->tx_tbl_num);
+ 	/* Configuration for other LANE for USB-DP combo PHY */
+-	if (cfg->has_phy_dp_com_ctrl)
++	if (cfg->is_dual_lane_phy)
+ 		qcom_qmp_phy_configure(tx + cfg->tx_b_lane_offset, cfg->regs,
+ 				       cfg->tx_tbl, cfg->tx_tbl_num);
+ 
+ 	qcom_qmp_phy_configure(rx, cfg->regs, cfg->rx_tbl, cfg->rx_tbl_num);
+-	if (cfg->has_phy_dp_com_ctrl)
++	if (cfg->is_dual_lane_phy)
+ 		qcom_qmp_phy_configure(rx + cfg->rx_b_lane_offset, cfg->regs,
+ 				       cfg->rx_tbl, cfg->rx_tbl_num);
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
