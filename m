@@ -2,139 +2,101 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D917DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30696C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2E120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:10:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LHnDGMtZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2E120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E587B20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:10:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E587B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbeGaSvN (ORCPT
+        id S1731760AbeGaSwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:51:13 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39684 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbeGaSvM (ORCPT
+        Tue, 31 Jul 2018 14:52:06 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:43618 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727269AbeGaSwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:51:12 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j8-v6so6415244pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pXrPRXFuCy1+/s26vdiNhGXvfpUY2x/j3+ERvEv4MG8=;
-        b=LHnDGMtZ1/1qTcWkzQCi3A1yqqWG6oO4qPkP7++Ln6ctl67/1/2Y2uFvcb8zDpL/GO
-         nmh7ZkC50bWPouVqIU2hqeZJyn2D5X1ok/yjKnOOHstsIsNznxw3MIftE005S4T6/Vug
-         vK/LQ2LjANhOTfvY+Yp+E5P9IqVCkF8xtmUJnI5Kt3ZP4pxShPGrPyKNC+pMGD+u5ByJ
-         Qrg/DGG+xm/LI7JNf3ZPk39ERvQfThBRBSrYNP3hqDWw0qgg/7jbfOJhXD/yEeIqM+/3
-         dIUJ+UhMGCoPAoN2b5lcCWGm56pe8BX+ZI7bpvX0ay4m6+HZpoZrOyXqq7m+5oGS9bMi
-         dk3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pXrPRXFuCy1+/s26vdiNhGXvfpUY2x/j3+ERvEv4MG8=;
-        b=ehpIR0Cq/jkN/Lo3VNopEpJrwlikCNcvdpw3vy+tNGHn0lNd1Gp1I8Q/x0+QgTk0OB
-         I++h+9soYm7xaKge7AD+7JPe8d1Pf7EPOqu4b5+d/LQiEvtIa6H6uWWeE8C0v4HgV7wT
-         hnuGXhe0i8+c0efSj+vtmk4MUh653WHt9I8YS70rJ+vRjxksYL0ksqz+8z+zX4Zrx4yb
-         xGzL04AmpxxGFFM8nTNfpEOVzhjQfwVJAhlDzuwThYym2u9GpuIXJvtvSQiVYxDF26GQ
-         JkGm09w85tV/8pE0ybRUPXzxkprL6um1vWqtHm43aQojcTdqIsHnUxOUarPog5ic3mBk
-         mqiw==
-X-Gm-Message-State: AOUpUlHU9525NfqhDddGKThdqHS4Ee9UfZcJZ2Fw8QFtXsJqWbOfOg2B
-        sv+bnxNY5P7Ga8ZMxuYwf5E3OemhdhY6dVSd4DNLcw==
-X-Google-Smtp-Source: AAOMgpcbk4+G+Wd8nhJnmDMyAELQsKuY1eNxUTUS6+rroWr0JPUzFyToo6T3H6/Ptus8Ht6+B0i9w/Y9OvyTavAE8Js=
-X-Received: by 2002:a62:ca0d:: with SMTP id n13-v6mr22892697pfg.69.1533056997046;
- Tue, 31 Jul 2018 10:09:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180730213412.242849-3-ndesaulniers@google.com>
- <201807311827.UpeCrGPC%fengguang.wu@intel.com> <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
- <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
-In-Reply-To: <CAGXu5jJFdbcmSMZi-uz0QySJ5c6uqUKEazztDfCWDeQOMF-T-Q@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 31 Jul 2018 10:09:45 -0700
-Message-ID: <CAKwvOdkE5sV_8=rOLE8Py3ym2n4uu8AOit=vSCVCaZo=ZV_ATg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-To:     Kees Cook <keescook@chromium.org>
-Cc:     lkp@intel.com, kbuild-all@01.org,
+        Tue, 31 Jul 2018 14:52:06 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1fkY9l-0004Cl-I8; Tue, 31 Jul 2018 19:09:57 +0200
+Date:   Tue, 31 Jul 2018 19:09:57 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        dccp@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Christoph Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
-        christophe.leroy@c-s.fr, shorne@gmail.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, rdunlap@infradead.org,
-        bp@suse.de, neilb@suse.com, LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
-        sandipan@linux.vnet.ibm.com, linux@rasmusvillemoes.dk,
-        Paul Lawrence <paullawrence@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>, avagin@openvz.org
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+Message-ID: <20180731170957.o4vhopmzgedpo5sh@breakpoint.cc>
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:02 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Jul 31, 2018 at 9:48 AM, Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> > Does anyone understand this error?  The code looks just fine to me,
-> > and the source file doesn't conflict with any of the macros I've added
-> > (certainly not in any way that could cause an indentation error as
-> > reported here).
->
-> It does _use_ the macro, but yeah, I'm stumped...
->
-> > On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
-> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
-> >> >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-> >>      if (!(cmd->flags & CMD_ASYNC))
-> >>      ^~
-> >>    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-> >>       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
-> >>     ^ ~
-> >>
-> >> vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
-> >>
-> >> 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
-> >> 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
->
-> #define lock_map_acquire_read(l)
-> lock_acquire_shared_recursive(l, 0, 0, NULL, _THIS_IP_)
->
-> #define lock_acquire_shared_recursive(l, s, t, n, i)
-> lock_acquire(l, s, t, 2, 1, n, i)
->
-> The config doesn't have CONFIG_LOCKDEP, so it's not:
->
-> extern void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
->                          int trylock, int read, int check,
->                          struct lockdep_map *nest_lock, unsigned long ip);
->
-> but rather:
->
-> # define lock_acquire(l, s, t, r, c, n, i)      do { } while (0)
->
-> If you build with the same gcc and config, does it reproduce for you?
+Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> Guys, it seems that we have a lot of code using SLAB_TYPESAFE_BY_RCU cache without constructor.
+> I think it's nearly impossible to use that combination without having bugs.
+> It's either you don't really need the SLAB_TYPESAFE_BY_RCU, or you need to have a constructor in kmem_cache.
+> 
+> Could you guys, please, verify your code if it's really need SLAB_TYPSAFE or constructor?
+> 
+> E.g. the netlink code look extremely suspicious:
+> 
+> 	/*
+> 	 * Do not use kmem_cache_zalloc(), as this cache uses
+> 	 * SLAB_TYPESAFE_BY_RCU.
+> 	 */
+> 	ct = kmem_cache_alloc(nf_conntrack_cachep, gfp);
+> 	if (ct == NULL)
+> 		goto out;
+> 
+> 	spin_lock_init(&ct->lock);
+> 
+> If nf_conntrack_cachep objects really used in rcu typesafe manner, than 'ct' returned by kmem_cache_alloc might still be
+> in use by another cpu. So we just reinitialize spin_lock used by someone else?
 
-Indeed, gcc 6, 7, or 8 + the provided config reproduce the issue.
+That would be a bug, nf_conn objects are reference counted.
 
--- 
-Thanks,
-~Nick Desaulniers
+spinlock can only be used after object had its refcount incremented.
+
+lookup operation on nf_conn object:
+1. compare keys
+2. attempt to obtain refcount (using _not_zero version)
+3. compare keys again after refcount was obtained
+
+if any of that fails, nf_conn candidate is skipped.
