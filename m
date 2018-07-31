@@ -2,79 +2,81 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51C8C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BC2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B60520844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:16:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="qdk8ukw7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B60520844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
+	by mail.kernel.org (Postfix) with ESMTP id C016D20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C016D20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbeGaT5t (ORCPT
+        id S1731507AbeGaT6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:57:49 -0400
-Received: from node.akkea.ca ([192.155.83.177]:56316 "EHLO node.akkea.ca"
+        Tue, 31 Jul 2018 15:58:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47295 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728140AbeGaT5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:57:49 -0400
-Received: by node.akkea.ca (Postfix, from userid 33)
-        id 1C60354204A; Tue, 31 Jul 2018 18:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1533060979; bh=BYR1NrAoEPlEtCRj+wxMYs1+ECOaJYux24YtTeMpdzY=;
-        h=To:Subject:Date:From:Cc:In-Reply-To:References;
-        b=qdk8ukw73Vm/UQawFQ4iJ1sGP71cVBFKMVMEDgKFOJINNFQ+h6888Hk1/5hVc8jbX
-         1rk1NJ2mGzDhdam21MPaGoqUmQ18vHszgljxVCx0UBNds8fr7ZdPHTDAn0CHTk8ZJP
-         oCj2uxquYrBlyD3uQ8+T2+yM10xXgkQ18tc4TOZk=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/4] power: bq25890_charger.c: Add debugging output of  failed initialization
-X-PHP-Originating-Script: 1000:rcube.php
+        id S1728140AbeGaT6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 15:58:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0192B207AA; Tue, 31 Jul 2018 20:16:38 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C80A720756;
+        Tue, 31 Jul 2018 20:16:27 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 20:16:28 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Mark Brown <broonie@kernel.org>, James Hogan <jhogan@kernel.org>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microsemi.com>
+Subject: Re: [PATCH v4 0/3] Add support for MSCC Ocelot SPI
+Message-ID: <20180731181628.GX28585@piout.net>
+References: <20180731143855.7131-1-alexandre.belloni@bootlin.com>
+ <20180731173809.eovsuiezlqzud7zi@pburton-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 31 Jul 2018 12:16:19 -0600
-From:   Angus Ainslie <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm, Sebastian Reichel <sre@kernel.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <CAJKOXPeaNpdPbhJuc5FcPKdCq_FPr70_PCSuNMmZ5wJAhBXvmQ@mail.gmail.com>
-References: <CAJKOXPczJWdNugbHiLRQv1krUFhZH=muix3M9R2LUT5=4zypYA@mail.gmail.com>
- <20180731164316.32696-1-angus@akkea.ca>
- <20180731164316.32696-2-angus@akkea.ca>
- <CAJKOXPeaNpdPbhJuc5FcPKdCq_FPr70_PCSuNMmZ5wJAhBXvmQ@mail.gmail.com>
-Message-ID: <e37abf500ce853afb24a8568b47c6679@www.akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731173809.eovsuiezlqzud7zi@pburton-laptop>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-31 10:57, Krzysztof Kozlowski wrote:
-> On 31 July 2018 at 18:43, Angus Ainslie (Purism) <angus@akkea.ca> 
-> wrote:
->> To ease adding a new part variant some debugging is handy.
->> 
->> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+On 31/07/2018 10:38:09-0700, Paul Burton wrote:
+> Hi Alexandre,
 > 
-> You missed my tag - I already reviewed it. Unless you change
-> something, the tag should be added to commit msg:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> On Tue, Jul 31, 2018 at 04:38:52PM +0200, Alexandre Belloni wrote:
+> > Hello,
+> > 
+> > This series only contains the DT documentation and the corresponding DT addition
+> > since it has been rebased on spi-next.
+> > 
+> > Alexandre Belloni (3):
+> >   spi: dw: document Microsemi integration
+> >   mips: dts: mscc: Add spi on Ocelot
+> >   mips: dts: mscc: enable spi and NOR flash support on ocelot PCB123
+> > 
+> >  .../devicetree/bindings/spi/snps,dw-apb-ssi.txt       |  6 ++++--
+> >  arch/mips/boot/dts/mscc/ocelot.dtsi                   | 11 +++++++++++
+> >  arch/mips/boot/dts/mscc/ocelot_pcb123.dts             | 10 ++++++++++
+> >  3 files changed, 25 insertions(+), 2 deletions(-)
 > 
-> Krzysztof
+> Thanks - looks like the DT binding has been accepted, so I've applied
+> patches 2 & 3 to mips-next for 4.19.
 > 
 
-Hi Krzysztof,
+Thank you, it is great to see that going in as this makes the platform
+much more useful !
 
-Ooops, sorry about that.
 
-Thanks for the review.
-
-Angus
-
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
