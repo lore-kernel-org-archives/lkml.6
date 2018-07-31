@@ -2,103 +2,112 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E81EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3876C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB2220841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YKclMVW5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB2220841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6152C20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:42:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6152C20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731181AbeGaTX3 (ORCPT
+        id S1731564AbeGaTYL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:23:29 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43560 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729634AbeGaTX3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:23:29 -0400
-Received: by mail-io0-f196.google.com with SMTP id y10-v6so13732706ioa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dZPiLSVij48Ml7RyMFdOOkoCd/1f7/lix5KTpWVZDok=;
-        b=YKclMVW54MIH2TrUVfJUGUOKzcLzesXUTCHwt6/wl+qTNoR4eOj+j0zfkMIjX42iEk
-         m9zhb1l3yKW08YXn6kJnYsFzL0vcSDyK/+YSmYQ2KyepPQxglVzdYc7qvjv8gwyWkCtR
-         shdXLVVrycSvOZBGEf/cYcrGVkGoTQPTF4JnvLFb6y05xSoDrQv7bRYiN7vI/TdSWD+u
-         AhwE5hKo+k9NxJhlDfybxjEKsjviA4pNL075f5wFi+JTUuip6oMMUt2wukGrnidLjSDt
-         IKI8STY2PZRBfZUgKzxRCAHrfVVnDAEAxuOZ2ohIRfuzFcDy2cePi/qs5w1HJ5qXlAlF
-         pIgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dZPiLSVij48Ml7RyMFdOOkoCd/1f7/lix5KTpWVZDok=;
-        b=Y+1BXT84VrNKC5JbuJrbjrOrUoztjgwl8dV9ytbBPyxhgJcoowHn7I6KbkQtr2tVeS
-         Zu6tL1fEZj86DIDCMDivP2Ji9alN3zWeH/Kiehmm1un5syykE4UQR7VMGj0FncwMyv/Y
-         b9IkmifECMuY5XG//lcw5eq4Ann0XYTk56KMJ/kMIUcpC3zYMBQuSyBMgFgA1sDOM3Dt
-         W19TIwubMDuChdO30CRAJnpTkNfI/3lGkwIQjZHeEmEKl3s78BGCxJ62QiZnuCozP/U4
-         XxGaNaoQY5dx4OZ0arHdJkNvjYKzsr5cQ+CKwDDh6xY9NAI7uJySVI0zG1ao/KjjEl7G
-         Aptg==
-X-Gm-Message-State: AOUpUlFcM4X+TJotv24EWFtUOz26a8B99dO1OqvQbIoI50xLuILiAh5n
-        M4X3bknV+kkA8R3dt3fYE+BecYgzQAqmKXFfq951IQ==
-X-Google-Smtp-Source: AAOMgpdYt/HTWx2J1qu7l91noLsrW/v+rrHTl1YFYDF0Io1IOeb+pJx+ZQtBSDpt2dpDgN+CwS57MsiWKs5e70uxghE=
-X-Received: by 2002:a6b:f10f:: with SMTP id e15-v6mr532662iog.271.1533058925770;
- Tue, 31 Jul 2018 10:42:05 -0700 (PDT)
+        Tue, 31 Jul 2018 15:24:11 -0400
+Received: from mga18.intel.com ([134.134.136.126]:41652 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729767AbeGaTYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 15:24:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 10:42:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,428,1526367600"; 
+   d="scan'208";a="79377193"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by orsmga002.jf.intel.com with ESMTP; 31 Jul 2018 10:42:28 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.242]) by
+ ORSMSX105.amr.corp.intel.com ([169.254.2.59]) with mapi id 14.03.0319.002;
+ Tue, 31 Jul 2018 10:42:28 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Chen, Tim C" <tim.c.chen@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: RE: [PATCH V2] x86/speculation: Support Enhanced IBRS on future CPUs
+Thread-Topic: [PATCH V2] x86/speculation: Support Enhanced IBRS on future
+ CPUs
+Thread-Index: AQHUKDpXeyPtJ37V00Gaz4M9pA51zKSotaGA///0qMCAAMpIgIAAI0Og
+Date:   Tue, 31 Jul 2018 17:42:27 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F475E3158@ORSMSX114.amr.corp.intel.com>
+References: <1532978396-2197-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <alpine.DEB.2.21.1807302153570.1725@nanos.tec.linutronix.de>
+ <FFF73D592F13FD46B8700F0A279B802F4757790C@ORSMSX114.amr.corp.intel.com>
+ <alpine.DEB.2.21.1807311018040.1725@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1807311018040.1725@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDg4ZDJiMjEtNzI2NC00ODUwLWJkZWYtYTA1Y2JjZWQ0NTM4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQjFpYnl6N0xqaCtUZ2tqMXFRaTQyU0loTWd1VkxSTDJoaGJTQW1ucDNpcmlBNG5LS0pwcVNySHlXV0hjWDhYXC8ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com> <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
-In-Reply-To: <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Tue, 31 Jul 2018 10:41:54 -0700
-Message-ID: <CANn89iLLQP2vA+2J-zxL3Fa75zNw=yRmv3Jg6vcEc=fYeEZ2ow@mail.gmail.com>
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-To:     Christoph Lameter <cl@linux.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, jack@suse.com,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:36 AM Christopher Lameter <cl@linux.com> wrote:
+> The feature strings are automatically generated from the define. The comment
+> can be used to supress them by an empty "" string or to modify them by a
+> "override" string at the beginning of the comment.
 
+I overlooked "override" part. Sorry! about that.
+It's clear now. Thanks for the explanation.
+
+> >
+> > > > +	WARN_ON_ONCE(x86_spec_ctrl_base & SPEC_CTRL_IBRS);
+> 
+> Please remove the warnon as well.
 >
-> If there is refcounting going on then why use SLAB_TYPESAFE_BY_RCU?
 
-To allow fast reuse of objects, without going through call_rcu() and
-reducing cache efficiency.
+Sure! I removed it but forgot to mention it.
 
-I believe this is mentioned in Documentation/RCU/rculist_nulls.txt
+> > > > +	/* Ensure SPEC_CTRL_IBRS is set after VMEXIT from a guest */
+> > > > +	x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
+> > >
+> > > And what exactly writes the MSR?
+> > >
+> >
+> > While booting, x86_spec_ctrl_setup_ap() does that and after VMEXIT
+> > x86_spec_ctrl_restore_host().
+> >
+> > As x86_spec_ctrl_setup_ap() does wrmsrl(MSR_IA32_SPEC_CTRL,
+> > x86_spec_ctrl_base), I thought writing here would be redundant.
+> 
+> x86_spec_ctrl_setup_ap() is only called on the AP but not on the BP. So the boot
+> processor will not have it set, unless something else writes the MSR. So you
+> really want to have an explicit write there.
+
+Yes, that makes sense.
+But on the machine, I see IBRS bit set on all cores. As you said, someone else might 
+be writing the MSR. I will try to find that out and will update the patch accordingly.
+
+I initially suspected it to be __ssb_select_mitigation() as I have 
+"spec_store_bypass_disable=on" in the kernel command line, but turns out it's not so.
+I will update you more on this.
+
+Regards,
+Sai
