@@ -2,286 +2,196 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A8FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF29C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5803D208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:11:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5803D208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EFC06208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:13:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaKmDI0g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC06208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbeGaJub (ORCPT
+        id S1729680AbeGaJw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:50:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57019 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbeGaJub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:50:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 074F4207AA; Tue, 31 Jul 2018 10:11:21 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 192892099F;
-        Tue, 31 Jul 2018 10:10:13 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 10:10:13 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
-        a.zummo@towertech.it, sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v2 4/5] RTC: RK808: add RK809 and RK817 support.
-Message-ID: <20180731081013.GS28585@piout.net>
-References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
- <1533023850-29004-5-git-send-email-tony.xie@rock-chips.com>
+        Tue, 31 Jul 2018 05:52:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34088 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeGaJw4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 05:52:56 -0400
+Received: by mail-wm0-f65.google.com with SMTP id l2-v6so10359413wme.1;
+        Tue, 31 Jul 2018 01:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/1vJWqKcPnI6xic6IfCiyKR7Y9Vabo63VRGWMa9bIak=;
+        b=VaKmDI0gp3pSBeYWjRnFckwGT4AUe1efHyBGn7LFj+/USSdZ1dZA6XpjB4weWrD0By
+         ZbS/aGbP0Sgy2a3O9xBPdRtIA+cdl4P0z11KYFzV6MjeILw1TJaTf6bd7NZjEi/rQzSu
+         TH5bDAQfW5zZgujgS1rADNVQXrB1wBEpZR3VFIAFsWQqfOSggCWsjxTup5FdPculh5oQ
+         yB/Gk20PXUVaPPIp35LITyvcTtYVxn06AtVLSJv3A2rdIdnQAxZRYE9oRoNN61W1O4/m
+         LNn5XgfiPlSh4K/axesuxQUArWRG4pptqaz4LvOkD1+4No+6UXTjDNsc2j0koGG+ubzF
+         x5ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/1vJWqKcPnI6xic6IfCiyKR7Y9Vabo63VRGWMa9bIak=;
+        b=TvOA+yTR56AEtAnt4uURNw7WbcSB0fWNXxDEdtxgDp8HkdgQTP4HV+fVwovvQr+qUC
+         QX0l4JPLyS2v2Jr3c19B5Fvi5O++QnRThncWrC6g5cfICmS71MnKXEbRiPyPHp33fH7s
+         l1+MrUgQbFj/c/bQSKEp0L6NTJLzaQ+TQAi7uUf/E54PPTQq/PScwCCx0VjBA5fFW7EU
+         BbEUW9fAF+/q29z4UEbo1+1EgecztkSaSm6/MXutxmEkQ1KfgBIGZpkPe/JuomYG5mbQ
+         OEhFcypPcSumeXdTf0iYZEpok36+8rZ7AjbShDTXeZkLbegwiCmU0d8PHsxZpkNos2IM
+         wylA==
+X-Gm-Message-State: AOUpUlECuXXrAlKPHjeUbKXaFHE40ZJYBFYAxoyHbeHKJQP2pT1LneC7
+        PnZ3HDv3nn9xn5UBRdSxbxQ=
+X-Google-Smtp-Source: AAOMgpeyUs6AcQld0ATrktxJnWcb7PqTJUcU5eq60Jmib7k6J5K2bMuh4cqzovHTOBuxWfpCm7FIGg==
+X-Received: by 2002:a1c:b143:: with SMTP id a64-v6mr1675864wmf.114.1533024825401;
+        Tue, 31 Jul 2018 01:13:45 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id j8-v6sm21177392wrn.50.2018.07.31.01.13.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 01:13:44 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 10:13:42 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mayurkumar.patel@intel.com, rajatxjain@gmail.com,
+        Richard Hughes <rhughes@redhat.com>,
+        Carlos Garnacho <cgarnach@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Takashi Iwai <tiwai@suse.de>,
+        Andy Whitcroft <apw@canonical.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+Message-ID: <20180731081342.4m3wckxdbgtdyeyo@pali>
+References: <20180508230148.121852-1-rajatja@google.com>
+ <20180510233912.96454-1-rajatja@google.com>
+ <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1533023850-29004-5-git-send-email-tony.xie@rock-chips.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180727202619.GD173328@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Friday 27 July 2018 15:26:19 Bjorn Helgaas wrote:
+> [+cc Rafael, Richard, Carlos, Pali, Takashi, Andy, Colin for question
+> about how to expose ASPM power management in sysfs]
+> 
+> On Thu, May 10, 2018 at 04:39:12PM -0700, Rajat Jain wrote:
+> > ...
+> > And some suggestions from Bjorn here:
+> > https://www.spinics.net/lists/linux-pci/msg60541.html
+> > 
+> > This patch picks up one of the suggestion, to remove the
+> > CONFIG_PCIEASPM_DEBUG and thus make the code always
+> > avilable. This provides control to userspace to control
+> > ASPM on a per slot / device basis using sysfs interface.
+> 
+> TL;DR: When CONFIG_PCIEASPM_DEBUG=y, Linux makes ASPM control files
+>        visible in sysfs, associated with the upstream end (e.g., Root
+>        Port) of a link.  Should these files be associated with the
+>        downstream end (e.g., NIC, GPU, etc) instead?
+> 
+> I think we do need to make ASPM control files visible in sysfs, as
+> this patch does.  But I have a question about exactly *how* we want to
+> do this.  I had planned to merge this patch for v4.19, but I think
+> I'll postpone it until we figure this out.
+> 
+> ASPM is a power management feature of a PCIe link, and it affects the
+> devices on both ends of that link.  The upstream end (closest to the
+> CPU) is typically a Root Port, and the downstream end is typically an
+> Endpoint (e.g., a GPU, NIC, or NVMe device).  For example, my laptop
+> has these devices:
+> 
+>   00:1c.2 Intel Root Port to [bus 04]
+>   04:00.0 Intel 8260 Wireless NIC
+> 
+> There's a PCIe link between these two devices, and if both ends
+> support it, ASPM reduces power usage when the NIC is idle.  The
+> hardware reduces power usage automatically; the kernel only needs to
+> configure ASPM.
+> 
+> ASPM affects performance as well as power, so we have knobs to control
+> the tradeoff.  Starting with the big hammers, we currently have:
+> 
+>   - Kernel build-time setting (CONFIG_PCIEASPM_PERFORMANCE, etc).
+>     Requires kernel rebuild and reboot.
+> 
+>   - "pcie_aspm=X" kernel boot parameter.  Can only enable/disable and
+>     requires a reboot.
+> 
+>   - /sys/module/pcie_aspm/parameters/policy file.  At any time, root
+>     can set the system-wide ASPM policy to one of these settings:
+> 
+>       + highest performance, highest power consumption
+>       + moderate power saving at cost of some performance
+>       + aggressive power saving at cost of more performance
+>       + use whatever setting BIOS configured
+> 
+>   - Many /sys/devices/pci0000:00/0000:00:1c.2/power/link_state files.
+>     At any time, root can set the ASPM policy to one of the above
+>     settings, but for individual devices.  Currently these files are
+>     only available when CONFIG_PCIEASPM_DEBUG=y (Red Hat does not
+>     enable this, but Ubuntu does).
+> 
+> The patch below changes it so these /sys/devices/.../link_state files
+> *always* exist, regardless of CONFIG_PCIEASPM_DEBUG.
+> 
+> The question is where those sysfs files should be.  Currently they are
+> associated with the device at the *upstream* end of the link.  In the
+> example above, they're associated with the Root Port:
+> 
+>   /sys/devices/pci0000:00/0000:00:1c.2/power/link_state
+> 
+> I don't know if that's the right place, or if they should be
+> associated with the device at the *downstream* end of the link, i.e.,
+> 04:00.0.  The downstream end might be better because:
+> 
+>   - It's easier to associate the downstream end with a device the user
+>     cares about, e.g., a NIC, GPU, etc.  This is mostly a user-
+>     interface issue.
+> 
+>   - A link can lead to a multi-function device, and the spec allows
+>     those functions to have different ASPM settings (see PCIe r4.0,
+>     sec 5.4.1).  With the sysfs files at the upstream end of the link,
+>     we have no way to configure those functions individually.
+> 
+> Any thoughts?
 
-I insist this must be a lowercase "rtc: rk808:". There has not been a
-single upper case RTC in a subject since 2011.
+Hi Bjorn, in my opinion sysfs entries should at the downstream end. As I
+think primary usage is to put "end" downstream device (e.g. wifi card)
+into lower power mode to increase battery runtime on laptop.
 
-
-On 31/07/2018 15:57:29+0800, Tony Xie wrote:
-> RK809 and RK817 are power management IC chips for multimedia products.
-> Most of their functions and registers are same, including the rtc.
-> 
-> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-> ---
->  drivers/rtc/Kconfig     |  4 +--
->  drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
->  2 files changed, 56 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index a2ba5db..1aaf935 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
->  	  will be called rtc-max77686.
->  
->  config RTC_DRV_RK808
-> -	tristate "Rockchip RK805/RK808/RK818 RTC"
-> +	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
->  	depends on MFD_RK808
->  	help
->  	  If you say yes here you will get support for the
-> -	  RTC of RK805, RK808 and RK818 PMIC.
-> +	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
->  
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rk808-rtc.
-> diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
-> index 739c0d4..5bacdaf 100644
-> --- a/drivers/rtc/rtc-rk808.c
-> +++ b/drivers/rtc/rtc-rk808.c
-> @@ -50,9 +50,18 @@
->  #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
->  #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
->  
-> +struct rk_rtc_compat_reg {
-> +	unsigned int ctrl_reg;
-> +	unsigned int status_reg;
-> +	unsigned int alarm_seconds_reg;
-> +	unsigned int int_reg;
-> +	unsigned int seconds_reg;
-> +};
-> +
->  struct rk808_rtc {
->  	struct rk808 *rk808;
->  	struct rtc_device *rtc;
-> +	struct rk_rtc_compat_reg *creg;
->  	int irq;
->  };
->  
-> @@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
->  	int ret;
->  
->  	/* Force an update of the shadowed registers right now */
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
->  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
->  				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
->  	if (ret) {
-> @@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
->  	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
->  	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
->  	 */
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
->  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
->  				 0);
->  	if (ret) {
-> @@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
->  		return ret;
->  	}
->  
-> -	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
-> +	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
->  			       rtc_data, NUM_TIME_REGS);
->  	if (ret) {
->  		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
-> @@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  	rtc_data[6] = bin2bcd(tm->tm_wday);
->  
->  	/* Stop RTC while updating the RTC registers */
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
->  				 BIT_RTC_CTRL_REG_STOP_RTC_M,
->  				 BIT_RTC_CTRL_REG_STOP_RTC_M);
->  	if (ret) {
-> @@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  		return ret;
->  	}
->  
-> -	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
-> +	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
->  				rtc_data, NUM_TIME_REGS);
->  	if (ret) {
->  		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
->  		return ret;
->  	}
->  	/* Start RTC again */
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
->  				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
->  	if (ret) {
->  		dev_err(dev, "Failed to update RTC control: %d\n", ret);
-> @@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	uint32_t int_reg;
->  	int ret;
->  
-> -	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
-> +	ret = regmap_bulk_read(rk808->regmap,
-> +			       rk808_rtc->creg->alarm_seconds_reg,
->  			       alrm_data, NUM_ALARM_REGS);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
-> +		return ret;
-> +	}
->  
->  	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
->  	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
-> @@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
->  	rockchip_to_gregorian(&alrm->time);
->  
-> -	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
-> +	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
->  	if (ret) {
->  		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
->  		return ret;
-> @@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
->  	struct rk808 *rk808 = rk808_rtc->rk808;
->  	int ret;
->  
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
->  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
->  
->  	return ret;
-> @@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
->  	struct rk808 *rk808 = rk808_rtc->rk808;
->  	int ret;
->  
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
->  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
->  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
->  
-> @@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
->  	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
->  	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
->  
-> -	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
-> +	ret = regmap_bulk_write(rk808->regmap,
-> +				rk808_rtc->creg->alarm_seconds_reg,
->  				alrm_data, NUM_ALARM_REGS);
->  	if (ret) {
->  		dev_err(dev, "Failed to bulk write: %d\n", ret);
-> @@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
->  	struct i2c_client *client = rk808->i2c;
->  	int ret;
->  
-> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
->  			   RTC_STATUS_MASK);
->  	if (ret) {
->  		dev_err(&client->dev,
-> @@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
->  static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
->  	rk808_rtc_suspend, rk808_rtc_resume);
->  
-> +static struct rk_rtc_compat_reg rk808_creg = {
-> +	.ctrl_reg = RK808_RTC_CTRL_REG,
-> +	.status_reg = RK808_RTC_STATUS_REG,
-> +	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
-> +	.int_reg = RK808_RTC_INT_REG,
-> +	.seconds_reg = RK808_SECONDS_REG,
-> +};
-> +
-> +static struct rk_rtc_compat_reg rk817_creg = {
-> +	.ctrl_reg = RK817_RTC_CTRL_REG,
-> +	.status_reg = RK817_RTC_STATUS_REG,
-> +	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
-> +	.int_reg = RK817_RTC_INT_REG,
-> +	.seconds_reg = RK817_SECONDS_REG,
-> +};
-> +
->  static int rk808_rtc_probe(struct platform_device *pdev)
->  {
->  	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-> @@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
->  	if (rk808_rtc == NULL)
->  		return -ENOMEM;
->  
-> +	switch (rk808->variant) {
-> +	case RK809_ID:
-> +	case RK817_ID:
-> +		rk808_rtc->creg = &rk817_creg;
-> +		break;
-> +	default:
-> +		rk808_rtc->creg = &rk808_creg;
-> +		break;
-> +	}
->  	platform_set_drvdata(pdev, rk808_rtc);
->  	rk808_rtc->rk808 = rk808;
->  
->  	/* start rtc running by default, and use shadowed timer. */
-> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
->  				 BIT_RTC_CTRL_REG_STOP_RTC_M |
->  				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
->  				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
-> @@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
->  			   RTC_STATUS_MASK);
->  	if (ret) {
->  		dev_err(&pdev->dev,
-> -- 
-> 1.9.1
-> 
-> 
+Anyway, if sysfs entry is going to be moved from one place to another
+maybe it would be better to give it a new name. Because currently it
+sysfs entry is bound to the upstream device and if you change location,
+then sysfs entry would change it logic.
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Pali Rohár
+pali.rohar@gmail.com
