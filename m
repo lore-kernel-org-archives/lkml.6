@@ -2,139 +2,410 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDFFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4472DC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 536A5205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CECAD20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 19:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O9BHypU7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 536A5205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMQEqbHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CECAD20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732505AbeGaVc2 (ORCPT
+        id S1732530AbeGaVd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:32:28 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35344 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732471AbeGaVc1 (ORCPT
+        Tue, 31 Jul 2018 17:33:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45076 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732403AbeGaVd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:32:27 -0400
-Received: by mail-oi0-f65.google.com with SMTP id m11-v6so5012199oic.2
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:50:35 -0700 (PDT)
+        Tue, 31 Jul 2018 17:33:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i26-v6so6604053pfo.12
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3RtSzZ4Ihm3OpO4QhKtXNpbFTqw2cBpAUS/UXSFe/w=;
-        b=O9BHypU7AXIWKZR/YX8iF0R+iBdwi62Ndl+JAi4wgFPoIffGL09YJGEy0w0VcGBSP9
-         mz2nIgOWk/uDSNIkgNeg6opJgze3EBso7yOlOkVlZSIH8kA0QBGGW634xaGMcEYM2TWz
-         l0PYUDtgd1V4TMGfAOCecByv6Su7TZhl4zUH9ij/3WXx7n7Er5dv1VMYosXP3ToS8NXj
-         olU7vwccchJ7QLAz5n2LCcDhiZxv22H6OkZsfO20OYVJF9AlKhpCC1fUMB78ABFX2XfA
-         X+UAxLvP5FR4uxCg9c3FiqmvKpEeet4qAR29vJ0X1AHyUReq+B20OJ0V1z0jUOxqwcY9
-         Sirw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nicOVFnotv1BdssFYlukKio1WAhe+11DLlnE/PB7XcM=;
+        b=YMQEqbHdrwnfNQL2dOwXIAdnrbR3JGJQVs41LDFXeXB/0nnr1CFIYCA41L+k72e5r5
+         SSea84ps0jvonON0aE1M1wfvRvnElaeN90bC6fHAdyWQgI4WUkmejjkm2KrKbI7S9Poh
+         XyM8ZkpP+XxTXUL8juFMGZvam7/h1jEMxOaDk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3RtSzZ4Ihm3OpO4QhKtXNpbFTqw2cBpAUS/UXSFe/w=;
-        b=DChnuZNW7SdN5nPgYJKl5O7rDHlFL0G5tGb/0kzbZmZoJCZ2wYrjVeFZVVrJo+opDw
-         ksT0Ia3evn3N0uz/7l3UhRG/5tGMB2lOkH+aFC68H4ab+4UJgNFb1T4BNtM78rNXAXIE
-         k5KRNXltIGm8JWFtIUm58gRKI7Cv44IMZlyYMwhH0I6Uk7fUfTCA6zNEkHXp2ABylX1j
-         CtSOisU3ZfsAadP1GJFLC7Tnv980fxDY/mAZln6zGVaOVe9XESLcWwg2TA8vQ1e5mDEt
-         B6bUG4OyvKm6QjcgXyFvK8X57MRCwS95lI4kCQGQb746pvhSK11Jtjtk5W95xPxvMSiJ
-         n3tA==
-X-Gm-Message-State: AOUpUlFA17DjIuON4qxTKLjGePH5AZTNcO0GegecBXv39ztGiWNLUR8m
-        fgM8qIb5oOFigNsjp/1Oq4VL08g0v6GoVwpQWYb7Rg==
-X-Google-Smtp-Source: AAOMgpcf66mwLF3SXdupNGlC12hXZJhPPSDNimLWlJPTAJUUox9IWJmDDNNvdTmJ6RwzN8LFQX5jwhJLbWK8Z+liJ0s=
-X-Received: by 2002:aca:5155:: with SMTP id f82-v6mr381511oib.272.1533066634870;
- Tue, 31 Jul 2018 12:50:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180731161025.189534-1-jannh@google.com> <20180731165112.GJ30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180731165112.GJ30522@ZenIV.linux.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 31 Jul 2018 21:50:08 +0200
-Message-ID: <CAG48ez2WUWCdicfUk5ytP8sv6yfwDeW-stCrnfwkYhqBe8d_pw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: don't let getdents return bogus names
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru,
-        Matt Turner <mattst88@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-alpha@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nicOVFnotv1BdssFYlukKio1WAhe+11DLlnE/PB7XcM=;
+        b=FhzomUUd+i+GN8cXd1u3E+oljhIaK2gYJcDEosg3Fr6bf0SbmDrA3751II8+6CC+dJ
+         u/T3LFj72Q9mXUdOSRkNfVqiU8MHNhRCx1jAOxAK7vafcR9rr/kq6aLhOpuDp+fObmpd
+         lVNKWpo0WThCe5As51noqpkH7e81608HgHKcpSTpsbYI9svjJwqb4eyPw2hwJXIe03og
+         4cfECXVk4gGxZn2lk5UwHmy8bGmKxVBYuhfsinlcAjYbhdmmrg22H5pkoWjbYWlvtZ/Q
+         evCoL78g6RPPaWHxTPS3c9f9mTFtk9bFBZay1khMWrJBnzONSG6+M4AaoT6VTjIF3vM/
+         X9UQ==
+X-Gm-Message-State: AOUpUlE74Dnx9bKwfqxtw6q+gXQk+8l3LFu9oaAfufBfRIghK8GWIYgT
+        Ir2GSUrE8zI1CSGpfyHsDUIGVw==
+X-Google-Smtp-Source: AAOMgpcfJJ3PgxwPf5D5/GLxxNoL18wpmWUVIoRImib9w/RZI24XbFsArAb2cdJQLaGf/4KGWJS3LQ==
+X-Received: by 2002:a62:5ec3:: with SMTP id s186-v6mr23742789pfb.129.1533066724132;
+        Tue, 31 Jul 2018 12:52:04 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id b192-v6sm27713257pga.2.2018.07.31.12.52.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 12:52:02 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Juergen Gross <jgross@suse.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        David Kershner <david.kershner@unisys.com>,
+        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/9] ide-cd: Drop unused sense buffers
+Date:   Tue, 31 Jul 2018 12:51:46 -0700
+Message-Id: <20180731195155.46664-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180731195155.46664-1-keescook@chromium.org>
+References: <20180731195155.46664-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 6:51 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Tue, Jul 31, 2018 at 06:10:27PM +0200, Jann Horn wrote:
-> > +/*
-> > + * Most filesystems don't filter out bogus directory entry names, and userspace
-> > + * can get very confused by such names. Behave as if a low-level IO error had
-> > + * happened while reading directory entries.
-> > + */
-> > +bool bogus_dirent_name(int *errp, const char *name, int namlen,
-> > +                    const char *caller)
-> > +{
-> > +     if (namlen == 0) {
-> > +             pr_err_once("%s: filesystem returned bogus empty name\n",
-> > +                         caller);
-> > +             *errp = -EUCLEAN;
-> > +             return true;
-> > +     }
-> > +     if (memchr(name, '/', namlen)) {
-> > +             pr_err_once("%s: filesystem returned bogus name '%*pEhp' (contains slash)\n",
-> > +                         caller, namlen, name);
-> > +             *errp = -EUCLEAN;
-> > +             return true;
-> > +     }
-> > +     return false;
-> > +}
->
-> > +     if (bogus_dirent_name(&buf->result, name, namlen, __func__))
-> > +             return -EUCLEAN;
->
-> These calling conventions st^Ware rather suboptimal.  First of all,
->         * none of ->actor() callbacks will ever get called directly.
->         * there are only 4 callers.  3 of them (all in fs.h) are
-> of the form return ....->actor(...) == 0;  The fourth is
->         return orig_ctx->actor(orig_ctx, name, namelen, offset, ino, d_type);
-> in ovl_fill_real(), which itself is an ->actor() callback.
->
-> So all these "return -E..." in the instances are completely pointless;
-> we should just turn filldir_t into pointer-to-function-returning-bool
-> and get rid of that boilerplate, rather than adding more to it.
+This drops unused sense buffers from:
 
-Do you want me to try to write a patch that does that change?
+	cdrom_eject()
+	cdrom_read_capacity()
+	cdrom_read_tocentry()
+	ide_cd_lockdoor()
+	ide_cd_read_toc()
 
-> Furthermore, who the hell cares which callback has stepped into it?
-> "The first time it happened from getdents(2) in a 32bit process and
-> that's all you'll ever get out of me" seems to be less than helpful...
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/ide/ide-cd.c       | 36 +++++++++++++++---------------------
+ drivers/ide/ide-cd.h       |  2 +-
+ drivers/ide/ide-cd_ioctl.c | 34 ++++++++++++----------------------
+ 3 files changed, 28 insertions(+), 44 deletions(-)
 
-Yeah, true. Should I just remove the method name from the pr_err_once?
-Or should I also use one of the _ratelimited things and print multiple
-messages?
+diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
+index 5a8e8e3c22cd..1d5b35312e33 100644
+--- a/drivers/ide/ide-cd.c
++++ b/drivers/ide/ide-cd.c
+@@ -890,8 +890,7 @@ int cdrom_check_status(ide_drive_t *drive, struct request_sense *sense)
+ }
+ 
+ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
+-			       unsigned long *sectors_per_frame,
+-			       struct request_sense *sense)
++			       unsigned long *sectors_per_frame)
+ {
+ 	struct {
+ 		__be32 lba;
+@@ -908,7 +907,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
+ 	memset(cmd, 0, BLK_MAX_CDB);
+ 	cmd[0] = GPCMD_READ_CDVD_CAPACITY;
+ 
+-	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, sense, 0,
++	stat = ide_cd_queue_pc(drive, cmd, 0, &capbuf, &len, NULL, 0,
+ 			       RQF_QUIET);
+ 	if (stat)
+ 		return stat;
+@@ -944,8 +943,7 @@ static int cdrom_read_capacity(ide_drive_t *drive, unsigned long *capacity,
+ }
+ 
+ static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
+-				int format, char *buf, int buflen,
+-				struct request_sense *sense)
++				int format, char *buf, int buflen)
+ {
+ 	unsigned char cmd[BLK_MAX_CDB];
+ 
+@@ -962,11 +960,11 @@ static int cdrom_read_tocentry(ide_drive_t *drive, int trackno, int msf_flag,
+ 	if (msf_flag)
+ 		cmd[1] = 2;
+ 
+-	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, sense, 0, RQF_QUIET);
++	return ide_cd_queue_pc(drive, cmd, 0, buf, &buflen, NULL, 0, RQF_QUIET);
+ }
+ 
+ /* Try to read the entire TOC for the disk into our internal buffer. */
+-int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
++int ide_cd_read_toc(ide_drive_t *drive)
+ {
+ 	int stat, ntracks, i;
+ 	struct cdrom_info *info = drive->driver_data;
+@@ -996,14 +994,13 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 	 * Check to see if the existing data is still valid. If it is,
+ 	 * just return.
+ 	 */
+-	(void) cdrom_check_status(drive, sense);
++	(void) cdrom_check_status(drive, NULL);
+ 
+ 	if (drive->atapi_flags & IDE_AFLAG_TOC_VALID)
+ 		return 0;
+ 
+ 	/* try to get the total cdrom capacity and sector size */
+-	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame,
+-				   sense);
++	stat = cdrom_read_capacity(drive, &toc->capacity, &sectors_per_frame);
+ 	if (stat)
+ 		toc->capacity = 0x1fffff;
+ 
+@@ -1016,7 +1013,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 
+ 	/* first read just the header, so we know how long the TOC is */
+ 	stat = cdrom_read_tocentry(drive, 0, 1, 0, (char *) &toc->hdr,
+-				    sizeof(struct atapi_toc_header), sense);
++				    sizeof(struct atapi_toc_header));
+ 	if (stat)
+ 		return stat;
+ 
+@@ -1036,7 +1033,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 				  (char *)&toc->hdr,
+ 				   sizeof(struct atapi_toc_header) +
+ 				   (ntracks + 1) *
+-				   sizeof(struct atapi_toc_entry), sense);
++				   sizeof(struct atapi_toc_entry));
+ 
+ 	if (stat && toc->hdr.first_track > 1) {
+ 		/*
+@@ -1056,8 +1053,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 					   (char *)&toc->hdr,
+ 					   sizeof(struct atapi_toc_header) +
+ 					   (ntracks + 1) *
+-					   sizeof(struct atapi_toc_entry),
+-					   sense);
++					   sizeof(struct atapi_toc_entry));
+ 		if (stat)
+ 			return stat;
+ 
+@@ -1094,7 +1090,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 	if (toc->hdr.first_track != CDROM_LEADOUT) {
+ 		/* read the multisession information */
+ 		stat = cdrom_read_tocentry(drive, 0, 0, 1, (char *)&ms_tmp,
+-					   sizeof(ms_tmp), sense);
++					   sizeof(ms_tmp));
+ 		if (stat)
+ 			return stat;
+ 
+@@ -1108,7 +1104,7 @@ int ide_cd_read_toc(ide_drive_t *drive, struct request_sense *sense)
+ 	if (drive->atapi_flags & IDE_AFLAG_TOCADDR_AS_BCD) {
+ 		/* re-read multisession information using MSF format */
+ 		stat = cdrom_read_tocentry(drive, 0, 1, 1, (char *)&ms_tmp,
+-					   sizeof(ms_tmp), sense);
++					   sizeof(ms_tmp));
+ 		if (stat)
+ 			return stat;
+ 
+@@ -1412,7 +1408,7 @@ static sector_t ide_cdrom_capacity(ide_drive_t *drive)
+ {
+ 	unsigned long capacity, sectors_per_frame;
+ 
+-	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame, NULL))
++	if (cdrom_read_capacity(drive, &capacity, &sectors_per_frame))
+ 		return 0;
+ 
+ 	return capacity * sectors_per_frame;
+@@ -1723,9 +1719,8 @@ static unsigned int idecd_check_events(struct gendisk *disk,
+ static int idecd_revalidate_disk(struct gendisk *disk)
+ {
+ 	struct cdrom_info *info = ide_drv_g(disk, cdrom_info);
+-	struct request_sense sense;
+ 
+-	ide_cd_read_toc(info->drive, &sense);
++	ide_cd_read_toc(info->drive);
+ 
+ 	return  0;
+ }
+@@ -1749,7 +1744,6 @@ static int ide_cd_probe(ide_drive_t *drive)
+ {
+ 	struct cdrom_info *info;
+ 	struct gendisk *g;
+-	struct request_sense sense;
+ 
+ 	ide_debug_log(IDE_DBG_PROBE, "driver_req: %s, media: 0x%x",
+ 				     drive->driver_req, drive->media);
+@@ -1798,7 +1792,7 @@ static int ide_cd_probe(ide_drive_t *drive)
+ 		goto failed;
+ 	}
+ 
+-	ide_cd_read_toc(drive, &sense);
++	ide_cd_read_toc(drive);
+ 	g->fops = &idecd_ops;
+ 	g->flags |= GENHD_FL_REMOVABLE | GENHD_FL_BLOCK_EVENTS_ON_EXCL_WRITE;
+ 	device_add_disk(&drive->gendev, g);
+diff --git a/drivers/ide/ide-cd.h b/drivers/ide/ide-cd.h
+index 04f0f310a856..fc162fbb6629 100644
+--- a/drivers/ide/ide-cd.h
++++ b/drivers/ide/ide-cd.h
+@@ -99,7 +99,7 @@ void ide_cd_log_error(const char *, struct request *, struct request_sense *);
+ /* ide-cd.c functions used by ide-cd_ioctl.c */
+ int ide_cd_queue_pc(ide_drive_t *, const unsigned char *, int, void *,
+ 		    unsigned *, struct request_sense *, int, req_flags_t);
+-int ide_cd_read_toc(ide_drive_t *, struct request_sense *);
++int ide_cd_read_toc(ide_drive_t *);
+ int ide_cdrom_get_capabilities(ide_drive_t *, u8 *);
+ void ide_cdrom_update_speed(ide_drive_t *, u8 *);
+ int cdrom_check_status(ide_drive_t *, struct request_sense *);
+diff --git a/drivers/ide/ide-cd_ioctl.c b/drivers/ide/ide-cd_ioctl.c
+index 2acca12b9c94..c709f4eed0e9 100644
+--- a/drivers/ide/ide-cd_ioctl.c
++++ b/drivers/ide/ide-cd_ioctl.c
+@@ -105,8 +105,7 @@ unsigned int ide_cdrom_check_events_real(struct cdrom_device_info *cdi,
+ /* Eject the disk if EJECTFLAG is 0.
+    If EJECTFLAG is 1, try to reload the disk. */
+ static
+-int cdrom_eject(ide_drive_t *drive, int ejectflag,
+-		struct request_sense *sense)
++int cdrom_eject(ide_drive_t *drive, int ejectflag)
+ {
+ 	struct cdrom_info *cd = drive->driver_data;
+ 	struct cdrom_device_info *cdi = &cd->devinfo;
+@@ -129,20 +128,16 @@ int cdrom_eject(ide_drive_t *drive, int ejectflag,
+ 	cmd[0] = GPCMD_START_STOP_UNIT;
+ 	cmd[4] = loej | (ejectflag != 0);
+ 
+-	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, sense, 0, 0);
++	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
+ }
+ 
+ /* Lock the door if LOCKFLAG is nonzero; unlock it otherwise. */
+ static
+-int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
+-		    struct request_sense *sense)
++int ide_cd_lockdoor(ide_drive_t *drive, int lockflag)
+ {
+-	struct request_sense my_sense;
++	struct request_sense my_sense, *sense = &my_sense;
+ 	int stat;
+ 
+-	if (sense == NULL)
+-		sense = &my_sense;
+-
+ 	/* If the drive cannot lock the door, just pretend. */
+ 	if ((drive->dev_flags & IDE_DFLAG_DOORLOCKING) == 0) {
+ 		stat = 0;
+@@ -186,23 +181,22 @@ int ide_cd_lockdoor(ide_drive_t *drive, int lockflag,
+ int ide_cdrom_tray_move(struct cdrom_device_info *cdi, int position)
+ {
+ 	ide_drive_t *drive = cdi->handle;
+-	struct request_sense sense;
+ 
+ 	if (position) {
+-		int stat = ide_cd_lockdoor(drive, 0, &sense);
++		int stat = ide_cd_lockdoor(drive, 0);
+ 
+ 		if (stat)
+ 			return stat;
+ 	}
+ 
+-	return cdrom_eject(drive, !position, &sense);
++	return cdrom_eject(drive, !position);
+ }
+ 
+ int ide_cdrom_lock_door(struct cdrom_device_info *cdi, int lock)
+ {
+ 	ide_drive_t *drive = cdi->handle;
+ 
+-	return ide_cd_lockdoor(drive, lock, NULL);
++	return ide_cd_lockdoor(drive, lock);
+ }
+ 
+ /*
+@@ -213,7 +207,6 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
+ {
+ 	ide_drive_t *drive = cdi->handle;
+ 	struct cdrom_info *cd = drive->driver_data;
+-	struct request_sense sense;
+ 	u8 buf[ATAPI_CAPABILITIES_PAGE_SIZE];
+ 	int stat;
+ 	unsigned char cmd[BLK_MAX_CDB];
+@@ -236,7 +229,7 @@ int ide_cdrom_select_speed(struct cdrom_device_info *cdi, int speed)
+ 		cmd[5] = speed & 0xff;
+ 	}
+ 
+-	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
++	stat = ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
+ 
+ 	if (!ide_cdrom_get_capabilities(drive, buf)) {
+ 		ide_cdrom_update_speed(drive, buf);
+@@ -252,11 +245,10 @@ int ide_cdrom_get_last_session(struct cdrom_device_info *cdi,
+ 	struct atapi_toc *toc;
+ 	ide_drive_t *drive = cdi->handle;
+ 	struct cdrom_info *info = drive->driver_data;
+-	struct request_sense sense;
+ 	int ret;
+ 
+ 	if ((drive->atapi_flags & IDE_AFLAG_TOC_VALID) == 0 || !info->toc) {
+-		ret = ide_cd_read_toc(drive, &sense);
++		ret = ide_cd_read_toc(drive);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -300,7 +292,6 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
+ {
+ 	ide_drive_t *drive = cdi->handle;
+ 	struct cdrom_info *cd = drive->driver_data;
+-	struct request_sense sense;
+ 	struct request *rq;
+ 	int ret;
+ 
+@@ -315,7 +306,7 @@ int ide_cdrom_reset(struct cdrom_device_info *cdi)
+ 	 * lock it again.
+ 	 */
+ 	if (drive->atapi_flags & IDE_AFLAG_DOOR_LOCKED)
+-		(void)ide_cd_lockdoor(drive, 1, &sense);
++		(void)ide_cd_lockdoor(drive, 1);
+ 
+ 	return ret;
+ }
+@@ -355,7 +346,6 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
+ 	struct atapi_toc_entry *first_toc, *last_toc;
+ 	unsigned long lba_start, lba_end;
+ 	int stat;
+-	struct request_sense sense;
+ 	unsigned char cmd[BLK_MAX_CDB];
+ 
+ 	stat = ide_cd_get_toc_entry(drive, ti->cdti_trk0, &first_toc);
+@@ -380,7 +370,7 @@ static int ide_cd_fake_play_trkind(ide_drive_t *drive, void *arg)
+ 	lba_to_msf(lba_start,   &cmd[3], &cmd[4], &cmd[5]);
+ 	lba_to_msf(lba_end - 1, &cmd[6], &cmd[7], &cmd[8]);
+ 
+-	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, &sense, 0, 0);
++	return ide_cd_queue_pc(drive, cmd, 0, NULL, NULL, NULL, 0, 0);
+ }
+ 
+ static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
+@@ -391,7 +381,7 @@ static int ide_cd_read_tochdr(ide_drive_t *drive, void *arg)
+ 	int stat;
+ 
+ 	/* Make sure our saved TOC is valid. */
+-	stat = ide_cd_read_toc(drive, NULL);
++	stat = ide_cd_read_toc(drive);
+ 	if (stat)
+ 		return stat;
+ 
+-- 
+2.17.1
 
-> And frankly, I would prefer
->         buf->result = check_dirent_name(name, namelen);
->         if (unlikely(buf->result))
->                 return false;
-> making that thing return -EUCLEAN or 0.  Quite possibly - inlining it
-> as well...
-
-I guess that would conform to normal kernel coding standards a bit better.
-
-Thanks for the quick feedback!
