@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E35BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CDBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C9F20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C9F20862
+	by mail.kernel.org (Postfix) with ESMTP id B66B320862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66B320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbeGaHs3 (ORCPT
+        id S1729790AbeGaHtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:48:29 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:38215 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbeGaHs3 (ORCPT
+        Tue, 31 Jul 2018 03:49:36 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:34283 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbeGaHtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:48:29 -0400
+        Tue, 31 Jul 2018 03:49:36 -0400
 X-Originating-IP: 79.86.19.127
 Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
         (Authenticated sender: alex@ghiti.fr)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 83653C0004;
-        Tue, 31 Jul 2018 06:09:39 +0000 (UTC)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 60D52240003;
+        Tue, 31 Jul 2018 06:10:50 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
         catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
@@ -43,9 +43,9 @@ To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
         linux-arch@vger.kernel.org
 Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v5 06/11] hugetlb: Introduce generic version of huge_pte_none
-Date:   Tue, 31 Jul 2018 06:01:50 +0000
-Message-Id: <20180731060155.16915-7-alex@ghiti.fr>
+Subject: [PATCH v5 07/11] hugetlb: Introduce generic version of huge_pte_wrprotect
+Date:   Tue, 31 Jul 2018 06:01:51 +0000
+Message-Id: <20180731060155.16915-8-alex@ghiti.fr>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
 References: <20180731060155.16915-1-alex@ghiti.fr>
@@ -54,9 +54,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, arm64, ia64, parisc, powerpc, sh, sparc, x86 architectures
-use the same version of huge_pte_none, so move this generic
-implementation into asm-generic/hugetlb.h.
+arm, arm64, ia64, mips, parisc, powerpc, sh, sparc, x86
+architectures use the same version of huge_pte_wrprotect, so move
+this generic implementation into asm-generic/hugetlb.h.
 
 Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
@@ -64,167 +64,171 @@ Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
  arch/arm/include/asm/hugetlb.h     | 5 -----
  arch/arm64/include/asm/hugetlb.h   | 5 -----
  arch/ia64/include/asm/hugetlb.h    | 5 -----
- arch/mips/include/asm/hugetlb.h    | 1 +
+ arch/mips/include/asm/hugetlb.h    | 5 -----
  arch/parisc/include/asm/hugetlb.h  | 5 -----
  arch/powerpc/include/asm/hugetlb.h | 5 -----
  arch/sh/include/asm/hugetlb.h      | 5 -----
  arch/sparc/include/asm/hugetlb.h   | 5 -----
  arch/x86/include/asm/hugetlb.h     | 5 -----
  include/asm-generic/hugetlb.h      | 7 +++++++
- 10 files changed, 8 insertions(+), 40 deletions(-)
+ 10 files changed, 7 insertions(+), 45 deletions(-)
 
 diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
-index 537660891f9f..c821b550d6a4 100644
+index c821b550d6a4..9ca14227eeb7 100644
 --- a/arch/arm/include/asm/hugetlb.h
 +++ b/arch/arm/include/asm/hugetlb.h
 @@ -44,11 +44,6 @@ static inline int prepare_hugepage_range(struct file *file,
  	return 0;
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void arch_clear_hugepage_flags(struct page *page)
  {
- 	return pte_wrprotect(pte);
+ 	clear_bit(PG_dcache_clean, &page->flags);
 diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 4c8dd488554d..49247c6f94db 100644
+index 49247c6f94db..1fd64ebf0cd7 100644
 --- a/arch/arm64/include/asm/hugetlb.h
 +++ b/arch/arm64/include/asm/hugetlb.h
 @@ -42,11 +42,6 @@ static inline int prepare_hugepage_range(struct file *file,
  	return 0;
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void arch_clear_hugepage_flags(struct page *page)
  {
- 	return pte_wrprotect(pte);
+ 	clear_bit(PG_dcache_clean, &page->flags);
 diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index 41b5f6adeee4..bf573500b3c4 100644
+index bf573500b3c4..82fe3d7a38d9 100644
 --- a/arch/ia64/include/asm/hugetlb.h
 +++ b/arch/ia64/include/asm/hugetlb.h
 @@ -26,11 +26,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
  {
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
  {
- 	return pte_wrprotect(pte);
 diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 7df1f116a3cc..1c9c4531376c 100644
+index 1c9c4531376c..b3d6bb53ee6e 100644
 --- a/arch/mips/include/asm/hugetlb.h
 +++ b/arch/mips/include/asm/hugetlb.h
-@@ -55,6 +55,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 	flush_tlb_page(vma, addr & huge_page_mask(hstate_vma(vma)));
+@@ -62,11 +62,6 @@ static inline int huge_pte_none(pte_t pte)
+ 	return !val || (val == (unsigned long)invalid_pte_table);
  }
  
-+#define __HAVE_ARCH_HUGE_PTE_NONE
- static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
+-{
+-	return pte_wrprotect(pte);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
  {
- 	unsigned long val = pte_val(pte) & ~_PAGE_GLOBAL;
 diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 9afff26747a1..c09d8c74553c 100644
+index c09d8c74553c..5a102d7251e4 100644
 --- a/arch/parisc/include/asm/hugetlb.h
 +++ b/arch/parisc/include/asm/hugetlb.h
 @@ -38,11 +38,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
  {
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
- {
- 	return pte_wrprotect(pte);
+ void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep);
+ 
 diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 0b02856aa85b..3562d46585ba 100644
+index 3562d46585ba..7123599089c6 100644
 --- a/arch/powerpc/include/asm/hugetlb.h
 +++ b/arch/powerpc/include/asm/hugetlb.h
 @@ -152,11 +152,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
  	flush_hugetlb_page(vma, addr);
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
- {
- 	return pte_wrprotect(pte);
+ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 				      unsigned long addr, pte_t *ptep,
+ 				      pte_t pte, int dirty);
 diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 9abf9c86b769..a9f8266f33cf 100644
+index a9f8266f33cf..54f65094efe6 100644
 --- a/arch/sh/include/asm/hugetlb.h
 +++ b/arch/sh/include/asm/hugetlb.h
 @@ -31,11 +31,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
  {
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
  {
- 	return pte_wrprotect(pte);
 diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 651a9593fcee..11115bbd712e 100644
+index 11115bbd712e..f661362376e0 100644
 --- a/arch/sparc/include/asm/hugetlb.h
 +++ b/arch/sparc/include/asm/hugetlb.h
 @@ -48,11 +48,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
  {
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
  {
- 	return pte_wrprotect(pte);
 diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index fd59673e7a0a..42d872054791 100644
+index 42d872054791..3cd3a2c9840e 100644
 --- a/arch/x86/include/asm/hugetlb.h
 +++ b/arch/x86/include/asm/hugetlb.h
 @@ -28,11 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
  	return 0;
  }
  
--static inline int huge_pte_none(pte_t pte)
+-static inline pte_t huge_pte_wrprotect(pte_t pte)
 -{
--	return pte_none(pte);
+-	return pte_wrprotect(pte);
 -}
 -
- static inline pte_t huge_pte_wrprotect(pte_t pte)
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
  {
- 	return pte_wrprotect(pte);
 diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index ffa63fd8388d..2fc3d68424e9 100644
+index 2fc3d68424e9..cd9697672b79 100644
 --- a/include/asm-generic/hugetlb.h
 +++ b/include/asm-generic/hugetlb.h
-@@ -73,4 +73,11 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+@@ -80,4 +80,11 @@ static inline int huge_pte_none(pte_t pte)
  }
  #endif
  
-+#ifndef __HAVE_ARCH_HUGE_PTE_NONE
-+static inline int huge_pte_none(pte_t pte)
++#ifndef __HAVE_ARCH_HUGE_PTE_WRPROTECT
++static inline pte_t huge_pte_wrprotect(pte_t pte)
 +{
-+	return pte_none(pte);
++	return pte_wrprotect(pte);
 +}
 +#endif
 +
