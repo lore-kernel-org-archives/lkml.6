@@ -3,180 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2BEC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7ABC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31D3E20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:59:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D3E20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 09C0120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C0120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729618AbeGaJis (ORCPT
+        id S1729733AbeGaJjE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 05:38:48 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:33740 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeGaJis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 05:38:48 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.190])
-        by lucky1.263xmail.com (Postfix) with ESMTP id C09E82B9;
-        Tue, 31 Jul 2018 15:59:34 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 2D0923C5;
-        Tue, 31 Jul 2018 15:59:28 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <5dee11a682f0376720980ead033eae03>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 6447DU8WO9;
-        Tue, 31 Jul 2018 15:59:33 +0800 (CST)
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v2 5/5] clk: RK808: add RK809 and RK817 support.
-Date:   Tue, 31 Jul 2018 16:00:29 +0800
-Message-Id: <1533024029-30273-1-git-send-email-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
-References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+        Tue, 31 Jul 2018 05:39:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:49738 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727279AbeGaJjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 05:39:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFC7C80D;
+        Tue, 31 Jul 2018 00:59:58 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A48DE3F5BA;
+        Tue, 31 Jul 2018 00:59:54 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 08:59:53 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     skannan@codeaurora.org
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
+ aggregation method
+Message-ID: <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-11-quentin.perret@arm.com>
+ <331552975e858911db66bc78c2c8e720@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <331552975e858911db66bc78c2c8e720@codeaurora.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
+[...]
+> If it's going to be a different aggregation from what's done for frequency
+> guidance, I don't see the point of having this inside schedutil. Why not
+> keep it inside the scheduler files?
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
----
- drivers/clk/Kconfig     |  6 ++---
- drivers/clk/clk-rk808.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 64 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..fc1427c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,11 +46,11 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+          These multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
- 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..c5d3492 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	case RK805_ID:
-+	case RK808_ID:
-+	case RK818_ID:
-+		return &rk808_clkout2_ops;
-+	}
-+
-+	return &rk808_clkout2_ops;
-+}
-+
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
- 
- 	/* optional override of the clockname */
--- 
-1.9.1
+This code basically results from a discussion we had with Peter on v4.
+Keeping everything centralized can make sense from a maintenance
+perspective, I think. That makes it easy to see the impact of any change
+to utilization signals for both EAS and schedutil.
 
 
+> Also, it seems weird to use a governor's
+> code when it might not actually be in use. What if someone is using
+> ondemand, conservative, performance, etc?
+
+Yeah I thought about that too ... I would say that even if you don't
+use schedutil, it is probably a fair assumption from the scheduler's
+standpoint to assume that somewhat OPPs follow utilization (in a very
+loose way). So yes, if you use ondemand with EAS you won't have a
+perfectly consistent match between the frequency requests and what EAS
+predicts, and that might result in sub-optimal decisions in some cases,
+but I'm not sure if we can do anything better at this stage.
+
+Also, if you do use schedutil, EAS will accurately predict what will be
+the frequency _request_, but that gives you no guarantee whatsoever that
+you'll actually get it for real (because you're throttled, or because of
+thermal capping, or simply because the HW refuses it for some reason ...).
+
+There will be inconsistencies between EAS' predictions and the actual
+frequencies, and we have to live with that. The best we can do is make
+sure we're at least internally consistent from the scheduler's
+standpoint, and that's why I think it can make sense to factorize as
+many things as possible with schedutil where applicable.
+
+> > +	if (type == frequency_util) {
+> > +		/*
+> > +		 * Bandwidth required by DEADLINE must always be granted
+> > +		 * while, for FAIR and RT, we use blocked utilization of
+> > +		 * IDLE CPUs as a mechanism to gracefully reduce the
+> > +		 * frequency when no tasks show up for longer periods of
+> > +		 * time.
+> > +		 *
+> > +		 * Ideally we would like to set bw_dl as min/guaranteed
+> > +		 * freq and util + bw_dl as requested freq. However,
+> > +		 * cpufreq is not yet ready for such an interface. So,
+> > +		 * we only do the latter for now.
+> > +		 */
+> > +		util += cpu_bw_dl(rq);
+> > +	}
+> 
+> Instead of all this indentation, can't you just return early without doing
+> the code inside the if?
+
+But then I'll need to duplicate the 'min' below, so not sure if it's
+worth it ?
+
+> > +enum schedutil_type {
+> > +	frequency_util,
+> > +	energy_util,
+> > +};
+> 
+> Please don't use lower case for enums. It's extremely confusing.
+
+Ok, I'll change that in v6.
+
+Thanks !
+Quentin
