@@ -2,262 +2,95 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B4EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EE0C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A9620840
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:44:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjo87Or6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A9620840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id C0770208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0770208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbeGaDWF (ORCPT
+        id S1731511AbeGaDYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 23:22:05 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39520 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbeGaDWF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 23:22:05 -0400
-Received: by mail-pg1-f193.google.com with SMTP id a11-v6so8213453pgw.6
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 18:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=MnneWn2uhd5uHBwBcWdjlf16tJNVllBH0oFR9iV7/a0=;
-        b=kjo87Or6wzPh/6eIgMDYLL/OnifKyIj+sE+T7WrNanwU/ylTzo+0bkhXuzsoNQPOi8
-         nmGP6kTKmoaWB0id2/hgK06uqd9nMVOWnFi8l+nvmCFEaK+Mx1nwuIs+lXJ78KVlcXpi
-         ttKoefEk4M7rXH2FXCu8LOUTBeq/TyfuCAjUbW05fpIJhniEsDYTlUrFOZfetQQsRVM/
-         2/yCPLulZStRe2uxBydX2QoM8NNB9U+wedQeSDBJzbTTBiRM3g/97XKXFI372AKIltRT
-         H2so1r4BAOac0uQ+57arUsohCbn3MDCEED9xn6Njy+xTwZtZja4/Tft5fEzn8wGvsDQQ
-         g9sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=MnneWn2uhd5uHBwBcWdjlf16tJNVllBH0oFR9iV7/a0=;
-        b=dcZAFyShqRXPeggWbEzcXC3o23RjMdMpiGZq0SmqdXDC9qIg+iyTP+k3lGcycfnDcC
-         MhJJ9mJozY48SAe8KQ2IZZ3l1nSsu8PBpwRy5HxKRLaFG4NoUKppdtLo+lxrT3VYRdma
-         ECfU1CHvbrQaVnxaO9GEysQaTmQIEeeWgmtNioSoYhO5l8KMoiYEtcpKdoH28dRT+/aA
-         SBeg1hw6betcL96ISKoMM5VHf29ecicENxugX3TWB4aVbd8JgeqXcL0Tl/NLFsUjBEMs
-         zyNhszCfJXafpGKPf5GlyDV1AVHdMpkWvM8X0Bz6djGj+ulg7EufqbGW1A0HMJAqZ9hm
-         pICw==
-X-Gm-Message-State: AOUpUlHkOx5loCGAUvk6Q8VdXNdCK2jiXiTilX+iP5w/zSdQPKuyoEXo
-        8GK5hBfSjAue9VWW9nHjAiM=
-X-Google-Smtp-Source: AAOMgpdls/E1YFo6nyEBGoXt7ChjXIpFxLeFf5S6XFua71A1peuq4IcRgKapSGZbkFDfyFQwzcy2qw==
-X-Received: by 2002:a62:2459:: with SMTP id r86-v6mr20024250pfj.31.1533001457374;
-        Mon, 30 Jul 2018 18:44:17 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id x24-v6sm18835338pfh.67.2018.07.30.18.44.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Jul 2018 18:44:16 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] powerpc/4xx: Fix error return path in ppc4xx_msi_probe()
-Date:   Mon, 30 Jul 2018 18:44:14 -0700
-Message-Id: <1533001454-8751-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Mon, 30 Jul 2018 23:24:10 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10183 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726659AbeGaDYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 23:24:10 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7CC7F5FBCF3B3;
+        Tue, 31 Jul 2018 09:46:16 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Tue, 31 Jul 2018
+ 09:46:13 +0800
+Subject: Re: [V9fs-developer] [PATCH 2/2] net/9p: add a per-client fcall
+ kmem_cache
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <20180730093101.GA7894@nautica>
+ <1532943263-24378-1-git-send-email-asmadeus@codewreck.org>
+ <1532943263-24378-2-git-send-email-asmadeus@codewreck.org>
+ <5B5FB8F0.6020908@huawei.com> <20180731013556.GA1530@nautica>
+CC:     <v9fs-developer@lists.sourceforge.net>,
+        <linux-fsdevel@vger.kernel.org>, Greg Kurz <groug@kaod.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B5FBF4C.3030605@huawei.com>
+Date:   Tue, 31 Jul 2018 09:45:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180731013556.GA1530@nautica>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An arbitrary error in ppc4xx_msi_probe() quite likely results in a
-crash similar to the following, seen after dma_alloc_coherent()
-returned an error.
 
-Unable to handle kernel paging request for data at address 0x00000000
-Faulting instruction address: 0xc001bff0
-Oops: Kernel access of bad area, sig: 11 [#1]
-BE Canyonlands
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Tainted: G        W
-4.18.0-rc6-00010-gff33d1030a6c #1
-NIP:  c001bff0 LR: c001c418 CTR: c01faa7c
-REGS: cf82db40 TRAP: 0300   Tainted: G        W
-(4.18.0-rc6-00010-gff33d1030a6c)
-MSR:  00029000 <CE,EE,ME>  CR: 28002024  XER: 00000000
-DEAR: 00000000 ESR: 00000000
-GPR00: c001c418 cf82dbf0 cf828000 cf8de400 00000000 00000000 000000c4 000000c4
-GPR08: c0481ea4 00000000 00000000 000000c4 22002024 00000000 c00025e8 00000000
-GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c0492380 0000004a
-GPR24: 00029000 0000000c 00000000 cf8de410 c0494d60 c0494d60 cf8bebc0 00000001
-NIP [c001bff0] ppc4xx_of_msi_remove+0x48/0xa0
-LR [c001c418] ppc4xx_msi_probe+0x294/0x3b8
-Call Trace:
-[cf82dbf0] [00029000] 0x29000 (unreliable)
-[cf82dc10] [c001c418] ppc4xx_msi_probe+0x294/0x3b8
-[cf82dc70] [c0209fbc] platform_drv_probe+0x40/0x9c
-[cf82dc90] [c0208240] driver_probe_device+0x2a8/0x350
-[cf82dcc0] [c0206204] bus_for_each_drv+0x60/0xac
-[cf82dcf0] [c0207e88] __device_attach+0xe8/0x160
-[cf82dd20] [c02071e0] bus_probe_device+0xa0/0xbc
-[cf82dd40] [c02050c8] device_add+0x404/0x5c4
-[cf82dd90] [c0288978] of_platform_device_create_pdata+0x88/0xd8
-[cf82ddb0] [c0288b70] of_platform_bus_create+0x134/0x220
-[cf82de10] [c0288bcc] of_platform_bus_create+0x190/0x220
-[cf82de70] [c0288cf4] of_platform_bus_probe+0x98/0xec
-[cf82de90] [c0449650] __machine_initcall_canyonlands_ppc460ex_device_probe+0x38/0x54
-[cf82dea0] [c0002404] do_one_initcall+0x40/0x188
-[cf82df00] [c043daec] kernel_init_freeable+0x130/0x1d0
-[cf82df30] [c0002600] kernel_init+0x18/0x104
-[cf82df40] [c000c23c] ret_from_kernel_thread+0x14/0x1c
-Instruction dump:
-90010024 813d0024 2f890000 83c30058 41bd0014 48000038 813d0024 7f89f800
-409d002c 813e000c 57ea103a 3bff0001 <7c69502e> 2f830000 419effe0 4803b26d
----[ end trace 8cf551077ecfc42a ]---
 
-Fix it up. Specifically,
+On 2018/7/31 9:35, Dominique Martinet wrote:
+> piaojun wrote on Tue, Jul 31, 2018:
+>> Could you help paste some test result before-and-after the patch applied?
+> 
+> The only performance tests I did were sent to the list a couple of mails
+> earlier, you can find it here:
+> http://lkml.kernel.org/r/20180730093101.GA7894@nautica
+> 
+> In particular, the results for benchmark on small writes just before and
+> after this patch, without KASAN (these are the same numbers as in the
+> link, hardware/setup is described there):
+>  - no alloc (4.18-rc7 request cache): 65.4k req/s
+>  - non-power of two alloc, no patch: 61.6k req/s
+>  - power of two alloc, no patch: 62.2k req/s
+>  - non-power of two alloc, with patch: 64.7k req/s
+>  - power of two alloc, with patch: 65.1k req/s
+> 
+> I'm rather happy with the result, I didn't expect using a dedicated
+> cache would bring this much back but it's certainly worth it.
+> 
+It looks like an obvious promotion.
 
-- Return valid error codes from ppc4xx_setup_pcieh_hw(), have it clean
-  up after itself, and only access hardware after all possible error
-  conditions have been handled.
-- Use devm_kzalloc() instead of kzalloc() in ppc4xx_msi_probe()
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- arch/powerpc/platforms/4xx/msi.c | 51 +++++++++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 21 deletions(-)
-
-diff --git a/arch/powerpc/platforms/4xx/msi.c b/arch/powerpc/platforms/4xx/msi.c
-index 81b2cbce7df8..7c324eff2f22 100644
---- a/arch/powerpc/platforms/4xx/msi.c
-+++ b/arch/powerpc/platforms/4xx/msi.c
-@@ -146,13 +146,19 @@ static int ppc4xx_setup_pcieh_hw(struct platform_device *dev,
- 	const u32 *sdr_addr;
- 	dma_addr_t msi_phys;
- 	void *msi_virt;
-+	int err;
- 
- 	sdr_addr = of_get_property(dev->dev.of_node, "sdr-base", NULL);
- 	if (!sdr_addr)
--		return -1;
-+		return -EINVAL;
- 
--	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
--	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
-+	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
-+	if (!msi_data)
-+		return -EINVAL;
-+
-+	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
-+	if (!msi_mask)
-+		return -EINVAL;
- 
- 	msi->msi_dev = of_find_node_by_name(NULL, "ppc4xx-msi");
- 	if (!msi->msi_dev)
-@@ -160,30 +166,30 @@ static int ppc4xx_setup_pcieh_hw(struct platform_device *dev,
- 
- 	msi->msi_regs = of_iomap(msi->msi_dev, 0);
- 	if (!msi->msi_regs) {
--		dev_err(&dev->dev, "of_iomap problem failed\n");
--		return -ENOMEM;
-+		dev_err(&dev->dev, "of_iomap failed\n");
-+		err = -ENOMEM;
-+		goto node_put;
- 	}
- 	dev_dbg(&dev->dev, "PCIE-MSI: msi register mapped 0x%x 0x%x\n",
- 		(u32) (msi->msi_regs + PEIH_TERMADH), (u32) (msi->msi_regs));
- 
- 	msi_virt = dma_alloc_coherent(&dev->dev, 64, &msi_phys, GFP_KERNEL);
--	if (!msi_virt)
--		return -ENOMEM;
-+	if (!msi_virt) {
-+		err = -ENOMEM;
-+		goto iounmap;
-+	}
- 	msi->msi_addr_hi = upper_32_bits(msi_phys);
- 	msi->msi_addr_lo = lower_32_bits(msi_phys & 0xffffffff);
- 	dev_dbg(&dev->dev, "PCIE-MSI: msi address high 0x%x, low 0x%x\n",
- 		msi->msi_addr_hi, msi->msi_addr_lo);
- 
-+	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
-+	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
-+
- 	/* Progam the Interrupt handler Termination addr registers */
- 	out_be32(msi->msi_regs + PEIH_TERMADH, msi->msi_addr_hi);
- 	out_be32(msi->msi_regs + PEIH_TERMADL, msi->msi_addr_lo);
- 
--	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
--	if (!msi_data)
--		return -1;
--	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
--	if (!msi_mask)
--		return -1;
- 	/* Program MSI Expected data and Mask bits */
- 	out_be32(msi->msi_regs + PEIH_MSIED, *msi_data);
- 	out_be32(msi->msi_regs + PEIH_MSIMK, *msi_mask);
-@@ -191,6 +197,12 @@ static int ppc4xx_setup_pcieh_hw(struct platform_device *dev,
- 	dma_free_coherent(&dev->dev, 64, msi_virt, msi_phys);
- 
- 	return 0;
-+
-+iounmap:
-+	iounmap(msi->msi_regs);
-+node_put:
-+	of_node_put(msi->msi_dev);
-+	return err;
- }
- 
- static int ppc4xx_of_msi_remove(struct platform_device *dev)
-@@ -209,7 +221,6 @@ static int ppc4xx_of_msi_remove(struct platform_device *dev)
- 		msi_bitmap_free(&msi->bitmap);
- 	iounmap(msi->msi_regs);
- 	of_node_put(msi->msi_dev);
--	kfree(msi);
- 
- 	return 0;
- }
-@@ -223,18 +234,16 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
- 
- 	dev_dbg(&dev->dev, "PCIE-MSI: Setting up MSI support...\n");
- 
--	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
--	if (!msi) {
--		dev_err(&dev->dev, "No memory for MSI structure\n");
-+	msi = devm_kzalloc(&dev->dev, sizeof(*msi), GFP_KERNEL);
-+	if (!msi)
- 		return -ENOMEM;
--	}
- 	dev->dev.platform_data = msi;
- 
- 	/* Get MSI ranges */
- 	err = of_address_to_resource(dev->dev.of_node, 0, &res);
- 	if (err) {
- 		dev_err(&dev->dev, "%pOF resource error!\n", dev->dev.of_node);
--		goto error_out;
-+		return err;
- 	}
- 
- 	msi_irqs = of_irq_count(dev->dev.of_node);
-@@ -243,7 +252,7 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
- 
- 	err = ppc4xx_setup_pcieh_hw(dev, res, msi);
- 	if (err)
--		goto error_out;
-+		return err;
- 
- 	err = ppc4xx_msi_init_allocator(dev, msi);
- 	if (err) {
-@@ -256,7 +265,7 @@ static int ppc4xx_msi_probe(struct platform_device *dev)
- 		phb->controller_ops.setup_msi_irqs = ppc4xx_setup_msi_irqs;
- 		phb->controller_ops.teardown_msi_irqs = ppc4xx_teardown_msi_irqs;
- 	}
--	return err;
-+	return 0;
- 
- error_out:
- 	ppc4xx_of_msi_remove(dev);
--- 
-2.7.4
-
+>>> @@ -1011,6 +1034,7 @@ void p9_client_destroy(struct p9_client *clnt)
+>>>  
+>>>  	p9_tag_cleanup(clnt);
+>>>  
+>>> +	kmem_cache_destroy(clnt->fcall_cache);
+>>
+>> We could set NULL for fcall_cache in case of use-after-free.
+>>
+>>>  	kfree(clnt);
+> 
+> Hmm, I understand where this comes from, but I'm not sure I agree.
+> If someone tries to access the client while/after it is freed things are
+> going to break anyway, I'd rather let things break as obviously as
+> possible than try to cover it up.
+> 
+Setting NULL is not a big matter, and I will hear others' opinion.
