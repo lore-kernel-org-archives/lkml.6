@@ -2,124 +2,154 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BADACC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9C6C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73712208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:03:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73712208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 388AC208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388AC208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbeGaHlh (ORCPT
+        id S1731261AbeGaHl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:41:37 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56913 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729725AbeGaHlh (ORCPT
+        Tue, 31 Jul 2018 03:41:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44017 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729118AbeGaHl6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:41:37 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 1854C240003;
-        Tue, 31 Jul 2018 06:02:48 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc:     Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v5 00/11] hugetlb: Factorize hugetlb architecture primitives
-Date:   Tue, 31 Jul 2018 06:01:44 +0000
-Message-Id: <20180731060155.16915-1-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
+        Tue, 31 Jul 2018 03:41:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6V63E662594610
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 30 Jul 2018 23:03:14 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6V63ELL2594607;
+        Mon, 30 Jul 2018 23:03:14 -0700
+Date:   Mon, 30 Jul 2018 23:03:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-9r1pifftxvuxms8l7ir73p5l@git.kernel.org>
+Cc:     tglx@linutronix.de, namhyung@kernel.org, wangnan0@huawei.com,
+        jolsa@kernel.org, dsahern@gmail.com, acme@redhat.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com
+Reply-To: jolsa@kernel.org, tglx@linutronix.de, wangnan0@huawei.com,
+          namhyung@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, mingo@kernel.org, acme@redhat.com,
+          dsahern@gmail.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf tools: Fix the build on the alpine:edge
+ distro
+Git-Commit-ID: 44fe619b1418ff4e9d2f9518a940fbe2fb686a08
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC linux-mm for inclusion in -mm tree] 
+Commit-ID:  44fe619b1418ff4e9d2f9518a940fbe2fb686a08
+Gitweb:     https://git.kernel.org/tip/44fe619b1418ff4e9d2f9518a940fbe2fb686a08
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 30 Jul 2018 13:15:03 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 30 Jul 2018 13:15:03 -0300
 
-In order to reduce copy/paste of functions across architectures and then
-make riscv hugetlb port (and future ports) simpler and smaller, this
-patchset intends to factorize the numerous hugetlb primitives that are
-defined across all the architectures.
+perf tools: Fix the build on the alpine:edge distro
 
-Except for prepare_hugepage_range, this patchset moves the versions that
-are just pass-through to standard pte primitives into
-asm-generic/hugetlb.h by using the same #ifdef semantic that can be
-found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.
+The UAPI file byteorder/little_endian.h uses the __always_inline define
+without including the header where it is defined, linux/stddef.h, this
+ends up working in all the other distros because that file gets included
+seemingly by luck from one of the files included from little_endian.h.
 
-s390 architecture has not been tackled in this serie since it does not
-use asm-generic/hugetlb.h at all.
-powerpc could be factorized a bit more (cf huge_ptep_set_wrprotect).
+But not on Alpine:edge, that fails for all files where perf_event.h is
+included but linux/stddef.h isn't include before that.
 
-This patchset has been compiled on all addressed architectures with
-success (except for parisc, but the problem does not come from this series). 
+Adding the missing linux/stddef.h file where it breaks on Alpine:edge to
+fix that, in all other distros, that is just a very small header anyway.
 
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-9r1pifftxvuxms8l7ir73p5l@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/x86/util/pmu.c | 1 +
+ tools/perf/arch/x86/util/tsc.c | 1 +
+ tools/perf/perf.h              | 1 +
+ tools/perf/util/header.h       | 1 +
+ tools/perf/util/namespaces.h   | 1 +
+ 5 files changed, 5 insertions(+)
 
-Changelog:
-
-v5:
-  As suggested by Mike Kravetz, no need to move the #include
-  <asm-generic/hugetlb.h> for arm and x86 architectures, let it live at
-  the top of the file.
-
-v4:
-  Fix powerpc build error due to misplacing of #include
-  <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as
-  pointed by Christophe Leroy.
-
-v1, v2, v3:
-  Same version, just problems with email provider and misuse of
-  --batch-size option of git send-email
-
-Alexandre Ghiti (11):
-  hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
-  hugetlb: Introduce generic version of hugetlb_free_pgd_range
-  hugetlb: Introduce generic version of set_huge_pte_at
-  hugetlb: Introduce generic version of huge_ptep_get_and_clear
-  hugetlb: Introduce generic version of huge_ptep_clear_flush
-  hugetlb: Introduce generic version of huge_pte_none
-  hugetlb: Introduce generic version of huge_pte_wrprotect
-  hugetlb: Introduce generic version of prepare_hugepage_range
-  hugetlb: Introduce generic version of huge_ptep_set_wrprotect
-  hugetlb: Introduce generic version of huge_ptep_set_access_flags
-  hugetlb: Introduce generic version of huge_ptep_get
-
- arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
- arch/arm/include/asm/hugetlb.h               | 30 ----------
- arch/arm64/include/asm/hugetlb.h             | 39 +++---------
- arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
- arch/mips/include/asm/hugetlb.h              | 40 +++----------
- arch/parisc/include/asm/hugetlb.h            | 33 +++--------
- arch/powerpc/include/asm/book3s/32/pgtable.h |  2 +
- arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
- arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
- arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
- arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
- arch/sh/include/asm/hugetlb.h                | 54 ++---------------
- arch/sparc/include/asm/hugetlb.h             | 40 +++----------
- arch/x86/include/asm/hugetlb.h               | 69 ----------------------
- include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
- 15 files changed, 139 insertions(+), 382 deletions(-)
-
--- 
-2.16.2
-
+diff --git a/tools/perf/arch/x86/util/pmu.c b/tools/perf/arch/x86/util/pmu.c
+index 63a74c32ddc5..e33ef5bc31c5 100644
+--- a/tools/perf/arch/x86/util/pmu.c
++++ b/tools/perf/arch/x86/util/pmu.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <string.h>
+ 
++#include <linux/stddef.h>
+ #include <linux/perf_event.h>
+ 
+ #include "../../util/intel-pt.h"
+diff --git a/tools/perf/arch/x86/util/tsc.c b/tools/perf/arch/x86/util/tsc.c
+index 06bae7023a51..950539f9a4f7 100644
+--- a/tools/perf/arch/x86/util/tsc.c
++++ b/tools/perf/arch/x86/util/tsc.c
+@@ -2,6 +2,7 @@
+ #include <stdbool.h>
+ #include <errno.h>
+ 
++#include <linux/stddef.h>
+ #include <linux/perf_event.h>
+ 
+ #include "../../perf.h"
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index a1a97956136f..d215714f48df 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -5,6 +5,7 @@
+ #include <time.h>
+ #include <stdbool.h>
+ #include <linux/types.h>
++#include <linux/stddef.h>
+ #include <linux/perf_event.h>
+ 
+ extern bool test_attr__enabled;
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index 90d4577a92dc..6d7fe44aadc0 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -2,6 +2,7 @@
+ #ifndef __PERF_HEADER_H
+ #define __PERF_HEADER_H
+ 
++#include <linux/stddef.h>
+ #include <linux/perf_event.h>
+ #include <sys/types.h>
+ #include <stdbool.h>
+diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
+index 760558dcfd18..cae1a9a39722 100644
+--- a/tools/perf/util/namespaces.h
++++ b/tools/perf/util/namespaces.h
+@@ -10,6 +10,7 @@
+ #define __PERF_NAMESPACES_H
+ 
+ #include <sys/types.h>
++#include <linux/stddef.h>
+ #include <linux/perf_event.h>
+ #include <linux/refcount.h>
+ #include <linux/types.h>
