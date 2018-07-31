@@ -2,80 +2,127 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03786C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DC3C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25C6208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25C6208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E899208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 10:09:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fnkbnm+e";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j4PLbDJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E899208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731616AbeGaLsw (ORCPT
+        id S1731953AbeGaLtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:48:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:51620 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727409AbeGaLsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:48:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 270BC1596;
-        Tue, 31 Jul 2018 03:09:17 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ECD893F5BA;
-        Tue, 31 Jul 2018 03:09:16 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id D03A71AE17A1; Tue, 31 Jul 2018 11:09:18 +0100 (BST)
-Date:   Tue, 31 Jul 2018 11:09:18 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Kees Cook <keescook@google.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <20180731100918.GC23281@arm.com>
-References: <20180727190207.7ce1c9b0@canb.auug.org.au>
- <20180727190647.3525f5f7@canb.auug.org.au>
- <20180727205511.7c0f2e62@canb.auug.org.au>
- <20180727125522.GA6173@arm.com>
- <20180730173356.694fbf4e@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730173356.694fbf4e@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 31 Jul 2018 07:49:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48094 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbeGaLtB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:49:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A526E60397; Tue, 31 Jul 2018 10:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533031766;
+        bh=Jc0F//2nuVRvP9gR+qtfLGJB/xw9AcTLMjZX+KwebNQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Fnkbnm+edx7nUeSeQ3F7kuDfCP3hvcfid+o36aoWyMEwyRHIkWeozhZKqPIL4lnFU
+         aWlN/mQHTTywRbj4K6+geNI4QSNRAZS1Soz/bxXojxY87Uln7T9wEkCj0KoV4q+2mn
+         hMQm28Jv5hZgYK9g8TwMZZJLcWLeJ0w2VdEBwAXU=
+Received: from CANG02.ap.qualcomm.com (unknown [180.166.53.21])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 983EE60397;
+        Tue, 31 Jul 2018 10:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533031765;
+        bh=Jc0F//2nuVRvP9gR+qtfLGJB/xw9AcTLMjZX+KwebNQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j4PLbDJmcFH3LkrtgqmqY/xye8DN+etqIXrMJzyzI5c2ispjqj24dCvEDZiJdypEZ
+         1CWdhmDIChr+EBOlvq+R7CvR1O8LurMRDNEKJFcjBFge26HIa/ZdygrC4VZU+d+kzy
+         CgNg/Jjif7FnYys7Hv1gKaKDa90IRDECG2Xp5W3o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 983EE60397
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>
+Subject: [PATCH v8 0/5] Support for Qualcomm UFS QMP PHY on SDM845
+Date:   Tue, 31 Jul 2018 18:09:09 +0800
+Message-Id: <20180731100914.19856-1-cang@codeaurora.org>
+X-Mailer: git-send-email 2.15.0.windows.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 05:33:56PM +1000, Stephen Rothwell wrote:
-> On Fri, 27 Jul 2018 13:55:22 +0100 Will Deacon <will.deacon@arm.com> wrote:
-> > Thanks, Stephen. I managed to reproduce this by merging for-next/kspp from
-> > Kees's tree and for-next/core from the arm64 tree. The failure happens when
-> > building the EFI stub, so the commit you mention above is almost certainly
-> > the culprit.
-> > 
-> > We build the stub with the following GCC invocation:
-> > 
-> >  gcc -Wp,-MD,drivers/firmware/efi/libstub/.efi-stub-helper.o.d  -nostdinc -isystem /usr/lib/gcc/x86_64-linux-gnu/4.9/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -mcmodel=small -m64 -D__KERNEL__ -O2 -fPIC -fno-strict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY -ffreestanding -fno-stack-protector -fplugin-arg-stackleak_plugin-disable   -fno-builtin      -DKBUILD_BASENAME='"efi_stub_helper"' -DKBUILD_MODNAME='"efi_stub_helper"' -c -o drivers/firmware/efi/libstub/.tmp_efi-stub-helper.o drivers/firmware/efi/libstub/efi-stub-helper.c
-> > 
-> > so given that we're not passing any -fplugin= option anyway (because we
-> > override KBUILD_CFLAGS for the stub), I don't understand why we need
-> > to the disable option at all.
-> > 
-> > Laura?
-> 
-> So today I am just trying reverting that arm64 tree commit.
+This patch series adds support for UFS QMP PHY on SDM845 and the
+compatible string for it. This patch series depends on the current
+proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
+the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
+rebased on updated pipe_clk initialization sequence [3]. This series
+can only be merged once the dependent patches do.
+[1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
+[2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
+[3] https://patchwork.kernel.org/patch/10376551/
 
-I've pushed out Laura's fix to the arm64 for-next/core branch, so this
-should be resolved in the next next.
+Changes since v7:
+- Add one new change to update UFS PHY power on sequence
+- Incorporated review comments from Evan, Vivek and Manu.
 
-Will
+Changes since v6:
+- Add one new change to clean up some structs and field
+- Updates the PHY power control sequence.
+- Incorporated review comments from Vivek and Manu.
+
+Changes since v5:
+- Updates the PHY power control sequence.
+- Updates UFS PHY power on condition check.
+
+Changes since v4:
+- Adds 'ref_aux' clock back to SDM845 UFS PHY clock list.
+- Power on PHY before serdes configuration starts.
+- Updates the UFS PHY initialization sequence.
+- Updates a few UFS PHY registers.
+- Incorporated review comments from Vivek and Manu.
+
+Changes since v3:
+- Incorporated review comments from Vivek and Rob.
+
+Changes since v2:
+- Incorporated review comments from Vivek and Rob.
+- Remove "ref_aux" from sdm845 ufs phy clock list structure.
+
+Changes since v1:
+- Incorporated review comments from Vivek and Manu.
+- Update the commit title of patch 2.
+
+
+Can Guo (5):
+  phy: Update PHY power control sequence
+  phy: General struct and field cleanup
+  phy: Add QMP phy based UFS phy support for sdm845
+  scsi: ufs: Power on phy after it is initialized
+  dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
+
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   4 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 216 +++++++++++++++++++--
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |  15 ++
+ drivers/scsi/ufs/ufs-qcom.c                        |   4 +-
+ drivers/scsi/ufs/ufs-qcom.h                        |   1 +
+ 5 files changed, 219 insertions(+), 21 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
