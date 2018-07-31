@@ -2,102 +2,67 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2502EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDE2C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE68208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:19:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HEDm8ISW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JdAdb4VI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE68208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 95697208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95697208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeGaI6W (ORCPT
+        id S1731818AbeGaI6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:58:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56958 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbeGaI6W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:58:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F3E2460376; Tue, 31 Jul 2018 07:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533021568;
-        bh=xAVGpBcNbziTPjVs1lzAFqpwCPO7/ASgUPcDS6bgAS8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=HEDm8ISWiawOJArHnQfBSpzE0Roz31RaSqN2MkN31k4gkYJg1a4nbSHU3uAKOjogD
-         T5KMQ+SMry/f+JpChWCWqLyQO7WO0nx4LRmQY7j19yFl4Q0a5Tq/AHOYtcTNKgAgTx
-         3Vd9bfWPbkFcpdGaztPOV5I6UKecTWWEPCoZV/RA=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0A3EC60397;
-        Tue, 31 Jul 2018 07:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533021567;
-        bh=xAVGpBcNbziTPjVs1lzAFqpwCPO7/ASgUPcDS6bgAS8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=JdAdb4VIpE+0VuWXwqUDKbPJ9KDGbSnQxgyYiNPxfeDUmnIY2LM++GvqS2qcpNN8C
-         slIoar7pl0fwEY87rGi1hMmj4ltXD7kTLaMDGbnoJ/DSej5dnRudtHv2ob1GLL5HUN
-         uehgOttF1I3tzFclQzEFPDeegBVyHkJcnSlCZTzI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A3EC60397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 31 Jul 2018 04:58:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:55976 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727241AbeGaI6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:58:46 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D3A1B68D40; Tue, 31 Jul 2018 09:24:13 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 09:24:13 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Christoph Hellwig <hch@lst.de>, Rich Felker <dalias@libc.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        linux-sh@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: use the generic dma-noncoherent code for sh V3
+Message-ID: <20180731072413.GA22837@lst.de>
+References: <20180725094043.32443-1-hch@lst.de> <877elcrlbe.wl-ysato@users.sourceforge.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] iwlegacy: remove several redundant variables
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180711074253.4192-1-colin.king@canonical.com>
-References: <20180711074253.4192-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180731071927.F3E2460376@smtp.codeaurora.org>
-Date:   Tue, 31 Jul 2018 07:19:27 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877elcrlbe.wl-ysato@users.sourceforge.jp>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jul 31, 2018 at 03:06:13PM +0900, Yoshinori Sato wrote:
+> On Wed, 25 Jul 2018 18:40:38 +0900,
+> Christoph Hellwig wrote:
+> > 
+> > Hi all,
+> > 
+> > can you review these patches to switch sh to use the generic
+> > dma-noncoherent code?  All the requirements are in mainline already
+> > and we've switched various architectures over to it already.
+> > 
+> > Changes since V2:
+> >  - drop a now obsolete export
+> > 
+> > Changes since V1:
+> >  - fixed two stupid compile errors and verified them using a local
+> >    cross toolchain instead of the 0day buildbot
 > 
-> Variables id, unicast, write, conf, a_band, accum_tx and ucode are
-> assigned a value but it is never read, hence they are redundant and
-> can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'id' set but not used [-Wunused-but-set-variable]
-> warning: variable 'unicast' set but not used [-Wunused-but-set-variable]
-> warning: variable 'write' set but not used [-Wunused-but-set-variable]
-> warning: variable 'conf' set but not used [-Wunused-but-set-variable]
-> warning: variable 'a_band' set but not used [-Wunused-but-set-variable]
-> warning: variable 'tx' set but not used [-Wunused-but-set-variable]
-> warning: variable 'accum_tx' set but not used [-Wunused-but-set-variable]
-> warning: variable 'ucode' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+> Acked-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-454127ad36fb iwlegacy: remove several redundant variables
-
--- 
-https://patchwork.kernel.org/patch/10519029/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Do you want to pull this in through the sh tree?  If not I'd be happy
+to take it through the dma mapping tree.
