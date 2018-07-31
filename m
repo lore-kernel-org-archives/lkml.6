@@ -2,76 +2,135 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF822C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9158C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF7720844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:31:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF7720844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1454E20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:32:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Byu7vC6b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1454E20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbeGaTNA (ORCPT
+        id S1730149AbeGaTOM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 15:13:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727495AbeGaTNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 15:13:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 181974023461;
-        Tue, 31 Jul 2018 17:31:40 +0000 (UTC)
-Received: from treble (ovpn-120-73.rdu2.redhat.com [10.10.120.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 652311C596;
-        Tue, 31 Jul 2018 17:31:38 +0000 (UTC)
-Date:   Tue, 31 Jul 2018 12:31:36 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Jeremy Cline <jcline@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] ext4: super: Fix spectre gadget in ext4_quota_on
-Message-ID: <20180731173136.rnhzvvvt3wtt2xdg@treble>
-References: <20180727162357.30801-1-jcline@redhat.com>
- <20180727162357.30801-2-jcline@redhat.com>
- <20180727174654.bnooz26puuo7456w@treble>
- <E3E7B6AF-3819-4998-9B12-DACB4EBC14F1@dilger.ca>
+        Tue, 31 Jul 2018 15:14:12 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55653 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbeGaTOM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 15:14:12 -0400
+Received: by mail-it0-f66.google.com with SMTP id p7-v6so5627237itf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 10:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y1BnrtqVG/s28YgDNCfZ28RW59JM/ZDS0R3VqqeJLt8=;
+        b=Byu7vC6bpS1kqBjTxluAR+SVN7KiD8TrA8F65lOG/AIYXmPJTyYpxqdQlBTmtW7Omi
+         7fXjSTneNj6+4T1AShb6eA53kKWnqRRA7i4bXcqjL21vtdM0qd3jpLONw4SZQuxPaY9t
+         7zVDxjXJXNgMVs4aiMu+ZIBK1I+DrMlS6XbCxtB0/MumzCEntMKqu9ON4l371jWrFoiq
+         XvB8Dmj0yq5Mrr6YOEGMaNLrLhM9klXOTmSLjQhccUUbsLCoJYuDhw+iMehmGC9xon4R
+         pdjSSxAyGGJ3+FmMzmpG35PH1kY+bEHrTjlGaojb9BsI7HvhpfLJ9g3fyO2MpSJY7/7u
+         53aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y1BnrtqVG/s28YgDNCfZ28RW59JM/ZDS0R3VqqeJLt8=;
+        b=inxPgi9smR9dweDswTPWfE2yLHLLNvRtlPEWXUOmuu9gdxmawn4hVYabwDvCFiOfzW
+         Lq4YR3xAe4fI9agifEk8uNxgMDPOtCOTKo2pkrHmeCOJcSleuwttOrMSLNOikoWBOugX
+         uf6SbxCo9EKifapy3QMCNag8TQRNySsrAX+yQu0F1RAYUkeDZx1hOk7GlNzNgPdaXrPI
+         6KnQUKRPAUMKfWCJoQ63rCVV2EMn/l6ygXjK/2ZBfXKh22h60U88VVoXKmYUOWT763+Q
+         5ELqKJAMs43Lg0HXZ+6Nw9GymHQn6FmTCcDgrbHOrMPNXy6bB/oOd7vkYu7KzDcFb3BY
+         p0fw==
+X-Gm-Message-State: AOUpUlFEMJX4Q5lYpilZPQpMC5uI72+nAG99fMhz8rf3x8ui6j8gf9Nx
+        7/+Pfs1tl65Xf6LVHsKaxxOAePSrmRDRxZmjJRaqfQ==
+X-Google-Smtp-Source: AAOMgpdr2VUNhGoPP5FfWW37TdO1haQf0DiePn8sKlnV76M4GEZqhKWlsUYbO7OsG3/um9cu2/ncUqZrDnyBoehNP8k=
+X-Received: by 2002:a24:5f92:: with SMTP id r140-v6mr579163itb.45.1533058370483;
+ Tue, 31 Jul 2018 10:32:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <E3E7B6AF-3819-4998-9B12-DACB4EBC14F1@dilger.ca>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 31 Jul 2018 17:31:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 31 Jul 2018 17:31:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com> <20180731170957.o4vhopmzgedpo5sh@breakpoint.cc>
+In-Reply-To: <20180731170957.o4vhopmzgedpo5sh@breakpoint.cc>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 31 Jul 2018 10:32:39 -0700
+Message-ID: <CANn89iLKwJ5oDfXu8M9z9_Xh0FKHFo961c_ocdUmHQc3Onmykw@mail.gmail.com>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, jack@suse.com,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        David Miller <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev <netdev@vger.kernel.org>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 12:39:41AM -0600, Andreas Dilger wrote:
-> > Also it looks like XQM_MAXQUOTAS, MAXQUOTAS, and EXT4_MAXQUOTAS all
-> > have the same value (3).  Maybe they can be consolidated to just use
-> > MAXQUOTAS everywhere?
-> 
-> No, the filesystem-specific MAXQUOTAS values were separated from
-> the kernel MAXQUOTAS value for a good reason.  This allows some
-> filesystems to support new quota types (e.g. project quotas) that
-> not all other filesystems can handle.  This may potentially change
-> again in the future, so they shouldn't be tightly coupled.
+On Tue, Jul 31, 2018 at 10:10 AM Florian Westphal <fw@strlen.de> wrote:
+>
+> Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> > Guys, it seems that we have a lot of code using SLAB_TYPESAFE_BY_RCU cache without constructor.
+> > I think it's nearly impossible to use that combination without having bugs.
+> > It's either you don't really need the SLAB_TYPESAFE_BY_RCU, or you need to have a constructor in kmem_cache.
+> >
+> > Could you guys, please, verify your code if it's really need SLAB_TYPSAFE or constructor?
+> >
+> > E.g. the netlink code look extremely suspicious:
+> >
+> >       /*
+> >        * Do not use kmem_cache_zalloc(), as this cache uses
+> >        * SLAB_TYPESAFE_BY_RCU.
+> >        */
+> >       ct = kmem_cache_alloc(nf_conntrack_cachep, gfp);
+> >       if (ct == NULL)
+> >               goto out;
+> >
+> >       spin_lock_init(&ct->lock);
+> >
+> > If nf_conntrack_cachep objects really used in rcu typesafe manner, than 'ct' returned by kmem_cache_alloc might still be
+> > in use by another cpu. So we just reinitialize spin_lock used by someone else?
+>
+> That would be a bug, nf_conn objects are reference counted.
+>
+> spinlock can only be used after object had its refcount incremented.
+>
+> lookup operation on nf_conn object:
+> 1. compare keys
+> 2. attempt to obtain refcount (using _not_zero version)
+> 3. compare keys again after refcount was obtained
+>
+> if any of that fails, nf_conn candidate is skipped.
 
-But isn't that what sb->s_quota_types is for?  To allow different
-filesystems to support different quota types?
 
-Also I don't see any bounds checks for EXT4_MAXQUOTAS.  It seems like
-the ext4 code assumes that MAXQUOTAS and EXT4_MAXQUOTAS are the same.
+Yes, the key here is the refcount, this is only what we need to clear
+after kmem_cache_alloc()
 
--- 
-Josh
+By definition, if an object is being freed/reallocated, the refcount
+should be already 0, and clearing it again is a NOP.
