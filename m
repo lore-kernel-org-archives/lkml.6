@@ -2,159 +2,276 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0878CC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C998C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C56208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:36:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S4q93Y6s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C56208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id AD736208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:38:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD736208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731986AbeGaLQJ (ORCPT
+        id S1731880AbeGaLRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:16:09 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34899 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730513AbeGaLQI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:16:08 -0400
-Received: by mail-io0-f193.google.com with SMTP id w11-v6so12428353iob.2
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 02:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=85TeqeXnlQijhRhmSXHYFUyoSms6CWO9ewd8YQdrlzk=;
-        b=S4q93Y6s7UFrG8UJGPAoolFC8DWugF6wH1JyNoUi9eeit9cQmDLgtks8O9PAlMQg2p
-         6/f+qhQwWsPswsdrSs8o2aoGXNiqsvnq25cfLl3S8xqUbiLquzhosMomPbAuEekwexNi
-         AKg83W2XGMPJxoe9p4SMEF+z/gkHMaMIVddSeVbuIsVTtuK6TmtToCqcHBI0fBNi3t+g
-         Bl7nsUFks1d6argU0VTBhQITd5Y/kMP777YJjenCP/aCja+M9uwUkQm/7X2myLowvJ4Q
-         xq6XzmuyoTYKT1kIPAQd4ixBpkJCvdf5UrGPJykJeFpDiPYZcQzkZgbdGMNu/DwTFtcN
-         WZww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=85TeqeXnlQijhRhmSXHYFUyoSms6CWO9ewd8YQdrlzk=;
-        b=KxQbCIBo4GJAE8F0IvN6+tkWKhNq57H3dVnYfDUpFy0X6zDT1o/u8b8v+/mv8I9nkx
-         A/nmnpfCC12EcVOpJcOeAh3V3lX3cMqGJMRxo/e/Y/DMa0BiO5RGNtZZ4VKMGY2QPScO
-         brLXM6f/njiRq9UstiSSIoMl3NmZrhLnutkezmwNDqwXK0YAb+4ejFxFt9xaZMd5AEat
-         biffoeztRzSppqUJkrCKrFHNtrLHfaQSTKT51f3XcDZMmzXRni36sMVAic+ME46PpPgM
-         W91/jzDRH21ZbrZBpcDA8T/FU5FNVSZXG9AiKV7GHhMBlqGqCtyR9KrtJM2e3QCeUAco
-         wJ5A==
-X-Gm-Message-State: AOUpUlEyTMg/OJWQQiK0j42rSrcHoxTqJXHu78HJZrhwkqqZHOWQKMa6
-        vnPtCSfrSf5pWM4Llu7sUqlr2xiJmxaYWVxKN6JYqA==
-X-Google-Smtp-Source: AAOMgpfTroYsQFwz8fMAs0uHa9xW/My+FCCbZJ9S9FewSOyzTlUOjL/NNKwYqQ956vzIM4xxQG5vd/h0mmUySRvqt5Q=
-X-Received: by 2002:a6b:b010:: with SMTP id z16-v6mr16432926ioe.206.1533029799948;
- Tue, 31 Jul 2018 02:36:39 -0700 (PDT)
+        Tue, 31 Jul 2018 07:17:43 -0400
+Received: from mga05.intel.com ([192.55.52.43]:14315 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729987AbeGaLRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:17:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 02:38:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,426,1526367600"; 
+   d="scan'208";a="68879636"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by FMSMGA003.fm.intel.com with ESMTP; 31 Jul 2018 02:38:11 -0700
+Subject: Re: [PATCH V4 5/7] mmc: sdhci: add Auto CMD Auto Select support
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>,
+        Jason Wu <jason.wu@unisoc.com>
+References: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
+ <1532340508-8749-6-git-send-email-zhang.chunyan@linaro.org>
+ <33ceb61c-3e09-c336-e9b9-87c01336f56c@intel.com>
+ <CAAfSe-vVEve63y-Pc0QF6w7vc37cbbbOknGkp9SmocXyNX3J4g@mail.gmail.com>
+ <f810df5a-2cc4-a534-9fdc-2575ae81cf4b@intel.com>
+ <CAAfSe-uyjnBGk7w2KMgrgEYVgYY6p6EqCWTUW+r2BWDoYmPpLg@mail.gmail.com>
+ <23282747-4ae1-d627-a537-590b9315b941@intel.com>
+ <CAAfSe-vp_6zFPo+UYKiR+St1ajv8WXP_OL-OZh_POiUybzDHeQ@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c036244d-e944-f0c7-3efd-886def5fb22c@intel.com>
+Date:   Tue, 31 Jul 2018 12:36:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:a4f:ba01:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 02:36:39
- -0700 (PDT)
-In-Reply-To: <67423232-be56-fd47-06e6-394812c2b918@iogearbox.net>
-References: <CAKOZuesQ6GdNTGDFsNi4o8LYzxLBtYZ=Cz4=aZbqqCNia+QFnQ@mail.gmail.com>
- <20180729205835.34850-1-dancol@google.com> <e8f6e709-e694-ddad-b61e-d2ce1598dff3@iogearbox.net>
- <CAKOZuesH_LRdt15aXaRQRPSNzN-URTQWgSgr0zLsv8ZKFU9=9Q@mail.gmail.com>
- <20180730172641.7d516231@cakuba.netronome.com> <CAKOZuesNnY8oKimMk+gnUppMgZt92F+razSZCSfHu=xfq+snGg@mail.gmail.com>
- <67423232-be56-fd47-06e6-394812c2b918@iogearbox.net>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 31 Jul 2018 02:36:39 -0700
-Message-ID: <CAKOZueu5VdzCEkEv_nR4D0CtYi5r9XOdKOfpKvYWDGPnQGqMHQ@mail.gmail.com>
-Subject: Re: [PATCH v3] Add BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES bpf(2) command
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        netdev <netdev@vger.kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <ast@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAAfSe-vp_6zFPo+UYKiR+St1ajv8WXP_OL-OZh_POiUybzDHeQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 1:34 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 07/31/2018 02:33 AM, Daniel Colascione wrote:
->> On Mon, Jul 30, 2018 at 5:26 PM, Jakub Kicinski
->> <jakub.kicinski@netronome.com> wrote:
->>> On Mon, 30 Jul 2018 03:25:43 -0700, Daniel Colascione wrote:
->>>> On Mon, Jul 30, 2018 at 3:04 AM, Daniel Borkmann <daniel@iogearbox.net> wrote:
->>>>> Hmm, I don't think such UAPI as above is future-proof. In case we would want
->>>>> a similar mechanism in future for other maps, we would need a whole new bpf
->>>>> command or reuse BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES as a workaround though
->>>>> the underlying map may not even be a map-to-map. Additionally, we don't have
->>>>> any map object at hand in the above, so we couldn't make any finer grained
->>>>> decisions either. Something like below would be more suitable and leaves room
->>>>> for extending this further in future.
+On 31/07/18 12:20, Chunyan Zhang wrote:
+> On 31 July 2018 at 16:56, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>> On 31/07/18 11:36, Chunyan Zhang wrote:
+>>> On 31 July 2018 at 16:05, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>>> On 31/07/18 10:04, Chunyan Zhang wrote:
+>>>>> Hi Adrian,
+>>>>>
+>>>>> On 30 July 2018 at 21:06, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>>>>> On 23/07/18 13:08, Chunyan Zhang wrote:
+>>>>>>> As SD Host Controller Specification v4.10 documents:
+>>>>>>> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
+>>>>>>> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
+>>>>>>> Control 2 register which indicates whether card supports CMD23. If CMD23
+>>>>>>> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
+>>>>>>> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
+>>>>>>> recommended rather than use of Auto CMD12 Enable or Auto CMD23
+>>>>>>> Enable.
+>>>>>>>
+>>>>>>> This patch add this new mode support.
+>>>>>>>
+>>>>>>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>>>>>>> ---
+>>>>>>>  drivers/mmc/host/sdhci.c | 61 +++++++++++++++++++++++++++++++++++++++---------
+>>>>>>>  drivers/mmc/host/sdhci.h |  2 ++
+>>>>>>>  2 files changed, 52 insertions(+), 11 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>>>> index 5acea3d..5c60590 100644
+>>>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>>>> @@ -311,6 +311,23 @@ static void sdhci_config_dma(struct sdhci_host *host)
+>>>>>>>       sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+>>>>>>>  }
+>>>>>>>
+>>>>>>> +static void sdhci_enable_cmd23(struct sdhci_host *host)
+>>>>>>> +{
+>>>>>>> +     u16 ctrl2;
+>>>>>>> +
+>>>>>>> +     /*
+>>>>>>> +      * This is used along with "Auto CMD Auto Select" feature,
+>>>>>>> +      * which is introduced from v4.10, if card supports CMD23,
+>>>>>>> +      * Auto CMD23 should be used instead of Auto CMD12.
+>>>>>>> +      */
+>>>>>>> +     if (host->version >= SDHCI_SPEC_410 &&
+>>>>>>> +         (host->mmc->caps & MMC_CAP_CMD23)) {
+>>>>>>
+>>>>>> That is the host capability.  It needs to be the card capability.
+>>>>>
+>>>>> Could you please elaborate the issue?
+>>>>>
+>>>>> I thought we're setting for host here.  Do you mean we need to see the
+>>>>> card capability?
 >>>>
->>>> YAGNI.  Your proposed mechanism doesn't add anything under the current
->>>> implementation.
+>>>> Yes. SDHCI_TRNS_AUTO_SEL selects auto-CMD23 or auto-CMD12 based on this
+>>>> setting, so this must reflect the card's capability.
 >>>
->>> FWIW in case of HW offload targeting a particular map may allow users
->>> to avoid a potentially slow sync with all the devices on the system.
+>>> Got it, but how to know if the card supports CMD23?
 >>
->> Sure. But such a thing doesn't exist right now (right?), and we can
->> add that more-efficient-in-that-one-case BPF interface when it lands.
->> I'd rather keep things simple for now.
->
-> I don't see a reason why that is even more complicated.
+>> At the moment the only way of knowing is if a request is received with mrq->sbc
+>>
+>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>>> +             ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>>>>>> +             ctrl2 |= SDHCI_CMD23_ENABLE;
+>>>>>>> +             sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+>>>>>>> +     }
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>  static void sdhci_init(struct sdhci_host *host, int soft)
+>>>>>>>  {
+>>>>>>>       struct mmc_host *mmc = host->mmc;
+>>>>>>> @@ -329,6 +346,8 @@ static void sdhci_init(struct sdhci_host *host, int soft)
+>>>>>>>               host->clock = 0;
+>>>>>>>               mmc->ops->set_ios(mmc, &mmc->ios);
+>>>>>>>       }
+>>>>>>> +
+>>>>>>> +     sdhci_enable_cmd23(host);
+>>>>>>>  }
+>>>>>>>
+>>>>>>>  static void sdhci_reinit(struct sdhci_host *host)
+>>>>>>> @@ -1093,6 +1112,36 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>>>>>>>              !mrq->cap_cmd_during_tfr;
+>>>>>>>  }
+>>>>>>>
+>>>>>>> +static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
+>>>>>>> +                                      struct mmc_command *cmd,
+>>>>>>> +                                      u16 *mode)
+>>>>>>> +{
+>>>>>>> +     bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
+>>>>>>> +                      (cmd->opcode != SD_IO_RW_EXTENDED);
+>>>>>>> +     bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
+>>>>>>> +
+>>>>>>> +     /*
+>>>>>>> +      * In case of Version 4.10 or later, use of 'Auto CMD Auto
+>>>>>>> +      * Select' is recommended rather than use of 'Auto CMD12
+>>>>>>> +      * Enable' or 'Auto CMD23 Enable'.
+>>>>>>> +      */
+>>>>>>> +     if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
+>>>>>>> +             *mode |= SDHCI_TRNS_AUTO_SEL;
+>>>>>>
+>>>>>> As noted in patch 4, the CMD23 argument is not just the block count for eMMC.
+>>>>>
+>>>>> Probably I haven't got your point...
+>>>>>
+>>>>> >From what I understand, auto_sel mode doesn't need argument2. Doesn't
+>>>>> this work for eMMC?
+>>>>
+>>>> CMD23 always needs an argument
+>>>
+>>> But setting argument for CMD23 will cover the block count value we set
+>>> before, that will lead mounting emmc to fail.
+>>
+>> Does it fail because it contains cmd->mrq->sbc->arg or does it fail because
+>> it gets written twice?
+> 
+> Seems that the argument is too big compared with block count, hardware
+> think it is a super block count.
+> 
+> More details of the error information:
+> https://www.irccloud.com/pastebin/uYlVEUsP/
 
-Both the API and the implementation are much more complicated in the
-per-map ops version: just look at the patch size. The size argument
-isn't necessarily a dealbreaker, but I still don't see what the extra
-code size and complexity is buying.
+Does it work with auto-CMD23 instead of auto-CMD-auto-select?
+Does it work if the 16-bit block count register is used?
 
-> An API command name
-> such as BPF_SYNCHRONIZE_MAP_TO_MAP_REFERENCES is simply non-generic, and
-> exposes specific map details (here: map-in-map) into the UAPI whereas it
-> should reside within a specific implementation instead similar to other ops
-> we have for maps.
+Obviously, if we can't pass the CMD23 argument correctly then we can't use
+auto-CMD23.
 
-But synchronize isn't conceptually a command that applies to a
-specific map. It waits on all references. Did you address my point
-about your proposed map-specific interface requiring redundant
-synchronize_rcu calls in the case where we swap multiple maps and want
-to wait for all the references to drain? Under my proposal, you'd just
-BPF_SYNCHRONIZE_WHATEVER and call schedule_rcu once. Under your
-proposal, we'd make it a per-map operation, so we'd issue one
-synchronize_rcu per map.
+> 
+>>
+>>>
+>>>>
+>>>>>
+>>>>> The test platform I used was just eMMC only, haven't found problem.
+>>>>
+>>>> Because the bits that are missing from the CMD23 argument (reliable write,
+>>>> context id, etc) will not make the command fail.
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Chunyan
+>>>>>
+>>>>>>
+>>>>>>> +             return;
+>>>>>>> +     }
+>>>>>>> +
+>>>>>>> +     /*
+>>>>>>> +      * If we are sending CMD23, CMD12 never gets sent
+>>>>>>> +      * on successful completion (so no Auto-CMD12).
+>>>>>>> +      */
+>>>>>>> +     if (use_cmd12) {
+>>>>>>> +             *mode |= SDHCI_TRNS_AUTO_CMD12;
+>>>>>>> +     } else if (use_cmd23) {
+>>>>>>> +             *mode |= SDHCI_TRNS_AUTO_CMD23;
+>>>>>>> +             sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>>>>>>> +     }
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>  static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>>>>>>       struct mmc_command *cmd)
+>>>>>>>  {
+>>>>>>> @@ -1119,17 +1168,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>>>>>>
+>>>>>>>       if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
+>>>>>>>               mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
+>>>>>>> -             /*
+>>>>>>> -              * If we are sending CMD23, CMD12 never gets sent
+>>>>>>> -              * on successful completion (so no Auto-CMD12).
+>>>>>>> -              */
+>>>>>>> -             if (sdhci_auto_cmd12(host, cmd->mrq) &&
+>>>>>>> -                 (cmd->opcode != SD_IO_RW_EXTENDED))
+>>>>>>> -                     mode |= SDHCI_TRNS_AUTO_CMD12;
+>>>>>>> -             else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+>>>>>>> -                     mode |= SDHCI_TRNS_AUTO_CMD23;
+>>>>>>> -                     sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>>>>>>> -             }
+>>>>>>> +             sdhci_auto_cmd_select(host, cmd, &mode);
+>>>>>>>       }
+>>>>>>>
+>>>>>>>       if (data->flags & MMC_DATA_READ)
+>>>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>>>>>> index 81aae07..a8f4ec2 100644
+>>>>>>> --- a/drivers/mmc/host/sdhci.h
+>>>>>>> +++ b/drivers/mmc/host/sdhci.h
+>>>>>>> @@ -42,6 +42,7 @@
+>>>>>>>  #define  SDHCI_TRNS_BLK_CNT_EN       0x02
+>>>>>>>  #define  SDHCI_TRNS_AUTO_CMD12       0x04
+>>>>>>>  #define  SDHCI_TRNS_AUTO_CMD23       0x08
+>>>>>>> +#define  SDHCI_TRNS_AUTO_SEL 0x0C
+>>>>>>>  #define  SDHCI_TRNS_READ     0x10
+>>>>>>>  #define  SDHCI_TRNS_MULTI    0x20
+>>>>>>>
+>>>>>>> @@ -185,6 +186,7 @@
+>>>>>>>  #define   SDHCI_CTRL_DRV_TYPE_D              0x0030
+>>>>>>>  #define  SDHCI_CTRL_EXEC_TUNING              0x0040
+>>>>>>>  #define  SDHCI_CTRL_TUNED_CLK                0x0080
+>>>>>>> +#define  SDHCI_CMD23_ENABLE          0x0800
+>>>>>>>  #define  SDHCI_CTRL_V4_MODE          0x1000
+>>>>>>>  #define  SDHCI_CTRL_64BIT_ADDR               0x2000
+>>>>>>>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE        0x8000
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
+> 
 
-> If in future other maps would be added that would have
-> similar mechanisms of inner objects they return to the BPF program, we'll
-> be adding yet another command just for this.
-
-And that's why my personal preference is to just calling this thing
-BPF_SYNCHRONIZE, which I'd define to wait for all such "inner
-objects". Alexei is the one who asked for the very specific naming, I
-believe.
-
-Anyway, we have a very simple patch that we could apply today. It
-addresses a real need, and it doesn't preclude adding something more
-specific later, when we know we need it. Besides, it's not as if
-adding a BPF command is particularly expensive.
-
-> Also, union bpf_attr is extensible,
-> e.g. additional members could be added in future whenever needed for this
-> subcommand instead of forcing it to NULL as done here.
-
-We fail with EINVAL when attr != NULL now, which means that we can
-safely accept a non-NULL attr-based subcommand later without breaking
-anyone. The interface is already extensible.
-
-> All I'm saying is to
-> keep it generic so it can be extended later.
-
-Sure, but no more extensible than it has to be. Prematurely-added
-extension points tend to cause trouble later.
