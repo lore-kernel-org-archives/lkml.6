@@ -2,144 +2,152 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322CBC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22EBC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB678208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:06:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB678208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B986208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 01:08:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qE1onPXb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B986208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeGaCnv (ORCPT
+        id S1731657AbeGaCqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:43:51 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50716 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729138AbeGaCnv (ORCPT
+        Mon, 30 Jul 2018 22:46:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50016 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728705AbeGaCqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:43:51 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fkJ6p-000106-FK; Mon, 30 Jul 2018 21:05:55 -0400
-Message-ID: <1532999155.28585.56.camel@surriel.com>
-Subject: Re: [PATCH v2 11/11] mm,sched: conditionally skip lazy TLB mm
- refcounting
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, X86 ML <x86@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Dave Hansen <dave.hansen@intel.com>,
+        Mon, 30 Jul 2018 22:46:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=qbGs4h/GgGklAXQBai4VPsqaU5ZT/KchQuqvzxesQ2I=; b=qE1onPXb4N0gulcpheDsUwJlOU
+        FJ8D9a3Z++u2vahBkSlXLwM4unIqsEkjXjlmGle61yKz/S8dUT2QJo2QS5cMLikF0D+tAcoFmg3nE
+        T5Zs7GxawrXzDWu4vzUlmw7sXdh1YjyA+wvXOOviTk/oYz1A8oQtZlLlmXbdTSQf8b5ocaBhTeRBd
+        iRR08xBdP9YAfD+yBNlf12vLQ8/Flso4olRQqharMXAHq9su+r+9Bw8gRxPwsrdmn7FJZaPiTRI13
+        BGHLsYqIUm50vfM4fLbEc8btN5BbaJe96l2WDYbEZ7j7NLO4nt0wRl+wq+PwbECRyWU7xoU00HlYE
+        ++EN6CAg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkJ9b-0002OT-5u; Tue, 31 Jul 2018 01:08:47 +0000
+Subject: Re: [PATCH 0/6] rapidio: move Kconfig menu definition to subsystem
+To:     Alexei Colin <acolin@isi.edu>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     John Paul Walters <jwalters@isi.edu>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date:   Mon, 30 Jul 2018 21:05:55 -0400
-In-Reply-To: <20180730162653.GM2494@hirez.programming.kicks-ass.net>
-References: <20180728215357.3249-1-riel@surriel.com>
-         <20180728215357.3249-11-riel@surriel.com>
-         <CALCETrWS4pE5Tv3OErM3AD-E=CGG3U+2CBVecRF3N0c+g42vEg@mail.gmail.com>
-         <20180729155452.37eddc11@imladris.surriel.com>
-         <20180730095502.GG2494@hirez.programming.kicks-ass.net>
-         <1532961011.28585.30.camel@surriel.com>
-         <20180730162653.GM2494@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-E7KE3RR1bBJyyka+rda/"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Anvin <hpa@zytor.com>,
+        Matt Porter <mporter@kernel.crashing.org>, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180730225035.28365-1-acolin@isi.edu>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <db90c65d-b6da-1f57-43c6-e105fc6f1704@infradead.org>
+Date:   Mon, 30 Jul 2018 18:08:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180730225035.28365-1-acolin@isi.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/30/2018 03:50 PM, Alexei Colin wrote:
+> The top-level Kconfig entry for RapidIO subsystem is currently
+> duplicated in several architecture-specific Kconfig files. This set of
+> patches does two things:
+> 
+> 1. Move the Kconfig menu definition into the RapidIO subsystem and
+> remove the duplicate definitions from arch Kconfig files.
+> 
+> 2. Enable RapidIO Kconfig menu entry for arm and arm64 architectures,
+> where it was not enabled before. I tested that subsystem and drivers
+> build successfully for both architectures, and tested that the modules
+> load on a custom arm64 Qemu model.
+> 
+> For all architectures, RapidIO menu should be offered when either:
+> (1) The platform has a PCI bus (which host a RapidIO module on the bus).
+> (2) The platform has a RapidIO IP block (connected to a system bus, e.g.
+> AXI on ARM). In this case, 'select HAS_RAPIDIO' should be added to the
+> 'config ARCH_*' menu entry for the SoCs that offer the IP block.
+> 
+> Prior to this patchset, different architectures used different criteria:
+> * powerpc: (1) and (2)
+> * mips: (1) and (2) after recent commit into next that added (2):
+>   https://www.linux-mips.org/archives/linux-mips/2018-07/msg00596.html
+>   fc5d988878942e9b42a4de5204bdd452f3f1ce47
+>   491ec1553e0075f345fbe476a93775eabcbc40b6
+> * x86: (1)
+> * arm,arm64: none (RapidIO menus never offered)
+> 
+> Responses to feedback from prior submission (thanks for the reviews!):
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593347.html
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593349.html
+> 
+> Changelog:
+>   * Moved Kconfig entry into RapidIO subsystem instead of duplicating
+> 
+> In the current patchset, I took the approach of adding '|| PCI' to the
+> depends in the subsystem. I did try the alterantive approach mentioned
+> in the reviews for v1 of this patch, where the subsystem Kconfig does
+> not add a '|| PCI' and each per-architecture Kconfig has to add a
+> 'select HAS_RAPIDIO if PCI' and SoCs with IP blocks have to also add
+> 'select HAS_RAPIDIO'. This works too but requires each architecture's
+> Kconfig to add the line for RapidIO (whereas current approach does not
+> require that involvement) and also may create a false impression that
+> the dependency on PCI is strict.
+> 
+> We appreciate the suggestion for also selecting the RapdiIO subsystem for
+> compilation with COMPILE_TEST, but hope to address it in a separate
+> patchset, localized to the subsystem, since it will need to change
+> depends on all drivers, not just on the top level, and since this
+> patch now spans multiple architectures.
+> 
+> 
+> Alexei Colin (6):
+>   rapidio: define top Kconfig menu in driver subtree
+>   x86: factor out RapidIO Kconfig menu
+>   powerpc: factor out RapidIO Kconfig menu entry
+>   mips: factor out RapidIO Kconfig entry
+>   arm: enable RapidIO menu in Kconfig
+>   arm64: enable RapidIO menu in Kconfig
+> 
+>  arch/arm/Kconfig        |  2 ++
+>  arch/arm64/Kconfig      |  2 ++
+>  arch/mips/Kconfig       | 11 -----------
+>  arch/powerpc/Kconfig    | 13 +------------
+>  arch/x86/Kconfig        |  8 --------
+>  drivers/rapidio/Kconfig | 15 +++++++++++++++
+>  6 files changed, 20 insertions(+), 31 deletions(-)
+> 
 
---=-E7KE3RR1bBJyyka+rda/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+LGTM.
 
-On Mon, 2018-07-30 at 18:26 +0200, Peter Zijlstra wrote:
->=20
-> So for ARCH_NO_ACTIVE_MM we never touch ->active_mm and therefore
-> ->active_mm =3D=3D ->mm.
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # for the series
 
-Close, but not true for kernel threads, which have a=20
-NULL ->mm, but a non-null ->active_mm that gets passed
-to enter_lazy_tlb().
-
-I stuck to the structure of your code, but ended up
-removing all the ifdefs because the final mmdrop requires
-that we actually keep track of the ->active_mm across
-potentially several kernel->kernel context switches.
-
-Ifdefs around the reference counting code are also not
-needed, because grab_lazy_mm and drop_lazy_mm already
-contain the equivalent of an ifdef themselves.
-
-By morning I should know what the test results look
-like. I expect they will be identical to my patches,
-since the refcounting is disabled completely anyway :)
-
-> > +       /*
-> > +        * kernel -> kernel   lazy + transfer active
-> > +        *   user -> kernel   lazy + mmgrab() active
-> > +        *
-> > +        * kernel ->   user   switch + mmdrop() active
-> > +        *   user ->   user   switch
-> > +        */
-> > +       if (!next->mm) {                                // to
-> > kernel
-> > +               enter_lazy_tlb(prev->active_mm, next);
-> > +
->=20
-> #ifndef ARCH_NO_ACTIVE_MM
-> > +               next->active_mm =3D prev->active_mm;
-> > +               if (prev->mm)                           // from
-> > user
-> > +                       mmgrab(prev->active_mm);
->=20
-> 		else
-> 			prev->active_mm =3D NULL;
-> > +#endif
-> > +       } else {                                        // to user
-> > +               switch_mm_irqs_off(prev->active_mm, next->mm,
-> > next);
-> > +
->=20
-> #ifndef ARCH_NO_ACTIVE_MM
-> > +               if (!prev->mm) {                        // from
-> > kernel
-> > +                       /* will mmdrop() in finish_task_switch().
-> > */
-> > +                       rq->prev_mm =3D prev->active_mm;
-> > +                       prev->active_mm =3D NULL;
-> > +               }
-> > +#endif
->=20
->=20
---=20
-All Rights Reversed.
---=-E7KE3RR1bBJyyka+rda/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltftfMACgkQznnekoTE
-3oPq/ggAuz6InKyTy2j2MY+yjCf8dKDUbsE/AYffIZfSRjj2k2SNu6fqx7VPPM4M
-UmAgECAp3RpBJFB0dH70GFb/dD+j1KLzCfNZA+1Qz+WZ7DdeylZcujos9Lph7nMw
-fD1MQFxO9bk+zt1XuVCChnNx1FphE2GVauZMDWRRYgs5oehegesRwQ5MC4HWhNe1
-AqhqSIg+FZx5EZo1vQmsBHPIS2ygMXHx8+6vQ84o1D+QNEDuMesmQmzWMozNZYak
-ar13GRAvo9+J41WMeaqq0zGh+jHBmzGwKYlMHkCwiN/79IDiodAscIJ+H8EUQY9v
-CxN+UM5kRBGsHW0Y4HY0nnTs04Jt/Q==
-=hkbD
------END PGP SIGNATURE-----
-
---=-E7KE3RR1bBJyyka+rda/--
-
+thanks,
+-- 
+~Randy
