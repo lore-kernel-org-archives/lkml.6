@@ -2,85 +2,89 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4303DC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC96FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5091208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:30:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5091208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 68843208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:31:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68843208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbeGaNKH (ORCPT
+        id S1732073AbeGaNLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 09:10:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:32451 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbeGaNKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 09:10:07 -0400
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6VBUDrD020219;
-        Tue, 31 Jul 2018 20:30:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Tue, 31 Jul 2018 20:30:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6VBUDnw020215
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 31 Jul 2018 20:30:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-To:     Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>
-Cc:     Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
- <20180730144647.GX24267@dhcp22.suse.cz>
- <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
- <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
- <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
- <20180730185110.GB24267@dhcp22.suse.cz>
- <20180730191005.GC24267@dhcp22.suse.cz>
- <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
- <20180731050928.GA4557@dhcp22.suse.cz>
- <b03f09c2-f749-9c80-b4f6-d0b4a9634013@i-love.sakura.ne.jp>
- <20180731111519.GH4557@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <08292e78-9a28-12ec-4164-2934cde5be51@i-love.sakura.ne.jp>
-Date:   Tue, 31 Jul 2018 20:30:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 09:11:47 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:60518 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731861AbeGaNLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 09:11:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id E2C38201BF;
+        Tue, 31 Jul 2018 15:31:37 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YDT0Nrk9PchS; Tue, 31 Jul 2018 15:31:37 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 92339201AE;
+        Tue, 31 Jul 2018 15:31:37 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server id 14.3.399.0; Tue, 31 Jul 2018
+ 13:31:52 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 3AAC031820C7;
+ Tue, 31 Jul 2018 13:31:52 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 13:31:52 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot <syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com>,
+        <ddstreet@ieee.org>, <dvyukov@google.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: unregister_netdevice: waiting for DEV to become free
+Message-ID: <20180731113152.4pes5xwhae2xydqg@gauss3.secunet.de>
+References: <000000000000d71bf6056a34b628@google.com>
+ <000000000000ed9844056a507832@google.com>
+ <50d24879-7f38-f8c5-982f-b3fc5d3a9cc6@I-love.SAKURA.ne.jp>
+ <11ddcad9-f3fa-dfbc-18a0-e5facc37a4a3@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180731111519.GH4557@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <11ddcad9-f3fa-dfbc-18a0-e5facc37a4a3@I-love.SAKURA.ne.jp>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: B7466EF7-D546-41A8-BC14-2312C118388A
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/31 20:15, Michal Hocko wrote:
->>> I will send the patch to Andrew if the patch is ok. 
->>
->> Andrew, can we send the "we used to have a sleeping point in the oom path but this has
->> been removed recently" patch to linux.git ?
+On Tue, Jul 31, 2018 at 08:16:22PM +0900, Tetsuo Handa wrote:
+> Steffen and Herbert,
 > 
-> This can really wait for the next merge window IMHO.
-> 
+> Do you have any question? I think I provided enough information for debugging.
 
-"mm, oom: cgroup-aware OOM killer" in linux-next.git is reviving that sleeping point.
-Current "mm, oom: cgroup-aware OOM killer" will not be sent to linux.git in the next
-merge window? I'm confused...
+It seems that I was not on Cc at the beginning of the threat,
+so I had to search the web for some context.
+
+I'm currently trying your reproducer (still with my .config) but I don't
+hit the problem.
+
+> 
+> This problem occurs because two dev_put() calls are missing (compared with not
+> calling setsockopt(SOL_IPV6, IPV6_XFRM_POLICY)) because dst_release() is not
+> called via fib6_info_destroy_rcu() when we called xfrm_compile_policy() from
+> xfrm_user_policy() from setsockopt(SOL_IPV6, IPV6_XFRM_POLICY).
+
+Thanks for the information! As said, I'm already working on it.
