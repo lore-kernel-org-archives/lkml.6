@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FA1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65ABC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE281208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90BD0208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="KDr51vBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE281208A2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="QhF5Jxt/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90BD0208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732272AbeGaIvF (ORCPT
+        id S1732215AbeGaIur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:51:05 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:13143 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732036AbeGaIur (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 04:50:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021113;
+Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:17106 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732103AbeGaIuq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:50:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021112;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=mNmwYrugiIktR30VzIrhTtXImRZ/mtWjYFnjgzTgDxA=;
-        b=KDr51vBWN5JlhScEQLUTbbJAtzXmcHWr6aDdS47AJ83cK9GOlyvphpVSARxnCtKpg7
-        uI4JPWp8LYDQggRFtKdx3a/iSqjXbqZ6z3d3zwHxutCmVZRdGBcehVGpoxlIp+2HayE/
-        BOD5eub0Vq86ihK5yvzW9SXmWfGOrzglvASsF0dyhTnKFnpDN0JwrwQJKUujOMFB3egW
-        /bDqM8AU+Fl7EfiodwJcn2wHs3CoHtQAMz3cmJhTYVcLd77KjtaePTlahDu3ufjFpjaD
-        rgen47xFlqR/qn/obQ7bAKevmpnRRt3tUCsP/qrAXa8OrPtiuMaLxL3jcb6UnUESpxir
-        kxEA==
+        bh=MMaPFeOqNErGtRsiAu3hlITNsgvoUDwSlPb2ECkEtJQ=;
+        b=QhF5Jxt/VN7V5FXWN098vS2JnoF4eAv0uAfILlW93MQE6uPMY+OAg9Gb2Ow6PEA9G/
+        Y+Pg1xgcuHRW0J/8tasXGjos6PMQJ154UhqYLb8WEFGMYPM2c5z+XzlxcNiCp+QXsw34
+        PIRlPiFs28c+b/ATZobW+80O2Cq891tkz7o6URcscfodzwezbI3VVk8ol12HyJMwpJr2
+        E6af2WFdHVRJgZ16vpvnMn+pKLI8F9gorQrKm1LsUzxJ4Drq2+Snhcgqkda6JNfwUyZk
+        4n4VHI2Tr+DpBpYD+vg7Mhfu349MxZ3Vlu06TODOkXwJvDCFFA5/X7Hu+0ktX6mNW+PZ
+        Chsg==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BkwOt
+        with ESMTPSA id 6047f4u6V7BkwOs
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
         Tue, 31 Jul 2018 09:11:46 +0200 (CEST)
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 27/32] ARM: dts: omap3-gta04a5: add support for PPS
-Date:   Tue, 31 Jul 2018 09:11:30 +0200
-Message-Id: <3a6fc8428f7ec414640821627f258b53e77b702d.1533021094.git.hns@goldelico.com>
+Subject: [PATCH v2 26/32] ARM: dts: omap3-gta04a5: fix whitepsace and tab style
+Date:   Tue, 31 Jul 2018 09:11:29 +0200
+Message-Id: <647a18b436d76e738f8103e0a00c9bc22ae6c863.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,39 +69,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GPS receiver provides a 1PPS signal to a gpio.
+in node sound / property ti,jack-det-gpio.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04a5.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/omap3-gta04a5.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
-index d408eb05cdfa..e3f9e0969065 100644
+index c01b4715fb83..d408eb05cdfa 100644
 --- a/arch/arm/boot/dts/omap3-gta04a5.dts
 +++ b/arch/arm/boot/dts/omap3-gta04a5.dts
-@@ -14,4 +14,22 @@
+@@ -12,6 +12,6 @@
+ 	model = "Goldelico GTA04A5/Letux 2804";
+ 
  	sound {
- 		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;	/* GTA04A5 only */
+-		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;    /* GTA04A5 only */
++		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;	/* GTA04A5 only */
  	};
-+
-+	pps {
-+		compatible = "pps-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pps_pins>;
-+
-+		gpios = <&gpio4 18 GPIO_ACTIVE_HIGH>; /* GPIN_114 */
-+	};
-+
-+};
-+
-+&omap3_pmx_core {
-+	pps_pins: pinmux_pps_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x2138, PIN_INPUT | MUX_MODE4) /* gpin114 */
-+		>;
-+	};
-+
  };
 -- 
 2.12.2
