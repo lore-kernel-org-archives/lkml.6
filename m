@@ -2,92 +2,236 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FDFC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB11AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2223820844
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E5EA20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:22:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UCNNSgjf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UCNNSgjf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2223820844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmLqGjGq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5EA20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732044AbeGaUA3 (ORCPT
+        id S1729963AbeGaUDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:00:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41186 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbeGaUA3 (ORCPT
+        Tue, 31 Jul 2018 16:03:32 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35753 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbeGaUDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:00:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3A1DA606DD; Tue, 31 Jul 2018 18:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533061138;
-        bh=JpnJcP0xCof96NyGvBR2LJKbq8U2GHGCoXMACvcuNRA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UCNNSgjfwWqo8V7S+8GnNcIzOQ/9IhPvyXZK3fJRdmqHw3Y1t9P9gXQ7cs18wOhVU
-         tDJ2/OzMmo/16MuRG+xmJSBvPl2nwF0VWWmdiEIQsh8trpizufRRuKJwvnDE/jRcZZ
-         Ddk78/EBaXr6GCKtzEaL2ZhUbdOWiJcpwU2CWVQg=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B47CA602D7;
-        Tue, 31 Jul 2018 18:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533061138;
-        bh=JpnJcP0xCof96NyGvBR2LJKbq8U2GHGCoXMACvcuNRA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UCNNSgjfwWqo8V7S+8GnNcIzOQ/9IhPvyXZK3fJRdmqHw3Y1t9P9gXQ7cs18wOhVU
-         tDJ2/OzMmo/16MuRG+xmJSBvPl2nwF0VWWmdiEIQsh8trpizufRRuKJwvnDE/jRcZZ
-         Ddk78/EBaXr6GCKtzEaL2ZhUbdOWiJcpwU2CWVQg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B47CA602D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, bryanh@codeaurora.org
-Subject: [PATCH 0/2] Add Embedded USB Debugger (EUD) driver
-Date:   Tue, 31 Jul 2018 11:18:47 -0700
-Message-Id: <1533061129-6539-1-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 31 Jul 2018 16:03:31 -0400
+Received: by mail-io0-f194.google.com with SMTP id w11-v6so13869587iob.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2HMehfdDkjGDNTUdHCh9ypmEMD7butM7h2R8hS34Vn4=;
+        b=hmLqGjGqFk/iKk7sPZW3zGnqc+tJYas8rYykhicDd/OpFTiybuqIBF5wSaLEgCQbNC
+         HhbEHjsQzTfjcWN7sCk5zan4RNCoGOo2SC4285VM17BUnhT6eXuCfe2B0cDp7TUsedWh
+         svaoxAjHvNMBAlYfPwexYgMpjNZ2mpiOKqCb31nSlzxR/UMZ9Fo0OMdyaqb8+QAgibo2
+         yoltEjRb2dBAUEaoe8CAr6IO/UT2XBu3hwGXVikyC0ltSkMccdUOiISFSPhmVwIusZcp
+         sCWzWjaicu30uJxUpyWTCWDzMyEBfKeUR4zlyzpo+Na6jfWv3EaMf0bhwN/yHyTD9Ujb
+         vApw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2HMehfdDkjGDNTUdHCh9ypmEMD7butM7h2R8hS34Vn4=;
+        b=kOgDlcvscp/IURtVc/CMnSAcHI3pDGx64mqWZBF9pxcXZNtp1TImU4OUSFQ8/QJDVf
+         WkTmwegCYeb300ErlBB/0zsP1P+UFpgmxD2mEPA4wj+KCsdke+wEjqCCNDTCHmy5jcuv
+         x5a2JNSLOMGcsuc306VJTlkufqMU9Svt43RaEPJ19vz6UczQ8LjEQfcY4K8qDHEi7Fba
+         5aNWXP6EWGeIykAyzS1eri7YUwu/pa1m3AAcXPy2Nfce4LcUhTb6wsLb+DCplW/xQi4O
+         BFN+46ei8ug8+Ta3ffFrnzQ632OMh3tqmIQktRlOeBtnWa3tTxG3uBPvA7PTZQvnBTls
+         fRKQ==
+X-Gm-Message-State: AOUpUlEOffqIW4AJj42gPa3je4NVmtjGmQ646+X92vcQVinxODR09fsR
+        6nCSlLnm8EU6SjdkyAOehQMi72cmXsM=
+X-Google-Smtp-Source: AAOMgpenyIpJJ4WLkuAjFEil4rvMrJGOTh98VqLDHS+C8Cps6IV4zAGWIC59n3zjo0HYgFShWmDf1A==
+X-Received: by 2002:a6b:bbc1:: with SMTP id l184-v6mr686897iof.83.1533061318844;
+        Tue, 31 Jul 2018 11:21:58 -0700 (PDT)
+Received: from [10.0.2.15] ([72.138.96.106])
+        by smtp.gmail.com with ESMTPSA id i3-v6sm1727831iti.40.2018.07.31.11.21.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 11:21:58 -0700 (PDT)
+Subject: Re: [RESEND PATCH 0/6] rapidio: move Kconfig menu definition to
+ subsystem
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Alexei Colin <acolin@isi.edu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        John Paul Walters <jwalters@isi.edu>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Anvin <hpa@zytor.com>,
+        Matt Porter <mporter@kernel.crashing.org>, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180731142954.30345-1-acolin@isi.edu>
+ <20180731155909.GO17271@n2100.armlinux.org.uk>
+From:   Alex Bounine <alex.bou9@gmail.com>
+Message-ID: <1f427e4c-3fb8-769a-efb6-db64afd4617a@gmail.com>
+Date:   Tue, 31 Jul 2018 14:21:57 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180731155909.GO17271@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a series of patches that implements a driver for the control
-peripheral, EUD (Embedded USB Debugger). The EUD is a mini-USB hub 
-implemented on chip to support the USB-based debug and trace capabilities.
-Apart from debug capabilities, EUD has a control peripheral. Control 
-Peripheral is on when EUD is on and gets signals like USB attach, pet EUD,
-charge phone etc. EUD driver listens to events like USB attach or detach 
-and charger enable or disable and then notifies the USB driver or PMIC 
-driver respectively about these events via EXTCON. At regular intervals, 
-the EUD driver receives an interrupt to pet the driver indicating that 
-the software is functional.
 
-Prakruthi Deepak Heragu (2):
-  dt-bindings: Documentation for qcom,eud
-  Embedded USB Debugger (EUD) driver
 
- .../devicetree/bindings/soc/qcom/qcom,msm-eud.txt  |  32 ++
- drivers/soc/qcom/Kconfig                           |  11 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/eud.c                             | 340 +++++++++++++++++++++
- 4 files changed, 384 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
- create mode 100644 drivers/soc/qcom/eud.c
+On 2018-07-31 11:59 AM, Russell King - ARM Linux wrote:
+> For the thread associated with this patch set, a review of a previous
+> patch for ARM posted last Tuesday on this subject asked a series of
+> questions about the PCI-nature of this.  The review has not been
+> responded to.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+We are dealing with this now. More appropriate to do it this time than 
+before having reworked set.
 
+> If it is inappropriate to offer RapidIO for any architecture that
+> happens to has PCI, then it is inappropriate to offer it for any
+> ARM machine that happens to have PCI.
+
+It is completely appropriate to use RapidIO on any architecture that has 
+PCI/PCIe using existing PCIe-to-SRIO host bridges. Works well with 
+Marvell and NVIDIA boards.
+
+Confusion here is caused by the fact that there are ARM and non-ARM 
+devices that offer on-chip RapidIO host controllers as well as PCIe. 
+E.g. TI Keystone/KeystoneII, FSL 85xx/86xx, Xilinx and Altera FPGAs with 
+ARM cores, Cavium on MIPS. In most cases external buses are configurable 
+and we have to address possible combinations.
+
+I already posted some explanation in response to your earlier comment.
+
+> In light of the lack of explanation on this point so far, I'm naking
+> the ARM part of this series for now.
+> 
+
+Explanations posted.
+
+> I also think that the HAS_RAPIDIO thing is misleading and needs
+> sorting out (as I've mentioned in other emails, including the one
+> I refer to above) before rapidio becomes available more widely.
+>
+Highly likely it is used right now in a base station of mobile operator 
+near you :)
+
+> On Tue, Jul 31, 2018 at 10:29:48AM -0400, Alexei Colin wrote:
+>> Resending the patchset from prior submission:
+>> https://lkml.org/lkml/2018/7/30/911
+>>
+>> The only change are the Cc tags in all patches now include the mailing
+>> lists for all affected architectures, and patch 1/6 (which adds the menu
+>> item to RapdidIO subsystem Kconfig) is CCed to all maintainers who are
+>> getting this cover letter. The cover letter has been updated with
+>> explanations to points raised in the feedback.
+>>
+>>
+>>
+>> The top-level Kconfig entry for RapidIO subsystem is currently
+>> duplicated in several architecture-specific Kconfig files. This set of
+>> patches does two things:
+>>
+>> 1. Move the Kconfig menu definition into the RapidIO subsystem and
+>> remove the duplicate definitions from arch Kconfig files.
+>>
+>> 2. Enable RapidIO Kconfig menu entry for arm and arm64 architectures,
+>> where it was not enabled before. I tested that subsystem and drivers
+>> build successfully for both architectures, and tested that the modules
+>> load on a custom arm64 Qemu model.
+>>
+>> For all architectures, RapidIO menu should be offered when either:
+>> (1) The platform has a PCI bus (which host a RapidIO module on the bus).
+>> (2) The platform has a RapidIO IP block (connected to a system bus, e.g.
+>> AXI on ARM). In this case, 'select HAS_RAPIDIO' should be added to the
+>> 'config ARCH_*' menu entry for the SoCs that offer the IP block.
+>>
+>> Prior to this patchset, different architectures used different criteria:
+>> * powerpc: (1) and (2)
+>> * mips: (1) and (2) after recent commit into next that added (2):
+>>    https://www.linux-mips.org/archives/linux-mips/2018-07/msg00596.html
+>>    fc5d988878942e9b42a4de5204bdd452f3f1ce47
+>>    491ec1553e0075f345fbe476a93775eabcbc40b6
+>> * x86: (1)
+>> * arm,arm64: none (RapidIO menus never offered)
+>>
+>> This set of architectures are the ones that implement support for
+>> RapidIO as system bus. On some platforms RapidIO can be the only system
+>> bus available replacing PCI/PCIe.  As it is done now, RapidIO is
+>> configured in "Bus Options" (x86/PPC) or "Bus Support" (ARMs) sub-menu
+>> and from system configuration option it should be kept this way.
+>> Current location of RAPIDIO configuration option is familiar to users of
+>> PowerPC and x86 platforms, and is similarly available in some ARM
+>> manufacturers kernel code trees. (Alex Bounine)
+>>
+>> HAS_RAPIDIO is not enabled unconditionally, because HAS_RAPIDIO option
+>> is intended for SOCs that have built in SRIO controllers, like TI
+>> KeyStoneII or FPGAs. Because RapidIO subsystem core is required during
+>> RapidIO port driver initialization, having separate option allows us to
+>> control available build options for RapidIO core and port driver (bool
+>> vs.  tristate) and disable module option if port driver is configured as
+>> built-in. (Alex Bounine)
+>>
+>> Responses to feedback from prior submission (thanks for the reviews!):
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593347.html
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/593349.html
+>>
+>> Changelog:
+>>    * Moved Kconfig entry into RapidIO subsystem instead of duplicating
+>>
+>> In the current patchset, I took the approach of adding '|| PCI' to the
+>> depends in the subsystem. I did try the alterantive approach mentioned
+>> in the reviews for v1 of this patch, where the subsystem Kconfig does
+>> not add a '|| PCI' and each per-architecture Kconfig has to add a
+>> 'select HAS_RAPIDIO if PCI' and SoCs with IP blocks have to also add
+>> 'select HAS_RAPIDIO'. This works too but requires each architecture's
+>> Kconfig to add the line for RapidIO (whereas current approach does not
+>> require that involvement) and also may create a false impression that
+>> the dependency on PCI is strict.
+>>
+>> We appreciate the suggestion for also selecting the RapdiIO subsystem for
+>> compilation with COMPILE_TEST, but hope to address it in a separate
+>> patchset, localized to the subsystem, since it will need to change
+>> depends on all drivers, not just on the top level, and since this
+>> patch now spans multiple architectures.
+>>
+>> Alexei Colin (6):
+>>    rapidio: define top Kconfig menu in driver subtree
+>>    x86: factor out RapidIO Kconfig menu
+>>    powerpc: factor out RapidIO Kconfig menu entry
+>>    mips: factor out RapidIO Kconfig entry
+>>    arm: enable RapidIO menu in Kconfig
+>>    arm64: enable RapidIO menu in Kconfig
+>>
+>>   arch/arm/Kconfig        |  2 ++
+>>   arch/arm64/Kconfig      |  2 ++
+>>   arch/mips/Kconfig       | 11 -----------
+>>   arch/powerpc/Kconfig    | 13 +------------
+>>   arch/x86/Kconfig        |  8 --------
+>>   drivers/rapidio/Kconfig | 15 +++++++++++++++
+>>   6 files changed, 20 insertions(+), 31 deletions(-)
+>>
+>> -- 
+>> 2.18.0
+>>
+> 
