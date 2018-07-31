@@ -2,107 +2,75 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E57BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9206BC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD33208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:40:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD33208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 43C8F208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ce/ILpdj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C8F208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732334AbeGaCSE (ORCPT
+        id S1729118AbeGaCWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:18:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37236 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732039AbeGaCRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:17:39 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 93D6A40241CC;
-        Tue, 31 Jul 2018 00:40:05 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 445DD16875;
-        Tue, 31 Jul 2018 00:40:05 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Karol Herbst <karolherbst@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/8] drm/nouveau: Use pm_runtime_get_noresume() in connector_detect()
-Date:   Mon, 30 Jul 2018 20:39:50 -0400
-Message-Id: <20180731003954.19962-6-lyude@redhat.com>
-In-Reply-To: <20180731003954.19962-1-lyude@redhat.com>
-References: <20180731003954.19962-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 00:40:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 31 Jul 2018 00:40:05 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Mon, 30 Jul 2018 22:22:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39960 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeGaCWq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 22:22:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2QT5qkxa4hIxAcKtQM3f0aUFrGje52f7KuS4xVzw8FM=; b=ce/ILpdjOH2YMzTmY1+y6rOxW
+        4OR0h5h02/sXOnBgH5BCSMu61QKvi0lZIZ9mVvJOZ75LEinyUJUs26HuIzCvu+TXuQrHdaltENWwN
+        kftt0nD2gPiveZldzvgz08XAfAzIjBii19gugkFb//ekeg1vzW7Wg0Zi2c1AeSRp4keaUHzk6YFWo
+        3pAdsQjaUFY6KTnFz6Y18vbtPfNu8eH0un2xt5fS7vDjUZ1BE5pXFGKDPcWGpSlPzVB0hrA/tkwpm
+        M80P6kZWbTPRo4clvzonQNYqkFd+v3PCbAyDjiLLK8+dPvpMlPbnJVZ1shoYgDSC0I4Scn7aXQE1R
+        SCtVsorKQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkIme-0000q2-86; Tue, 31 Jul 2018 00:45:04 +0000
+Date:   Mon, 30 Jul 2018 17:45:04 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Cannon Matthews <cannonmatthews@google.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andres Lagar-Cavilla <andreslc@google.com>,
+        Salman Qazi <sqazi@google.com>, Paul Turner <pjt@google.com>,
+        David Matlack <dmatlack@google.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Alain Trinh <nullptr@google.com>
+Subject: Re: [PATCH v2] RFC: clear 1G pages with streaming stores on x86
+Message-ID: <20180731004504.GB19692@bombadil.infradead.org>
+References: <20180724210923.GA20168@bombadil.infradead.org>
+ <20180725023728.44630-1-cannonmatthews@google.com>
+ <20180730162926.GD11890@nazgul.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730162926.GD11890@nazgul.tnic>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's true we can't resume the device from poll workers in
-nouveau_connector_detect(). We can however, prevent the autosuspend
-timer from elapsing immediately if it hasn't already without risking any
-sort of deadlock with the runtime suspend/resume operations. So do that
-instead of entirely avoiding grabbing a power reference.
+On Mon, Jul 30, 2018 at 06:29:27PM +0200, Borislav Petkov wrote:
+> > +EXPORT_SYMBOL(__clear_page_nt)
+> 
+> EXPORT_SYMBOL_GPL like the other functions in that file.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Karol Herbst <karolherbst@gmail.com>
----
- drivers/gpu/drm/nouveau/nouveau_connector.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 2a45b4c2ceb0..010d6db14cba 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -572,12 +572,16 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
- 		nv_connector->edid = NULL;
- 	}
- 
--	/* Outputs are only polled while runtime active, so acquiring a
--	 * runtime PM ref here is unnecessary (and would deadlock upon
--	 * runtime suspend because it waits for polling to finish).
-+	/* Outputs are only polled while runtime active, so resuming the
-+	 * device here is unnecessary (and would deadlock upon runtime suspend
-+	 * because it waits for polling to finish). We do however, want to
-+	 * prevent the autosuspend timer from elapsing during this operation
-+	 * if possible.
- 	 */
--	if (!drm_kms_helper_is_poll_worker()) {
--		ret = pm_runtime_get_sync(connector->dev->dev);
-+	if (drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_get_noresume(dev->dev);
-+	} else {
-+		ret = pm_runtime_get_sync(dev->dev);
- 		if (ret < 0 && ret != -EACCES)
- 			return conn_status;
- 	}
-@@ -655,10 +659,8 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
- 
-  out:
- 
--	if (!drm_kms_helper_is_poll_worker()) {
--		pm_runtime_mark_last_busy(connector->dev->dev);
--		pm_runtime_put_autosuspend(connector->dev->dev);
--	}
-+	pm_runtime_mark_last_busy(dev->dev);
-+	pm_runtime_put_autosuspend(dev->dev);
- 
- 	return conn_status;
- }
--- 
-2.17.1
-
+Actually, __clear_page_nt doesn't need to be exported at all for this
+patch set; it's not invoked from a module.
