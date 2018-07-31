@@ -2,263 +2,75 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D048C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29839C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F6720841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:41:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATose/Wt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F6720841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8081B20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:43:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8081B20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbeGaUXA (ORCPT
+        id S1731865AbeGaUZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:23:00 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42561 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729645AbeGaUXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:23:00 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u202-v6so11478147lff.9;
-        Tue, 31 Jul 2018 11:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8NOJpxsmR9ReBXFbLY4RBjZ5vXvjiuyG+zrpa/tFRYg=;
-        b=ATose/WtqhJbjF4h5kb/GYn0JShittC1Vu0dcOpEHIfmD4RiAkKO6Cuo6Nvv+518QA
-         XKpn8OA968zpQHPkpXgdS3G+E9M3pRR8FJ7S51EK8LM0wEJgeObtyW4YOSXQenFmUMyc
-         vyyuBcDysRZjzg7FmUTl0+35kADFAwykrHmb1jOQTb9X4ecVyhcLVzoNvfak3lkC1Tnv
-         /kdH1HnxxfWOD8wTWhbeLWI2GkessNiUJvfPF8wL0RF3y/sB6cdZly0vlgXwC/VYHDs1
-         JTgXlGL1hA73oZ8caJQuDfuaA3sIcjIM6XBOzmg2ZpUgmHTqDhPTCRQnLQaQ0l0vhgmo
-         AY7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8NOJpxsmR9ReBXFbLY4RBjZ5vXvjiuyG+zrpa/tFRYg=;
-        b=iVagrvf4sl49s1LQllxWOlA3EN2b6UGi7h7KhBhmqxJjXOZcqsHHC4XjOHzl09hweX
-         47rMJu/I3m1/gFETM1rYvtzv4N5JmjpV+HHRP9d+3s7QEEDb+aEh/gORk//Q8NSCvp20
-         YHLlZEgYrV8zEB3hQ2UsXcNo1aRID4r3vBho9T/O+Nse4STLrvZFeihbe7hEY9ejGqN7
-         GEDYk0wgybh/l3FEbhT6att+vjUVBRQbgeGD1UZP9zeJC2rd2uhx5sRatHyG6MZ1tzxj
-         WvsnnbwddvwDeQSuXHw+fvmvp4SJVvFikQ6YUmnrABNJXBpIz0gDfgOOQUSAvu8KlQ4L
-         pSwQ==
-X-Gm-Message-State: AOUpUlGe7Sm8MEyzW/CNaJxT3XIIAWLmpdZNMmoyX017Ulzf4s5nLmYd
-        ErFIGLfzZfGOdxppW49c87OtcoGngP8bG2XyObA=
-X-Google-Smtp-Source: AAOMgpdPTo8lZqC+b86AD7G2eKyGm6qawISlDNi7mS82KfNeAl1dgY9QwbRiLeIZ9b3yxFNfSXKObPHijvVAKSqrGw0=
-X-Received: by 2002:a19:e119:: with SMTP id y25-v6mr14784677lfg.3.1533062482245;
- Tue, 31 Jul 2018 11:41:22 -0700 (PDT)
+        Tue, 31 Jul 2018 16:25:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57520 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729772AbeGaUZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 16:25:22 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F02187C6A9;
+        Tue, 31 Jul 2018 18:43:45 +0000 (UTC)
+Received: from treble (ovpn-120-73.rdu2.redhat.com [10.10.120.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9CACC7C5C;
+        Tue, 31 Jul 2018 18:43:45 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 13:43:44 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Jeremy Cline <jcline@redhat.com>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [PATCH 0/2] fs/quota: Fix potential spectre v1 gadgets
+Message-ID: <20180731184344.yspy7sjbec74d5w6@treble>
+References: <20180731013731.1987-1-jcline@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 11:41:21
- -0700 (PDT)
-In-Reply-To: <20180731103440.GD17455@e110455-lin.cambridge.arm.com>
-References: <20180730190137.GA25420@jordon-HP-15-Notebook-PC> <20180731103440.GD17455@e110455-lin.cambridge.arm.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 1 Aug 2018 00:11:21 +0530
-Message-ID: <CAFqt6zbEur=h4pRxs-XNZhTbtwQMdbwwOLmiFDQmhNDVx3msJA@mail.gmail.com>
-Subject: Re: [PATCH] drm: Convert drm_atomic_helper_suspend/resume()
-To:     Liviu Dudau <liviu.dudau@arm.com>
-Cc:     Brian Starkey <brian.starkey@arm.com>, malidp@foss.arm.com,
-        airlied@linux.ie, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ajit Linux <ajitn.linux@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180731013731.1987-1-jcline@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 18:43:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 31 Jul 2018 18:43:46 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 4:04 PM, Liviu Dudau <liviu.dudau@arm.com> wrote:
-> Hi Souptick,
->
-> On Tue, Jul 31, 2018 at 12:31:37AM +0530, Souptick Joarder wrote:
->> convert drm_atomic_helper_suspend/resume() to use
->> drm_mode_config_helper_suspend/resume().
->>
->> With this conversion, drm_fbdev_cma_set_suspend_unlocked()
->> will left with no consumer. So this function can be removed.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
->> ---
->>  drivers/gpu/drm/arm/hdlcd_drv.c       | 26 ++------------------------
->>  drivers/gpu/drm/drm_fb_cma_helper.c   | 18 ------------------
->>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 ++-------------------
->>  include/drm/drm_fb_cma_helper.h       |  2 --
->>  4 files changed, 4 insertions(+), 63 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd=
-_drv.c
->> index feaa8bc..4e617e0 100644
->> --- a/drivers/gpu/drm/arm/hdlcd_drv.c
->> +++ b/drivers/gpu/drm/arm/hdlcd_drv.c
->> @@ -427,37 +427,15 @@ static int hdlcd_remove(struct platform_device *pd=
-ev)
->>  static int __maybe_unused hdlcd_pm_suspend(struct device *dev)
->>  {
->>       struct drm_device *drm =3D dev_get_drvdata(dev);
->> -     struct hdlcd_drm_private *hdlcd =3D drm ? drm->dev_private : NULL;
->>
->> -     if (!hdlcd)
->> -             return 0;
->> -
->> -     drm_kms_helper_poll_disable(drm);
->> -     drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 1);
->> -
->> -     hdlcd->state =3D drm_atomic_helper_suspend(drm);
->> -     if (IS_ERR(hdlcd->state)) {
->> -             drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 0);
->> -             drm_kms_helper_poll_enable(drm);
->> -             return PTR_ERR(hdlcd->state);
->> -     }
->> -
->> -     return 0;
->> +     return drm_mode_config_helper_suspend(drm);
->>  }
->>
->>  static int __maybe_unused hdlcd_pm_resume(struct device *dev)
->>  {
->>       struct drm_device *drm =3D dev_get_drvdata(dev);
->> -     struct hdlcd_drm_private *hdlcd =3D drm ? drm->dev_private : NULL;
->> -
->> -     if (!hdlcd)
->> -             return 0;
->>
->> -     drm_atomic_helper_resume(drm, hdlcd->state);
->> -     drm_fbdev_cma_set_suspend_unlocked(hdlcd->fbdev, 0);
->> -     drm_kms_helper_poll_enable(drm);
->> -
->> -     return 0;
->> +     return drm_mode_config_helper_resume(drm);
->>  }
->
-> This patch is similar to the one Noralf Tr=C3=B8nnes submitted, and his i=
-s
-> also cleaning up the state variable in hdlcd_drm_private. The patch has
-> been queued as commit f69d9686e5d9 in git://linux-arm.org/linux-ld.git
-> for-upstream/hdlcd and I will send a pull request today for it.
->
-> Best regards,
-> Liviu
+On Tue, Jul 31, 2018 at 01:37:29AM +0000, Jeremy Cline wrote:
+> Hi folks,
+> 
+> This series unifies XQM_MAXQUOTAS with MAXQUOTAS, which were both being
+> used to perform bounds checks on arrays, and then sanitizes 'type' so it
+> can't be used in speculative out-of-bounds array access.
+> 
+> Jeremy Cline (2):
+>   fs/quota: Replace XQM_MAXQUOTAS usage with MAXQUOTAS
+>   fs/quota: Fix spectre gadget in do_quotactl
+> 
+>  fs/quota/quota.c               | 14 +++++++-------
+>  include/linux/quota.h          |  8 +-------
+>  include/uapi/linux/dqblk_xfs.h |  5 -----
+>  3 files changed, 8 insertions(+), 19 deletions(-)
 
-unable to clone this repository.
-can you please post the patchwork link ?
+Looks good to me, though this might hinge on the discussion with
+Andreas:
 
->
->>
->>  static SIMPLE_DEV_PM_OPS(hdlcd_pm_ops, hdlcd_pm_suspend, hdlcd_pm_resum=
-e);
->> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_f=
-b_cma_helper.c
->> index 186d00a..f604a84 100644
->> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
->> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
->> @@ -529,21 +529,3 @@ void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma=
- *fbdev_cma, bool state)
->>               drm_fb_helper_set_suspend(&fbdev_cma->fb_helper, state);
->>  }
->>  EXPORT_SYMBOL(drm_fbdev_cma_set_suspend);
->> -
->> -/**
->> - * drm_fbdev_cma_set_suspend_unlocked - wrapper around
->> - *                                      drm_fb_helper_set_suspend_unloc=
-ked
->> - * @fbdev_cma: The drm_fbdev_cma struct, may be NULL
->> - * @state: desired state, zero to resume, non-zero to suspend
->> - *
->> - * Calls drm_fb_helper_set_suspend, which is a wrapper around
->> - * fb_set_suspend implemented by fbdev core.
->> - */
->> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma=
-,
->> -                                     bool state)
->> -{
->> -     if (fbdev_cma)
->> -             drm_fb_helper_set_suspend_unlocked(&fbdev_cma->fb_helper,
->> -                                                state);
->> -}
->> -EXPORT_SYMBOL(drm_fbdev_cma_set_suspend_unlocked);
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rca=
-r-du/rcar_du_drv.c
->> index 02aee6c..288220f 100644
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
->> @@ -357,32 +357,15 @@ static void rcar_du_lastclose(struct drm_device *d=
-ev)
->>  static int rcar_du_pm_suspend(struct device *dev)
->>  {
->>       struct rcar_du_device *rcdu =3D dev_get_drvdata(dev);
->> -     struct drm_atomic_state *state;
->>
->> -     drm_kms_helper_poll_disable(rcdu->ddev);
->> -     drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
->> -
->> -     state =3D drm_atomic_helper_suspend(rcdu->ddev);
->> -     if (IS_ERR(state)) {
->> -             drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
->> -             drm_kms_helper_poll_enable(rcdu->ddev);
->> -             return PTR_ERR(state);
->> -     }
->> -
->> -     rcdu->suspend_state =3D state;
->> -
->> -     return 0;
->> +     return drm_mode_config_helper_suspend(rcdu->ddev);
->>  }
->>
->>  static int rcar_du_pm_resume(struct device *dev)
->>  {
->>       struct rcar_du_device *rcdu =3D dev_get_drvdata(dev);
->>
->> -     drm_atomic_helper_resume(rcdu->ddev, rcdu->suspend_state);
->> -     drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, false);
->> -     drm_kms_helper_poll_enable(rcdu->ddev);
->> -
->> -     return 0;
->> +     return drm_mode_config_helper_resume(rcdu->ddev);
->>  }
->>  #endif
->>
->> diff --git a/include/drm/drm_fb_cma_helper.h b/include/drm/drm_fb_cma_he=
-lper.h
->> index d532f88a..15c4569 100644
->> --- a/include/drm/drm_fb_cma_helper.h
->> +++ b/include/drm/drm_fb_cma_helper.h
->> @@ -33,8 +33,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_de=
-vice *dev,
->>  void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma);
->>  void drm_fbdev_cma_hotplug_event(struct drm_fbdev_cma *fbdev_cma);
->>  void drm_fbdev_cma_set_suspend(struct drm_fbdev_cma *fbdev_cma, bool st=
-ate);
->> -void drm_fbdev_cma_set_suspend_unlocked(struct drm_fbdev_cma *fbdev_cma=
-,
->> -                                     bool state);
->>
->>  struct drm_gem_cma_object *drm_fb_cma_get_gem_obj(struct drm_framebuffe=
-r *fb,
->>       unsigned int plane);
->> --
->> 1.9.1
->>
->
-> --
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> | I would like to |
-> | fix the world,  |
-> | but they're not |
-> | giving me the   |
->  \ source code!  /
->   ---------------
->     =C2=AF\_(=E3=83=84)_/=C2=AF
+  https://lkml.kernel.org/r/E3E7B6AF-3819-4998-9B12-DACB4EBC14F1@dilger.ca
+
+-- 
+Josh
