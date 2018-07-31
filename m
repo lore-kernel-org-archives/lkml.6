@@ -2,252 +2,76 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D70EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700B5C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF44820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:51:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF44820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BBC8520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:53:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fG1BWqbh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC8520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbeGaKas (ORCPT
+        id S1729782AbeGaKc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:30:48 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47645 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729787AbeGaKas (ORCPT
+        Tue, 31 Jul 2018 06:32:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48646 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727608AbeGaKc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:30:48 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1fkQNM-00066a-8a; Tue, 31 Jul 2018 10:51:28 +0200
-Message-ID: <1533027087.3444.7.camel@pengutronix.de>
-Subject: Re: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset
- controller
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-Date:   Tue, 31 Jul 2018 10:51:27 +0200
-In-Reply-To: <20180727152811.15258-2-sibis@codeaurora.org>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
-         <20180727152811.15258-2-sibis@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 31 Jul 2018 06:32:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+d6dxIydmDGzGUcHW51+EdQ0pZRUvIfZR3rUqB2lB8g=; b=fG1BWqbh1pjNSkAW4EOvObe2Y
+        migJeLN+9BpOxvO7PNGGjbsagFm5XaquhA222qvdvQW6CfT8laGd4eeiqlaUYnxYzYLzbvBj/GDYu
+        03QYzKUKMZrRVOtbJnUCOBKbU6e1UY/ubPhD8qsfiklV3zTFRN3fvgswj6YMjj12lpvYRNH7T+7FP
+        RCdWmmXIZAlpziWcVh40Z7mWxx23Tfe+WVefh/JDnnceansuxQCkeXuMc89vAQTqbUmPB/qj/vTqa
+        i7xLxEMml+rlLLGSTIdbc0dHroPScr5+jkN3MudQ2LrJy+LW3LTG2V59e7EVdpWdAEtbM4a1hWYBL
+        NXwlLPWAg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkQOp-0007J1-VQ; Tue, 31 Jul 2018 08:53:00 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D40552027585B; Tue, 31 Jul 2018 10:52:57 +0200 (CEST)
+Date:   Tue, 31 Jul 2018 10:52:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        ying.huang@intel.com, mingo@kernel.org, jiangshanlai@gmail.com,
+        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        joel@joelfernandes.org, len.brown@intel.com, glider@google.com,
+        peter@hurleysoftware.com, aik@ozlabs.ru
+Subject: Re: [QUESTION] llist: Comment releasing 'must delete' restriction
+ before traversing
+Message-ID: <20180731085257.GR2494@hirez.programming.kicks-ass.net>
+References: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
-> Add reset controller for SDM845 SoC to control reset signals
-> provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
-> Sensors, Audio, SP and APPS
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/reset/Kconfig          |   9 +++
->  drivers/reset/Makefile         |   1 +
->  drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 drivers/reset/reset-qcom-pdc.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 13d28fdbdbb5..5344e202a630 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
->  	  reset signals provided by AOSS for Modem, Venus, ADSP,
->  	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
->  
-> +config RESET_QCOM_PDC
-> +	bool "Qcom PDC Reset Driver"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  This enables the PDC (Power Domain Controller) reset driver
-> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
-> +	  to control reset signals provided by PDC for Modem, Compute,
-> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
-> +
->  config RESET_SIMPLE
->  	bool "Simple Reset Controller Driver" if COMPILE_TEST
->  	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 4243c38228e2..d08e8b90046a 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
-> +obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
->  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
->  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-> diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
-> new file mode 100644
-> index 000000000000..64a0041e3452
-> --- /dev/null
-> +++ b/drivers/reset/reset-qcom-pdc.c
-> @@ -0,0 +1,139 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/regmap.h>
-> +#include <linux/of_device.h>
-> +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
-> +
-> +struct qcom_pdc_reset_map {
-> +	u8 bit;
-> +};
-> +
-> +struct qcom_pdc_desc {
-> +	const struct regmap_config *config;
-> +	const struct qcom_pdc_reset_map *resets;
-> +	size_t num_resets;
-> +};
-> +
-> +struct qcom_pdc_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +	const struct qcom_pdc_desc *desc;
-> +};
-> +
-> +static const struct regmap_config sdm845_pdc_regmap_config = {
-> +	.name		= "pdc-reset",
-> +	.reg_bits	= 32,
-> +	.reg_stride	= 4,
-> +	.val_bits	= 32,
-> +	.max_register	= 0x20000,
-> +	.fast_io	= true,
-> +};
-> +
-> +static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
-> +	[PDC_APPS_SYNC_RESET] = {0},
-> +	[PDC_SP_SYNC_RESET] = {1},
-> +	[PDC_AUDIO_SYNC_RESET] = {2},
-> +	[PDC_SENSORS_SYNC_RESET] = {3},
-> +	[PDC_AOP_SYNC_RESET] = {4},
-> +	[PDC_DEBUG_SYNC_RESET] = {5},
-> +	[PDC_GPU_SYNC_RESET] = {6},
-> +	[PDC_DISPLAY_SYNC_RESET] = {7},
-> +	[PDC_COMPUTE_SYNC_RESET] = {8},
-> +	[PDC_MODEM_SYNC_RESET] = {9},
-> +};
-> +
-> +static const struct qcom_pdc_desc sdm845_pdc_desc = {
-> +	.config = &sdm845_pdc_regmap_config,
-> +	.resets = sdm845_pdc_resets,
-> +	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
-> +};
-> +
-> +static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
-> +				struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
-> +}
-> +
-> +static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-> +
-> +	return regmap_update_bits(data->regmap, 0x100,
+On Tue, Jul 31, 2018 at 09:58:36AM +0900, Byungchul Park wrote:
+> In restrictive cases like only addtions happen but never deletion, can't
+> we safely traverse a llist? I believe llist can be more useful if we can
+> release the restriction. Can't we?
 
-Does this register have a name? If so, a #define would be preferable.
-Otherwise this driver looks fine to me.
+Yes you can, but I'm not sure it makes much sense to confuse the
+comments with this.
 
-> +					BIT(map->bit), BIT(map->bit));
-> +}
-> +
-> +static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-> +
-> +	return regmap_update_bits(data->regmap, 0x100, BIT(map->bit), 0);
-> +}
-> +
-> +static const struct reset_control_ops qcom_pdc_reset_ops = {
-> +	.assert = qcom_pdc_control_assert,
-> +	.deassert = qcom_pdc_control_deassert,
-> +};
-> +
-> +static int qcom_pdc_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct qcom_pdc_reset_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	const struct qcom_pdc_desc *desc;
-> +	void __iomem *base;
-> +	struct resource *res;
-> +
-> +	desc = of_device_get_match_data(dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->desc = desc;
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
-> +	if (IS_ERR(data->regmap)) {
-> +		dev_err(dev, "Unable to get pdc-global regmap");
-> +		return PTR_ERR(data->regmap);
-> +	}
-> +
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.ops = &qcom_pdc_reset_ops;
-> +	data->rcdev.nr_resets = desc->num_resets;
-> +	data->rcdev.of_node = dev->of_node;
-> +
-> +	return devm_reset_controller_register(dev, &data->rcdev);
-> +}
-> +
-> +static const struct of_device_id qcom_pdc_reset_of_match[] = {
-> +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
-> +	{}
-> +};
-> +
-> +static struct platform_driver qcom_pdc_reset_driver = {
-> +	.probe = qcom_pdc_reset_probe,
-> +	.driver = {
-> +		.name = "qcom_pdc_reset",
-> +		.of_match_table = qcom_pdc_reset_of_match,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(qcom_pdc_reset_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm PDC Reset Driver");
-> +MODULE_LICENSE("GPL v2");
-
-regards
-Philipp
+This really ends up in the 'you had better know what you're doing'
+category.
