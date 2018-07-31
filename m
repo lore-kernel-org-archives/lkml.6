@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF579C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4254C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F33820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BD120841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:05:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dyqopz5n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F33820870
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JX16f4h2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BD120841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeGaSp5 (ORCPT
+        id S1731021AbeGaSqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:45:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45868 "EHLO
+        Tue, 31 Jul 2018 14:46:51 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46570 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbeGaSp5 (ORCPT
+        with ESMTP id S1727269AbeGaSqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:45:57 -0400
+        Tue, 31 Jul 2018 14:46:51 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VH3nfM186058;
-        Tue, 31 Jul 2018 17:04:32 GMT
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VH3r9R186120;
+        Tue, 31 Jul 2018 17:05:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=/NyYG2xUjEbwmFCVydnwZsI5jVQ5mzX2p/pPJj91BN0=;
- b=Dyqopz5nta8xK/mPuws9pK7fvsoHTyH19a/9ectjB1+GG3lPqjQHT1/pdWqTV1qPdbfO
- 0PO6fIEM9ADPA/R253FIL5Mk9DY44x8bNORHH3dbrHw8Px82MS4tI2Qeqfj+LFnh8TTi
- CzN8aBwwDsJBzD7xDjRpDNSRt9ZLdwSKBQ3JjUXiRLXHC6D7y683AKkkmKIV/E6WHl3R
- h396iWTWRsFSmSI8rYPanEEynyp3MZcaI8/tLuzgEL/1dRdXa1qigLW88r7PCWszmwIR
- b5jZJfMpEJcI0xn/rG4U6iXvLvzDJ0TbhfK+v0+BBf1xd/1HErdoUyLeF3QP/NQRTfQp 9Q== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2kgh4q1xqf-1
+ bh=uyRQMbYe9xdrAEDbho6bRxXrkDTd0OqH4kmosZIDQjM=;
+ b=JX16f4h2OQ286oHLG598AKeTaAaco3ZUYsmpG7Y/GeTJ7v5a/ZSlv+1OuELpP4TRVQQF
+ Sie8E1cIxHYJOqcENzzTLI7l7UTDAauXXr1zd4dud2bC3how3PzY/z3Qlv1wEf3HYh0n
+ 0G6Mc+ydYfOBeaGRwNwCIH2zJIUcfET4TuwNKHyYHD/h8R53Wa3afrNjSrMNvrC7OlI+
+ KaLCqzLvMIZiQTJK7wunarojYUy94KNFDN18Oj3jgwncRGuX6f92gFTVbuhdvHuzAaMG
+ 1AvXQfokfowsLrx3lFw6fGAwpjQWJtGowwvTehED0ev7J70uiy6LFnnLZurY0bywhELL pQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kgh4q1xtt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 17:04:32 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6VH4UA3003248
+        Tue, 31 Jul 2018 17:05:15 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6VH5E9o010768
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 17:04:31 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6VH4USG019490;
-        Tue, 31 Jul 2018 17:04:30 GMT
+        Tue, 31 Jul 2018 17:05:15 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6VH5ESR003338;
+        Tue, 31 Jul 2018 17:05:14 GMT
 Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 10:04:29 -0700
-Subject: Re: [PATCH v5 0/8] xen: dma-buf support for grant device
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180720090150.24560-1-andr2000@gmail.com>
+        with ESMTP ; Tue, 31 Jul 2018 10:05:14 -0700
+Subject: Re: [PATCH v2] xen/spinlock: Don't use pvqspinlock if only 1 vCPU
+To:     Waiman Long <longman@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1532036397-19449-1-git-send-email-longman@redhat.com>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
@@ -106,18 +106,18 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <b321da31-24ea-7bfd-769c-0cdec85844c8@oracle.com>
-Date:   Tue, 31 Jul 2018 13:04:48 -0400
+Message-ID: <a57a15cb-162f-6248-79c9-311756bd9560@oracle.com>
+Date:   Tue, 31 Jul 2018 13:05:39 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180720090150.24560-1-andr2000@gmail.com>
+In-Reply-To: <1532036397-19449-1-git-send-email-longman@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=833
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=599
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1806210000 definitions=main-1807310158
 Sender: linux-kernel-owner@vger.kernel.org
@@ -125,17 +125,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/20/2018 05:01 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On 07/19/2018 05:39 PM, Waiman Long wrote:
+> On a VM with only 1 vCPU, the locking fast paths will always be
+> successful. In this case, there is no need to use the the PV qspinlock
+> code which has higher overhead on the unlock side than the native
+> qspinlock code.
 >
-> This work is in response to my previous attempt to introduce Xen/DRM
-> zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
-> frontends/backends. There is also an existing hyper_dmabuf approach
-> available [3] which, if reworked to utilize the proposed solution,
-> can greatly benefit as well.
+> The xen_pvspin veriable is also turned off in this 1 vCPU case to
+> eliminate unneeded pvqspinlock initialization in xen_init_lock_cpu()
+> which is run after xen_init_spinlocks().
 >
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
 
 Applied to for-linus-4.19.
 
 -boris
+
+
