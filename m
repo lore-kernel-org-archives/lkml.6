@@ -2,225 +2,103 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAACC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB08C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F8F208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3AC0208AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OOZCncX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F8F208AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YaEPcBxl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AC0208AC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732411AbeGaQ0m (ORCPT
+        id S1732444AbeGaQ2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 12:26:42 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57178 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732350AbeGaQ0m (ORCPT
+        Tue, 31 Jul 2018 12:28:40 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43944 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732309AbeGaQ2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 12:26:42 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6VE92NC040893;
-        Tue, 31 Jul 2018 14:45:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ilI93KBqqQ4Hq2i+/xbQFizG6+gWf+PyMpVJ7bUe/2A=;
- b=OOZCncX8Nu4FWRwODEm1AZwfKuDdODCdtYGqEYQSC8fmF3fMbhwdkRN/bHon5JhFyNV/
- vX9XszA99EEwbsNDUvNYXCdJTR+3mg25WQNX1ke1nMLM7FE8w4tEXVX+rxc1EIwSDkxf
- cBRbAOaB5gtNqz80MvbtCu8vLsGCFQCS4M4f4UP5oz83iftNoGvmIdOhMTnjOYCe5wIf
- PCnVhZVt3/OHrPr+NhNT6DDo+FeGpWsL3TzKPgM8RfhTbYGffPF0SOW7CL1IJCMsln8j
- BFSsuSczX0RPSo0Da8iS9N3cu/tNKZIsTeAvaUoGhCJv8XZhGGEA1X45AzksCQo8T4+B LA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2kgh4q19p9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 14:45:49 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6VEjmhS002332
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jul 2018 14:45:48 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6VEjlej015314;
-        Tue, 31 Jul 2018 14:45:48 GMT
-Received: from xakep.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 07:45:47 -0700
-Date:   Tue, 31 Jul 2018 10:45:45 -0400
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
-        Mel Gorman <mgorman@suse.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
-Message-ID: <20180731144545.fh5syvwcecgvqul6@xakep.localdomain>
-References: <20180731124504.27582-1-osalvador@techadventures.net>
- <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
- <20180731144157.GA1499@techadventures.net>
+        Tue, 31 Jul 2018 12:28:39 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b15-v6so16961903wrv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 07:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JX1rFIkxl/qfmgj+om/gyrq8vcJeEApGMk7zMDnxm6k=;
+        b=YaEPcBxlue8+izjRAUivrReNWG34VM1u5qAntmRD3KS4m2BiibvpiHpsFULk17BeSU
+         IxK5YKoHZ7uG0jRc4fq6xn026dGwnpoohCzCmrD8IwvHljN9xJRxxyMXZ5E8iBI9inko
+         VrfDDyOkcFqi4Eu6/d0KRrcyirenqSr/wMd8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JX1rFIkxl/qfmgj+om/gyrq8vcJeEApGMk7zMDnxm6k=;
+        b=nxFEb0lJzYSlo4iEG+9VuM2/VLVEX2x4RE2yeUB7RRuS87n5xAR1EToXVPmhn7eZEY
+         VtmcKYCvOO9iwoa3ts29sc1ilA65Xb4OTPLLHWiFMB6hLa/wawq2eWbhymgSA3eVeeTN
+         LkS4nKIPBgPM94B1TEz+JrU9YDZOamz+O+Ew7LRSiBVOxcvmJJjfNPjlR+2VTBhYH3mA
+         eT6atfZ/AHjR1HXKPojTuVl6fKGyoQYgvSUqw5DiXHwrPEPZZXKOtEmXm/HRrIaCL40y
+         2xSGGbJgb5fp/64tpI71a7U0E8QO+rgYoDlWQknTSLVB+U5NJeiWZXDLc65gTgMGsj/a
+         9jrw==
+X-Gm-Message-State: AOUpUlFH/+r0r/Tufkc+gLGe0jiha1DXPafEBeYUMwnU8ftsHaqNRYuh
+        jdYIsK3V6wf7WjApH70HBaw9mQ==
+X-Google-Smtp-Source: AAOMgpdsYRcMx2zzp6TbnkW3eNE/dhE6qGpGBWu59aJH/gEh+41aKMqxokDbd1b3x2TqjFjhHHdBuQ==
+X-Received: by 2002:adf:bc03:: with SMTP id s3-v6mr22337546wrg.211.1533048478506;
+        Tue, 31 Jul 2018 07:47:58 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s ([45.76.138.171])
+        by smtp.gmail.com with ESMTPSA id u185-v6sm3271006wmg.25.2018.07.31.07.47.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 07:47:57 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 22:47:43 +0800
+From:   leo.yan@linaro.org
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Kim Phillips <kim.phillips@arm.com>
+Subject: Re: [PATCH v2 0/6] perf cs-etm: Fix tracing packet handling and
+ minor refactoring
+Message-ID: <20180731144743.GA16484@leoy-ThinkPad-X240s>
+References: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
+ <20180723013507.GA27713@leoy-ThinkPad-X240s>
+ <20180731142445.GB4909@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180731144157.GA1499@techadventures.net>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807310137
+In-Reply-To: <20180731142445.GB4909@kernel.org>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-07-31 16:41:57, Oscar Salvador wrote:
-> On Tue, Jul 31, 2018 at 08:49:11AM -0400, Pavel Tatashin wrote:
-> > Hi Oscar,
+On Tue, Jul 31, 2018 at 11:24:45AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jul 23, 2018 at 09:35:07AM +0800, leo.yan@linaro.org escreveu:
+> > Hi Arnaldo,
 > > 
-> > Have you looked into replacing __paginginit via __meminit ? What is
-> > the reason to keep both?
-> Hi Pavel,
+> > On Wed, Jul 11, 2018 at 03:45:39PM +0800, Leo Yan wrote:
+> > 
+> > Just want to confirm, I saw the first two patches in this serise have
+> > been merged into perf/core branch [1], but the last 4 patches are
+> > missed.
+> > 
+> > Could I know if you have trouble when you apply them?  Or anything
+> > need me to follow up?  Otherwise you might miss them :)
 > 
-> Actually, thinking a bit more about this, it might make sense to remove
-> __paginginit altogether and keep only __meminit.
-> Looking at the original commit, I think that it was put as a way to abstract it.
-> 
-> After the patchset [1] has been applied, only two functions marked as __paginginit
-> remain, so it will be less hassle to replace that with __meminit.
-> 
-> I will send a v2 tomorrow to be applied on top of [1].
-> 
-> [1] https://patchwork.kernel.org/patch/10548861/
-> 
-> Thanks
-> -- 
-> Oscar Salvador
-> SUSE L3
-> 
+> Just this reminder was enough, checked that it has Mathieu's reviewed-by
+> tags, applied, will go thru my cross build containers, hopefully all
+> will test build ok and then it'll go to Ingo's direction.
 
-Here the patch would look like this:
-
-From e640b32dbd329bba5a785cc60050d5d7e1ca18ce Mon Sep 17 00:00:00 2001
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Tue, 31 Jul 2018 10:37:44 -0400
-Subject: [PATCH] mm: remove __paginginit
-
-__paginginit is the same thing as __meminit except for platforms without
-sparsemem, there it is defined as __init.
-
-Remove __paginginit and use __meminit. Use __ref in one single function
-that merges __meminit and __init sections: setup_usemap().
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- mm/internal.h   | 12 ------------
- mm/page_alloc.c | 19 ++++++++++---------
- 2 files changed, 10 insertions(+), 21 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 33c22754d282..87256ae1bef8 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -389,18 +389,6 @@ static inline struct page *mem_map_next(struct page *iter,
- 	return iter + 1;
- }
- 
--/*
-- * FLATMEM and DISCONTIGMEM configurations use alloc_bootmem_node,
-- * so all functions starting at paging_init should be marked __init
-- * in those cases. SPARSEMEM, however, allows for memory hotplug,
-- * and alloc_bootmem_node is not used.
-- */
--#ifdef CONFIG_SPARSEMEM
--#define __paginginit __meminit
--#else
--#define __paginginit __init
--#endif
--
- /* Memory initialisation debug and verification */
- enum mminit_level {
- 	MMINIT_WARNING,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 02e4b84038f8..92abe3eb151d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6122,7 +6122,7 @@ static unsigned long __init usemap_size(unsigned long zone_start_pfn, unsigned l
- 	return usemapsize / 8;
- }
- 
--static void __init setup_usemap(struct pglist_data *pgdat,
-+static void __ref setup_usemap(struct pglist_data *pgdat,
- 				struct zone *zone,
- 				unsigned long zone_start_pfn,
- 				unsigned long zonesize)
-@@ -6142,7 +6142,7 @@ static inline void setup_usemap(struct pglist_data *pgdat, struct zone *zone,
- #ifdef CONFIG_HUGETLB_PAGE_SIZE_VARIABLE
- 
- /* Initialise the number of pages represented by NR_PAGEBLOCK_BITS */
--void __paginginit set_pageblock_order(void)
-+void __meminit set_pageblock_order(void)
- {
- 	unsigned int order;
- 
-@@ -6170,14 +6170,14 @@ void __paginginit set_pageblock_order(void)
-  * include/linux/pageblock-flags.h for the values of pageblock_order based on
-  * the kernel config
-  */
--void __paginginit set_pageblock_order(void)
-+void __meminit set_pageblock_order(void)
- {
- }
- 
- #endif /* CONFIG_HUGETLB_PAGE_SIZE_VARIABLE */
- 
--static unsigned long __paginginit calc_memmap_size(unsigned long spanned_pages,
--						   unsigned long present_pages)
-+static unsigned long __meminit calc_memmap_size(unsigned long spanned_pages,
-+						unsigned long present_pages)
- {
- 	unsigned long pages = spanned_pages;
- 
-@@ -6204,7 +6204,7 @@ static unsigned long __paginginit calc_memmap_size(unsigned long spanned_pages,
-  *
-  * NOTE: pgdat should get zeroed by caller.
-  */
--static void __paginginit free_area_init_core(struct pglist_data *pgdat)
-+static void __meminit free_area_init_core(struct pglist_data *pgdat)
- {
- 	enum zone_type j;
- 	int nid = pgdat->node_id;
-@@ -6344,8 +6344,9 @@ static void __ref alloc_node_mem_map(struct pglist_data *pgdat)
- static void __ref alloc_node_mem_map(struct pglist_data *pgdat) { }
- #endif /* CONFIG_FLAT_NODE_MEM_MAP */
- 
--void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
--		unsigned long node_start_pfn, unsigned long *zholes_size)
-+void __meminit free_area_init_node(int nid, unsigned long *zones_size,
-+				   unsigned long node_start_pfn,
-+				   unsigned long *zholes_size)
- {
- 	pg_data_t *pgdat = NODE_DATA(nid);
- 	unsigned long start_pfn = 0;
-@@ -6390,7 +6391,7 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
-  * may be accessed (for example page_to_pfn() on some configuration accesses
-  * flags). We must explicitly zero those struct pages.
-  */
--void __paginginit zero_resv_unavail(void)
-+void __meminit zero_resv_unavail(void)
- {
- 	phys_addr_t start, end;
- 	unsigned long pfn;
--- 
-2.18.0
-
-
+Cool!  Thanks a lot, Arnaldo.
