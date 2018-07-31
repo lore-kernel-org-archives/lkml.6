@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8BAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25078C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88A52083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88A52083D
+	by mail.kernel.org (Postfix) with ESMTP id B991D2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B991D2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732361AbeGaP23 (ORCPT
+        id S1732375AbeGaP2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:28:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38727 "EHLO mail.bootlin.com"
+        Tue, 31 Jul 2018 11:28:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38732 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732127AbeGaP22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732250AbeGaP22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 11:28:28 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DDE9220799; Tue, 31 Jul 2018 15:48:01 +0200 (CEST)
+        id DFB3F20765; Tue, 31 Jul 2018 15:48:01 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 58126207B7;
+        by mail.bootlin.com (Postfix) with ESMTPSA id A434E207BD;
         Tue, 31 Jul 2018 15:47:43 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>,
@@ -39,9 +39,9 @@ Cc:     Paul Burton <paul.burton@mips.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Allan Nielsen <allan.nielsen@microsemi.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 5/6] mips: dts: mscc: Add i2c on ocelot
-Date:   Tue, 31 Jul 2018 15:47:39 +0200
-Message-Id: <20180731134740.441-6-alexandre.belloni@bootlin.com>
+Subject: [PATCH v2 6/6] mips: dts: mscc: enable i2c on ocelot_pcb123
+Date:   Tue, 31 Jul 2018 15:47:40 +0200
+Message-Id: <20180731134740.441-7-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180731134740.441-1-alexandre.belloni@bootlin.com>
 References: <20180731134740.441-1-alexandre.belloni@bootlin.com>
@@ -50,50 +50,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ocelot has an i2c controller, add it. There is only one possible pinmux
-configuration so add it as well.
+Enable the i2c controller on ocelot PCB123. While there are no i2c devices
+on the board itself, it can be used to control the SFP transceivers.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/mips/boot/dts/mscc/ocelot.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/mips/boot/dts/mscc/ocelot_pcb123.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-index 4f33dbc67348..34093acebc0d 100644
---- a/arch/mips/boot/dts/mscc/ocelot.dtsi
-+++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-@@ -78,6 +78,19 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+index 4ccd65379059..336c859a9bbe 100644
+--- a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
++++ b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+@@ -26,6 +26,12 @@
+ 	status = "okay";
+ };
  
-+		i2c: i2c@100400 {
-+			compatible = "mscc,ocelot-i2c", "snps,designware-i2c";
-+			pinctrl-0 = <&i2c_pins>;
-+			pinctrl-names = "default";
-+			reg = <0x100400 0x100>, <0x198 0x8>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <8>;
-+			clocks = <&ahb_clk>;
++&i2c {
++	clock-frequency = <100000>;
++	i2c-sda-hold-time-ns = <300>;
++	status = "okay";
++};
 +
-+			status = "disabled";
-+		};
-+
- 		uart2: serial@100800 {
- 			pinctrl-0 = <&uart2_pins>;
- 			pinctrl-names = "default";
-@@ -178,6 +191,11 @@
- 				pins = "GPIO_12", "GPIO_13";
- 				function = "uart2";
- 			};
-+
-+			i2c_pins: i2c-pins {
-+				pins = "GPIO_16", "GPIO_17";
-+				function = "twi";
-+			};
- 		};
- 
- 		mdio0: mdio@107009c {
+ &mdio0 {
+ 	status = "okay";
+ };
 -- 
 2.18.0
 
