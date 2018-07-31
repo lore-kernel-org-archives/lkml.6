@@ -2,71 +2,112 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55A1C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4391C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D36A20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:14:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwbTLfGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D36A20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 63FC520844
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 17:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FC520844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbeGaSzp (ORCPT
+        id S1731501AbeGaS43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:55:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbeGaSzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:55:45 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3173420844;
-        Tue, 31 Jul 2018 17:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533057269;
-        bh=ZWb/IiEpXh/MWpzUYdci0auOqrxcdz/LhqjD9OJrRBE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fwbTLfGohFkPkEU3ib1JY8AthGM7K9a51tJ9hi7ps+u69kAFXVqhTUBroteDX/g4E
-         1fv3AkYRyxj0IruVBJJsSGAXEcdOB/ys76t/sFHcUxLD0fG/9nilMGyvOH6CvBduJi
-         xYaUwcnXNE6+VSmxPm0ezZ7xSOgZHaK5dEKXJumY=
-Date:   Tue, 31 Jul 2018 19:14:27 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
-        tglx@linutronix.de, bristot@redhat.com, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org
-Subject: Re: [PATCH] nohz: Fix local_timer_softirq_pending()
-Message-ID: <20180731171426.GD28353@lerouge>
-References: <20180731161358.29472-1-anna-maria@linutronix.de>
+        Tue, 31 Jul 2018 14:56:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:41378 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727135AbeGaS43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 14:56:29 -0400
+X-UUID: ae7bdcfe755c44a886be8e1a1045292a-20180801
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1383639138; Wed, 01 Aug 2018 01:15:03 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 1 Aug 2018 01:15:01 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 1 Aug 2018 01:15:02 +0800
+From:   <sean.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v7 1/3] dt-bindings: net: bluetooth: Add mediatek-bluetooth
+Date:   Wed, 1 Aug 2018 01:14:58 +0800
+Message-ID: <a3e8870dfb1302a60b041077a05c44faa42675b6.1533056925.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1533056925.git.sean.wang@mediatek.com>
+References: <cover.1533056925.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731161358.29472-1-anna-maria@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 06:13:58PM +0200, Anna-Maria Gleixner wrote:
-> local_timer_softirq_pending() checks whether the timer softirq is
-> pending with: local_softirq_pending() & TIMER_SOFTIRQ.
-> 
-> This is wrong because TIMER_SOFTIRQ is the softirq number and not a
-> bitmask. So the test checks for the wrong bit.
-> 
-> Use BIT(TIMER_SOFTIRQ) instead.
-> 
-> Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
-> Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Sean Wang <sean.wang@mediatek.com>
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Add binding document for a SoC built-in device using MediaTek protocol.
+Which could be found on MT7622 SoC or other similar MediaTek SoCs.
 
-Thanks!
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+
+diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+new file mode 100644
+index 0000000..14ceb2a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+@@ -0,0 +1,35 @@
++MediaTek SoC built-in Bluetooth Devices
++==================================
++
++This device is a serial attached device to BTIF device and thus it must be a
++child node of the serial node with BTIF. The dt-bindings details for BTIF
++device can be known via Documentation/devicetree/bindings/serial/8250.txt.
++
++Required properties:
++
++- compatible:	Must be
++		  "mediatek,mt7622-bluetooth": for MT7622 SoC
++- clocks:	Should be the clock specifiers corresponding to the entry in
++		clock-names property.
++- clock-names:	Should contain "ref" entries.
++- power-domains: Phandle to the power domain that the device is part of
++
++Example:
++
++	btif: serial@1100c000 {
++		compatible = "mediatek,mt7622-btif",
++			     "mediatek,mtk-btif";
++		reg = <0 0x1100c000 0 0x1000>;
++		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&pericfg CLK_PERI_BTIF_PD>;
++		clock-names = "main";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++
++		bluetooth {
++			compatible = "mediatek,mt7622-bluetooth";
++			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
++			clocks = <&clk25m>;
++			clock-names = "ref";
++		};
++	};
+-- 
+2.7.4
+
