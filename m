@@ -2,125 +2,87 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33939C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899DCC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86AE208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86AE208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 3A8D9208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 09:21:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8D9208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731272AbeGaLAD (ORCPT
+        id S1731428AbeGaLAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 07:00:03 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61632 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729485AbeGaLAC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 07:00:02 -0400
-Received: from 79.184.255.22.ipv4.supernova.orange.pl (79.184.255.22) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 7a2edf879e3bbb67; Tue, 31 Jul 2018 11:20:37 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     lenb@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, eero.t.tamminen@intel.com,
-        ggherdovich@suse.cz, mgorman@techsingularity.net,
-        currojerez@riseup.net
-Subject: Re: [PATCH] cpufreq: intel_pstate: Limit the scope of HWP dynamic boost platforms
-Date:   Tue, 31 Jul 2018 11:18:44 +0200
-Message-ID: <1750924.cJQU9QUSYP@aspire.rjw.lan>
-In-Reply-To: <20180730220029.81983-1-srinivas.pandruvada@linux.intel.com>
-References: <20180730220029.81983-1-srinivas.pandruvada@linux.intel.com>
+        Tue, 31 Jul 2018 07:00:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729485AbeGaLAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 07:00:54 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37AE4402315B;
+        Tue, 31 Jul 2018 09:21:30 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 62BC52142F20;
+        Tue, 31 Jul 2018 09:21:29 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 11:21:28 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [RFC] perf annotate: option to report global percentage
+Message-ID: <20180731092128.GA17617@krava>
+References: <CABPqkBT0P=GKNb6ypjaPxe4dEwShHk37mdrX0RtodMm44gaE+Q@mail.gmail.com>
+ <20180719082539.GB18667@krava>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719082539.GB18667@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 31 Jul 2018 09:21:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 31 Jul 2018 09:21:30 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, July 31, 2018 12:00:29 AM CEST Srinivas Pandruvada wrote:
-> Dynamic boosting of HWP performance on IO wake showed significant
-> improvement to IO workloads. This series was intended for Skylake Xeon
-> platforms only and feature was enabled by default based on CPU model
-> number.
+On Thu, Jul 19, 2018 at 10:25:39AM +0200, Jiri Olsa wrote:
+> On Wed, Jul 18, 2018 at 02:55:14PM -0700, Stephane Eranian wrote:
+> > Hi Jiri,
+> > 
+> > As far as I know, once you go into annotate mode, via perf report TUI
+> > mode, the percentage you see per instruction is relative to the
+> > function. I would like the option to display the total percentage,
+> > i..e, the importance of the instruction for the entire run. Right now,
+> > if I want that, I need to do function_percentage * insn_percentage by
+> > hand. This is not convenient. Having a key toggle would be very
+> > useful, worst case a cmdline option.
+> > 
+> > What do you think?
 > 
-> But some Xeon platforms reused the Skylake desktop CPU model number. This
-> caused some undesirable side effects to some graphics workloads. Since
-> they are heavily IO bound, the increase in CPU performance decreased the
-> power available for GPU to do its computing and hence decrease in graphics
-> benchmark performance.
+> hi,
+> that should be simple to add, we already have the 'F' in the
+> main browser window to toggle among full/filtered scale
 > 
-> For example on a Skylake desktop, GpuTest benchmark showed average FPS
-> reduction from 529 to 506.
-> 
-> This change makes sure that HWP boost feature is only enabled for Skylake
-> server platforms by using ACPI FADT preferred PM Profile. If some desktop
-> users wants to get benefit of boost, they can still enable boost from
-> intel_pstate sysfs attribute "hwp_dynamic_boost".
-> 
-> Fixes: 41ab43c9c89e (cpufreq: intel_pstate: enable boost for Skylake Xeon)
-> Link: https://bugs.freedesktop.org/show_bug.cgi?id=107410
-> Reported-by: Eero Tamminen <eero.t.tamminen@intel.com>
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index 3c3971256130..d4ed0022b0dd 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -311,12 +311,20 @@ static DEFINE_MUTEX(intel_pstate_limits_lock);
->  
->  #ifdef CONFIG_ACPI
->  
-> -static bool intel_pstate_get_ppc_enable_status(void)
-> +static bool intel_pstate_acpi_pm_profile_server(void)
->  {
->  	if (acpi_gbl_FADT.preferred_profile == PM_ENTERPRISE_SERVER ||
->  	    acpi_gbl_FADT.preferred_profile == PM_PERFORMANCE_SERVER)
->  		return true;
->  
-> +	return false;
-> +}
-> +
-> +static bool intel_pstate_get_ppc_enable_status(void)
-> +{
-> +	if (intel_pstate_acpi_pm_profile_server())
-> +		return true;
-> +
->  	return acpi_ppc;
->  }
->  
-> @@ -459,6 +467,11 @@ static inline void intel_pstate_init_acpi_perf_limits(struct cpufreq_policy *pol
->  static inline void intel_pstate_exit_perf_limits(struct cpufreq_policy *policy)
->  {
->  }
-> +
-> +static inline bool intel_pstate_acpi_pm_profile_server(void)
-> +{
-> +	return false;
-> +}
->  #endif
->  
->  static inline void update_turbo_state(void)
-> @@ -1841,7 +1854,7 @@ static int intel_pstate_init_cpu(unsigned int cpunum)
->  		intel_pstate_hwp_enable(cpu);
->  
->  		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
-> -		if (id)
-> +		if (id && intel_pstate_acpi_pm_profile_server())
->  			hwp_boost = true;
->  	}
->  
-> 
+> I'll try to add something similar for annotation window
 
-Applied, thanks!
+sry for delay, I was out last week
 
+I put something together and pushed it in here:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  perf/annotate_percent
 
+there's the 'p' key to switch between local and global period
+I haven't added any command line option for stdio yet
+
+I'll have more testing and post later but any feedback
+now would be great
+
+thanks,
+jirka
