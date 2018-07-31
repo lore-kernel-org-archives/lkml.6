@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ACAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14158C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EEE208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7BE4208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 18:59:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZY6tr+zY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75EEE208B2
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VtKNsFx2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7BE4208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732201AbeGaUlY (ORCPT
+        id S1732247AbeGaUl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 16:41:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37593 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732006AbeGaUlY (ORCPT
+        Tue, 31 Jul 2018 16:41:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35488 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732211AbeGaUlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 16:41:24 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n7-v6so9540905pgq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:59:44 -0700 (PDT)
+        Tue, 31 Jul 2018 16:41:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p12-v6so1448673pfh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 11:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pregnSMfkOaGBP4vqZw3v3Rj/ItF+UeK9Knvf5WfDP4=;
-        b=ZY6tr+zYY40u8HIGlHlv7yUWn4nd25P9iTfaiSsJk0cobiYOamYX5s9xCpzYB6XMyv
-         O9s+4uj0n05Wjf+zetTSTyamcEimvSziJ3UZiTjet5j2z3HW1KnBnVSjdef402dHCCqt
-         LUngiV0pXnXmV5QF/u406B8pLXIM6P4IvQiLw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XWHD3U11wghvwRII1kRUIs8QoNbRmHkZbA9xigt5SRw=;
+        b=VtKNsFx2fc4xr3o3dPJ+5VUohYwrqfLv+Nz4/VQ6QNzrkXlR5hx6vBnYUJbhiFQfor
+         tlObU1KQ9ZDN9Amr1kPyYq0pZAKphBl3Krt/5fn8kG9SjDmGeYDocJzvLM8yJWgPuipe
+         ruVm1RLrL/HC2wvq70MbYskCB8Bb3LjraFb/8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pregnSMfkOaGBP4vqZw3v3Rj/ItF+UeK9Knvf5WfDP4=;
-        b=ll9MVk+dqDIfUoqIhulk88YdMJwNCA1yPAl8+0iTHdMkjMO3lCuSq0/EW8e8iwsqK3
-         olPFC087Vi9wt/vzarZt4qreAJ+DE1vMSAhsBGZa26Q6wndq5fl9HH/kB1npX4yTH834
-         wIZtG+4GjhZ7+DBysEx1Iecujwm+RGDdtYd1p48ykXtZW998TG2sE1J2//PJs+eQmW+C
-         f55j3JEUmu6++MC1YH+ofNR/HBhdgySaz/2dGkLNyb10qhPmAPYYjmKJy57JR/gs1j/x
-         jDPc6dSRaRaz2J/GPsBPkjsdLDeREMoHzte8+T1GUclfPPfc5GQZovwMIYzq2RxiUlUx
-         TB0w==
-X-Gm-Message-State: AOUpUlFsF5AUfin/bqLiP6FstQva9ZIRxT8Uy3aJuGGnHuoEhyBpd5T+
-        xgduJ9e+mj//2gpnSDT5i+N6BA==
-X-Google-Smtp-Source: AAOMgpd8xxnEWfHqO2sUp+cEmFEzipR/+YKCkPW+qO2/mgpwGOvmtbpEcEIPjXdIVhWmcfUNUZmgUQ==
-X-Received: by 2002:aa7:8591:: with SMTP id w17-v6mr23605077pfn.77.1533063583758;
-        Tue, 31 Jul 2018 11:59:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XWHD3U11wghvwRII1kRUIs8QoNbRmHkZbA9xigt5SRw=;
+        b=s1UXEIBCalPSOdSJRUP+OIZqIWz0KhMEzaPRba2iTmEP0Dd90PlJ7TzQrT0iem2ZHK
+         iaJ1WFtXfQSFVvxoAIuHQQuxV+EoYdKEshJRHNintFBo+roRvLMOcU96CpmQ5vQov9UR
+         hL1stp6SpxcHcvDGu8S1E2psAxALqTTIo4h6iZF1uxb3bS/Qze7auTSpX9hkVQcpDS5w
+         iKBEA2FfFUDaFwK8+ubwZLg3hrk3mNfjO/u/MlRtmhykU2JqbewIkTWDIBlqj7oMibIK
+         CDqAoEmHP1tGWXBvIRqdFliyHp2y4fZKrEYlQ1ThK4A61VjEqYk21SacM0wunamuTfp3
+         qiPg==
+X-Gm-Message-State: AOUpUlGKb23/3zAKTNys+77dgUMkqhoIwITVYDWW7BKoGNI99yGq9tQl
+        QfjTp8miQIMV0kWB6rCboWH06A==
+X-Google-Smtp-Source: AAOMgpcqwTmDD5Ozvi7ayuWDmQ9nKxaf3SQSygz6tb6gXrX94F7Q864clnedanKKUMCy8q4QEVrOxw==
+X-Received: by 2002:aa7:824d:: with SMTP id e13-v6mr23441782pfn.97.1533063585006;
+        Tue, 31 Jul 2018 11:59:45 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id e132-v6sm27797567pfc.49.2018.07.31.11.59.42
+        by smtp.gmail.com with ESMTPSA id e132-v6sm27797567pfc.49.2018.07.31.11.59.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 11:59:43 -0700 (PDT)
+        Tue, 31 Jul 2018 11:59:44 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -71,22 +71,30 @@ Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 1/5] dt-bindings: thermal: qcom-spmi-temp-alarm: Fix documentation of 'reg'
-Date:   Tue, 31 Jul 2018 11:59:13 -0700
-Message-Id: <20180731185917.176074-1-mka@chromium.org>
+Subject: [PATCH v6 2/5] dt-bindings: thermal: qcom-spmi-temp-alarm: Improve thermal zone in example
+Date:   Tue, 31 Jul 2018 11:59:14 -0700
+Message-Id: <20180731185917.176074-2-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+In-Reply-To: <20180731185917.176074-1-mka@chromium.org>
+References: <20180731185917.176074-1-mka@chromium.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation claims that the 'reg' property consists of two values,
-the SPMI address and the length of the controller's registers. However
-the SPMI bus to which it is added specifies "#size-cells = <0>;". Remove
-the controller register length from the documentation of the field and the
-example.
+The current example for a thermal zone isn't very useful as reference
+since it would result in a hardware shutdown at 145°C, instead of
+allowing the system to try to shutdown gracefully. Without an ADC
+channel a maximum of two trip points is useful in practice for this
+sensor, with temperatures corresponding to the stage 1 and stage 2
+'hardware trip points'. A critical trip point at stage 2 may allow the
+system to shutdown before a hardware shutdown at stage 3 kicks in. It
+should be noted though that by default the chip performs a 'partial
+shutdown' when the temperature reaches stage 2, which may prevent an
+orderly shutdown. The 'partial shutdown' can be disabled by software.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
@@ -94,32 +102,36 @@ Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Changes in v6:
 - patch added to the series
 ---
- .../devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt     | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ .../bindings/thermal/qcom-spmi-temp-alarm.txt         | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
-index 290ec06fa33a..86fb41fe772f 100644
+index 86fb41fe772f..0273a92a2a84 100644
 --- a/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
 +++ b/Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt
-@@ -6,8 +6,7 @@ interrupt signal and status register to identify high PMIC die temperature.
+@@ -35,19 +35,14 @@ Example:
+ 			thermal-sensors = <&pm8941_temp>;
  
- Required properties:
- - compatible:      Should contain "qcom,spmi-temp-alarm".
--- reg:             Specifies the SPMI address and length of the controller's
--                   registers.
-+- reg:             Specifies the SPMI address.
- - interrupts:      PMIC temperature alarm interrupt.
- - #thermal-sensor-cells: Should be 0. See thermal.txt for a description.
- 
-@@ -20,7 +19,7 @@ Example:
- 
- 	pm8941_temp: thermal-alarm@2400 {
- 		compatible = "qcom,spmi-temp-alarm";
--		reg = <0x2400 0x100>;
-+		reg = <0x2400>;
- 		interrupts = <0 0x24 0 IRQ_TYPE_EDGE_RISING>;
- 		#thermal-sensor-cells = <0>;
- 
+ 			trips {
+-				passive {
+-					temperature = <1050000>;
++				stage1 {
++					temperature = <105000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-				alert {
++				stage2 {
+ 					temperature = <125000>;
+ 					hysteresis = <2000>;
+-					type = "hot";
+-				};
+-				crit {
+-					temperature = <145000>;
+-					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
 -- 
 2.18.0.345.g5c9ce644c3-goog
 
