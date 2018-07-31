@@ -2,177 +2,129 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF10C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89014C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CC420841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:49:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rsW0XZGX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CC420841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F11F20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 16:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F11F20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731760AbeGaSaT (ORCPT
+        id S1729786AbeGaSb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 14:30:19 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44474 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728042AbeGaSaT (ORCPT
+        Tue, 31 Jul 2018 14:31:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727471AbeGaSb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 14:30:19 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m16-v6so7413132pls.11
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 09:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u0WOo3R3YBIqyGQEAcbJ7mGnnTgMAUrFkzZIsK+f730=;
-        b=rsW0XZGX7UJ+r+0Uvjxdc6P7DK+s0JGuFibI6wVkRUoLZTMBBsjKG1PJmgKer0nhEE
-         6C4M0tO5eVcRoGEPIpVK5wKxoQz0zWqSFkTBTy7g16nDSwwgpeI/q+DtmT8iCQqrSZx0
-         iEPAnrCDiPP0wb3XNrNrfkdasaiB6IvXj0F44aAnrGNi83Uea0F3V2w+4ITLAYKS1eiV
-         08gEZI1CCIgF9FSV8KJeHfiHOF5dI0eihhTL5J0OGzpw9SJjaxbt1jDIKR3Ggw56VUM/
-         0uOccVVc1ZmMioKBQ92dxSdSsOhzkos+tDYMYBysMgvV8d2BR3xYrdFC3MflWBhs4Hqn
-         mJIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u0WOo3R3YBIqyGQEAcbJ7mGnnTgMAUrFkzZIsK+f730=;
-        b=VjXoJIUazb8ugh2HQRkxg3oYrYlcWGSoEZsLI4RHd2exg3lyyj8P0xkW7PGmhQg2WG
-         o6XEJRllF8dPyXFggCLtoLmOSjK+pF7JyCDC+R4/d6iFfkfgpuHnmVCH8UDgh1qksTrl
-         iTWVRnPN7o+Or8a5KM88NubLV8lZtl9/bBgOflk22l0QPvySX7sDe202MXE3b+GiJZ+m
-         cwSUvdU4FfLRM5bVfUGJjPIzZUnjatTbEPJ4R6OV52XH5sHOvyaRhMTgZZKDr36JlbSd
-         OAFGbr88tS//l03/tlwLHZUYP6ojYogUZrwmK8uZcF7yRoACX0t8Y0sBQOh+RkAm+W/i
-         7euw==
-X-Gm-Message-State: AOUpUlEGDjD/IdG3UZEF5PYqOStulHOLSTa2ZSMmwSkwYQ05sghxCqG8
-        emt7iVLTI/3vs5x6onxLyrDdcaATkK1YJN1SQPSudg==
-X-Google-Smtp-Source: AAOMgpdP9mxVk3W5FXDXvCb2yVFqQ3nSGnlzp5IvgcFTIa0qNGeyhZtpwezCi/04FzeQxdvFPm4Ec0EaeQgQ11LIqpA=
-X-Received: by 2002:a17:902:708b:: with SMTP id z11-v6mr20830038plk.262.1533055748726;
- Tue, 31 Jul 2018 09:49:08 -0700 (PDT)
+        Tue, 31 Jul 2018 14:31:56 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6VGmfHB147222
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:50:46 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kjsx74uf6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 12:50:45 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 31 Jul 2018 12:50:45 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 31 Jul 2018 12:50:42 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6VGofn764684066
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 31 Jul 2018 16:50:41 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B2A1B2064;
+        Tue, 31 Jul 2018 12:50:15 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0ECFB205F;
+        Tue, 31 Jul 2018 12:50:14 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jul 2018 12:50:14 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 861C516C1835; Tue, 31 Jul 2018 09:50:41 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 09:50:41 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
+        tglx@linutronix.de, frederic@kernel.org, bristot@redhat.com,
+        peterz@infradead.org
+Subject: Re: [PATCH] nohz: Fix local_timer_softirq_pending()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180731161358.29472-1-anna-maria@linutronix.de>
 MIME-Version: 1.0
-References: <20180730213412.242849-3-ndesaulniers@google.com> <201807311827.UpeCrGPC%fengguang.wu@intel.com>
-In-Reply-To: <201807311827.UpeCrGPC%fengguang.wu@intel.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 31 Jul 2018 09:48:57 -0700
-Message-ID: <CAKwvOd=rwib91mnXs=PCP460hkCWTE5anNFgvRPBrbagetCbzw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kernel.h: Disable -Wreturn-stack-address for _THIS_IP_
-To:     lkp@intel.com
-Cc:     kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, paul.burton@mips.com,
-        christophe.leroy@c-s.fr, shorne@gmail.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, rdunlap@infradead.org,
-        bp@suse.de, neilb@suse.com, LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
-        sandipan@linux.vnet.ibm.com, linux@rasmusvillemoes.dk,
-        Paul Lawrence <paullawrence@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>, avagin@openvz.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731161358.29472-1-anna-maria@linutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18073116-0052-0000-0000-00000315F588
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009464; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068514; UDB=6.00549318; IPR=6.00846723;
+ MB=3.00022428; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-31 16:50:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18073116-0053-0000-0000-00005D8E2D59
+Message-Id: <20180731165041.GX24813@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=964 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807310155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Does anyone understand this error?  The code looks just fine to me,
-and the source file doesn't conflict with any of the macros I've added
-(certainly not in any way that could cause an indentation error as
-reported here).
-On Tue, Jul 31, 2018 at 3:27 AM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Nick,
->
-> Thank you for the patch! Perhaps something to improve:
->
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v4.18-rc7 next-20180727]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Nick-Desaulniers/compiler-clang-h-Add-CLANG_VERSION-and-__diag-macros/20180731-161932
-> config: x86_64-fedora-25 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
->
-> All warnings (new ones prefixed by >>):
->
->    drivers/net//wireless/intel/iwlwifi/iwl-trans.c: In function 'iwl_trans_send_cmd':
-> >> drivers/net//wireless/intel/iwlwifi/iwl-trans.c:137:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
->      if (!(cmd->flags & CMD_ASYNC))
->      ^~
->    drivers/net//wireless/intel/iwlwifi/iwl-trans.c:138:1: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
->       lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
->     ^ ~
->
-> vim +/if +137 drivers/net//wireless/intel/iwlwifi/iwl-trans.c
->
-> 92fe8343 Emmanuel Grumbach 2015-12-01  116
-> 92fe8343 Emmanuel Grumbach 2015-12-01  117  int iwl_trans_send_cmd(struct iwl_trans *trans, struct iwl_host_cmd *cmd)
-> 92fe8343 Emmanuel Grumbach 2015-12-01  118  {
-> 92fe8343 Emmanuel Grumbach 2015-12-01  119      int ret;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  120
-> 92fe8343 Emmanuel Grumbach 2015-12-01  121      if (unlikely(!(cmd->flags & CMD_SEND_IN_RFKILL) &&
-> 326477e4 Johannes Berg     2017-04-25  122                   test_bit(STATUS_RFKILL_OPMODE, &trans->status)))
-> 92fe8343 Emmanuel Grumbach 2015-12-01  123              return -ERFKILL;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  124
-> 92fe8343 Emmanuel Grumbach 2015-12-01  125      if (unlikely(test_bit(STATUS_FW_ERROR, &trans->status)))
-> 92fe8343 Emmanuel Grumbach 2015-12-01  126              return -EIO;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  127
-> 92fe8343 Emmanuel Grumbach 2015-12-01  128      if (unlikely(trans->state != IWL_TRANS_FW_ALIVE)) {
-> 92fe8343 Emmanuel Grumbach 2015-12-01  129              IWL_ERR(trans, "%s bad state = %d\n", __func__, trans->state);
-> 92fe8343 Emmanuel Grumbach 2015-12-01  130              return -EIO;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  131      }
-> 92fe8343 Emmanuel Grumbach 2015-12-01  132
-> 92fe8343 Emmanuel Grumbach 2015-12-01  133      if (WARN_ON((cmd->flags & CMD_WANT_ASYNC_CALLBACK) &&
-> 92fe8343 Emmanuel Grumbach 2015-12-01  134                  !(cmd->flags & CMD_ASYNC)))
-> 92fe8343 Emmanuel Grumbach 2015-12-01  135              return -EINVAL;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  136
-> 92fe8343 Emmanuel Grumbach 2015-12-01 @137      if (!(cmd->flags & CMD_ASYNC))
-> 92fe8343 Emmanuel Grumbach 2015-12-01  138              lock_map_acquire_read(&trans->sync_cmd_lockdep_map);
-> 92fe8343 Emmanuel Grumbach 2015-12-01  139
-> 5b88792c Sara Sharon       2016-08-15  140      if (trans->wide_cmd_header && !iwl_cmd_groupid(cmd->id))
-> 5b88792c Sara Sharon       2016-08-15  141              cmd->id = DEF_ID(cmd->id);
-> 5b88792c Sara Sharon       2016-08-15  142
-> 92fe8343 Emmanuel Grumbach 2015-12-01  143      ret = trans->ops->send_cmd(trans, cmd);
-> 92fe8343 Emmanuel Grumbach 2015-12-01  144
-> 92fe8343 Emmanuel Grumbach 2015-12-01  145      if (!(cmd->flags & CMD_ASYNC))
-> 92fe8343 Emmanuel Grumbach 2015-12-01  146              lock_map_release(&trans->sync_cmd_lockdep_map);
-> 92fe8343 Emmanuel Grumbach 2015-12-01  147
-> 0ec971fd Johannes Berg     2017-04-10  148      if (WARN_ON((cmd->flags & CMD_WANT_SKB) && !ret && !cmd->resp_pkt))
-> 0ec971fd Johannes Berg     2017-04-10  149              return -EIO;
-> 0ec971fd Johannes Berg     2017-04-10  150
-> 92fe8343 Emmanuel Grumbach 2015-12-01  151      return ret;
-> 92fe8343 Emmanuel Grumbach 2015-12-01  152  }
-> 92fe8343 Emmanuel Grumbach 2015-12-01  153  IWL_EXPORT_SYMBOL(iwl_trans_send_cmd);
-> 39bdb17e Sharon Dvir       2015-10-15  154
->
-> :::::: The code at line 137 was first introduced by commit
-> :::::: 92fe83430b899b786c837e5b716a328220d47ae5 iwlwifi: uninline iwl_trans_send_cmd
->
-> :::::: TO: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> :::::: CC: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
->
+On Tue, Jul 31, 2018 at 06:13:58PM +0200, Anna-Maria Gleixner wrote:
+> local_timer_softirq_pending() checks whether the timer softirq is
+> pending with: local_softirq_pending() & TIMER_SOFTIRQ.
+> 
+> This is wrong because TIMER_SOFTIRQ is the softirq number and not a
+> bitmask. So the test checks for the wrong bit.
+> 
+> Use BIT(TIMER_SOFTIRQ) instead.
+> 
+> Fixes: 5d62c183f9e9 ("nohz: Prevent a timer interrupt storm in tick_nohz_stop_sched_tick()")
+> Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+2729 opportunities to change "1UL << x" to "BIT(x)", including
+__raise_softirq_irqoff().  I did the two in RCU.  ;-)
+
+							Thanx, Paul
+
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  kernel/time/tick-sched.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> index da9455a6b42b..5b33e2f5c0ed 100644
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -642,7 +642,7 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+> 
+>  static inline bool local_timer_softirq_pending(void)
+>  {
+> -	return local_softirq_pending() & TIMER_SOFTIRQ;
+> +	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
+>  }
+> 
+>  static ktime_t tick_nohz_next_event(struct tick_sched *ts, int cpu)
+> -- 
+> 2.18.0
+> 
 
-
-
--- 
-Thanks,
-~Nick Desaulniers
