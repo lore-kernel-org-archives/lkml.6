@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D186BC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24768C46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0AB208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:39:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0AB208A5
+	by mail.kernel.org (Postfix) with ESMTP id D57FD208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 05:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57FD208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeGaHR6 (ORCPT
+        id S1729662AbeGaHSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 03:17:58 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41325 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726070AbeGaHR6 (ORCPT
+        Tue, 31 Jul 2018 03:18:01 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59100 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725912AbeGaHSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:17:58 -0400
-X-UUID: c2a7a8d235124a5180062afdee57d3ad-20180731
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        Tue, 31 Jul 2018 03:18:00 -0400
+X-UUID: d8f1eecf5d4d4f2fbc94204c91a7fb60-20180731
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <erin.lo@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1711776814; Tue, 31 Jul 2018 13:39:22 +0800
+        with ESMTP id 1485735073; Tue, 31 Jul 2018 13:39:24 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 31 Jul 2018 13:39:21 +0800
+ 15.0.1210.3; Tue, 31 Jul 2018 13:39:23 +0800
 Received: from mtkslt303.mediatek.inc (10.21.14.116) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 31 Jul 2018 13:39:21 +0800
+ Transport; Tue, 31 Jul 2018 13:39:23 +0800
 From:   Erin Lo <erin.lo@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -51,9 +51,9 @@ CC:     <devicetree@vger.kernel.org>,
         <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
         <linux-clk@vger.kernel.org>
-Subject: [PATCH v4 01/10] dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
-Date:   Tue, 31 Jul 2018 13:37:58 +0800
-Message-ID: <1533015487-60189-2-git-send-email-erin.lo@mediatek.com>
+Subject: [PATCH v4 02/10] dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+Date:   Tue, 31 Jul 2018 13:37:59 +0800
+Message-ID: <1533015487-60189-3-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
 References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
@@ -65,33 +65,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds dt-binding documentation of cpu for Mediatek MT8183.
+This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+Platform.
 
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/mediatek.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
-index 7d21ab3..2754535 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek.txt
-@@ -19,6 +19,7 @@ compatible: Must contain one of
-    "mediatek,mt8127"
-    "mediatek,mt8135"
-    "mediatek,mt8173"
-+   "mediatek,mt8183"
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 07bf0b9..5ff48a8 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -5,6 +5,7 @@ interrupt.
  
- 
- Supported boards:
-@@ -73,3 +74,6 @@ Supported boards:
- - MTK mt8173 tablet EVB:
-     Required root node properties:
-       - compatible = "mediatek,mt8173-evb", "mediatek,mt8173";
-+- Evaluation board for MT8183:
-+    Required root node properties:
-+      - compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
+ Required properties:
+ - compatible: should be
++	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+ 	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+ 	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+ 	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
 -- 
 1.9.1
 
