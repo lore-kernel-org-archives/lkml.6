@@ -2,188 +2,121 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CF4C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD5FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48FA220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:09:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FA220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E3F5320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 14:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nimNPq8S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F5320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbeGaPuI (ORCPT
+        id S1732306AbeGaPvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:50:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54760 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbeGaPuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:50:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 172287A9;
-        Tue, 31 Jul 2018 07:09:38 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 684A43F5B3;
-        Tue, 31 Jul 2018 07:09:36 -0700 (PDT)
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-To:     Guenter Roeck <linux@roeck-us.net>, Stefan Agner <stefan@agner.ch>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-References: <CAJKOXPeaguNxRr7pCArJ5Db4tS6Kr5BDheCxskY+vd0dUN+0GQ@mail.gmail.com>
- <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
- <20180727140448.GA29001@lst.de> <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
- <f67628ad-4cae-96cd-d0c4-3b2f7d12a822@roeck-us.net>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4ce17098-850f-3bb0-b977-8d7932e74e06@arm.com>
-Date:   Tue, 31 Jul 2018 15:09:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 31 Jul 2018 11:51:17 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45462 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729592AbeGaPvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 11:51:17 -0400
+Received: by mail-pl0-f67.google.com with SMTP id j8-v6so7211498pll.12;
+        Tue, 31 Jul 2018 07:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=DIdKv9Pqy5ibPUBuIdtbeDMZ3EsvI4Zo5Zj0c/0E5us=;
+        b=nimNPq8SyRVJ5q6CzhXyRjd1d2O6CK2dw5ysq14Ve6VnEQy2a1jURQS21iJnkCFNXk
+         3HEMuxrSf+iknPM7mC2EimSsBEKqwjJZJnFoRz90MQSYHiEeLE1qKkAI0RTIXpx5lC61
+         TV/w/uDS8OnrL7TvGAuOzrOBxKcI94k4yvzP1XX89i0Jg4C5DZtI3KhH8NFSUjXBWpXf
+         U8B/Vj2KIIeBtcqMG/imRfZLrDYakT4qMEOcchSZDEeqF8QaN/QZ0vE5F2QacsGsW7bX
+         KZ5gr1L7d7/XghkquyKkVkPaFx2k0KrUxXwA03u8GCIr1/87pOI5eAHv8jboE3WtIcsV
+         XI1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=DIdKv9Pqy5ibPUBuIdtbeDMZ3EsvI4Zo5Zj0c/0E5us=;
+        b=AR8DnywaUbzSLqPoMgnLo5ITOQqpwRVzMO08KiIDAI+GLzzW6UdNEV98/5rHDmEtvN
+         124IJQGEr2FgX5H9YA/1TkC2uP98GSG2vnZjX4YIIvRhxTf2g45nEuqFm74YRYhkJ2+E
+         JGIFIAU7ICrfkPMOGgIdGkkfZVIRwVxMAxKqI3t1C3ZLhm1cJT/NaU3eRzK9dofCITC0
+         beKcM2fWdCqEyyzKWGf8oji8Heu6IDkINqVrnrfKKQGUq9NMkfeVb1MrxTKqPN5mLXG0
+         f/26qdP0cjKo/UedyqybBj09Rdid/ORmwf/0j63soZp+zLKrpSzfWpki3wc/Q73garUI
+         eigg==
+X-Gm-Message-State: AOUpUlEW9wQoL/bvd/F0uakK3JbFeCjCl/jMz9EN3UHrNezgSz7esKIh
+        Lzp/FTAX7M0akgKK+Dr8nGQ=
+X-Google-Smtp-Source: AAOMgpc1FWDxuNTJwmyWe15ecx1y7KK0bD+Wf6TwSTeDLLhoRSUd1grrJsLXVrOOavla77PjHV4taQ==
+X-Received: by 2002:a17:902:8482:: with SMTP id c2-v6mr20749341plo.45.1533046247247;
+        Tue, 31 Jul 2018 07:10:47 -0700 (PDT)
+Received: from pjb1027-Latitude-E5410 ([58.227.15.43])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm26125519pfa.18.2018.07.31.07.10.44
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 31 Jul 2018 07:10:46 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 23:10:40 +0900
+From:   Jinbum Park <jinb.park7@gmail.com>
+To:     johannes@sipsolutions.net, kvalo@codeaurora.org,
+        davem@davemloft.net
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH] mac80211_hwsim: Fix possible Spectre-v1 for
+ hwsim_world_regdom_custom
+Message-ID: <20180731141040.GA8936@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
-In-Reply-To: <f67628ad-4cae-96cd-d0c4-3b2f7d12a822@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/07/18 14:26, Guenter Roeck wrote:
-> On 07/31/2018 05:32 AM, Robin Murphy wrote:
->> On 31/07/18 09:19, Stefan Agner wrote:
->>> On 30.07.2018 16:38, Robin Murphy wrote:
->>>> On 28/07/18 17:58, Guenter Roeck wrote:
->>>>> On Fri, Jul 27, 2018 at 04:04:48PM +0200, Christoph Hellwig wrote:
->>>>>> On Fri, Jul 27, 2018 at 03:18:14PM +0200, Krzysztof Kozlowski wrote:
->>>>>>> On 27 July 2018 at 15:11, Krzysztof Kozlowski <krzk@kernel.org> 
->>>>>>> wrote:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> On today's next, the bisect pointed commit
->>>>>>>> ff33d1030a6ca87cea9a41e1a2ea7750a781ab3d as fault for my boot 
->>>>>>>> failures
->>>>>>>> with NFSv4 root on Toradex Colibri VF50 (Iris carrier board).
->>>>>>>>
->>>>>>>> Author: Robin Murphy <robin.murphy@arm.com>
->>>>>>>> Date:   Mon Jul 23 23:16:12 2018 +0100
->>>>>>>>       OF: Don't set default coherent DMA mask
->>>>>>>>
->>>>>>>> Board: Toradex Colibri VF50 (NXP VF500, Cortex A5, serial 
->>>>>>>> configured
->>>>>>>> with DMA) on Iris Carrier.
->>>>>>>>
->>>>>>>> It looks like problem with Freescale Ethernet driver:
->>>>>>>> [   15.458477] fsl-edma 40018000.dma-controller: coherent DMA 
->>>>>>>> mask is unset
->>>>>>>> [   15.465284] fsl-lpuart 40027000.serial: Cannot prepare cyclic 
->>>>>>>> DMA
->>>>>>>> [   15.472086] Root-NFS: no NFS server address
->>>>>>>> [   15.476359] VFS: Unable to mount root fs via NFS, trying floppy.
->>>>>>>> [   15.484228] VFS: Cannot open root device "nfs" or
->>>>>>>> unknown-block(2,0): error -6
->>>>>>>> [   15.491664] Please append a correct "root=" boot option; here 
->>>>>>>> are
->>>>>>>> the available partitions:
->>>>>>>> [   15.500188] 0100           16384 ram0
->>>>>>>> [   15.500200]  (driver?)
->>>>>>>> [   15.506406] Kernel panic - not syncing: VFS: Unable to mount 
->>>>>>>> root
->>>>>>>> fs on unknown-block(2,0)
->>>>>>>> [   15.514747] ---[ end Kernel panic - not syncing: VFS: Unable to
->>>>>>>> mount root fs on unknown-block(2,0) ]---
->>>>>>>>
->>>>>>>> Attached - defconfig and full boot log.
->>>>>>>>
->>>>>>>> Any hints?
->>>>>>>> Let me know if you need any more information.
->>>>>>>
->>>>>>> My Exynos boards also fail to boot on missing network:
->>>>>>> https://krzk.eu/#/builders/21/builds/799/steps/10/logs/serial0
->>>>>>>
->>>>>>> As expected there are plenty of "DMA mask not set" warnings... and
->>>>>>> later dwc3 driver fails with:
->>>>>>>       dwc3: probe of 12400000.dwc3 failed with error -12
->>>>>>> which is probably the answer why LAN attached to USB is not present.
->>>>>>
->>>>>> Looks like all the drivers failed to set a dma mask and were lucky.
->>>>>
->>>>> I would call it a serious regression. Also, no longer setting a 
->>>>> default
->>>>> coherent DMA mask is a quite substantial behavioral change, especially
->>>>> if and since the code worked just fine up to now.
->>>>
->>>> To reiterate, that particular side-effect was an unintentional
->>>> oversight, and I was simply (un)lucky enough that none of the drivers
->>>> I did test depended on that default mask. Sorry for the blip; please
->>>> check whether it's now fixed in next-20180730 as it should be.
->>>>
->>>
->>> Just for my understanding:
->>>
->>> Your first patch ("OF: Don't set default coherent DMA mask") sounded
->>> like that *not* setting default coherent DMA mask was intentionally.
->>> Since the commit message reads: "...the bus code has not initialised any
->>> default value" that was assuming that all bus code sets a default DMA
->>> mask which wasn't the case for "simple-bus".
->>
->> Yes, reading the patches in the order they were written is perhaps a 
->> little unclear, but hopefully the order in which they are now applied 
->> makes more sense.
->>
->>> So I guess that is what ("of/platform: Initialise default DMA masks")
->>> makes up for in the typical device tree case ("simple-bus")?
->>
->> Indeed, I'd missed the fact that the now-out-of-place-looking 
->> initialisation in of_dma_configure() still actually belonged to 
->> of_platform_device_create_pdata() - that patch should make the 
->> assumptions of "OF: Don't set default coherent DMA mask" true again, 
->> even for OF-platform devices.
->>
->>> Now, since almost all drivers are inside a soc "simple-bus" and DMA mask
->>> is set again, can/should we rely on the coherent DMA mask set?
->>>
->>> Or is the expectation still that this is set on driver level too?
->>
->> Ideally, we'd like all drivers to explicitly request their masks as 
->> the documentation in DMA-API-HOWTO.txt recommends, if only to ensure 
->> DMA is actually possible - there can be systems where even the default 
->> 32-bit mask is no good - but clearly we're a little way off trying to 
->> enforce that just yet.
->>
->> Robin.
->>
-> 
-> Please note that sparc images still generate the warning (next-20180731).
+User controls @idx which to be used as index of hwsim_world_regdom_custom.
+So, It can be exploited via Spectre-like attack. (speculative execution)
 
-Ugh, OK, any ideas what sparc does to create these platform devices that 
-isn't of_platform_device_create_pdata() and has somehow grown an 
-implicit dependency on of_dma_configure() since 4.12? I'm looking, but 
-nothing jumps out...
+This kind of attack leaks address of hwsim_world_regdom_custom,
+It leads an attacker to bypass security mechanism such as KASLR.
 
-Robin.
+So sanitize @idx before using it to prevent attack.
 
-> sunlance ffd35110: DMA mask not set
-> sunlance.c:v2.02 8/24/03 Miguel de Icaza (miguel@nuclecu.unam.mx)
-> ioremap: done with statics, switching to malloc
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 
-> sparc_lance_probe_one+0x428/0x4f4
-> 
-> esp ffd38e90: DMA mask not set
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 
-> esp_sbus_probe+0x408/0x6e8
-> 
-> Guenter
-> 
+I leveraged strategy [1] to find and exploit this gadget.
+
+[1] https://github.com/jinb-park/linux-exploit/
+tree/master/exploit-remaining-spectre-gadget/
+
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+---
+ drivers/net/wireless/mac80211_hwsim.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 998dfac..b41fdc3 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -34,6 +34,7 @@
+ #include <net/net_namespace.h>
+ #include <net/netns/generic.h>
+ #include <linux/rhashtable.h>
++#include <linux/nospec.h>
+ #include "mac80211_hwsim.h"
+ 
+ #define WARN_QUEUE 100
+@@ -3350,6 +3351,9 @@ static int hwsim_new_radio_nl(struct sk_buff *msg, struct genl_info *info)
+ 			kfree(hwname);
+ 			return -EINVAL;
+ 		}
++
++		idx = array_index_nospec(idx,
++					 ARRAY_SIZE(hwsim_world_regdom_custom));
+ 		param.regd = hwsim_world_regdom_custom[idx];
+ 	}
+ 
+-- 
+1.9.1
+
