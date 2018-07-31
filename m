@@ -2,114 +2,117 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22479C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12ACC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCAB020841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:51:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xcmSEWSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAB020841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8018C208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8018C208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbeGaPbs (ORCPT
+        id S1732286AbeGaPeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 11:31:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38326 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732194AbeGaPbr (ORCPT
+        Tue, 31 Jul 2018 11:34:11 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56777 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732173AbeGaPeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 11:31:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tc8bnuCp2VlhJ2A1pqvCxDo9L3yX7cq0oruy0L9vN0s=; b=xcmSEWShvnpOrMEAyqRZlBCLf
-        qgQsc/HdTGlHZ4rKBJhb0boOg1nr7yIsLtB3zichXglgsJJw7VxVB3XUgAfUXnrIggx0Qf7Fkz2Jo
-        LbEDqSqzIZZvglPbCs6Ib8J45M7FrDHzw00DuzE3XBC/WCzk8sJTQIdIECVzDz6yFMaN4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkV3T-0007BJ-LV; Tue, 31 Jul 2018 13:51:15 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2D19011242BD; Tue, 31 Jul 2018 14:51:15 +0100 (BST)
-Date:   Tue, 31 Jul 2018 14:51:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Alexander.Deucher@amd.com,
-        djkurtz@chromium.org, Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-pcm: Use delay set in pointer
- function
-Message-ID: <20180731135115.GD5719@sirena.org.uk>
-References: <s5hy3dsviwq.wl-tiwai@suse.de>
- <20180730155030.GP5789@sirena.org.uk>
- <7a88c7b4-d31d-b044-bb8e-a866d49d1256@amd.com>
- <s5hwotc0y6v.wl-tiwai@suse.de>
- <5b3249cb-6212-6a14-b644-7548cf0ad00c@amd.com>
- <s5ha7q721vs.wl-tiwai@suse.de>
- <20180731101943.GB5719@sirena.org.uk>
- <s5heffjr8ys.wl-tiwai@suse.de>
- <20180731131246.GC5719@sirena.org.uk>
- <s5hin4vpm80.wl-tiwai@suse.de>
+        Tue, 31 Jul 2018 11:34:11 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 8A69E1C0008;
+        Tue, 31 Jul 2018 13:53:43 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 15:53:41 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][media-next] media: i2c: mt9v111: fix off-by-one array
+ bounds check
+Message-ID: <20180731135341.GD370@w540>
+References: <20180731133343.22337-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sgneBHv3152wZ8jf"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
 Content-Disposition: inline
-In-Reply-To: <s5hin4vpm80.wl-tiwai@suse.de>
-X-Cookie: Save the bales!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180731133343.22337-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sgneBHv3152wZ8jf
-Content-Type: text/plain; charset=us-ascii
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
-On Tue, Jul 31, 2018 at 03:29:35PM +0200, Takashi Iwai wrote:
-> Mark Brown wrote:
+Hi Colin,
+   thanks for the patch.
 
-> > > > However since it's not supposed to be providing any DMA a CPU DAI really
-> > > > shouldn't be doing this...
+On Tue, Jul 31, 2018 at 02:33:43PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check of fse->index is off-by-one and should be using >= rather
+> than > to check the maximum allowed array index. Fix this.
+>
+> Detected by CoverityScan, CID#172122 ("Out-of-bounds read")
+>
+> Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> > > Well, if so, the CPU dai also cannot get the exact base delay
-> > > corresponding to the reported position, either, no?
+Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-> > It can know how much delay it's adding internally between its input and
-> > output, which feeds into the overall delay experienced by the user.
+Thanks
+  j
 
-> But isn't it merely the additional delay that should be applied on top
-> of the existing runtime->delay?
+> ---
+>  drivers/media/i2c/mt9v111.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c
+> index da8f6ab91307..b1d13f1d695e 100644
+> --- a/drivers/media/i2c/mt9v111.c
+> +++ b/drivers/media/i2c/mt9v111.c
+> @@ -848,7 +848,7 @@ static int mt9v111_enum_frame_size(struct v4l2_subdev *subdev,
+>  				   struct v4l2_subdev_pad_config *cfg,
+>  				   struct v4l2_subdev_frame_size_enum *fse)
+>  {
+> -	if (fse->pad || fse->index > ARRAY_SIZE(mt9v111_frame_sizes))
+> +	if (fse->pad || fse->index >= ARRAY_SIZE(mt9v111_frame_sizes))
+>  		return -EINVAL;
+>
+>  	fse->min_width = mt9v111_frame_sizes[fse->index].width;
+> --
+> 2.17.1
+>
 
-Yes.  I'm saying that if the CPU DAI thinks it can figure out the base
-delay something is confused.
-
---sgneBHv3152wZ8jf
+--NklN7DEeGtkPCoo3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltgaVIACgkQJNaLcl1U
-h9Dc/gf8DM00LYsmfSfREWDEZOQ1LLvo4bi8nuYkoSUTGC/fkCvSgUj732kSvkAY
-aPaZqrlhMZf+aedlU2+8TCRu/MMUszefetX6N8/gYBAmHWS2Bo2mEnljNZD+zrP/
-oisktLeeIK0W5HX7Rafoij3KM79QqD2VZusExUGH+GIVKuj6bWmIx2kBjULSsuft
-XCJWmWiYx9KlM2WQR0djpW+5NPKbymLVmcYgPRcR21reY8umeG2z9noMrtIcaNYy
-mdH7ioFzJ5aqdgK90AMoFgj+apDhcdhC8D8gkxQhV6EmiwxrelanrTSnQ7N6EtMh
-LcM8hvc1692eypMzlAYeCRBrEbF+OQ==
-=baWl
+iQIcBAEBAgAGBQJbYGnlAAoJEHI0Bo8WoVY82UkQAMWwAJTzbGS8L9Uj0RBWpRxM
+8cduuFA2Nj8dduihBJxId1Ui+192x0Rz9ycilg0qk/F3K8YGTp885mT+3e6LfO+w
+SE3wburj6g9PzvTVX0Pl1S5EZJ7crZYNYuQcfnBpOlje0cBrhPZSJnC3U8qhvp4B
+kfMTFneh2vqJlLqIWtIAXb8U+Kp9lVGL4P5LmPRb+NUlFCBzcx9o+mwHM18fOC1o
+yQiYXvLsiD9/sx+4ArJqSy2rM3Wl2ptvk89jmxUggichX5HaZ71Z2LVeEU/kDx+A
+/xmWTyaPYfqZf1uZE2zuuY0NTYnqWqz7sAHuYTG1sPnNMolzDy/jEjDXUUdZk3R8
+qsdEeoHshLQm0Iz+YqQWWV3hv1rvK4jQnlLQgxs9L7E8HplbsWnGm2LA9W7f/2BX
+KIukd5nSvPieaOxVQJ+NAG+75fwmR3SzNywcWIi/mt/64yY9W7Nk3rgbEc4qPCoC
+eHLTJ5MM5SfULI5lLDk55nyJmC+RlEIwKAVS1KXc422Ak6/m4EVYaAu7Hszyj/IG
+Da6taOpKwNWIr7S0S2FGHF7iUtbmKEM61yuXwAiefPtcwksCK/DRNxBxZ/V9Wwxk
+SXDldgQPhv8X/zhEVdwpaRo1fH5P5wGBKiylsRr0XIjw1vThlf5zkuzcsyyds54z
+DqofY29g74kfZjHWfp/T
+=iV1I
 -----END PGP SIGNATURE-----
 
---sgneBHv3152wZ8jf--
+--NklN7DEeGtkPCoo3--
