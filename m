@@ -2,288 +2,437 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFAAC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48423C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449E1208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:00:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RoBdZkmb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OD7/Iw5K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449E1208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DE873208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 13:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE873208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeGaOk7 (ORCPT
+        id S1732296AbeGaOn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 10:40:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732080AbeGaOk6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 10:40:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A0B016071C; Tue, 31 Jul 2018 13:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533042044;
-        bh=Z2MUjHHPtX+GN6s9vOTKRHcb+2g3fGQz1E2OlO/iMJs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RoBdZkmbxsnTmhQgfaHTEm8+79pm1Dlh92spKSTI2c+Z+C9FLG+B5+bk3BJ05KjAh
-         3C2VjIuXIiUMwBlZ6y78/Xm2hgEW11J/X9aTJcDUu2YP3oNECLUCEFH3DprlXFgm01
-         L3/DwJIrcPkm1qP8QyZxpepn8xI7TIUA1e9lBy5c=
-Received: from [10.79.40.96] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2AC7360264;
-        Tue, 31 Jul 2018 13:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533042043;
-        bh=Z2MUjHHPtX+GN6s9vOTKRHcb+2g3fGQz1E2OlO/iMJs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OD7/Iw5KjRMk/OaeVjOE+mYjpX7XdxVe3vQ15XfTW92t/JeA0Pq3fcwvAoNKRGbSa
-         3f79RjTOGuk+VdDl+3KfTriZm4B6F6JHBEEzdMsuof0QgPsXuSJUuoOFFKBWNC4Ck9
-         HXW03LkXEtZ/xCSXdET7tL/rijrZNHjCAXRFBcZY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AC7360264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset
- controller
-To:     Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com,
-        sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <20180727152811.15258-2-sibis@codeaurora.org>
- <1533027087.3444.7.camel@pengutronix.de>
-From:   Sibi S <sibis@codeaurora.org>
-Message-ID: <72f17bfc-9b19-7cfa-2aa7-8d45cd1ed39e@codeaurora.org>
-Date:   Tue, 31 Jul 2018 18:30:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 31 Jul 2018 10:43:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53954 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732141AbeGaOn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 10:43:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF76580D;
+        Tue, 31 Jul 2018 06:03:12 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 076333F5D0;
+        Tue, 31 Jul 2018 06:03:09 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 14:03:07 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org,
+        patches@groups.riscv.org, robh+dt@kernel.org, albert@sifive.com,
+        yamada.masahiro@socionext.com, mmarek@suse.com,
+        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
+        boqun.feng@gmail.com, oleg@redhat.com, mingo@redhat.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 04/12] RISC-V: Init and Halt Code
+Message-ID: <20180731130307.3geak2mx37is7uec@lakrids.cambridge.arm.com>
+References: <20171005110111.GB4929@leverpostej>
+ <mhng-266f17e0-1151-4136-9627-9e0e8d242e4c@palmer-si-x1c4>
 MIME-Version: 1.0
-In-Reply-To: <1533027087.3444.7.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-266f17e0-1151-4136-9627-9e0e8d242e4c@palmer-si-x1c4>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
-Thanks for the review!
+On Mon, Jul 30, 2018 at 04:42:49PM -0700, Palmer Dabbelt wrote:
+> Sorry it took me an absurd amount of time to get back around to this...  I'm 
+> adding our mailing list, as we didn't even have one a year ago.
 
-On 07/31/2018 02:21 PM, Philipp Zabel wrote:
-> On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
->> Add reset controller for SDM845 SoC to control reset signals
->> provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
->> Sensors, Audio, SP and APPS
->>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   drivers/reset/Kconfig          |   9 +++
->>   drivers/reset/Makefile         |   1 +
->>   drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
->>   3 files changed, 149 insertions(+)
->>   create mode 100644 drivers/reset/reset-qcom-pdc.c
->>
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 13d28fdbdbb5..5344e202a630 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
->>   	  reset signals provided by AOSS for Modem, Venus, ADSP,
->>   	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
->>   
->> +config RESET_QCOM_PDC
->> +	bool "Qcom PDC Reset Driver"
->> +	depends on ARCH_QCOM || COMPILE_TEST
->> +	help
->> +	  This enables the PDC (Power Domain Controller) reset driver
->> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
->> +	  to control reset signals provided by PDC for Modem, Compute,
->> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
->> +
->>   config RESET_SIMPLE
->>   	bool "Simple Reset Controller Driver" if COMPILE_TEST
->>   	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
->> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->> index 4243c38228e2..d08e8b90046a 100644
->> --- a/drivers/reset/Makefile
->> +++ b/drivers/reset/Makefile
->> @@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->>   obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->>   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->>   obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
->> +obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
->>   obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->>   obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
->>   obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
->> diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
->> new file mode 100644
->> index 000000000000..64a0041e3452
->> --- /dev/null
->> +++ b/drivers/reset/reset-qcom-pdc.c
->> @@ -0,0 +1,139 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset-controller.h>
->> +#include <linux/regmap.h>
->> +#include <linux/of_device.h>
->> +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
->> +
->> +struct qcom_pdc_reset_map {
->> +	u8 bit;
->> +};
->> +
->> +struct qcom_pdc_desc {
->> +	const struct regmap_config *config;
->> +	const struct qcom_pdc_reset_map *resets;
->> +	size_t num_resets;
->> +};
->> +
->> +struct qcom_pdc_reset_data {
->> +	struct reset_controller_dev rcdev;
->> +	struct regmap *regmap;
->> +	const struct qcom_pdc_desc *desc;
->> +};
->> +
->> +static const struct regmap_config sdm845_pdc_regmap_config = {
->> +	.name		= "pdc-reset",
->> +	.reg_bits	= 32,
->> +	.reg_stride	= 4,
->> +	.val_bits	= 32,
->> +	.max_register	= 0x20000,
->> +	.fast_io	= true,
->> +};
->> +
->> +static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
->> +	[PDC_APPS_SYNC_RESET] = {0},
->> +	[PDC_SP_SYNC_RESET] = {1},
->> +	[PDC_AUDIO_SYNC_RESET] = {2},
->> +	[PDC_SENSORS_SYNC_RESET] = {3},
->> +	[PDC_AOP_SYNC_RESET] = {4},
->> +	[PDC_DEBUG_SYNC_RESET] = {5},
->> +	[PDC_GPU_SYNC_RESET] = {6},
->> +	[PDC_DISPLAY_SYNC_RESET] = {7},
->> +	[PDC_COMPUTE_SYNC_RESET] = {8},
->> +	[PDC_MODEM_SYNC_RESET] = {9},
->> +};
->> +
->> +static const struct qcom_pdc_desc sdm845_pdc_desc = {
->> +	.config = &sdm845_pdc_regmap_config,
->> +	.resets = sdm845_pdc_resets,
->> +	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
->> +};
->> +
->> +static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
->> +				struct reset_controller_dev *rcdev)
->> +{
->> +	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
->> +}
->> +
->> +static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
->> +					unsigned long idx)
->> +{
->> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
->> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
->> +
->> +	return regmap_update_bits(data->regmap, 0x100,
-> 
-> Does this register have a name? If so, a #define would be preferable.
-> Otherwise this driver looks fine to me.
-> 
+No worries; we all get swamped with things.
 
-Yes will had a separate #define for it.
+> I've included a few patches in line here, but they're just drafts.  I'll test
+> them and submit them properly.
 
->> +					BIT(map->bit), BIT(map->bit));
->> +}
->> +
->> +static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
->> +					unsigned long idx)
->> +{
->> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
->> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
->> +
->> +	return regmap_update_bits(data->regmap, 0x100, BIT(map->bit), 0);
->> +}
->> +
->> +static const struct reset_control_ops qcom_pdc_reset_ops = {
->> +	.assert = qcom_pdc_control_assert,
->> +	.deassert = qcom_pdc_control_deassert,
->> +};
->> +
->> +static int qcom_pdc_reset_probe(struct platform_device *pdev)
->> +{
->> +	struct qcom_pdc_reset_data *data;
->> +	struct device *dev = &pdev->dev;
->> +	const struct qcom_pdc_desc *desc;
->> +	void __iomem *base;
->> +	struct resource *res;
->> +
->> +	desc = of_device_get_match_data(dev);
->> +	if (!desc)
->> +		return -EINVAL;
->> +
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->desc = desc;
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	base = devm_ioremap_resource(dev, res);
->> +	if (IS_ERR(base))
->> +		return PTR_ERR(base);
->> +
->> +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
->> +	if (IS_ERR(data->regmap)) {
->> +		dev_err(dev, "Unable to get pdc-global regmap");
->> +		return PTR_ERR(data->regmap);
->> +	}
->> +
->> +	data->rcdev.owner = THIS_MODULE;
->> +	data->rcdev.ops = &qcom_pdc_reset_ops;
->> +	data->rcdev.nr_resets = desc->num_resets;
->> +	data->rcdev.of_node = dev->of_node;
->> +
->> +	return devm_reset_controller_register(dev, &data->rcdev);
->> +}
->> +
->> +static const struct of_device_id qcom_pdc_reset_of_match[] = {
->> +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
->> +	{}
->> +};
->> +
->> +static struct platform_driver qcom_pdc_reset_driver = {
->> +	.probe = qcom_pdc_reset_probe,
->> +	.driver = {
->> +		.name = "qcom_pdc_reset",
->> +		.of_match_table = qcom_pdc_reset_of_match,
->> +	},
->> +};
->> +
->> +builtin_platform_driver(qcom_pdc_reset_driver);
->> +
->> +MODULE_DESCRIPTION("Qualcomm PDC Reset Driver");
->> +MODULE_LICENSE("GPL v2");
+> >> +static void ci_leaf_init(struct cacheinfo *this_leaf,
+> >> +			 struct device_node *node,
+> >> +			 enum cache_type type, unsigned int level)
+> >> +{
+> >> +	this_leaf->of_node = node;
+> >> +	this_leaf->level = level;
+> >> +	this_leaf->type = type;
+> >> +	/* not a sector cache */
+> >> +	this_leaf->physical_line_partition = 1;
+> >> +	/* TODO: Add to DTS */
+> >> +	this_leaf->attributes =
+> >> +		CACHE_WRITE_BACK
+> >> +		| CACHE_READ_ALLOCATE
+> >> +		| CACHE_WRITE_ALLOCATE;
+> >> +}
+> >
+> > In practice, it's very hard to remove implicit assumptions later down
+> > the line, so I'd recommend you add this to your DT from the outset.
 > 
-> regards
-> Philipp
-> 
+> Are these actually used by anything?  I poked around the kernel and it appears 
+> that pretty much all they do is get printed in drivers/base/cacheinfo.c.  It 
+> looks like we're only filling out half the info in there anyway so it feels 
+> like we'd be better off just deleting these and waiting until we have a proper 
+> scheme before setting anything.
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I think that would make sense. That way you should be able to assume
+that the data is correct if present, and if anyone screams that they ned
+it, you'll be able to find out why.
+
+[...]
+
+> >> +{
+> >> +	const char *isa, *status;
+> >> +	u32 hart;
+> >> +
+> >> +	if (!of_device_is_compatible(node, "riscv")) {
+> >> +		pr_warn("Found incompatible CPU\n");
+> >> +		return -(ENODEV);
+> >> +	}
+> >> +
+> >> +	if (of_property_read_u32(node, "reg", &hart)) {
+> >> +		pr_warn("Found CPU without hart ID\n");
+> >> +		return -(ENODEV);
+> >> +	}
+> >> +	if (hart >= NR_CPUS) {
+> >> +		pr_info("Found hart ID %d, which is above NR_CPUs.  Disabling this hart\n", hart);
+> >> +		return -(ENODEV);
+> >> +	}
+> >
+> > Here you assume that the hard ID is equalt to the Linux logical ID.
+> >
+> > I'd recommend that (as other architectures do), you decouple the two.
+> >
+> > That's going to be necessary for things like kdump to work, as the kdump
+> > kernel will run on (Linux logical) CPU0, but may have been executed from
+> > any secondary CPU.
+> 
+> This is a good point.  We currently have another headache with CPU numbering on
+> some systems where the machine CPU ID of 0 actually isn't a Linux CPU (ie, it
+> doesn't have virtual memory) and we're handling the remapping in the
+> bootloader.  That's a bit convoluted, so it might be easier to handle the
+> remapping in Linux.
+> 
+> >> +
+> >> +	if (of_property_read_string(node, "status", &status)) {
+> >> +		pr_warn("CPU with hartid=%d has no \"status\" property\n", hart);
+> >> +		return -(ENODEV);
+> >> +	}
+> >> +	if (strcmp(status, "okay")) {
+> >> +		pr_info("CPU with hartid=%d has a non-okay status of \"%s\"\n", hart, status);
+> >> +		return -(ENODEV);
+> >> +	}
+> >
+> > Please use of_device_is_available().
+> >
+> >> +
+> >> +	if (of_property_read_string(node, "riscv,isa", &isa)) {
+> >> +		pr_warn("CPU with hartid=%d has no \"riscv,isa\" property\n", hart);
+> >> +		return -(ENODEV);
+> >> +	}
+> >> +	if (isa[0] != 'r' || isa[1] != 'v') {
+> >> +		pr_warn("CPU with hartid=%d has an invalid ISA of \"%s\"\n", hart, isa);
+> >> +		return -(ENODEV);
+> >> +	}
+> >
+> > As mentioned on the binding patch, I'd recommend that you use a set of
+> > discrete flags.
+> 
+> RISC-V defines what the ISA string means, and it's got all sorts of mechanism
+> for extensibility already defined.  I'm trying to avoid inventing any other
+> encodings of this as they're just going to be incompatible in some subtle way.
+
+Ok.
+
+> 
+> > [...]
+> >
+> >> +static int c_show(struct seq_file *m, void *v)
+> >> +{
+> >> +	unsigned long hart_id = (unsigned long)v - 1;
+> >> +	struct device_node *node = of_get_cpu_node(hart_id, NULL);
+> >> +	const char *compat, *isa, *mmu;
+> >> +
+> >> +	seq_printf(m, "hart\t: %lu\n", hart_id);
+> >> +	if (!of_property_read_string(node, "riscv,isa", &isa)
+> >> +	    && isa[0] == 'r'
+> >> +	    && isa[1] == 'v')
+> >> +		seq_printf(m, "isa\t: %s\n", isa);
+> >> +	if (!of_property_read_string(node, "mmu-type", &mmu)
+> >> +	    && !strncmp(mmu, "riscv,", 6))
+> >> +		seq_printf(m, "mmu\t: %s\n", mmu+6);
+> >> +	if (!of_property_read_string(node, "compatible", &compat)
+> >> +	    && strcmp(compat, "riscv"))
+> >> +		seq_printf(m, "uarch\t: %s\n", compat);
+> >> +	seq_puts(m, "\n");
+> >
+> > I'd *very strongly* recommend that you don't pass the DT values straight
+> > through to userspace.
+> >
+> > Otherwise, things like riscv,isa = "rvtypo'd\nsomething" get exposed,
+> > and inevitably, some subset of userspace ends up relying upon it, while
+> > others break based upon it.
+> >
+> > Further, specifically for the ISA parts, this is a very bad idea. If
+> > some ISA extensions require kernel support (e.g. to context switch
+> > state, or disable some configurable traps), they cannot work without
+> > kernel support. Generally, the wayt to handle this is for the kernel to
+> > detect the features at boot time, and save these in hwcaps.
+> >
+> > Later, the hwcaps can be used to generate /proc/cpunifo output, and are
+> > also exposed via auxv, which avoids applications and libraries having to
+> > parse /proc/cpuinfo just to determine whether they have a particular
+> > feature, which doesn't work in many situations (e.g. early boot where
+> > /proc may not be mounted).
+> >
+> > Take a look at arm64's hwcaps for an example of how to use hwcaps.
+> 
+> Yes, that's a very good point.  We actually have an implementation of hwcaps
+> (that's exposed via the aux vector) that's cropped up in the mean time, and
+> while the right thing to do is probably to generate cpuinfo from that I do at
+> least have a simple patch that allows us to avoid passing garbage to userspace:
+> 
+>     commit 6dbfebe5b2ddd873283abf625556b99f98cc85f2
+>     gpg: Signature made Fri 27 Jul 2018 10:40:02 AM PDT
+>     gpg:                using RSA key 00CE76D1834960DFCE886DF8EF4CA1502CCBAB41
+>     gpg:                issuer "palmer@dabbelt.com"
+>     gpg: Good signature from "Palmer Dabbelt <palmer@dabbelt.com>" [ultimate]
+>     gpg:                 aka "Palmer Dabbelt <palmer@sifive.com>" [ultimate]
+>     Author: Palmer Dabbelt <palmer@sifive.com>
+>     Date:   Fri Jul 27 09:57:29 2018 -0700
+> 
+>         RISC-V: Filter ISA and MMU values in cpuinfo
+> 
+>         We shouldn't be directly passing device tree values to userspace, both
+>         because there could be mistakes in device trees and because the kernel
+>         doesn't support arbitrary ISAs.
+> 
+>         Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> 
+>     diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+>     index 19e98c1710dd..a18b4e3962a1 100644
+>     --- a/arch/riscv/kernel/cpu.c
+>     +++ b/arch/riscv/kernel/cpu.c
+>     @@ -58,6 +58,57 @@ int riscv_of_processor_hartid(struct device_node *node)
+> 
+>      #ifdef CONFIG_PROC_FS
+> 
+>     +static void print_isa(struct seq_file *f, const char *orig_isa)
+>     +{
+>     +    static const char *ext = "mafdc";
+>     +    const char *isa = orig_isa;
+>     +    const char *e;
+>     +
+>     +    /* Linux doesn't support rv32e or rv128i, and we only support booting
+>     +     * kernels on harts with the same ISA that the kernel is compiled for. */
+>     +#if defined(CONFIG_32BIT)
+>     +    if (strncmp(isa, "rv32i", 5) != 0)
+>     +        return;
+>     +#elif defined(CONFIG_64BIT)
+>     +    if (strncmp(isa, "rv64i", 5) != 0)
+>     +        return;
+>     +#endif
+>     +
+>     +    /* Print the base ISA, as we already know it's legal. */
+>     +    seq_printf(f, "isa\t: ");
+>     +    seq_write(f, isa, 5);
+>     +    isa += 5;
+>     +
+>     +    /* Check the rest of the ISA string for valid extensions, printing those we
+>     +     * find.  RISC-V ISA strings define an order, so we only print the
+>     +     * extension bits when they're in order. */
+>     +    for (e = ext; *e != '\0'; ++e) {
+>     +        if (isa[0] == e[0]) {
+>     +            seq_write(f, isa, 1);
+>     +            isa++;
+>     +        }
+>     +    }
+>     +
+>     +    /* If we were given an unsupported ISA in the device tree then print a bit
+>     +     * of info describing what went wrong. */
+>     +    if (isa[0] != '\0')
+>     +        pr_info("unsupported ISA \"%s\" in device tree", orig_isa);
+
+It's probably best to do this once at boot time, rather than each time
+someone (e.g. libc) reads /proc/cpuinfo. That way you get a message in a
+deterministic location, and don't end up with an accidental DoS.
+
+[...]
+
+> >> +ENTRY(_start)
+> >> +	/* Mask all interrupts */
+> >> +	csrw sie, zero
+> >> +
+> >> +	/* Load the global pointer */
+> >> +.option push
+> >> +.option norelax
+> >> +	la gp, __global_pointer$
+> >> +.option pop
+> >> +
+> >> +	/*
+> >> +	 * Disable FPU to detect illegal usage of
+> >> +	 * floating point in kernel space
+> >> +	 */
+> >> +	li t0, SR_FS
+> >> +	csrc sstatus, t0
+> >> +
+> >> +	/* Pick one hart to run the main boot sequence */
+> >> +	la a3, hart_lottery
+> >> +	li a2, 1
+> >> +	amoadd.w a3, a2, (a3)
+> >> +	bnez a3, .Lsecondary_start
+> >
+> > I would *very strongly* recommend that you do not throw all CPUs into
+> > the kernel at the start of time, and instead have a mechanism where you
+> > can bring CPUs into the kernel individually.
+> >
+> > While it's simple, it comes with a number of long term problems (e.g.
+> > for kexec/kdump), some of which are unsolvable (e.g. as you cannot know
+> > how many CPUs are stuck in the kernel text, which haven't been brought
+> > online).
+> >
+> > If you want a simple SMP bringup mechanism, ePAPR's spin-table (and
+> > arm64's different-but-identically-named spin-table) are good starting
+> > points. Just make sure you require each CPU is brought online
+> > individually. We didn't do that for arm64 from day one, and it still
+> > prevents us from making improvements that we'd like to, years later.
+> >
+> > Doing that will also simplify decoupling the HART IDs from linux logical
+> > IDs, necessary for kdump/kexec, etc.
+> 
+> Defining a proper platform specification is something we've been punting on for
+> too long.  It's nominally on my plate, but I'm a bit behind right now.  We've
+> been able to get away without one because we don't have real bootloaders yet,
+> but it's really time to get started working on this so we don't end up in a bad
+> situation where we have production hardware out there that is capable of
+> running Linux but is stuck with pre-specification firmware.
+
+Indeed; best of luck! :)
+
+[...]
+
+> >> +int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> >> +{
+> >> +	tidle->thread_info.cpu = cpu;
+> >> +
+> >> +	/*
+> >> +	 * On RISC-V systems, all harts boot on their own accord.  Our _start
+> >> +	 * selects the first hart to boot the kernel and causes the remainder
+> >> +	 * of the harts to spin in a loop waiting for their stack pointer to be
+> >> +	 * setup by that main hart.  Writing __cpu_up_stack_pointer signals to
+> >> +	 * the spinning harts that they can continue the boot process.
+> >> +	 */
+> >> +	smp_mb();
+> >> +	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
+> >> +	__cpu_up_task_pointer[cpu] = tidle;
+> >
+> > Shouldn't these be WRITE_ONCE() (or some atomic) to avoid tearing?
+> >
+> > How are the secondaries reading these? Is there any requirement on the
+> > order these become visible?
+> 
+> They just need to be WRITE_ONCE, the secondary harts spin until both of these
+> are non-zero so it's not necessary to have any ordering here.  Thanks for
+> pointing this out, though, as this would have been an afwul bug to track down :)
+
+Ok. I assume the other end is doing something equivalent to READ_ONCE()
+for each!
+
+[...]
+
+> >
+> >> +/*
+> >> + * C entry point for a secondary processor.
+> >> + */
+> >> +asmlinkage void __init smp_callin(void)
+> >> +{
+> >> +	struct mm_struct *mm = &init_mm;
+> >> +
+> >> +	/* All kernel threads share the same mm context.  */
+> >> +	atomic_inc(&mm->mm_count);
+> >
+> > I beleive this should be:
+> >
+> > 	mmgrab(mm);
+> >
+> > See commit f1f1007644ffc805 ("mm: add new mmgrab() helper")
+> 
+> Thanks!
+> 
+>     commit 120b58060bbd67d893552d89b18ebbc7fea66ea9
+>     gpg: Signature made Fri 27 Jul 2018 03:19:16 PM PDT
+>     gpg:                using RSA key 00CE76D1834960DFCE886DF8EF4CA1502CCBAB41
+>     gpg:                issuer "palmer@dabbelt.com"
+>     gpg: Good signature from "Palmer Dabbelt <palmer@dabbelt.com>" [ultimate]
+>     gpg:                 aka "Palmer Dabbelt <palmer@sifive.com>" [ultimate]
+>     Author: Palmer Dabbelt <palmer@sifive.com>
+>     Date:   Fri Jul 27 15:16:35 2018 -0700
+> 
+>         RISC-V: Use mmgrab()
+> 
+>         f1f1007644ff ("mm: add new mmgrab() helper") added a helper that we
+>         missed out on.
+> 
+>         Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> 
+>     diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+>     index 4f18ca5050bc..57552fa3892b 100644
+>     --- a/arch/riscv/kernel/smpboot.c
+>     +++ b/arch/riscv/kernel/smpboot.c
+>     @@ -79,8 +79,8 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>      	 * the spinning harts that they can continue the boot process.
+>      	 */
+>      	smp_mb();
+>     -	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
+>     -	__cpu_up_task_pointer[cpu] = tidle;
+>     +	WRITE_ONCE(__cpu_up_stack_pointer[cpu], task_stack_page(tidle) + THREAD_SIZE);
+>     +	WRITE_ONCE(__cpu_up_task_pointer[cpu], tidle);
+> 
+>      	while (!cpu_online(cpu))
+>      		cpu_relax();
+>     @@ -100,7 +100,7 @@ asmlinkage void __init smp_callin(void)
+>      	struct mm_struct *mm = &init_mm;
+> 
+>      	/* All kernel threads share the same mm context.  */
+>     -	atomic_inc(&mm->mm_count);
+>     +   mm_grab(mm);
+>      	current->active_mm = mm;
+> 
+>      	trap_init();
+> 
+> >> +	current->active_mm = mm;
+> >> +
+> >> +	trap_init();
+> >> +	init_clockevent();
+> >> +	notify_cpu_starting(smp_processor_id());
+> >> +	set_cpu_online(smp_processor_id(), 1);
+> >> +	local_flush_tlb_all();
+> >
+> > Why do you need a TLB flush here?
+> 
+> On RISC-V systems there is a mask that specifies which CPUs to target with
+> remote TLB flushes.  If the CPU is offline then it will not be included as part
+> of the mask bits set for global TLB flushes, so they're essentially ignored.
+> Thus we do a local flush here in case any other flushes were ignored.
+
+Is that just for transient kernel mappings (e.g. vmalloc), or other
+things (e.g. junk values in the TLB out-of-reset)?
+
+For the former that may be ok, depending on your TLB architecture, but
+for the latter I'd suspect that you need to do TLB maintenance before
+enabling the MMU.
+
+Thanks,
+Mark.
