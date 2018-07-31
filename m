@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65ABC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DBEC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BD0208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD9EA208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="QhF5Jxt/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90BD0208A5
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="esKnSe4T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9EA208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732215AbeGaIur (ORCPT
+        id S1732289AbeGaIvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:47 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.121]:17106 "EHLO
+        Tue, 31 Jul 2018 04:51:15 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.177]:17190 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732103AbeGaIuq (ORCPT
+        with ESMTP id S1732164AbeGaIur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:50:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021112;
+        Tue, 31 Jul 2018 04:50:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021113;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=MMaPFeOqNErGtRsiAu3hlITNsgvoUDwSlPb2ECkEtJQ=;
-        b=QhF5Jxt/VN7V5FXWN098vS2JnoF4eAv0uAfILlW93MQE6uPMY+OAg9Gb2Ow6PEA9G/
-        Y+Pg1xgcuHRW0J/8tasXGjos6PMQJ154UhqYLb8WEFGMYPM2c5z+XzlxcNiCp+QXsw34
-        PIRlPiFs28c+b/ATZobW+80O2Cq891tkz7o6URcscfodzwezbI3VVk8ol12HyJMwpJr2
-        E6af2WFdHVRJgZ16vpvnMn+pKLI8F9gorQrKm1LsUzxJ4Drq2+Snhcgqkda6JNfwUyZk
-        4n4VHI2Tr+DpBpYD+vg7Mhfu349MxZ3Vlu06TODOkXwJvDCFFA5/X7Hu+0ktX6mNW+PZ
-        Chsg==
+        bh=EliiLwTPmGSbDwWK741EpRrBcJZcBOCipR6lx4gtBgY=;
+        b=esKnSe4T5j2PQZS/Uboe377uW8vj/UzGOvpxELR3ldA2Q8DP2ng6fMBEKxfy2y72jX
+        +u+cQocHRwKcOYEUphLkQvctTdzsDTDmW//oJSlglM8cvlY/mdDbpbleBrBKsU2jrDtg
+        VQqh4Tf/bF24Bwr1nHCmVU4Tc8SGuIqUaOSmJDBjwcdNCbmzHyIkz8xBoYk7cpzf8vGn
+        rZRsWm/oMZ/1g7beKmbkcPsRNtfAvf44knkE7LnT9payqKQt/A3t5SqQeQ3zyI42a7kW
+        c+lZVoKwurv9h2XZXMwl55J/7nBz5r+Vqz0gO5+ECA4+XLv2eDCdM9FUmzhc+BPvpzej
+        Gi2g==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BkwOs
+        with ESMTPSA id 6047f4u6V7BlwOu
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:46 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:47 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 26/32] ARM: dts: omap3-gta04a5: fix whitepsace and tab style
-Date:   Tue, 31 Jul 2018 09:11:29 +0200
-Message-Id: <647a18b436d76e738f8103e0a00c9bc22ae6c863.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 28/32] ARM: dts: omap3-gta04a5: disable IrDA receiver to save power
+Date:   Tue, 31 Jul 2018 09:11:31 +0200
+Message-Id: <ffec4dfe31b61e5feda6ed9da2595220f34b5c69.1533021094.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,25 +69,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in node sound / property ti,jack-det-gpio.
+The GTA04A5 has an improved IrDA circuit that can enable/disable
+the receiver individually. We do not have an IrDA driver/subsystem
+and hence the receiver should be actively turned off to save power,
+especially in suspend.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04a5.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/omap3-gta04a5.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
-index c01b4715fb83..d408eb05cdfa 100644
+index e3f9e0969065..e3352cc97c91 100644
 --- a/arch/arm/boot/dts/omap3-gta04a5.dts
 +++ b/arch/arm/boot/dts/omap3-gta04a5.dts
-@@ -12,6 +12,6 @@
- 	model = "Goldelico GTA04A5/Letux 2804";
+@@ -25,7 +25,21 @@
  
- 	sound {
--		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;    /* GTA04A5 only */
-+		ti,jack-det-gpio = <&twl_gpio 2 GPIO_ACTIVE_HIGH>;	/* GTA04A5 only */
- 	};
  };
+ 
++&gpio5 {
++	irda_en {
++		gpio-hog;
++		gpios = <(175-160) GPIO_ACTIVE_HIGH>;
++		output-high;	/* activate gpio_175 to disable IrDA receiver */
++	};
++};
++
+ &omap3_pmx_core {
++	irda_pins: pinmux_irda {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x21d0, PIN_OUTPUT_PULLUP | MUX_MODE4)	/* mcspi1_cs1 = gpio175 */
++		>;
++	};
++
+ 	pps_pins: pinmux_pps_pins {
+ 		pinctrl-single,pins = <
+ 			OMAP3_CORE1_IOPAD(0x2138, PIN_INPUT | MUX_MODE4) /* gpin114 */
 -- 
 2.12.2
 
