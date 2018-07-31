@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E94FC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FA8C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B07A208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A38A208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:15:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="HSzfrJXh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B07A208A2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="nCyI9X6Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A38A208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbeGaIyA (ORCPT
+        id S1730196AbeGaIuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:54:00 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:21722 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeGaIuk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Jul 2018 04:50:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021104;
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:25946 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727269AbeGaIuj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:50:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021105;
         s=strato-dkim-0002; d=goldelico.com;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=/2YBbUuVQyHl/Rz+1MO8AC5FcH0iEk9H4kUrbMMfcl4=;
-        b=HSzfrJXhEgLh/fHZ22zTHTA0Ab2XU3IyTtpOrbhx+AU6Ul7Z18gqjDL5/rA1vyCzn+
-        97SLIbacw5VNHz07dLeSKU/3Chx02NnfdP1YJpfQNuTm4WqzrrAd41iOv5HWKhZn6bDH
-        Gg9ZpMlJN2wR5v127M7NT8BmzBi4SHrzsx2uiGYUx2WMAdk5a6upKlEb4CpBazNpzdle
-        oBtkS87E7ZPlzR9bnStGVneHPUSq/NGf/klafW3hcYa1yRfF8LRPfTKJEkL+AHlIZLwc
-        h/PQRmjpSMOCfjz+IdtNDxHoYwLRR/WcWiDcTRfgAI+p7yxOa1uA+eaVd8o92SbpX4Wr
-        T5Zg==
+        h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
+        Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=7H7RNh20MYHqH2Nr8Lu/99U41OjBpBRKwrpR9drAoH4=;
+        b=nCyI9X6YdjC+zhMO7iPjSPkWsy8Lwdnc2omRjsAGLWsXh0jyMLaw7okOMsCwZu1WKM
+        1eYccGJXpMrGPy++M7LN4qDec6jOaUS3cXL/DvWqRWJA0ebK3KygfByqfxEJEqXAhZps
+        j5pfY3sb7kFYzpOemmtzBx2utVN9xYqbXbCKvr5Pym1qIR/FmOUq0PoyHSUD1bSPEuJb
+        fFhgDgm9qczuZz7d/fe4t4itCxtv3JHlQZNPVFyB2gXfXqEqXj4inoFH66eUEA+dC9WR
+        gftGO4FzRdn4NKitMVqnWCf3yUeci++Up9wTi02lVJZWHQQ7v/6Lc4vjVtGa0X5i9i3r
+        /F7Q==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BbwOR
+        with ESMTPSA id 6047f4u6V7BcwOU
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:37 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:38 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,88 +56,40 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 00/32] Device Tree Updates for GTA04 (A3/A4/A5 variants)
-Date:   Tue, 31 Jul 2018 09:11:03 +0200
-Message-Id: <cover.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 03/32] ARM: dts: omap3-gta04: give spi_lcd node a label so that we can overwrite in other DTS files
+Date:   Tue, 31 Jul 2018 09:11:06 +0200
+Message-Id: <e4d5a28ff446aa29be268dbfa1ef45c638f5b841.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
+References: <cover.1533021093.git.hns@goldelico.com>
+In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
+References: <cover.1533021093.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-  asked why we have reg=<0> for port@1.
-  Based on his comment we have removed the change for
-  the opa362 reg property in the DT, but worked out a correct
-  fix in the opa362 driver which solves the issue better.
-  See: https://lore.kernel.org/patchwork/patch/968407/
-* Ladislav Michl <ladis@linux-mips.org>
-  has found a typo and we discussed NAND/OneNAND and
-  how the partitions should be setup. A better solution
-  would be to do it completely by u-boot, but unless we have
-  that, we must fix it here.
-* we omit the patch that replaces ti,non-removable by non-removable
-  since additional internal tests have shown that it makes
-  problems with finding the rootfs boot partition.
-* instead we add a patch that explicitly sets broken-cd for mmc1.
+needed for device variants based on GTA04 board but with
+different display panel (driver).
 
-PATCH V1 2018-07-25 09:00:42:
-We have not upstreamed significant improvements collected
-in the GTA04 vendor kernel tree for some years. The result
-is that distribution kernels derived from upstream (e.g.
-Debian) lag behind and miss significant features and fixes.
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ arch/arm/boot/dts/omap3-gta04.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-H. Nikolaus Schaller (32):
-  ARM: dts: omap3-gta04: fix typo in backlight pins node name
-  ARM: dts: omap3-gta04: fix some whitespace and tab style errors
-  ARM: dts: omap3-gta04: give spi_lcd node a label so that we can
-    overwrite in other DTS files
-  ARM: dts: omap3-gta04: fixes for tvout / venc
-  ARM: dts: omap3-gta04: add devconf1 setup for correct tvout pins
-  ARM: dts: omap3-gta04: tvout: enable as display1 alias
-  ARM: dts: omap3-gta04: fix touchscreen tsc2007
-  ARM: dts: omap3-gta04: add pinmux for bmp085 EOC interrupt
-  ARM: dts: omap3-gta04: make NAND partitions compatible with recent
-    U-Boot
-  ARM: dts: omap3-gta04: update gpmc NAND setup
-  ARM: dts: omap3-gta04: keep vpll2 always on
-  ARM: dts: omap3-gta04: add a comment how to reference the tca6507 gpio
-  ARM: dts: omap3-gta04: add warning comment to vaux2 regulator
-  ARM: dts: omap3-gta04: explicitly describe that mmc1 has no CD/WP
-  ARM: dts: omap3-gta04: make use of input event include file and
-    constants
-  ARM: dts: omap3-gta04: map antenna detect GPIO to SW_LINEIN_INSERT key
-    event
-  ARM: dts: omap3-gta04: add camera interface parallel port
-  ARM: dts: omap3-gta04: add camera pinmux
-  ARM: dts: omap3-gta04: add mcbsp (audio subsystem) pinmux
-  ARM: dts: omap3-gta04: add devconf0 setup for mcbsp1 clock pins
-  ARM: dts: omap3-gta04: add mcbsp (audio subsystem) nodes
-  ARM: dts: omap3-gta04a3: fix model name for A3 variant
-  ARM: dts: omap3-gta04a4: fix model name for A4 variant
-  ARM: dts: omap3-gta04a5: fix copyright of A5 variant
-  ARM: dts: omap3-gta04a5: fix model name
-  ARM: dts: omap3-gta04a5: fix whitepsace and tab style
-  ARM: dts: omap3-gta04a5: add support for PPS
-  ARM: dts: omap3-gta04a5: disable IrDA receiver to save power
-  ARM: dts: omap3-gta04a5: add support for ti,wl1837 module
-  ARM: dts: omap3-gta04a5: uses different sensors than gta04a4
-  ARM: dts: omap3-gta04a5: define pinmux for bluetooth enable of
-    ti,wl1837 module
-  ARM: dts: omap3-gta04a5one: define GTA04A5 variant with OneNAND
-
- arch/arm/boot/dts/omap3-gta04.dtsi     | 248 +++++++++++++++++++++++++++++----
- arch/arm/boot/dts/omap3-gta04a3.dts    |   2 +-
- arch/arm/boot/dts/omap3-gta04a4.dts    |   2 +-
- arch/arm/boot/dts/omap3-gta04a5.dts    | 129 ++++++++++++++++-
- arch/arm/boot/dts/omap3-gta04a5one.dts | 114 +++++++++++++++
- 5 files changed, 462 insertions(+), 33 deletions(-)
- create mode 100644 arch/arm/boot/dts/omap3-gta04a5one.dts
-
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index 27fc9e54dcda..2db670e2a4bd 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -78,7 +78,7 @@
+ 		#sound-dai-cells = <0>;
+ 	};
+ 
+-	spi_lcd {
++	spi_lcd: spi_lcd {
+ 		compatible = "spi-gpio";
+ 		#address-cells = <0x1>;
+ 		#size-cells = <0x0>;
 -- 
 2.12.2
 
