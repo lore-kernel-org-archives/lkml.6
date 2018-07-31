@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAE0C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F102C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E7E208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A50208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:12:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="RFXY5vj+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E7E208A4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="Zbi9N9WB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A50208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732200AbeGaIur (ORCPT
+        id S1732157AbeGaIup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:50:47 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.124]:20608 "EHLO
+        Tue, 31 Jul 2018 04:50:45 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:33231 "EHLO
         mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732105AbeGaIuq (ORCPT
+        with ESMTP id S1732045AbeGaIuo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:50:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021112;
+        Tue, 31 Jul 2018 04:50:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533021110;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:References:In-Reply-To:Message-Id:Date:
         Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=bh629jtbd4BZCNt9zMjzGd9NE774t5NB9KqMhHcBwZE=;
-        b=RFXY5vj+tkqDLwUTtvhcS83tsy5R2T8J792WAODg82sI8tQJXAb+MS8BLsTGsrhuFp
-        Ct/qVo1Cy82FtFBuClevK/BaTjjq3dHk1rWpovSyzGX1ydhcNVUEtnTRfmpjLBe6YCk1
-        4wr7d/7toOgFHvlmlqRNRUTDXKRzkcrM7Th6W9PwKOQAbG2/bnlh6vejgRDVGHBQMuNW
-        Ui8LYqFpPSpb3APnwai/uEh7b7M9nFY2s9aII9ZVVtI6o2YJTlmxjVWI2QWzTtivDL2V
-        YnTU4F91gILgW7/hTbViJI0pqTyKABWplW353KVGaO8IIiNWPFOzoRyAxvgwVEAHpjJN
-        csaA==
+        bh=p9ZkjB4l03XGV99oT/tHeEFAklA9rRkHXd5XgQAbEZk=;
+        b=Zbi9N9WBJhwywkSY0qkJ846M6QPniGl2WrHDKRKhYmD1KE336Zl4wbUHgFeAgDVJJr
+        ujBHMlSeiiyMwSa3/5DUhUU2G7H7ivqpnZ2JQ5IG6SVpFpInZFd9m0k1FEtSuEGSSKC5
+        X7XpPwjwLdSSmRPzOfPTExzdWjZinJkrMI5e8PQVWbZnBZTjImDLcrM2nyJ70Zg808kb
+        BIbgzYkSYWctLLx7WSYM8cIFPv6px6xMNPOEFFG6rhl38qBdRol/pPI0aUAgdH90rl0e
+        0IgLjtJGMuNEziSU7CKuhDkP/OMIeP+EoskeIL6Ty27bryF4n5NpoqOet2/bcS0GhDeU
+        DhFA==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1pxICp41QvXLM9PJBRQ"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 43.13 DYNA|AUTH)
-        with ESMTPSA id 6047f4u6V7BjwOp
+        with ESMTPSA id 6047f4u6V7BiwOk
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Tue, 31 Jul 2018 09:11:45 +0200 (CEST)
+        Tue, 31 Jul 2018 09:11:44 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     ladis@linux-mips.org,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
@@ -56,9 +56,9 @@ To:     ladis@linux-mips.org,
 Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 24/32] ARM: dts: omap3-gta04a5: fix copyright of A5 variant
-Date:   Tue, 31 Jul 2018 09:11:27 +0200
-Message-Id: <cde473db9f8674ab92d9b51218afdff2c1e629f3.1533021093.git.hns@goldelico.com>
+Subject: [PATCH v2 19/32] ARM: dts: omap3-gta04: add mcbsp (audio subsystem) pinmux
+Date:   Tue, 31 Jul 2018 09:11:22 +0200
+Message-Id: <0be0d622032348bc942505abaf6b4a4ef24ad331.1533021093.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
 References: <cover.1533021093.git.hns@goldelico.com>
@@ -69,22 +69,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+GTA04 audio system makes use of all four McBSP ports, so set
+up proper pinmux.
+
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04a5.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/omap3-gta04.dtsi | 39 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04a5.dts b/arch/arm/boot/dts/omap3-gta04a5.dts
-index 600b6ca5a1bd..b691e70773f9 100644
---- a/arch/arm/boot/dts/omap3-gta04a5.dts
-+++ b/arch/arm/boot/dts/omap3-gta04a5.dts
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) 2014 H. Nikolaus Schaller <hns@goldelico.com>
-+ * Copyright (C) 2014-18 H. Nikolaus Schaller <hns@goldelico.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
+diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+index 89e16e1897f7..cbb55b9c3242 100644
+--- a/arch/arm/boot/dts/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+@@ -356,6 +356,45 @@
+ 			OMAP3_CORE1_IOPAD(0x2132, PIN_INPUT_PULLDOWN | MUX_MODE4) /* cam_strobe */
+ 		>;
+ 	};
++
++	mcbsp1_pins: pinmux_mcbsp1_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x218c, PIN_INPUT | MUX_MODE4)	/* mcbsp1_clkr.mcbsp1_clkr - gpio_156 FM interrupt */
++			OMAP3_CORE1_IOPAD(0x218e, PIN_OUTPUT | MUX_MODE0)	/* mcbsp1_clkr.mcbsp1_fsr */
++			OMAP3_CORE1_IOPAD(0x2190, PIN_OUTPUT | MUX_MODE0)	/* mcbsp1_dx.mcbsp1_dx */
++			OMAP3_CORE1_IOPAD(0x2192, PIN_INPUT | MUX_MODE0)	/* mcbsp1_dx.mcbsp1_dr */
++			/* mcbsp_clks is used as PENIRQ */
++			/* OMAP3_CORE1_IOPAD(0x2194, PIN_INPUT | MUX_MODE0)	/* mcbsp_clks.mcbsp_clks */
++			OMAP3_CORE1_IOPAD(0x2196, PIN_INPUT | MUX_MODE0)	/* mcbsp_clks.mcbsp1_fsx */
++			OMAP3_CORE1_IOPAD(0x2198, PIN_INPUT | MUX_MODE0)	/* mcbsp1_clkx.mcbsp1_clkx */
++		>;
++	};
++
++	mcbsp2_pins: pinmux_mcbsp2_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x213c, PIN_INPUT | MUX_MODE0)	/* mcbsp2_fsx.mcbsp2_fsx */
++			OMAP3_CORE1_IOPAD(0x213e, PIN_INPUT | MUX_MODE0)	/* mcbsp2_fsx.mcbsp2_clkx */
++			OMAP3_CORE1_IOPAD(0x2140, PIN_INPUT | MUX_MODE0)	/* mcbsp2_dr.mcbsp2_dr */
++			OMAP3_CORE1_IOPAD(0x2142, PIN_OUTPUT | MUX_MODE0)	/* mcbsp2_dr.mcbsp2_dx */
++		>;
++	};
++
++	mcbsp3_pins: pinmux_mcbsp3_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x216c, PIN_OUTPUT | MUX_MODE0)	/* mcbsp3_dx.mcbsp3_dx */
++			OMAP3_CORE1_IOPAD(0x216e, PIN_INPUT | MUX_MODE0)	/* mcbsp3_dx.mcbsp3_dr */
++			OMAP3_CORE1_IOPAD(0x2170, PIN_INPUT | MUX_MODE0)	/* mcbsp3_clkx.mcbsp3_clkx */
++			OMAP3_CORE1_IOPAD(0x2172, PIN_INPUT | MUX_MODE0)	/* mcbsp3_clkx.mcbsp3_fsx */
++		>;
++	};
++
++	mcbsp4_pins: pinmux_mcbsp4_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x2184, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcbsp4_clkx.mcbsp4_clkx */
++			OMAP3_CORE1_IOPAD(0x2186, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcbsp4_clkx.mcbsp4_dr */
++			OMAP3_CORE1_IOPAD(0x218a, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcbsp4_dx.mcbsp4_fsx */
++		>;
++	};
+ };
+ 
+ &omap3_pmx_core2 {
 -- 
 2.12.2
 
