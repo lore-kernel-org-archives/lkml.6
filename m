@@ -2,199 +2,80 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2484C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6708AC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7805320841
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:04:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqbKUvUe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7805320841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 07D3220841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:06:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D3220841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732634AbeGaVqR (ORCPT
+        id S1732599AbeGaVsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 17:46:17 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45798 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732373AbeGaVqR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 17:46:17 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i26-v6so6617701pfo.12;
-        Tue, 31 Jul 2018 13:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=sEE9CUkse8pz+BACRudKwfsWTWfB2imbK5IEGi39cUs=;
-        b=BqbKUvUeQIRQIOVG2XwBWM9iRRq7MMlsqCdBgi5umvleAisF3dShFs5FamXAzzHhz7
-         BsOSqyPfyIOj1yCnRT9IJG+vysr9DBOaLZ9fbeAhRDa87H08D2i50L1VEGMdRvtW0akZ
-         Du5jFFN4BhfDdAl30w7qDyAKAOVl9iecBUUnhj5VeL3NaVREMr2nFp4ajStuVF+ArDWk
-         YOC3WgDCcAjtX/o1/LcgHjs1VPD3qqf4Jzhi7ey6Ms67GNwtYehuVcXyYkUsI3Ur+lQK
-         rVZYxwBs/I4HlduE5htxZ1+eml/CCaPXqVOvE8jsXy1ylTZG+g6a+cqfFCCzLaioZGt6
-         zrIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=sEE9CUkse8pz+BACRudKwfsWTWfB2imbK5IEGi39cUs=;
-        b=CtsHIXiV5J3yLBvtGlRCK2Fz5AEZEm1oX30WddAGpmBaEvJ1t1ADqQzOhSLPndQhCM
-         YT3XtxDldE5tAZ8R1ei+LZ8DxEo3dLh9A1J3YnPPIqCfHgre0UoK31E768j1lthFQjxh
-         kn70kmvHy7PRE10iHOSTeynuf9MmrL6KfPNBHZF4CWMGkNNvQp7azm39uOTbujuGyqCj
-         NCJOxG6Vgph+X/w7zVbeIug0kRJdQK+IhF/nJW+qodlosmdLMvtV2a8WfhEGQoP1Geff
-         sPfvx299DtfMFBne8CEkoMlGfs8SLgV+EXzKq1HQa9b3CIJPNnEDFDcxS609By4eKnFt
-         RZgg==
-X-Gm-Message-State: AOUpUlEF39krEBPBRsZwXmtqscksXVZcMAnRbJ7ScDTreRmCMuCQYGUZ
-        P88tfJh5bGDiw7D3gDb1n+wqglrR
-X-Google-Smtp-Source: AAOMgpcjdhaGLZWVoWNYF0CHFbzMru3Xr+L8n0k93z6A22wrrHqtup9q3ZvoXmRJArWRzhw1FlMFxg==
-X-Received: by 2002:a62:d94a:: with SMTP id s71-v6mr23431943pfg.164.1533067459958;
-        Tue, 31 Jul 2018 13:04:19 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.216.188])
-        by smtp.gmail.com with ESMTPSA id h132-v6sm22007969pfc.100.2018.07.31.13.04.17
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 31 Jul 2018 13:04:18 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 01:37:05 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     thierry.reding@gmail.com, airlied@linux.ie, jonathanh@nvidia.com,
-        ajitn.linux@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
-Message-ID: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
+        Tue, 31 Jul 2018 17:48:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53242 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732373AbeGaVsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 17:48:50 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 07A838197005;
+        Tue, 31 Jul 2018 20:06:52 +0000 (UTC)
+Received: from doriath (ovpn-116-231.phx2.redhat.com [10.3.116.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 586E61C701;
+        Tue, 31 Jul 2018 20:06:42 +0000 (UTC)
+Date:   Tue, 31 Jul 2018 16:06:40 -0400
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Alexandre Ghiti <alex@ghiti.fr>
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 00/11] hugetlb: Factorize hugetlb architecture
+ primitives
+Message-ID: <20180731160640.11306628@doriath>
+In-Reply-To: <20180731060155.16915-1-alex@ghiti.fr>
+References: <20180731060155.16915-1-alex@ghiti.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 31 Jul 2018 20:06:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 31 Jul 2018 20:06:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-convert drm_atomic_helper_suspend/resume() to use
-drm_mode_config_helper_suspend/resume().
+On Tue, 31 Jul 2018 06:01:44 +0000
+Alexandre Ghiti <alex@ghiti.fr> wrote:
 
-With this conversion, tegra_drm_fb_suspend() and
-tegra_drm_fb_resume() wil not be used anymore.
-Both of these functions can be removed.
+> [CC linux-mm for inclusion in -mm tree] 
+> 
+> In order to reduce copy/paste of functions across architectures and then
+> make riscv hugetlb port (and future ports) simpler and smaller, this
+> patchset intends to factorize the numerous hugetlb primitives that are
+> defined across all the architectures.
 
-Also, in tegra_drm struct's member state will not be
-used anymore. So this can be removed forever.
+[...]
 
-Fixed one sparse warning.
+>  15 files changed, 139 insertions(+), 382 deletions(-)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
----
- drivers/gpu/drm/tegra/drm.c | 20 ++------------------
- drivers/gpu/drm/tegra/drm.h |  4 ----
- drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
- 3 files changed, 3 insertions(+), 45 deletions(-)
+I imagine you're mostly interested in non-x86 review at this point, but
+as this series is looking amazing:
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index a2bd587..9a0efce 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
- static int host1x_drm_suspend(struct device *dev)
- {
- 	struct drm_device *drm = dev_get_drvdata(dev);
--	struct tegra_drm *tegra = drm->dev_private;
--
--	drm_kms_helper_poll_disable(drm);
--	tegra_drm_fb_suspend(drm);
--
--	tegra->state = drm_atomic_helper_suspend(drm);
--	if (IS_ERR(tegra->state)) {
--		tegra_drm_fb_resume(drm);
--		drm_kms_helper_poll_enable(drm);
--		return PTR_ERR(tegra->state);
--	}
- 
--	return 0;
-+	return drm_mode_config_helper_suspend(drm);
- }
- 
- static int host1x_drm_resume(struct device *dev)
- {
- 	struct drm_device *drm = dev_get_drvdata(dev);
--	struct tegra_drm *tegra = drm->dev_private;
- 
--	drm_atomic_helper_resume(drm, tegra->state);
--	tegra_drm_fb_resume(drm);
--	drm_kms_helper_poll_enable(drm);
--
--	return 0;
-+	return drm_mode_config_helper_resume(drm);
- }
- #endif
- 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 92d2487..1012335 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -60,8 +60,6 @@ struct tegra_drm {
- 	unsigned int pitch_align;
- 
- 	struct tegra_display_hub *hub;
--
--	struct drm_atomic_state *state;
- };
- 
- struct tegra_drm_client;
-@@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
- void tegra_drm_fb_free(struct drm_device *drm);
- int tegra_drm_fb_init(struct drm_device *drm);
- void tegra_drm_fb_exit(struct drm_device *drm);
--void tegra_drm_fb_suspend(struct drm_device *drm);
--void tegra_drm_fb_resume(struct drm_device *drm);
- 
- extern struct platform_driver tegra_display_hub_driver;
- extern struct platform_driver tegra_dc_driver;
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 4c22cdd..b947e82 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
- 		/* Undo the special mapping we made in fbdev probe. */
- 		if (bo && bo->pages) {
- 			vunmap(bo->vaddr);
--			bo->vaddr = 0;
-+			bo->vaddr = NULL;
- 		}
- 
- 		drm_framebuffer_remove(fbdev->fb);
-@@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
- 	tegra_fbdev_exit(tegra->fbdev);
- #endif
- }
--
--void tegra_drm_fb_suspend(struct drm_device *drm)
--{
--#ifdef CONFIG_DRM_FBDEV_EMULATION
--	struct tegra_drm *tegra = drm->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
--	console_unlock();
--#endif
--}
--
--void tegra_drm_fb_resume(struct drm_device *drm)
--{
--#ifdef CONFIG_DRM_FBDEV_EMULATION
--	struct tegra_drm *tegra = drm->dev_private;
--
--	console_lock();
--	drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
--	console_unlock();
--#endif
--}
--- 
-1.9.1
-
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
