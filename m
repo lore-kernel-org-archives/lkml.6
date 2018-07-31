@@ -2,178 +2,142 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B576EC43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8CAC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5583A208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14375208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 11:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihnk5AOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5583A208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGiZKn6R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14375208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbeGaMt1 (ORCPT
+        id S1731863AbeGaMxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 08:49:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34328 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731395AbeGaMt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 08:49:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y5-v6so8903425pgv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 04:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=2WvnA6eI9cUHIsdEP7c7f7BrbwUfvvtbYh8dMg2a8tM=;
-        b=ihnk5AOpjjIVz/umuEbrSJ9sj9cpJ2/G0Gl6M0A5YxIsqsQEGhYGqVj41W23e3d1M+
-         omtSBfdOSDwOoAvKS/aySkqfb6TpRp2Q8rNwSW5DAsUe6hiXMlTreoHiKOXG4C2HyPGO
-         Mt8G5qo8qimIvmp3+VwYg7oyvE0YCKgI+cn1/xKm9GOtop5BLJV7CXKhg4vnHKD+Utfy
-         kXwEhO/lFTRRsNpJTdElTXOsvSc8pgJt1tR1+gS+LTiN3SQdOnXrlmbpXqm+srZ0yAjH
-         SMnUiU2HE1X77kXv0Xs7TkicuOOFmISZRt6FmwcM4Uu+dTkeCmJVb5COpgA79dkxUxFr
-         RNKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=2WvnA6eI9cUHIsdEP7c7f7BrbwUfvvtbYh8dMg2a8tM=;
-        b=tcv+0j6YjBmEVNPhTRBw5o9qMcXJU/sNYr9TZ+0fSsOsEUEg5t/+qkFXmwQYxyeO12
-         iCC83c4yP399oIb6NLi/iXkzA2vRXRnvTM2tuPu3uIsKHdQPjjufLl1RoRAMo7n0esB5
-         eHuAnx8MrTk3o4blNEAD+I51UIjz9wYFV024+yUF8fkjNqIz3AHFLxM/BWtRKBKAlC+h
-         LDxuyy2E3VEqDjj41E+2y9Sa7rCWGJHgK7qzm38oDQKJgTnMZYrkjP6OWi/qRQHJpT5J
-         K7NaRjpt6Ib4EMjN/ZTgpe8qhFOegkRRBNde8NQcuDnnxH9/rfU8VztIS35I3YTeBIzd
-         q+AQ==
-X-Gm-Message-State: AOUpUlGjSl8AxIlUV/qeWNBw7LUhhkAyEgSEnPiXYSHVYnIUIlCoD2dK
-        De3GZ2hlXtt5E58jxswzeS4=
-X-Google-Smtp-Source: AAOMgpe0mN0r5Z3yJ5qwue6LJbsohulVzj60oOlaUWMm6IIez03NrxXK6eudXNe1I1T2qxpO7AOcpA==
-X-Received: by 2002:a62:c8c2:: with SMTP id i63-v6mr21847671pfk.73.1533035378480;
-        Tue, 31 Jul 2018 04:09:38 -0700 (PDT)
-Received: from bj03382pcu.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id z10-v6sm19147154pfh.83.2018.07.31.04.09.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 31 Jul 2018 04:09:37 -0700 (PDT)
-From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
-X-Google-Original-From: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
-Subject: [PATCH v2] mm: terminate the reclaim early when direct reclaiming
-Date:   Tue, 31 Jul 2018 19:09:28 +0800
-Message-Id: <1533035368-30911-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-X-Mailer: git-send-email 1.7.9.5
+        Tue, 31 Jul 2018 08:53:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729273AbeGaMxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 08:53:08 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A29020857;
+        Tue, 31 Jul 2018 11:13:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533035599;
+        bh=Ta9mUt7JoXTn+MX98LaHbbt1IWNFTW2IT7A5DNowgb4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bGiZKn6Rx3sYDOQOlmobE1bUkEGUkFtM0gnCeQHie5zSLwmv0Pu3ifIxP0w+14Wij
+         wqI5litrS1SlkykLSAxpv/WZ/jiVEWwvEl4sSZY+EdFigD7W0WbFX1b3KmeiV2Y71i
+         8W7/r5PS/CXa8H/Nlw0ntMzYIaABH3cXXRte0b+Y=
+Date:   Tue, 31 Jul 2018 06:13:17 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>, Milo Kim <milo.kim@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] PCI: let pci_request_irq properly deal with threaded
+ interrupts
+Message-ID: <20180731111317.GJ45322@bhelgaas-glaptop.roam.corp.google.com>
+References: <d004975f-03a8-59f5-56ef-f4e1f8e12dfb@gmail.com>
+ <20180730213028.GC45322@bhelgaas-glaptop.roam.corp.google.com>
+ <20180730224252.GE45322@bhelgaas-glaptop.roam.corp.google.com>
+ <alpine.DEB.2.21.1807310047320.1725@nanos.tec.linutronix.de>
+ <20180731080111.GG17271@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731080111.GG17271@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch try to let the direct reclaim finish earlier than it used
-to be. The problem comes from We observing that the direct reclaim
-took a long time to finish when memcg is enabled. By debugging, we
-find that the reason is the softlimit is too low to meet the loop
-end criteria. So we add two barriers to judge if it has reclaimed
-enough memory as same criteria as it is in shrink_lruvec:
-1. for each memcg softlimit reclaim.
-2. before starting the global reclaim in shrink_zone.
+On Tue, Jul 31, 2018 at 09:01:12AM +0100, Russell King - ARM Linux wrote:
+> On Tue, Jul 31, 2018 at 12:50:21AM +0200, Thomas Gleixner wrote:
+> > On Mon, 30 Jul 2018, Bjorn Helgaas wrote:
+> > 
+> > > [+cc maintainers of possibly erroneous callers of request_threaded_irq()]
+> > > 
+> > > On Mon, Jul 30, 2018 at 04:30:28PM -0500, Bjorn Helgaas wrote:
+> > > > [+cc Thomas, Christoph, LKML]
+> > > > 
+> > > > On Mon, Jul 30, 2018 at 12:03:42AM +0200, Heiner Kallweit wrote:
+> > > > > If we have a threaded interrupt with the handler being NULL, then
+> > > > > request_threaded_irq() -> __setup_irq() will complain and bail out
+> > > > > if the IRQF_ONESHOT flag isn't set. Therefore check for the handler
+> > > > > being NULL and set IRQF_ONESHOT in this case.
+> > > > > 
+> > > > > This change is needed to migrate the mei_me driver to
+> > > > > pci_alloc_irq_vectors() and pci_request_irq().
+> > > > > 
+> > > > > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> > > > 
+> > > > I'd like an ack from Thomas because this requirement about IRQF_ONESHOT
+> > > > usage isn't mentioned in the request_threaded_irq() function doc or
+> > > > Documentation/
+> > > 
+> > > Possibly these other request_threaded_irq() callers are similarly
+> > > broken?  I can't tell for sure about tda998x_create(), but all the
+> > > others certainly call request_threaded_irq() with "handler == NULL"
+> > > and irqflags that do not contain IRQF_ONESHOT:
+> > > 
+> > >   tda998x_create()
+> > >     request_threaded_irq(client->irq, NULL, ..., irqd_get_trigger_type(), ...)
+> > >     (I can't tell what irqd_get_trigger_type() does)
+> > 
+> > It reads the trigger type back from the irq chip (level/edge/polarity) but
+> > does not return with the ONESHOT bit set.
+> 
+> What tree are you (Bjorn) using there?  Looking in my git history,
+> request_threaded_irq() was added in January 2014, as:
+> 
+> +               irqf_trigger =
+> +                       irqd_get_trigger_type(irq_get_irq_data(client->irq));
+> +               ret = request_threaded_irq(client->irq, NULL,
+> +                                          tda998x_irq_thread,
+> +                                          irqf_trigger | IRQF_ONESHOT,
+> +                                          "tda998x", priv);
+> 
+> and updated more recently for the CEC support in ae81553c30ef
+> ("drm/i2c: tda998x: allow interrupt to be shared") to be:
+> 
+> -               irqf_trigger =
+> +               irq_flags =
+>                         irqd_get_trigger_type(irq_get_irq_data(client->irq));
+> +               irq_flags |= IRQF_SHARED | IRQF_ONESHOT;
+>                 ret = request_threaded_irq(client->irq, NULL,
+> -                                          tda998x_irq_thread,
+> -                                          irqf_trigger | IRQF_ONESHOT,
+> +                                          tda998x_irq_thread, irq_flags,
+>                                            "tda998x", priv);
+> 
+> In all cases, IRQF_ONESHOT has been set for this threaded interrupt.
+> 
+> I've also checked drm-next, and it doesn't show anything like what
+> Bjorn quoted.
+> 
+> Confused.  Bjorn, can you double check that what you think are
+> erroneous request_threaded_irq() calls are actually as per what
+> you quoted please?
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
----
- include/linux/memcontrol.h |  3 ++-
- mm/memcontrol.c            |  3 +++
- mm/vmscan.c                | 38 +++++++++++++++++++++++++++++++++++++-
- 3 files changed, 42 insertions(+), 2 deletions(-)
+I was looking at v4.18-rc1, but in the case of tda998x_create(), I
+overlooked this line:
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb11..a7e82c7 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -325,7 +325,8 @@ void mem_cgroup_cancel_charge(struct page *page, struct mem_cgroup *memcg,
- void mem_cgroup_uncharge_list(struct list_head *page_list);
- 
- void mem_cgroup_migrate(struct page *oldpage, struct page *newpage);
--
-+bool direct_reclaim_reach_watermark(pg_data_t *pgdat, unsigned long nr_reclaimed,
-+			unsigned long nr_scanned, gfp_t gfp_mask, int order);
- static struct mem_cgroup_per_node *
- mem_cgroup_nodeinfo(struct mem_cgroup *memcg, int nid)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 8c0280b..e4efd46 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2577,6 +2577,9 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 			(next_mz == NULL ||
- 			loop > MEM_CGROUP_MAX_SOFT_LIMIT_RECLAIM_LOOPS))
- 			break;
-+		if (direct_reclaim_reach_watermark(pgdat, nr_reclaimed,
-+					*total_scanned, gfp_mask, order))
-+			break;
- 	} while (!nr_reclaimed);
- 	if (next_mz)
- 		css_put(&next_mz->memcg->css);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f8..19503f3 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2518,6 +2518,34 @@ static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
- 		(memcg && memcg_congested(pgdat, memcg));
- }
- 
-+bool direct_reclaim_reach_watermark(pg_data_t *pgdat, unsigned long nr_reclaimed,
-+		unsigned long nr_scanned, gfp_t gfp_mask,
-+		int order)
-+{
-+	struct scan_control sc = {
-+		.gfp_mask = gfp_mask,
-+		.order = order,
-+		.priority = DEF_PRIORITY,
-+		.nr_reclaimed = nr_reclaimed,
-+		.nr_scanned = nr_scanned,
-+	};
-+	if (!current_is_kswapd())
-+		return false;
-+	if (!IS_ENABLED(CONFIG_COMPACTION))
-+		return false;
-+	/*
-+	 * In fact, we add 1 to nr_reclaimed and nr_scanned to let should_continue_reclaim
-+	 * NOT return by finding they are zero, which means compaction_suitable()
-+	 * takes effect here to judge if we have reclaimed enough pages for passing
-+	 * the watermark and no necessary to check other memcg anymore.
-+	 */
-+	if (!should_continue_reclaim(pgdat,
-+				sc.nr_reclaimed + 1, sc.nr_scanned + 1, &sc))
-+		return true;
-+	return false;
-+}
-+EXPORT_SYMBOL(direct_reclaim_reach_watermark);
-+
- static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- {
- 	struct reclaim_state *reclaim_state = current->reclaim_state;
-@@ -2802,7 +2830,15 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
- 			sc->nr_scanned += nr_soft_scanned;
- 			/* need some check for avoid more shrink_zone() */
- 		}
--
-+		/*
-+		 * we maybe have stolen enough pages from soft limit reclaim, so we return
-+		 * back if we are direct reclaim
-+		 */
-+		if (direct_reclaim_reach_watermark(zone->zone_pgdat, sc->nr_reclaimed,
-+						sc->nr_scanned, sc->gfp_mask, sc->order)) {
-+			sc->gfp_mask = orig_mask;
-+			return;
-+		}
- 		/* See comment about same check for global reclaim above */
- 		if (zone->zone_pgdat == last_pgdat)
- 			continue;
--- 
-1.9.1
+  irq_flags |= IRQF_SHARED | IRQF_ONESHOT;
 
+Sorry!
