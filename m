@@ -2,106 +2,131 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D27C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B516FC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C9C204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C9C204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 6D9CB20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 20:51:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9CB20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbeGaWcO (ORCPT
+        id S1732153AbeGaWdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 18:32:14 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35917 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeGaWcN (ORCPT
+        Tue, 31 Jul 2018 18:33:13 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40497 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726580AbeGaWdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 18:32:13 -0400
-Received: by mail-wm0-f67.google.com with SMTP id w24-v6so3108231wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 13:50:05 -0700 (PDT)
+        Tue, 31 Jul 2018 18:33:13 -0400
+Received: by mail-it0-f66.google.com with SMTP id h23-v6so6302948ita.5;
+        Tue, 31 Jul 2018 13:51:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DyJqw0MbnW7bnoItYJ7cc4XhtBLnvWYUWi60o67LZeA=;
-        b=PrD/jg35ZO/UV6YIaSmQKp2kaQVdbhKmkk9NVl5yNY4WmtmwgPkaYaZ6EbKQcirEIC
-         CN8LJij8vnrp2eQ83YLcy78PFle/mwvTK4G1QPUNl+sxRjCQg3Bpclu/OcBwITN0AyUL
-         ROH24X/m8Km90ZpsoIHiW/PrArzmJqxGJ97RrZ3HFcg+62a++zzy5FmhzvkHZph8k8Ms
-         bc+kgu9tzGPeB9WniPJRshFnj/S8bsE9GJNYhPMus8oiT41no0zsfpAOmQBO8nTVzug+
-         YuEdUmtU7btB2z/+RX1rb1bwM54WTfed3c8a2LNM3nYU2FU4b5w7ryYRVKdWUXpj6lmD
-         EkYw==
-X-Gm-Message-State: AOUpUlENnq06ijbsUIKWWM43GrSmeWa9O/y8Whz/chDP5Vc1IErIwTxl
-        an/gbhDYEDoJE7aVdUnXhwKP+zz4LWg=
-X-Google-Smtp-Source: AAOMgpeDygXd7Xj56q8XCGD+iMJc0pwAYf7niOMXmZ67PQ2lMmgI2rl2JsInBvtpgecnEgQ+OF8dOA==
-X-Received: by 2002:a1c:4489:: with SMTP id r131-v6mr761403wma.128.1533070204671;
-        Tue, 31 Jul 2018 13:50:04 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id l11-v6sm18988814wru.25.2018.07.31.13.50.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 13:50:03 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 2C01312451A; Tue, 31 Jul 2018 22:50:03 +0200 (CEST)
-Date:   Tue, 31 Jul 2018 22:50:03 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        kirill.shutemov@linux.intel.com, iamjoonsoo.kim@lge.com,
-        Mel Gorman <mgorman@suse.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Subject: Re: [PATCH] mm: make __paginginit based on CONFIG_MEMORY_HOTPLUG
-Message-ID: <20180731205003.GA3277@techadventures.net>
-References: <20180731124504.27582-1-osalvador@techadventures.net>
- <CAGM2rebds=A5m1ZB1LtD7oxMzM9gjVQvm-QibHjEENmXViw5eA@mail.gmail.com>
- <20180731144157.GA1499@techadventures.net>
- <20180731144545.fh5syvwcecgvqul6@xakep.localdomain>
- <20180731145125.GB1499@techadventures.net>
- <CAGM2reZSZHdWECr8-7pj6j=CtjWVF2oKC9SwHhMuOsDkigdzgA@mail.gmail.com>
- <20180731150115.GC1499@techadventures.net>
- <CAGM2reZ+KhsuFhOVvJzRkQO=66TosvxDW0BYAXNf8Gw8zoRQXQ@mail.gmail.com>
- <CAGM2reaniWqEJ1hArMoreyGn5M+eSYge+wYYMxTrRHth-hxzOQ@mail.gmail.com>
+        bh=+z2DbmO16+CWPxLboxYsTF+DBpoa43xDdA9XOZoBoYM=;
+        b=oSYAHciptKaUqkDi/Fy8i020vHg4rU0deF/qTJxQfHi6t9pK2cMXnohEN3KXgmwLib
+         Mflc87c1xUuv7Q9qHNzypbuIfiRrVNdY2XFsBf6lrraq9pI09BIpLZTj4QTrs2oFbf7+
+         azirScxnUWiXhG3ui6qsGawMLRaPHBBTumcNTU10EpVv1lH6UA65w/XsER3WQI2AePTL
+         yQTarn5SjzF5RqIDyks/7+O5CQtWdVWeRy/ou9WQ0pUIBNsdHLOK9Yq1uFb2Mu3QoSpr
+         D6/U3CyF/T4+Vr+7b0Pt7yreFyYWs9pz8Rn54TyxXF8FFmy7+ifrrQs70uVDN+3L4XXu
+         aNzw==
+X-Gm-Message-State: AOUpUlE/Khh1pA4B+ivKp15tOi78rJYKg2cwQdK31CqAKj5r0qnOLjKz
+        0bxTNQI8Q5/3HWKWhle22g==
+X-Google-Smtp-Source: AAOMgpc240gJvm/8Rfv1yCrWwHz/xUVAztMBS8vc01zmRIUn3QWMilhy5qNqAAjMIcejpwsfswp3JA==
+X-Received: by 2002:a24:be8f:: with SMTP id i137-v6mr1149792itf.61.1533070263992;
+        Tue, 31 Jul 2018 13:51:03 -0700 (PDT)
+Received: from localhost ([24.51.61.72])
+        by smtp.gmail.com with ESMTPSA id p84-v6sm1708047itc.2.2018.07.31.13.51.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 13:51:03 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 14:51:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     djw@t-chip.com.cn
+Cc:     linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: add support for ROC-RK3399-PC
+ board
+Message-ID: <20180731205102.GA13177@rob-hp-laptop>
+References: <1532916721-24117-1-git-send-email-djw@t-chip.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGM2reaniWqEJ1hArMoreyGn5M+eSYge+wYYMxTrRHth-hxzOQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1532916721-24117-1-git-send-email-djw@t-chip.com.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 11:23:33AM -0400, Pavel Tatashin wrote:
-> Yes we free meminit when no CONFIG_MEMORY_HOTPLUG
-> See here:
-> http://src.illumos.org/source/xref/linux-master/include/asm-generic/vmlinux.lds.h#107
+On Mon, Jul 30, 2018 at 10:12:01AM +0800, djw@t-chip.com.cn wrote:
+> From: Levin Du <djw@t-chip.com.cn>
+> 
+> ROC-RK3399-PC is a power efficient 4GB LPDDR4 single board
+> computer with USB 3.0 and Gigabit Ethernet in a form factor
+> compatible with the Raspberry Pi. It is based on the Rockchip
+> RK3399 SoC, powered by the Type-C port.
+> 
+> The devicetree currently supports peripherals of:
+> 
+> - Ethernet
+> - HDMI
+> - SD Card
+> - UART2 debug
+> - Type-C
+> - eMMC
+> 
+> USB3 in Type-C port currently only works with normal orientation,
+> not flip one.
+> 
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> 
+> ---
+> 
+> Changes in v2:
+> - remove custom brightness-levels (use calculated one in pwm_bl driver)
+> - remove redundant 'dr_mode="otg"' in usbdrd_dwc3_0
+> 
+> Changes in v1:
+> - remove bootargs
+> - use interpolation for brightness level
+> - add vcc_vbus_typec1 regulator
+> - fix phy-supply of u2phy0_otg and u2phy1_otg
+> - remove vcc_hub_en dummy regualtor
+> - add hub_rst (changed to output high) to pinctrl status of vcc5v0_host
+> - remove vsel-gpios props in fan53xx
+> - remove mp8859 in i2c
+> - fusb302: fix interrupt setting
+> - fusb302: add vbus-supply
+> - remove extcon in tcphy0 and tcphy1
+> - remove #sound-dai-cells in i2s*
+> - use RK_PXX style bit number for cd-gpios in SDMMC
+> - clean commented status lines
+> 
+>  Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+>  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>  arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts     | 682 +++++++++++++++++++++
+>  3 files changed, 687 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dts
 
-Oh, I got the point now.
-Somehow I missed that we were freeing up the memory when CONFIG_MEMORY_HOTPLUG
-was not in place.
-
-So your patch makes sense to me now, sorry.
-
-Since my patchset [1] + cleanup patch [2] remove almost all __paginginit,
-leaving only pgdat_init_internals() and zone_init_internals(), I think
-it would be great if you base your patch on top of that.
-Or since the patchset has some cleanups already, I could add your patch
-into it (as we did for the zone_to/set_nid() patch) and send a v6 with it.
-
-What do you think?
-
-[1] https://patchwork.kernel.org/patch/10548861/
-[2] <20180731101752.GA473@techadventures.net>
-
-Thanks
--- 
-Oscar Salvador
-SUSE L3
+Reviewed-by: Rob Herring <robh@kernel.org>
