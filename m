@@ -2,240 +2,229 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11234C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8D4C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F861208A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:05:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLmS1oLz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F861208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 38E0B20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 07:06:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E0B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbeGaIoP (ORCPT
+        id S1730038AbeGaIpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:44:15 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44000 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbeGaIoO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:44:14 -0400
-Received: by mail-lf1-f66.google.com with SMTP id f135-v6so9933097lfg.10;
-        Tue, 31 Jul 2018 00:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cxeDHlHSH07d/NsXw1qbkGcF6sG69w86Br4Njn1GKwM=;
-        b=hLmS1oLzcPfe7hJyzTdWL2425F0nWNc1w18Sh6vJk97/MRJK7Ed2pUN5N92fGT/nFl
-         dDSq8cW45k0IEeJHyuhGfkEynvAIt5g83LHDY9ZDb7CebuhWYpLSdawWxs2ORzN5LQZg
-         KDRmBPnGltHwK2K6WLxT1ozYE8UkR2pMkUoj4r2yEoqoZqYOLIXYry9SUWfDI8w7dbVd
-         9rgFICnDbJo2ZjVa71U658cYdXMw7DAc8ZuLXPnojVpaJ6V9GxwWvyFklmsZkfBoMRTU
-         ialqMTs9k4owxJGI1otHvfXXaEdmPiXGIByg0fcEfRhr8f8hX9VoPZqCqhPWObVU60k5
-         m3uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cxeDHlHSH07d/NsXw1qbkGcF6sG69w86Br4Njn1GKwM=;
-        b=N2Ki8WbG0AfGsdETXm2cSeEkC40BvNpyUQRj7EcORrvXA9aZ+caD08/I6hiD2nTRk5
-         HLqFycvUpohkV46+Z/QGAXRjDhdW87Uw3j4YD0ENaRCMnvKkQOQ0n3pdLYf+Q2LIlfdx
-         96B47fC5sd9uFUBbWrp2F8QOYXlkLiJcKoyRsLN3Wj4GmaQrLzFHjNqly1sd0hpg58Pf
-         5mLrQhxoXGLG1xbh4PKy3/VFmvaeSDYakW0TSdyWXucILCCELzUARllepNDnAECxxhWh
-         Wf6kLiZ777hDyAJnDVNZgyTKQkCtnHtC09L9FQffg2DXjFDGPvr9SvAW2nao2gXEvt8S
-         1C6g==
-X-Gm-Message-State: AOUpUlHrAIXh/NBNjL/7FoX9BqJ/9UGKBcib2I1rZhpS/3aCnwtnG3va
-        R/hATkcF23DLlYm5a3KH+MF3bsozczlGGyN5ukg=
-X-Google-Smtp-Source: AAOMgpeNP/tcwwrVBaUShPlpBn6UDMNdKC3c3m5Akte2/CPVDbVsLZiy/XKs8zIGrvCx9kPwtzK+YTRXskW8zhO7Fjo=
-X-Received: by 2002:a19:c742:: with SMTP id x63-v6mr11881729lff.9.1533020721617;
- Tue, 31 Jul 2018 00:05:21 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab3:631a:0:0:0:0:0 with HTTP; Tue, 31 Jul 2018 00:04:41
- -0700 (PDT)
-In-Reply-To: <33ceb61c-3e09-c336-e9b9-87c01336f56c@intel.com>
-References: <1532340508-8749-1-git-send-email-zhang.chunyan@linaro.org>
- <1532340508-8749-6-git-send-email-zhang.chunyan@linaro.org> <33ceb61c-3e09-c336-e9b9-87c01336f56c@intel.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Tue, 31 Jul 2018 15:04:41 +0800
-Message-ID: <CAAfSe-vVEve63y-Pc0QF6w7vc37cbbbOknGkp9SmocXyNX3J4g@mail.gmail.com>
-Subject: Re: [PATCH V4 5/7] mmc: sdhci: add Auto CMD Auto Select support
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Jason Wu <jason.wu@unisoc.com>
+        Tue, 31 Jul 2018 04:45:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58006 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727241AbeGaIpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 04:45:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9746DAFCD;
+        Tue, 31 Jul 2018 07:06:26 +0000 (UTC)
+Message-ID: <1533021001.3300.2.camel@suse.cz>
+Subject: Re: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Francisco Jerez <currojerez@riseup.net>,
+        Mel Gorman <mgorman@techsingularity.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        lenb@kernel.org, rjw@rjwysocki.net, peterz@infradead.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        juri.lelli@redhat.com, viresh.kumar@linaro.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>
+Date:   Tue, 31 Jul 2018 09:10:01 +0200
+In-Reply-To: <87lg9sefrb.fsf@riseup.net>
+References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+         <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
+         <87bmarhqk4.fsf@riseup.net>
+         <20180728123639.7ckv3ljnei3urn6m@techsingularity.net>
+         <87r2jnf6w0.fsf@riseup.net>
+         <20180730154347.wrcrkweckclgbyrp@techsingularity.net>
+         <87lg9sefrb.fsf@riseup.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+On Mon, 2018-07-30 at 11:32 -0700, Francisco Jerez wrote:
+> Mel Gorman <mgorman@techsingularity.net> writes:
+> 
+> > On Sat, Jul 28, 2018 at 01:21:51PM -0700, Francisco Jerez wrote:
+> > > > > Please revert this series, it led to significant energy usage and
+> > > > > graphics performance regressions [1].  The reasons are roughly the ones
+> > > > > we discussed by e-mail off-list last April: This causes the intel_pstate
+> > > > > driver to decrease the EPP to zero when the workload blocks on IO
+> > > > > frequently enough, which for the regressing benchmarks detailed in [1]
+> > > > > is a symptom of the workload being heavily IO-bound, which means they
+> > > > > won't benefit at all from the EPP boost since they aren't significantly
+> > > > > CPU-bound, and they will suffer a decrease in parallelism due to the
+> > > > > active CPU core using a larger fraction of the TDP in order to achieve
+> > > > > the same work, causing the GPU to have a lower power budget available,
+> > > > > leading to a decrease in system performance.
+> > > > 
+> > > > It slices both ways.
+> > > 
+> > > I don't think it's acceptable to land an optimization that trades
+> > > performance of one use-case for another,
+> > 
+> > The same logic applies to a revert
+> 
+> No, it doesn't, the responsibility of addressing the fallout from a
+> change that happens to hurt performance even though it was supposed to
+> improve it lies on the author of the change, not on the reporter of the
+> regression.
 
-On 30 July 2018 at 21:06, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 23/07/18 13:08, Chunyan Zhang wrote:
->> As SD Host Controller Specification v4.10 documents:
->> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
->> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
->> Control 2 register which indicates whether card supports CMD23. If CMD23
->> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
->> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
->> recommended rather than use of Auto CMD12 Enable or Auto CMD23
->> Enable.
->>
->> This patch add this new mode support.
->>
->> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->> ---
->>  drivers/mmc/host/sdhci.c | 61 +++++++++++++++++++++++++++++++++++++++---------
->>  drivers/mmc/host/sdhci.h |  2 ++
->>  2 files changed, 52 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 5acea3d..5c60590 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -311,6 +311,23 @@ static void sdhci_config_dma(struct sdhci_host *host)
->>       sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
->>  }
->>
->> +static void sdhci_enable_cmd23(struct sdhci_host *host)
->> +{
->> +     u16 ctrl2;
->> +
->> +     /*
->> +      * This is used along with "Auto CMD Auto Select" feature,
->> +      * which is introduced from v4.10, if card supports CMD23,
->> +      * Auto CMD23 should be used instead of Auto CMD12.
->> +      */
->> +     if (host->version >= SDHCI_SPEC_410 &&
->> +         (host->mmc->caps & MMC_CAP_CMD23)) {
+The server and desktop worlds have different characteristics and needs, which
+in this particular case appear to be conflicting. Luckily we can can
+differentiate the two scenarios (as in the bugfix patch by Srinivas a few
+hours ago).
+
+> The task scheduler does go through the effort of attempting to re-use
+> the most frequently active CPU when a task wakes up, at least last time
+> I checked.
+
+Unfortunately that doesn't happen in practice; the load balancer in the
+scheduler is in a constant tension between spreading tasks evenly across all
+cores (necessary when the machine is under heavy load) and packing on just a
+few (which makes more sense when only a few threads are working and the box is
+almost idle otherwise). Recent evolutions favour spreading. We often observe
+tasks helplessly bounce from core to core losing all their accrued utilisation
+score, and intel_pstate (with or without HWP) penalizes that.
+
+On Mon, 2018-07-30 at 11:32 -0700, Francisco Jerez wrote:
+> Mel Gorman <mgorman@techsingularity.net> writes:
 >
-> That is the host capability.  It needs to be the card capability.
+> [...]
+> > One pattern is a small fsync which ends up context switching between
+> > the process and a journalling thread (may be dedicated thread, may be
+> > workqueue depending on filesystem) and the process waking again in the
+> > very near future on IO completion. While the workload may be single
+> > threaded, more than one core is in use because of how the short sleeps
+> > migrate the task to other cores.  HWP does not necessarily notice that
+> > the task is quite CPU-intensive due to the migrations and so the
+> > performance suffers.
+> > 
+> > Some effort is made to minimise the number of cores used with this sort
+> > of waker/wakee relationship but it's not necessarily enough for HWP to
+> > boost the frequency.  Minimally, the journalling thread woken up will
+> > not wake on the same CPU as the IO issuer except under extremely heavily
+> > utilisation and this is not likely to change (stacking stacks too often
+> > increases wakeup latency).
+> > 
+> 
+> The task scheduler does go through the effort of attempting to re-use
+> the most frequently active CPU when a task wakes up, at least last time
+> I checked.  But yes some migration patterns can exacerbate the downward
+> bias of the response of the HWP to an intermittent workload, primarily
+> in cases where the application is unable to take advantage of the
+> parallelism between CPU and the IO device involved, like you're
+> describing above.
 
-Could you please elaborate the issue?
+Unfortunately that doesn't happen in practice; the load balancer in the
+scheduler is in a constant tension between spreading tasks evenly across all
+cores (necessary when the machine is under heavy load) and packing on just a
+few (which makes more sense when only a few threads are working and the box is
+idle otherwise). Recent evolutions favour spreading. We often observe tasks
+helplessly bounce from core to core losing all their accrued utilization
+score, and intel_pstate (with or without HWP) penalizes that.
 
-I thought we're setting for host here.  Do you mean we need to see the
-card capability?
+That's why in our distro SLES-15 (which is based on 4.12.14) we're sporting a
+patch like this:
+https://kernel.opensuse.org/cgit/kernel/commit/?h=SLE15&id=3a287868cb7a9 which
+boosts tasks that have been placed on a previously idle CPU. We haven't even
+proposed this patch upstream as we hope to solve those problems at a more
+fundamental level, but when you're supporting power management (freq scaling)
+in the server world you get compared to the performance governor, so your
+policy needs to be aggressive.
 
+> 
+> > > > With the series, there are large boosts to performance on other
+> > > > workloads where a slight increase in power usage is acceptable in
+> > > > exchange for performance. For example,
+> > > > 
+> > > > Single socket skylake running sqlite
+> > > >                                  v4.17               41ab43c9
+> > > > Min       Trans     2580.85 (   0.00%)     5401.58 ( 109.29%)
+> > > > Hmean     Trans     2610.38 (   0.00%)     5518.36 ( 111.40%)
+> > > > Stddev    Trans       28.08 (   0.00%)      208.90 (-644.02%)
+> > > > CoeffVar  Trans        1.08 (   0.00%)        3.78 (-251.57%)
+> > > > Max       Trans     2648.02 (   0.00%)     5992.74 ( 126.31%)
+> > > > BHmean-50 Trans     2629.78 (   0.00%)     5643.81 ( 114.61%)
+> > > > BHmean-95 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> > > > BHmean-99 Trans     2620.38 (   0.00%)     5538.32 ( 111.36%)
+> > > > 
+> > > > That's over doubling the transactions per second for that workload.
+> > > > 
+> > > > Two-socket skylake running dbench4
+> > > >                                 v4.17               41ab43c9
+> > > > Amean      1         40.85 (   0.00%)       14.97 (  63.36%)
+> > > > Amean      2         42.31 (   0.00%)       17.33 (  59.04%)
+> > > > Amean      4         53.77 (   0.00%)       27.85 (  48.20%)
+> > > > Amean      8         68.86 (   0.00%)       43.78 (  36.42%)
+> > > > Amean      16        82.62 (   0.00%)       56.51 (  31.60%)
+> > > > Amean      32       135.80 (   0.00%)      116.06 (  14.54%)
+> > > > Amean      64       737.51 (   0.00%)      701.00 (   4.95%)
+> > > > Amean      512    14996.60 (   0.00%)    14755.05 (   1.61%)
+> > > > 
+> > > > This is reporting the average latency of operations running
+> > > > dbench. The series over halves the latencies. There are many examples
+> > > > of basic workloads that benefit heavily from the series and while I
+> > > > accept it may not be universal, such as the case where the graphics
+> > > > card needs the power and not the CPU, a straight revert is not the
+> > > > answer. Without the series, HWP cripplies the CPU.
+> > > > 
+> > > 
+> > > That seems like a huge overstatement.  HWP doesn't "cripple" the CPU
+> > > without this series.  It will certainly set lower clocks than with this
+> > > series for workloads like you show above that utilize the CPU very
+> > > intermittently (i.e. they underutilize it). 
+> > 
+> > Dbench for example can be quite CPU intensive. When bound to a single
+> > core, it shows up to 80% utilisation of a single core.
+> 
+> So even with an oracle cpufreq governor able to guess that the
+> application relies on the CPU being locked to the maximum frequency
+> despite it utilizing less than 80% of the CPU cycles, the application
+> will still perform 20% worse than an alternative application handling
+> its IO work asynchronously.
+
+It's a matter of being pragmatic. You're saying that a given application is
+badly designed and should be rewritten to leverage parallelism between CPU and
+IO. But in the field you *have* applications that behave that way, and the OS
+is in a position to do something to mitigate the damage.
+
+> 
+> > When unbound, the usage of individual cores appears low due to the
+> > migrations. It may be intermittent usage as it context switches to
+> > worker threads but it's not low utilisation either.
+> > 
+> > intel_pstate also had logic for IO-boosting before HWP 
+> 
+> The IO-boosting logic of the intel_pstate governor has the same flaw as
+> this unfortunately.
 >
->> +             ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->> +             ctrl2 |= SDHCI_CMD23_ENABLE;
->> +             sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
->> +     }
->> +}
->> +
->>  static void sdhci_init(struct sdhci_host *host, int soft)
->>  {
->>       struct mmc_host *mmc = host->mmc;
->> @@ -329,6 +346,8 @@ static void sdhci_init(struct sdhci_host *host, int soft)
->>               host->clock = 0;
->>               mmc->ops->set_ios(mmc, &mmc->ios);
->>       }
->> +
->> +     sdhci_enable_cmd23(host);
->>  }
->>
->>  static void sdhci_reinit(struct sdhci_host *host)
->> @@ -1093,6 +1112,36 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
->>              !mrq->cap_cmd_during_tfr;
->>  }
->>
->> +static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
->> +                                      struct mmc_command *cmd,
->> +                                      u16 *mode)
->> +{
->> +     bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
->> +                      (cmd->opcode != SD_IO_RW_EXTENDED);
->> +     bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
->> +
->> +     /*
->> +      * In case of Version 4.10 or later, use of 'Auto CMD Auto
->> +      * Select' is recommended rather than use of 'Auto CMD12
->> +      * Enable' or 'Auto CMD23 Enable'.
->> +      */
->> +     if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
->> +             *mode |= SDHCI_TRNS_AUTO_SEL;
->
-> As noted in patch 4, the CMD23 argument is not just the block count for eMMC.
 
-Probably I haven't got your point...
+Again it's a matter of pragmatism. You'll find that another governor uses
+IO-boosting: schedutil. And while intel_pstate needs it because it gets
+otherwise killed by migrating tasks, schedutil is based on the PELT
+utilization signal and doesn't have that problem at all. The principle there
+is plain and simple: if I've been "wasting time" waiting on "slow" IO (disk),
+that probably means I'm getting late and there is soon some compute to do:
+better catch up on the lost time and speed up. IO-wait boosting on schedutil
+was discussed at
+https://lore.kernel.org/lkml/3752826.3sXAQIvcIA@vostro.rjw.lan/
 
-From what I understand, auto_sel mode doesn't need argument2. Doesn't
-this work for eMMC?
 
-The test platform I used was just eMMC only, haven't found problem.
-
-Thanks,
-Chunyan
-
->
->> +             return;
->> +     }
->> +
->> +     /*
->> +      * If we are sending CMD23, CMD12 never gets sent
->> +      * on successful completion (so no Auto-CMD12).
->> +      */
->> +     if (use_cmd12) {
->> +             *mode |= SDHCI_TRNS_AUTO_CMD12;
->> +     } else if (use_cmd23) {
->> +             *mode |= SDHCI_TRNS_AUTO_CMD23;
->> +             sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
->> +     }
->> +}
->> +
->>  static void sdhci_set_transfer_mode(struct sdhci_host *host,
->>       struct mmc_command *cmd)
->>  {
->> @@ -1119,17 +1168,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->>
->>       if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
->>               mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
->> -             /*
->> -              * If we are sending CMD23, CMD12 never gets sent
->> -              * on successful completion (so no Auto-CMD12).
->> -              */
->> -             if (sdhci_auto_cmd12(host, cmd->mrq) &&
->> -                 (cmd->opcode != SD_IO_RW_EXTENDED))
->> -                     mode |= SDHCI_TRNS_AUTO_CMD12;
->> -             else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
->> -                     mode |= SDHCI_TRNS_AUTO_CMD23;
->> -                     sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
->> -             }
->> +             sdhci_auto_cmd_select(host, cmd, &mode);
->>       }
->>
->>       if (data->flags & MMC_DATA_READ)
->> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->> index 81aae07..a8f4ec2 100644
->> --- a/drivers/mmc/host/sdhci.h
->> +++ b/drivers/mmc/host/sdhci.h
->> @@ -42,6 +42,7 @@
->>  #define  SDHCI_TRNS_BLK_CNT_EN       0x02
->>  #define  SDHCI_TRNS_AUTO_CMD12       0x04
->>  #define  SDHCI_TRNS_AUTO_CMD23       0x08
->> +#define  SDHCI_TRNS_AUTO_SEL 0x0C
->>  #define  SDHCI_TRNS_READ     0x10
->>  #define  SDHCI_TRNS_MULTI    0x20
->>
->> @@ -185,6 +186,7 @@
->>  #define   SDHCI_CTRL_DRV_TYPE_D              0x0030
->>  #define  SDHCI_CTRL_EXEC_TUNING              0x0040
->>  #define  SDHCI_CTRL_TUNED_CLK                0x0080
->> +#define  SDHCI_CMD23_ENABLE          0x0800
->>  #define  SDHCI_CTRL_V4_MODE          0x1000
->>  #define  SDHCI_CTRL_64BIT_ADDR               0x2000
->>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE        0x8000
->>
->
+Giovanni Gherdovich
+SUSE Labs
