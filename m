@@ -3,99 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E33C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 03:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A116C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 03:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34CDC208B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 03:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B89320841
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 03:07:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rRrL5k6F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34CDC208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EDYD6f5v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B89320841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbeGaEpH (ORCPT
+        id S1727045AbeGaEpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 00:45:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:52563 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbeGaEpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 00:45:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41fhDk4bYFz9ryn;
-        Tue, 31 Jul 2018 13:07:00 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533006422;
-        bh=gd2kYnldNDevXBnUcGrUXFFFW504uK1ezx76RMDT1HM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rRrL5k6F8MOK7V7goal0XMtqhBnPGycsN4JpwV136X2f+7XwWx2L6AqY1dwIdN3Uh
-         b7XL+Q8hRoHQEJHwfTMHW1DdF1XVwedUnk+8Q3jl8MCaPVEGHlOmdZ/pjapYQkT523
-         fhxDFXXsMXOhVugpN1kb7Un4K5UrI0g7uJa4xpTR4MDYL7gcqrVB5EZdZa/LUipm7y
-         s/EBKcM6dI5RFBQMFHVuT8G4Qm6VZZnWgpilZUT2WVvKMSjDZDlQm7sl+C710xe14s
-         04I764hC0yZJlpa/6MC3sgD11DE/nEROeNci9WxCFPsqvpV/tIhfK06rD5i3PDq9Be
-         fxmcdAQDkVAYw==
-Date:   Tue, 31 Jul 2018 13:07:00 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Max Gurtovoy <maxg@mellanox.com>
-Subject: linux-next: build failure after merge of the block tree
-Message-ID: <20180731130700.3ff50dce@canb.auug.org.au>
+        Tue, 31 Jul 2018 00:45:23 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57656 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbeGaEpX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 00:45:23 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6V34Hef151811;
+        Tue, 31 Jul 2018 03:06:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DGaku9oeyP9hNRnd/EivIQ9PPqra02fR8H5x/ybSLnI=;
+ b=EDYD6f5vzAPwtJf/Ahv+nOTT0h0mUTWEy180vek9xs3CE5sM9c7+nIdZyvoERRE+twSe
+ 92hMqabdktKr9Q+TYAYtnL0X8MRJ9aQ7YIbqM90RS7a8HioiqlaAvBW0DTs4XHqLUBbv
+ YlTxeqc+CHZPdti80kLAVXXseOVBuAhZpPd+Bc+sQa/4YfxmCa17X0F7CNfOjs4/Xacb
+ /O/g3wSwtZjOVhoRhYWbsqPjyi1LXKavL32KLsQi5eal534Zdwuuqen8LAf9GJ036mOr
+ MCppsphpu3wQRo47gNaBq3YJaBxbrJj7a123k/9bIjKdOYugwz3TuE4duygKkpsc7+yg 6g== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2kgfwsy1nr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Jul 2018 03:06:44 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6V36itV026810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Jul 2018 03:06:44 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6V36fnG010807;
+        Tue, 31 Jul 2018 03:06:42 GMT
+Received: from [10.154.104.120] (/10.154.104.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Jul 2018 20:06:41 -0700
+Subject: Re: [PATCH] ipc/shm.c add ->pagesize function to shm_vm_ops
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, jack@suse.cz, jglisse@redhat.com,
+        mike.kravetz@oracle.com, dave@stgolabs.net, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+References: <20180727211727.5020-1-jane.chu@oracle.com>
+ <20180728190248.GA883@bombadil.infradead.org>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <026b057d-ec11-9273-40bc-072a8958bb64@oracle.com>
+Date:   Mon, 30 Jul 2018 20:06:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.jhLpF1cCZWW_8sMHa+0.c+"; protocol="application/pgp-signature"
+In-Reply-To: <20180728190248.GA883@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8970 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=925
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807310031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Mathew,
 
-Hi Jens,
 
-After merging the block tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+On 7/28/2018 12:02 PM, Matthew Wilcox wrote:
+> On Fri, Jul 27, 2018 at 03:17:27PM -0600, Jane Chu wrote:
+>> +++ b/include/linux/mm.h
+>> @@ -387,6 +387,13 @@ enum page_entry_size {
+>>    * These are the virtual MM functions - opening of an area, closing and
+>>    * unmapping it (needed to keep files on disk up-to-date etc), pointer
+>>    * to the functions called when a no-page or a wp-page exception occurs.
+>> + *
+>> + * Note, when a new function is introduced to vm_operations_struct and
+>> + * added to hugetlb_vm_ops, please consider adding the function to
+>> + * shm_vm_ops. This is because under System V memory model, though
+>> + * mappings created via shmget/shmat with "huge page" specified are
+>> + * backed by hugetlbfs files, their original vm_ops are overwritten with
+>> + * shm_vm_ops.
+>>    */
+>>   struct vm_operations_struct {
+> I don't think this header file is the right place for this comment.
+> I'd think a better place for it would be at the definition of hugetlb_vm_ops.
 
-drivers/scsi/sd.o: In function `sd_done':
-sd.c:(.text+0x1050): undefined reference to `t10_pi_complete'
+Agreed, will make the change.
+Thanks for reviewing!
 
-Presuably caused by commit
+-jane
 
-  10c41ddd6132 ("block: move dif_prepare/dif_complete functions to block la=
-yer")
-
-# CONFIG_BLK_DEV_INTEGRITY is not set
-CONFIG_BLK_DEV_SD=3Dy
-
-I have used the block tree from next-20180730 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltf0lQACgkQAVBC80lX
-0Gwzpwf/X1pEYcETqY2fL0QFgQAhpmOPUON7wZpj6z13jGvyYZxnBNtcRbO27xzC
-VQDdXosoalPiBbV9eEaAVZ+AH939rXbdiNExxswEaGki6Www3oPhu2JfaulgMZv9
-Lw1Y1/RplTLqKLWo9RkyNwc1CoSL0ajP8+uRLwdVxpvNxa38wpWsb5Ejxo+omZfc
-riXmy82x9mSyS7D4FadRugMJTQiUixNgvy490PGvuZuDvzs88LYsF4D0vo2KXtin
-ZKBErWxcj9ewsUO5L/gXv8HCgBaEkpyJWLXwfXKAV8oUd9HypjEXQNEUKOWX8YT2
-JVDWxh4F/RU0FpZV8VMHRvkTZmLRlg==
-=7edz
------END PGP SIGNATURE-----
-
---Sig_/.jhLpF1cCZWW_8sMHa+0.c+--
