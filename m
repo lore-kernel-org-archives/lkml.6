@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCE1C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07858C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89CA20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89CA20862
+	by mail.kernel.org (Postfix) with ESMTP id 96CCE208A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 06:56:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CCE208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbeGaIeo (ORCPT
+        id S1731364AbeGaIer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 04:34:44 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:58336 "EHLO
+        Tue, 31 Jul 2018 04:34:47 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:33424 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729830AbeGaIen (ORCPT
+        with ESMTP id S1727135AbeGaIeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 04:34:43 -0400
+        Tue, 31 Jul 2018 04:34:46 -0400
 Received: from tony.xie?rock-chips.com (unknown [192.168.167.157])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 0F22539A;
-        Tue, 31 Jul 2018 14:55:48 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id BEB9431E;
+        Tue, 31 Jul 2018 14:55:45 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 1
 X-MAIL-DELIVERY: 0
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 446613D6;
-        Tue, 31 Jul 2018 14:55:45 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id A8C113DB;
+        Tue, 31 Jul 2018 14:55:42 +0800 (CST)
 X-RL-SENDER: tony.xie@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <54ff64442cce44c3816cafe705dcee45>
+X-UNIQUE-TAG: <27d55aab965a62b59e6b778b7139560e>
 X-ATTACHMENT-NUM: 0
 X-SENDER: xxx@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 28355KAAT7M;
-        Tue, 31 Jul 2018 14:55:47 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 28355K7XIZI;
+        Tue, 31 Jul 2018 14:55:44 +0800 (CST)
 From:   Tony Xie <tony.xie@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
@@ -55,9 +55,9 @@ Cc:     broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
         linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
         xsf@rock-chips.com, zhangqing@rock-chips.com,
         huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH 2/5] regulator: rk808: add RK809 and RK817 support.
-Date:   Tue, 31 Jul 2018 14:56:31 +0800
-Message-Id: <1533020197-754-4-git-send-email-tony.xie@rock-chips.com>
+Subject: [PATCH 2/5] regulator: rk808: Add regulator driver for RK809 and RK817.
+Date:   Tue, 31 Jul 2018 14:56:30 +0800
+Message-Id: <1533020197-754-3-git-send-email-tony.xie@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533020197-754-1-git-send-email-tony.xie@rock-chips.com>
 References: <1533020197-754-1-git-send-email-tony.xie@rock-chips.com>
