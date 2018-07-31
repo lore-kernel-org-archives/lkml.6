@@ -5,159 +5,169 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D94C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94322C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D792208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:02:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D792208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A778208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:08:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A778208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbeGaBji (ORCPT
+        id S1732115AbeGaBpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 21:39:38 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56478 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729477AbeGaBji (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 21:39:38 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6UNxJin049610
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 20:02:11 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2kj97w73b9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jul 2018 20:02:11 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 30 Jul 2018 18:02:10 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 30 Jul 2018 18:02:07 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6V026dU62521374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Jul 2018 17:02:06 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5064DC605D;
-        Mon, 30 Jul 2018 18:02:06 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3DF78C6062;
-        Mon, 30 Jul 2018 18:02:03 -0600 (MDT)
-Received: from morokweng.localdomain (unknown [9.85.203.167])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 30 Jul 2018 18:02:02 -0600 (MDT)
-References: <20180725024209.32586-1-bauerman@linux.ibm.com> <20180725024209.32586-4-bauerman@linux.ibm.com> <20180725141849.GE25188@rapoport-lnx>
-User-agent: mu4e 1.0; emacs 25.3.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>
-Subject: Re: [PATCH 3/3] userfaultfd: selftest: Report XFAIL if shmem doesn't support zeropage
-In-reply-to: <20180725141849.GE25188@rapoport-lnx>
-Date:   Mon, 30 Jul 2018 21:01:56 -0300
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18073100-0016-0000-0000-0000090FEAFD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009459; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01068253; UDB=6.00549142; IPR=6.00846386;
- MB=3.00022414; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-31 00:02:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18073100-0017-0000-0000-00003FD19783
-Message-Id: <87zhy89ssr.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-30_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807300251
+        Mon, 30 Jul 2018 21:45:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:31170 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732038AbeGaBpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 21:45:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2018 17:08:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,425,1526367600"; 
+   d="scan'208";a="68768493"
+Received: from khuang2-desk.gar.corp.intel.com ([10.254.180.23])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Jul 2018 17:08:04 -0700
+Message-ID: <1532995683.27283.12.camel@linux.intel.com>
+Subject: Re: [PATCHv5 08/19] x86/mm: Introduce variables to store number,
+ shift and mask of KeyIDs
+From:   Kai Huang <kai.huang@linux.intel.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Tue, 31 Jul 2018 12:08:03 +1200
+In-Reply-To: <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
+References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+         <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-07-17 at 14:20 +0300, Kirill A. Shutemov wrote:
+> mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
+> KeyID zero which used by TME. MKTME KeyIDs start from 1.
+> 
+> mktme_keyid_shift holds shift of KeyID within physical address.
+> 
+> mktme_keyid_mask holds mask to extract KeyID from physical address.
 
-Mike Rapoport <rppt@linux.vnet.ibm.com> writes:
+Sorry to bring this up, but AMD SME already introduced sme_me_mask, and
+__sme_{set/clr} in linux/mem_encrypt.h, should we try to merge MKTME
+and SME to have common variables, and reuse mem_encrypt.h? IMHO
+sme_me_mask is sort of equivalent to'keyID=1'. And w/ different names
+for SME and MKTME, in other components which want to use memory
+encryption (ex, DMA API), we have to have explict code to distinguish
+MKTME and SME IMO, which is not good.
 
-> Hi,
->
-> On Tue, Jul 24, 2018 at 11:42:09PM -0300, Thiago Jung Bauermann wrote:
->> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
->> shared memory, it currently ends with error code 1 which indicates test
->> failure:
->>
->>   # ./userfaultfd shmem 10 10
->>   nr_pages: 160, nr_pages_per_cpu: 80
->>   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
->>   # echo $?
->>   1
->>
->> This is a real failure, but expected so signal that to the test harness:
->
-> I don't think its a real failure. If the kernel does not support
-> UFFDIO_ZEROPAGE for shared memory the userfaultfd_zeropage_test can be
-> simply skipped.
-
-Ok, good point. I'll make that change in v2.
-
->>   # ./userfaultfd shmem 10 10
->>   nr_pages: 160, nr_pages_per_cpu: 80
->>   bounces: 9, mode: rnd poll, UFFDIO_ZEROPAGE unsupported in shmem VMAs
->>   # echo $?
->>   2
->>
->> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> ---
->>  tools/testing/selftests/vm/userfaultfd.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
->> index bc9ec38fbc34..686fe96f617f 100644
->> --- a/tools/testing/selftests/vm/userfaultfd.c
->> +++ b/tools/testing/selftests/vm/userfaultfd.c
->> @@ -1115,6 +1115,14 @@ static int userfaultfd_stress(void)
->>  		expected_ioctls = uffd_test_ops->expected_ioctls;
->>  		if ((uffdio_register.ioctls & expected_ioctls) !=
->>  		    expected_ioctls) {
->> +			if (test_type == TEST_SHMEM &&
->> +			    (uffdio_register.ioctls & expected_ioctls) ==
->> +			    UFFD_API_RANGE_IOCTLS_BASIC) {
->> +				fprintf(stderr,
->> +					"UFFDIO_ZEROPAGE unsupported in shmem VMAs\n");
->> +				return KSFT_XFAIL;
->> +			}
->> +
->
-> By all means, this check should be moved to userfaultfd_zeropage_test().
-
-I made that change in v2.
-
-> Ideally, we should call here ksft_test_result_skip() and simply return from
-> the function.
-
-In my understanding, calling ksft_test_result_skip() would require
-converting the testcase to use the functions that generate TAP output.
-
-Also, returning here isn't actually necessary: from my testing
-userfaultfd_stress() doesn't require zeropage support in shmem so if the
-only bit missing from uffdio_register.ioctls is the one for
-UFFDIO_ZEROPAGE then this error can simply be ignored and the test can
-continue. Do you agree?
-
->>  			fprintf(stderr,
->>  				"unexpected missing ioctl for anon memory\n");
->>  			return 1;
-
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Thanks,
+-Kai
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  arch/x86/include/asm/mktme.h | 16 ++++++++++++++++
+>  arch/x86/kernel/cpu/intel.c  | 12 ++++++++----
+>  arch/x86/mm/Makefile         |  2 ++
+>  arch/x86/mm/mktme.c          |  5 +++++
+>  4 files changed, 31 insertions(+), 4 deletions(-)
+>  create mode 100644 arch/x86/include/asm/mktme.h
+>  create mode 100644 arch/x86/mm/mktme.c
+> 
+> diff --git a/arch/x86/include/asm/mktme.h
+> b/arch/x86/include/asm/mktme.h
+> new file mode 100644
+> index 000000000000..df31876ec48c
+> --- /dev/null
+> +++ b/arch/x86/include/asm/mktme.h
+> @@ -0,0 +1,16 @@
+> +#ifndef	_ASM_X86_MKTME_H
+> +#define	_ASM_X86_MKTME_H
+> +
+> +#include <linux/types.h>
+> +
+> +#ifdef CONFIG_X86_INTEL_MKTME
+> +extern phys_addr_t mktme_keyid_mask;
+> +extern int mktme_nr_keyids;
+> +extern int mktme_keyid_shift;
+> +#else
+> +#define mktme_keyid_mask	((phys_addr_t)0)
+> +#define mktme_nr_keyids		0
+> +#define mktme_keyid_shift	0
+> +#endif
+> +
+> +#endif
+> diff --git a/arch/x86/kernel/cpu/intel.c
+> b/arch/x86/kernel/cpu/intel.c
+> index bf2caf9d52dd..efc9e9fc47d4 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -573,6 +573,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  
+>  #ifdef CONFIG_X86_INTEL_MKTME
+>  	if (mktme_status == MKTME_ENABLED && nr_keyids) {
+> +		mktme_nr_keyids = nr_keyids;
+> +		mktme_keyid_shift = c->x86_phys_bits - keyid_bits;
+> +
+>  		/*
+>  		 * Mask out bits claimed from KeyID from physical
+> address mask.
+>  		 *
+> @@ -580,10 +583,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  		 * and number of bits claimed for KeyID is 6, bits
+> 51:46 of
+>  		 * physical address is unusable.
+>  		 */
+> -		phys_addr_t keyid_mask;
+> -
+> -		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c-
+> >x86_phys_bits - keyid_bits);
+> -		physical_mask &= ~keyid_mask;
+> +		mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1,
+> mktme_keyid_shift);
+> +		physical_mask &= ~mktme_keyid_mask;
+>  	} else {
+>  		/*
+>  		 * Reset __PHYSICAL_MASK.
+> @@ -591,6 +592,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  		 * between CPUs.
+>  		 */
+>  		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
+> +		mktme_keyid_mask = 0;
+> +		mktme_keyid_shift = 0;
+> +		mktme_nr_keyids = 0;
+>  	}
+>  #endif
+>  
+> diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+> index 4b101dd6e52f..4ebee899c363 100644
+> --- a/arch/x86/mm/Makefile
+> +++ b/arch/x86/mm/Makefile
+> @@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+
+> = pti.o
+>  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
+>  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
+>  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
+> +
+> +obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
+> diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
+> new file mode 100644
+> index 000000000000..467f1b26c737
+> --- /dev/null
+> +++ b/arch/x86/mm/mktme.c
+> @@ -0,0 +1,5 @@
+> +#include <asm/mktme.h>
+> +
+> +phys_addr_t mktme_keyid_mask;
+> +int mktme_nr_keyids;
+> +int mktme_keyid_shift;
