@@ -2,121 +2,252 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE38C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D03C43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AA44208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:21:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgjCV92m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA44208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F1C6C208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 08:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C6C208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbeGaKAg (ORCPT
+        id S1729772AbeGaKBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 06:00:36 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53597 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbeGaKAg (ORCPT
+        Tue, 31 Jul 2018 06:01:14 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:42522 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeGaKBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 06:00:36 -0400
-Received: by mail-it0-f66.google.com with SMTP id 72-v6so3155615itw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 01:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wsedL34Iwh9QW83RmG9rZsf9noYCWwlKl4IRxDF7iGc=;
-        b=fgjCV92mgEngHdTlf+Ld73WZoQpxzJfGzbKnUeuZTY88l5cPGCEW5C46m2tpOhbvWp
-         4PK2+zQxynjt1E/lZZNmiVE8N0QtvpY4P7dhYgjPqgeMW11PYPuTT9lm52Yq6edbiMuQ
-         W6zjF6nFqm5pOX7pAHcV93VcvE6zwF4K/4wXI=
+        Tue, 31 Jul 2018 06:01:13 -0400
+Received: by mail-io0-f198.google.com with SMTP id t23-v6so10799171ioa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 01:22:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wsedL34Iwh9QW83RmG9rZsf9noYCWwlKl4IRxDF7iGc=;
-        b=ExMhsRrlSWw17wtG0DwlSITsH1rHI+pBlBbFenAwuW/7zoiaWhWLh9iKcuLVXfAMR0
-         ZAHTX66yR9VVSwiqrZP1v8gWyW2aHzaDY2V0JfqIiucOadAB2DVXsKe2uTTxyDpLXKFP
-         4iSrvTNyXPpCuEQFTCPASmwSkyguvmSpeb2Pv5CUfliTBB3uD82917oQiSY8JWKJibOD
-         wqCkP3iYTzo5S8wQ0/85LFOM5NJDL7ErrCIq3xP5ZhZF5ouhcpyZlgLeTca6M+MdqiSg
-         PVN+OdbHln8AhAjOxa0lQ5fSGYmbt24Fs/p90KelAndA3/CG5pa7ESusLUFEV2AT2zbA
-         KCmA==
-X-Gm-Message-State: AOUpUlFTPbjOi2VXzRPu56y3mlWk2VP/z2Gr+V3JDh4jdLNipqLHYNRT
-        KQTffP6eXORwqbbodbukt4yuXkNgie1o5Sx61SiiKw==
-X-Google-Smtp-Source: AAOMgpcXRJj67xD8TNgwTzyeunYaUcXYh0jhzwxW+rcHKjSLvszd7Vs5xfhT9ivC57/GIEfQBg0+bg12vQpQ56/CfAA=
-X-Received: by 2002:a24:55cd:: with SMTP id e196-v6mr2024266itb.8.1533025285670;
- Tue, 31 Jul 2018 01:21:25 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GdVoXQAWk2gjEzb4vapIn3igYAY4bovrpKuaH8oHJxg=;
+        b=M7loQc4swEmYjJEdy44uYp0ohhHg6oaU/Ozpy3x7KeI4MFo73hOoGTxAwDxSOlUBe/
+         AzW0ytjCAaYuLlrM9YycI2L3aof8InlawIoGdHxUU6N1nW5lz7qbnHU+pSNdlRyFGeH3
+         /ON171OmpbFW5Ec4xq9+mcmeVeaCR2GqBez1NTCk/7bwmRn2DTsBFXd7WOPcWsDCalYK
+         S/foJTQA1ji3HM4jEKRWi+14Yr+h3/Ax7ZK5yCR5EbOW5I7PYJNwRdbG1v70isPtEQ53
+         4c0j5s9elWqpoAiBbYNwy4kAKwAVT9ehbLk4rGQshnzxlKiDsGpGz1nsm06tLPXD6cKG
+         o1wQ==
+X-Gm-Message-State: AOUpUlGNP/kYcASWYQ6kb0tSXw69lubCUltI472nV1M3gC8ljjc/ocx1
+        56HvW/GEP1vPOjLrQbhe0eNbfIWN2wdrZZFwxtq8g8t2/g6S
+X-Google-Smtp-Source: AAOMgpc9dv+pfNec5Ksra7yrVfvpRvNTtXHiAMzzqTkHVn/WcU8UPQgHd5uMhtRJ+9LZg+K6Mr1nQLrJhMCtNsaQZxiZiD1hfD0M
 MIME-Version: 1.0
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
- <1530200714-4504-7-git-send-email-vincent.guittot@linaro.org>
- <CANRm+Cz0-61-WOT8CLf02G-aHEwrff6WVWd6mp0DKV+GfFyvWw@mail.gmail.com>
- <CAKfTPtBMSvfLYAZz6p+uj0G2uq87QzXBOnTHMmzV=niwd0nMjA@mail.gmail.com> <CANRm+Cw7Rg1mFgqAzbS-72z=RZ4mBV_vp=0obC7YPyR5ZdqXVA@mail.gmail.com>
-In-Reply-To: <CANRm+Cw7Rg1mFgqAzbS-72z=RZ4mBV_vp=0obC7YPyR5ZdqXVA@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 31 Jul 2018 10:21:14 +0200
-Message-ID: <CAKfTPtDG3d5HtmTXmz4SB9J9Ncv-ATPXsh_VsyJAB9516GLQKg@mail.gmail.com>
-Subject: Re: [PATCH 06/11] sched/irq: add irq utilization tracking
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:9fc1:: with SMTP id i184-v6mr7993304ioe.75.1533025322338;
+ Tue, 31 Jul 2018 01:22:02 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 01:22:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c5132b0572474587@google.com>
+Subject: KASAN: use-after-free Read in refcount_sub_and_test
+From:   syzbot <syzbot+8c17db54fd0c0a2ee849@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018 at 05:32, Wanpeng Li <kernellwp@gmail.com> wrote:
+Hello,
 
-> > > >
-> > > >  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> > > >         if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
-> > > > -               sched_rt_avg_update(rq, irq_delta + steal);
-> > > > +               update_irq_load_avg(rq, irq_delta + steal);
-> > >
-> > > I think we should not add steal time into irq load tracking, steal
-> > > time is always 0 on native kernel which doesn't matter, what will
-> > > happen when guest disables IRQ_TIME_ACCOUNTING and enables
-> > > PARAVIRT_TIME_ACCOUNTING? Steal time is not the real irq util_avg. In
-> > > addition, we haven't exposed power management for performance which
-> > > means that e.g. schedutil governor can not cooperate with passive mode
-> > > intel_pstate driver to tune the OPP. To decay the old steal time avg
-> > > and add the new one just wastes cpu cycles.
-> >
-> > In fact, I have kept the same behavior as with rt_avg, which was
-> > already adding steal time when computing scale_rt_capacity, which is
-> > used to reflect the remaining capacity for FAIR tasks and is used in
-> > load balance. I'm not sure that it's worth using different variables
-> > for irq and steal.
-> > That being said, I see a possible optimization in schedutil when
-> > PARAVIRT_TIME_ACCOUNTING is enable and IRQ_TIME_ACCOUNTING is disable.
-> > With this kind of config, scale_irq_capacity can be a nop for
-> > schedutil but scales the utilization for scale_rt_capacity
->
-> Yeah, this is what in my mind before, you can make a patch for that. :)
+syzbot found the following crash on:
 
-ok, I'm going to prepare a patch
+HEAD commit:    61f4b23769f0 netlink: Don't shift with UB on nlk->ngroups
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ed5cf0400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8c17db54fd0c0a2ee849
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Thanks
+Unfortunately, I don't have any reproducer for this crash yet.
 
->
-> Regards,
-> Wanpeng Li
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8c17db54fd0c0a2ee849@syzkaller.appspotmail.com
+
+device lo left promiscuous mode
+==================================================================
+BUG: KASAN: use-after-free in atomic_read  
+include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in refcount_sub_and_test+0x9a/0x350  
+lib/refcount.c:179
+Read of size 4 at addr ffff8801d96d2844 by task syz-executor1/4479
+
+CPU: 0 PID: 4479 Comm: syz-executor1 Not tainted 4.18.0-rc6+ #34
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  refcount_sub_and_test+0x9a/0x350 lib/refcount.c:179
+  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+  fib6_metrics_release+0x4f/0x90 net/ipv6/ip6_fib.c:178
+  fib6_drop_pcpu_from net/ipv6/ip6_fib.c:899 [inline]
+  fib6_purge_rt+0x5ec/0x7f0 net/ipv6/ip6_fib.c:934
+  fib6_del_route net/ipv6/ip6_fib.c:1784 [inline]
+  fib6_del+0xc11/0x1310 net/ipv6/ip6_fib.c:1815
+  fib6_clean_node+0x3ee/0x5e0 net/ipv6/ip6_fib.c:1976
+  fib6_walk_continue+0x4b1/0x8e0 net/ipv6/ip6_fib.c:1899
+  fib6_walk+0x95/0xf0 net/ipv6/ip6_fib.c:1947
+  fib6_clean_tree+0x1ea/0x360 net/ipv6/ip6_fib.c:2024
+  __fib6_clean_all+0x21c/0x420 net/ipv6/ip6_fib.c:2040
+  fib6_clean_all+0x27/0x30 net/ipv6/ip6_fib.c:2051
+  rt6_sync_down_dev net/ipv6/route.c:4083 [inline]
+  rt6_disable_ip+0x111/0x7e0 net/ipv6/route.c:4088
+  addrconf_ifdown+0x16f/0x1670 net/ipv6/addrconf.c:3650
+  addrconf_notify+0x6e9/0x27f0 net/ipv6/addrconf.c:3575
+  notifier_call_chain+0x180/0x390 kernel/notifier.c:93
+  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
+  call_netdevice_notifiers net/core/dev.c:1753 [inline]
+  dev_close_many+0x447/0x8d0 net/core/dev.c:1505
+  rollback_registered_many+0x52b/0xef0 net/core/dev.c:7452
+  rollback_registered+0x1e9/0x420 net/core/dev.c:7517
+  unregister_netdevice_queue+0x32f/0x660 net/core/dev.c:8561
+  unregister_netdevice include/linux/netdevice.h:2548 [inline]
+  __tun_detach+0x11d1/0x15e0 drivers/net/tun.c:727
+  tun_detach drivers/net/tun.c:744 [inline]
+  tun_chr_close+0xe3/0x180 drivers/net/tun.c:3271
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1b08/0x2750 kernel/exit.c:865
+  do_group_exit+0x177/0x440 kernel/exit.c:968
+  __do_sys_exit_group kernel/exit.c:979 [inline]
+  __se_sys_exit_group kernel/exit.c:977 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x456a09
+Code: Bad RIP value.
+RSP: 002b:00007fffa8ff4908 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000456a09
+RDX: 00000000004104e0 RSI: 0000000000a44bd0 RDI: 0000000000000045
+RBP: 00000000004c1904 R08: 000000000000000b R09: 0000000000000000
+R10: 0000000001445940 R11: 0000000000000246 R12: 0000000001446940
+R13: 0000000000000000 R14: 000000000000057e R15: badc0ffeebadface
+
+Allocated by task 28651:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  fib6_metric_set+0x163/0x2c0 net/ipv6/ip6_fib.c:645
+  fib6_add_rt2node+0xe36/0x27f0 net/ipv6/ip6_fib.c:1000
+  fib6_add+0xaae/0x14d0 net/ipv6/ip6_fib.c:1308
+  __ip6_ins_rt+0x54/0x80 net/ipv6/route.c:1163
+  ip6_route_add+0x6d/0xc0 net/ipv6/route.c:3171
+  addrconf_prefix_route.isra.48+0x51d/0x720 net/ipv6/addrconf.c:2347
+  inet6_addr_modify net/ipv6/addrconf.c:4627 [inline]
+  inet6_rtm_newaddr+0x112e/0x1b50 net/ipv6/addrconf.c:4743
+  rtnetlink_rcv_msg+0x46e/0xc30 net/core/rtnetlink.c:4665
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2453
+  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4683
+  netlink_unicast_kernel net/netlink/af_netlink.c:1315 [inline]
+  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1341
+  netlink_sendmsg+0xa18/0xfd0 net/netlink/af_netlink.c:1906
+  sock_sendmsg_nosec net/socket.c:642 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:652
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2126
+  __sys_sendmsg+0x11d/0x290 net/socket.c:2164
+  __do_sys_sendmsg net/socket.c:2173 [inline]
+  __se_sys_sendmsg net/socket.c:2171 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2171
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 4479:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  fib6_metrics_release+0x77/0x90 net/ipv6/ip6_fib.c:179
+  fib6_drop_pcpu_from net/ipv6/ip6_fib.c:899 [inline]
+  fib6_purge_rt+0x5ec/0x7f0 net/ipv6/ip6_fib.c:934
+  fib6_del_route net/ipv6/ip6_fib.c:1784 [inline]
+  fib6_del+0xc11/0x1310 net/ipv6/ip6_fib.c:1815
+  fib6_clean_node+0x3ee/0x5e0 net/ipv6/ip6_fib.c:1976
+  fib6_walk_continue+0x4b1/0x8e0 net/ipv6/ip6_fib.c:1899
+  fib6_walk+0x95/0xf0 net/ipv6/ip6_fib.c:1947
+  fib6_clean_tree+0x1ea/0x360 net/ipv6/ip6_fib.c:2024
+  __fib6_clean_all+0x21c/0x420 net/ipv6/ip6_fib.c:2040
+  fib6_clean_all+0x27/0x30 net/ipv6/ip6_fib.c:2051
+  rt6_sync_down_dev net/ipv6/route.c:4083 [inline]
+  rt6_disable_ip+0x111/0x7e0 net/ipv6/route.c:4088
+  addrconf_ifdown+0x16f/0x1670 net/ipv6/addrconf.c:3650
+  addrconf_notify+0x6e9/0x27f0 net/ipv6/addrconf.c:3575
+  notifier_call_chain+0x180/0x390 kernel/notifier.c:93
+  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1735
+  call_netdevice_notifiers net/core/dev.c:1753 [inline]
+  dev_close_many+0x447/0x8d0 net/core/dev.c:1505
+  rollback_registered_many+0x52b/0xef0 net/core/dev.c:7452
+  rollback_registered+0x1e9/0x420 net/core/dev.c:7517
+  unregister_netdevice_queue+0x32f/0x660 net/core/dev.c:8561
+  unregister_netdevice include/linux/netdevice.h:2548 [inline]
+  __tun_detach+0x11d1/0x15e0 drivers/net/tun.c:727
+  tun_detach drivers/net/tun.c:744 [inline]
+  tun_chr_close+0xe3/0x180 drivers/net/tun.c:3271
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1b08/0x2750 kernel/exit.c:865
+  do_group_exit+0x177/0x440 kernel/exit.c:968
+  __do_sys_exit_group kernel/exit.c:979 [inline]
+  __se_sys_exit_group kernel/exit.c:977 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:977
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d96d2800
+  which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 68 bytes inside of
+  96-byte region [ffff8801d96d2800, ffff8801d96d2860)
+The buggy address belongs to the page:
+page:ffffea000765b480 count:1 mapcount:0 mapping:ffff8801dac004c0  
+index:0xffff8801d96d2700
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0006c46348 ffffea0006d0d288 ffff8801dac004c0
+raw: ffff8801d96d2700 ffff8801d96d2000 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d96d2700: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+  ffff8801d96d2780: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ffff8801d96d2800: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                                            ^
+  ffff8801d96d2880: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+  ffff8801d96d2900: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
