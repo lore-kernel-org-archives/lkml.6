@@ -2,220 +2,144 @@ Return-Path: <SRS0=SIc1=KP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2879C43142
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1AFC43142
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EB5208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EB5208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A4086208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 31 Jul 2018 00:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4086208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732027AbeGaCgT (ORCPT
+        id S1732068AbeGaCgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 30 Jul 2018 22:36:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731785AbeGaCgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Jul 2018 22:36:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7310440216FC;
-        Tue, 31 Jul 2018 00:58:39 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 307A22026D68;
-        Tue, 31 Jul 2018 00:58:39 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/nouveau: Prevent redundant connector probes from ACPI
-Date:   Mon, 30 Jul 2018 20:58:35 -0400
-Message-Id: <20180731005835.21032-2-lyude@redhat.com>
-In-Reply-To: <20180731005835.21032-1-lyude@redhat.com>
-References: <20180731005835.21032-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 00:58:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 31 Jul 2018 00:58:39 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Mon, 30 Jul 2018 22:36:24 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:49423 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731785AbeGaCgY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Jul 2018 22:36:24 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.53 with ESMTP; 31 Jul 2018 09:58:42 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.222.33)
+        by 156.147.1.125 with ESMTP; 31 Jul 2018 09:58:42 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@lge.com, ying.huang@intel.com, peterz@infradead.org,
+        mingo@kernel.org, jiangshanlai@gmail.com,
+        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        joel@joelfernandes.org, len.brown@intel.com, glider@google.com,
+        peter@hurleysoftware.com, aik@ozlabs.ru
+Subject: [QUESTION] llist: Comment releasing 'must delete' restriction before traversing
+Date:   Tue, 31 Jul 2018 09:58:36 +0900
+Message-Id: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the Lenovo P50 I've been working on, ACPI notifications for hotplugs
-always seem happen even while the GPU has it's hotplugs enabled. This
-means that we're uselessly scheduling two connector probes every time we
-get a hotplug.
+Hello folks,
 
-Since we can't unregister the acpi handler without causing userspace to
-start getting mysterious keypresses from the ACPI_VIDEO_REPROBE events
-that are meant for us, simply add a member to nouveau_drm that can be
-used to enable/disable our ACPI event handler from being able to
-schedule connector probes on it's own.
+I'm careful in saying.. and curious about..
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+In restrictive cases like only addtions happen but never deletion, can't
+we safely traverse a llist? I believe llist can be more useful if we can
+release the restriction. Can't we?
+
+If yes, we may add another function traversing starting from a head. Or
+just use existing funtion with head->first.
+
+Thank a lot for your answers in advance :)
+
+----->8-----
+From 1e73882799b269cd86e7a7c955021e3a18d1e6cf Mon Sep 17 00:00:00 2001
+From: Byungchul Park <byungchul.park@lge.com>
+Date: Tue, 31 Jul 2018 09:31:57 +0900
+Subject: [QUESTION] llist: Comment releasing 'must delete' restriction before
+ traversing
+
+llist traversing can run without deletion in restrictive cases all
+items are added but never deleted like a rculist traversing such as
+list_for_each_entry_lockless. So add the comment.
+
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_display.c | 40 +++++++++++++++--------
- drivers/gpu/drm/nouveau/nouveau_display.h |  4 +--
- drivers/gpu/drm/nouveau/nouveau_drm.c     |  4 +--
- drivers/gpu/drm/nouveau/nouveau_drv.h     |  1 +
- 4 files changed, 32 insertions(+), 17 deletions(-)
+ include/linux/llist.h | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index b2a93e3fa67b..b80226c87487 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -382,13 +382,16 @@ nouveau_display_acpi_ntfy(struct notifier_block *nb, unsigned long val,
- 
- 	if (!strcmp(info->device_class, ACPI_VIDEO_CLASS)) {
- 		if (info->type == ACPI_VIDEO_NOTIFY_PROBE) {
--			/*
--			 * This may be the only indication we receive of a
--			 * connector hotplug on a runtime suspended GPU,
--			 * schedule hpd_work to check.
--			 */
--			NV_DEBUG(drm, "ACPI requested connector probe\n");
--			schedule_work(&drm->hpd_work);
-+			if (READ_ONCE(drm->acpi_hpd_enabled)) {
-+				/*
-+				 * This may be the only indication we receive
-+				 * of a connector hotplug on a runtime
-+				 * suspended GPU, schedule hpd_work to check.
-+				 */
-+				NV_DEBUG(drm,
-+					 "ACPI requested connector probe\n");
-+				schedule_work(&drm->hpd_work);
-+			}
- 
- 			/* acpi-video should not generate keypresses for this */
- 			return NOTIFY_BAD;
-@@ -400,7 +403,7 @@ nouveau_display_acpi_ntfy(struct notifier_block *nb, unsigned long val,
- #endif
- 
- int
--nouveau_display_init(struct drm_device *dev)
-+nouveau_display_init(struct drm_device *dev, bool runtime)
- {
- 	struct nouveau_display *disp = nouveau_display(dev);
- 	struct nouveau_drm *drm = nouveau_drm(dev);
-@@ -420,13 +423,20 @@ nouveau_display_init(struct drm_device *dev)
- 	}
- 	drm_connector_list_iter_end(&conn_iter);
- 
-+	/* disable ACPI hotplug handling to prevent duplicate connector
-+	 * probes
-+	 * FIXME: make sure that WRITE_ONCE() implies a store barrier
-+	 * beforehand
-+	 */
-+	WRITE_ONCE(drm->acpi_hpd_enabled, false);
-+
- 	/* enable flip completion events */
- 	nvif_notify_get(&drm->flip);
- 	return ret;
- }
- 
- void
--nouveau_display_fini(struct drm_device *dev, bool suspend)
-+nouveau_display_fini(struct drm_device *dev, bool suspend, bool runtime)
- {
- 	struct nouveau_display *disp = nouveau_display(dev);
- 	struct nouveau_drm *drm = nouveau_drm(dev);
-@@ -443,6 +453,10 @@ nouveau_display_fini(struct drm_device *dev, bool suspend)
- 	/* disable flip completion events */
- 	nvif_notify_put(&drm->flip);
- 
-+	/* let ACPI handle hotplugs since we won't have them enabled */
-+	if (runtime)
-+		WRITE_ONCE(drm->acpi_hpd_enabled, true);
-+
- 	/* disable hotplug interrupts */
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
-@@ -619,11 +633,11 @@ nouveau_display_suspend(struct drm_device *dev, bool runtime)
- 			}
- 		}
- 
--		nouveau_display_fini(dev, true);
-+		nouveau_display_fini(dev, true, runtime);
- 		return 0;
- 	}
- 
--	nouveau_display_fini(dev, true);
-+	nouveau_display_fini(dev, true, runtime);
- 
- 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
- 		struct nouveau_framebuffer *nouveau_fb;
-@@ -656,7 +670,7 @@ nouveau_display_resume(struct drm_device *dev, bool runtime)
- 	int ret;
- 
- 	if (drm_drv_uses_atomic_modeset(dev)) {
--		nouveau_display_init(dev);
-+		nouveau_display_init(dev, runtime);
- 		if (disp->suspend) {
- 			drm_atomic_helper_resume(dev, disp->suspend);
- 			disp->suspend = NULL;
-@@ -689,7 +703,7 @@ nouveau_display_resume(struct drm_device *dev, bool runtime)
- 			NV_ERROR(drm, "Could not pin/map cursor.\n");
- 	}
- 
--	nouveau_display_init(dev);
-+	nouveau_display_init(dev, runtime);
- 
- 	/* Force CLUT to get re-loaded during modeset */
- 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.h b/drivers/gpu/drm/nouveau/nouveau_display.h
-index 54aa7c3fa42d..473411120225 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.h
-@@ -61,8 +61,8 @@ nouveau_display(struct drm_device *dev)
- 
- int  nouveau_display_create(struct drm_device *dev);
- void nouveau_display_destroy(struct drm_device *dev);
--int  nouveau_display_init(struct drm_device *dev);
--void nouveau_display_fini(struct drm_device *dev, bool suspend);
-+int  nouveau_display_init(struct drm_device *dev, bool runtime);
-+void nouveau_display_fini(struct drm_device *dev, bool suspend, bool runtime);
- int  nouveau_display_suspend(struct drm_device *dev, bool runtime);
- void nouveau_display_resume(struct drm_device *dev, bool runtime);
- int  nouveau_display_vblank_enable(struct drm_device *, unsigned int);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index c7ec86d6c3c9..65dc5b5cf6ce 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -574,7 +574,7 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
- 		goto fail_dispctor;
- 
- 	if (dev->mode_config.num_crtc) {
--		ret = nouveau_display_init(dev);
-+		ret = nouveau_display_init(dev, false);
- 		if (ret)
- 			goto fail_dispinit;
- 	}
-@@ -629,7 +629,7 @@ nouveau_drm_unload(struct drm_device *dev)
- 	nouveau_debugfs_fini(drm);
- 
- 	if (dev->mode_config.num_crtc)
--		nouveau_display_fini(dev, false);
-+		nouveau_display_fini(dev, false, false);
- 	nouveau_display_destroy(dev);
- 
- 	nouveau_bios_takedown(dev);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
-index 6e1acaec3400..22e70e72ec8b 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-@@ -201,6 +201,7 @@ struct nouveau_drm {
- 	int fbcon_new_state;
- #ifdef CONFIG_ACPI
- 	struct notifier_block acpi_nb;
-+	bool acpi_hpd_enabled;
- #endif
- 
- 	/* power management */
+diff --git a/include/linux/llist.h b/include/linux/llist.h
+index 85abc29..d012d3e 100644
+--- a/include/linux/llist.h
++++ b/include/linux/llist.h
+@@ -32,8 +32,12 @@
+  * operation, with "-" being no lock needed, while "L" being lock is needed.
+  *
+  * The list entries deleted via llist_del_all can be traversed with
+- * traversing function such as llist_for_each etc.  But the list
+- * entries can not be traversed safely before deleted from the list.
++ * traversing function such as llist_for_each etc.  Normally the list
++ * entries cannot be traversed safely before deleted from the list
++ * except the cases items are added to the list but never deleted.  In
++ * that restrictive cases the list may be safely traversed concurrently
++ * with llist_add.
++ *
+  * The order of deleted entries is from the newest to the oldest added
+  * one.  If you want to traverse from the oldest to the newest, you
+  * must reverse the order by yourself before traversing.
+@@ -116,7 +120,9 @@ static inline void init_llist_head(struct llist_head *list)
+  *
+  * In general, some entries of the lock-less list can be traversed
+  * safely only after being deleted from list, so start with an entry
+- * instead of list head.
++ * instead of list head.  But in restrictive cases items are added to
++ * the list but never deleted, the list may be safely traversed
++ * concurrently with llist_add.
+  *
+  * If being used on entries deleted from lock-less list directly, the
+  * traverse order is from the newest to the oldest added entry.  If
+@@ -135,7 +141,9 @@ static inline void init_llist_head(struct llist_head *list)
+  *
+  * In general, some entries of the lock-less list can be traversed
+  * safely only after being deleted from list, so start with an entry
+- * instead of list head.
++ * instead of list head.  But in restrictive cases items are added to
++ * the list but never deleted, the list may be safely traversed
++ * concurrently with llist_add.
+  *
+  * If being used on entries deleted from lock-less list directly, the
+  * traverse order is from the newest to the oldest added entry.  If
+@@ -153,7 +161,9 @@ static inline void init_llist_head(struct llist_head *list)
+  *
+  * In general, some entries of the lock-less list can be traversed
+  * safely only after being removed from list, so start with an entry
+- * instead of list head.
++ * instead of list head.  But in restrictive cases items are added to
++ * the list but never deleted, the list may be safely traversed
++ * concurrently with llist_add.
+  *
+  * If being used on entries deleted from lock-less list directly, the
+  * traverse order is from the newest to the oldest added entry.  If
+@@ -175,7 +185,9 @@ static inline void init_llist_head(struct llist_head *list)
+  *
+  * In general, some entries of the lock-less list can be traversed
+  * safely only after being removed from list, so start with an entry
+- * instead of list head.
++ * instead of list head.  But in restrictive cases items are added to
++ * the list but never deleted, the list may be safely traversed
++ * concurrently with llist_add.
+  *
+  * If being used on entries deleted from lock-less list directly, the
+  * traverse order is from the newest to the oldest added entry.  If
 -- 
-2.17.1
+1.9.1
 
