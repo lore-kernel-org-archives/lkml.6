@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994BBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC119C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5764220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5764220844
+	by mail.kernel.org (Postfix) with ESMTP id 7E90420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E90420862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405203AbeHATGN (ORCPT
+        id S2405217AbeHATGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48242 "EHLO
+        Wed, 1 Aug 2018 15:06:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48256 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATGM (ORCPT
+        with ESMTP id S2403884AbeHATGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:12 -0400
+        Wed, 1 Aug 2018 15:06:15 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F46DCC3;
-        Wed,  1 Aug 2018 17:19:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 948B9CD1;
+        Wed,  1 Aug 2018 17:19:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Lanigan <sean@lano.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 156/246] brcmfmac: Add support for bcm43364 wireless chipset
-Date:   Wed,  1 Aug 2018 18:51:06 +0200
-Message-Id: <20180801165019.195490377@linuxfoundation.org>
+Subject: [PATCH 4.14 157/246] s390/cpum_sf: Add data entry sizes to sampling trailer entry
+Date:   Wed,  1 Aug 2018 18:51:07 +0200
+Message-Id: <20180801165019.240121159@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,51 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Lanigan <sean@lano.id.au>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 9c4a121e82634aa000a702c98cd6f05b27d6e186 ]
+[ Upstream commit 77715b7ddb446bd39a06f3376e85f4bb95b29bb8 ]
 
-Add support for the BCM43364 chipset via an SDIO interface, as used in
-e.g. the Murata 1FX module.
+The CPU Measurement sampling facility creates a trailer entry for each
+Sample-Data-Block of stored samples. The trailer entry contains the sizes
+(in bytes) of the stored sampling types:
+ - basic-sampling data entry size
+ - diagnostic-sampling data entry size
+Both sizes are 2 bytes long.
 
-The BCM43364 uses the same firmware as the BCM43430 (which is already
-included), the only difference is the omission of Bluetooth.
+This patch changes the trailer entry definition to reflect this.
 
-However, the SDIO_ID for the BCM43364 is 02D0:A9A4, giving it a MODALIAS
-of sdio:c00v02D0dA9A4, which doesn't get recognised and hence doesn't
-load the brcmfmac module. Adding the 'A9A4' ID in the appropriate place
-triggers the brcmfmac driver to load, and then correctly use the
-firmware file 'brcmfmac43430-sdio.bin'.
-
-Signed-off-by: Sean Lanigan <sean@lano.id.au>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: fcc77f507333 ("s390/cpum_sf: Atomically reset trailer entry fields of sample-data-blocks")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c |    1 +
- include/linux/mmc/sdio_ids.h                              |    1 +
- 2 files changed, 2 insertions(+)
+ arch/s390/include/asm/cpu_mf.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
-@@ -1098,6 +1098,7 @@ static const struct sdio_device_id brcmf
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43340),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43341),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43362),
-+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43364),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4335_4339),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4339),
- 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43430),
---- a/include/linux/mmc/sdio_ids.h
-+++ b/include/linux/mmc/sdio_ids.h
-@@ -35,6 +35,7 @@
- #define SDIO_DEVICE_ID_BROADCOM_4335_4339	0x4335
- #define SDIO_DEVICE_ID_BROADCOM_4339		0x4339
- #define SDIO_DEVICE_ID_BROADCOM_43362		0xa962
-+#define SDIO_DEVICE_ID_BROADCOM_43364		0xa9a4
- #define SDIO_DEVICE_ID_BROADCOM_43430		0xa9a6
- #define SDIO_DEVICE_ID_BROADCOM_4345		0x4345
- #define SDIO_DEVICE_ID_BROADCOM_43455		0xa9bf
+--- a/arch/s390/include/asm/cpu_mf.h
++++ b/arch/s390/include/asm/cpu_mf.h
+@@ -132,7 +132,9 @@ struct hws_trailer_entry {
+ 			unsigned int f:1;	/* 0 - Block Full Indicator   */
+ 			unsigned int a:1;	/* 1 - Alert request control  */
+ 			unsigned int t:1;	/* 2 - Timestamp format	      */
+-			unsigned long long:61;	/* 3 - 63: Reserved	      */
++			unsigned int :29;	/* 3 - 31: Reserved	      */
++			unsigned int bsdes:16;	/* 32-47: size of basic SDE   */
++			unsigned int dsdes:16;	/* 48-63: size of diagnostic SDE */
+ 		};
+ 		unsigned long long flags;	/* 0 - 63: All indicators     */
+ 	};
 
 
