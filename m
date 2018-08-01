@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD2AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7F6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B493E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B493E2083D
+	by mail.kernel.org (Postfix) with ESMTP id 2FD242083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD242083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732535AbeHATyz (ORCPT
+        id S1731507AbeHATzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:54:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        Wed, 1 Aug 2018 15:55:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405020AbeHATIg (ORCPT
+        with ESMTP id S2405749AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6FA8F1395;
-        Wed,  1 Aug 2018 17:15:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66C68137B;
+        Wed,  1 Aug 2018 17:14:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 019/246] mlxsw: spectrum_switchdev: Fix port_vlan refcounting
-Date:   Wed,  1 Aug 2018 18:48:49 +0200
-Message-Id: <20180801165012.627922023@linuxfoundation.org>
+Subject: [PATCH 4.14 022/246] hv_netvsc: fix network namespace issues with VF support
+Date:   Wed,  1 Aug 2018 18:48:52 +0200
+Message-Id: <20180801165012.756257714@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,62 +51,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 9e25826ffc942e985b8595b2f1cf2065d3880514 ]
+[ Upstream commit 7bf7bb37f16a80465ee3bd7c6c966f96f5a075a6 ]
 
-Switchdev notifications for addition of SWITCHDEV_OBJ_ID_PORT_VLAN are
-distributed not only on clean addition, but also when flags on an
-existing VLAN are changed. mlxsw_sp_bridge_port_vlan_add() calls
-mlxsw_sp_port_vlan_get() to get at the port_vlan in question, which
-implicitly references the object. This then leads to discrepancies in
-reference counting when the VLAN is removed. spectrum.c warns about the
-problem when the module is removed:
+When finding the parent netvsc device, the search needs to be across
+all netvsc device instances (independent of network namespace).
 
-[13578.493090] WARNING: CPU: 0 PID: 2454 at drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2973 mlxsw_sp_port_remove+0xfd/0x110 [mlxsw_spectrum]
-[...]
-[13578.627106] Call Trace:
-[13578.629617]  mlxsw_sp_fini+0x2a/0xe0 [mlxsw_spectrum]
-[13578.634748]  mlxsw_core_bus_device_unregister+0x3e/0x130 [mlxsw_core]
-[13578.641290]  mlxsw_pci_remove+0x13/0x40 [mlxsw_pci]
-[13578.646238]  pci_device_remove+0x31/0xb0
-[13578.650244]  device_release_driver_internal+0x14f/0x220
-[13578.655562]  driver_detach+0x32/0x70
-[13578.659183]  bus_remove_driver+0x47/0xa0
-[13578.663134]  pci_unregister_driver+0x1e/0x80
-[13578.667486]  mlxsw_sp_module_exit+0xc/0x3fa [mlxsw_spectrum]
-[13578.673207]  __x64_sys_delete_module+0x13b/0x1e0
-[13578.677888]  ? exit_to_usermode_loop+0x78/0x80
-[13578.682374]  do_syscall_64+0x39/0xe0
-[13578.685976]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Find parent device of VF using upper_dev_get routine which
+searches only adjacent list.
 
-Fix by putting the port_vlan when mlxsw_sp_port_vlan_bridge_join()
-determines it's a flag-only change.
+Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 
-Fixes: b3529af6bb0d ("spectrum: Reference count VLAN entries")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+netns aware byref
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/hyperv_net.h |    2 +
+ drivers/net/hyperv/netvsc_drv.c |   45 ++++++++++++++++++----------------------
+ 2 files changed, 23 insertions(+), 24 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -912,8 +912,10 @@ mlxsw_sp_port_vlan_bridge_join(struct ml
- 	int err;
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -724,6 +724,8 @@ struct net_device_context {
+ 	struct hv_device *device_ctx;
+ 	/* netvsc_device */
+ 	struct netvsc_device __rcu *nvdev;
++	/* list of netvsc net_devices */
++	struct list_head list;
+ 	/* reconfigure work */
+ 	struct delayed_work dwork;
+ 	/* last reconfig time */
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -66,6 +66,8 @@ static int debug = -1;
+ module_param(debug, int, S_IRUGO);
+ MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
  
- 	/* No need to continue if only VLAN flags were changed */
--	if (mlxsw_sp_port_vlan->bridge_port)
-+	if (mlxsw_sp_port_vlan->bridge_port) {
-+		mlxsw_sp_port_vlan_put(mlxsw_sp_port_vlan);
- 		return 0;
-+	}
++static LIST_HEAD(netvsc_dev_list);
++
+ static void netvsc_change_rx_flags(struct net_device *net, int change)
+ {
+ 	struct net_device_context *ndev_ctx = netdev_priv(net);
+@@ -1749,13 +1751,10 @@ out_unlock:
  
- 	err = mlxsw_sp_port_vlan_fid_join(mlxsw_sp_port_vlan, bridge_port);
- 	if (err)
+ static struct net_device *get_netvsc_bymac(const u8 *mac)
+ {
+-	struct net_device *dev;
+-
+-	ASSERT_RTNL();
++	struct net_device_context *ndev_ctx;
+ 
+-	for_each_netdev(&init_net, dev) {
+-		if (dev->netdev_ops != &device_ops)
+-			continue;	/* not a netvsc device */
++	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
++		struct net_device *dev = hv_get_drvdata(ndev_ctx->device_ctx);
+ 
+ 		if (ether_addr_equal(mac, dev->perm_addr))
+ 			return dev;
+@@ -1766,25 +1765,18 @@ static struct net_device *get_netvsc_bym
+ 
+ static struct net_device *get_netvsc_byref(struct net_device *vf_netdev)
+ {
++	struct net_device_context *net_device_ctx;
+ 	struct net_device *dev;
+ 
+-	ASSERT_RTNL();
+-
+-	for_each_netdev(&init_net, dev) {
+-		struct net_device_context *net_device_ctx;
+-
+-		if (dev->netdev_ops != &device_ops)
+-			continue;	/* not a netvsc device */
+-
+-		net_device_ctx = netdev_priv(dev);
+-		if (!rtnl_dereference(net_device_ctx->nvdev))
+-			continue;	/* device is removed */
++	dev = netdev_master_upper_dev_get(vf_netdev);
++	if (!dev || dev->netdev_ops != &device_ops)
++		return NULL;	/* not a netvsc device */
++
++	net_device_ctx = netdev_priv(dev);
++	if (!rtnl_dereference(net_device_ctx->nvdev))
++		return NULL;	/* device is removed */
+ 
+-		if (rtnl_dereference(net_device_ctx->vf_netdev) == vf_netdev)
+-			return dev;	/* a match */
+-	}
+-
+-	return NULL;
++	return dev;
+ }
+ 
+ /* Called when VF is injecting data into network stack.
+@@ -2065,15 +2057,19 @@ static int netvsc_probe(struct hv_device
+ 	else
+ 		net->max_mtu = ETH_DATA_LEN;
+ 
+-	ret = register_netdev(net);
++	rtnl_lock();
++	ret = register_netdevice(net);
+ 	if (ret != 0) {
+ 		pr_err("Unable to register netdev.\n");
+ 		goto register_failed;
+ 	}
+ 
+-	return ret;
++	list_add(&net_device_ctx->list, &netvsc_dev_list);
++	rtnl_unlock();
++	return 0;
+ 
+ register_failed:
++	rtnl_unlock();
+ 	rndis_filter_device_remove(dev, nvdev);
+ rndis_failed:
+ 	free_percpu(net_device_ctx->vf_stats);
+@@ -2119,6 +2115,7 @@ static int netvsc_remove(struct hv_devic
+ 		rndis_filter_device_remove(dev, nvdev);
+ 
+ 	unregister_netdevice(net);
++	list_del(&ndev_ctx->list);
+ 
+ 	rtnl_unlock();
+ 	rcu_read_unlock();
 
 
