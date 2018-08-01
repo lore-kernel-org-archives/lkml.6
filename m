@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0710AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D13C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69F1208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69F1208A5
+	by mail.kernel.org (Postfix) with ESMTP id E4F66208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F66208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406112AbeHATIm (ORCPT
+        id S2406097AbeHATIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:08:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406031AbeHATIl (ORCPT
+        with ESMTP id S2405921AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:41 -0400
+        Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78559139D;
-        Wed,  1 Aug 2018 17:14:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00A5F115A;
+        Wed,  1 Aug 2018 17:05:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Xiao Yao <xiaoyao@rock-chips.com>,
+        Ziyuan <xzy.xu@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/246] f2fs: fix error path of move_data_page
-Date:   Wed,  1 Aug 2018 18:49:26 +0200
-Message-Id: <20180801165014.394074082@linuxfoundation.org>
+Subject: [PATCH 4.17 235/336] mmc: dw_mmc: update actual clock for mmc debugfs
+Date:   Wed,  1 Aug 2018 18:49:30 +0200
+Message-Id: <20180801165038.058434409@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,45 +49,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-[ Upstream commit 14a28559f43ac7c0b98dd1b0e73ec9ec8ab4fc45 ]
+[ Upstream commit ff178981bd5fd1667f373098740cb1c6d6efa1ba ]
 
-This patch fixes error path of move_data_page:
-- clear cold data flag if it fails to write page.
-- redirty page for non-ENOMEM case.
+Respect the actual clock for mmc debugfs to help better debug
+the hardware.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+mmc_host mmc0: Bus speed (slot 0) = 135475200Hz (slot req 150000000Hz,
+actual 135475200HZ div = 0)
+
+cat /sys/kernel/debug/mmc0/ios
+clock:          150000000 Hz
+actual clock:   135475200 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    9 (mmc HS200)
+signal voltage: 0 (1.80 V)
+driver type:    0 (driver type B)
+
+Cc: Xiao Yao <xiaoyao@rock-chips.com>
+Cc: Ziyuan <xzy.xu@rock-chips.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/gc.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/mmc/host/dw_mmc.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -768,9 +768,14 @@ retry:
- 		set_cold_data(page);
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1231,6 +1231,8 @@ static void dw_mci_setup_bus(struct dw_m
+ 	if (host->state == STATE_WAITING_CMD11_DONE)
+ 		sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH;
  
- 		err = do_write_data_page(&fio);
--		if (err == -ENOMEM && is_dirty) {
--			congestion_wait(BLK_RW_ASYNC, HZ/50);
--			goto retry;
-+		if (err) {
-+			clear_cold_data(page);
-+			if (err == -ENOMEM) {
-+				congestion_wait(BLK_RW_ASYNC, HZ/50);
-+				goto retry;
-+			}
-+			if (is_dirty)
-+				set_page_dirty(page);
- 		}
++	slot->mmc->actual_clock = 0;
++
+ 	if (!clock) {
+ 		mci_writel(host, CLKENA, 0);
+ 		mci_send_cmd(slot, sdmmc_cmd_bits, 0);
+@@ -1289,6 +1291,8 @@ static void dw_mci_setup_bus(struct dw_m
+ 
+ 		/* keep the last clock value that was requested from core */
+ 		slot->__clk_old = clock;
++		slot->mmc->actual_clock = div ? ((host->bus_hz / div) >> 1) :
++					  host->bus_hz;
  	}
- out:
+ 
+ 	host->current_speed = clock;
 
 
