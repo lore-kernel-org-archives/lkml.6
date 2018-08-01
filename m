@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A530DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D97C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D37B208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D37B208A3
+	by mail.kernel.org (Postfix) with ESMTP id 4FBBE20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBBE20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407425AbeHATPN (ORCPT
+        id S2407438AbeHATPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52176 "EHLO
+        Wed, 1 Aug 2018 15:15:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406866AbeHATPM (ORCPT
+        with ESMTP id S2406866AbeHATPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:12 -0400
+        Wed, 1 Aug 2018 15:15:16 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5298DD4A;
-        Wed,  1 Aug 2018 17:28:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 711EBC3C;
+        Wed,  1 Aug 2018 17:28:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 079/144] media: smiapp: fix timeout checking in smiapp_read_nvm
-Date:   Wed,  1 Aug 2018 18:51:46 +0200
-Message-Id: <20180801164955.492402570@linuxfoundation.org>
+Subject: [PATCH 4.9 080/144] net: ethernet: ti: cpsw-phy-sel: check bus_find_device() ret value
+Date:   Wed,  1 Aug 2018 18:51:47 +0200
+Message-Id: <20180801164955.546793825@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,58 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 7a2148dfda8001c983f0effd9afd8a7fa58e99c4 ]
+[ Upstream commit c6213eb1aee308e67377fd1890d84f7284caf531 ]
 
-The current code decrements the timeout counter i and the end of
-each loop i is incremented, so the check for timeout will always
-be false and hence the timeout mechanism is just a dead code path.
-Potentially, if the RD_READY bit is not set, we could end up in
-an infinite loop.
+This fixes klockworks warnings: Pointer 'dev' returned from call to
+function 'bus_find_device' at line 179 may be NULL and will be dereferenced
+at line 181.
 
-Fix this so the timeout starts from 1000 and decrements to zero,
-if at the end of the loop i is zero we have a timeout condition.
+    cpsw-phy-sel.c:179: 'dev' is assigned the return value from function 'bus_find_device'.
+    bus.c:342: 'bus_find_device' explicitly returns a NULL value.
+    cpsw-phy-sel.c:181: 'dev' is dereferenced by passing argument 1 to function 'dev_get_drvdata'.
+    device.h:1024: 'dev' is passed to function 'dev_get_drvdata'.
+    device.h:1026: 'dev' is explicitly dereferenced.
 
-Detected by CoverityScan, CID#1324008 ("Logically dead code")
-
-Fixes: ccfc97bdb5ae ("[media] smiapp: Add driver")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+[nsekhar@ti.com: add an error message, fix return path]
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/smiapp/smiapp-core.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/ti/cpsw-phy-sel.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/media/i2c/smiapp/smiapp-core.c
-+++ b/drivers/media/i2c/smiapp/smiapp-core.c
-@@ -991,7 +991,7 @@ static int smiapp_read_nvm(struct smiapp
- 		if (rval)
- 			goto out;
+--- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
++++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+@@ -177,12 +177,18 @@ void cpsw_phy_sel(struct device *dev, ph
+ 	}
  
--		for (i = 0; i < 1000; i++) {
-+		for (i = 1000; i > 0; i--) {
- 			rval = smiapp_read(
- 				sensor,
- 				SMIAPP_REG_U8_DATA_TRANSFER_IF_1_STATUS, &s);
-@@ -1002,11 +1002,10 @@ static int smiapp_read_nvm(struct smiapp
- 			if (s & SMIAPP_DATA_TRANSFER_IF_1_STATUS_RD_READY)
- 				break;
+ 	dev = bus_find_device(&platform_bus_type, NULL, node, match);
+-	of_node_put(node);
++	if (!dev) {
++		dev_err(dev, "unable to find platform device for %pOF\n", node);
++		goto out;
++	}
++
+ 	priv = dev_get_drvdata(dev);
  
--			if (--i == 0) {
--				rval = -ETIMEDOUT;
--				goto out;
--			}
--
-+		}
-+		if (!i) {
-+			rval = -ETIMEDOUT;
-+			goto out;
- 		}
+ 	priv->cpsw_phy_sel(priv, phy_mode, slave);
  
- 		for (i = 0; i < SMIAPP_NVM_PAGE_SIZE; i++) {
+ 	put_device(dev);
++out:
++	of_node_put(node);
+ }
+ EXPORT_SYMBOL_GPL(cpsw_phy_sel);
+ 
 
 
