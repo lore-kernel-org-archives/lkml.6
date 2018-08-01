@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BDAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908CBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7049E20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7049E20844
+	by mail.kernel.org (Postfix) with ESMTP id 3E61820862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E61820862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732266AbeHATqe (ORCPT
+        id S1729736AbeHATqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:46:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:46:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405899AbeHATIj (ORCPT
+        with ESMTP id S2405906AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 982D4109A;
-        Wed,  1 Aug 2018 17:02:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03A1C1350;
+        Wed,  1 Aug 2018 17:12:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Xu Yandong <xuyandong2@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 163/336] regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
-Date:   Wed,  1 Aug 2018 18:48:18 +0200
-Message-Id: <20180801165035.353052997@linuxfoundation.org>
+Subject: [PATCH 4.14 030/246] vfio/type1: Fix task tracking for QEMU vCPU hotplug
+Date:   Wed,  1 Aug 2018 18:49:00 +0200
+Message-Id: <20180801165013.135820670@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,37 +47,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-[ Upstream commit 0b01fd3d40fe6402e5fa3b491ef23109feb1aaa5 ]
+[ Upstream commit 48d8476b41eed63567dd2f0ad125c895b9ac648a ]
 
-If is_enabled() is not defined, regulator core will assume
-this regulator is already enabled, then it can NOT be really
-enabled after disabled.
+MAP_DMA ioctls might be called from various threads within a process,
+for example when using QEMU, the vCPU threads are often generating
+these calls and we therefore take a reference to that vCPU task.
+However, QEMU also supports vCPU hotplug on some machines and the task
+that called MAP_DMA may have exited by the time UNMAP_DMA is called,
+resulting in the mm_struct pointer being NULL and thus a failure to
+match against the existing mapping.
 
-Based on Li Jun's patch from the NXP kernel tree.
+To resolve this, we instead take a reference to the thread
+group_leader, which has the same mm_struct and resource limits, but
+is less likely exit, at least in the QEMU case.  A difficulty here is
+guaranteeing that the capabilities of the group_leader match that of
+the calling thread, which we resolve by tracking CAP_IPC_LOCK at the
+time of calling rather than at an indeterminate time in the future.
+Potentially this also results in better efficiency as this is now
+recorded once per MAP_DMA ioctl.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Xu Yandong <xuyandong2@huawei.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/regulator/pfuze100-regulator.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/vfio/vfio_iommu_type1.c |   73 +++++++++++++++++++++++++---------------
+ 1 file changed, 47 insertions(+), 26 deletions(-)
 
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -158,6 +158,7 @@ static const struct regulator_ops pfuze1
- static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
- 	.list_voltage = regulator_list_voltage_table,
- 	.map_voltage = regulator_map_voltage_ascend,
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -83,6 +83,7 @@ struct vfio_dma {
+ 	size_t			size;		/* Map size (bytes) */
+ 	int			prot;		/* IOMMU_READ/WRITE */
+ 	bool			iommu_mapped;
++	bool			lock_cap;	/* capable(CAP_IPC_LOCK) */
+ 	struct task_struct	*task;
+ 	struct rb_root		pfn_list;	/* Ex-user pinned pfn list */
+ };
+@@ -246,29 +247,25 @@ static int vfio_iova_put_vfio_pfn(struct
+ 	return ret;
+ }
+ 
+-static int vfio_lock_acct(struct task_struct *task, long npage, bool *lock_cap)
++static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+ {
+ 	struct mm_struct *mm;
+-	bool is_current;
+ 	int ret;
+ 
+ 	if (!npage)
+ 		return 0;
+ 
+-	is_current = (task->mm == current->mm);
+-
+-	mm = is_current ? task->mm : get_task_mm(task);
++	mm = async ? get_task_mm(dma->task) : dma->task->mm;
+ 	if (!mm)
+ 		return -ESRCH; /* process exited */
+ 
+ 	ret = down_write_killable(&mm->mmap_sem);
+ 	if (!ret) {
+ 		if (npage > 0) {
+-			if (lock_cap ? !*lock_cap :
+-			    !has_capability(task, CAP_IPC_LOCK)) {
++			if (!dma->lock_cap) {
+ 				unsigned long limit;
+ 
+-				limit = task_rlimit(task,
++				limit = task_rlimit(dma->task,
+ 						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+ 
+ 				if (mm->locked_vm + npage > limit)
+@@ -282,7 +279,7 @@ static int vfio_lock_acct(struct task_st
+ 		up_write(&mm->mmap_sem);
+ 	}
+ 
+-	if (!is_current)
++	if (async)
+ 		mmput(mm);
+ 
+ 	return ret;
+@@ -391,7 +388,7 @@ static int vaddr_get_pfn(struct mm_struc
+  */
+ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 				  long npage, unsigned long *pfn_base,
+-				  bool lock_cap, unsigned long limit)
++				  unsigned long limit)
+ {
+ 	unsigned long pfn = 0;
+ 	long ret, pinned = 0, lock_acct = 0;
+@@ -414,7 +411,7 @@ static long vfio_pin_pages_remote(struct
+ 	 * pages are already counted against the user.
+ 	 */
+ 	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+-		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
++		if (!dma->lock_cap && current->mm->locked_vm + 1 > limit) {
+ 			put_pfn(*pfn_base, dma->prot);
+ 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
+ 					limit << PAGE_SHIFT);
+@@ -440,7 +437,7 @@ static long vfio_pin_pages_remote(struct
+ 		}
+ 
+ 		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+-			if (!lock_cap &&
++			if (!dma->lock_cap &&
+ 			    current->mm->locked_vm + lock_acct + 1 > limit) {
+ 				put_pfn(pfn, dma->prot);
+ 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+@@ -453,7 +450,7 @@ static long vfio_pin_pages_remote(struct
+ 	}
+ 
+ out:
+-	ret = vfio_lock_acct(current, lock_acct, &lock_cap);
++	ret = vfio_lock_acct(dma, lock_acct, false);
+ 
+ unpin_out:
+ 	if (ret) {
+@@ -484,7 +481,7 @@ static long vfio_unpin_pages_remote(stru
+ 	}
+ 
+ 	if (do_accounting)
+-		vfio_lock_acct(dma->task, locked - unlocked, NULL);
++		vfio_lock_acct(dma, locked - unlocked, true);
+ 
+ 	return unlocked;
+ }
+@@ -501,7 +498,7 @@ static int vfio_pin_page_external(struct
+ 
+ 	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
+ 	if (!ret && do_accounting && !is_invalid_reserved_pfn(*pfn_base)) {
+-		ret = vfio_lock_acct(dma->task, 1, NULL);
++		ret = vfio_lock_acct(dma, 1, true);
+ 		if (ret) {
+ 			put_pfn(*pfn_base, dma->prot);
+ 			if (ret == -ENOMEM)
+@@ -528,7 +525,7 @@ static int vfio_unpin_page_external(stru
+ 	unlocked = vfio_iova_put_vfio_pfn(dma, vpfn);
+ 
+ 	if (do_accounting)
+-		vfio_lock_acct(dma->task, -unlocked, NULL);
++		vfio_lock_acct(dma, -unlocked, true);
+ 
+ 	return unlocked;
+ }
+@@ -723,7 +720,7 @@ static long vfio_unmap_unpin(struct vfio
+ 
+ 	dma->iommu_mapped = false;
+ 	if (do_accounting) {
+-		vfio_lock_acct(dma->task, -unlocked, NULL);
++		vfio_lock_acct(dma, -unlocked, true);
+ 		return 0;
+ 	}
+ 	return unlocked;
+@@ -935,14 +932,12 @@ static int vfio_pin_map_dma(struct vfio_
+ 	size_t size = map_size;
+ 	long npage;
+ 	unsigned long pfn, limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	bool lock_cap = capable(CAP_IPC_LOCK);
+ 	int ret = 0;
+ 
+ 	while (size) {
+ 		/* Pin a contiguous chunk of memory */
+ 		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
+-					      size >> PAGE_SHIFT, &pfn,
+-					      lock_cap, limit);
++					      size >> PAGE_SHIFT, &pfn, limit);
+ 		if (npage <= 0) {
+ 			WARN_ON(!npage);
+ 			ret = (int)npage;
+@@ -1017,8 +1012,36 @@ static int vfio_dma_do_map(struct vfio_i
+ 	dma->iova = iova;
+ 	dma->vaddr = vaddr;
+ 	dma->prot = prot;
+-	get_task_struct(current);
+-	dma->task = current;
++
++	/*
++	 * We need to be able to both add to a task's locked memory and test
++	 * against the locked memory limit and we need to be able to do both
++	 * outside of this call path as pinning can be asynchronous via the
++	 * external interfaces for mdev devices.  RLIMIT_MEMLOCK requires a
++	 * task_struct and VM locked pages requires an mm_struct, however
++	 * holding an indefinite mm reference is not recommended, therefore we
++	 * only hold a reference to a task.  We could hold a reference to
++	 * current, however QEMU uses this call path through vCPU threads,
++	 * which can be killed resulting in a NULL mm and failure in the unmap
++	 * path when called via a different thread.  Avoid this problem by
++	 * using the group_leader as threads within the same group require
++	 * both CLONE_THREAD and CLONE_VM and will therefore use the same
++	 * mm_struct.
++	 *
++	 * Previously we also used the task for testing CAP_IPC_LOCK at the
++	 * time of pinning and accounting, however has_capability() makes use
++	 * of real_cred, a copy-on-write field, so we can't guarantee that it
++	 * matches group_leader, or in fact that it might not change by the
++	 * time it's evaluated.  If a process were to call MAP_DMA with
++	 * CAP_IPC_LOCK but later drop it, it doesn't make sense that they
++	 * possibly see different results for an iommu_mapped vfio_dma vs
++	 * externally mapped.  Therefore track CAP_IPC_LOCK in vfio_dma at the
++	 * time of calling MAP_DMA.
++	 */
++	get_task_struct(current->group_leader);
++	dma->task = current->group_leader;
++	dma->lock_cap = capable(CAP_IPC_LOCK);
++
+ 	dma->pfn_list = RB_ROOT;
+ 
+ 	/* Insert zero-sized and grow as we map chunks of it */
+@@ -1053,7 +1076,6 @@ static int vfio_iommu_replay(struct vfio
+ 	struct vfio_domain *d;
+ 	struct rb_node *n;
+ 	unsigned long limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	bool lock_cap = capable(CAP_IPC_LOCK);
+ 	int ret;
+ 
+ 	/* Arbitrarily pick the first domain in the list for lookups */
+@@ -1100,8 +1122,7 @@ static int vfio_iommu_replay(struct vfio
+ 
+ 				npage = vfio_pin_pages_remote(dma, vaddr,
+ 							      n >> PAGE_SHIFT,
+-							      &pfn, lock_cap,
+-							      limit);
++							      &pfn, limit);
+ 				if (npage <= 0) {
+ 					WARN_ON(!npage);
+ 					ret = (int)npage;
+@@ -1378,7 +1399,7 @@ static void vfio_iommu_unmap_unpin_reacc
+ 			if (!is_invalid_reserved_pfn(vpfn->pfn))
+ 				locked++;
+ 		}
+-		vfio_lock_acct(dma->task, locked - unlocked, NULL);
++		vfio_lock_acct(dma, locked - unlocked, true);
+ 	}
+ }
+ 
 
 
