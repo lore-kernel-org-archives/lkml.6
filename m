@@ -6,40 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF4CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48B0C46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A228208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A228208A4
+	by mail.kernel.org (Postfix) with ESMTP id AA022208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA022208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406152AbeHATIn (ORCPT
+        id S2390263AbeHATh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        Wed, 1 Aug 2018 15:37:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50606 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406035AbeHATIl (ORCPT
+        with ESMTP id S2406131AbeHATIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:41 -0400
+        Wed, 1 Aug 2018 15:08:43 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76EA31094;
-        Wed,  1 Aug 2018 17:02:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 003E5CC9;
+        Wed,  1 Aug 2018 17:22:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Nguyen Viet Dung <nv-dung@jinso.co.jp>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 178/336] arm64: dts: renesas: salvator-common: use audio-graph-card for Sound
-Date:   Wed,  1 Aug 2018 18:48:33 +0200
-Message-Id: <20180801165035.908076905@linuxfoundation.org>
+Subject: [PATCH 4.14 205/246] scsi: megaraid_sas: Increase timeout by 1 sec for non-RAID fastpath IOs
+Date:   Wed,  1 Aug 2018 18:51:55 +0200
+Message-Id: <20180801165021.532823078@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -49,94 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-[ Upstream commit 06a574c7ef69bd0bd26ed08e35967acb76622ab3 ]
+[ Upstream commit 3239b8cd28fd849a2023483257d35d68c5876c74 ]
 
-Current Sound is using simple-audio-card which can't support HDMI.
-To use HDMI sound, we need to use audio-graph-card.
-But, one note is that r8a7795 has 2 HDMI ports, but r8a7796 has 1.
-Because of this mismatch, supporting HDMI on salvator-common is
-impossible.
-Thus, this patch exchange sound card to audio-graph-card and keep
-supporting ak4613 as 1st sound node.
-r8a7795/r8a7796 salvator-x{s} need to add HDMI sound individually.
+Hardware could time out Fastpath IOs one second earlier than the timeout
+provided by the host.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+For non-RAID devices, driver provides timeout value based on OS provided
+timeout value. Under certain scenarios, if the OS provides a timeout
+value of 1 second, due to above behavior hardware will timeout
+immediately.
+
+Increase timeout value for non-RAID fastpath IOs by 1 second.
+
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |   38 +++++++++++++----------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -93,20 +93,12 @@
- 		regulator-always-on;
- 	};
- 
--	rsnd_ak4613: sound {
--		compatible = "simple-audio-card";
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
- 
--		simple-audio-card,format = "left_j";
--		simple-audio-card,bitclock-master = <&sndcpu>;
--		simple-audio-card,frame-master = <&sndcpu>;
-+		label = "rcar-sound";
- 
--		sndcpu: simple-audio-card,cpu {
--			sound-dai = <&rcar_sound>;
--		};
--
--		sndcodec: simple-audio-card,codec {
--			sound-dai = <&ak4613>;
--		};
-+		dais = <&rsnd_port0>;
- 	};
- 
- 	vbus0_usb2: regulator-vbus0-usb2 {
-@@ -322,6 +314,12 @@
- 		asahi-kasei,out4-single-end;
- 		asahi-kasei,out5-single-end;
- 		asahi-kasei,out6-single-end;
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -2677,6 +2677,9 @@ megasas_build_syspd_fusion(struct megasa
+ 		pRAID_Context->timeout_value = cpu_to_le16(os_timeout_value);
+ 		pRAID_Context->virtual_disk_tgt_id = cpu_to_le16(device_id);
+ 	} else {
++		if (os_timeout_value)
++			os_timeout_value++;
 +
-+		port {
-+			ak4613_endpoint: endpoint {
-+				remote-endpoint = <&rsnd_endpoint0>;
-+			};
-+		};
- 	};
- 
- 	cs2000: clk_multiplier@4f {
-@@ -581,10 +579,18 @@
- 		 <&audio_clk_c>,
- 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
- 
--	rcar_sound,dai {
--		dai0 {
--			playback = <&ssi0 &src0 &dvc0>;
--			capture  = <&ssi1 &src1 &dvc1>;
-+	ports {
-+		rsnd_port0: port@0 {
-+			rsnd_endpoint0: endpoint {
-+				remote-endpoint = <&ak4613_endpoint>;
-+
-+				dai-format = "left_j";
-+				bitclock-master = <&rsnd_endpoint0>;
-+				frame-master = <&rsnd_endpoint0>;
-+
-+				playback = <&ssi0 &src0 &dvc0>;
-+				capture  = <&ssi1 &src1 &dvc1>;
-+			};
- 		};
- 	};
- };
+ 		/* system pd Fast Path */
+ 		io_request->Function = MPI2_FUNCTION_SCSI_IO_REQUEST;
+ 		timeout_limit = (scmd->device->type == TYPE_DISK) ?
 
 
