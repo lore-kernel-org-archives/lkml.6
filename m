@@ -2,305 +2,157 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D48C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D990C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7D6208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A7D6208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 40CCF208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:47:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CCF208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388986AbeHANcy (ORCPT
+        id S2389040AbeHANc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:32:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44708 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387654AbeHANcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:32:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8ABBEAD3A;
-        Wed,  1 Aug 2018 11:47:28 +0000 (UTC)
-Date:   Wed, 1 Aug 2018 13:47:26 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     osalvador@techadventures.net
-Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
-        pasha.tatashin@oracle.com, mgorman@techsingularity.net,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-        david@redhat.com, Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v5 4/4] mm/page_alloc: Introduce
- free_area_init_core_hotplug
-Message-ID: <20180801114726.GL16767@dhcp22.suse.cz>
-References: <20180730101757.28058-1-osalvador@techadventures.net>
- <20180730101757.28058-5-osalvador@techadventures.net>
+        Wed, 1 Aug 2018 09:32:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36626 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387654AbeHANc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:32:57 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3BE8430E684A;
+        Wed,  1 Aug 2018 11:47:01 +0000 (UTC)
+Received: from parsley.fieldses.org (ovpn-116-121.phx2.redhat.com [10.3.116.121])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E46B52010CDA;
+        Wed,  1 Aug 2018 11:46:57 +0000 (UTC)
+Received: by parsley.fieldses.org (Postfix, from userid 2815)
+        id E3D8B1801FA; Wed,  1 Aug 2018 07:46:47 -0400 (EDT)
+Date:   Wed, 1 Aug 2018 07:46:47 -0400
+From:   "J. Bruce Fields" <bfields@redhat.com>
+To:     Ye Xiaolong <xiaolong.ye@intel.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, linux-nfs@vger.kernel.org,
+        lkp@01.org, LKML <linux-kernel@vger.kernel.org>,
+        "Chen, Rong A" <rong.a.chen@intel.com>
+Subject: Re: [LKP] [lkp-robot] [nfsd4] 517dc52baa: fsmark.files_per_sec 32.4%
+ improvement
+Message-ID: <20180801114642.GA21500@parsley.fieldses.org>
+References: <20180620065243.GD11011@yexl-desktop>
+ <20180620154950.GA28475@parsley.fieldses.org>
+ <87va9vu21f.fsf@yhuang-dev.intel.com>
+ <20180716065500.GU27608@yexl-desktop>
+ <20180727002225.GF17169@yexl-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730101757.28058-5-osalvador@techadventures.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180727002225.GF17169@yexl-desktop>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 01 Aug 2018 11:47:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 30-07-18 12:17:57, osalvador@techadventures.net wrote:
-> From: Oscar Salvador <osalvador@suse.de>
+On Fri, Jul 27, 2018 at 08:22:25AM +0800, Ye Xiaolong wrote:
+> On 07/16, Ye Xiaolong wrote:
+> >On 07/04, Huang, Ying wrote:
+> >>"J. Bruce Fields" <bfields@redhat.com> writes:
+> >>
+> >>> Thanks!
+> >>>
+> >>> On Wed, Jun 20, 2018 at 02:52:43PM +0800, kernel test robot wrote:
+> >>>> FYI, we noticed a 32.4% improvement of fsmark.files_per_sec due to commit:
+> >>>> 
+> >>>> 
+> >>>> commit: 517dc52baa2a508c82f68bbc7219b48169e6b29f ("nfsd4: shortern default lease period")
+> >>>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> >>>
+> >>> That doesn't make any sense....
+> >>>
+> >>> OK, I think I see the problem:
+> >>>
+> >>>> in testcase: fsmark
+> >>>> on test machine: 48 threads Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz with 64G memory
+> >>>> with following parameters:
+> >>>> 
+> >>>> 	iterations: 1x
+> >>>> 	nr_threads: 1t
+> >>>> 	disk: 1BRD_48G
+> >>>> 	fs: f2fs
+> >>>> 	fs2: nfsv4
+> >>>> 	filesize: 4M
+> >>>> 	test_size: 40G
+> >>>> 	sync_method: fsyncBeforeClose
+> >>>> 	cpufreq_governor: performance
+> >>>> 
+> >>>> test-description: The fsmark is a file system benchmark to test synchronous write workloads, for example, mail servers workload.
+> >>>> test-url: https://sourceforge.net/projects/fsmark/
+> >>>> 
+> >>>> 
+> >>>> 
+> >>>> Details are as below:
+> >>>> -------------------------------------------------------------------------------------------------->
+> >>>> 
+> >>>> 
+> >>>> To reproduce:
+> >>>> 
+> >>>>         git clone https://github.com/intel/lkp-tests.git
+> >>>>         cd lkp-tests
+> >>>>         bin/lkp install job.yaml  # job file is attached in this email
+> >>>>         bin/lkp run     job.yaml
+> >>>> 
+> >>>> =========================================================================================
+> >>>> compiler/cpufreq_governor/disk/filesize/fs2/fs/iterations/kconfig/nr_threads/rootfs/sync_method/tbox_group/test_size/testcase:
+> >>>>   gcc-7/performance/1BRD_48G/4M/nfsv4/f2fs/1x/x86_64-rhel-7.2/1t/debian-x86_64-2016-08-31.cgz/fsyncBeforeClose/ivb44/40G/fsmark
+> >>>> 
+> >>>> commit: 
+> >>>>   c2993a1d7d ("nfsd4: extend reclaim period for reclaiming clients")
+> >>>>   517dc52baa ("nfsd4: shortern default lease period")
+> >>>> 
+> >>>> c2993a1d7d6687fd 517dc52baa2a508c82f68bbc72 
+> >>>> ---------------- -------------------------- 
+> >>>>          %stddev     %change         %stddev
+> >>>>              \          |                \  
+> >>>>      53.60           +32.4%      70.95        fsmark.files_per_sec
+> >>>>     191.89           -24.4%     145.16        fsmark.time.elapsed_time
+> >>>>     191.89           -24.4%     145.16        fsmark.time.elapsed_time.max
+> >>>
+> >>> So what happened is the test took about 45 seconds less.
+> >>>
+> >>> I suspect you're starting the nfs server and then immediately running
+> >>> this test.
+> >>
+> >>Yes.
+> >>
+> >>> The problem is that if there's a grace period on startup, any open will
+> >>> just hang until the grace period ends.
+> >>>
+> >>> This patch changed the default grace period from 90 seconds to 45, so
+> >>> that would explain the change.
+> >>>
+> >>> In my testing I usually 
+> >>>
+> >>> 	start the nfs server
+> >>> 	on the client:
+> >>> 		mount the server
+> >>> 		touch a file
+> >>>
+> >>> When the touch returns, I know any grace period has completed, and then
+> >>> I can run any tests normally.
+> >>
+> >
+> >I've modified our test to touch a file before running the actual workload, then
+> >requeue tests for both commit 517dc52baa and its parent c2993a1d7d, but the
+> >result seems persistent which shows a ~30% improvement of fsmark.files_per_sec.
+> >
 > 
-> Currently, whenever a new node is created/re-used from the memhotplug path,
-> we call free_area_init_node()->free_area_init_core().
-> But there is some code that we do not really need to run when we are coming
-> from such path.
-> 
-> free_area_init_core() performs the following actions:
-> 
-> 1) Initializes pgdat internals, such as spinlock, waitqueues and more.
-> 2) Account # nr_all_pages and # nr_kernel_pages. These values are used later on
->    when creating hash tables.
-> 3) Account number of managed_pages per zone, substracting dma_reserved and memmap pages.
-> 4) Initializes some fields of the zone structure data
-> 5) Calls init_currently_empty_zone to initialize all the freelists
-> 6) Calls memmap_init to initialize all pages belonging to certain zone
-> 
-> When called from memhotplug path, free_area_init_core() only performs actions #1 and #4.
-> 
-> Action #2 is pointless as the zones do not have any pages since either the node was freed,
-> or we are re-using it, eitherway all zones belonging to this node should have 0 pages.
-> For the same reason, action #3 results always in manages_pages being 0.
-> 
-> Action #5 and #6 are performed later on when onlining the pages:
->  online_pages()->move_pfn_range_to_zone()->init_currently_empty_zone()
->  online_pages()->move_pfn_range_to_zone()->memmap_init_zone()
-> 
-> This patch does two things:
-> 
-> First, moves the node/zone initializtion to their own function, so it allows us
-> to create a small version of free_area_init_core, where we only perform:
-> 
-> 1) Initialization of pgdat internals, such as spinlock, waitqueues and more
-> 4) Initialization of some fields of the zone structure data
-> 
-> These two functions are: pgdat_init_internals() and zone_init_internals().
-> 
-> The second thing this patch does, is to introduce free_area_init_core_hotplug(),
-> the memhotplug version of free_area_init_core():
-> 
-> Currently, we call free_area_init_node() from the memhotplug path.
-> In there, we set some pgdat's fields, and call calculate_node_totalpages().
-> calculate_node_totalpages() calculates the # of pages the node has.
-> 
-> Since the node is either new, or we are re-using it, the zones belonging to
-> this node should not have any pages, so there is no point to calculate this now.
-> 
-> Actually, we re-set these values to 0 later on with the calls to:
-> 
-> reset_node_managed_pages()
-> reset_node_present_pages()
-> 
-> The # of pages per node and the # of pages per zone will be calculated when
-> onlining the pages:
-> 
-> online_pages()->move_pfn_range()->move_pfn_range_to_zone()->resize_zone_range()
-> online_pages()->move_pfn_range()->move_pfn_range_to_zone()->resize_pgdat_range()
-> 
-> Also, since free_area_init_core/free_area_init_node will now only get called during early init, let us replace
-> __paginginit with __init, so their code gets freed up.
+> Any suggestions?
 
-The split up makes sense to me. Sections attributes can be handled on
-top. Btw. free_area_init_core_hotplug declaration could have gone into
-include/linux/memory_hotplug.h to save the ifdef
+You're sure you only start timing after the "touch" returns?
 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  include/linux/mm.h  |  6 ++++-
->  mm/memory_hotplug.c | 16 ++++--------
->  mm/page_alloc.c     | 71 +++++++++++++++++++++++++++++++++++++----------------
->  3 files changed, 60 insertions(+), 33 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 6954ad183159..af3222785347 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1998,10 +1998,14 @@ static inline spinlock_t *pud_lock(struct mm_struct *mm, pud_t *pud)
->  
->  extern void __init pagecache_init(void);
->  extern void free_area_init(unsigned long * zones_size);
-> -extern void free_area_init_node(int nid, unsigned long * zones_size,
-> +extern void __init free_area_init_node(int nid, unsigned long * zones_size,
->  		unsigned long zone_start_pfn, unsigned long *zholes_size);
->  extern void free_initmem(void);
->  
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +extern void __ref free_area_init_core_hotplug(int nid);
-> +#endif
-> +
->  /*
->   * Free reserved pages within range [PAGE_ALIGN(start), end & PAGE_MASK)
->   * into the buddy system. The freed pages will be poisoned with pattern
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 4eb6e824a80c..9eea6e809a4e 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -982,8 +982,6 @@ static void reset_node_present_pages(pg_data_t *pgdat)
->  static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->  {
->  	struct pglist_data *pgdat;
-> -	unsigned long zones_size[MAX_NR_ZONES] = {0};
-> -	unsigned long zholes_size[MAX_NR_ZONES] = {0};
->  	unsigned long start_pfn = PFN_DOWN(start);
->  
->  	pgdat = NODE_DATA(nid);
-> @@ -1006,8 +1004,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->  
->  	/* we can use NODE_DATA(nid) from here */
->  
-> +	pgdat->node_id = nid;
-> +	pgdat->node_start_pfn = start_pfn;
-> +
->  	/* init node's zones as empty zones, we don't have any present pages.*/
-> -	free_area_init_node(nid, zones_size, start_pfn, zholes_size);
-> +	free_area_init_core_hotplug(nid);
->  	pgdat->per_cpu_nodestats = alloc_percpu(struct per_cpu_nodestat);
->  
->  	/*
-> @@ -1017,18 +1018,11 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
->  	build_all_zonelists(pgdat);
->  
->  	/*
-> -	 * zone->managed_pages is set to an approximate value in
-> -	 * free_area_init_core(), which will cause
-> -	 * /sys/device/system/node/nodeX/meminfo has wrong data.
-> -	 * So reset it to 0 before any memory is onlined.
-> -	 */
-> -	reset_node_managed_pages(pgdat);
-> -
-> -	/*
->  	 * When memory is hot-added, all the memory is in offline state. So
->  	 * clear all zones' present_pages because they will be updated in
->  	 * online_pages() and offline_pages().
->  	 */
-> +	reset_node_managed_pages(pgdat);
->  	reset_node_present_pages(pgdat);
->  
->  	return pgdat;
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 4e84a17a5030..b2ccade42020 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6237,21 +6237,9 @@ static void pgdat_init_kcompactd(struct pglist_data *pgdat)
->  static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
->  #endif
->  
-> -/*
-> - * Set up the zone data structures:
-> - *   - mark all pages reserved
-> - *   - mark all memory queues empty
-> - *   - clear the memory bitmaps
-> - *
-> - * NOTE: pgdat should get zeroed by caller.
-> - */
-> -static void __paginginit free_area_init_core(struct pglist_data *pgdat)
-> +static void __paginginit pgdat_init_internals(struct pglist_data *pgdat)
->  {
-> -	enum zone_type j;
-> -	int nid = pgdat->node_id;
-> -
->  	pgdat_resize_init(pgdat);
-> -
->  	pgdat_init_numabalancing(pgdat);
->  	pgdat_init_split_queue(pgdat);
->  	pgdat_init_kcompactd(pgdat);
-> @@ -6262,7 +6250,54 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->  	pgdat_page_ext_init(pgdat);
->  	spin_lock_init(&pgdat->lru_lock);
->  	lruvec_init(node_lruvec(pgdat));
-> +}
-> +
-> +static void __paginginit zone_init_internals(struct zone *zone, enum zone_type idx, int nid,
-> +							unsigned long remaining_pages)
-> +{
-> +	zone->managed_pages = remaining_pages;
-> +	zone_set_nid(zone, nid);
-> +	zone->name = zone_names[idx];
-> +	zone->zone_pgdat = NODE_DATA(nid);
-> +	spin_lock_init(&zone->lock);
-> +	zone_seqlock_init(zone);
-> +	zone_pcp_init(zone);
-> +}
-> +
-> +/*
-> + * Set up the zone data structures
-> + * - init pgdat internals
-> + * - init all zones belonging to this node
-> + *
-> + * NOTE: this function is only called during memory hotplug
-> + */
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +void __ref free_area_init_core_hotplug(int nid)
-> +{
-> +	enum zone_type z;
-> +	pg_data_t *pgdat = NODE_DATA(nid);
-> +
-> +	pgdat_init_internals(pgdat);
-> +	for (z = 0; z < MAX_NR_ZONES; z++)
-> +		zone_init_internals(&pgdat->node_zones[z], z, nid, 0);
-> +}
-> +#endif
-> +
-> +/*
-> + * Set up the zone data structures:
-> + *   - mark all pages reserved
-> + *   - mark all memory queues empty
-> + *   - clear the memory bitmaps
-> + *
-> + * NOTE: pgdat should get zeroed by caller.
-> + * NOTE: this function is only called during early init.
-> + */
-> +static void __init free_area_init_core(struct pglist_data *pgdat)
-> +{
-> +	enum zone_type j;
-> +	int nid = pgdat->node_id;
->  
-> +	pgdat_init_internals(pgdat);
->  	pgdat->per_cpu_nodestats = &boot_nodestats;
->  
->  	for (j = 0; j < MAX_NR_ZONES; j++) {
-> @@ -6310,13 +6345,7 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->  		 * when the bootmem allocator frees pages into the buddy system.
->  		 * And all highmem pages will be managed by the buddy system.
->  		 */
-> -		zone->managed_pages = freesize;
-> -		zone_set_nid(zone, nid);
-> -		zone->name = zone_names[j];
-> -		zone->zone_pgdat = pgdat;
-> -		spin_lock_init(&zone->lock);
-> -		zone_seqlock_init(zone);
-> -		zone_pcp_init(zone);
-> +		zone_init_internals(zone, j, nid, freesize);
->  
->  		if (!size)
->  			continue;
-> @@ -6391,7 +6420,7 @@ static inline void pgdat_set_deferred_range(pg_data_t *pgdat)
->  static inline void pgdat_set_deferred_range(pg_data_t *pgdat) {}
->  #endif
->  
-> -void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
-> +void __init free_area_init_node(int nid, unsigned long *zones_size,
->  		unsigned long node_start_pfn, unsigned long *zholes_size)
->  {
->  	pg_data_t *pgdat = NODE_DATA(nid);
-> -- 
-> 2.13.6
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+--b.
