@@ -6,42 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC942C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD5B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD5B20862
+	by mail.kernel.org (Postfix) with ESMTP id B8BEF20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BEF20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407924AbeHATXI (ORCPT
+        id S2407712AbeHATXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:23:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52928 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436565AbeHATSi (ORCPT
+        with ESMTP id S2436567AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2B89E24;
-        Wed,  1 Aug 2018 16:53:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0B34DE68;
+        Wed,  1 Aug 2018 16:54:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Rik van Riel <riel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 017/336] mm: check for SIGKILL inside dup_mmap() loop
-Date:   Wed,  1 Aug 2018 18:45:52 +0200
-Message-Id: <20180801165029.641924158@linuxfoundation.org>
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.17 003/336] Input: i8042 - add Lenovo LaVie Z to the i8042 reset list
+Date:   Wed,  1 Aug 2018 18:45:38 +0200
+Message-Id: <20180801165029.055869687@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -58,66 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 655c79bb40a0870adcd0871057d01de11625882b ]
+commit 384cf4285b34e08917e3e66603382f2b0c4f6e1b upstream.
 
-As a theoretical problem, dup_mmap() of an mm_struct with 60000+ vmas
-can loop while potentially allocating memory, with mm->mmap_sem held for
-write by current thread.  This is bad if current thread was selected as
-an OOM victim, for current thread will continue allocations using memory
-reserves while OOM reaper is unable to reclaim memory.
+The Lenovo LaVie Z laptop requires i8042 to be reset in order to
+consistently detect its Elantech touchpad. The nomux and kbdreset
+quirks are not sufficient.
 
-As an actually observable problem, it is not difficult to make OOM
-reaper unable to reclaim memory if the OOM victim is blocked at
-i_mmap_lock_write() in this loop.  Unfortunately, since nobody can
-explain whether it is safe to use killable wait there, let's check for
-SIGKILL before trying to allocate memory.  Even without an OOM event,
-there is no point with continuing the loop from the beginning if current
-thread is killed.
+It's possible the other LaVie Z models from NEC require this as well.
 
-I tested with debug printk().  This patch should be safe because we
-already fail if security_vm_enough_memory_mm() or
-kmem_cache_alloc(GFP_KERNEL) fails and exit_mmap() handles it.
-
-   ***** Aborting dup_mmap() due to SIGKILL *****
-   ***** Aborting dup_mmap() due to SIGKILL *****
-   ***** Aborting dup_mmap() due to SIGKILL *****
-   ***** Aborting dup_mmap() due to SIGKILL *****
-   ***** Aborting exit_mmap() due to NULL mmap *****
-
-[akpm@linux-foundation.org: add comment]
-Link: http://lkml.kernel.org/r/201804071938.CDE04681.SOFVQJFtMHOOLF@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/fork.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -440,6 +440,14 @@ static __latent_entropy int dup_mmap(str
- 			continue;
- 		}
- 		charge = 0;
-+		/*
-+		 * Don't duplicate many vmas if we've been oom-killed (for
-+		 * example)
-+		 */
-+		if (fatal_signal_pending(current)) {
-+			retval = -EINTR;
-+			goto out;
-+		}
- 		if (mpnt->vm_flags & VM_ACCOUNT) {
- 			unsigned long len = vma_pages(mpnt);
+---
+ drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -527,6 +527,13 @@ static const struct dmi_system_id __init
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "N24_25BU"),
+ 		},
+ 	},
++	{
++		/* Lenovo LaVie Z */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo LaVie Z"),
++		},
++	},
+ 	{ }
+ };
  
 
 
