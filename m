@@ -2,91 +2,96 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC9DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2209C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232C420844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232C420844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 955EA20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:58:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qdenJ8f7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955EA20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387457AbeHAUm0 (ORCPT
+        id S1732169AbeHAUpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:42:26 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34721 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731836AbeHAUm0 (ORCPT
+        Wed, 1 Aug 2018 16:45:10 -0400
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:45801 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731900AbeHAUpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:42:26 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fkwH5-0000Rm-Ha; Wed, 01 Aug 2018 20:55:07 +0200
-Date:   Wed, 1 Aug 2018 20:55:06 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Marc Zyngier <marc.zyngier@arm.com>, palmer@sifive.com,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
-In-Reply-To: <20180725112457.GA24502@lst.de>
-Message-ID: <alpine.DEB.2.21.1808012049170.1835@nanos.tec.linutronix.de>
-References: <20180725093649.32332-1-hch@lst.de> <20180725093649.32332-4-hch@lst.de> <c3ccb953-cd75-4a37-636a-ca643602053a@arm.com> <20180725112457.GA24502@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 1 Aug 2018 16:45:09 -0400
+Received: by mail-pf1-f172.google.com with SMTP id i26-v6so8315313pfo.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kuVctN/GQuAPPUnBvIjA3RbHquRoUy2PbM4UiFIBbwQ=;
+        b=qdenJ8f7mHkvQSpR5yTEwwEyZ/JxL5GJfScEjZA/PQeBG8Knn/TMECfVJB8U//bL12
+         RP5Jz691zCscmblvEJ1f8uO/8yTCtFK1UQfC+xkYWx6vzT94PqmgaM6VJgqPJhKed2Ss
+         qx6jO3EIxfL7ouEDjcsUYxhugkdj9S/x7TLO/xbYqRs6biyhQoMGYaLXvCAOhEVDrSt6
+         8LplfadXWYBJVxAcKMJUxHi4UM6+umtLmeiPRfaznrVfnpkyxz1TTHRCiVyI0y9v3xN/
+         lLra+8u2RK7o22h5RYnDaVTbYfJr+09DuBR+dqG6XLwWqub+C/t1cUjCfL8W4J+DTwcu
+         9zTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kuVctN/GQuAPPUnBvIjA3RbHquRoUy2PbM4UiFIBbwQ=;
+        b=pFXA2EpSvWGz1JjjXZFI63J/2YaA6FQOY2buS0sjPpuHXQeRBa7xwAUIMMg+zA9Vlf
+         ayUqfOMxSOlUuJrgqnf/6Tmy9JhhhyaH0oitJC4sRzVjZVZsNEH6PvFTlzfdd5qGgw2F
+         v3XhoPucG6fXs9kYRXuOA1pDHrz0cNHBDfPng1MbB2Rjp54O8+VbBrJLIAAv8bg5QzZe
+         10XJaGd11MgMExuZn9xSgkgRzFOTLK3dDYkFprxCJRB4Wvosjjs+JGIJ14CeToQy72Ej
+         4udVY0hKJkagsM7EMDKTM9GVBH5B0mhNri/wbzJN4wMWf6QqFUjDy65237CD6ShGvAsH
+         jtRg==
+X-Gm-Message-State: AOUpUlFFH/u6IkDbqlCVab7LXn62HvAi+Ii0eS7G57rDgcH5pAKvG+dq
+        zdvNVDiOLNpytpo0UqRsDUNBaFs9Ax3ALXD6mug499I8u+c=
+X-Google-Smtp-Source: AAOMgpeucO+2LCWoOTT2o5KQJnbnempYoDlP5z9rTMHxqPsqsnVaZySxSqClzJk2K9y7Vrx0IXCu8OdYjJ4hwwk9KMo=
+X-Received: by 2002:a62:8d7:: with SMTP id 84-v6mr28115591pfi.172.1533149879392;
+ Wed, 01 Aug 2018 11:57:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <CAKwvOdmuXvM0qF0zy15Q9yfCUNr+Kd4jDTcERWg1R-R2zDNuTA@mail.gmail.com>
+ <20180801185317.ndyxtx4zwdkes2dh@angband.pl>
+In-Reply-To: <20180801185317.ndyxtx4zwdkes2dh@angband.pl>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 1 Aug 2018 11:57:48 -0700
+Message-ID: <CAKwvOd=V3qDqzEMa0LXHHU5_0BRSMyCK3tarASzPYhATiasFFQ@mail.gmail.com>
+Subject: Re: get_maintainer.pl and change of email
+To:     kilobyte@angband.pl
+Cc:     joe@perches.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 1, 2018 at 11:53 AM Adam Borowski <kilobyte@angband.pl> wrote:
+>
+> On Wed, Aug 01, 2018 at 11:36:23AM -0700, Nick Desaulniers wrote:
+> > It seems that get_maintainer.pl will make recommendations based on
+> > commit history to a file, but over time, people change emails that
+> > they commit from, then get_maintainer.pl recommends the possibly now
+> > invalid email address.
+> >
+> > I feel like we should have a look up table / file like MAINTAINERS
+> > that tracks previous and new email addresses, which get_maintainer.pl
+> > would parse, that way we have a record of movement between committer
+> > email addresses allowing get_maintainer.pl to make more accurate
+> > recommendations.  Thoughts?
+>
+> .mailmap
 
-On Wed, 25 Jul 2018, Christoph Hellwig wrote:
+Neat, that's a start.  It has a top level comment about being used by
+git-shortlog, looks like get_maintainer.pl parses it, and it's a
+default on option.  Cool.  Ok, looks like I just need to add someone
+to the .mailmap file.  Thanks!
 
-> On Wed, Jul 25, 2018 at 12:18:39PM +0100, Marc Zyngier wrote:
-> > This feels odd. It means that you cannot have the following sequence:
-> > 
-> > 	local_irq_disable();
-> > 	enable_irq(x); // where x is owned by a remote hart
-> > 
-> > as smp_call_function_single() requires interrupts to be enabled.
-> > 
-> > More fundamentally, why are you trying to make these interrupts look
-> > global while they aren't? arm/arm64 have similar restrictions with GICv2
-> > and earlier, and treats these interrupts as per-cpu.
-> > 
-> > Given that the drivers that deal with drivers connected to the per-hart
-> > irqchip are themselves likely to be aware of the per-cpu aspect, it
-> > would make sense to align things (we've been through that same
-> > discussion about the clocksource driver a few weeks back).
-> 
-> Right now the only direct consumers are said clocksource, the PLIC
-> driver later in this series and the RISC-V arch IPI code.  None of them
-> is going to do a manual enable_irq, so I guess the remote case of the
-> code is simply dead code.  I'll take a look at converting them to
-> per-cpu.  I guess the GICv2 driver is the best template?
-
-Confused. The timer and the IPI are separate causes and have nothing to do
-with the per cpu irq domain. That's what the low level interrupt handling
-code tells me.
-
-If I understand correctly then the per cpu irq domain is for device
-interrupts, right? If so, then this simply cannot work and there is no way
-to make it work with per cpu interrupts either.
-
-Is there some high level documentation about the design (or the lack of) or
-can someone give a concise explanation how this stuff is supposed to work?
-
+-- 
 Thanks,
-
-	tglx
+~Nick Desaulniers
