@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE05C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF029C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2F6208AD
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D2F6208AD
+	by mail.kernel.org (Postfix) with ESMTP id 7255D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7255D20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405266AbeHATG2 (ORCPT
+        id S2405279AbeHATGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48556 "EHLO
+        Wed, 1 Aug 2018 15:06:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48644 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATG1 (ORCPT
+        with ESMTP id S2403884AbeHATGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:27 -0400
+        Wed, 1 Aug 2018 15:06:30 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CAA7CC3;
-        Wed,  1 Aug 2018 17:19:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25E40CC3;
+        Wed,  1 Aug 2018 17:19:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Adam Radford <aradford@gmail.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 161/246] scsi: 3w-xxxx: fix a missing-check bug
-Date:   Wed,  1 Aug 2018 18:51:11 +0200
-Message-Id: <20180801165019.445017425@linuxfoundation.org>
+Subject: [PATCH 4.14 162/246] scsi: megaraid: silence a static checker bug
+Date:   Wed,  1 Aug 2018 18:51:12 +0200
+Message-Id: <20180801165019.495172941@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,47 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 9899e4d3523faaef17c67141aa80ff2088f17871 ]
+[ Upstream commit 27e833dabab74ee665e487e291c9afc6d71effba ]
 
-In tw_chrdev_ioctl(), the length of the data buffer is firstly copied
-from the userspace pointer 'argp' and saved to the kernel object
-'data_buffer_length'. Then a security check is performed on it to make
-sure that the length is not more than 'TW_MAX_IOCTL_SECTORS *
-512'. Otherwise, an error code -EINVAL is returned. If the security
-check is passed, the entire ioctl command is copied again from the
-'argp' pointer and saved to the kernel object 'tw_ioctl'. Then, various
-operations are performed on 'tw_ioctl' according to the 'cmd'. Given
-that the 'argp' pointer resides in userspace, a malicious userspace
-process can race to change the buffer length between the two
-copies. This way, the user can bypass the security check and inject
-invalid data buffer length. This can cause potential security issues in
-the following execution.
+If we had more than 32 megaraid cards then it would cause memory
+corruption.  That's not likely, of course, but it's handy to enforce it
+and make the static checker happy.
 
-This patch checks for capable(CAP_SYS_ADMIN) in tw_chrdev_open() to
-avoid the above issues.
-
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/3w-xxxx.c |    3 +++
+ drivers/scsi/megaraid.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -1033,6 +1033,9 @@ static int tw_chrdev_open(struct inode *
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -4199,6 +4199,9 @@ megaraid_probe_one(struct pci_dev *pdev,
+ 	int irq, i, j;
+ 	int error = -ENODEV;
  
- 	dprintk(KERN_WARNING "3w-xxxx: tw_ioctl_open()\n");
- 
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EACCES;
++	if (hba_count >= MAX_CONTROLLERS)
++		goto out;
 +
- 	minor_number = iminor(inode);
- 	if (minor_number >= tw_device_extension_count)
- 		return -ENODEV;
+ 	if (pci_enable_device(pdev))
+ 		goto out;
+ 	pci_set_master(pdev);
 
 
