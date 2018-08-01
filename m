@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F76C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222B3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9905220862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9905220862
+	by mail.kernel.org (Postfix) with ESMTP id D807620844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D807620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405183AbeHATGE (ORCPT
+        id S2405192AbeHATGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48212 "EHLO
+        Wed, 1 Aug 2018 15:06:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATGD (ORCPT
+        with ESMTP id S2403884AbeHATGK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:03 -0400
+        Wed, 1 Aug 2018 15:06:10 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF549CC3;
-        Wed,  1 Aug 2018 17:19:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5439D0A;
+        Wed,  1 Aug 2018 17:19:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 113/246] drivers/perf: arm-ccn: dont log to dmesg in event_init
-Date:   Wed,  1 Aug 2018 18:50:23 +0200
-Message-Id: <20180801165017.112789617@linuxfoundation.org>
+Subject: [PATCH 4.14 147/246] tty: Fix data race in tty_insert_flip_string_fixed_flag
+Date:   Wed,  1 Aug 2018 18:50:57 +0200
+Message-Id: <20180801165018.767325472@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,114 +50,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: DaeRyong Jeong <threeearcat@gmail.com>
 
-[ Upstream commit 1898eb61fbc9703efee886d3abec27a388cf28c3 ]
+[ Upstream commit b6da31b2c07c46f2dcad1d86caa835227a16d9ff ]
 
-The ARM CCN PMU driver uses dev_warn() to complain about parameters in
-the user-provided perf_event_attr. This means that under normal
-operation (e.g. a single invocation of the perf tool), a number of
-messages warnings may be logged to dmesg.
+Unlike normal serials, in pty layer, there is no guarantee that multiple
+threads don't insert input characters at the same time. If it is happened,
+tty_insert_flip_string_fixed_flag can be executed concurrently. This can
+lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
 
-Tools may issue multiple syscalls to probe for feature support, and
-multiple applications (from multiple users) can attempt to open events
-simultaneously, so this is not very helpful, even if a user happens to
-have access to dmesg. Worse, this can push important information out of
-the dmesg ring buffer, and can significantly slow down syscall fuzzers,
-vastly increasing the time it takes to find critical bugs.
+Call sequences are as follows.
+CPU0                                    CPU1
+n_tty_ioctl_helper                      n_tty_ioctl_helper
+__start_tty                             tty_send_xchar
+tty_wakeup                              pty_write
+n_hdlc_tty_wakeup                       tty_insert_flip_string
+n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
+pty_write
+tty_insert_flip_string
+tty_insert_flip_string_fixed_flag
 
-Demote the dev_warn() instances to dev_dbg(), as is the case for all
-other PMU drivers under drivers/perf/. Users who wish to debug PMU event
-initialisation can enable dynamic debug to receive these messages.
+To fix the race, acquire port->lock in pty_write() before it inserts input
+characters to tty buffer. It prevents multiple threads from inserting
+input characters concurrently.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+The crash log is as follows:
+BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
+0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
+Write of size 1792 by task syz-executor0/30017
+CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+ 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
+ ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
+ ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
+Call Trace:
+ __dump_stack lib/dump_stack.c:15 [inline]
+ dump_stack+0xb3/0x110 lib/dump_stack.c:51
+ kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
+ print_address_description mm/kasan/report.c:194 [inline]
+ kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
+ kasan_report+0x36/0x40 mm/kasan/report.c:303
+ check_memory_region_inline mm/kasan/kasan.c:292 [inline]
+ check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
+ memcpy+0x37/0x50 mm/kasan/kasan.c:335
+ tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
+ tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
+ pty_write+0x7f/0xc0 drivers/tty/pty.c:115
+ n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
+ n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
+ tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
+ __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
+ __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
+ n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
+ n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
+ tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
+ vfs_ioctl fs/ioctl.c:43 [inline]
+ do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
+ SYSC_ioctl fs/ioctl.c:694 [inline]
+ SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
+ entry_SYSCALL_64_fastpath+0x1f/0xbd
+
+Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bus/arm-ccn.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/tty/pty.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/bus/arm-ccn.c
-+++ b/drivers/bus/arm-ccn.c
-@@ -736,7 +736,7 @@ static int arm_ccn_pmu_event_init(struct
- 	ccn = pmu_to_arm_ccn(event->pmu);
+--- a/drivers/tty/pty.c
++++ b/drivers/tty/pty.c
+@@ -110,16 +110,19 @@ static void pty_unthrottle(struct tty_st
+ static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
+ {
+ 	struct tty_struct *to = tty->link;
++	unsigned long flags;
  
- 	if (hw->sample_period) {
--		dev_warn(ccn->dev, "Sampling not supported!\n");
-+		dev_dbg(ccn->dev, "Sampling not supported!\n");
- 		return -EOPNOTSUPP;
- 	}
+ 	if (tty->stopped)
+ 		return 0;
  
-@@ -744,12 +744,12 @@ static int arm_ccn_pmu_event_init(struct
- 			event->attr.exclude_kernel || event->attr.exclude_hv ||
- 			event->attr.exclude_idle || event->attr.exclude_host ||
- 			event->attr.exclude_guest) {
--		dev_warn(ccn->dev, "Can't exclude execution levels!\n");
-+		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
- 		return -EINVAL;
+ 	if (c > 0) {
++		spin_lock_irqsave(&to->port->lock, flags);
+ 		/* Stuff the data into the input queue of the other end */
+ 		c = tty_insert_flip_string(to->port, buf, c);
+ 		/* And shovel */
+ 		if (c)
+ 			tty_flip_buffer_push(to->port);
++		spin_unlock_irqrestore(&to->port->lock, flags);
  	}
- 
- 	if (event->cpu < 0) {
--		dev_warn(ccn->dev, "Can't provide per-task data!\n");
-+		dev_dbg(ccn->dev, "Can't provide per-task data!\n");
- 		return -EOPNOTSUPP;
- 	}
- 	/*
-@@ -771,13 +771,13 @@ static int arm_ccn_pmu_event_init(struct
- 	switch (type) {
- 	case CCN_TYPE_MN:
- 		if (node_xp != ccn->mn_id) {
--			dev_warn(ccn->dev, "Invalid MN ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid MN ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		break;
- 	case CCN_TYPE_XP:
- 		if (node_xp >= ccn->num_xps) {
--			dev_warn(ccn->dev, "Invalid XP ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid XP ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		break;
-@@ -785,11 +785,11 @@ static int arm_ccn_pmu_event_init(struct
- 		break;
- 	default:
- 		if (node_xp >= ccn->num_nodes) {
--			dev_warn(ccn->dev, "Invalid node ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid node ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		if (!arm_ccn_pmu_type_eq(type, ccn->node[node_xp].type)) {
--			dev_warn(ccn->dev, "Invalid type 0x%x for node %d!\n",
-+			dev_dbg(ccn->dev, "Invalid type 0x%x for node %d!\n",
- 					type, node_xp);
- 			return -EINVAL;
- 		}
-@@ -808,19 +808,19 @@ static int arm_ccn_pmu_event_init(struct
- 		if (event_id != e->event)
- 			continue;
- 		if (e->num_ports && port >= e->num_ports) {
--			dev_warn(ccn->dev, "Invalid port %d for node/XP %d!\n",
-+			dev_dbg(ccn->dev, "Invalid port %d for node/XP %d!\n",
- 					port, node_xp);
- 			return -EINVAL;
- 		}
- 		if (e->num_vcs && vc >= e->num_vcs) {
--			dev_warn(ccn->dev, "Invalid vc %d for node/XP %d!\n",
-+			dev_dbg(ccn->dev, "Invalid vc %d for node/XP %d!\n",
- 					vc, node_xp);
- 			return -EINVAL;
- 		}
- 		valid = 1;
- 	}
- 	if (!valid) {
--		dev_warn(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
-+		dev_dbg(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
- 				event_id, node_xp);
- 		return -EINVAL;
- 	}
+ 	return c;
+ }
 
 
