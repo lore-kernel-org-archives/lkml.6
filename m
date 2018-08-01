@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C35C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125D1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA10F20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA10F20841
+	by mail.kernel.org (Postfix) with ESMTP id C165020840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C165020840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733051AbeHAUXd (ORCPT
+        id S2388580AbeHAUYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:23:33 -0400
+        Wed, 1 Aug 2018 16:24:13 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403963AbeHATDc (ORCPT
+        with ESMTP id S2403855AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AFBFFAD;
-        Wed,  1 Aug 2018 16:58:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9CF91249;
+        Wed,  1 Aug 2018 17:09:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 101/336] net: hns3: Fixes the init of the VALID BD info in the descriptor
-Date:   Wed,  1 Aug 2018 18:47:16 +0200
-Message-Id: <20180801165033.031760334@linuxfoundation.org>
+        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.17 309/336] RDMA/uverbs: Protect from attempts to create flows on unsupported QP
+Date:   Wed,  1 Aug 2018 18:50:44 +0200
+Message-Id: <20180801165040.869347014@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,45 +53,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 7d0b130cbbfa4651cc1ab9268a2956c1b9d82ff9 ]
+commit 940efcc8889f0d15567eb07fc9fd69b06e366aa5 upstream.
 
-RX Buffer Descriptor contains a VALID bit which indicates if the BD
-is valid and has some data. This field is set by HNS3 hardware to
-intimate the driver of some valid data present in the BD. nd should
-be reset by the driver when BD is being used again. In the existing
-code this bit was not being (re-)initialized properly and hence was
-causing problems.
+Flows can be created on UD and RAW_PACKET QP types. Attempts to provide
+other QP types as an input causes to various unpredictable failures.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+The reason is that in order to support all various types (e.g. XRC), we
+are supposed to use real_qp handle and not qp handle and expect to
+driver/FW to fail such (XRC) flows. The simpler and safer variant is to
+ban all QP types except UD and RAW_PACKET, instead of relying on
+driver/FW.
+
+Cc: <stable@vger.kernel.org> # 3.11
+Fixes: 436f2ad05a0b ("IB/core: Export ib_create/destroy_flow through uverbs")
+Cc: syzkaller <syzkaller@googlegroups.com>
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/core/uverbs_cmd.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1836,6 +1836,7 @@ static void hns3_replace_buffer(struct h
- 	hns3_unmap_buffer(ring, &ring->desc_cb[i]);
- 	ring->desc_cb[i] = *res_cb;
- 	ring->desc[i].addr = cpu_to_le64(ring->desc_cb[i].dma);
-+	ring->desc[i].rx.bd_base_info = 0;
- }
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -3478,6 +3478,11 @@ int ib_uverbs_ex_create_flow(struct ib_u
+ 		goto err_uobj;
+ 	}
  
- static void hns3_reuse_buffer(struct hns3_enet_ring *ring, int i)
-@@ -1843,6 +1844,7 @@ static void hns3_reuse_buffer(struct hns
- 	ring->desc_cb[i].reuse_flag = 0;
- 	ring->desc[i].addr = cpu_to_le64(ring->desc_cb[i].dma
- 		+ ring->desc_cb[i].page_offset);
-+	ring->desc[i].rx.bd_base_info = 0;
- }
- 
- static void hns3_nic_reclaim_one_desc(struct hns3_enet_ring *ring, int *bytes,
++	if (qp->qp_type != IB_QPT_UD && qp->qp_type != IB_QPT_RAW_PACKET) {
++		err = -EINVAL;
++		goto err_put;
++	}
++
+ 	flow_attr = kzalloc(sizeof(*flow_attr) + cmd.flow_attr.num_of_specs *
+ 			    sizeof(union ib_flow_spec), GFP_KERNEL);
+ 	if (!flow_attr) {
 
 
