@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2978C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF8120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF8120862
+	by mail.kernel.org (Postfix) with ESMTP id 2F03420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F03420862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732932AbeHAT4A (ORCPT
+        id S1732910AbeHATz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:56:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
+        Wed, 1 Aug 2018 15:55:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405745AbeHATIg (ORCPT
+        with ESMTP id S2405726AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C36C1114A;
-        Wed,  1 Aug 2018 17:05:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC5771014;
+        Wed,  1 Aug 2018 17:02:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 227/336] media: em28xx: fix a regression with HVR-950
-Date:   Wed,  1 Aug 2018 18:49:22 +0200
-Message-Id: <20180801165037.757950162@linuxfoundation.org>
+Subject: [PATCH 4.17 175/336] media: staging: atomisp: Comment out several unused sensor resolutions
+Date:   Wed,  1 Aug 2018 18:48:30 +0200
+Message-Id: <20180801165035.799395943@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,45 +55,356 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit 509f89652f83e834b3ef7a083e2eeac812b055f0 ]
+[ Upstream commit db01f7ccfa6d4738e366077ce7423d1710b805f3 ]
 
-Commit be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner
-functionality") removed the logic with sets the alternate for the DVB
-device. Without setting the right alternate, the device won't be
-able to submit URBs, and userspace fails with -EMSGSIZE:
+The register settings for several resolutions aren't used
+currently. So, comment them out.
 
-	ERROR     DMX_SET_PES_FILTER failed (PID = 0x2000): 90 Message too long
+Fix those warnings:
 
-Tested with Hauppauge HVR-950 model A1C0.
+In file included from drivers/staging/media/atomisp/i2c/atomisp-gc2235.c:35:0:
+drivers/staging/media/atomisp/i2c/gc2235.h:340:32: warning: 'gc2235_960_640_30fps' defined but not used [-Wunused-const-variable=]
+ static struct gc2235_reg const gc2235_960_640_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/gc2235.h:287:32: warning: 'gc2235_1296_736_30fps' defined but not used [-Wunused-const-variable=]
+ static struct gc2235_reg const gc2235_1296_736_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/staging/media/atomisp/i2c/atomisp-ov2722.c:35:0:
+drivers/staging/media/atomisp/i2c/ov2722.h:999:32: warning: 'ov2722_720p_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov2722_reg const ov2722_720p_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2722.h:787:32: warning: 'ov2722_1M3_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov2722_reg const ov2722_1M3_30fps[] = {
+                                ^~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2722.h:476:32: warning: 'ov2722_VGA_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov2722_reg const ov2722_VGA_30fps[] = {
+                                ^~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2722.h:367:32: warning: 'ov2722_480P_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov2722_reg const ov2722_480P_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2722.h:257:32: warning: 'ov2722_QVGA_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov2722_reg const ov2722_QVGA_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/atomisp-ov2680.c: In function '__ov2680_set_exposure':
+In file included from drivers/staging/media/atomisp/i2c/atomisp-ov2680.c:35:0:
+At top level:
+drivers/staging/media/atomisp/i2c/ov2680.h:736:33: warning: 'ov2680_1616x1082_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_1616x1082_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:649:33: warning: 'ov2680_1456x1096_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_1456x1096_30fps[]= {
+                                 ^~~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:606:33: warning: 'ov2680_1296x976_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_1296x976_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:563:33: warning: 'ov2680_720p_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_720p_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:520:33: warning: 'ov2680_800x600_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_800x600_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:475:33: warning: 'ov2680_720x592_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_720x592_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:433:33: warning: 'ov2680_656x496_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_656x496_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:389:33: warning: 'ov2680_QVGA_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_QVGA_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:346:33: warning: 'ov2680_CIF_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_CIF_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov2680.h:301:33: warning: 'ov2680_QCIF_30fps' defined but not used [-Wunused-const-variable=]
+  static struct ov2680_reg const ov2680_QCIF_30fps[] = {
+                                 ^~~~~~~~~~~~~~~~~
+In file included from drivers/staging/media/atomisp/i2c/ov5693/atomisp-ov5693.c:36:0:
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:988:32: warning: 'ov5693_1424x1168_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_1424x1168_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:954:32: warning: 'ov5693_2592x1944_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_2592x1944_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:889:32: warning: 'ov5693_2592x1456_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_2592x1456_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:862:32: warning: 'ov5693_1940x1096' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_1940x1096[] = {
+                                ^~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:796:32: warning: 'ov5693_1636p_30fps' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_1636p_30fps[] = {
+                                ^~~~~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:758:32: warning: 'ov5693_1296x736' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_1296x736[] = {
+                                ^~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:730:32: warning: 'ov5693_976x556' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_976x556[] = {
+                                ^~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:672:32: warning: 'ov5693_736x496' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_736x496[] = {
+                                ^~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:643:32: warning: 'ov5693_192x160' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_192x160[] = {
+                                ^~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:616:32: warning: 'ov5693_368x304' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_368x304[] = {
+                                ^~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:587:32: warning: 'ov5693_336x256' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_336x256[] = {
+                                ^~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:540:32: warning: 'ov5693_1296x976' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_1296x976[] = {
+                                ^~~~~~~~~~~~~~~
+drivers/staging/media/atomisp/i2c/ov5693/ov5693.h:509:32: warning: 'ov5693_654x496' defined but not used [-Wunused-const-variable=]
+ static struct ov5693_reg const ov5693_654x496[] = {
+                                ^~~~~~~~~~~~~~
 
-Fixes: be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner functionality")
-
-Cc: Brad Love <brad@nextdimension.cc>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/em28xx/em28xx-dvb.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/media/atomisp/i2c/gc2235.h        |    9 ++++++++-
+ drivers/staging/media/atomisp/i2c/ov2680.h        |    5 ++++-
+ drivers/staging/media/atomisp/i2c/ov2722.h        |    6 ++++++
+ drivers/staging/media/atomisp/i2c/ov5693/ov5693.h |   18 +++++++++++++++++-
+ 4 files changed, 35 insertions(+), 3 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-dvb.c
-+++ b/drivers/media/usb/em28xx/em28xx-dvb.c
-@@ -199,6 +199,7 @@ static int em28xx_start_streaming(struct
- 	int rc;
- 	struct em28xx_i2c_bus *i2c_bus = dvb->adapter.priv;
- 	struct em28xx *dev = i2c_bus->dev;
-+	struct usb_device *udev = interface_to_usbdev(dev->intf);
- 	int dvb_max_packet_size, packet_multiplier, dvb_alt;
+--- a/drivers/staging/media/atomisp/i2c/gc2235.h
++++ b/drivers/staging/media/atomisp/i2c/gc2235.h
+@@ -33,6 +33,11 @@
  
- 	if (dev->dvb_xfer_bulk) {
-@@ -217,6 +218,7 @@ static int em28xx_start_streaming(struct
- 		dvb_alt = dev->dvb_alt_isoc;
- 	}
+ #include "../include/linux/atomisp_platform.h"
  
-+	usb_set_interface(udev, dev->ifnum, dvb_alt);
- 	rc = em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
- 	if (rc < 0)
- 		return rc;
++/*
++ * FIXME: non-preview resolutions are currently broken
++ */
++#define ENABLE_NON_PREVIEW     0
++
+ /* Defines for register writes and register array processing */
+ #define I2C_MSG_LENGTH		0x2
+ #define I2C_RETRY_COUNT		5
+@@ -284,6 +289,7 @@ static struct gc2235_reg const gc2235_in
+ /*
+  * Register settings for various resolution
+  */
++#if ENABLE_NON_PREVIEW
+ static struct gc2235_reg const gc2235_1296_736_30fps[] = {
+ 	{ GC2235_8BIT, 0x8b, 0xa0 },
+ 	{ GC2235_8BIT, 0x8c, 0x02 },
+@@ -387,6 +393,7 @@ static struct gc2235_reg const gc2235_96
+ 	{ GC2235_8BIT, 0xfe, 0x00 }, /* switch to P0 */
+ 	{ GC2235_TOK_TERM, 0, 0 }
+ };
++#endif
+ 
+ static struct gc2235_reg const gc2235_1600_900_30fps[] = {
+ 	{ GC2235_8BIT, 0x8b, 0xa0 },
+@@ -578,7 +585,7 @@ static struct gc2235_resolution gc2235_r
+  * Disable non-preview configurations until the configuration selection is
+  * improved.
+  */
+-#if 0
++#if ENABLE_NON_PREVIEW
+ static struct gc2235_resolution gc2235_res_still[] = {
+ 	{
+ 		.desc = "gc2235_1600_900_30fps",
+--- a/drivers/staging/media/atomisp/i2c/ov2680.h
++++ b/drivers/staging/media/atomisp/i2c/ov2680.h
+@@ -295,6 +295,7 @@ struct ov2680_format {
+ 	};
+ 
+ 
++#if 0 /* None of the definitions below are used currently */
+ 	/*
+ 	 * 176x144 30fps  VBlanking 1lane 10Bit (binning)
+ 	 */
+@@ -513,7 +514,6 @@ struct ov2680_format {
+ 	{OV2680_8BIT, 0x5081, 0x41},
+     {OV2680_TOK_TERM, 0, 0}
+ 	};
+-
+ 	/*
+ 	* 800x600 30fps  VBlanking 1lane 10Bit (binning)
+ 	*/
+@@ -685,6 +685,7 @@ struct ov2680_format {
+     // {OV2680_8BIT, 0x5090, 0x0c},
+ 	{OV2680_TOK_TERM, 0, 0}
+ 	};
++#endif
+ 
+ 	/*
+ 	 *1616x916  30fps  VBlanking 1lane 10bit
+@@ -734,6 +735,7 @@ struct ov2680_format {
+ 	/*
+ 	 * 1612x1212 30fps VBlanking 1lane 10Bit
+ 	 */
++#if 0
+ 	static struct ov2680_reg const ov2680_1616x1082_30fps[] = {
+        {OV2680_8BIT, 0x3086, 0x00},
+        {OV2680_8BIT, 0x3501, 0x48},
+@@ -773,6 +775,7 @@ struct ov2680_format {
+        {OV2680_8BIT, 0x5081, 0x41},
+ 		{OV2680_TOK_TERM, 0, 0}
+         };
++#endif
+ 	/*
+ 	 * 1616x1216 30fps VBlanking 1lane 10Bit
+ 	 */
+--- a/drivers/staging/media/atomisp/i2c/ov2722.h
++++ b/drivers/staging/media/atomisp/i2c/ov2722.h
+@@ -254,6 +254,7 @@ struct ov2722_write_ctrl {
+ /*
+  * Register settings for various resolution
+  */
++#if 0
+ static struct ov2722_reg const ov2722_QVGA_30fps[] = {
+ 	{OV2722_8BIT, 0x3718, 0x10},
+ 	{OV2722_8BIT, 0x3702, 0x0c},
+@@ -581,6 +582,7 @@ static struct ov2722_reg const ov2722_VG
+ 	{OV2722_8BIT, 0x3509, 0x10},
+ 	{OV2722_TOK_TERM, 0, 0},
+ };
++#endif
+ 
+ static struct ov2722_reg const ov2722_1632_1092_30fps[] = {
+ 	{OV2722_8BIT, 0x3021, 0x03}, /* For stand wait for
+@@ -784,6 +786,7 @@ static struct ov2722_reg const ov2722_14
+ 	{OV2722_8BIT, 0x3509, 0x00},
+ 	{OV2722_TOK_TERM, 0, 0}
+ };
++#if 0
+ static struct ov2722_reg const ov2722_1M3_30fps[] = {
+ 	{OV2722_8BIT, 0x3718, 0x10},
+ 	{OV2722_8BIT, 0x3702, 0x24},
+@@ -890,6 +893,7 @@ static struct ov2722_reg const ov2722_1M
+ 	{OV2722_8BIT, 0x3509, 0x10},
+ 	{OV2722_TOK_TERM, 0, 0},
+ };
++#endif
+ 
+ static struct ov2722_reg const ov2722_1080p_30fps[] = {
+ 	{OV2722_8BIT, 0x3021, 0x03}, /* For stand wait for a whole
+@@ -996,6 +1000,7 @@ static struct ov2722_reg const ov2722_10
+ 	{OV2722_TOK_TERM, 0, 0}
+ };
+ 
++#if 0 /* Currently unused */
+ static struct ov2722_reg const ov2722_720p_30fps[] = {
+ 	{OV2722_8BIT, 0x3021, 0x03},
+ 	{OV2722_8BIT, 0x3718, 0x10},
+@@ -1095,6 +1100,7 @@ static struct ov2722_reg const ov2722_72
+ 	{OV2722_8BIT, 0x3509, 0x00},
+ 	{OV2722_TOK_TERM, 0, 0},
+ };
++#endif
+ 
+ static struct ov2722_resolution ov2722_res_preview[] = {
+ 	{
+--- a/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
++++ b/drivers/staging/media/atomisp/i2c/ov5693/ov5693.h
+@@ -31,6 +31,12 @@
+ 
+ #include "../../include/linux/atomisp_platform.h"
+ 
++/*
++ * FIXME: non-preview resolutions are currently broken
++ */
++#define ENABLE_NON_PREVIEW	0
++
++
+ #define OV5693_POWER_UP_RETRY_NUM 5
+ 
+ /* Defines for register writes and register array processing */
+@@ -503,6 +509,7 @@ static struct ov5693_reg const ov5693_gl
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
+ 
++#if ENABLE_NON_PREVIEW
+ /*
+  * 654x496 30fps 17ms VBlanking 2lane 10Bit (Scaling)
+  */
+@@ -695,6 +702,7 @@ static struct ov5693_reg const ov5693_73
+ 	{OV5693_8BIT, 0x0100, 0x01},
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
++#endif
+ 
+ /*
+ static struct ov5693_reg const ov5693_736x496[] = {
+@@ -727,6 +735,7 @@ static struct ov5693_reg const ov5693_73
+ /*
+  * 976x556 30fps 8.8ms VBlanking 2lane 10Bit (Scaling)
+  */
++#if ENABLE_NON_PREVIEW
+ static struct ov5693_reg const ov5693_976x556[] = {
+ 	{OV5693_8BIT, 0x3501, 0x7b},
+ 	{OV5693_8BIT, 0x3502, 0x00},
+@@ -819,6 +828,7 @@ static struct ov5693_reg const ov5693_16
+ 	{OV5693_8BIT, 0x0100, 0x01},
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
++#endif
+ 
+ static struct ov5693_reg const ov5693_1616x1216_30fps[] = {
+ 	{OV5693_8BIT, 0x3501, 0x7b},
+@@ -859,6 +869,7 @@ static struct ov5693_reg const ov5693_16
+ /*
+  * 1940x1096 30fps 8.8ms VBlanking 2lane 10bit (Scaling)
+  */
++#if ENABLE_NON_PREVIEW
+ static struct ov5693_reg const ov5693_1940x1096[] = {
+ 	{OV5693_8BIT, 0x3501, 0x7b},
+ 	{OV5693_8BIT, 0x3502, 0x00},
+@@ -916,6 +927,7 @@ static struct ov5693_reg const ov5693_25
+ 	{OV5693_8BIT, 0x5002, 0x00},
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
++#endif
+ 
+ static struct ov5693_reg const ov5693_2576x1456_30fps[] = {
+ 	{OV5693_8BIT, 0x3501, 0x7b},
+@@ -951,6 +963,7 @@ static struct ov5693_reg const ov5693_25
+ /*
+  * 2592x1944 30fps 0.6ms VBlanking 2lane 10Bit
+  */
++#if ENABLE_NON_PREVIEW
+ static struct ov5693_reg const ov5693_2592x1944_30fps[] = {
+ 	{OV5693_8BIT, 0x3501, 0x7b},
+ 	{OV5693_8BIT, 0x3502, 0x00},
+@@ -977,6 +990,7 @@ static struct ov5693_reg const ov5693_25
+ 	{OV5693_8BIT, 0x0100, 0x01},
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
++#endif
+ 
+ /*
+  * 11:9 Full FOV Output, expected FOV Res: 2346x1920
+@@ -985,6 +999,7 @@ static struct ov5693_reg const ov5693_25
+  *
+  * WA: Left Offset: 8, Hor scal: 64
+  */
++#if ENABLE_NON_PREVIEW
+ static struct ov5693_reg const ov5693_1424x1168_30fps[] = {
+ 	{OV5693_8BIT, 0x3501, 0x3b}, /* long exposure[15:8] */
+ 	{OV5693_8BIT, 0x3502, 0x80}, /* long exposure[7:0] */
+@@ -1019,6 +1034,7 @@ static struct ov5693_reg const ov5693_14
+ 	{OV5693_8BIT, 0x0100, 0x01},
+ 	{OV5693_TOK_TERM, 0, 0}
+ };
++#endif
+ 
+ /*
+  * 3:2 Full FOV Output, expected FOV Res: 2560x1706
+@@ -1151,7 +1167,7 @@ static struct ov5693_resolution ov5693_r
+  * Disable non-preview configurations until the configuration selection is
+  * improved.
+  */
+-#if 0
++#if ENABLE_NON_PREVIEW
+ struct ov5693_resolution ov5693_res_still[] = {
+ 	{
+ 		.desc = "ov5693_736x496_30fps",
 
 
