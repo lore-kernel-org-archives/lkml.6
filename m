@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067BFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD76FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0509208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0509208A4
+	by mail.kernel.org (Postfix) with ESMTP id 929DD208BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929DD208BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404664AbeHATjr (ORCPT
+        id S2404015AbeHATjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:39:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50224 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406010AbeHATIl (ORCPT
+        with ESMTP id S2406013AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4815B13AC;
-        Wed,  1 Aug 2018 17:15:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48DB013E1;
+        Wed,  1 Aug 2018 17:16:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 026/246] NFSv4.1: Fix the client behaviour on NFS4ERR_SEQ_FALSE_RETRY
-Date:   Wed,  1 Aug 2018 18:48:56 +0200
-Message-Id: <20180801165012.954727937@linuxfoundation.org>
+Subject: [PATCH 4.14 092/246] ath: Add regulatory mapping for ETSI8_WORLD
+Date:   Wed,  1 Aug 2018 18:50:02 +0200
+Message-Id: <20180801165016.116839378@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,47 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit f9312a541050007ec59eb0106273a0a10718cd83 ]
+[ Upstream commit 45faf6e096da8bb80e1ddf8c08a26a9601d9469e ]
 
-If the server returns NFS4ERR_SEQ_FALSE_RETRY or NFS4ERR_RETRY_UNCACHED_REP,
-then it thinks we're trying to replay an existing request. If so, then
-let's just bump the sequence ID and retry the operation.
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+  Invalid EEPROM contents
+
+The current CTL mappings for this regdomain code are:
+
+* 2.4GHz: ETSI
+* 5GHz: ETSI
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4proc.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -745,6 +745,13 @@ static int nfs41_sequence_process(struct
- 			slot->slot_nr,
- 			slot->seq_nr);
- 		goto out_retry;
-+	case -NFS4ERR_RETRY_UNCACHED_REP:
-+	case -NFS4ERR_SEQ_FALSE_RETRY:
-+		/*
-+		 * The server thinks we tried to replay a request.
-+		 * Retry the call after bumping the sequence ID.
-+		 */
-+		goto retry_new_seq;
- 	case -NFS4ERR_BADSLOT:
- 		/*
- 		 * The slot id we used was probably retired. Try again
-@@ -769,10 +776,6 @@ static int nfs41_sequence_process(struct
- 			goto retry_nowait;
- 		}
- 		goto session_recover;
--	case -NFS4ERR_SEQ_FALSE_RETRY:
--		if (interrupted)
--			goto retry_new_seq;
--		goto session_recover;
- 	default:
- 		/* Just update the slot sequence no. */
- 		slot->seq_done = 1;
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -45,6 +45,7 @@ enum EnumRd {
+ 	ETSI4_ETSIC = 0x38,
+ 	ETSI5_WORLD = 0x39,
+ 	ETSI6_WORLD = 0x34,
++	ETSI8_WORLD = 0x3D,
+ 	ETSI_RESERVED = 0x33,
+ 
+ 	MKK1_MKKA = 0x40,
+@@ -181,6 +182,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{ETSI4_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{ETSI5_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{ETSI6_WORLD, CTL_ETSI, CTL_ETSI},
++	{ETSI8_WORLD, CTL_ETSI, CTL_ETSI},
+ 
+ 	/* XXX: For ETSI3_ETSIA, Was NO_CTL meant for the 2 GHz band ? */
+ 	{ETSI3_ETSIA, CTL_ETSI, CTL_ETSI},
 
 
