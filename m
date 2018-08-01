@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4F8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2EFC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D04920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D04920862
+	by mail.kernel.org (Postfix) with ESMTP id 7F0A520862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0A520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436573AbeHATSi (ORCPT
+        id S2407948AbeHATYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52886 "EHLO
+        Wed, 1 Aug 2018 15:24:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390534AbeHATSg (ORCPT
+        with ESMTP id S2436525AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:36 -0400
+        Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B67BEF7;
-        Wed,  1 Aug 2018 16:55:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 530C6F2D;
+        Wed,  1 Aug 2018 16:56:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.17 009/336] tracing: Fix possible double free in event_enable_trigger_func()
-Date:   Wed,  1 Aug 2018 18:45:44 +0200
-Message-Id: <20180801165029.283039232@linuxfoundation.org>
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 065/336] pnfs: Dont release the sequence slot until weve processed layoutget on open
+Date:   Wed,  1 Aug 2018 18:46:40 +0200
+Message-Id: <20180801165031.623129480@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,60 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
+[ Upstream commit ae55e59da0e401893b3c52b575fc18a00623d0a1 ]
 
-There was a case that triggered a double free in event_trigger_callback()
-due to the called reg() function freeing the trigger_data and then it
-getting freed again by the error return by the caller. The solution there
-was to up the trigger_data ref count.
+If the server recalls the layout that was just handed out, we risk hitting
+a race as described in RFC5661 Section 2.10.6.3 unless we ensure that we
+release the sequence slot after processing the LAYOUTGET operation that
+was sent as part of the OPEN compound.
 
-Code inspection found that event_enable_trigger_func() has the same issue,
-but is not as easy to trigger (requires harder to trigger failures). It
-needs to be solved slightly different as it needs more to clean up when the
-reg() function fails.
-
-Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
-
-Cc: stable@vger.kernel.org
-Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
-Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_events_trigger.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4proc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1422,6 +1422,9 @@ int event_enable_trigger_func(struct eve
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2807,7 +2807,7 @@ static int _nfs4_open_and_get_state(stru
+ 	if (ret != 0)
  		goto out;
+ 
+-	state = nfs4_opendata_to_nfs4_state(opendata);
++	state = _nfs4_opendata_to_nfs4_state(opendata);
+ 	ret = PTR_ERR(state);
+ 	if (IS_ERR(state))
+ 		goto out;
+@@ -2843,6 +2843,7 @@ static int _nfs4_open_and_get_state(stru
+ 			nfs4_schedule_stateid_recovery(server, state);
  	}
- 
-+	/* Up the trigger_data count to make sure nothing frees it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
-+
- 	if (trigger) {
- 		number = strsep(&trigger, ":");
- 
-@@ -1472,6 +1475,7 @@ int event_enable_trigger_func(struct eve
- 		goto out_disable;
- 	/* Just return zero, not the number of enabled functions */
- 	ret = 0;
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
+ out:
++	nfs4_sequence_free_slot(&opendata->o_res.seq_res);
  	return ret;
- 
-@@ -1482,7 +1486,7 @@ int event_enable_trigger_func(struct eve
-  out_free:
- 	if (cmd_ops->set_filter)
- 		cmd_ops->set_filter(NULL, trigger_data, NULL);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_ops, trigger_data);
- 	kfree(enable_data);
- 	goto out;
  }
+ 
 
 
