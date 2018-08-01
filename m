@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2532CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EB8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D36AE20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D36AE20862
+	by mail.kernel.org (Postfix) with ESMTP id 6735320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6735320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405793AbeHATIg (ORCPT
+        id S1732943AbeHAT4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:36 -0400
+        Wed, 1 Aug 2018 15:56:14 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405714AbeHATIf (ORCPT
+        with ESMTP id S2405751AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:35 -0400
+        Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 381581177;
-        Wed,  1 Aug 2018 17:06:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 655F913DF;
+        Wed,  1 Aug 2018 17:16:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 202/336] media: saa7164: Fix driver name in debug output
-Date:   Wed,  1 Aug 2018 18:48:57 +0200
-Message-Id: <20180801165036.817781820@linuxfoundation.org>
+Subject: [PATCH 4.14 091/246] ath: Add regulatory mapping for FCC3_ETSIC
+Date:   Wed,  1 Aug 2018 18:50:01 +0200
+Message-Id: <20180801165016.066428940@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,43 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 0cc4655cb57af0b7e105d075c4f83f8046efafe7 ]
+[ Upstream commit 01fb2994a98dc72c8818c274f7b5983d5dd885c7 ]
 
-This issue was reported by a user who downloaded a corrupt saa7164
-firmware, then went looking for a valid xc5000 firmware to fix the
-error displayed...but the device in question has no xc5000, thus after
-much effort, the wild goose chase eventually led to a support call.
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
 
-The xc5000 has nothing to do with saa7164 (as far as I can tell),
-so replace the string with saa7164 as well as give a meaningful
-hint on the firmware mismatch.
+  Invalid EEPROM contents
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The current CTL mappings for this regdomain code are:
+
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/saa7164/saa7164-fw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/pci/saa7164/saa7164-fw.c
-+++ b/drivers/media/pci/saa7164/saa7164-fw.c
-@@ -426,7 +426,8 @@ int saa7164_downloadfirmware(struct saa7
- 			__func__, fw->size);
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -35,6 +35,7 @@ enum EnumRd {
+ 	FRANCE_RES = 0x31,
+ 	FCC3_FCCA = 0x3A,
+ 	FCC3_WORLD = 0x3B,
++	FCC3_ETSIC = 0x3F,
  
- 		if (fw->size != fwlength) {
--			printk(KERN_ERR "xc5000: firmware incorrect size\n");
-+			printk(KERN_ERR "saa7164: firmware incorrect size %zu != %u\n",
-+				fw->size, fwlength);
- 			ret = -ENOMEM;
- 			goto out;
- 		}
+ 	ETSI1_WORLD = 0x37,
+ 	ETSI3_ETSIA = 0x32,
+@@ -168,6 +169,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{FCC2_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC3_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC3_WORLD, CTL_FCC, CTL_ETSI},
++	{FCC3_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC4_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC5_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC6_FCCA, CTL_FCC, CTL_FCC},
 
 
