@@ -6,44 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6CDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7821AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0C22083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0C22083D
+	by mail.kernel.org (Postfix) with ESMTP id 2E4772083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4772083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbeHATu1 (ORCPT
+        id S1732620AbeHATuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:50:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        Wed, 1 Aug 2018 15:50:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405704AbeHATIi (ORCPT
+        with ESMTP id S2405089AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:38 -0400
+        Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 105901352;
-        Wed,  1 Aug 2018 17:12:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1444913E5;
+        Wed,  1 Aug 2018 17:16:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Mandeep Singh Baines <msb@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 031/246] kernel/hung_task.c: show all hung tasks before panic
-Date:   Wed,  1 Aug 2018 18:49:01 +0200
-Message-Id: <20180801165013.183330440@linuxfoundation.org>
+Subject: [PATCH 4.14 094/246] ath: Add regulatory mapping for APL2_FCCA
+Date:   Wed,  1 Aug 2018 18:50:04 +0200
+Message-Id: <20180801165016.215780010@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -60,118 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 401c636a0eeb0d51862fce222da1bf08e3a0ffd0 ]
+[ Upstream commit 4f183687e3fad3ce0e06e38976cad81bc4541990 ]
 
-When we get a hung task it can often be valuable to see _all_ the hung
-tasks on the system before calling panic().
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
 
-Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&id=5316056503549952
-----------------------------------------
-INFO: task syz-executor0:6540 blocked for more than 120 seconds.
-      Not tainted 4.16.0+ #13
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor0   D23560  6540   4521 0x80000004
-Call Trace:
- context_switch kernel/sched/core.c:2848 [inline]
- __schedule+0x8fb/0x1ef0 kernel/sched/core.c:3490
- schedule+0xf5/0x430 kernel/sched/core.c:3549
- schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3607
- __mutex_lock_common kernel/locking/mutex.c:833 [inline]
- __mutex_lock+0xb7f/0x1810 kernel/locking/mutex.c:893
- mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
- lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
- __blkdev_driver_ioctl block/ioctl.c:303 [inline]
- blkdev_ioctl+0x1759/0x1e00 block/ioctl.c:601
- ioctl_by_bdev+0xa5/0x110 fs/block_dev.c:2060
- isofs_get_last_session fs/isofs/inode.c:567 [inline]
- isofs_fill_super+0x2ba9/0x3bc0 fs/isofs/inode.c:660
- mount_bdev+0x2b7/0x370 fs/super.c:1119
- isofs_mount+0x34/0x40 fs/isofs/inode.c:1560
- mount_fs+0x66/0x2d0 fs/super.c:1222
- vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:2514 [inline]
- do_new_mount fs/namespace.c:2517 [inline]
- do_mount+0xea4/0x2b90 fs/namespace.c:2847
- ksys_mount+0xab/0x120 fs/namespace.c:3063
- SYSC_mount fs/namespace.c:3077 [inline]
- SyS_mount+0x39/0x50 fs/namespace.c:3074
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-(...snipped...)
-Showing all locks held in the system:
-(...snipped...)
-2 locks held by syz-executor0/6540:
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: alloc_super fs/super.c:211 [inline]
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: sget_userns+0x3b2/0xe60 fs/super.c:502 /* down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING); */
- #1: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
-(...snipped...)
-3 locks held by syz-executor7/6541:
- #0: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
- #1: 000000007bf3d3f9 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
- #2: 00000000566d4c39 (&type->s_umount_key#50){.+.+}, at: __get_super.part.10+0x1d3/0x280 fs/super.c:663 /* down_read(&sb->s_umount); */
-----------------------------------------
+  Invalid EEPROM contents
 
-When reporting an AB-BA deadlock like shown above, it would be nice if
-trace of PID=6541 is printed as well as trace of PID=6540 before calling
-panic().
+The current CTL mappings for this regdomain code are:
 
-Showing hung tasks up to /proc/sys/kernel/hung_task_warnings could delay
-calling panic() but normally there should not be so many hung tasks.
+* 2.4GHz: FCC
+* 5GHz: FCC
 
-Link: http://lkml.kernel.org/r/201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Mandeep Singh Baines <msb@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/hung_task.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -44,6 +44,7 @@ int __read_mostly sysctl_hung_task_warni
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -61,6 +61,7 @@ enum EnumRd {
+ 	MKK1_MKKA1 = 0x4A,
+ 	MKK1_MKKA2 = 0x4B,
+ 	MKK1_MKKC = 0x4C,
++	APL2_FCCA = 0x4D,
  
- static int __read_mostly did_panic;
- static bool hung_task_show_lock;
-+static bool hung_task_call_panic;
- 
- static struct task_struct *watchdog_task;
- 
-@@ -127,10 +128,8 @@ static void check_hung_task(struct task_
- 	touch_nmi_watchdog();
- 
- 	if (sysctl_hung_task_panic) {
--		if (hung_task_show_lock)
--			debug_show_all_locks();
--		trigger_all_cpu_backtrace();
--		panic("hung_task: blocked tasks");
-+		hung_task_show_lock = true;
-+		hung_task_call_panic = true;
- 	}
- }
- 
-@@ -193,6 +192,10 @@ static void check_hung_uninterruptible_t
- 	rcu_read_unlock();
- 	if (hung_task_show_lock)
- 		debug_show_all_locks();
-+	if (hung_task_call_panic) {
-+		trigger_all_cpu_backtrace();
-+		panic("hung_task: blocked tasks");
-+	}
- }
- 
- static long hung_timeout_jiffies(unsigned long last_checked,
+ 	APL3_FCCA = 0x50,
+ 	APL1_WORLD = 0x52,
+@@ -193,6 +194,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{FCC1_FCCA, CTL_FCC, CTL_FCC},
+ 	{APL1_WORLD, CTL_FCC, CTL_ETSI},
+ 	{APL2_WORLD, CTL_FCC, CTL_ETSI},
++	{APL2_FCCA, CTL_FCC, CTL_FCC},
+ 	{APL3_WORLD, CTL_FCC, CTL_ETSI},
+ 	{APL4_WORLD, CTL_FCC, CTL_ETSI},
+ 	{APL5_WORLD, CTL_FCC, CTL_ETSI},
 
 
