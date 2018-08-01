@@ -6,44 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BF4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228E120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228E120862
+	by mail.kernel.org (Postfix) with ESMTP id 8681E20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8681E20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408215AbeHATXJ (ORCPT
+        id S2408201AbeHATXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:23:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52920 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436553AbeHATSi (ORCPT
+        with ESMTP id S2436532AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9483E75;
-        Wed,  1 Aug 2018 16:54:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59B2FE33;
+        Wed,  1 Aug 2018 16:53:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Mandeep Singh Baines <msb@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 031/336] kernel/hung_task.c: show all hung tasks before panic
-Date:   Wed,  1 Aug 2018 18:46:06 +0200
-Message-Id: <20180801165030.258680595@linuxfoundation.org>
+Subject: [PATCH 4.17 020/336] hv_netvsc: fix network namespace issues with VF support
+Date:   Wed,  1 Aug 2018 18:45:55 +0200
+Message-Id: <20180801165029.768231364@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -60,118 +51,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit 401c636a0eeb0d51862fce222da1bf08e3a0ffd0 ]
+[ Upstream commit 7bf7bb37f16a80465ee3bd7c6c966f96f5a075a6 ]
 
-When we get a hung task it can often be valuable to see _all_ the hung
-tasks on the system before calling panic().
+When finding the parent netvsc device, the search needs to be across
+all netvsc device instances (independent of network namespace).
 
-Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&id=5316056503549952
-----------------------------------------
-INFO: task syz-executor0:6540 blocked for more than 120 seconds.
-      Not tainted 4.16.0+ #13
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor0   D23560  6540   4521 0x80000004
-Call Trace:
- context_switch kernel/sched/core.c:2848 [inline]
- __schedule+0x8fb/0x1ef0 kernel/sched/core.c:3490
- schedule+0xf5/0x430 kernel/sched/core.c:3549
- schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3607
- __mutex_lock_common kernel/locking/mutex.c:833 [inline]
- __mutex_lock+0xb7f/0x1810 kernel/locking/mutex.c:893
- mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
- lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
- __blkdev_driver_ioctl block/ioctl.c:303 [inline]
- blkdev_ioctl+0x1759/0x1e00 block/ioctl.c:601
- ioctl_by_bdev+0xa5/0x110 fs/block_dev.c:2060
- isofs_get_last_session fs/isofs/inode.c:567 [inline]
- isofs_fill_super+0x2ba9/0x3bc0 fs/isofs/inode.c:660
- mount_bdev+0x2b7/0x370 fs/super.c:1119
- isofs_mount+0x34/0x40 fs/isofs/inode.c:1560
- mount_fs+0x66/0x2d0 fs/super.c:1222
- vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:2514 [inline]
- do_new_mount fs/namespace.c:2517 [inline]
- do_mount+0xea4/0x2b90 fs/namespace.c:2847
- ksys_mount+0xab/0x120 fs/namespace.c:3063
- SYSC_mount fs/namespace.c:3077 [inline]
- SyS_mount+0x39/0x50 fs/namespace.c:3074
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-(...snipped...)
-Showing all locks held in the system:
-(...snipped...)
-2 locks held by syz-executor0/6540:
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: alloc_super fs/super.c:211 [inline]
- #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: sget_userns+0x3b2/0xe60 fs/super.c:502 /* down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING); */
- #1: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
-(...snipped...)
-3 locks held by syz-executor7/6541:
- #0: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
- #1: 000000007bf3d3f9 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
- #2: 00000000566d4c39 (&type->s_umount_key#50){.+.+}, at: __get_super.part.10+0x1d3/0x280 fs/super.c:663 /* down_read(&sb->s_umount); */
-----------------------------------------
+Find parent device of VF using upper_dev_get routine which
+searches only adjacent list.
 
-When reporting an AB-BA deadlock like shown above, it would be nice if
-trace of PID=6541 is printed as well as trace of PID=6540 before calling
-panic().
+Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
 
-Showing hung tasks up to /proc/sys/kernel/hung_task_warnings could delay
-calling panic() but normally there should not be so many hung tasks.
-
-Link: http://lkml.kernel.org/r/201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Mandeep Singh Baines <msb@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
+netns aware byref
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/hung_task.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/hyperv/hyperv_net.h |    2 +
+ drivers/net/hyperv/netvsc_drv.c |   45 ++++++++++++++++++----------------------
+ 2 files changed, 23 insertions(+), 24 deletions(-)
 
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -44,6 +44,7 @@ int __read_mostly sysctl_hung_task_warni
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -738,6 +738,8 @@ struct net_device_context {
+ 	struct hv_device *device_ctx;
+ 	/* netvsc_device */
+ 	struct netvsc_device __rcu *nvdev;
++	/* list of netvsc net_devices */
++	struct list_head list;
+ 	/* reconfigure work */
+ 	struct delayed_work dwork;
+ 	/* last reconfig time */
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -69,6 +69,8 @@ static int debug = -1;
+ module_param(debug, int, 0444);
+ MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
  
- static int __read_mostly did_panic;
- static bool hung_task_show_lock;
-+static bool hung_task_call_panic;
++static LIST_HEAD(netvsc_dev_list);
++
+ static void netvsc_change_rx_flags(struct net_device *net, int change)
+ {
+ 	struct net_device_context *ndev_ctx = netdev_priv(net);
+@@ -1779,13 +1781,10 @@ out_unlock:
  
- static struct task_struct *watchdog_task;
+ static struct net_device *get_netvsc_bymac(const u8 *mac)
+ {
+-	struct net_device *dev;
+-
+-	ASSERT_RTNL();
++	struct net_device_context *ndev_ctx;
  
-@@ -127,10 +128,8 @@ static void check_hung_task(struct task_
- 	touch_nmi_watchdog();
+-	for_each_netdev(&init_net, dev) {
+-		if (dev->netdev_ops != &device_ops)
+-			continue;	/* not a netvsc device */
++	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
++		struct net_device *dev = hv_get_drvdata(ndev_ctx->device_ctx);
  
- 	if (sysctl_hung_task_panic) {
--		if (hung_task_show_lock)
--			debug_show_all_locks();
--		trigger_all_cpu_backtrace();
--		panic("hung_task: blocked tasks");
-+		hung_task_show_lock = true;
-+		hung_task_call_panic = true;
+ 		if (ether_addr_equal(mac, dev->perm_addr))
+ 			return dev;
+@@ -1796,25 +1795,18 @@ static struct net_device *get_netvsc_bym
+ 
+ static struct net_device *get_netvsc_byref(struct net_device *vf_netdev)
+ {
++	struct net_device_context *net_device_ctx;
+ 	struct net_device *dev;
+ 
+-	ASSERT_RTNL();
+-
+-	for_each_netdev(&init_net, dev) {
+-		struct net_device_context *net_device_ctx;
+-
+-		if (dev->netdev_ops != &device_ops)
+-			continue;	/* not a netvsc device */
+-
+-		net_device_ctx = netdev_priv(dev);
+-		if (!rtnl_dereference(net_device_ctx->nvdev))
+-			continue;	/* device is removed */
++	dev = netdev_master_upper_dev_get(vf_netdev);
++	if (!dev || dev->netdev_ops != &device_ops)
++		return NULL;	/* not a netvsc device */
++
++	net_device_ctx = netdev_priv(dev);
++	if (!rtnl_dereference(net_device_ctx->nvdev))
++		return NULL;	/* device is removed */
+ 
+-		if (rtnl_dereference(net_device_ctx->vf_netdev) == vf_netdev)
+-			return dev;	/* a match */
+-	}
+-
+-	return NULL;
++	return dev;
+ }
+ 
+ /* Called when VF is injecting data into network stack.
+@@ -2094,15 +2086,19 @@ static int netvsc_probe(struct hv_device
+ 	else
+ 		net->max_mtu = ETH_DATA_LEN;
+ 
+-	ret = register_netdev(net);
++	rtnl_lock();
++	ret = register_netdevice(net);
+ 	if (ret != 0) {
+ 		pr_err("Unable to register netdev.\n");
+ 		goto register_failed;
  	}
- }
  
-@@ -193,6 +192,10 @@ static void check_hung_uninterruptible_t
+-	return ret;
++	list_add(&net_device_ctx->list, &netvsc_dev_list);
++	rtnl_unlock();
++	return 0;
+ 
+ register_failed:
++	rtnl_unlock();
+ 	rndis_filter_device_remove(dev, nvdev);
+ rndis_failed:
+ 	free_percpu(net_device_ctx->vf_stats);
+@@ -2148,6 +2144,7 @@ static int netvsc_remove(struct hv_devic
+ 		rndis_filter_device_remove(dev, nvdev);
+ 
+ 	unregister_netdevice(net);
++	list_del(&ndev_ctx->list);
+ 
+ 	rtnl_unlock();
  	rcu_read_unlock();
- 	if (hung_task_show_lock)
- 		debug_show_all_locks();
-+	if (hung_task_call_panic) {
-+		trigger_all_cpu_backtrace();
-+		panic("hung_task: blocked tasks");
-+	}
- }
- 
- static long hung_timeout_jiffies(unsigned long last_checked,
 
 
