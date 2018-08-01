@@ -7,105 +7,92 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E16C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F209C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8203E20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFAA820894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgcfB+q4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8203E20844
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4NHciWL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAA820894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389201AbeHAO31 (ORCPT
+        id S2389208AbeHAOfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:29:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42563 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730355AbeHAO31 (ORCPT
+        Wed, 1 Aug 2018 10:35:24 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45440 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730355AbeHAOfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:29:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f1-v6so16746599ljc.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:43:49 -0700 (PDT)
+        Wed, 1 Aug 2018 10:35:24 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f12-v6so10075865wrv.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=r27vBjxVaebcYLq40PuyIf5p2pYfNSWatlCjqcA9K8Y=;
-        b=EgcfB+q4U4ezYXUmcbRBWTEuxmC4B+dWEQ935uWOn5XFNjqTxLY7fqi80+UUF3jR21
-         +wE8OkJSzWCl5fkrus5DkDMj+ZgjQaH8zOd4NWlOM6RgQ2wgxgo5L2fZ7kylqdBlv8Sw
-         RAjQnESrTnuOy85XiJmrYItChSNlQ7XLrT6uLoLRTxSbHllVw+rsg5IbEp7m/fut96kG
-         U2YkUdSwMsjUIV76nVZXb9RW+bQQK6/qUIDSxxsc9TYL7OJy0FDgK8Cgtb09nFY8xlOy
-         PZPbc1KBLz6Wcvnkmgy3nQB4o8tyxU+4Wm2iF0leWWq7f8BkhFYnmWhFlHX1DQ1wq5aX
-         b4mA==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=wp4MRKtGBvimo/r6PLg7g+lX2TFTv07oL2qBcwZy5S4=;
+        b=M4NHciWLM7fQ8/s+ALHFoDKlBNH5wDpiEDUiVbSH2+/MPNHdXZ3V8KApf7oaMX1V/L
+         t+Y6N2k/UT3C1mtLKXetDh1fY96jNbVCf7rrTISyqy2Gir2g5i0+884gga9brjX4wNeK
+         o2+7lQqa5TEmb/9dwVFJ0RIhzjoIHFxjxUhvzoXccdUbpSMSYts9Z3NbKUngsSXSWAFk
+         aC91vjAm2m7vahXLKtEu4wr34OlUlDotqHzo1s7bd5fXTHPtwMQFa4jOQXHZmFTlD1Vf
+         o/C+svOgvcU3cpwBAKxdz3akyTTHKV87xZEVPnPuIVHF6tfYbkeFTidJrK/MK6pUSgtV
+         Ywzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=r27vBjxVaebcYLq40PuyIf5p2pYfNSWatlCjqcA9K8Y=;
-        b=d8hSt+REEY0aEaJazasEMZNWs2xDUyvprC/3S/A9ihfNpr0C+dwqalgXJDtj6PWfDE
-         gK5Wsn1POlraf999uLFdtWUDDw5Q+oQrvusu7kt6uiJkAaWnch284LQ3XJrR4BeBWJYQ
-         TtJX+rpdgSzpRbbsL18UKuF+aoFIMzzGJmEwyvNKip0Exv4V8OwGHA+wvK8h1wGFKfae
-         p+/w+pjIvFlrmkAnfRgzDQq/+VUlkzY4kBDlEQxcH19wF5cq7NuAeeWdnzGejE4Cl7f4
-         tPpCgIdxP2bKtOfRD7z1sSvIOvcquUfKNQQk4WchaVcadYXe5P/id7f6a46/+Pk5S9mu
-         PYNw==
-X-Gm-Message-State: AOUpUlG5iiMKM2w8OEyKWd8vQNvCb5GUMV2IL74bdIedplkNMzUr10+7
-        GIV2sQvhROwEVCu0TSgKKJqp+7N1V9/zqHoxrO4=
-X-Google-Smtp-Source: AAOMgpf4w/moemdNfu9MdXdIx9OfWuUtg5yEHeqanZhc5m/WmIQOgtSHWHQ1Wbn+1Wssl8dPEgB/F3Ln/dT20zMoe1Y=
-X-Received: by 2002:a2e:5243:: with SMTP id g64-v6mr18852146ljb.144.1533127428596;
- Wed, 01 Aug 2018 05:43:48 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=wp4MRKtGBvimo/r6PLg7g+lX2TFTv07oL2qBcwZy5S4=;
+        b=bdaLo6jTknM86Wx8HuDwLNv19K3GJT7Z9XFV74iBA5AwWXOfRf68+n4EeSd37bMcjS
+         /ZL7u438krNjuGyvn4sI6n8VTg3tTbtfSNxn/0nT6Twg0HOJ8zLZ5l5HgkaoLj8KPj3E
+         YJvAh6vNv36iLCSlMhukwySiU3R5sRg2U3fOt4wIhess+CVTIe5ihdXWaxeY+4xPyYBG
+         ID0d1sF3eWNWJgU601dJ8IDvVOtyHFHCc35O1Cear4kFwKrFjE/d3Ho0RxOFFRPkkLcy
+         Fqadrszpy/7GTQgPhe03q6TkTcJCHrRO+rLP5UQCPhhh9aD85GLqULwu2HsGIqGYb2q1
+         Blbw==
+X-Gm-Message-State: AOUpUlELP09kfm8cYLfIZzkS772AtEwSgCvGE+FiWFQY5KyeBGLtitRC
+        3/cS0sgFuoSqmbVBoxKg+9qVb8qmGP+OTxTpi+qkenx62Ow=
+X-Google-Smtp-Source: AAOMgpfppHPjHtKfaSO7Zu3K5Z7MxcK9Q1ZnDoSxRtbA7nmHQxdBIiVgpU6qowAD76Gr/2sI017BruI0ZUOiTcgo5E4=
+X-Received: by 2002:adf:f210:: with SMTP id p16-v6mr24419991wro.184.1533127784805;
+ Wed, 01 Aug 2018 05:49:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 05:43:47 -0700 (PDT)
-In-Reply-To: <16141309.kTfAWOe8rM@phil>
-References: <20180731203430.GA30136@jordon-HP-15-Notebook-PC> <16141309.kTfAWOe8rM@phil>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 1 Aug 2018 18:13:47 +0530
-Message-ID: <CAFqt6zZfLXuMUT75a3dWKeiCCmKZOfi=FdTeFRjcdFDZdfcRVQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/rockchip: Convert drm_atomic_helper_suspend/resume()
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     hjc@rock-chips.com, airlied@linux.ie,
-        Ajit Linux <ajitn.linux@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Received: by 2002:adf:8487:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 05:49:24 -0700 (PDT)
+From:   Mathieu Tarral <mathieu.tarral@gmail.com>
+Date:   Wed, 1 Aug 2018 15:49:24 +0300
+Message-ID: <CAPXUdKFpFw2GAQ+mUHKz1oN+DRn6VvxB-AbUGD+YAXreAf-MQQ@mail.gmail.com>
+Subject: pthread_sigmask call is hanging in the kernel
+To:     linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 6:03 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Hi Souptick,
->
-> Am Dienstag, 31. Juli 2018, 22:34:30 CEST schrieb Souptick Joarder:
->> convert drm_atomic_helper_suspend/resume() to use
->> drm_mode_config_helper_suspend/resume().
->>
->> With this conversion, rockchip_drm_fb_resume() and
->> rockchip_drm_fb_suspend() will not be used anymore.
->> Both of these functions can be removed.
->>
->> Also, in struct rockchip_drm_private state will not be
->> used anymore. So this can be removed forever.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
->
-> the patch itself looks great, just a simple bookkeeping question.
->
-> What role did Ajit play in creating the patch? If I remember correctly
-> it is meant to be
-> - 1st Signed-off: Patch-Author
-> - 2nd Signed-off: E-Mail sender + patch possibly patch changes
-> (optional of course if the same)
->
-> So was this meant to be a Reviewed-by from Ajit?
+Greetings,
 
-We both are working together for these patches to
-convert drm_atomic_helper_suspend/resume().
-That's the reason to add his name in 2nd Signed-off
-in all similar patches.
+while developing a patch to perform introspection on KVM[1], i'm facing a bug
+where a call to pthread_sigmask(), coming from the libvirt client library,
+hangs for no obvious reason[2].
 
-Is it a incorrect way to put 2nd Signed-off here ?
+I come to ask for help and guidance on this mailing list, as i don't know how
+to proceed further. In fact:
+- the bug can only be triggered on a bare metal server in public cloud, i was
+  unable to reproduce it anywhere else, including a VM.
+- given that the server is in public cloud, debugging with KGDB is impossible
+  since it requires 2 computers with a serial cable (as i understood)
+
+After a few discussions on the Libvirt mailing list, they suggested the bug was
+due to a memory corruption.  it's a possibility, but very unlickely as I would
+have seen unexpected crashes everywhere else.
+
+The kernel i'm using is a modified Debian Stretch kernel.
+
+The next step for me is to understand where the call is blocked in the kernel,
+and I would like to ask you what are my solutions to get a kernel backtrace of
+my process in this situation ?
+
+[1]: https://github.com/KVM-VMI/kvm-vmi
+[2]: https://gist.github.com/Wenzel/6dc9e32558a7ffd51d1c0d89177532fc
+
+Thank you for your time,
+Best regards
+-- 
+Mathieu Tarral
