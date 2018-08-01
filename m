@@ -6,43 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941BAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ABAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53072208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53072208A4
+	by mail.kernel.org (Postfix) with ESMTP id 9C7C8208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7C8208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405586AbeHATlF (ORCPT
+        id S2390427AbeHATlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:41:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50152 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405955AbeHATIk (ORCPT
+        with ESMTP id S2405959AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2465E134C;
-        Wed,  1 Aug 2018 17:12:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 205921113;
+        Wed,  1 Aug 2018 17:04:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Alexander Boyko <alexander.boyko@seagate.com>,
+        Alexey Lyashkov <c17817@cray.com>,
+        Doug Oucharek <dougso@me.com>,
+        "John L. Hammond" <john.hammond@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 020/246] kcov: ensure irq code sees a valid area
-Date:   Wed,  1 Aug 2018 18:48:50 +0200
-Message-Id: <20180801165012.667812846@linuxfoundation.org>
+Subject: [PATCH 4.17 221/336] staging: lustre: o2iblnd: fix race at kiblnd_connect_peer
+Date:   Wed,  1 Aug 2018 18:49:16 +0200
+Message-Id: <20180801165037.533587582@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -52,81 +50,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Doug Oucahrek <dougso@me.com>
 
-[ Upstream commit c9484b986ef03492357fddd50afbdd02929cfa72 ]
+[ Upstream commit cf04968efe341b9b1c30a527e5dd61b2af9c43d2 ]
 
-Patch series "kcov: fix unexpected faults".
+cmid will be destroyed at OFED if kiblnd_cm_callback return error.
+if error happen before the end of kiblnd_connect_peer, it will touch
+destroyed cmid and fail as
+(o2iblnd_cb.c:1315:kiblnd_connect_peer())
+            ASSERTION( cmid->device != ((void *)0) ) failed:
 
-These patches fix a few issues where KCOV code could trigger recursive
-faults, discovered while debugging a patch enabling KCOV for arch/arm:
-
-* On CONFIG_PREEMPT kernels, there's a small race window where
-  __sanitizer_cov_trace_pc() can see a bogus kcov_area.
-
-* Lazy faulting of the vmalloc area can cause mutual recursion between
-  fault handling code and __sanitizer_cov_trace_pc().
-
-* During the context switch, switching the mm can cause the kcov_area to
-  be transiently unmapped.
-
-These are prerequisites for enabling KCOV on arm, but the issues
-themsevles are generic -- we just happen to avoid them by chance rather
-than design on x86-64 and arm64.
-
-This patch (of 3):
-
-For kernels built with CONFIG_PREEMPT, some C code may execute before or
-after the interrupt handler, while the hardirq count is zero.  In these
-cases, in_task() can return true.
-
-A task can be interrupted in the middle of a KCOV_DISABLE ioctl while it
-resets the task's kcov data via kcov_task_init().  Instrumented code
-executed during this period will call __sanitizer_cov_trace_pc(), and as
-in_task() returns true, will inspect t->kcov_mode before trying to write
-to t->kcov_area.
-
-In kcov_init_task() we update t->kcov_{mode,area,size} with plain stores,
-which may be re-ordered, torn, etc.  Thus __sanitizer_cov_trace_pc() may
-see bogus values for any of these fields, and may attempt to write to
-memory which is not mapped.
-
-Let's avoid this by using WRITE_ONCE() to set t->kcov_mode, with a
-barrier() to ensure this is ordered before we clear t->kov_{area,size}.
-This ensures that any code execute while kcov_init_task() is preempted
-will either see valid values for t->kcov_{area,size}, or will see that
-t->kcov_mode is KCOV_MODE_DISABLED, and bail out without touching
-t->kcov_area.
-
-Link: http://lkml.kernel.org/r/20180504135535.53744-2-mark.rutland@arm.com
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Alexander Boyko <alexander.boyko@seagate.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10015
+Reviewed-by: Alexey Lyashkov <c17817@cray.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Reviewed-by: John L. Hammond <john.hammond@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kcov.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   18 +++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -108,7 +108,8 @@ static void kcov_put(struct kcov *kcov)
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1290,11 +1290,6 @@ kiblnd_connect_peer(struct kib_peer *pee
+ 		goto failed2;
+ 	}
  
- void kcov_task_init(struct task_struct *t)
- {
--	t->kcov_mode = KCOV_MODE_DISABLED;
-+	WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
-+	barrier();
- 	t->kcov_size = 0;
- 	t->kcov_area = NULL;
- 	t->kcov = NULL;
+-	LASSERT(cmid->device);
+-	CDEBUG(D_NET, "%s: connection bound to %s:%pI4h:%s\n",
+-	       libcfs_nid2str(peer->ibp_nid), dev->ibd_ifname,
+-	       &dev->ibd_ifip, cmid->device->name);
+-
+ 	return;
+ 
+  failed2:
+@@ -2996,8 +2991,19 @@ kiblnd_cm_callback(struct rdma_cm_id *cm
+ 		} else {
+ 			rc = rdma_resolve_route(
+ 				cmid, *kiblnd_tunables.kib_timeout * 1000);
+-			if (!rc)
++			if (!rc) {
++				struct kib_net *net = peer->ibp_ni->ni_data;
++				struct kib_dev *dev = net->ibn_dev;
++
++				CDEBUG(D_NET, "%s: connection bound to "\
++				       "%s:%pI4h:%s\n",
++				       libcfs_nid2str(peer->ibp_nid),
++				       dev->ibd_ifname,
++				       &dev->ibd_ifip, cmid->device->name);
++
+ 				return 0;
++			}
++
+ 			/* Can't initiate route resolution */
+ 			CERROR("Can't resolve route for %s: %d\n",
+ 			       libcfs_nid2str(peer->ibp_nid), rc);
 
 
