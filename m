@@ -2,82 +2,115 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4473EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73693C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA76120894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA76120894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2331A20894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hybR9cAa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2331A20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbeHAKk2 (ORCPT
+        id S2388787AbeHAKlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:40:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33372 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387502AbeHAKk2 (ORCPT
+        Wed, 1 Aug 2018 06:41:44 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40134 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387728AbeHAKln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:40:28 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fkmuj-00028U-Ap; Wed, 01 Aug 2018 10:55:25 +0200
-Date:   Wed, 1 Aug 2018 10:55:22 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH 6/7] x86/vdso: Add vDSO functions for user wait
- instructions
-In-Reply-To: <CALCETrUZdbvo+FPrcKP2vbORAZmeaXvMiGm5r6Hxn+3GkSQTdw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808011050340.2501@nanos.tec.linutronix.de>
-References: <1532350557-98388-1-git-send-email-fenghua.yu@intel.com> <1532350557-98388-7-git-send-email-fenghua.yu@intel.com> <2267fbe6-37e8-7063-d48f-1879f31d3258@kernel.org> <alpine.DEB.2.21.1807312220490.1713@nanos.tec.linutronix.de>
- <CALCETrUZdbvo+FPrcKP2vbORAZmeaXvMiGm5r6Hxn+3GkSQTdw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 1 Aug 2018 06:41:43 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y9-v6so6141049wma.5
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 01:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fmAftgO3f/CX3HLsGTkE0X64lHZrKJQFEs6fx5m+BGg=;
+        b=hybR9cAanIX2DiCOMcpmtew7TOxjXC62V6gaxDFoW6RlPlByifVGwlIbEVXHh9UL2r
+         qCTizbmg7CW+T1p8gtaAKSvwG2emKZ4s4lR7yFkMUBNWf8XhRD8y5nwLNYyvp9zGBd95
+         t0ElYQTQEZmNQHrV2Fuz5+y6NYBr0KuNY4l5M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fmAftgO3f/CX3HLsGTkE0X64lHZrKJQFEs6fx5m+BGg=;
+        b=V49qDkSqu+U158/QZ9acfmoq7IqcsDNkHVdAVID+YmIgrZAn6XRPqAd2FwQlTDm0vM
+         G/VvB0no0Y6VC8k0Pb1tZPJBhN3xcjnZXCCxeclPxUjr8BHpKk+uKujNxFy3qgZ1fsGG
+         nD+znSmLtH1x9UVRAHOtLEGxIQOUr1+lkiRbGjpAzl9PBVLpVu9x1HEtxKP/W4nnn/PC
+         ieF3Q+90aSUeA3MuNqz8hli4gUccWPxGy87JoslLMixHbdJJ9lmpEUZBS9DU/trEhs5a
+         8Fg0XlzhheR8R1hY81wcuh4VQSqSTMEVrGu+aPGK752BBIAoLGoCpDFagakcAEJosxjZ
+         ys5w==
+X-Gm-Message-State: AOUpUlFiqV9szdO89BpX8CWU3Vl4HZRQFt5IJZKIGBfEhtqH33kKpGyZ
+        7Ch3rMmivWwDFkAPfWFvldIvmw==
+X-Google-Smtp-Source: AAOMgpd0HrN2XOB4s3vl1D4DIx4NM6uzPob6DQbyZ0iLMf0BbUlIzI4SY5w7iwfrmZsST4ku/w90cg==
+X-Received: by 2002:a1c:6d9a:: with SMTP id b26-v6mr1958024wmi.74.1533113820641;
+        Wed, 01 Aug 2018 01:57:00 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id i1-v6sm19082139wrq.69.2018.08.01.01.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 01:57:00 -0700 (PDT)
+Subject: Re: [PATCH v2 01/10] ASoC: dt-bindings: add dt bindings for wcd9335
+ audio codec
+To:     Rob Herring <robh@kernel.org>
+Cc:     lee.jones@linaro.org, broonie@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
+References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
+ <20180727121806.18209-2-srinivas.kandagatla@linaro.org>
+ <20180731204315.GA5265@rob-hp-laptop>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <53a4e82c-7270-fdbd-a2ea-efbfc2d747a2@linaro.org>
+Date:   Wed, 1 Aug 2018 09:56:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180731204315.GA5265@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018, Andy Lutomirski wrote:
-> On Tue, Jul 31, 2018 at 2:22 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> u64 start = __vdso_read_art_ns();
-> >
-> > Errm. No. You can't read ART. ART is only used by decives to which it is
-> > distributed. You can only read TSC here and convert that to nsecs.
-> 
-> Bah.
-> 
-> But my point remains -- I think that the user (non-vDSO) code should
-> think in nanoseconds, not TSC ticks.  That we have have a much better
-> chance of getting migration right.
+Thanks for the review.
 
-Agreed. And we should not create new interfaces for that. We already have
-clock_gettime() which is the right thing to use.
-
-> > A possible solution would be to use CLOCK_MOTONIC_RAW which is not affected
-> > by NTP/PTP adjustments. But that still has the issue of TSC not being the
-> > timekeeping clocksource. Bah, the whole TSC deadline mode sucks. I have no
-> > idea what's wrong with simple down counters. They Just Work.
+On 31/07/18 21:43, Rob Herring wrote:
+>> +
+>> +- reset-gpio:
+> reset-gpios
 > 
-> I think it's not totally crazy to declare UMWAIT on a system with a
-> non-TSC clocksource to be unsupported.
+Yep, reset-gpios makes more inline with others!
+>> +	Usage: required
+>> +	Value type: <String Array>
+>> +	Definition: Reset gpio line
+>> +
+>> +- qcom,ifd:
+>> +	Usage: required
+>> +	Value type: <phandle>
+>> +	Definition: SLIM interface device
+> Wouldn't this be the parent?
+> 
+No, Interface device is just like other slim device and is part of 
+SLIMbus Component and has a unique address. Every SLIMbus component has 
+one interface device.
+...
+>> +
+>> +codec@1{
+> audio-codec@1
+> 
+Yep, I will fix this in next version.
 
-Sure, the information is already available in the VDSO gtod data.
+>> +	compatible = "slim217,1a0";
+>> +	reg  = <1 0>;
 
 Thanks,
-
-	tglx
-
+srini
