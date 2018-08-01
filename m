@@ -2,305 +2,318 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D93CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80876C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B5E208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:41:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mt59xQyC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B5E208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3230D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:45:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3230D20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbeHAXY4 (ORCPT
+        id S1732403AbeHAXcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:24:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38730 "EHLO mail.kernel.org"
+        Wed, 1 Aug 2018 19:32:50 -0400
+Received: from mga09.intel.com ([134.134.136.24]:60202 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732307AbeHAXYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:24:54 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D932208A4;
-        Wed,  1 Aug 2018 21:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533159426;
-        bh=fgaxWkAPTHAF2866FoT1D+Fo1IYKJqvt3ezsnWOqxaQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mt59xQyCAYXjOxwWPDISBx+zqVQ3lPQZ65YbuUhVjedGvQJyxMN4a5mMcg57cn3kc
-         aRyLSdxCgnxx93ZquSlaRbfQfRfS1vZoKoYbVZe/8GPVm+1TTXqPefPP/cNtxrzRZn
-         gf64qq8/ZoLWOlYuvsnP9kFuGWyd+7WiU3Z1ljKs=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 01/21] perf trace beauty: Default header_dir to cwd to work without parms
-Date:   Wed,  1 Aug 2018 18:36:28 -0300
-Message-Id: <20180801213648.4814-2-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180801213648.4814-1-acme@kernel.org>
-References: <20180801213648.4814-1-acme@kernel.org>
+        id S1731900AbeHAXcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 19:32:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 14:45:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,433,1526367600"; 
+   d="scan'208";a="69340678"
+Received: from maru.jf.intel.com ([10.54.51.80])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Aug 2018 14:44:56 -0700
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH i2c-next v3] i2c: aspeed: Handle master/slave combined irq events properly
+Date:   Wed,  1 Aug 2018 14:44:53 -0700
+Message-Id: <20180801214453.30905-1-jae.hyun.yoo@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+In most of cases, interrupt bits are set one by one but there are
+also a lot of other cases that Aspeed I2C IP sends multiple
+interrupt bits with combining master and slave events using a
+single interrupt call. It happens much more in multi-master
+environment than single-master. For an example, when master is
+waiting for a NORMAL_STOP interrupt in its MASTER_STOP state,
+SLAVE_MATCH and RX_DONE interrupts could come along with the
+NORMAL_STOP in case of an another master immediately sends data
+just after acquiring the bus. In this case, the NORMAL_STOP
+interrupt should be handled by master_irq and the SLAVE_MATCH and
+RX_DONE interrupts should be handled by slave_irq. This commit
+modifies irq hadling logic to handle the master/slave combined
+events properly.
 
-Useful when checking the effects of header synchs for the files it uses
-as a input to generate string tables, in retrospect this is how it
-should've been done from day 1, not requiring the header_dir to be set
-on the Makefile, will change everything later, so that the only parm,
-common to all generators will be $(srctree) and $(beauty_outdir).
-
-So, to see what it generates, just call it without any parameters:
-
-  $ tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-  static const char *vhost_virtio_ioctl_cmds[] = {
-	[0x00] = "SET_FEATURES",
-	[0x01] = "SET_OWNER",
-	[0x02] = "RESET_OWNER",
-	[0x03] = "SET_MEM_TABLE",
-	[0x04] = "SET_LOG_BASE",
-	[0x07] = "SET_LOG_FD",
-	[0x10] = "SET_VRING_NUM",
-	[0x11] = "SET_VRING_ADDR",
-	[0x12] = "SET_VRING_BASE",
-	[0x13] = "SET_VRING_ENDIAN",
-	[0x14] = "GET_VRING_ENDIAN",
-	[0x20] = "SET_VRING_KICK",
-	[0x21] = "SET_VRING_CALL",
-	[0x22] = "SET_VRING_ERR",
-	[0x23] = "SET_VRING_BUSYLOOP_TIMEOUT",
-	[0x24] = "GET_VRING_BUSYLOOP_TIMEOUT",
-	[0x30] = "NET_SET_BACKEND",
-	[0x40] = "SCSI_SET_ENDPOINT",
-	[0x41] = "SCSI_CLEAR_ENDPOINT",
-	[0x42] = "SCSI_GET_ABI_VERSION",
-	[0x43] = "SCSI_SET_EVENTS_MISSED",
-	[0x44] = "SCSI_GET_EVENTS_MISSED",
-	[0x60] = "VSOCK_SET_GUEST_CID",
-	[0x61] = "VSOCK_SET_RUNNING",
-  };
-  static const char *vhost_virtio_ioctl_read_cmds[] = {
-	[0x00] = "GET_FEATURES",
-	[0x12] = "GET_VRING_BASE",
-  };
-  $
-
-Or:
-
-  $ tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
-  static const char *sndrv_pcm_ioctl_cmds[] = {
-	[0x00] = "PVERSION",
-	[0x01] = "INFO",
-	[0x02] = "TSTAMP",
-	[0x03] = "TTSTAMP",
-	[0x04] = "USER_PVERSION",
-	[0x10] = "HW_REFINE",
-	[0x11] = "HW_PARAMS",
-	[0x12] = "HW_FREE",
-	[0x13] = "SW_PARAMS",
-	[0x20] = "STATUS",
-	[0x21] = "DELAY",
-	[0x22] = "HWSYNC",
-	[0x23] = "SYNC_PTR",
-	[0x24] = "STATUS_EXT",
-	[0x32] = "CHANNEL_INFO",
-	[0x40] = "PREPARE",
-	[0x41] = "RESET",
-	[0x42] = "START",
-	[0x43] = "DROP",
-	[0x44] = "DRAIN",
-	[0x45] = "PAUSE",
-	[0x46] = "REWIND",
-	[0x47] = "RESUME",
-	[0x48] = "XRUN",
-	[0x49] = "FORWARD",
-	[0x50] = "WRITEI_FRAMES",
-	[0x51] = "READI_FRAMES",
-	[0x52] = "WRITEN_FRAMES",
-	[0x53] = "READN_FRAMES",
-	[0x60] = "LINK",
-	[0x61] = "UNLINK",
-  };
-  $
-
-Etc.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-90am4vm8hh1osms894dp2otr@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 ---
- tools/perf/trace/beauty/drm_ioctl.sh                | 9 +++++----
- tools/perf/trace/beauty/kcmp_type.sh                | 2 +-
- tools/perf/trace/beauty/kvm_ioctl.sh                | 4 ++--
- tools/perf/trace/beauty/madvise_behavior.sh         | 2 +-
- tools/perf/trace/beauty/perf_ioctl.sh               | 2 +-
- tools/perf/trace/beauty/pkey_alloc_access_rights.sh | 2 +-
- tools/perf/trace/beauty/sndrv_ctl_ioctl.sh          | 4 ++--
- tools/perf/trace/beauty/sndrv_pcm_ioctl.sh          | 4 ++--
- tools/perf/trace/beauty/vhost_virtio_ioctl.sh       | 6 +++---
- 9 files changed, 18 insertions(+), 17 deletions(-)
+Changes since v2:
+- Changed the name of ASPEED_I2CD_INTR_ERRORS to ASPEED_I2CD_INTR_MASTER_ERRORS
+- Removed a member irq_status from the struct aspeed_i2c_bus and changed
+  master_irq and slave_irq handlers to make them return status_ack.
+- Added a comment to explain why it needs to try both irq handlers.
 
-diff --git a/tools/perf/trace/beauty/drm_ioctl.sh b/tools/perf/trace/beauty/drm_ioctl.sh
-index 2149d3a98e42..9d3816815e60 100755
---- a/tools/perf/trace/beauty/drm_ioctl.sh
-+++ b/tools/perf/trace/beauty/drm_ioctl.sh
-@@ -1,13 +1,14 @@
- #!/bin/sh
+Changes since v1:
+- Fixed a grammar issue in commit message.
+- Added a missing line feed character into a message printing.
+
+ drivers/i2c/busses/i2c-aspeed.c | 110 +++++++++++++++++++-------------
+ 1 file changed, 65 insertions(+), 45 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index efb89422d496..37cee46f1e36 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -82,6 +82,11 @@
+ #define ASPEED_I2CD_INTR_RX_DONE			BIT(2)
+ #define ASPEED_I2CD_INTR_TX_NAK				BIT(1)
+ #define ASPEED_I2CD_INTR_TX_ACK				BIT(0)
++#define ASPEED_I2CD_INTR_MASTER_ERRORS					       \
++		(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
++		 ASPEED_I2CD_INTR_SCL_TIMEOUT |				       \
++		 ASPEED_I2CD_INTR_ABNORMAL |				       \
++		 ASPEED_I2CD_INTR_ARBIT_LOSS)
+ #define ASPEED_I2CD_INTR_ALL						       \
+ 		(ASPEED_I2CD_INTR_SDA_DL_TIMEOUT |			       \
+ 		 ASPEED_I2CD_INTR_BUS_RECOVER_DONE |			       \
+@@ -227,20 +232,16 @@ static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
+ }
  
--drm_header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/drm/
-+
- printf "#ifndef DRM_COMMAND_BASE\n"
--grep "#define DRM_COMMAND_BASE" $drm_header_dir/drm.h
-+grep "#define DRM_COMMAND_BASE" $header_dir/drm.h
- printf "#endif\n"
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+-static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
++static u32 aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ {
+-	u32 command, irq_status, status_ack = 0;
++	u32 command, status_ack = 0;
+ 	struct i2c_client *slave = bus->slave;
+-	bool irq_handled = true;
+ 	u8 value;
  
- printf "static const char *drm_ioctl_cmds[] = {\n"
--grep "^#define DRM_IOCTL.*DRM_IO" $drm_header_dir/drm.h | \
-+grep "^#define DRM_IOCTL.*DRM_IO" $header_dir/drm.h | \
- 	sed -r 's/^#define +DRM_IOCTL_([A-Z0-9_]+)[	 ]+DRM_IO[A-Z]* *\( *(0x[[:xdigit:]]+),*.*/	[\2] = "\1",/g'
--grep "^#define DRM_I915_[A-Z_0-9]\+[	 ]\+0x" $drm_header_dir/i915_drm.h | \
-+grep "^#define DRM_I915_[A-Z_0-9]\+[	 ]\+0x" $header_dir/i915_drm.h | \
- 	sed -r 's/^#define +DRM_I915_([A-Z0-9_]+)[	 ]+(0x[[:xdigit:]]+)/\t[DRM_COMMAND_BASE + \2] = "I915_\1",/g'
- printf "};\n"
-diff --git a/tools/perf/trace/beauty/kcmp_type.sh b/tools/perf/trace/beauty/kcmp_type.sh
-index 40d063b8c082..a3c304caa336 100755
---- a/tools/perf/trace/beauty/kcmp_type.sh
-+++ b/tools/perf/trace/beauty/kcmp_type.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
+-	if (!slave) {
+-		irq_handled = false;
+-		goto out;
+-	}
++	if (!slave)
++		return 0;
  
--header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 	command = readl(bus->base + ASPEED_I2C_CMD_REG);
+-	irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
  
- printf "static const char *kcmp_types[] = {\n"
- regex='^[[:space:]]+(KCMP_(\w+)),'
-diff --git a/tools/perf/trace/beauty/kvm_ioctl.sh b/tools/perf/trace/beauty/kvm_ioctl.sh
-index bd28817afced..c4699fd46bb6 100755
---- a/tools/perf/trace/beauty/kvm_ioctl.sh
-+++ b/tools/perf/trace/beauty/kvm_ioctl.sh
-@@ -1,10 +1,10 @@
- #!/bin/sh
+ 	/* Slave was requested, restart state machine. */
+ 	if (irq_status & ASPEED_I2CD_INTR_SLAVE_MATCH) {
+@@ -249,10 +250,8 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
+ 	}
  
--kvm_header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 	/* Slave is not currently active, irq was for someone else. */
+-	if (bus->slave_state == ASPEED_I2C_SLAVE_STOP) {
+-		irq_handled = false;
+-		goto out;
+-	}
++	if (bus->slave_state == ASPEED_I2C_SLAVE_STOP)
++		return status_ack;
  
- printf "static const char *kvm_ioctl_cmds[] = {\n"
- regex='^#[[:space:]]*define[[:space:]]+KVM_(\w+)[[:space:]]+_IO[RW]*\([[:space:]]*KVMIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
--egrep $regex ${kvm_header_dir}/kvm.h	| \
-+egrep $regex ${header_dir}/kvm.h	| \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	egrep -v " ((ARM|PPC|S390)_|[GS]ET_(DEBUGREGS|PIT2|XSAVE|TSC_KHZ)|CREATE_SPAPR_TCE_64)" | \
- 	sort | xargs printf "\t[%s] = \"%s\",\n"
-diff --git a/tools/perf/trace/beauty/madvise_behavior.sh b/tools/perf/trace/beauty/madvise_behavior.sh
-index 60ef8640ee70..431639eb4d29 100755
---- a/tools/perf/trace/beauty/madvise_behavior.sh
-+++ b/tools/perf/trace/beauty/madvise_behavior.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
+ 	dev_dbg(bus->dev, "slave irq status 0x%08x, cmd 0x%08x\n",
+ 		irq_status, command);
+@@ -281,19 +280,19 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
+ 		status_ack |= ASPEED_I2CD_INTR_TX_NAK;
+ 		bus->slave_state = ASPEED_I2C_SLAVE_STOP;
+ 	}
++	if (irq_status & ASPEED_I2CD_INTR_TX_ACK)
++		status_ack |= ASPEED_I2CD_INTR_TX_ACK;
  
--header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/asm-generic/
+ 	switch (bus->slave_state) {
+ 	case ASPEED_I2C_SLAVE_READ_REQUESTED:
+ 		if (irq_status & ASPEED_I2CD_INTR_TX_ACK)
+ 			dev_err(bus->dev, "Unexpected ACK on read request.\n");
+ 		bus->slave_state = ASPEED_I2C_SLAVE_READ_PROCESSED;
+-
+ 		i2c_slave_event(slave, I2C_SLAVE_READ_REQUESTED, &value);
+ 		writel(value, bus->base + ASPEED_I2C_BYTE_BUF_REG);
+ 		writel(ASPEED_I2CD_S_TX_CMD, bus->base + ASPEED_I2C_CMD_REG);
+ 		break;
+ 	case ASPEED_I2C_SLAVE_READ_PROCESSED:
+-		status_ack |= ASPEED_I2CD_INTR_TX_ACK;
+ 		if (!(irq_status & ASPEED_I2CD_INTR_TX_ACK))
+ 			dev_err(bus->dev,
+ 				"Expected ACK after processed read.\n");
+@@ -317,14 +316,7 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
+ 		break;
+ 	}
  
- printf "static const char *madvise_advices[] = {\n"
- regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+MADV_([[:alnum:]_]+)[[:space:]]+([[:digit:]]+)[[:space:]]*.*'
-diff --git a/tools/perf/trace/beauty/perf_ioctl.sh b/tools/perf/trace/beauty/perf_ioctl.sh
-index faea4237c793..6492c74df928 100755
---- a/tools/perf/trace/beauty/perf_ioctl.sh
-+++ b/tools/perf/trace/beauty/perf_ioctl.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
+-	if (status_ack != irq_status)
+-		dev_err(bus->dev,
+-			"irq handled != irq. expected %x, but was %x\n",
+-			irq_status, status_ack);
+-	writel(status_ack, bus->base + ASPEED_I2C_INTR_STS_REG);
+-
+-out:
+-	return irq_handled;
++	return status_ack;
+ }
+ #endif /* CONFIG_I2C_SLAVE */
  
--header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+@@ -380,21 +372,21 @@ static int aspeed_i2c_is_irq_error(u32 irq_status)
+ 	return 0;
+ }
  
- printf "static const char *perf_ioctl_cmds[] = {\n"
- regex='^#[[:space:]]*define[[:space:]]+PERF_EVENT_IOC_(\w+)[[:space:]]+_IO[RW]*[[:space:]]*\([[:space:]]*.\$.[[:space:]]*,[[:space:]]*([[:digit:]]+).*'
-diff --git a/tools/perf/trace/beauty/pkey_alloc_access_rights.sh b/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
-index 62e51a02b839..e0a51aeb20b2 100755
---- a/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
-+++ b/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
+-static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
++static u32 aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus, u32 irq_status)
+ {
+-	u32 irq_status, status_ack = 0, command = 0;
++	u32 status_ack = 0, command = 0;
+ 	struct i2c_msg *msg;
+ 	u8 recv_byte;
+ 	int ret;
  
--header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/asm-generic/
+-	irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
+-	/* Ack all interrupt bits. */
+-	writel(irq_status, bus->base + ASPEED_I2C_INTR_STS_REG);
+-
+ 	if (irq_status & ASPEED_I2CD_INTR_BUS_RECOVER_DONE) {
+ 		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
+ 		status_ack |= ASPEED_I2CD_INTR_BUS_RECOVER_DONE;
+ 		goto out_complete;
++	} else {
++		/* Master is not currently active, irq was for someone else. */
++		if (bus->master_state == ASPEED_I2C_MASTER_INACTIVE)
++			goto out_no_complete;
+ 	}
  
- printf "static const char *pkey_alloc_access_rights[] = {\n"
- regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+PKEY_([[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*'
-diff --git a/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh b/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
-index aad5ab130539..eb511bb5fbd3 100755
---- a/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
-+++ b/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
-@@ -1,8 +1,8 @@
- #!/bin/sh
+ 	/*
+@@ -403,19 +395,22 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
+ 	 * INACTIVE state.
+ 	 */
+ 	ret = aspeed_i2c_is_irq_error(irq_status);
+-	if (ret < 0) {
++	if (ret) {
+ 		dev_dbg(bus->dev, "received error interrupt: 0x%08x\n",
+ 			irq_status);
+ 		bus->cmd_err = ret;
+ 		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
++		status_ack |= (irq_status & ASPEED_I2CD_INTR_MASTER_ERRORS);
+ 		goto out_complete;
+ 	}
  
--sound_header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/sound/
+ 	/* We are in an invalid state; reset bus to a known state. */
+ 	if (!bus->msgs) {
+-		dev_err(bus->dev, "bus in unknown state\n");
++		dev_err(bus->dev, "bus in unknown state irq_status: 0x%x\n",
++			irq_status);
+ 		bus->cmd_err = -EIO;
+-		if (bus->master_state != ASPEED_I2C_MASTER_STOP)
++		if (bus->master_state != ASPEED_I2C_MASTER_STOP &&
++		    bus->master_state != ASPEED_I2C_MASTER_INACTIVE)
+ 			aspeed_i2c_do_stop(bus);
+ 		goto out_no_complete;
+ 	}
+@@ -428,6 +423,11 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
+ 	 */
+ 	if (bus->master_state == ASPEED_I2C_MASTER_START) {
+ 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
++			if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_NAK))) {
++				bus->cmd_err = -ENXIO;
++				bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
++				goto out_complete;
++			}
+ 			pr_devel("no slave present at %02x\n", msg->addr);
+ 			status_ack |= ASPEED_I2CD_INTR_TX_NAK;
+ 			bus->cmd_err = -ENXIO;
+@@ -506,7 +506,9 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
+ 		goto out_no_complete;
+ 	case ASPEED_I2C_MASTER_STOP:
+ 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_NORMAL_STOP))) {
+-			dev_err(bus->dev, "master failed to STOP\n");
++			dev_err(bus->dev,
++				"master failed to STOP irq_status:0x%x\n",
++				irq_status);
+ 			bus->cmd_err = -EIO;
+ 			/* Do not STOP as we have already tried. */
+ 		} else {
+@@ -540,33 +542,51 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
+ 		bus->master_xfer_result = bus->msgs_index + 1;
+ 	complete(&bus->cmd_complete);
+ out_no_complete:
+-	if (irq_status != status_ack)
+-		dev_err(bus->dev,
+-			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
+-			irq_status, status_ack);
+-	return !!irq_status;
++	return status_ack;
+ }
  
- printf "static const char *sndrv_ctl_ioctl_cmds[] = {\n"
--grep "^#define[\t ]\+SNDRV_CTL_IOCTL_" $sound_header_dir/asound.h | \
-+grep "^#define[\t ]\+SNDRV_CTL_IOCTL_" $header_dir/asound.h | \
- 	sed -r 's/^#define +SNDRV_CTL_IOCTL_([A-Z0-9_]+)[\t ]+_IO[RW]*\( *.U., *(0x[[:xdigit:]]+),?.*/\t[\2] = \"\1\",/g'
- printf "};\n"
-diff --git a/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh b/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
-index b7e9ef6b2f55..6818392968b2 100755
---- a/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
-+++ b/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
-@@ -1,8 +1,8 @@
- #!/bin/sh
+ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ {
+ 	struct aspeed_i2c_bus *bus = dev_id;
+-	bool ret;
++	u32 irq_received, irq_status, irq_acked;
  
--sound_header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/sound/
+ 	spin_lock(&bus->lock);
++	irq_received = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
++	irq_status = irq_received;
  
- printf "static const char *sndrv_pcm_ioctl_cmds[] = {\n"
--grep "^#define[\t ]\+SNDRV_PCM_IOCTL_" $sound_header_dir/asound.h | \
-+grep "^#define[\t ]\+SNDRV_PCM_IOCTL_" $header_dir/asound.h | \
- 	sed -r 's/^#define +SNDRV_PCM_IOCTL_([A-Z0-9_]+)[\t ]+_IO[RW]*\( *.A., *(0x[[:xdigit:]]+),?.*/\t[\2] = \"\1\",/g'
- printf "};\n"
-diff --git a/tools/perf/trace/beauty/vhost_virtio_ioctl.sh b/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-index 76f1de697787..0f6a5197d0be 100755
---- a/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-+++ b/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-@@ -1,17 +1,17 @@
- #!/bin/sh
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+-	if (aspeed_i2c_slave_irq(bus)) {
+-		dev_dbg(bus->dev, "irq handled by slave.\n");
+-		ret = true;
+-		goto out;
++	/*
++	 * In most cases, interrupt bits will be set one by one, although
++	 * multiple interrupt bits could be set at the same time. It also
++	 * possible that master interrupt bits could be set along with slave
++	 * interrupt bits. Each case needs to be handled using corresponding
++	 * handlers depending on the current state.
++	 */
++	if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
++		irq_acked = aspeed_i2c_master_irq(bus, irq_status);
++		irq_status &= ~irq_acked;
++		if (irq_status)
++			irq_acked = aspeed_i2c_slave_irq(bus, irq_status);
++	} else {
++		irq_acked = aspeed_i2c_slave_irq(bus, irq_status);
++		irq_status &= ~irq_acked;
++		if (irq_status)
++			irq_acked = aspeed_i2c_master_irq(bus, irq_status);
+ 	}
++#else
++	irq_acked = aspeed_i2c_master_irq(bus, irq_status);
+ #endif /* CONFIG_I2C_SLAVE */
  
--vhost_virtio_header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+-	ret = aspeed_i2c_master_irq(bus);
++	irq_status &= ~irq_acked;
++	if (irq_status)
++		dev_err(bus->dev,
++			"irq handled != irq. expected 0x%08x, but was 0x%08x\n",
++			irq_received, irq_received ^ irq_status);
  
- printf "static const char *vhost_virtio_ioctl_cmds[] = {\n"
- regex='^#[[:space:]]*define[[:space:]]+VHOST_(\w+)[[:space:]]+_IOW?\([[:space:]]*VHOST_VIRTIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
--egrep $regex ${vhost_virtio_header_dir}/vhost.h | \
-+egrep $regex ${header_dir}/vhost.h | \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	sort | xargs printf "\t[%s] = \"%s\",\n"
- printf "};\n"
+-out:
++	/* Ack all interrupt bits. */
++	writel(irq_received, bus->base + ASPEED_I2C_INTR_STS_REG);
+ 	spin_unlock(&bus->lock);
+-	return ret ? IRQ_HANDLED : IRQ_NONE;
++	return irq_status ? IRQ_NONE : IRQ_HANDLED;
+ }
  
- printf "static const char *vhost_virtio_ioctl_read_cmds[] = {\n"
- regex='^#[[:space:]]*define[[:space:]]+VHOST_(\w+)[[:space:]]+_IOW?R\([[:space:]]*VHOST_VIRTIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
--egrep $regex ${vhost_virtio_header_dir}/vhost.h | \
-+egrep $regex ${header_dir}/vhost.h | \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	sort | xargs printf "\t[%s] = \"%s\",\n"
- printf "};\n"
+ static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
 -- 
-2.14.4
+2.18.0
 
