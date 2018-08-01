@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5827DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C26C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C1020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C1020844
+	by mail.kernel.org (Postfix) with ESMTP id BB942208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB942208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405069AbeHATFj (ORCPT
+        id S2405084AbeHATFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:05:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47668 "EHLO
+        Wed, 1 Aug 2018 15:05:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403863AbeHATFh (ORCPT
+        with ESMTP id S2403863AbeHATFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:05:37 -0400
+        Wed, 1 Aug 2018 15:05:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A92ED0A;
-        Wed,  1 Aug 2018 17:18:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24B44D00;
+        Wed,  1 Aug 2018 17:18:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrice Chotard <patrice.chotard@st.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 142/246] ARM: dts: stih407-pinctrl: Fix complain about IRQ_TYPE_NONE usage
-Date:   Wed,  1 Aug 2018 18:50:52 +0200
-Message-Id: <20180801165018.531095156@linuxfoundation.org>
+Subject: [PATCH 4.14 143/246] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
+Date:   Wed,  1 Aug 2018 18:50:53 +0200
+Message-Id: <20180801165018.575583439@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,69 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit e95b8e718f9bd2386a29639dd21c633b4951dc21 ]
+[ Upstream commit 7207b94754b6f503b278b5b200faaf662ffa1da8 ]
 
-Since commit 83a86fbb5b56 ("irqchip/gic: Loudly complain about the use of IRQ_TYPE_NONE")
-kernel is complaining about the IRQ_TYPE_NONE usage which shouldn't
-be used.
+The PMU node references two interrupts, but lacks the interrupt-affinity
+property, which is required in that case:
 
-Use IRQ_TYPE_LEVEL_HIGH instead.
+    hw perfevents: no interrupt-affinity property for /pmu, guessing.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Add the missing property to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/stih407-pinctrl.dtsi |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/emev2.dtsi |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -52,7 +52,7 @@
- 			st,syscfg = <&syscfg_sbc>;
- 			reg = <0x0961f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 188 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09610000 0x6000>;
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -31,13 +31,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
-@@ -376,7 +376,7 @@
- 			st,syscfg = <&syscfg_front>;
- 			reg = <0x0920f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 189 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09200000 0x10000>;
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <533000000>;
+ 		};
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+@@ -57,6 +57,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
+ 	};
  
-@@ -936,7 +936,7 @@
- 			st,syscfg = <&syscfg_front>;
- 			reg = <0x0921f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 190 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09210000 0x10000>;
- 
-@@ -969,7 +969,7 @@
- 			st,syscfg = <&syscfg_rear>;
- 			reg = <0x0922f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 191 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09220000 0x6000>;
- 
-@@ -1164,7 +1164,7 @@
- 			st,syscfg = <&syscfg_flash>;
- 			reg = <0x0923f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 192 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09230000 0x3000>;
- 
+ 	clocks@e0110000 {
 
 
