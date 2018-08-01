@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96908C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 474B7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56EDD20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EDD20840
+	by mail.kernel.org (Postfix) with ESMTP id 0944020840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0944020840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733125AbeHAUTU (ORCPT
+        id S1733201AbeHAUT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:19:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
+        Wed, 1 Aug 2018 16:19:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404174AbeHATDf (ORCPT
+        with ESMTP id S2404179AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E268F11D5;
-        Wed,  1 Aug 2018 17:08:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA78E1194;
+        Wed,  1 Aug 2018 17:07:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 277/336] regulator: Dont return or expect -errno from of_map_mode()
-Date:   Wed,  1 Aug 2018 18:50:12 +0200
-Message-Id: <20180801165039.625225017@linuxfoundation.org>
+Subject: [PATCH 4.17 264/336] staging: vchiq_core: Fix missing semaphore release in error case
+Date:   Wed,  1 Aug 2018 18:49:59 +0200
+Message-Id: <20180801165039.148873152@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,109 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit 02f3703934a42417021405ef336fe45add13c3d1 ]
+[ Upstream commit 8113b89fc615cfb531df0334fb3a091cf6a45ce0 ]
 
-In of_get_regulation_constraints() we were taking the result of
-of_map_mode() (an unsigned int) and assigning it to an int.  We were
-then checking whether this value was -EINVAL.  Some implementers of
-of_map_mode() were returning -EINVAL (even though the return type of
-their function needed to be unsigned int) because they needed to
-signal an error back to of_get_regulation_constraints().
+The bail out branch in case of a invalid tx_pos missed a semaphore
+release. Dan Carpenter found this with a static checker.
 
-In general in the regulator framework the mode is always referred to
-as an unsigned int.  While we could fix this to be a signed int (the
-highest value we store in there right now is 0x8), it's actually
-pretty clean to just define the regulator mode 0x0 (the lack of any
-bits set) as an invalid mode.  Let's do that.
-
-Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
-Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: d1eab9dec610 ("staging: vchiq_core: Bail out in case of invalid tx_pos")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/regulator/cpcap-regulator.c |    2 +-
- drivers/regulator/of_regulator.c    |   13 +++++++------
- drivers/regulator/twl-regulator.c   |    2 +-
- include/linux/regulator/consumer.h  |    1 +
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsig
- 	case CPCAP_BIT_AUDIO_LOW_PWR:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -601,6 +601,7 @@ reserve_space(VCHIQ_STATE_T *state, size
+ 		}
  
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -31,6 +31,7 @@ static void of_get_regulation_constraint
- 	struct regulation_constraints *constraints = &(*init_data)->constraints;
- 	struct regulator_state *suspend_state;
- 	struct device_node *suspend_np;
-+	unsigned int mode;
- 	int ret, i;
- 	u32 pval;
- 
-@@ -124,11 +125,11 @@ static void of_get_regulation_constraint
- 
- 	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
- 		if (desc && desc->of_map_mode) {
--			ret = desc->of_map_mode(pval);
--			if (ret == -EINVAL)
-+			mode = desc->of_map_mode(pval);
-+			if (mode == REGULATOR_MODE_INVALID)
- 				pr_err("%s: invalid mode %u\n", np->name, pval);
- 			else
--				constraints->initial_mode = ret;
-+				constraints->initial_mode = mode;
- 		} else {
- 			pr_warn("%s: mapping for mode %d not defined\n",
- 				np->name, pval);
-@@ -163,12 +164,12 @@ static void of_get_regulation_constraint
- 		if (!of_property_read_u32(suspend_np, "regulator-mode",
- 					  &pval)) {
- 			if (desc && desc->of_map_mode) {
--				ret = desc->of_map_mode(pval);
--				if (ret == -EINVAL)
-+				mode = desc->of_map_mode(pval);
-+				if (mode == REGULATOR_MODE_INVALID)
- 					pr_err("%s: invalid mode %u\n",
- 					       np->name, pval);
- 				else
--					suspend_state->mode = ret;
-+					suspend_state->mode = mode;
- 			} else {
- 				pr_warn("%s: mapping for mode %d not defined\n",
- 					np->name, pval);
---- a/drivers/regulator/twl-regulator.c
-+++ b/drivers/regulator/twl-regulator.c
-@@ -274,7 +274,7 @@ static inline unsigned int twl4030reg_ma
- 	case RES_STATE_SLEEP:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -80,6 +80,7 @@ struct regmap;
-  * These modes can be OR'ed together to make up a mask of valid register modes.
-  */
- 
-+#define REGULATOR_MODE_INVALID			0x0
- #define REGULATOR_MODE_FAST			0x1
- #define REGULATOR_MODE_NORMAL			0x2
- #define REGULATOR_MODE_IDLE			0x4
+ 		if (tx_pos == (state->slot_queue_available * VCHIQ_SLOT_SIZE)) {
++			up(&state->slot_available_event);
+ 			pr_warn("%s: invalid tx_pos: %d\n", __func__, tx_pos);
+ 			return NULL;
+ 		}
 
 
