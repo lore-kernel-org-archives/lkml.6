@@ -3,38 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39548C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3B9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E550320844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E550320844
+	by mail.kernel.org (Postfix) with ESMTP id 730292083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 730292083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407016AbeHATMz (ORCPT
+        id S2407022AbeHATM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51504 "EHLO
+        Wed, 1 Aug 2018 15:12:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406575AbeHATMx (ORCPT
+        with ESMTP id S2389883AbeHATM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:53 -0400
+        Wed, 1 Aug 2018 15:12:56 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C219ACC9;
-        Wed,  1 Aug 2018 17:26:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B286BCC9;
+        Wed,  1 Aug 2018 17:26:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        acme@kernel.org, eranian@google.com,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 036/144] usbip: usbip_detach: Fix memory, udev context and udev leak
-Date:   Wed,  1 Aug 2018 18:51:03 +0200
-Message-Id: <20180801164951.738582428@linuxfoundation.org>
+Subject: [PATCH 4.9 037/144] perf/x86/intel/uncore: Correct fixed counter index check in generic code
+Date:   Wed,  1 Aug 2018 18:51:04 +0200
+Message-Id: <20180801164951.813595654@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,48 +55,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Kan Liang <kan.liang@intel.com>
 
-[ Upstream commit d179f99a651685b19333360e6558110da2fe9bd7 ]
+[ Upstream commit 4749f8196452eeb73cf2086a6a9705bae479d33d ]
 
-detach_port() fails to call usbip_vhci_driver_close() from its error
-path after usbip_vhci_detach_device() returns failure, leaking memory
-allocated in usbip_vhci_driver_open() and holding udev_context and udev
-references. Fix it to call usbip_vhci_driver_close().
+There is no index which is bigger than UNCORE_PMC_IDX_FIXED. The only
+exception is client IMC uncore, which has been specially handled.
+For generic code, it is not correct to use >= to check fixed counter.
+The code quality issue will bring problem when a new counter index is
+introduced.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: acme@kernel.org
+Cc: eranian@google.com
+Link: http://lkml.kernel.org/r/1525371913-10597-3-git-send-email-kan.liang@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/usb/usbip/src/usbip_detach.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/events/intel/uncore.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -43,7 +43,7 @@ void usbip_detach_usage(void)
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -212,7 +212,7 @@ void uncore_perf_event_update(struct int
+ 	u64 prev_count, new_count, delta;
+ 	int shift;
  
- static int detach_port(char *port)
- {
--	int ret;
-+	int ret = 0;
- 	uint8_t portnum;
- 	char path[PATH_MAX+1];
- 
-@@ -73,9 +73,12 @@ static int detach_port(char *port)
- 	}
- 
- 	ret = usbip_vhci_detach_device(portnum);
--	if (ret < 0)
--		return -1;
-+	if (ret < 0) {
-+		ret = -1;
-+		goto call_driver_close;
-+	}
- 
-+call_driver_close:
- 	usbip_vhci_driver_close();
- 
- 	return ret;
+-	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
++	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
+ 		shift = 64 - uncore_fixed_ctr_bits(box);
+ 	else
+ 		shift = 64 - uncore_perf_ctr_bits(box);
 
 
