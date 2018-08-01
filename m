@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E006C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0690C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1C5208AC
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1C5208AC
+	by mail.kernel.org (Postfix) with ESMTP id 57C1920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C1920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406187AbeHATIv (ORCPT
+        id S2406198AbeHATIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50630 "EHLO
+        Wed, 1 Aug 2018 15:08:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405036AbeHATIu (ORCPT
+        with ESMTP id S2405310AbeHATIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:50 -0400
+        Wed, 1 Aug 2018 15:08:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 336CBD27;
-        Wed,  1 Aug 2018 17:22:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52B3ACC9;
+        Wed,  1 Aug 2018 17:22:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
-        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 207/246] scsi: cxlflash: Avoid clobbering context control register value
-Date:   Wed,  1 Aug 2018 18:51:57 +0200
-Message-Id: <20180801165021.615011170@linuxfoundation.org>
+Subject: [PATCH 4.14 190/246] rsi: Fix invalid vdd warning in mmc
+Date:   Wed,  1 Aug 2018 18:51:40 +0200
+Message-Id: <20180801165020.806981953@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,63 +53,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
 
-[ Upstream commit 465891fe9237b02f8d0fd26448f733fae7236f4a ]
+[ Upstream commit 78e450719c702784e42af6da912d3692fd3da0cb ]
 
-The SISLite specification originally defined the context control register with
-a single field of bits to represent the LISN and also stipulated that the
-register reset value be 0. The cxlflash driver took advantage of this when
-programming the LISN for the master contexts via an unconditional write - no
-other bits were preserved.
+While performing cleanup, driver is messing with card->ocr
+value by not masking rocr against ocr_avail. Below panic
+is observed with some of the SDIO host controllers due to
+this. Issue is resolved by reverting incorrect modifications
+to vdd.
 
-When unmap support was added, SISLite was updated to define bit 0 of the
-context control register as a way for the AFU to notify the context owner that
-unmap operations were supported. Thus the assumptions under which the register
-is setup changed and the existing unconditional write is clobbering the unmap
-state for master contexts. This is presently not an issue due to the order in
-which the context control register is programmed in relation to the unmap bit
-being queried but should be addressed to avoid a future regression in the
-event this code is moved elsewhere.
+[  927.423821] mmc1: Invalid vdd 0x1f
+[  927.423925] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x
+	       mac80211 cfg80211 btrsi rfcomm bluetooth ecdh_generic
+[  927.424073] CPU: 0 PID: 1624 Comm: insmod Tainted: G		W        4.15.0-1000-caracalla #1
+[  927.424075] Hardware name: Dell Inc. Edge Gateway	3003/      , BIOS 01.00.06 01/22/2018
+[  927.424082] RIP: 0010:sdhci_set_power_noreg+0xdd/0x190[sdhci]
+[  927.424085] RSP: 0018:ffffac3fc064b930 EFLAGS:  00010282
+[  927.424107] Call Trace:
+[  927.424118]  sdhci_set_power+0x5a/0x60 [sdhci]
+[  927.424125]  sdhci_set_ios+0x360/0x3b0 [sdhci]
+[  927.424133]  mmc_set_initial_state+0x92/0x120
+[  927.424137]  mmc_power_up.part.34+0x33/0x1d0
+[  927.424141]  mmc_power_up+0x17/0x20
+[  927.424147]  mmc_sdio_runtime_resume+0x2d/0x50
+[  927.424151]  mmc_runtime_resume+0x17/0x20
+[  927.424156]  __rpm_callback+0xc4/0x200
+[  927.424161]  ? idr_alloc_cyclic+0x57/0xd0
+[  927.424165]  ? mmc_runtime_suspend+0x20/0x20
+[  927.424169]  rpm_callback+0x24/0x80
+[  927.424172]  ? mmc_runtime_suspend+0x20/0x20
+[  927.424176]  rpm_resume+0x4b3/0x6c0
+[  927.424181]  __pm_runtime_resume+0x4e/0x80
+[  927.424188]  driver_probe_device+0x41/0x490
+[  927.424192]  __driver_attach+0xdf/0xf0
+[  927.424196]  ? driver_probe_device+0x490/0x490
+[  927.424201]  bus_for_each_dev+0x6c/0xc0
+[  927.424205]  driver_attach+0x1e/0x20
+[  927.424209]  bus_add_driver+0x1f4/0x270
+[  927.424217]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.424221]  driver_register+0x60/0xe0
+[  927.424227]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.424231]  sdio_register_driver+0x20/0x30
+[  927.424237]  rsi_module_init+0x16/0x40 [rsi_sdio]
 
-To remedy this issue, preserve the bits when programming the LISN field in the
-context control register. Since the LISN will now be programmed using a read
-value, assert that the initial state of the LISN field is as described in
-SISLite (0).
-
-Signed-off-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
-Signed-off-by: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/cxlflash/main.c    |    5 ++++-
- drivers/scsi/cxlflash/sislite.h |    1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_sdio.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -1303,7 +1303,10 @@ static void afu_err_intr_init(struct afu
- 	for (i = 0; i < afu->num_hwqs; i++) {
- 		hwq = get_hwq(afu, i);
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+@@ -161,7 +161,6 @@ static void rsi_reset_card(struct sdio_f
+ 	int err;
+ 	struct mmc_card *card = pfunction->card;
+ 	struct mmc_host *host = card->host;
+-	s32 bit = (fls(host->ocr_avail) - 1);
+ 	u8 cmd52_resp;
+ 	u32 clock, resp, i;
+ 	u16 rca;
+@@ -181,7 +180,6 @@ static void rsi_reset_card(struct sdio_f
+ 	msleep(20);
  
--		writeq_be(SISL_MSI_SYNC_ERROR, &hwq->host_map->ctx_ctrl);
-+		reg = readq_be(&hwq->host_map->ctx_ctrl);
-+		WARN_ON((reg & SISL_CTX_CTRL_LISN_MASK) != 0);
-+		reg |= SISL_MSI_SYNC_ERROR;
-+		writeq_be(reg, &hwq->host_map->ctx_ctrl);
- 		writeq_be(SISL_ISTATUS_MASK, &hwq->host_map->intr_mask);
- 	}
- }
---- a/drivers/scsi/cxlflash/sislite.h
-+++ b/drivers/scsi/cxlflash/sislite.h
-@@ -284,6 +284,7 @@ struct sisl_host_map {
- 	__be64 cmd_room;
- 	__be64 ctx_ctrl;	/* least significant byte or b56:63 is LISN# */
- #define SISL_CTX_CTRL_UNMAP_SECTOR	0x8000000000000000ULL /* b0 */
-+#define SISL_CTX_CTRL_LISN_MASK		(0xFFULL)
- 	__be64 mbox_w;		/* restricted use */
- 	__be64 sq_start;	/* Submission Queue (R/W): write sequence and */
- 	__be64 sq_end;		/* inclusion semantics are the same as RRQ    */
+ 	/* Initialize the SDIO card */
+-	host->ios.vdd = bit;
+ 	host->ios.chip_select = MMC_CS_DONTCARE;
+ 	host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
+ 	host->ios.power_mode = MMC_POWER_UP;
 
 
