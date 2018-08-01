@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDAAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1237FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79535208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79535208A4
+	by mail.kernel.org (Postfix) with ESMTP id ACB9B20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB9B20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732602AbeHATrH (ORCPT
+        id S1732580AbeHATrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:47:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405868AbeHATIi (ORCPT
+        with ESMTP id S2405889AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6BBC10F2;
-        Wed,  1 Aug 2018 17:04:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96F6210D9;
+        Wed,  1 Aug 2018 17:04:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oza Pawandeep <poza@codeaurora.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Ram Pai <linuxram@us.ibm.com>, Ingo Molnar <mingo@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 169/336] PCI/DPC: Clear interrupt status in interrupt handler top half
-Date:   Wed,  1 Aug 2018 18:48:24 +0200
-Message-Id: <20180801165035.579863965@linuxfoundation.org>
+Subject: [PATCH 4.17 212/336] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
+Date:   Wed,  1 Aug 2018 18:49:07 +0200
+Message-Id: <20180801165037.184333048@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,56 +53,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oza Pawandeep <poza@codeaurora.org>
+From: Ram Pai <linuxram@us.ibm.com>
 
-[ Upstream commit 56abbf8ad73c89d0a4c3c84b1449ceaaabd1b8c7 ]
+[ Upstream commit 5212213aa5a2359dd0474c9dab22b6220b591fe1 ]
 
-The generic IRQ handling code ensures that an interrupt handler runs with
-its interrupt masked or disabled.  If the interrupt is level-triggered, the
-interrupt handler must tell its device to stop asserting the interrupt
-before returning.  If it doesn't, we will immediately take the interrupt
-again when the handler returns and the generic code unmasks the interrupt.
+VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+is enabled. Powerpc also needs these bits. Hence lets define the
+VM_PKEY_BITx bits for any architecture that enables
+CONFIG_ARCH_HAS_PKEYS.
 
-The driver doesn't know whether its interrupt is edge- or level-triggered,
-so it must clear its interrupt source directly in its interrupt handler.
-
-Previously we cleared the DPC interrupt status in the bottom half, i.e., in
-deferred work, which can cause an interrupt storm if the DPC interrupt
-happens to be level-triggered, e.g., if we're using INTx instead of MSI.
-
-Clear the DPC interrupt status bit in the interrupt handler, not in the
-deferred work.
-
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-[bhelgaas: changelog]
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pcie/dpc.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/pkeys.h |    2 ++
+ fs/proc/task_mmu.c               |    4 ++--
+ include/linux/mm.h               |    9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -113,7 +113,7 @@ static void dpc_work(struct work_struct
- 	}
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -26,6 +26,8 @@ extern u32 initial_allocation_mask; /* b
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+ # define VM_PKEY_BIT4	VM_HIGH_ARCH_4
++#elif !defined(VM_PKEY_BIT4)
++# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+ #endif
  
- 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
--		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
-+			      PCI_EXP_DPC_STATUS_TRIGGER);
+ #define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 | \
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -673,13 +673,13 @@ static void show_smap_vma_flags(struct s
+ 		[ilog2(VM_MERGEABLE)]	= "mg",
+ 		[ilog2(VM_UFFD_MISSING)]= "um",
+ 		[ilog2(VM_UFFD_WP)]	= "uw",
+-#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ 		/* These come out via ProtectionKey: */
+ 		[ilog2(VM_PKEY_BIT0)]	= "",
+ 		[ilog2(VM_PKEY_BIT1)]	= "",
+ 		[ilog2(VM_PKEY_BIT2)]	= "",
+ 		[ilog2(VM_PKEY_BIT3)]	= "",
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
+ 	};
+ 	size_t i;
  
- 	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
- 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
-@@ -223,6 +223,9 @@ static irqreturn_t dpc_irq(int irq, void
- 	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
- 		dpc_process_rp_pio_error(dpc);
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -228,15 +228,16 @@ extern unsigned int kobjsize(const void
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
  
-+	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
-+			      PCI_EXP_DPC_STATUS_INTERRUPT);
+-#if defined(CONFIG_X86)
+-# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+-#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+ # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
+ # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
 +
- 	schedule_work(&dpc->work);
- 
- 	return IRQ_HANDLED;
++#if defined(CONFIG_X86)
++# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+ # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
+ #elif defined(CONFIG_PARISC)
 
 
