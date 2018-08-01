@@ -2,112 +2,143 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A97EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A59C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36AA20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36AA20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id D5065208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5065208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389680AbeHAQo4 (ORCPT
+        id S2389521AbeHAQuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:44:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43751 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389256AbeHAQo4 (ORCPT
+        Wed, 1 Aug 2018 12:50:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389430AbeHAQuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:44:56 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fksaH-0006wy-UU; Wed, 01 Aug 2018 14:58:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [SCSI] sym53c8xx: remove some redundant variables
-Date:   Wed,  1 Aug 2018 15:58:41 +0100
-Message-Id: <20180801145841.5877-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Aug 2018 12:50:08 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71EseMm189773
+        for <linux-kernel@vger.kernel.org>; Wed, 1 Aug 2018 11:04:00 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kkbrf1w37-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:04:00 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Wed, 1 Aug 2018 09:03:59 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Aug 2018 09:03:54 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w71F3rTW22741458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Aug 2018 08:03:53 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72840BE058;
+        Wed,  1 Aug 2018 09:03:53 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CFA71BE056;
+        Wed,  1 Aug 2018 09:03:52 -0600 (MDT)
+Received: from localhost (unknown [9.80.99.86])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Wed,  1 Aug 2018 09:03:52 -0600 (MDT)
+Date:   Wed, 1 Aug 2018 12:03:50 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     linux-kernel@vger.kernel.org,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Joe Perches <joe@perches.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 9/9] powerpc/traps: Add line prefix in
+ show_instructions()
+References: <20180731145020.14009-1-muriloo@linux.ibm.com>
+ <20180731145020.14009-10-muriloo@linux.ibm.com>
+ <c7e0fe17-8c4e-4ccc-dadf-9b320ca5a1d2@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c7e0fe17-8c4e-4ccc-dadf-9b320ca5a1d2@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18080115-0012-0000-0000-00001694BEA3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009467; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068852; UDB=6.00549529; IPR=6.00847167;
+ MB=3.00022441; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-01 15:03:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080115-0013-0000-0000-000053E126BA
+Message-Id: <20180801150350.GC6022@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1808010155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi, Christophe.
 
-Variables scriptb0 and dp_sgmin are being assigned but are never
-used hence they are redundant and can be removed.
+On Wed, Aug 01, 2018 at 08:41:15AM +0200, Christophe LEROY wrote:
+>
+>
+> Le 31/07/2018 à 16:50, Murilo Opsfelder Araujo a écrit :
+> > Remove "Instruction dump:" line by adding a prefix to display current->comm
+> > and current->pid, along with the instructions dump.
+> >
+> > The prefix can serve as a glue that links the instructions dump to its
+> > originator, allowing messages to be interleaved in the logs.
+> >
+> > Before this patch, a page fault looked like:
+> >
+> >    pandafault[10524]: segfault (11) at 100007d0 nip 1000061c lr 7fffbd295100 code 2 in pandafault[10000000+10000]
+> >    Instruction dump:
+> >    4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
+> >    392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
+> >
+> > After this patch, it looks like:
+> >
+> >    pandafault[10850]: segfault (11) at 100007d0 nip 1000061c lr 7fff9f3e5100 code 2 in pandafault[10000000+10000]
+> >    pandafault[10850]: code: 4bfffeec 4bfffee8 3c401002 38427f00 fbe1fff8 f821ffc1 7c3f0b78 3d22fffe
+> >    pandafault[10850]: code: 392988d0 f93f0020 e93f0020 39400048 <99490000> 39200000 7d234b78 383f0040
+> >
+> > Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+>
+> Does the script scripts/decode_stacktrace.sh also works with this format
+> change ?
 
-Cleans up clang warnings:
-warning: variable 'scriptb0' set but not used [-Wunused-but-set-variable]
-warning: variable 'dp_sgmin' set but not used [-Wunused-but-set-variable]
+I've got more feedback from Michael about this.  A better approach would be
+having a new show_user_instructions(), a slightly modified version of
+show_instructions(), that can be called from within show_signal_msg().
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/sym53c8xx_2/sym_fw.c   | 4 ----
- drivers/scsi/sym53c8xx_2/sym_hipd.c | 3 +--
- 2 files changed, 1 insertion(+), 6 deletions(-)
+Since _exception_pkey() dies if the exception is in kernel mode, we'll be
+safe to call the new show_user_instructions(), without interfering in
+scripts/decode_stacktrace.sh.
 
-diff --git a/drivers/scsi/sym53c8xx_2/sym_fw.c b/drivers/scsi/sym53c8xx_2/sym_fw.c
-index 190770bdc194..91db17727963 100644
---- a/drivers/scsi/sym53c8xx_2/sym_fw.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_fw.c
-@@ -295,10 +295,8 @@ static void
- sym_fw1_setup(struct sym_hcb *np, struct sym_fw *fw)
- {
- 	struct sym_fw1a_scr *scripta0;
--	struct sym_fw1b_scr *scriptb0;
- 
- 	scripta0 = (struct sym_fw1a_scr *) np->scripta0;
--	scriptb0 = (struct sym_fw1b_scr *) np->scriptb0;
- 
- 	/*
- 	 *  Fill variable parts in scripts.
-@@ -319,10 +317,8 @@ static void
- sym_fw2_setup(struct sym_hcb *np, struct sym_fw *fw)
- {
- 	struct sym_fw2a_scr *scripta0;
--	struct sym_fw2b_scr *scriptb0;
- 
- 	scripta0 = (struct sym_fw2a_scr *) np->scripta0;
--	scriptb0 = (struct sym_fw2b_scr *) np->scriptb0;
- 
- 	/*
- 	 *  Fill variable parts in scripts.
-diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-index 378af306fda1..bd3f6e2d6834 100644
---- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
-@@ -3855,7 +3855,7 @@ static void sym_modify_dp(struct sym_hcb *np, struct sym_tcb *tp, struct sym_ccb
- 
- int sym_compute_residual(struct sym_hcb *np, struct sym_ccb *cp)
- {
--	int dp_sg, dp_sgmin, resid = 0;
-+	int dp_sg, resid = 0;
- 	int dp_ofs = 0;
- 
- 	/*
-@@ -3902,7 +3902,6 @@ int sym_compute_residual(struct sym_hcb *np, struct sym_ccb *cp)
- 	 *  We are now full comfortable in the computation 
- 	 *  of the data residual (2's complement).
- 	 */
--	dp_sgmin = SYM_CONF_MAX_SG - cp->segments;
- 	resid = -cp->ext_ofs;
- 	for (dp_sg = cp->ext_sg; dp_sg < SYM_CONF_MAX_SG; ++dp_sg) {
- 		u_int tmp = scr_to_cpu(cp->phys.data[dp_sg].size);
--- 
-2.17.1
+Cheers
+Murilo
 
