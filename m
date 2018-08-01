@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B63DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0320F208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0320F208A4
+	by mail.kernel.org (Postfix) with ESMTP id 0F0DC208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0DC208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406015AbeHATIk (ORCPT
+        id S2390487AbeHATlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50216 "EHLO
+        Wed, 1 Aug 2018 15:41:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405916AbeHATIj (ORCPT
+        with ESMTP id S2405917AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:39 -0400
+        Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FD881084;
-        Wed,  1 Aug 2018 17:02:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BCB813A2;
+        Wed,  1 Aug 2018 17:15:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 172/336] ALSA: usb-audio: Apply rate limit to warning messages in URB complete callback
-Date:   Wed,  1 Aug 2018 18:48:27 +0200
-Message-Id: <20180801165035.685913851@linuxfoundation.org>
+Subject: [PATCH 4.14 081/246] media: videobuf2-core: dont call memop finish when queueing
+Date:   Wed,  1 Aug 2018 18:49:51 +0200
+Message-Id: <20180801165015.592375752@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,36 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-[ Upstream commit 377a879d9832f4ba69bd6a1fc996bb4181b1e504 ]
+[ Upstream commit 90b2da89a083e1395cb322521a42397c49ae4500 ]
 
-retire_capture_urb() may print warning messages when the given URB
-doesn't align, and this may flood the system log easily.
-Put the rate limit to the message for avoiding it.
+When a buffer is queued or requeued in vb2_buffer_done, then don't
+call the finish memop. In this case the buffer is only returned to vb2,
+not to userspace.
 
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1093485
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Calling 'finish' here will cause an unbalance when the queue is
+canceled, since the core will call the same memop again.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/usb/pcm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/videobuf2-core.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -1311,7 +1311,7 @@ static void retire_capture_urb(struct sn
- 		if (bytes % (runtime->sample_bits >> 3) != 0) {
- 			int oldbytes = bytes;
- 			bytes = frames * stride;
--			dev_warn(&subs->dev->dev,
-+			dev_warn_ratelimited(&subs->dev->dev,
- 				 "Corrected urb data len. %d->%d\n",
- 							oldbytes, bytes);
- 		}
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -912,9 +912,12 @@ void vb2_buffer_done(struct vb2_buffer *
+ 	dprintk(4, "done processing on buffer %d, state: %d\n",
+ 			vb->index, state);
+ 
+-	/* sync buffers */
+-	for (plane = 0; plane < vb->num_planes; ++plane)
+-		call_void_memop(vb, finish, vb->planes[plane].mem_priv);
++	if (state != VB2_BUF_STATE_QUEUED &&
++	    state != VB2_BUF_STATE_REQUEUEING) {
++		/* sync buffers */
++		for (plane = 0; plane < vb->num_planes; ++plane)
++			call_void_memop(vb, finish, vb->planes[plane].mem_priv);
++	}
+ 
+ 	spin_lock_irqsave(&q->done_lock, flags);
+ 	if (state == VB2_BUF_STATE_QUEUED ||
 
 
