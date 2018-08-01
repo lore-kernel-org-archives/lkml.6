@@ -6,175 +6,80 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D83DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7E0208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:35:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7E0208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 22EF7208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22EF7208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404126AbeHASWK (ORCPT
+        id S2403978AbeHASXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:22:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44908 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404111AbeHASWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:22:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD9DD80D;
-        Wed,  1 Aug 2018 09:35:37 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D5C43F5BA;
-        Wed,  1 Aug 2018 09:35:37 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B2BC81AE30FD; Wed,  1 Aug 2018 17:35:39 +0100 (BST)
-Date:   Wed, 1 Aug 2018 17:35:39 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-ID: <20180801163538.GA10800@arm.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <20180628105057.GA26019@e103592.cambridge.arm.com>
- <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
- <20180629110709.GA17859@arm.com>
- <CAAeHK+wHd8B2nhat-Z2Y2=s4NVobPG7vjr2CynjFhqPTwQRepQ@mail.gmail.com>
- <20180703173608.GF27243@arm.com>
- <CAAeHK+wTcH+2hgm_BTkLLdn1GkjBtkhQ=vPWZCncJ6KenqgKpg@mail.gmail.com>
- <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
+        Wed, 1 Aug 2018 14:23:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60202 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403813AbeHASXk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 14:23:40 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57381DCB;
+        Wed,  1 Aug 2018 16:37:06 +0000 (UTC)
+Date:   Wed, 1 Aug 2018 18:37:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        security@kernel.org, kernel-team@android.com,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH] HID: Bluetooth: hidp: buffer overflow in
+ hidp_process_report
+Message-ID: <20180801163703.GA6994@kroah.com>
+References: <20180731220225.159741-1-salyzyn@android.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180731220225.159741-1-salyzyn@android.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
-
-On Tue, Jul 31, 2018 at 03:22:13PM +0200, Andrey Konovalov wrote:
-> On Wed, Jul 18, 2018 at 7:16 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> > On Tue, Jul 3, 2018 at 7:36 PM, Will Deacon <will.deacon@arm.com> wrote:
-> >> Hmm, but elsewhere in this thread, Evgenii is motivating the need for this
-> >> patch set precisely because the lower overhead means it's suitable for
-> >> "near-production" use. So I don't think writing this off as a debugging
-> >> feature is the right approach, and we instead need to put effort into
-> >> analysing the impact of address tags on the kernel as a whole. Playing
-> >> whack-a-mole with subtle tag issues sounds like the worst possible outcome
-> >> for the long-term.
-> >
-> > I don't see a way to find cases where pointer tags would matter
-> > statically, so I've implemented the dynamic approach that I mentioned
-> > above. I've instrumented all pointer comparisons/subtractions in an
-> > LLVM compiler pass and used a kernel module that would print a bug
-> > report whenever two pointers with different tags are being
-> > compared/subtracted (ignoring comparisons with NULL pointers and with
-> > pointers obtained by casting an error code to a pointer type). Then I
-> > tried booting the kernel in QEMU and on an Odroid C2 board and I ran
-> > syzkaller overnight.
-> >
-> > This yielded the following results.
-> >
-> > ======
-> >
-> > The two places that look interesting are:
-> >
-> > is_vmalloc_addr in include/linux/mm.h (already mentioned by Catalin)
-> > is_kernel_rodata in mm/util.c
-> >
-> > Here we compare a pointer with some fixed untagged values to make sure
-> > that the pointer lies in a particular part of the kernel address
-> > space. Since KWHASAN doesn't add tags to pointers that belong to
-> > rodata or vmalloc regions, this should work as is. To make sure I've
-> > added debug checks to those two functions that check that the result
-> > doesn't change whether we operate on pointers with or without
-> > untagging.
-> >
-> > ======
-> >
-> > A few other cases that don't look that interesting:
-> >
-> > Comparing pointers to achieve unique sorting order of pointee objects
-> > (e.g. sorting locks addresses before performing a double lock):
-> >
-> > tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
-> > pipe_double_lock in fs/pipe.c
-> > unix_state_double_lock in net/unix/af_unix.c
-> > lock_two_nondirectories in fs/inode.c
-> > mutex_lock_double in kernel/events/core.c
-> >
-> > ep_cmp_ffd in fs/eventpoll.c
-> > fsnotify_compare_groups fs/notify/mark.c
-> >
-> > Nothing needs to be done here, since the tags embedded into pointers
-> > don't change, so the sorting order would still be unique.
-> >
-> > Check that a pointer belongs to some particular allocation:
-> >
-> > is_sibling_entry lib/radix-tree.c
-> > object_is_on_stack in include/linux/sched/task_stack.h
-> >
-> > Nothing needs to be here either, since two pointers can only belong to
-> > the same allocation if they have the same tag.
-> >
-> > ======
-> >
-> > Will, Catalin, WDYT?
+On Tue, Jul 31, 2018 at 03:02:13PM -0700, Mark Salyzyn wrote:
+> CVE-2018-9363
 > 
-> ping
+> The buffer length is unsigned at all layers, but gets cast to int and
+> checked in hidp_process_report and can lead to a buffer overflow.
+> Switch len parameter to unsigned int to resolve issue.
+> 
+> This affects 3.18 and newer kernels.
+> 
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Cc: Johan Hedberg <johan.hedberg@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Cc: linux-bluetooth@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: security@kernel.org
+> Cc: kernel-team@android.com
 
-Thanks for tracking these cases down and going through each of them. The
-obvious follow-up question is: how do we ensure that we keep on top of
-this in mainline? Are you going to repeat your experiment at every kernel
-release or every -rc or something else? I really can't see how we can
-maintain this in the long run, especially given that the coverage we have
-is only dynamic -- do you have an idea of how much coverage you're actually
-getting for, say, a defconfig+modules build?
+Nit, you only need to bother security@ if you do not have a fix and need
+to figure out one.
 
-I'd really like to enable pointer tagging in the kernel, I'm just still
-failing to see how we can do it in a controlled manner where we can reason
-about the semantic changes using something other than a best-effort,
-case-by-case basis which is likely to be fragile and error-prone.
-Unfortunately, if that's all we have, then this gets relegated to a
-debug feature, which sort of defeats the point in my opinion.
+Also, you forgot to cc: stable@vger.kernel.org to be included in older
+kernel releases :(
 
-Will
+thanks,
+
+greg k-h
