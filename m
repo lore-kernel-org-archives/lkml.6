@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125D1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2148BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C165020840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C165020840
+	by mail.kernel.org (Postfix) with ESMTP id 95FEB20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FEB20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388580AbeHAUYN (ORCPT
+        id S2388557AbeHAUYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:24:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+        Wed, 1 Aug 2018 16:24:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403855AbeHATDc (ORCPT
+        with ESMTP id S2403824AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9CF91249;
-        Wed,  1 Aug 2018 17:09:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEAEBFAA;
+        Wed,  1 Aug 2018 16:58:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.17 309/336] RDMA/uverbs: Protect from attempts to create flows on unsupported QP
-Date:   Wed,  1 Aug 2018 18:50:44 +0200
-Message-Id: <20180801165040.869347014@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 083/336] selftests: kvm: return Kselftest Skip code for skipped tests
+Date:   Wed,  1 Aug 2018 18:46:58 +0200
+Message-Id: <20180801165032.362957411@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,44 +52,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-commit 940efcc8889f0d15567eb07fc9fd69b06e366aa5 upstream.
+[ Upstream commit ab0e9c4b91ca902b1cae593b3dec9c4c7a724f9f ]
 
-Flows can be created on UD and RAW_PACKET QP types. Attempts to provide
-other QP types as an input causes to various unpredictable failures.
+When kvm test is skipped because of unmet dependencies and/or unsupported
+configuration, it exits with error which is treated as a fail by the
+Kselftest framework. This leads to false negative result even when the test
+could not be run.
 
-The reason is that in order to support all various types (e.g. XRC), we
-are supposed to use real_qp handle and not qp handle and expect to
-driver/FW to fail such (XRC) flows. The simpler and safer variant is to
-ban all QP types except UD and RAW_PACKET, instead of relying on
-driver/FW.
+Change it to return kselftest skip code when a test gets skipped to clearly
+report that the test could not be run.
 
-Cc: <stable@vger.kernel.org> # 3.11
-Fixes: 436f2ad05a0b ("IB/core: Export ib_create/destroy_flow through uverbs")
-Cc: syzkaller <syzkaller@googlegroups.com>
-Reported-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Change it to use ksft_exit_skip() when the test is skipped. In addition,
+refine test_assert() message to include strerror() string and add explicit
+check for EACCES to cleary identify when test doesn't run when access is
+denied to resources required e.g: open /dev/kvm failed, rc: -1 errno: 13
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ tools/testing/selftests/kvm/lib/assert.c          |    9 +++++++--
+ tools/testing/selftests/kvm/vmx_tsc_adjust_test.c |    2 ++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3478,6 +3478,11 @@ int ib_uverbs_ex_create_flow(struct ib_u
- 		goto err_uobj;
+--- a/tools/testing/selftests/kvm/lib/assert.c
++++ b/tools/testing/selftests/kvm/lib/assert.c
+@@ -13,6 +13,8 @@
+ #include <execinfo.h>
+ #include <sys/syscall.h>
+ 
++#include "../../kselftest.h"
++
+ /* Dumps the current stack trace to stderr. */
+ static void __attribute__((noinline)) test_dump_stack(void);
+ static void test_dump_stack(void)
+@@ -70,8 +72,9 @@ test_assert(bool exp, const char *exp_st
+ 
+ 		fprintf(stderr, "==== Test Assertion Failure ====\n"
+ 			"  %s:%u: %s\n"
+-			"  pid=%d tid=%d\n",
+-			file, line, exp_str, getpid(), gettid());
++			"  pid=%d tid=%d - %s\n",
++			file, line, exp_str, getpid(), gettid(),
++			strerror(errno));
+ 		test_dump_stack();
+ 		if (fmt) {
+ 			fputs("  ", stderr);
+@@ -80,6 +83,8 @@ test_assert(bool exp, const char *exp_st
+ 		}
+ 		va_end(ap);
+ 
++		if (errno == EACCES)
++			ksft_exit_skip("Access denied - Exiting.\n");
+ 		exit(254);
  	}
  
-+	if (qp->qp_type != IB_QPT_UD && qp->qp_type != IB_QPT_RAW_PACKET) {
-+		err = -EINVAL;
-+		goto err_put;
-+	}
+--- a/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
++++ b/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
+@@ -28,6 +28,8 @@
+ #include <string.h>
+ #include <sys/ioctl.h>
+ 
++#include "../kselftest.h"
 +
- 	flow_attr = kzalloc(sizeof(*flow_attr) + cmd.flow_attr.num_of_specs *
- 			    sizeof(union ib_flow_spec), GFP_KERNEL);
- 	if (!flow_attr) {
+ #ifndef MSR_IA32_TSC_ADJUST
+ #define MSR_IA32_TSC_ADJUST 0x3b
+ #endif
 
 
