@@ -2,84 +2,94 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D544AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE278C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8962D208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8962D208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 690B120844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:52:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690B120844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388889AbeHANhp (ORCPT
+        id S2389023AbeHANiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:37:45 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48725 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387799AbeHANhp (ORCPT
+        Wed, 1 Aug 2018 09:38:22 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40767 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387799AbeHANiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:37:45 -0400
-X-Originating-IP: 81.250.144.103
-Received: from [10.30.1.20] (LNeuilly-657-1-5-103.w81-250.abo.wanadoo.fr [81.250.144.103])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 0C62560010;
-        Wed,  1 Aug 2018 11:51:25 +0000 (UTC)
-Subject: Re: [PATCH v5 00/11] hugetlb: Factorize hugetlb architecture
- primitives
-To:     Luiz Capitulino <lcapitulino@redhat.com>
-Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org
-References: <20180731060155.16915-1-alex@ghiti.fr>
- <20180731160640.11306628@doriath>
-From:   Alexandre Ghiti <alex@ghiti.fr>
-Message-ID: <1cee9f98-4cff-3e42-6cc8-088310e406d9@ghiti.fr>
-Date:   Wed, 1 Aug 2018 13:50:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 1 Aug 2018 09:38:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h15-v6so19801466wrs.7
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 04:52:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ySvPxFInicNmzK7nox6x4P/pPuZtGKzQ1+zqib1ovEc=;
+        b=p6O+CWOC0V55Nz9QGVoRQJhzrDZTIT5W63ogUQDEojdvsmqW887rXxITefeVq1bnmJ
+         D+gkfYVxjJqtQ3slekSfyIJVBj3mbzE7ydb3IOd/Nl+EzBrJt5pv92qN56aVL8PPpfAv
+         R7rCi7shX+g+R4yboxcsXOnkWWjb+JCwMlFiIKw+8b4+P9FgO+3DpYah5Uxw0g/IHAWL
+         /2t5K5tOkC+d2W+Glv+KWaJaet+j7uL3msLucXWphkVdkQXkoTVSnBKBCgh2BNBrpYah
+         odACl0P7qPA+pMUlwNk/fXU26RYSq0EiyS7a2pbNti9PiR+mb7XcPKKoCHsSC1AN7+ig
+         hCOg==
+X-Gm-Message-State: AOUpUlH8BY5w56AqhXJ+9AnEXUQa1Ln3tqyROpxsh8p+s8UaxRQzWdmH
+        p6KBLgmHXwSb0zUXE0hLIxA=
+X-Google-Smtp-Source: AAOMgpeuaPl4f4IsssYrCD1Z6bA2dQ3pdzdxu06uHn20Y9xGz5f1WNw3hYmJ2+Dn4QUl1cmn3sI7Eg==
+X-Received: by 2002:adf:9d81:: with SMTP id p1-v6mr24550262wre.12.1533124375773;
+        Wed, 01 Aug 2018 04:52:55 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id t19-v6sm5881427wmi.42.2018.08.01.04.52.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 04:52:55 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 93C4212453E; Wed,  1 Aug 2018 13:52:54 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 13:52:54 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        david@redhat.com, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v5 4/4] mm/page_alloc: Introduce
+ free_area_init_core_hotplug
+Message-ID: <20180801115254.GA7145@techadventures.net>
+References: <20180730101757.28058-1-osalvador@techadventures.net>
+ <20180730101757.28058-5-osalvador@techadventures.net>
+ <20180801114726.GL16767@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180731160640.11306628@doriath>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801114726.GL16767@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31/2018 10:06 PM, Luiz Capitulino wrote:
-> On Tue, 31 Jul 2018 06:01:44 +0000
-> Alexandre Ghiti <alex@ghiti.fr> wrote:
->
->> [CC linux-mm for inclusion in -mm tree]
->>
->> In order to reduce copy/paste of functions across architectures and then
->> make riscv hugetlb port (and future ports) simpler and smaller, this
->> patchset intends to factorize the numerous hugetlb primitives that are
->> defined across all the architectures.
-> [...]
->
->>   15 files changed, 139 insertions(+), 382 deletions(-)
-> I imagine you're mostly interested in non-x86 review at this point, but
-> as this series is looking amazing:
->
-> Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+On Wed, Aug 01, 2018 at 01:47:26PM +0200, Michal Hocko wrote:
+> 
+> The split up makes sense to me. Sections attributes can be handled on
+> top. Btw. free_area_init_core_hotplug declaration could have gone into
+> include/linux/memory_hotplug.h to save the ifdef
 
-It's always good to have another feedback :)
-Thanks for your review Luiz,
+You are right, I will fix this up.
 
-Alex
+> 
+> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> > Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks Michal!
+
+Since Pavel and I agreed on putting a patch of his which removes __paginginit
+into this patchset, I will send out a v6 in a few minutes.
+
+-- 
+Oscar Salvador
+SUSE L3
