@@ -2,204 +2,369 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2ACC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8266DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B490208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D2E420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:01:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1/ymuEzK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B490208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ETejsza0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2E420844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389026AbeHALpb (ORCPT
+        id S2389148AbeHALqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:45:31 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:40692 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388985AbeHALpa (ORCPT
+        Wed, 1 Aug 2018 07:46:18 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:37912 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388876AbeHALqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:45:30 -0400
-Received: by mail-wr1-f41.google.com with SMTP id h15-v6so19474127wrs.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 03:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kuBO+lRjS+AQcV6hL+v/rpCD0Zo/OVQAPDSiaaqeuys=;
-        b=1/ymuEzKs6beJ9HR6UhbZuVnV+OZt1sRGMMs+/QL1apP+tnCEk/ZlfdlHUWOuIq8eH
-         d1MLuXyFfyxJDEL0a+tkn/e2lBZaY+Gnd6/c+J5gEuV33ybwIeIuTQfWlnp6qz/FJAbx
-         qDeKi4Q2fDOCvQRwg2JyFW5VCqFkUgduDCE3QUPy8qAP0EPa1zMrt56bml7ZQZp4M9oa
-         bph+fy9ff7f7DaQf47F5mTQTVbRi/5p6qSqy7Wx+RJeLTo1jtkEjvvER9Mj1I75EzKNP
-         E4M0C5ZtGb3XQ9vEJxZyO+AHa1/HmjpqhyJ+T/lIUVxfrbaWt76q44kHGOywuGT35CpO
-         rEYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kuBO+lRjS+AQcV6hL+v/rpCD0Zo/OVQAPDSiaaqeuys=;
-        b=ozOAzbgt5Bho6lf0hZJXIXDmtMgtYexZCOGSaiCb1zZ7dYLKzJWS+M2k3l9ybw3eXc
-         HpeLJru34kSfQn6PyhhsNtUahLxOTntJDYbedpo9Xrrcu6fM73CXMAK50P+XonJu/mar
-         sTQjlFeKbVa8BVSWpZ5HQgAb51m7HC3TgpkAHU5wql97gI8+61NbYwC3r3FlZYHEL7BK
-         mUpVlVPL1VPUEqpVRnfmFpqiSt28huXs/SwO0X70f9kvfCdOrM5/PCcEkACBT4bOxrxi
-         ZwzWI0sGycptlZlrJO5MLG0CLVt0DYWibWHXHlstW7WyWLq61M0yqgcKF6yjer62Tprk
-         Eg2g==
-X-Gm-Message-State: AOUpUlGitU72F/7dKngKgjqWtA22unD43DSPu2a0AAmCnDdQtNQ/zqJH
-        YHjJ2mkePI1wItW70X/Yww65zA==
-X-Google-Smtp-Source: AAOMgpfmEnPY2ZnCtLVp6HPIOnf2hnSolmMk9pcPCXg7zFYN08OSREUoQbbF91hCn3NNMsk9Qk4u7Q==
-X-Received: by 2002:adf:b243:: with SMTP id y3-v6mr24607182wra.90.1533117630927;
-        Wed, 01 Aug 2018 03:00:30 -0700 (PDT)
-Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u7-v6sm6317067wmd.46.2018.08.01.03.00.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 03:00:29 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com, linus.walleij@linaro.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] pinctrl: meson: Add support to set direction with a secure monitor call
-Date:   Wed,  1 Aug 2018 12:00:20 +0200
-Message-Id: <1533117623-27856-3-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
-References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
+        Wed, 1 Aug 2018 07:46:17 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8D4F85C0548;
+        Wed,  1 Aug 2018 12:00:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533117659;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2o9vRgBUyJ5JGVgcFGNnnnXqbhL3w3mJqvKIHU62Zmg=;
+        b=ETejsza0RlN2gM/DaNiLTAbP1X059/BNgfWkipz2+pqxn5TVLuMKj4/PKd+CIOZQA/+xSV
+        jTZcZ/+LSi5cH9U1Q1uNdEqidLrGv1sfOXa1WrnlyBuU2aISC1I5iR9tCPKb4xOstDC98Q
+        SZt9oqm9uJchS8plrMAa9ZYZhIWsTfw=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 01 Aug 2018 12:00:58 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/mxsfb: Fix runtime PM for unpowering lcdif block
+In-Reply-To: <f873c5592e9907beba905ce68358d5ae2f63a4d7.1531824173.git.leonard.crestez@nxp.com>
+References: <f873c5592e9907beba905ce68358d5ae2f63a4d7.1531824173.git.leonard.crestez@nxp.com>
+Message-ID: <053a788e297c5b54baa80d03586da53d@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
-set the TEST_N pin direction.
-This patch adds a "smc" boolean to the bank structure to differentiate
-the TEST_N bank and call the Secure Monitor in the _input/_output functions.
+On 17.07.2018 12:48, Leonard Crestez wrote:
+> Adding lcdif nodes to a power domain currently does work, it results in
+> black/corrupted screens or hangs. While the driver does enable runtime
+> pm it does not deal correctly with the block being unpowered.
+> 
+> Ensure power is on when required by adding pm_runtime_get/put_sync to
+> mxsfb_pipe_enable/disable.
+> 
+> Since power is lost on suspend implement PM_SLEEP_OPS using
+> drm_mode_config_helper_suspend/resume.
+> 
+> The mxsfb_plane_atomic_update function can get called before
+> mxsfb_pipe_enable while the block is not yet powered. When this happens
+> the write to LCDIF_NEXT_BUF is lost causing corrupt display on unblank
+> until a refresh.
+> 
+> Fix this by not writing gem->paddr if the block is not enabled and
+> instead delaying the write until the next mxsfb_crtc_mode_set_nofb call.
+> At that point also update cur_buf to avoid an initial corrupt frame
+> after resume.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/Kconfig         |  1 +
- drivers/pinctrl/meson/pinctrl-meson.c | 31 ++++++++++++++++++++++++++-----
- drivers/pinctrl/meson/pinctrl-meson.h | 10 +++++++++-
- 3 files changed, 36 insertions(+), 6 deletions(-)
+You seem to do two things in a single patch. I know they are related,
+but it still seems better if you split it up:
 
-diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-index c80951d..1b90470 100644
---- a/drivers/pinctrl/meson/Kconfig
-+++ b/drivers/pinctrl/meson/Kconfig
-@@ -8,6 +8,7 @@ menuconfig PINCTRL_MESON
- 	select GPIOLIB
- 	select OF_GPIO
- 	select REGMAP_MMIO
-+	select MESON_SM
- 
- if PINCTRL_MESON
- 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 29a458d..8e445aa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -54,6 +54,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/seq_file.h>
-+#include <linux/firmware/meson/meson_sm.h>
- 
- #include "../core.h"
- #include "../pinctrl-utils.h"
-@@ -99,8 +100,14 @@ static void meson_calc_reg_and_bit(struct meson_bank *bank, unsigned int pin,
- {
- 	struct meson_reg_desc *desc = &bank->regs[reg_type];
- 
--	*reg = desc->reg * 4;
--	*bit = desc->bit + pin - bank->first;
-+	/* TEST_N pin direction needs to be set using a Secure Monitor call */
-+	if (reg_type == REG_DIR && bank->smc) {
-+		*reg = desc->reg;
-+		*bit = desc->bit;
-+	} else {
-+		*reg = desc->reg * 4;
-+		*bit = desc->bit + pin - bank->first;
-+	}
- }
- 
- static int meson_get_groups_count(struct pinctrl_dev *pcdev)
-@@ -342,6 +349,12 @@ static int meson_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- 
- 	meson_calc_reg_and_bit(bank, gpio, REG_DIR, &reg, &bit);
- 
-+	/* TEST_N pin direction needs to be set using a Secure Monitor call */
-+	if (bank->smc) {
-+		u32 smc_ret = 0;
-+		return meson_sm_call(reg, &smc_ret, 0, 0, 0, 0, 0);
-+	}
-+
- 	return regmap_update_bits(pc->reg_gpio, reg, BIT(bit), BIT(bit));
- }
- 
-@@ -358,9 +371,17 @@ static int meson_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
- 		return ret;
- 
- 	meson_calc_reg_and_bit(bank, gpio, REG_DIR, &reg, &bit);
--	ret = regmap_update_bits(pc->reg_gpio, reg, BIT(bit), 0);
--	if (ret)
--		return ret;
-+	/* TEST_N pin direction needs to be set using a Secure Monitor call */
-+	if (bank->smc) {
-+		u32 smc_ret = 0;
-+		ret = meson_sm_call(reg, &smc_ret, bit, 0, 0, 0, 0);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = regmap_update_bits(pc->reg_gpio, reg, BIT(bit), 0);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	meson_calc_reg_and_bit(bank, gpio, REG_OUT, &reg, &bit);
- 	return regmap_update_bits(pc->reg_gpio, reg, BIT(bit),
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 12a39110..d32e9a9 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -92,6 +92,7 @@ struct meson_bank {
- 	const char *name;
- 	unsigned int first;
- 	unsigned int last;
-+	bool smc; /* Direction needs to use a Secure Monitor call */
- 	int irq_first;
- 	int irq_last;
- 	struct meson_reg_desc regs[NUM_REG];
-@@ -131,11 +132,12 @@ struct meson_pinctrl {
- 		.num_groups = ARRAY_SIZE(fn ## _groups),		\
- 	}
- 
--#define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)	\
-+#define __BANK(n, f, l, sm, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib) \
- 	{								\
- 		.name		= n,					\
- 		.first		= f,					\
- 		.last		= l,					\
-+		.smc		= sm,					\
- 		.irq_first	= fi,					\
- 		.irq_last	= li,					\
- 		.regs = {						\
-@@ -147,6 +149,12 @@ struct meson_pinctrl {
- 		},							\
- 	 }
- 
-+#define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib) \
-+	__BANK(n, f, l, false, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)
-+
-+#define BANK_SMC(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib) \
-+	__BANK(n, f, l, true, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)
-+
- #define MESON_PIN(x) PINCTRL_PIN(x, #x)
- 
- /* Common pmx functions */
--- 
-2.7.4
+1. Introduce mxsfb_get_fb_paddr and set framebuffer pointers properly
+(this seems to have a positive effect even without PM as reported by
+Philipp)
+2. Add PM callbacks
 
+I think in a follow up patch we can also use runtime pm to
+enable/disable the AXI clock. Add driver level runtime pm functions
+which enable disable the clocks.
+
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> 
+> ---
+> 
+> The purpose of this patch is to prepare for enabling power gating on
+> DISPLAY power domains.
+> 
+> Changes since v1:
+> * Drop mxsfb_runtime_suspend/mxsfb_runtime_resume, calling
+> pm_runtime_get/put in pipe enable/disable is enough.
+> * Use drm_mode_config_helper_suspend/resume instead of attempting to
+> track state manually.
+> * Don't touch NEXT_BUF if atomic_update called with crtc disabled
+> * Also update CUR_BUF on enable, this avoids initial corrupt frames.
+> 
+> Previous discussion: https://lkml.org/lkml/2018/7/17/329
+> ---
+>  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 51 +++++++++++++++++++++++-------
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 25 +++++++++++++++
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.h  |  2 ++
+>  3 files changed, 67 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+> b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+> index 0abe77675b76..10153da77c40 100644
+> --- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+> +++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+> @@ -194,15 +194,31 @@ static int mxsfb_reset_block(void __iomem *reset_addr)
+>  		return ret;
+>  
+>  	return clear_poll_bit(reset_addr, MODULE_CLKGATE);
+>  }
+>  
+> +static dma_addr_t mxsfb_get_fb_paddr(struct mxsfb_drm_private *mxsfb)
+> +{
+> +	struct drm_framebuffer *fb = mxsfb->pipe.plane.state->fb;
+> +	struct drm_gem_cma_object *gem;
+> +
+> +	if (!fb)
+> +		return 0;
+> +
+> +	gem = drm_fb_cma_get_gem_obj(fb, 0);
+> +	if (!gem)
+> +		return 0;
+> +
+> +	return gem->paddr;
+> +}
+> +
+>  static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
+>  {
+>  	struct drm_display_mode *m = &mxsfb->pipe.crtc.state->adjusted_mode;
+>  	const u32 bus_flags = mxsfb->connector.display_info.bus_flags;
+>  	u32 vdctrl0, vsync_pulse_len, hsync_pulse_len;
+> +	dma_addr_t paddr;
+>  	int err;
+>  
+>  	/*
+>  	 * It seems, you can't re-program the controller if it is still
+>  	 * running. This may lead to shifted pictures (FIFO issue?), so
+> @@ -268,35 +284,47 @@ static void mxsfb_crtc_mode_set_nofb(struct
+> mxsfb_drm_private *mxsfb)
+>  	       mxsfb->base + LCDC_VDCTRL3);
+>  
+>  	writel(SET_DOTCLK_H_VALID_DATA_CNT(m->hdisplay),
+>  	       mxsfb->base + LCDC_VDCTRL4);
+>  
+> +	/* Update cur_buf as well to avoid an initial corrupt frame */
+> +	paddr = mxsfb_get_fb_paddr(mxsfb);
+> +	if (paddr) {
+> +		writel(paddr, mxsfb->base + mxsfb->devdata->cur_buf);
+> +		writel(paddr, mxsfb->base + mxsfb->devdata->next_buf);
+> +	}
+>  	mxsfb_disable_axi_clk(mxsfb);
+>  }
+>  
+>  void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
+>  {
+> +	if (mxsfb->enabled)
+> +		return;
+> +
+>  	mxsfb_crtc_mode_set_nofb(mxsfb);
+>  	mxsfb_enable_controller(mxsfb);
+> +
+> +	mxsfb->enabled = true;
+>  }
+>  
+>  void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb)
+>  {
+> +	if (!mxsfb->enabled)
+> +		return;
+> +
+>  	mxsfb_disable_controller(mxsfb);
+> +
+> +	mxsfb->enabled = false;
+>  }
+>  
+>  void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
+>  			       struct drm_plane_state *state)
+>  {
+>  	struct drm_simple_display_pipe *pipe = &mxsfb->pipe;
+>  	struct drm_crtc *crtc = &pipe->crtc;
+> -	struct drm_framebuffer *fb = pipe->plane.state->fb;
+>  	struct drm_pending_vblank_event *event;
+> -	struct drm_gem_cma_object *gem;
+> -
+> -	if (!crtc)
+> -		return;
+> +	dma_addr_t paddr;
+>  
+>  	spin_lock_irq(&crtc->dev->event_lock);
+>  	event = crtc->state->event;
+>  	if (event) {
+>  		crtc->state->event = NULL;
+> @@ -307,14 +335,15 @@ void mxsfb_plane_atomic_update(struct
+> mxsfb_drm_private *mxsfb,
+>  			drm_crtc_send_vblank_event(crtc, event);
+>  		}
+>  	}
+>  	spin_unlock_irq(&crtc->dev->event_lock);
+>  
+> -	if (!fb)
+> +	if (!mxsfb->enabled)
+>  		return;
+>  
+
+I think this is the wrong thing to do.
+
+The simple KMS helper callback ->update() is called by the
+->atomic_update() callback of drm_plane_helper_funcs.
+
+And the documentation of atomic_update() states:
+https://01.org/linuxgraphics/gfx-docs/drm/gpu/drm-kms-helpers.html#c.drm_plane_helper_funcs
+
+"Note that the power state of the display pipe when this function is
+called depends upon the exact helpers and calling sequence the driver
+has picked. See drm_atomic_helper_commit_planes() for a discussion of
+the tradeoffs and variants of plane commit helpers."
+
+The documentation of drm_atomic_helper_commit_planes() then has more
+information:
+https://01.org/linuxgraphics/gfx-docs/drm/gpu/drm-kms-helpers.html#c.drm_atomic_helper_commit_planes
+
+Bottom line, we should be using drm_atomic_helper_commit_tail_rpm() for
+runtime pm...
+
+So adding something like:
+
+static const struct drm_mode_config_helper_funcs
+mxsfb_drm_mode_config_helpers = {
+	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
+};
+
+And add something like this in mxsfb_load:
+
+	drm->mode_config.funcs		= &mxsfb_mode_config_funcs;
++	dev->mode_config.helper_private = &mxsfb_drm_mode_config_helpers;
+...
+
+Should make the stack not calling update while the pipe is disabled.
+
+With that you do not have to keep state locally and can always apply the
+new state in ->enable().
+
+> -	gem = drm_fb_cma_get_gem_obj(fb, 0);
+> -
+> -	mxsfb_enable_axi_clk(mxsfb);
+> -	writel(gem->paddr, mxsfb->base + mxsfb->devdata->next_buf);
+> -	mxsfb_disable_axi_clk(mxsfb);
+> +	paddr = mxsfb_get_fb_paddr(mxsfb);
+> +	if (paddr) {
+> +		mxsfb_enable_axi_clk(mxsfb);
+> +		writel(paddr, mxsfb->base + mxsfb->devdata->next_buf);
+> +		mxsfb_disable_axi_clk(mxsfb);
+> +	}
+>  }
+> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> index dd1dd58e4956..a5269fccbed9 100644
+> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> @@ -101,23 +101,27 @@ static const struct drm_mode_config_funcs
+> mxsfb_mode_config_funcs = {
+>  static void mxsfb_pipe_enable(struct drm_simple_display_pipe *pipe,
+>  			      struct drm_crtc_state *crtc_state,
+>  			      struct drm_plane_state *plane_state)
+>  {
+>  	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
+> +	struct drm_device *drm = pipe->plane.dev;
+>  
+> +	pm_runtime_get_sync(drm->dev);
+>  	drm_panel_prepare(mxsfb->panel);
+>  	mxsfb_crtc_enable(mxsfb);
+>  	drm_panel_enable(mxsfb->panel);
+>  }
+>  
+>  static void mxsfb_pipe_disable(struct drm_simple_display_pipe *pipe)
+>  {
+>  	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
+> +	struct drm_device *drm = pipe->plane.dev;
+>  
+>  	drm_panel_disable(mxsfb->panel);
+>  	mxsfb_crtc_disable(mxsfb);
+>  	drm_panel_unprepare(mxsfb->panel);
+> +	pm_runtime_put_sync(drm->dev);
+>  }
+>  
+>  static void mxsfb_pipe_update(struct drm_simple_display_pipe *pipe,
+>  			      struct drm_plane_state *plane_state)
+>  {
+> @@ -412,17 +416,38 @@ static int mxsfb_remove(struct platform_device *pdev)
+>  	drm_dev_unref(drm);
+>  
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PM
+
+This should be CONFIG_PM_SLEEP afaict.
+
+--
+Stefan
+
+> +static int mxsfb_suspend(struct device *dev)
+> +{
+> +       struct drm_device *drm = dev_get_drvdata(dev);
+> +
+> +       return drm_mode_config_helper_suspend(drm);
+> +}
+> +
+> +static int mxsfb_resume(struct device *dev)
+> +{
+> +       struct drm_device *drm = dev_get_drvdata(dev);
+> +
+> +       return drm_mode_config_helper_resume(drm);
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops mxsfb_pm_ops = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(mxsfb_suspend, mxsfb_resume)
+> +};
+> +
+>  static struct platform_driver mxsfb_platform_driver = {
+>  	.probe		= mxsfb_probe,
+>  	.remove		= mxsfb_remove,
+>  	.id_table	= mxsfb_devtype,
+>  	.driver	= {
+>  		.name		= "mxsfb-drm",
+>  		.of_match_table	= mxsfb_dt_ids,
+> +		.pm		= &mxsfb_pm_ops,
+>  	},
+>  };
+>  
+>  module_platform_driver(mxsfb_platform_driver);
+>  
+> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+> b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+> index 5d0883fc805b..e539d4b05c48 100644
+> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+> @@ -36,10 +36,12 @@ struct mxsfb_drm_private {
+>  
+>  	struct drm_simple_display_pipe	pipe;
+>  	struct drm_connector		connector;
+>  	struct drm_panel		*panel;
+>  	struct drm_fbdev_cma		*fbdev;
+> +
+> +	bool enabled;
+>  };
+>  
+>  int mxsfb_setup_crtc(struct drm_device *dev);
+>  int mxsfb_create_output(struct drm_device *dev);
