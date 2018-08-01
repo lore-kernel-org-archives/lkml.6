@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CE1C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F321C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE3820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE3820844
+	by mail.kernel.org (Postfix) with ESMTP id F107F2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F107F2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407090AbeHATNU (ORCPT
+        id S2407099AbeHATNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51600 "EHLO
+        Wed, 1 Aug 2018 15:13:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51616 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407077AbeHATNT (ORCPT
+        with ESMTP id S2405523AbeHATNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:19 -0400
+        Wed, 1 Aug 2018 15:13:22 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D164DCC3;
-        Wed,  1 Aug 2018 17:26:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB143CC3;
+        Wed,  1 Aug 2018 17:26:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 044/144] mfd: cros_ec: Fail early if we cannot identify the EC
-Date:   Wed,  1 Aug 2018 18:51:11 +0200
-Message-Id: <20180801164952.206873945@linuxfoundation.org>
+Subject: [PATCH 4.9 045/144] mwifiex: handle race during mwifiex_usb_disconnect
+Date:   Wed,  1 Aug 2018 18:51:12 +0200
+Message-Id: <20180801164952.261036995@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -55,41 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Palatin <vpalatin@chromium.org>
+From: Ganapathi Bhat <gbhat@marvell.com>
 
-[ Upstream commit 0dbbf25561b29ffab5ba6277429760abdf49ceff ]
+[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
 
-If we cannot communicate with the EC chip to detect the protocol version
-and its features, it's very likely useless to continue. Else we will
-commit all kind of uninformed mistakes (using the wrong protocol, the
-wrong buffer size, mixing the EC with other chips).
+Race condition is observed during rmmod of mwifiex_usb:
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Acked-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+1. The rmmod thread will call mwifiex_usb_disconnect(), download
+   SHUTDOWN command and do wait_event_interruptible_timeout(),
+   waiting for response.
+
+2. The main thread will handle the response and will do a
+   wake_up_interruptible(), unblocking rmmod thread.
+
+3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
+   mwifiex_usb_free().
+
+4. The main thread will try to resubmit rx_cmd.urb in
+   mwifiex_usb_submit_rx_urb(), which is NULL.
+
+To fix, wait for main thread to complete before calling
+mwifiex_usb_free().
+
+Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mfd/cros_ec.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/usb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -86,7 +86,11 @@ int cros_ec_register(struct cros_ec_devi
+--- a/drivers/net/wireless/marvell/mwifiex/usb.c
++++ b/drivers/net/wireless/marvell/mwifiex/usb.c
+@@ -624,6 +624,9 @@ static void mwifiex_usb_disconnect(struc
+ 					 MWIFIEX_FUNC_SHUTDOWN);
+ 	}
  
- 	mutex_init(&ec_dev->lock);
++	if (adapter->workqueue)
++		flush_workqueue(adapter->workqueue);
++
+ 	mwifiex_usb_free(card);
  
--	cros_ec_query_all(ec_dev);
-+	err = cros_ec_query_all(ec_dev);
-+	if (err) {
-+		dev_err(dev, "Cannot identify the EC: error %d\n", err);
-+		return err;
-+	}
- 
- 	if (ec_dev->irq) {
- 		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+ 	mwifiex_dbg(adapter, FATAL,
 
 
