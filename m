@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE189C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D70CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2C7208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2C7208A3
+	by mail.kernel.org (Postfix) with ESMTP id 61DAD208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DAD208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407680AbeHATV1 (ORCPT
+        id S2405157AbeHATV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:21:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
+        Wed, 1 Aug 2018 15:21:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436607AbeHATSj (ORCPT
+        with ESMTP id S2436609AbeHATSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48E5EE27;
-        Wed,  1 Aug 2018 16:53:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C6E5F0E;
+        Wed,  1 Aug 2018 16:55:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kenneth Feng <kenneth.feng@amd.com>,
-        Rex Zhu <rezhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Stewart Smith <stewart@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 018/336] drm/amd/powerplay: Set higher SCLK&MCLK frequency than dpm7 in OD (v2)
-Date:   Wed,  1 Aug 2018 18:45:53 +0200
-Message-Id: <20180801165029.683351853@linuxfoundation.org>
+Subject: [PATCH 4.17 054/336] hvc_opal: dont set tb_ticks_per_usec in udbg_init_opal_common()
+Date:   Wed,  1 Aug 2018 18:46:29 +0200
+Message-Id: <20180801165031.140805265@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,45 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kenneth Feng <kenneth.feng@amd.com>
+From: Stewart Smith <stewart@linux.ibm.com>
 
-[ Upstream commit 5c16f36f6f003b4415237acca59384a074cd8030 ]
+[ Upstream commit 447808bf500a7cc92173266a59f8a494e132b122 ]
 
-Fix the issue that SCLK&MCLK can't be set higher than dpm7 when
-OD is enabled in SMU7.
+time_init() will set up tb_ticks_per_usec based on reality.
+time_init() is called *after* udbg_init_opal_common() during boot.
 
-v2: fix warning (Alex)
+from arch/powerpc/kernel/time.c:
+  unsigned long tb_ticks_per_usec = 100; /* sane default */
 
-Signed-off-by: Kenneth Feng <kenneth.feng@amd.com>
-Acked-by: Rex Zhu<rezhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Currently, all powernv systems have a timebase frequency of 512mhz
+(512000000/1000000 == 0x200) - although there's nothing written
+down anywhere that I can find saying that we couldn't make that
+different based on the requirements in the ISA.
+
+So, we've been (accidentally) thwacking the (currently) correct
+(for powernv at least) value for tb_ticks_per_usec earlier than
+we otherwise would have.
+
+The "sane default" seems to be adequate for our purposes between
+udbg_init_opal_common() and time_init() being called, and if it isn't,
+then we should probably be setting it somewhere that isn't hvc_opal.c!
+
+Signed-off-by: Stewart Smith <stewart@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/tty/hvc/hvc_opal.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -3715,14 +3715,17 @@ static int smu7_trim_dpm_states(struct p
- static int smu7_generate_dpm_level_enable_mask(
- 		struct pp_hwmgr *hwmgr, const void *input)
- {
--	int result;
-+	int result = 0;
- 	const struct phm_set_power_state_input *states =
- 			(const struct phm_set_power_state_input *)input;
- 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
- 	const struct smu7_power_state *smu7_ps =
- 			cast_const_phw_smu7_power_state(states->pnew_state);
+--- a/drivers/tty/hvc/hvc_opal.c
++++ b/drivers/tty/hvc/hvc_opal.c
+@@ -318,7 +318,6 @@ static void udbg_init_opal_common(void)
+ 	udbg_putc = udbg_opal_putc;
+ 	udbg_getc = udbg_opal_getc;
+ 	udbg_getc_poll = udbg_opal_getc_poll;
+-	tb_ticks_per_usec = 0x200; /* Make udelay not suck */
+ }
  
--	result = smu7_trim_dpm_states(hwmgr, smu7_ps);
-+	/*skip the trim if od is enabled*/
-+	if (!hwmgr->od_enabled)
-+		result = smu7_trim_dpm_states(hwmgr, smu7_ps);
-+
- 	if (result)
- 		return result;
- 
+ void __init hvc_opal_init_early(void)
 
 
