@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821E9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DAAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4602420841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4602420841
+	by mail.kernel.org (Postfix) with ESMTP id E3AF92083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AF92083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404591AbeHATDm (ORCPT
+        id S2404578AbeHATDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
+        Wed, 1 Aug 2018 15:03:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404474AbeHATDk (ORCPT
+        with ESMTP id S2404471AbeHATDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71C81F85;
-        Wed,  1 Aug 2018 16:57:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F3031223;
+        Wed,  1 Aug 2018 17:09:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 048/336] ceph: fix use-after-free in ceph_statfs()
-Date:   Wed,  1 Aug 2018 18:46:23 +0200
-Message-Id: <20180801165030.914550559@linuxfoundation.org>
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Martin Wilck <mwilck@suse.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 296/336] block: bio_iov_iter_get_pages: fix size of last iovec
+Date:   Wed,  1 Aug 2018 18:50:31 +0200
+Message-Id: <20180801165040.367328395@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,110 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luis Henriques <lhenriques@suse.com>
+From: Martin Wilck <mwilck@suse.com>
 
-[ Upstream commit 73fb0949cf246b212ff63d692a0ec88db954bb35 ]
+commit b403ea2404889e1227812fa9657667a1deb9c694 upstream.
 
-KASAN found an UAF in ceph_statfs.  This was a one-off bug but looking at
-the code it looks like the monmap access needs to be protected as it can
-be modified while we're accessing it.  Fix this by protecting the access
-with the monc->mutex.
+If the last page of the bio is not "full", the length of the last
+vector slot needs to be corrected. This slot has the index
+(bio->bi_vcnt - 1), but only in bio->bi_io_vec. In the "bv" helper
+array, which is shifted by the value of bio->bi_vcnt at function
+invocation, the correct index is (nr_pages - 1).
 
-  BUG: KASAN: use-after-free in ceph_statfs+0x21d/0x2c0
-  Read of size 8 at addr ffff88006844f2e0 by task trinity-c5/304
+v2: improved readability following suggestions from Ming Lei.
+v3: followed a formatting suggestion from Christoph Hellwig.
 
-  CPU: 0 PID: 304 Comm: trinity-c5 Not tainted 4.17.0-rc6+ #172
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-  Call Trace:
-   dump_stack+0xa5/0x11b
-   ? show_regs_print_info+0x5/0x5
-   ? kmsg_dump_rewind+0x118/0x118
-   ? ceph_statfs+0x21d/0x2c0
-   print_address_description+0x73/0x2b0
-   ? ceph_statfs+0x21d/0x2c0
-   kasan_report+0x243/0x360
-   ceph_statfs+0x21d/0x2c0
-   ? ceph_umount_begin+0x80/0x80
-   ? kmem_cache_alloc+0xdf/0x1a0
-   statfs_by_dentry+0x79/0xb0
-   vfs_statfs+0x28/0x110
-   user_statfs+0x8c/0xe0
-   ? vfs_statfs+0x110/0x110
-   ? __fdget_raw+0x10/0x10
-   __se_sys_statfs+0x5d/0xa0
-   ? user_statfs+0xe0/0xe0
-   ? mutex_unlock+0x1d/0x40
-   ? __x64_sys_statfs+0x20/0x30
-   do_syscall_64+0xee/0x290
-   ? syscall_return_slowpath+0x1c0/0x1c0
-   ? page_fault+0x1e/0x30
-   ? syscall_return_slowpath+0x13c/0x1c0
-   ? prepare_exit_to_usermode+0xdb/0x140
-   ? syscall_trace_enter+0x330/0x330
-   ? __put_user_4+0x1c/0x30
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-  Allocated by task 130:
-   __kmalloc+0x124/0x210
-   ceph_monmap_decode+0x1c1/0x400
-   dispatch+0x113/0xd20
-   ceph_con_workfn+0xa7e/0x44e0
-   process_one_work+0x5f0/0xa30
-   worker_thread+0x184/0xa70
-   kthread+0x1a0/0x1c0
-   ret_from_fork+0x35/0x40
-
-  Freed by task 130:
-   kfree+0xb8/0x210
-   dispatch+0x15a/0xd20
-   ceph_con_workfn+0xa7e/0x44e0
-   process_one_work+0x5f0/0xa30
-   worker_thread+0x184/0xa70
-   kthread+0x1a0/0x1c0
-   ret_from_fork+0x35/0x40
-
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 2cefe4dbaadf ("block: add bio_iov_iter_get_pages()")
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ceph/super.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -45,7 +45,7 @@ static void ceph_put_super(struct super_
- static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
+---
+ block/bio.c |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -881,16 +881,16 @@ EXPORT_SYMBOL(bio_add_page);
+  */
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
  {
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(d_inode(dentry));
--	struct ceph_monmap *monmap = fsc->client->monc.monmap;
-+	struct ceph_mon_client *monc = &fsc->client->monc;
- 	struct ceph_statfs st;
- 	u64 fsid;
- 	int err;
-@@ -58,7 +58,7 @@ static int ceph_statfs(struct dentry *de
+-	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
++	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt, idx;
+ 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
+ 	struct page **pages = (struct page **)bv;
+-	size_t offset, diff;
++	size_t offset;
+ 	ssize_t size;
+ 
+ 	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
+ 	if (unlikely(size <= 0))
+ 		return size ? size : -EFAULT;
+-	nr_pages = (size + offset + PAGE_SIZE - 1) / PAGE_SIZE;
++	idx = nr_pages = (size + offset + PAGE_SIZE - 1) / PAGE_SIZE;
+ 
+ 	/*
+ 	 * Deep magic below:  We need to walk the pinned pages backwards
+@@ -903,17 +903,15 @@ int bio_iov_iter_get_pages(struct bio *b
+ 	bio->bi_iter.bi_size += size;
+ 	bio->bi_vcnt += nr_pages;
+ 
+-	diff = (nr_pages * PAGE_SIZE - offset) - size;
+-	while (nr_pages--) {
+-		bv[nr_pages].bv_page = pages[nr_pages];
+-		bv[nr_pages].bv_len = PAGE_SIZE;
+-		bv[nr_pages].bv_offset = 0;
++	while (idx--) {
++		bv[idx].bv_page = pages[idx];
++		bv[idx].bv_len = PAGE_SIZE;
++		bv[idx].bv_offset = 0;
  	}
  
- 	dout("statfs\n");
--	err = ceph_monc_do_statfs(&fsc->client->monc, data_pool, &st);
-+	err = ceph_monc_do_statfs(monc, data_pool, &st);
- 	if (err < 0)
- 		return err;
+ 	bv[0].bv_offset += offset;
+ 	bv[0].bv_len -= offset;
+-	if (diff)
+-		bv[bio->bi_vcnt - 1].bv_len -= diff;
++	bv[nr_pages - 1].bv_len -= nr_pages * PAGE_SIZE - offset - size;
  
-@@ -94,8 +94,11 @@ static int ceph_statfs(struct dentry *de
- 	buf->f_namelen = NAME_MAX;
- 
- 	/* Must convert the fsid, for consistent values across arches */
--	fsid = le64_to_cpu(*(__le64 *)(&monmap->fsid)) ^
--	       le64_to_cpu(*((__le64 *)&monmap->fsid + 1));
-+	mutex_lock(&monc->mutex);
-+	fsid = le64_to_cpu(*(__le64 *)(&monc->monmap->fsid)) ^
-+	       le64_to_cpu(*((__le64 *)&monc->monmap->fsid + 1));
-+	mutex_unlock(&monc->mutex);
-+
- 	buf->f_fsid.val[0] = fsid & 0xffffffff;
- 	buf->f_fsid.val[1] = fsid >> 32;
- 
+ 	iov_iter_advance(iter, size);
+ 	return 0;
 
 
