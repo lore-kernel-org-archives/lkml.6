@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404DAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E174B2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E174B2083D
+	by mail.kernel.org (Postfix) with ESMTP id 7AEA6208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEA6208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732663AbeHATw1 (ORCPT
+        id S1732537AbeHATw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:52:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405824AbeHATIh (ORCPT
+        with ESMTP id S2405826AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FD9710B1;
-        Wed,  1 Aug 2018 17:03:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51B3A1170;
+        Wed,  1 Aug 2018 17:06:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 190/336] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
-Date:   Wed,  1 Aug 2018 18:48:45 +0200
-Message-Id: <20180801165036.367594309@linuxfoundation.org>
+Subject: [PATCH 4.17 208/336] perf: fix invalid bit in diagnostic entry
+Date:   Wed,  1 Aug 2018 18:49:03 +0200
+Message-Id: <20180801165037.039572984@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,50 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 7207b94754b6f503b278b5b200faaf662ffa1da8 ]
+[ Upstream commit 3c0a83b14ea71fef5ccc93a3bd2de5f892be3194 ]
 
-The PMU node references two interrupts, but lacks the interrupt-affinity
-property, which is required in that case:
+The s390 CPU measurement facility sampling mode supports basic entries
+and diagnostic entries. Each entry has a valid bit to indicate the
+status of the entry as valid or invalid.
 
-    hw perfevents: no interrupt-affinity property for /pmu, guessing.
+This bit is bit 31 in the diagnostic entry, but the bit mask definition
+refers to bit 30.
 
-Add the missing property to fix this.
+Fix this by making the reserved field one bit larger.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 7e75fc3ff4cf ("s390/cpum_sf: Add raw data sampling to support the diagnostic-sampling function")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/emev2.dtsi |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/s390/include/asm/cpu_mf.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/emev2.dtsi
-+++ b/arch/arm/boot/dts/emev2.dtsi
-@@ -31,13 +31,13 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+--- a/arch/s390/include/asm/cpu_mf.h
++++ b/arch/s390/include/asm/cpu_mf.h
+@@ -113,7 +113,7 @@ struct hws_basic_entry {
  
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
- 			clock-frequency = <533000000>;
- 		};
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
-@@ -57,6 +57,7 @@
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
- 	};
- 
- 	clocks@e0110000 {
+ struct hws_diag_entry {
+ 	unsigned int def:16;	    /* 0-15  Data Entry Format		 */
+-	unsigned int R:14;	    /* 16-19 and 20-30 reserved		 */
++	unsigned int R:15;	    /* 16-19 and 20-30 reserved		 */
+ 	unsigned int I:1;	    /* 31 entry valid or invalid	 */
+ 	u8	     data[];	    /* Machine-dependent sample data	 */
+ } __packed;
 
 
