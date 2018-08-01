@@ -3,45 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114B8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60583C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2ED020862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2ED020862
+	by mail.kernel.org (Postfix) with ESMTP id 22D4920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D4920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbeHAT7X (ORCPT
+        id S1732875AbeHAT7b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:59:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49926 "EHLO
+        Wed, 1 Aug 2018 15:59:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390328AbeHATIe (ORCPT
+        with ESMTP id S2405692AbeHATIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEBFC13D3;
-        Wed,  1 Aug 2018 17:16:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3160E1146;
+        Wed,  1 Aug 2018 17:05:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Wood <swood@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Pei Zhang <pezhang@redhat.com>, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 086/246] x86/microcode: Make the late update update_lock a raw lock for RT
-Date:   Wed,  1 Aug 2018 18:49:56 +0200
-Message-Id: <20180801165015.837161149@linuxfoundation.org>
+Subject: [PATCH 4.17 226/336] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
+Date:   Wed,  1 Aug 2018 18:49:21 +0200
+Message-Id: <20180801165037.719292562@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -51,54 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Scott Wood <swood@redhat.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit ff987fcf011d20c53b3a613edf6e2055ea48e26e ]
+[ Upstream commit 5b19d284f5195a925dd015a6397bfce184097378 ]
 
-__reload_late() is called from stop_machine context and thus cannot
-acquire a non-raw spinlock on PREEMPT_RT.
+pageout() in MM traslates EAGAIN, so calls handle_write_error()
+ -> mapping_set_error() -> set_bit(AS_EIO, ...).
+ file_write_and_wait_range() will see EIO error, which is critical
+ to return value of fsync() followed by atomic_write failure to user.
 
-Signed-off-by: Scott Wood <swood@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Pei Zhang <pezhang@redhat.com>
-Cc: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20180524154420.24455-1-swood@redhat.com
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -70,7 +70,7 @@ static DEFINE_MUTEX(microcode_mutex);
- /*
-  * Serialize late loading so that CPUs get updated one-by-one.
-  */
--static DEFINE_SPINLOCK(update_lock);
-+static DEFINE_RAW_SPINLOCK(update_lock);
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1848,7 +1848,13 @@ out:
  
- struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
- 
-@@ -560,9 +560,9 @@ static int __reload_late(void *info)
- 	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
- 		return -1;
- 
--	spin_lock(&update_lock);
-+	raw_spin_lock(&update_lock);
- 	apply_microcode_local(&err);
--	spin_unlock(&update_lock);
-+	raw_spin_unlock(&update_lock);
- 
- 	/* siblings return UCODE_OK because their engine got updated already */
- 	if (err > UCODE_NFOUND) {
+ redirty_out:
+ 	redirty_page_for_writepage(wbc, page);
+-	if (!err)
++	/*
++	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
++	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
++	 * file_write_and_wait_range() will see EIO error, which is critical
++	 * to return value of fsync() followed by atomic_write failure to user.
++	 */
++	if (!err || wbc->for_reclaim)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+ 	unlock_page(page);
+ 	return err;
 
 
