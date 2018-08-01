@@ -6,35 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7C8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A55C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0889220862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0889220862
+	by mail.kernel.org (Postfix) with ESMTP id 80D7720862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D7720862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405645AbeHATYC (ORCPT
+        id S2406234AbeHATYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:24:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52946 "EHLO
+        Wed, 1 Aug 2018 15:24:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52934 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436580AbeHATSi (ORCPT
+        with ESMTP id S2436523AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D403BF38;
-        Wed,  1 Aug 2018 16:56:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6793E88;
+        Wed,  1 Aug 2018 16:54:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Daniel Colascione <dancol@google.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 069/336] f2fs: dont drop dentry pages after fs shutdown
-Date:   Wed,  1 Aug 2018 18:46:44 +0200
-Message-Id: <20180801165031.777403641@linuxfoundation.org>
+Subject: [PATCH 4.17 033/336] mm: /proc/pid/pagemap: hide swap entries from unprivileged users
+Date:   Wed,  1 Aug 2018 18:46:08 +0200
+Message-Id: <20180801165030.355446108@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,41 +60,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Huang Ying <ying.huang@intel.com>
 
-[ Upstream commit 1174abfd8309f4c47d454734233aa3b694560e10 ]
+[ Upstream commit ab6ecf247a9321e3180e021a6a60164dee53ab2e ]
 
-As description in commit "f2fs: don't drop any page on f2fs_cp_error()
-case":
+In commit ab676b7d6fbf ("pagemap: do not leak physical addresses to
+non-privileged userspace"), the /proc/PID/pagemap is restricted to be
+readable only by CAP_SYS_ADMIN to address some security issue.
 
-"We still provide readdir() after shtudown, so we should keep pages to
-avoid additional IOs."
+In commit 1c90308e7a77 ("pagemap: hide physical addresses from
+non-privileged users"), the restriction is relieved to make
+/proc/PID/pagemap readable, but hide the physical addresses for
+non-privileged users.
 
-In order to provider lastest directory structure, let's keep dentry
-pages in cache after fs shutdown.
+But the swap entries are readable for non-privileged users too.  This
+has some security issues.  For example, for page under migrating, the
+swap entry has physical address information.  So, in this patch, the
+swap entries are hided for non-privileged users too.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Link: http://lkml.kernel.org/r/20180508012745.7238-1-ying.huang@intel.com
+Fixes: 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged users")
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Cc: Daniel Colascione <dancol@google.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/data.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/proc/task_mmu.c |   26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1745,6 +1745,12 @@ static int __write_data_page(struct page
- 	/* we should bypass data pages to proceed the kworkder jobs */
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		mapping_set_error(page->mapping, -EIO);
-+		/*
-+		 * don't drop any dirty dentry pages for keeping lastest
-+		 * directory structure.
-+		 */
-+		if (S_ISDIR(inode->i_mode))
-+			goto redirty_out;
- 		goto out;
- 	}
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1259,8 +1259,9 @@ static pagemap_entry_t pte_to_pagemap_en
+ 		if (pte_swp_soft_dirty(pte))
+ 			flags |= PM_SOFT_DIRTY;
+ 		entry = pte_to_swp_entry(pte);
+-		frame = swp_type(entry) |
+-			(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
++		if (pm->show_pfn)
++			frame = swp_type(entry) |
++				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+ 		flags |= PM_SWAP;
+ 		if (is_migration_entry(entry))
+ 			page = migration_entry_to_page(entry);
+@@ -1311,11 +1312,14 @@ static int pagemap_pmd_range(pmd_t *pmdp
+ #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+ 		else if (is_swap_pmd(pmd)) {
+ 			swp_entry_t entry = pmd_to_swp_entry(pmd);
+-			unsigned long offset = swp_offset(entry);
++			unsigned long offset;
  
+-			offset += (addr & ~PMD_MASK) >> PAGE_SHIFT;
+-			frame = swp_type(entry) |
+-				(offset << MAX_SWAPFILES_SHIFT);
++			if (pm->show_pfn) {
++				offset = swp_offset(entry) +
++					((addr & ~PMD_MASK) >> PAGE_SHIFT);
++				frame = swp_type(entry) |
++					(offset << MAX_SWAPFILES_SHIFT);
++			}
+ 			flags |= PM_SWAP;
+ 			if (pmd_swp_soft_dirty(pmd))
+ 				flags |= PM_SOFT_DIRTY;
+@@ -1333,10 +1337,12 @@ static int pagemap_pmd_range(pmd_t *pmdp
+ 			err = add_to_pagemap(addr, &pme, pm);
+ 			if (err)
+ 				break;
+-			if (pm->show_pfn && (flags & PM_PRESENT))
+-				frame++;
+-			else if (flags & PM_SWAP)
+-				frame += (1 << MAX_SWAPFILES_SHIFT);
++			if (pm->show_pfn) {
++				if (flags & PM_PRESENT)
++					frame++;
++				else if (flags & PM_SWAP)
++					frame += (1 << MAX_SWAPFILES_SHIFT);
++			}
+ 		}
+ 		spin_unlock(ptl);
+ 		return err;
 
 
