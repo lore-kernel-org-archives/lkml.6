@@ -2,132 +2,80 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4828DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BE5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2BC208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:04:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nO3qBraU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H4KXFraH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2BC208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id C4C16208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:04:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C16208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbeHAVve (ORCPT
+        id S2387443AbeHAVvq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:51:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeHAVvd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:51:33 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 195B360275; Wed,  1 Aug 2018 20:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533153847;
-        bh=AycGWAS9RfsyqyoQJcC6qknLtu6knsJAxQ3hmDs39o4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nO3qBraUgWsVYI5CAmIw6BCvIanrwpAyfVVNlI6nX/dDqWXv5H22UH1GqIEdpIg1U
-         s4TGd8mPhQaGnBQwMekh+FmfmKBLiE+U3JZRoC1NMcx8B5eh2vN8+XBVSXJ4arr2cE
-         QWx/xuAtwWE0C3mQi9aaXs9YOy8ybG/VcJ5zF0mE=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3B57E60264;
-        Wed,  1 Aug 2018 20:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533153846;
-        bh=AycGWAS9RfsyqyoQJcC6qknLtu6knsJAxQ3hmDs39o4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H4KXFraHQ4RDa8Sa62xu7lIqLuXPPuNGlaEcuWQP9Bm6C4NB2OlnzcqR6LTeCRSf7
-         LiehGn5uzhWhMdIiYmlSZI6LWfw8uffIuBGoLAd4MUU5Ew2hbFBTIHiIKM6glRJTM7
-         CaH477ySmsH/Q5DtIJ+EG6TxAhnXd7xIO8iKCq5g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B57E60264
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Wed, 1 Aug 2018 14:04:05 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     swboyd@chromium.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND RFC 2/4] drivers: pinctrl: qcom: add wakeup gpio
- map for sdm845
-Message-ID: <20180801200405.GB6422@codeaurora.org>
-References: <20180801020021.9782-1-ilina@codeaurora.org>
- <20180801020021.9782-3-ilina@codeaurora.org>
- <8636vyxyub.wl-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8636vyxyub.wl-marc.zyngier@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 1 Aug 2018 17:51:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48624 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729647AbeHAVvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 17:51:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DBBC7A9;
+        Wed,  1 Aug 2018 13:04:20 -0700 (PDT)
+Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC2093F5BA;
+        Wed,  1 Aug 2018 13:04:19 -0700 (PDT)
+From:   Jeremy Linton <jeremy.linton@arm.com>
+To:     linux-mm@kvack.org
+Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, mhocko@suse.com,
+        vbabka@suse.cz, Punit.Agrawal@arm.com, Lorenzo.Pieralisi@arm.com,
+        linux-arm-kernel@lists.infradead.org, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>
+Subject: [RFC 0/2] harden alloc_pages against bogus nid
+Date:   Wed,  1 Aug 2018 15:04:16 -0500
+Message-Id: <20180801200418.1325826-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01 2018 at 02:42 -0600, Marc Zyngier wrote:
->On Wed, 01 Aug 2018 03:00:19 +0100,
->Lina Iyer <ilina@codeaurora.org> wrote:
->>
->> Add GPIO to PDC pin map for the SDM845 SoC.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->>  drivers/pinctrl/qcom/pinctrl-sdm845.c | 76 +++++++++++++++++++++++++++
->>  1 file changed, 76 insertions(+)
->>
->> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
->> index 2ab7a8885757..e93660922dc2 100644
->> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
->> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
->> @@ -1277,6 +1277,80 @@ static const struct msm_pingroup sdm845_groups[] = {
->>  	UFS_RESET(ufs_reset, 0x99f000),
->>  };
->>
->> +static struct msm_pinctrl_pdc_map sdm845_wakeup_gpios[] = {
->
->[huge array]
->
->> +};
->
->Why isn't that array part of the DT? I'd expect other SoCs to
->eventually use a similar mechanism, no?
->
-I agree and it should be.
+The thread "avoid alloc memory on offline node"
 
-One place I am thinking is to add it to the DT definition of PDC
-controller as a data argument -
+https://lkml.org/lkml/2018/6/7/251
 
-	tlmm: pinctrl@000000{
-	[...]
-		interrupts-extended = <&pdc 30 IRQ_TYPE_LEVEL_HIGH 1>,
-                      <&pdc 31 IRQ_TYPE_LEVEL_HIGH 3>,
-		      <&pdc 32 IRQ_TYPE_LEVEL_HIGH 5>,
-						   ^
-						   |--- Provide the GPIO
-						   for the PDC pin here.
-	};
+Asked at one point why the kzalloc_node was crashing rather than
+returning memory from a valid node. The thread ended up fixing
+the immediate causes of the crash but left open the case of bad
+proximity values being in DSDT tables without corrisponding
+SRAT/SLIT entries as is happening on another machine.
 
-	pdc: interrupt-controller@b220000 {
-		compatible = "qcom,sdm845-pdc";
-		reg = <0xb220000 0x30000>;
-		qcom,pdc-ranges = <0 512 94>, <94 641 15>, <115 662 7>;
-		#interrupt-cells = <3>; <-------- Increase this from 2 ?
-		interrupt-parent = <&intc>;
-		interrupt-controller;
-	};
+Its also easy to fix that, but we should also harden the allocator
+sufficiently that it doesn't crash when passed an invalid node id.
+There are a couple possible ways to do this, and i've attached two
+separate patches which individually fix that problem.
 
-Would that be acceptable?
+The first detects the offline node before calling
+the new_slab code path when it becomes apparent that the allocation isn't
+going to succeed. The second actually hardens node_zonelist() and
+prepare_alloc_pages() in the face of NODE_DATA(nid) returning a NULL
+zonelist. This latter case happens if the node has never been initialized
+or is possibly out of range. There are other places (NODE_DATA &
+online_node) which should be checking if the node id's are > MAX_NUMNODES.
 
-Thanks,
-Lina
+Jeremy Linton (2):
+  slub: Avoid trying to allocate memory on offline nodes
+  mm: harden alloc_pages code paths against bogus nodes
+
+ include/linux/gfp.h | 2 ++
+ mm/page_alloc.c     | 2 ++
+ mm/slub.c           | 2 ++
+ 3 files changed, 6 insertions(+)
+
+-- 
+2.14.3
+
