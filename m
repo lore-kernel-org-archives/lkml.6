@@ -6,41 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFEDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC16C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360FC2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360FC2083D
+	by mail.kernel.org (Postfix) with ESMTP id 60E7320841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E7320841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbeHAUIS (ORCPT
+        id S2387493AbeHAUIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:08:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404411AbeHATDj (ORCPT
+        with ESMTP id S2404413AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20DE311E3;
-        Wed,  1 Aug 2018 17:08:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2BC8AFE8;
+        Wed,  1 Aug 2018 16:59:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
-        Hannes Reinecke <hare@suse.de>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        SCSI ML <linux-scsi@vger.kernel.org>,
-        DM ML <dm-devel@redhat.com>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 280/336] scsi: scsi_dh: replace too broad "TP9" string with the exact models
-Date:   Wed,  1 Aug 2018 18:50:15 +0200
-Message-Id: <20180801165039.741047962@linuxfoundation.org>
+Subject: [PATCH 4.17 085/336] selftests: filesystems: return Kselftest Skip code for skipped tests
+Date:   Wed,  1 Aug 2018 18:47:00 +0200
+Message-Id: <20180801165032.433126312@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -57,46 +52,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit 37b37d2609cb0ac267280ef27350b962d16d272e ]
+[ Upstream commit 7357dcf2ef2811156fdf223a9a27f73528934e1f ]
 
-SGI/TP9100 is not an RDAC array:
-    ^^^
-https://git.opensvc.com/gitweb.cgi?p=multipath-tools/.git;a=blob;f=libmultipath/hwtable.c;h=88b4700beb1d8940008020fbe4c3cd97d62f4a56;hb=HEAD#l235
+When devpts_pts test is skipped because of unmet dependencies and/or
+unsupported configuration, it exits with error which is treated as
+a fail by the Kselftest framework. This leads to false negative
+result even when the test could not be run.
 
-This partially reverts commit 35204772ea03 ("[SCSI] scsi_dh_rdac :
-Consolidate rdac strings together")
+In another case, it returns pass for a skipped test reporting a false
+postive.
 
-[mkp: fixed up the new entries to align with rest of struct]
+Change it to return kselftest skip code when a test gets skipped to
+clearly report that the test could not be run.
 
-Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: SCSI ML <linux-scsi@vger.kernel.org>
-Cc: DM ML <dm-devel@redhat.com>
-Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Change it to use ksft_exit_skip() when test is skipped.
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_dh.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/testing/selftests/filesystems/devpts_pts.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/scsi_dh.c
-+++ b/drivers/scsi/scsi_dh.c
-@@ -58,7 +58,10 @@ static const struct scsi_dh_blist scsi_d
- 	{"IBM", "3526",			"rdac", },
- 	{"IBM", "3542",			"rdac", },
- 	{"IBM", "3552",			"rdac", },
--	{"SGI", "TP9",			"rdac", },
-+	{"SGI", "TP9300",		"rdac", },
-+	{"SGI", "TP9400",		"rdac", },
-+	{"SGI", "TP9500",		"rdac", },
-+	{"SGI", "TP9700",		"rdac", },
- 	{"SGI", "IS",			"rdac", },
- 	{"STK", "OPENstorage",		"rdac", },
- 	{"STK", "FLEXLINE 380",		"rdac", },
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -11,6 +11,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/mount.h>
+ #include <sys/wait.h>
++#include "../kselftest.h"
+ 
+ static bool terminal_dup2(int duplicate, int original)
+ {
+@@ -125,10 +126,12 @@ static int do_tiocgptpeer(char *ptmx, ch
+ 		if (errno == EINVAL) {
+ 			fprintf(stderr, "TIOCGPTPEER is not supported. "
+ 					"Skipping test.\n");
+-			fret = EXIT_SUCCESS;
++			fret = KSFT_SKIP;
++		} else {
++			fprintf(stderr,
++				"Failed to perform TIOCGPTPEER ioctl\n");
++			fret = EXIT_FAILURE;
+ 		}
+-
+-		fprintf(stderr, "Failed to perform TIOCGPTPEER ioctl\n");
+ 		goto do_cleanup;
+ 	}
+ 
+@@ -281,7 +284,7 @@ int main(int argc, char *argv[])
+ 	if (!isatty(STDIN_FILENO)) {
+ 		fprintf(stderr, "Standard input file desciptor is not attached "
+ 				"to a terminal. Skipping test\n");
+-		exit(EXIT_FAILURE);
++		exit(KSFT_SKIP);
+ 	}
+ 
+ 	ret = unshare(CLONE_NEWNS);
 
 
