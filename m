@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92610C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB99FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521D620844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521D620844
+	by mail.kernel.org (Postfix) with ESMTP id 70F47208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F47208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732616AbeHATsH (ORCPT
+        id S1732631AbeHATsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:48:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:1770 "EHLO mga04.intel.com"
+        Wed, 1 Aug 2018 15:48:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58990 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbeHATsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:48:03 -0400
+        id S1731955AbeHATsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:48:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 11:01:10 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 11:01:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
-   d="scan'208";a="77895722"
+   d="scan'208";a="61270676"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga001.jf.intel.com with ESMTP; 01 Aug 2018 11:01:01 -0700
-Subject: [PATCH 0/5] x86/mm/pti: close two Meltdown leaks with Global kernel mapping
+  by orsmga007.jf.intel.com with ESMTP; 01 Aug 2018 11:01:06 -0700
+Subject: [PATCH 3/5] x86/mm/init: pass unconverted symbol addresses to free_init_pages()
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>, keescook@google.com,
         tglx@linutronix.de, mingo@kernel.org, aarcange@redhat.com,
@@ -40,59 +40,35 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>, keescook@google.com,
         torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
         ak@linux.intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Wed, 01 Aug 2018 11:00:58 -0700
-Message-Id: <20180801180058.EC46D963@viggo.jf.intel.com>
+Date:   Wed, 01 Aug 2018 11:01:02 -0700
+References: <20180801180058.EC46D963@viggo.jf.intel.com>
+In-Reply-To: <20180801180058.EC46D963@viggo.jf.intel.com>
+Message-Id: <20180801180102.9B58A341@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This applies to 4.17 and 4.18.
 
-Thanks to Hugh Dickins for initially finding the r/w kernel text
-issue and coming up with an initial fix.  I found the "unused
-hole" part and came up with different approach for fixing the
-mess.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
---
+The x86 code has several places where it frees parts of kernel image:
 
-Background:
+ 1. Unused SMP alternative
+ 2. __init code
+ 3. The hole between text and rodata
+ 4. The hole between rodata and data
 
-Process Context IDentifiers (PCIDs) are a hardware feature that
-allows TLB entries to survive page table switches (CR3 writes).
-As an optimization, the PTI code currently allows the kernel image
-to be Global when running on hardware without PCIDs.  This results
-in fewer TLB misses, especially upon entry.
+We call free_init_pages() to do this.  Strangely, we convert the
+symbol addresses to kernel direct map addresses in some cases
+(#3, #4) but not others (#1, #2).
 
-The downside is that these Global areas are theoretically
-susceptible to Meltdown.  The logic is that there are no secrets
-in the kernel image, so why pay the cost of TLB misses.
+The virt_to_page() and the other code in free_reserved_area() now
+works fine for for symbol addresses on x86, so don't bother
+converting the addresses to direct map addresses before freeing
+them.
 
-Problem:
-
-The current PTI code leaves the entire area of the kernel binary
-between '_text' and '_end' as Global (on non-PCID hardware).
-However, that range contains both read-write kernel data, and two
-"unused" holes in addition to text.  The areas which are not text
-or read-only might contain secrets once they are freed back into
-the allocator.
-
-This issue affects systems which are susceptible to Meltdown, do not
-have PCIDs and which are using the default PTI_AUTO mode (no
-pti=on/off on the cmdline).
-
-PCIDs became generally available for servers in ~2010 (Westmere)
-and desktop (client) parts in roughly 2011 (Sandybridge).  This
-is not expected to affect anything newer than that.
-
-Solution:
-
-The solution for the read-write area is to clear the global bit
-for the area (patch #1).
-
-The "unused" holes need a bit more work since we free them in a
-bit of an ad-hoc way, but we fix this up in patches 2-5.
-
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Kees Cook <keescook@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -106,3 +82,27 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
+---
+
+ b/arch/x86/mm/init_64.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff -puN arch/x86/mm/init_64.c~x86-init-do-not-convert-symbol-addresses arch/x86/mm/init_64.c
+--- a/arch/x86/mm/init_64.c~x86-init-do-not-convert-symbol-addresses	2018-07-30 09:53:13.778915692 -0700
++++ b/arch/x86/mm/init_64.c	2018-07-30 09:53:13.782915692 -0700
+@@ -1283,12 +1283,8 @@ void mark_rodata_ro(void)
+ 	set_memory_ro(start, (end-start) >> PAGE_SHIFT);
+ #endif
+ 
+-	free_init_pages("unused kernel",
+-			(unsigned long) __va(__pa_symbol(text_end)),
+-			(unsigned long) __va(__pa_symbol(rodata_start)));
+-	free_init_pages("unused kernel",
+-			(unsigned long) __va(__pa_symbol(rodata_end)),
+-			(unsigned long) __va(__pa_symbol(_sdata)));
++	free_init_pages("unused kernel", text_end, rodata_start);
++	free_init_pages("unused kernel", rodata_end, _sdata);
+ 
+ 	debug_checkwx();
+ 
+_
