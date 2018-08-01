@@ -2,108 +2,187 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C2FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C628BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3901C208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CE5208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/FY0+ar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3901C208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="MKganLey"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CE5208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389917AbeHARiN (ORCPT
+        id S2389938AbeHARjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:38:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56254 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389557AbeHARiM (ORCPT
+        Wed, 1 Aug 2018 13:39:19 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46859 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389698AbeHARjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:38:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JGGGUPL8y+Sg9MFwW8cY9lJ3vvwCFtGeyT8ocGR/Lto=; b=O/FY0+arLoN3yvgTDaQdaP11A
-        sFtp5jmbphrcnIRsmYkDI6jzby+x3hdhhGH3Ej6fnPHKWn7LDNSAILFeGxDnyf4U/5c9pbbsXbsdx
-        nDfAIa7IkUvZkijysDA0qV/s1PLw0ypgiXnmO1KDQpyR6c+Nm5OuyiTjH/meSWVYUkR+XBCouLEaj
-        EyWd3E80RP3YZd75oTyxmuRBQqCWjdwPRKt5lDbOd6qWUOS4lqmkSfAO9kV/ndWWGjUZM/kvOKUW4
-        AJxw6be/Xd8UB4g7HoVlVPBHIUpOqakiXSHWwvAcTONZp83sKS2ay+yxDO6bPxhI42ERKRVlbTp3/
-        DZcU9JLhg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fktPU-0004Ho-UI; Wed, 01 Aug 2018 15:51:36 +0000
-Date:   Wed, 1 Aug 2018 08:51:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>, jack@suse.com,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Misuse of constructors
-Message-ID: <20180801155136.GB4039@bombadil.infradead.org>
-References: <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <30ee6c72-dc90-275a-8e23-54221f393cb0@virtuozzo.com>
- <c03fd1ca-0169-4492-7d6f-2df7a91bff5e@gmail.com>
- <CACT4Y+bLbDunoz+0qB=atbQXJ9Gu3N6+UXPwNnqMbq5RyZu1mQ@mail.gmail.com>
- <cf751136-c459-853a-0210-abf16f54ad17@gmail.com>
- <CACT4Y+b6aCHMTQD21fSf2AMZoH5g8p-FuCVHviMLF00uFV+zGg@mail.gmail.com>
- <01000164f60f3f12-b1253c6e-ee57-49fc-aed8-0944ab4fd7a2-000000@email.amazonses.com>
- <CANn89i+KtwtLvSw1c=Ux8okKP+XyMxzYbuKhYb2qhYeMw=NTzg@mail.gmail.com>
+        Wed, 1 Aug 2018 13:39:19 -0400
+Received: by mail-qt0-f195.google.com with SMTP id d4-v6so20401161qtn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mclUiBiBMjGqRmLDCY4DkBrnidOyVpPFZwnbKnVDC28=;
+        b=MKganLeyqIuHbAnkaSYRU5XrkkLw7y5UIgIOUc9k8Q50v682xFSf8eWtBAHL5tsqkL
+         VgVupLRxpdckKaVggK/KT66+2R07TsJvniJ0w5rmSk/4RDa8pZsEk3KLG4Hi1tkaQH1m
+         zyPbzt+8PDJwNyRqhM6JIMHw2oizTzqYwCYUU7sRS6DDLgOKThfSrZFldyKbnKJwgfqH
+         jfAHiqX2D1nT47EBvA+LGavyGVjnMmyAzAs0h7bnEU55VGfU5EELgd67mzfzAi2IS8LM
+         B8x55WqQrsbAzcMRPgBBp5Xdth4ZlvOpj5MhZwLQd1pbV7XLEVOdbtYZHB3SIYzn77Q0
+         7pWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mclUiBiBMjGqRmLDCY4DkBrnidOyVpPFZwnbKnVDC28=;
+        b=ZwwUorqNy0XNeqtaW2Pt23/cyg/maxqnTJTOz2kCBiaHXioQUBskarY8ssGmipFiI1
+         6frnLmVeskDHgtrKLdFXMX5h4ba8Rac1ffT30c+i/vj7BM9nKxdPRfZvJy2aW5Taue0Z
+         M6VDsSCDzonj/COY2X7FKQycBrktLdg0ESiyjTrO6wybuC2sJ2rCA9OdCsXNdskDYLGh
+         B7Mlh02dhR6fKkZ/i4yjsVMf54rUKDHfRWIRLIkxJjzM1A0Lq0jF+XuiPca9InBqkE0r
+         +ouBOTwUgHfCH4/j71dfruvTNFteqDV+HcgbIP9Is3mP1wmyT45sXrKWJOtwnKxNtTO9
+         ghtQ==
+X-Gm-Message-State: AOUpUlHu54PrOcgxqukVAY5HEkYmedLP822y2+5SmKu9p+1IagfXqXmg
+        2l3xlZT0qktwC4l6qeCWN8RvlCy9OCs=
+X-Google-Smtp-Source: AAOMgpc2vJjJWgrR0Sby9dSWJcOoyIDIOlaaBFV0qxwujaA9cKc6UBB1Z9eh8L+M4XDY1xoWKDLk7g==
+X-Received: by 2002:a0c:e651:: with SMTP id c17-v6mr23667236qvn.170.1533138777938;
+        Wed, 01 Aug 2018 08:52:57 -0700 (PDT)
+Received: from localhost (216.49.36.201.res-cmts.bus.ptd.net. [216.49.36.201])
+        by smtp.gmail.com with ESMTPSA id t127-v6sm6819704qkd.1.2018.08.01.08.52.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 08:52:56 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 11:55:52 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
+ mem_cgroup_css_alloc() failure
+Message-ID: <20180801155552.GA8600@cmpxchg.org>
+References: <8a81c801-35c8-767d-54b0-df9f1ca0abc0@virtuozzo.com>
+ <20180413115454.GL17484@dhcp22.suse.cz>
+ <abfd4903-c455-fac2-7ed6-73707cda64d1@virtuozzo.com>
+ <20180413121433.GM17484@dhcp22.suse.cz>
+ <20180413125101.GO17484@dhcp22.suse.cz>
+ <20180726162512.6056b5d7c1d2a5fbff6ce214@linux-foundation.org>
+ <20180727193134.GA10996@cmpxchg.org>
+ <20180729192621.py4znecoinw5mqcp@esperanza>
+ <20180730153113.GB4567@cmpxchg.org>
+ <20180731163908.603d7a27c6534341e1afa724@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANn89i+KtwtLvSw1c=Ux8okKP+XyMxzYbuKhYb2qhYeMw=NTzg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180731163908.603d7a27c6534341e1afa724@linux-foundation.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 08:37:07AM -0700, Eric Dumazet wrote:
-> The idea of having a ctor() would only be a win if all the fields that
-> can be initialized in the ctor are contiguous and fill an integral
-> number of cache lines.
+On Tue, Jul 31, 2018 at 04:39:08PM -0700, Andrew Morton wrote:
+> On Mon, 30 Jul 2018 11:31:13 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+> 
+> > Subject: [PATCH] mm: memcontrol: simplify memcg idr allocation and error
+> >  unwinding
+> > 
+> > The memcg ID is allocated early in the multi-step memcg creation
+> > process, which needs 2-step ID allocation and IDR publishing, as well
+> > as two separate IDR cleanup/unwind sites on error.
+> > 
+> > Defer the IDR allocation until the last second during onlining to
+> > eliminate all this complexity. There is no requirement to have the ID
+> > and IDR entry earlier than that. And the root reference to the ID is
+> > put in the offline path, so this matches nicely.
+> 
+> This patch isn't aware of Kirill's later "mm, memcg: assign memcg-aware
+> shrinkers bitmap to memcg", which altered mem_cgroup_css_online():
+> 
+> @@ -4356,6 +4470,11 @@ static int mem_cgroup_css_online(struct
+>  {
+>  	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+>  
+> +	if (memcg_alloc_shrinker_maps(memcg)) {
+> +		mem_cgroup_id_remove(memcg);
+> +		return -ENOMEM;
+> +	}
+> +
+>  	/* Online state pins memcg ID, memcg ID pins CSS */
+>  	atomic_set(&memcg->id.ref, 1);
+>  	css_get(css);
+> 
 
-Let's state it more generally: Having a ctor is only a win if it allows
-the user to avoid reading or writing a significant number of cachelines.
+Hm, that looks out of place too. The bitmaps are allocated for the
+entire lifetime of the css, not just while it's online.
 
-For example, the radix tree node occupies nine cachelines (576 bytes).
-The typical user will touch two of those cacheliens (the header and the
-cacheline which contains the slot of interest).  That's seven cachelines
-which don't even need to be read, let alone written.
+Any objections to the following fixup to that patch?
 
-I think filesystems are particularly prone to this antipattern of
-initialising some of their inode with a ctor and the remainder at
-alloc_inode() time (compare the locations of the struct members touched
-by inode_init_always() and inode_init_once()).
+From bbb785f1daca74024232aa34ba29a8a108556ace Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Wed, 1 Aug 2018 11:42:55 -0400
+Subject: [PATCH] mm, memcg: assign memcg-aware shrinkers bitmap to memcg fix
+
+The shrinker bitmap allocation is a bit out of place in the css
+onlining path.
+
+Allocate and free those bitmaps as part of the memcg alloc and free
+procedures.
+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/memcontrol.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index c9098200326f..82eb40b715da 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4342,6 +4342,7 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
+ {
+ 	int node;
+ 
++	memcg_free_shrinker_maps(memcg);
+ 	for_each_node(node)
+ 		free_mem_cgroup_per_node_info(memcg, node);
+ 	free_percpu(memcg->stat_cpu);
+@@ -4381,6 +4382,9 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 		if (alloc_mem_cgroup_per_node_info(memcg, node))
+ 			goto fail;
+ 
++	if (memcg_alloc_shrinker_maps(memcg))
++		goto fail;
++
+ 	if (memcg_wb_domain_init(memcg, GFP_KERNEL))
+ 		goto fail;
+ 
+@@ -4470,11 +4474,6 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+ 
+-	if (memcg_alloc_shrinker_maps(memcg)) {
+-		mem_cgroup_id_remove(memcg);
+-		return -ENOMEM;
+-	}
+-
+ 	/* Online state pins memcg ID, memcg ID pins CSS */
+ 	atomic_set(&memcg->id.ref, 1);
+ 	css_get(css);
+@@ -4527,7 +4526,6 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
+ 	vmpressure_cleanup(&memcg->vmpressure);
+ 	cancel_work_sync(&memcg->high_work);
+ 	mem_cgroup_remove_from_trees(memcg);
+-	memcg_free_shrinker_maps(memcg);
+ 	memcg_free_kmem(memcg);
+ 	mem_cgroup_free(memcg);
+ }
+-- 
+2.18.0
+
