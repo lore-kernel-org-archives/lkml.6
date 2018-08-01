@@ -3,36 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CE0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB742083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB742083D
+	by mail.kernel.org (Postfix) with ESMTP id 6986F20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6986F20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732295AbeHAUJP (ORCPT
+        id S1732953AbeHAUJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:09:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
+        Wed, 1 Aug 2018 16:09:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404308AbeHATDj (ORCPT
+        with ESMTP id S2404425AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 278C0124D;
-        Wed,  1 Aug 2018 17:09:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25D42119E;
+        Wed,  1 Aug 2018 17:07:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.17 303/336] ext4: fix false negatives *and* false positives in ext4_check_descriptors()
-Date:   Wed,  1 Aug 2018 18:50:38 +0200
-Message-Id: <20180801165040.646526971@linuxfoundation.org>
+        stable@vger.kernel.org, Sergey Kubushyn <ksi@koi8.net>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 263/336] platform/x86: dell-smbios: Match on www.dell.com in OEM strings too
+Date:   Wed,  1 Aug 2018 18:49:58 +0200
+Message-Id: <20180801165039.110623083@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -49,56 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-commit 44de022c4382541cebdd6de4465d1f4f465ff1dd upstream.
+[ Upstream commit b004b21cc664ca00782508514dade43e29eebf94 ]
 
-Ext4_check_descriptors() was getting called before s_gdb_count was
-initialized.  So for file systems w/o the meta_bg feature, allocation
-bitmaps could overlap the block group descriptors and ext4 wouldn't
-notice.
+Sergey reported that some much older Dell systems don't support
+the OEM string "Dell System" but instead supported www.dell.com
+in OEM strings.
 
-For file systems with the meta_bg feature enabled, there was a
-fencepost error which would cause the ext4_check_descriptors() to
-incorrectly believe that the block allocation bitmap overlaps with the
-block group descriptor blocks, and it would reject the mount.
+Match both of these to indicate that this driver is running on
+a Dell system.
 
-Fix both of these problems.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+Reported-by: Sergey Kubushyn <ksi@koi8.net>
+Tested-by: Sergey Kubushyn <ksi@koi8.net>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+[dvhart: Simplify DMI logic and eliminate unnecessary variables]
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/super.c |    5 ++---
+ drivers/platform/x86/dell-smbios-base.c |    5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2307,7 +2307,7 @@ static int ext4_check_descriptors(struct
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
--	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -4050,14 +4050,13 @@ static int ext4_fill_super(struct super_
- 			goto failed_mount2;
- 		}
- 	}
-+	sbi->s_gdb_count = db_count;
- 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
- 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
- 		ret = -EFSCORRUPTED;
- 		goto failed_mount2;
- 	}
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -555,11 +555,10 @@ static void free_group(struct platform_d
  
--	sbi->s_gdb_count = db_count;
--
- 	timer_setup(&sbi->s_err_report, print_daily_error_info, 0);
+ static int __init dell_smbios_init(void)
+ {
+-	const struct dmi_device *valid;
+ 	int ret, wmi, smm;
  
- 	/* Register extent status tree shrinker */
+-	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
+-	if (!valid) {
++	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
++	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+ 		pr_err("Unable to run on non-Dell system\n");
+ 		return -ENODEV;
+ 	}
 
 
