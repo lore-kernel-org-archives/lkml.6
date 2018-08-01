@@ -2,70 +2,86 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3620C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDDB208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDDB208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 4A564208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A564208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407763AbeHATRM (ORCPT
+        id S2405026AbeHAT2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:12 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49888 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406684AbeHATRL (ORCPT
+        Wed, 1 Aug 2018 15:28:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406684AbeHATRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:11 -0400
-Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2DA98100A39AC;
-        Wed,  1 Aug 2018 09:51:36 -0700 (PDT)
-Date:   Wed, 01 Aug 2018 09:51:35 -0700 (PDT)
-Message-Id: <20180801.095135.79911181296177212.davem@davemloft.net>
-To:     jcline@redhat.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com
-Subject: Re: [PATCH] netlink: Fix spectre v1 gadget in netlink_create()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180731211316.12971-1-jcline@redhat.com>
-References: <20180731211316.12971-1-jcline@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 01 Aug 2018 09:51:36 -0700 (PDT)
+        Wed, 1 Aug 2018 15:17:15 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3992AD4A;
+        Wed,  1 Aug 2018 17:30:31 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 117/144] memory: tegra: Do not handle spurious interrupts
+Date:   Wed,  1 Aug 2018 18:52:24 +0200
+Message-Id: <20180801164957.618758660@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
+References: <20180801164949.023217860@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Cline <jcline@redhat.com>
-Date: Tue, 31 Jul 2018 21:13:16 +0000
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> 'protocol' is a user-controlled value, so sanitize it after the bounds
-> check to avoid using it for speculative out-of-bounds access to arrays
-> indexed by it.
-> 
-> This addresses the following accesses detected with the help of smatch:
-> 
-> * net/netlink/af_netlink.c:654 __netlink_create() warn: potential
->   spectre issue 'nlk_cb_mutex_keys' [w]
-> 
-> * net/netlink/af_netlink.c:654 __netlink_create() warn: potential
->   spectre issue 'nlk_cb_mutex_key_strings' [w]
-> 
-> * net/netlink/af_netlink.c:685 netlink_create() warn: potential spectre
->   issue 'nl_table' [w] (local cap)
-> 
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Jeremy Cline <jcline@redhat.com>
+------------------
 
-Applied and queued up for -stable, thanks.
+From: Dmitry Osipenko <digetx@gmail.com>
+
+[ Upstream commit bf3fbdfbec947cdd04b2f2c4bce11534c8786eee ]
+
+The ISR reads interrupts-enable mask, but doesn't utilize it. Apply the
+mask to the interrupt status and don't handle interrupts that MC driver
+haven't asked for. Kernel would disable spurious MC IRQ and report the
+error. This would happen only in a case of a very severe bug.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/memory/tegra/mc.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -252,8 +252,11 @@ static irqreturn_t tegra_mc_irq(int irq,
+ 	unsigned int bit;
+ 
+ 	/* mask all interrupts to avoid flooding */
+-	status = mc_readl(mc, MC_INTSTATUS);
+ 	mask = mc_readl(mc, MC_INTMASK);
++	status = mc_readl(mc, MC_INTSTATUS) & mask;
++
++	if (!status)
++		return IRQ_NONE;
+ 
+ 	for_each_set_bit(bit, &status, 32) {
+ 		const char *error = status_names[bit] ?: "unknown";
+
+
