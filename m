@@ -5,118 +5,200 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C370C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E2EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56253208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56253208A5
+	by mail.kernel.org (Postfix) with ESMTP id 73C9720894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C9720894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390151AbeHARNq (ORCPT
+        id S2390165AbeHARNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:13:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60026 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 13:13:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58752 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389787AbeHARNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:13:45 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S2389770AbeHARNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:13:46 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9469987A76;
+        by mx1.redhat.com (Postfix) with ESMTPS id 88DAC7A7E6;
         Wed,  1 Aug 2018 15:27:31 +0000 (UTC)
-Received: from [10.36.116.228] (ovpn-116-228.ams2.redhat.com [10.36.116.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE30B1C5B6;
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 19C21200AC23;
         Wed,  1 Aug 2018 15:27:30 +0000 (UTC)
-Subject: Re: [PATCH] x86: kvm: Restrict X86_FEATURE_VMMCALL to x86_64 platform
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     whiteheadm@acm.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180730194059.5781-1-tedheadster@gmail.com>
- <7c274466-6d93-d1ba-8721-4d69f847b40f@redhat.com>
- <CAP8WD_aP5-bh=+NrJV8a3BCMbQK_PyJD88PGRuU8Qh_exFBy9w@mail.gmail.com>
- <1d40dca9-c128-0390-98d2-5ca9c8791448@redhat.com>
- <CAMzpN2jY7AC2Kmp7rr+cP2Xynx66fWnzEXs9_JhbNpsqix0_Vg@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <db964be1-623d-979a-3321-58a6d87a188e@redhat.com>
-Date:   Wed, 1 Aug 2018 17:27:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 30/33] vfs: syscall: Add fspick() to select a superblock for
+ reconfiguration [ver #11]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 01 Aug 2018 16:27:28 +0100
+Message-ID: <153313724861.13253.3837522702693613670.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <CAMzpN2jY7AC2Kmp7rr+cP2Xynx66fWnzEXs9_JhbNpsqix0_Vg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/08/2018 17:21, Brian Gerst wrote:
-> On Tue, Jul 31, 2018 at 9:00 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->>
->> On 31/07/2018 14:57, tedheadster wrote:
->>>>
->>>> This shouldn't be necessary; for systems that don't have virtualization
->>>> extensions, the comment explains why setting X86_FEATURE_VMMCALL is safe.
->>>>
->>>> But it is also wrong, because you can run a 32-bit kernel as a guest on
->>>> a 64-bit processor, and then it should set X86_FEATURE_VMMCALL because
->>>> the processor has the vmmcall instruction and not Intel's vmcall.
->>>>
->>>
->>> Paolo,
->>>   I'm running this on a bare metal machine (no virtualization) with a
->>> 32-bit AMD i486 class cpu. Should the feature be showing up in
->>> /proc/cpuinfo under the 'flags' line? It does on my machine, and it
->>> looked wrong to me.
->>
->> It's a bit silly, but it's not particularly wrong.
-> 
-> Why is there even a specific feature flag for VMMCALL?  Isn't
-> X86_FEATURE_SVM sufficient to differentiate which opcode to use?
+Provide an fspick() system call that can be used to pick an existing
+mountpoint into an fs_context which can thereafter be used to reconfigure a
+superblock (equivalent of the superblock side of -o remount).
 
-No, X86_FEATURE_SVM is there in the host while X86_FEATURE_VMMCALL is
-used in the guest.
+This looks like:
 
-Paolo
+	int fd = fspick(AT_FDCWD, "/mnt",
+			FSPICK_CLOEXEC | FSPICK_NO_AUTOMOUNT);
+        fsconfig(fd, FSCONFIG_SET_FLAG, "intr", NULL, 0);
+        fsconfig(fd, FSCONFIG_SET_FLAG, "noac", NULL, 0);
+        fsconfig(fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+
+At the point of fspick being called, the file descriptor referring to the
+filesystem context is in exactly the same state as the one that was created
+by fsopen() after fsmount() has been successfully called.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-api@vger.kernel.org
+---
+
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 +
+ fs/fsopen.c                            |   58 ++++++++++++++++++++++++++++++++
+ include/linux/syscalls.h               |    1 +
+ include/uapi/linux/fs.h                |    5 +++
+ 5 files changed, 66 insertions(+)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index c78b68256f8a..d1eb6c815790 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -403,3 +403,4 @@
+ 389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
+ 390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
+ 391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
++392	i386	fspick			sys_fspick			__ia32_sys_fspick
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index d44ead5d4368..d3ab703c02bb 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -348,6 +348,7 @@
+ 337	common	fsopen			__x64_sys_fsopen
+ 338	common	fsconfig		__x64_sys_fsconfig
+ 339	common	fsmount			__x64_sys_fsmount
++340	common	fspick			__x64_sys_fspick
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 5d8560e78ce1..e79bb5b085d6 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -155,6 +155,64 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	return ret;
+ }
+ 
++/*
++ * Pick a superblock into a context for reconfiguration.
++ */
++SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
++{
++	struct fs_context *fc;
++	struct path target;
++	unsigned int lookup_flags;
++	int ret;
++
++	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if ((flags & ~(FSPICK_CLOEXEC |
++		       FSPICK_SYMLINK_NOFOLLOW |
++		       FSPICK_NO_AUTOMOUNT |
++		       FSPICK_EMPTY_PATH)) != 0)
++		return -EINVAL;
++
++	lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
++	if (flags & FSPICK_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & FSPICK_NO_AUTOMOUNT)
++		lookup_flags &= ~LOOKUP_AUTOMOUNT;
++	if (flags & FSPICK_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++	ret = user_path_at(dfd, path, lookup_flags, &target);
++	if (ret < 0)
++		goto err;
++
++	ret = -EOPNOTSUPP;
++	if (!target.dentry->d_sb->s_op->reconfigure)
++		goto err_path;
++
++	fc = vfs_new_fs_context(target.dentry->d_sb->s_type, target.dentry,
++				0, FS_CONTEXT_FOR_RECONFIGURE);
++	if (IS_ERR(fc)) {
++		ret = PTR_ERR(fc);
++		goto err_path;
++	}
++
++	fc->phase = FS_CONTEXT_RECONF_PARAMS;
++
++	ret = fscontext_alloc_log(fc);
++	if (ret < 0)
++		goto err_fc;
++
++	path_put(&target);
++	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
++
++err_fc:
++	put_fs_context(fc);
++err_path:
++	path_put(&target);
++err:
++	return ret;
++}
++
+ /*
+  * Check the state and apply the configuration.  Note that this function is
+  * allowed to 'steal' the value by setting param->xxx to NULL before returning.
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 65db661cc2da..701522957a12 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -908,6 +908,7 @@ asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+ asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
+ 			     const void __user *value, int aux);
+ asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
++asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 10281d582e28..7f01503a9e9b 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -351,6 +351,11 @@ typedef int __bitwise __kernel_rwf_t;
+ 
+ #define FSMOUNT_CLOEXEC		0x00000001
+ 
++#define FSPICK_CLOEXEC		0x00000001
++#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
++#define FSPICK_NO_AUTOMOUNT	0x00000004
++#define FSPICK_EMPTY_PATH	0x00000008
++
+ /*
+  * The type of fsconfig() call made.
+  */
+
