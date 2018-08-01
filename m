@@ -3,38 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9362BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11845C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45ACA20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45ACA20862
+	by mail.kernel.org (Postfix) with ESMTP id C021F20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C021F20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390318AbeHATHp (ORCPT
+        id S2405520AbeHATHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49254 "EHLO
+        Wed, 1 Aug 2018 15:07:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389699AbeHATHo (ORCPT
+        with ESMTP id S2390320AbeHATHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:44 -0400
+        Wed, 1 Aug 2018 15:07:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2ABFCE6;
-        Wed,  1 Aug 2018 17:21:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18654CE6;
+        Wed,  1 Aug 2018 17:21:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org,
+        Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 184/246] memory: tegra: Apply interrupts mask per SoC
-Date:   Wed,  1 Aug 2018 18:51:34 +0200
-Message-Id: <20180801165020.526445411@linuxfoundation.org>
+Subject: [PATCH 4.14 150/246] media: rcar_jpu: Add missing clk_disable_unprepare() on error in jpu_open()
+Date:   Wed,  1 Aug 2018 18:51:00 +0200
+Message-Id: <20180801165018.921047470@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,161 +55,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-[ Upstream commit 1c74d5c0de0c2cc29fef97a19251da2ad6f579bd ]
+[ Upstream commit 43d0d3c52787df0221d1c52494daabd824fe84f1 ]
 
-Currently we are enabling handling of interrupts specific to Tegra124+
-which happen to overlap with previous generations. Let's specify
-interrupts mask per SoC generation for consistency and in a preparation
-of squashing of Tegra20 driver into the common one that will enable
-handling of GART faults which may be undesirable by newer generations.
+Add the missing clk_disable_unprepare() before return from
+jpu_open() in the software reset error handling case.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Acked-by: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/memory/tegra/mc.c       |   21 +++------------------
- drivers/memory/tegra/mc.h       |    9 +++++++++
- drivers/memory/tegra/tegra114.c |    2 ++
- drivers/memory/tegra/tegra124.c |    6 ++++++
- drivers/memory/tegra/tegra210.c |    3 +++
- drivers/memory/tegra/tegra30.c  |    2 ++
- include/soc/tegra/mc.h          |    2 ++
- 7 files changed, 27 insertions(+), 18 deletions(-)
+ drivers/media/platform/rcar_jpu.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -20,14 +20,6 @@
- #include "mc.h"
+--- a/drivers/media/platform/rcar_jpu.c
++++ b/drivers/media/platform/rcar_jpu.c
+@@ -1280,7 +1280,7 @@ static int jpu_open(struct file *file)
+ 		/* ...issue software reset */
+ 		ret = jpu_reset(jpu);
+ 		if (ret)
+-			goto device_prepare_rollback;
++			goto jpu_reset_rollback;
+ 	}
  
- #define MC_INTSTATUS 0x000
--#define  MC_INT_DECERR_MTS (1 << 16)
--#define  MC_INT_SECERR_SEC (1 << 13)
--#define  MC_INT_DECERR_VPR (1 << 12)
--#define  MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
--#define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
--#define  MC_INT_ARBITRATION_EMEM (1 << 9)
--#define  MC_INT_SECURITY_VIOLATION (1 << 8)
--#define  MC_INT_DECERR_EMEM (1 << 6)
- 
- #define MC_INTMASK 0x004
- 
-@@ -248,13 +240,11 @@ static const char *const error_names[8]
- static irqreturn_t tegra_mc_irq(int irq, void *data)
- {
- 	struct tegra_mc *mc = data;
--	unsigned long status, mask;
-+	unsigned long status;
- 	unsigned int bit;
- 
- 	/* mask all interrupts to avoid flooding */
--	mask = mc_readl(mc, MC_INTMASK);
--	status = mc_readl(mc, MC_INTSTATUS) & mask;
--
-+	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
- 	if (!status)
- 		return IRQ_NONE;
- 
-@@ -349,7 +339,6 @@ static int tegra_mc_probe(struct platfor
- 	const struct of_device_id *match;
- 	struct resource *res;
- 	struct tegra_mc *mc;
--	u32 value;
- 	int err;
- 
- 	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
-@@ -417,11 +406,7 @@ static int tegra_mc_probe(struct platfor
- 
- 	WARN(!mc->soc->client_id_mask, "Missing client ID mask for this SoC\n");
- 
--	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
--		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
--		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
--
--	mc_writel(mc, value, MC_INTMASK);
-+	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
- 
+ 	jpu->ref_count++;
+@@ -1288,6 +1288,8 @@ static int jpu_open(struct file *file)
+ 	mutex_unlock(&jpu->mutex);
  	return 0;
- }
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -14,6 +14,15 @@
  
- #include <soc/tegra/mc.h>
- 
-+#define MC_INT_DECERR_MTS (1 << 16)
-+#define MC_INT_SECERR_SEC (1 << 13)
-+#define MC_INT_DECERR_VPR (1 << 12)
-+#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
-+#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
-+#define MC_INT_ARBITRATION_EMEM (1 << 9)
-+#define MC_INT_SECURITY_VIOLATION (1 << 8)
-+#define MC_INT_DECERR_EMEM (1 << 6)
-+
- static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
- {
- 	return readl(mc->regs + offset);
---- a/drivers/memory/tegra/tegra114.c
-+++ b/drivers/memory/tegra/tegra114.c
-@@ -930,4 +930,6 @@ const struct tegra_mc_soc tegra114_mc_so
- 	.atom_size = 32,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra114_smmu_soc,
-+	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
-+		   MC_INT_DECERR_EMEM,
- };
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1020,6 +1020,9 @@ const struct tegra_mc_soc tegra124_mc_so
- 	.smmu = &tegra124_smmu_soc,
- 	.emem_regs = tegra124_mc_emem_regs,
- 	.num_emem_regs = ARRAY_SIZE(tegra124_mc_emem_regs),
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
- 
-@@ -1042,5 +1045,8 @@ const struct tegra_mc_soc tegra132_mc_so
- 	.atom_size = 32,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra132_smmu_soc,
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -1077,4 +1077,7 @@ const struct tegra_mc_soc tegra210_mc_so
- 	.atom_size = 64,
- 	.client_id_mask = 0xff,
- 	.smmu = &tegra210_smmu_soc,
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -952,4 +952,6 @@ const struct tegra_mc_soc tegra30_mc_soc
- 	.atom_size = 16,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra30_smmu_soc,
-+	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
-+		   MC_INT_DECERR_EMEM,
- };
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -99,6 +99,8 @@ struct tegra_mc_soc {
- 	u8 client_id_mask;
- 
- 	const struct tegra_smmu_soc *smmu;
-+
-+	u32 intmask;
- };
- 
- struct tegra_mc {
++jpu_reset_rollback:
++	clk_disable_unprepare(jpu->clk);
+ device_prepare_rollback:
+ 	mutex_unlock(&jpu->mutex);
+ v4l_prepare_rollback:
 
 
