@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C43AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8162BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E560620844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E560620844
+	by mail.kernel.org (Postfix) with ESMTP id 23BF020862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23BF020862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404698AbeHATEL (ORCPT
+        id S2404713AbeHATEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46458 "EHLO
+        Wed, 1 Aug 2018 15:04:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403893AbeHATEK (ORCPT
+        with ESMTP id S2404701AbeHATEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:10 -0400
+        Wed, 1 Aug 2018 15:04:13 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E832DC96;
-        Wed,  1 Aug 2018 17:17:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE67EC9E;
+        Wed,  1 Aug 2018 17:17:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Theodore Tso <tytso@mit.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 115/246] net: hns3: Fix the missing client list node initialization
-Date:   Wed,  1 Aug 2018 18:50:25 +0200
-Message-Id: <20180801165017.209971893@linuxfoundation.org>
+Subject: [PATCH 4.14 116/246] fscrypt: use unbound workqueue for decryption
+Date:   Wed,  1 Aug 2018 18:50:26 +0200
+Message-Id: <20180801165017.256855363@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,34 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xi Wang <wangxi11@huawei.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 13562d1f5e2fbe2cf33b23a00abca3f71264c4ac ]
+[ Upstream commit 36dd26e0c8d42699eeba87431246c07c28075bae ]
 
-This patch fixes the missing initialization of the client list node
-in the hnae3_register_client() function.
+Improve fscrypt read performance by switching the decryption workqueue
+from bound to unbound.  With the bound workqueue, when multiple bios
+completed on the same CPU, they were decrypted on that same CPU.  But
+with the unbound queue, they are now decrypted in parallel on any CPU.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Although fscrypt read performance can be tough to measure due to the
+many sources of variation, this change is most beneficial when
+decryption is slow, e.g. on CPUs without AES instructions.  For example,
+I timed tarring up encrypted directories on f2fs.  On x86 with AES-NI
+instructions disabled, the unbound workqueue improved performance by
+about 25-35%, using 1 to NUM_CPUs jobs with 4 or 8 CPUs available.  But
+with AES-NI enabled, performance was unchanged to within ~2%.
+
+I also did the same test on a quad-core ARM CPU using xts-speck128-neon
+encryption.  There performance was usually about 10% better with the
+unbound workqueue, bringing it closer to the unencrypted speed.
+
+The unbound workqueue may be worse in some cases due to worse locality,
+but I think it's still the better default.  dm-crypt uses an unbound
+workqueue by default too, so this change makes fscrypt match.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/crypto/crypto.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-@@ -2883,6 +2883,8 @@ static int __init hns3_init_module(void)
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -446,8 +446,17 @@ fail:
+  */
+ static int __init fscrypt_init(void)
+ {
++	/*
++	 * Use an unbound workqueue to allow bios to be decrypted in parallel
++	 * even when they happen to complete on the same CPU.  This sacrifices
++	 * locality, but it's worthwhile since decryption is CPU-intensive.
++	 *
++	 * Also use a high-priority workqueue to prioritize decryption work,
++	 * which blocks reads from completing, over regular application tasks.
++	 */
+ 	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
+-							WQ_HIGHPRI, 0);
++						 WQ_UNBOUND | WQ_HIGHPRI,
++						 num_online_cpus());
+ 	if (!fscrypt_read_workqueue)
+ 		goto fail;
  
- 	client.ops = &client_ops;
- 
-+	INIT_LIST_HEAD(&client.node);
-+
- 	ret = hnae3_register_client(&client);
- 	if (ret)
- 		return ret;
 
 
