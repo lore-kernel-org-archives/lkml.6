@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA3BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8454A2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8454A2083D
+	by mail.kernel.org (Postfix) with ESMTP id E68C82083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68C82083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387572AbeHAUMe (ORCPT
+        id S2387629AbeHAUM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:12:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46152 "EHLO
+        Wed, 1 Aug 2018 16:12:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404316AbeHATDi (ORCPT
+        with ESMTP id S2404284AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:38 -0400
+        Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF6FCFD7;
-        Wed,  1 Aug 2018 16:58:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DC4412B5;
+        Wed,  1 Aug 2018 17:10:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 115/336] nvme-rdma: stop admin queue before freeing it
-Date:   Wed,  1 Aug 2018 18:47:30 +0200
-Message-Id: <20180801165033.551254396@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 323/336] virtio_net: Fix incosistent received bytes counter
+Date:   Wed,  1 Aug 2018 18:50:58 +0200
+Message-Id: <20180801165041.398879997@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,68 +51,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit 2e050f00a0f0e07467050cb4afae0234941e5bf3 ]
+[ Upstream commit ecbc42ca5d665e9238a4cdb595024d2e6cf87f2d ]
 
-For any failure after nvme_rdma_start_queue in
-nvme_rdma_configure_admin_queue, the admin queue will be freed with the
-NVME_RDMA_Q_LIVE flag still set.  Once nvme_rdma_stop_queue is invoked,
-that will cause a use-after-free.
-BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
+When received packets are dropped in virtio_net driver, received packets
+counter is incremented but bytes counter is not.
+As a result, for instance if we drop all packets by XDP, only received
+is counted and bytes stays 0, which looks inconsistent.
+IMHO received packets/bytes should be counted if packets are produced by
+the hypervisor, like what common NICs on physical machines are doing.
+So fix the bytes counter.
 
-To fix it, call nvme_rdma_stop_queue for all the failed cases after
-nvme_rdma_start_queue.
-
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Suggested-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/rdma.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/virtio_net.c |   41 +++++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
 
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -778,7 +778,7 @@ static int nvme_rdma_configure_admin_que
- 	if (error) {
- 		dev_err(ctrl->ctrl.device,
- 			"prop_get NVME_REG_CAP failed\n");
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -551,7 +551,8 @@ static struct sk_buff *receive_small(str
+ 				     struct receive_queue *rq,
+ 				     void *buf, void *ctx,
+ 				     unsigned int len,
+-				     unsigned int *xdp_xmit)
++				     unsigned int *xdp_xmit,
++				     unsigned int *rbytes)
+ {
+ 	struct sk_buff *skb;
+ 	struct bpf_prog *xdp_prog;
+@@ -567,6 +568,7 @@ static struct sk_buff *receive_small(str
+ 	int err;
+ 
+ 	len -= vi->hdr_len;
++	*rbytes += len;
+ 
+ 	rcu_read_lock();
+ 	xdp_prog = rcu_dereference(rq->xdp_prog);
+@@ -666,11 +668,13 @@ static struct sk_buff *receive_big(struc
+ 				   struct virtnet_info *vi,
+ 				   struct receive_queue *rq,
+ 				   void *buf,
+-				   unsigned int len)
++				   unsigned int len,
++				   unsigned int *rbytes)
+ {
+ 	struct page *page = buf;
+ 	struct sk_buff *skb = page_to_skb(vi, rq, page, 0, len, PAGE_SIZE);
+ 
++	*rbytes += len - vi->hdr_len;
+ 	if (unlikely(!skb))
+ 		goto err;
+ 
+@@ -688,7 +692,8 @@ static struct sk_buff *receive_mergeable
+ 					 void *buf,
+ 					 void *ctx,
+ 					 unsigned int len,
+-					 unsigned int *xdp_xmit)
++					 unsigned int *xdp_xmit,
++					 unsigned int *rbytes)
+ {
+ 	struct virtio_net_hdr_mrg_rxbuf *hdr = buf;
+ 	u16 num_buf = virtio16_to_cpu(vi->vdev, hdr->num_buffers);
+@@ -702,6 +707,7 @@ static struct sk_buff *receive_mergeable
+ 	int err;
+ 
+ 	head_skb = NULL;
++	*rbytes += len - vi->hdr_len;
+ 
+ 	rcu_read_lock();
+ 	xdp_prog = rcu_dereference(rq->xdp_prog);
+@@ -831,6 +837,7 @@ static struct sk_buff *receive_mergeable
+ 			goto err_buf;
+ 		}
+ 
++		*rbytes += len;
+ 		page = virt_to_head_page(buf);
+ 
+ 		truesize = mergeable_ctx_to_truesize(ctx);
+@@ -886,6 +893,7 @@ err_skb:
+ 			dev->stats.rx_length_errors++;
+ 			break;
+ 		}
++		*rbytes += len;
+ 		page = virt_to_head_page(buf);
+ 		put_page(page);
+ 	}
+@@ -896,14 +904,13 @@ xdp_xmit:
+ 	return NULL;
+ }
+ 
+-static int receive_buf(struct virtnet_info *vi, struct receive_queue *rq,
+-		       void *buf, unsigned int len, void **ctx,
+-		       unsigned int *xdp_xmit)
++static void receive_buf(struct virtnet_info *vi, struct receive_queue *rq,
++			void *buf, unsigned int len, void **ctx,
++			unsigned int *xdp_xmit, unsigned int *rbytes)
+ {
+ 	struct net_device *dev = vi->dev;
+ 	struct sk_buff *skb;
+ 	struct virtio_net_hdr_mrg_rxbuf *hdr;
+-	int ret;
+ 
+ 	if (unlikely(len < vi->hdr_len + ETH_HLEN)) {
+ 		pr_debug("%s: short packet %i\n", dev->name, len);
+@@ -915,23 +922,22 @@ static int receive_buf(struct virtnet_in
+ 		} else {
+ 			put_page(virt_to_head_page(buf));
+ 		}
+-		return 0;
++		return;
  	}
  
- 	ctrl->ctrl.sqsize =
-@@ -786,23 +786,25 @@ static int nvme_rdma_configure_admin_que
+ 	if (vi->mergeable_rx_bufs)
+-		skb = receive_mergeable(dev, vi, rq, buf, ctx, len, xdp_xmit);
++		skb = receive_mergeable(dev, vi, rq, buf, ctx, len, xdp_xmit,
++					rbytes);
+ 	else if (vi->big_packets)
+-		skb = receive_big(dev, vi, rq, buf, len);
++		skb = receive_big(dev, vi, rq, buf, len, rbytes);
+ 	else
+-		skb = receive_small(dev, vi, rq, buf, ctx, len, xdp_xmit);
++		skb = receive_small(dev, vi, rq, buf, ctx, len, xdp_xmit, rbytes);
  
- 	error = nvme_enable_ctrl(&ctrl->ctrl, ctrl->ctrl.cap);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
+ 	if (unlikely(!skb))
+-		return 0;
++		return;
  
- 	ctrl->ctrl.max_hw_sectors =
- 		(ctrl->max_fr_pages - 1) << (ilog2(SZ_4K) - 9);
+ 	hdr = skb_vnet_hdr(skb);
  
- 	error = nvme_init_identify(&ctrl->ctrl);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
+-	ret = skb->len;
+-
+ 	if (hdr->hdr.flags & VIRTIO_NET_HDR_F_DATA_VALID)
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
  
- 	error = nvme_rdma_alloc_qe(ctrl->queues[0].device->dev,
- 			&ctrl->async_event_sqe, sizeof(struct nvme_command),
- 			DMA_TO_DEVICE);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
+@@ -948,12 +954,11 @@ static int receive_buf(struct virtnet_in
+ 		 ntohs(skb->protocol), skb->len, skb->pkt_type);
  
- 	return 0;
+ 	napi_gro_receive(&rq->napi, skb);
+-	return ret;
++	return;
  
-+out_stop_queue:
-+	nvme_rdma_stop_queue(&ctrl->queues[0]);
- out_cleanup_queue:
- 	if (new)
- 		blk_cleanup_queue(ctrl->ctrl.admin_q);
+ frame_err:
+ 	dev->stats.rx_frame_errors++;
+ 	dev_kfree_skb(skb);
+-	return 0;
+ }
+ 
+ /* Unlike mergeable buffers, all buffers are allocated to the
+@@ -1203,13 +1208,13 @@ static int virtnet_receive(struct receiv
+ 
+ 		while (received < budget &&
+ 		       (buf = virtqueue_get_buf_ctx(rq->vq, &len, &ctx))) {
+-			bytes += receive_buf(vi, rq, buf, len, ctx, xdp_xmit);
++			receive_buf(vi, rq, buf, len, ctx, xdp_xmit, &bytes);
+ 			received++;
+ 		}
+ 	} else {
+ 		while (received < budget &&
+ 		       (buf = virtqueue_get_buf(rq->vq, &len)) != NULL) {
+-			bytes += receive_buf(vi, rq, buf, len, NULL, xdp_xmit);
++			receive_buf(vi, rq, buf, len, NULL, xdp_xmit, &bytes);
+ 			received++;
+ 		}
+ 	}
 
 
