@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA57FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29914C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC502208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC502208A4
+	by mail.kernel.org (Postfix) with ESMTP id DF8AE208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8AE208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeHATl5 (ORCPT
+        id S1727153AbeHATmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:41:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:42:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405942AbeHATIk (ORCPT
+        with ESMTP id S2405958AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85081132E;
-        Wed,  1 Aug 2018 17:12:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F7A0114B;
+        Wed,  1 Aug 2018 17:05:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@vger.kerne.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 013/246] tracing: Fix double free of event_trigger_data
-Date:   Wed,  1 Aug 2018 18:48:43 +0200
-Message-Id: <20180801165012.340980346@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 228/336] media: siano: get rid of __le32/__le16 cast warnings
+Date:   Wed,  1 Aug 2018 18:49:23 +0200
+Message-Id: <20180801165037.796268159@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,116 +48,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 1863c387259b629e4ebfb255495f67cd06aa229b upstream.
+[ Upstream commit e1b7f11b37def5f3021c06e8c2b4953e099357aa ]
 
-Running the following:
+Those are all false-positives that appear with smatch when building for
+arm:
 
- # cd /sys/kernel/debug/tracing
- # echo 500000 > buffer_size_kb
-[ Or some other number that takes up most of memory ]
- # echo snapshot > events/sched/sched_switch/trigger
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
 
-Triggers the following bug:
+Get rid of them by adding explicit forced casts.
 
- ------------[ cut here ]------------
- kernel BUG at mm/slub.c:296!
- invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
- CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
- Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
- RIP: 0010:kfree+0x16c/0x180
- Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
- RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
- RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
- RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
- RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
- R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
- R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
- FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
- Call Trace:
-  event_trigger_callback+0xee/0x1d0
-  event_trigger_write+0xfc/0x1a0
-  __vfs_write+0x33/0x190
-  ? handle_mm_fault+0x115/0x230
-  ? _cond_resched+0x16/0x40
-  vfs_write+0xb0/0x190
-  ksys_write+0x52/0xc0
-  do_syscall_64+0x5a/0x160
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7f363e16ab50
- Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
- RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
- RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
- RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
- RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
- R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
- R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
- Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
-86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
- ---[ end trace d301afa879ddfa25 ]---
-
-The cause is because the register_snapshot_trigger() call failed to
-allocate the snapshot buffer, and then called unregister_trigger()
-which freed the data that was passed to it. Then on return to the
-function that called register_snapshot_trigger(), as it sees it
-failed to register, it frees the trigger_data again and causes
-a double free.
-
-By calling event_trigger_init() on the trigger_data (which only ups
-the reference counter for it), and then event_trigger_free() afterward,
-the trigger_data would not get freed by the registering trigger function
-as it would only up and lower the ref count for it. If the register
-trigger function fails, then the event_trigger_free() called after it
-will free the trigger data normally.
-
-Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
-
-Cc: stable@vger.kerne.org
-Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
-Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_events_trigger.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/media/common/siano/smsendian.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -680,6 +680,8 @@ event_trigger_callback(struct event_comm
- 		goto out_free;
+--- a/drivers/media/common/siano/smsendian.c
++++ b/drivers/media/common/siano/smsendian.c
+@@ -35,7 +35,7 @@ void smsendian_handle_tx_message(void *b
+ 	switch (msg->x_msg_header.msg_type) {
+ 	case MSG_SMS_DATA_DOWNLOAD_REQ:
+ 	{
+-		msg->msg_data[0] = le32_to_cpu(msg->msg_data[0]);
++		msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
+ 		break;
+ 	}
  
-  out_reg:
-+	/* Up the trigger_data count to make sure reg doesn't free it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
- 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
- 	/*
- 	 * The above returns on success the # of functions enabled,
-@@ -687,11 +689,13 @@ event_trigger_callback(struct event_comm
- 	 * Consider no functions a failure too.
- 	 */
- 	if (!ret) {
-+		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
- 		ret = -ENOENT;
--		goto out_free;
--	} else if (ret < 0)
--		goto out_free;
--	ret = 0;
-+	} else if (ret > 0)
-+		ret = 0;
-+
-+	/* Down the counter of trigger_data or free it if not used anymore */
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
+@@ -44,7 +44,7 @@ void smsendian_handle_tx_message(void *b
+ 				sizeof(struct sms_msg_hdr))/4;
  
+ 		for (i = 0; i < msg_words; i++)
+-			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
++			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
+ 
+ 		break;
+ 	}
+@@ -64,7 +64,7 @@ void smsendian_handle_rx_message(void *b
+ 	{
+ 		struct sms_version_res *ver =
+ 			(struct sms_version_res *) msg;
+-		ver->chip_model = le16_to_cpu(ver->chip_model);
++		ver->chip_model = le16_to_cpu((__force __le16)ver->chip_model);
+ 		break;
+ 	}
+ 
+@@ -81,7 +81,7 @@ void smsendian_handle_rx_message(void *b
+ 				sizeof(struct sms_msg_hdr))/4;
+ 
+ 		for (i = 0; i < msg_words; i++)
+-			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
++			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
+ 
+ 		break;
+ 	}
+@@ -95,9 +95,9 @@ void smsendian_handle_message_header(voi
+ #ifdef __BIG_ENDIAN
+ 	struct sms_msg_hdr *phdr = (struct sms_msg_hdr *)msg;
+ 
+-	phdr->msg_type = le16_to_cpu(phdr->msg_type);
+-	phdr->msg_length = le16_to_cpu(phdr->msg_length);
+-	phdr->msg_flags = le16_to_cpu(phdr->msg_flags);
++	phdr->msg_type = le16_to_cpu((__force __le16)phdr->msg_type);
++	phdr->msg_length = le16_to_cpu((__force __le16)phdr->msg_length);
++	phdr->msg_flags = le16_to_cpu((__force __le16)phdr->msg_flags);
+ #endif /* __BIG_ENDIAN */
+ }
+ EXPORT_SYMBOL_GPL(smsendian_handle_message_header);
 
 
