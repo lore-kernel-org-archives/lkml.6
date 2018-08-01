@@ -6,41 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4255C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4853EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D1920844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D1920844
+	by mail.kernel.org (Postfix) with ESMTP id 097A520862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097A520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406352AbeHATJs (ORCPT
+        id S2406367AbeHATJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50840 "EHLO
+        Wed, 1 Aug 2018 15:09:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405274AbeHATJr (ORCPT
+        with ESMTP id S2405274AbeHATJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:47 -0400
+        Wed, 1 Aug 2018 15:09:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DFF5CC9;
-        Wed,  1 Aug 2018 17:23:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09676D40;
+        Wed,  1 Aug 2018 17:23:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
+        stable@vger.kernel.org, Khuong Dinh <kdinh@apm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
+        Tanmay Inamdar <tinamdar@apm.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 223/246] PCI: pciehp: Assume NoCompl+ for Thunderbolt ports
-Date:   Wed,  1 Aug 2018 18:52:13 +0200
-Message-Id: <20180801165022.375944531@linuxfoundation.org>
+Subject: [PATCH 4.14 224/246] PCI: xgene: Remove leftover pci_scan_child_bus() call
+Date:   Wed,  1 Aug 2018 18:52:14 +0200
+Message-Id: <20180801165022.423159135@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -57,80 +53,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-commit 493fb50e958c1c6deef7feff0b8c3855def78d75 upstream.
+commit 94b9d290b753cbbc87971ee134511245f5872a83 upstream.
 
-Certain Thunderbolt 1 controllers claim to support Command Completed events
-(value of 0b in the No Command Completed Support field of the Slot
-Capabilities register) but in reality they neither set the Command
-Completed bit in the Slot Status register nor signal a Command Completed
-interrupt:
+The changes in commit 9af275be15f7 ("PCI: xgene: Convert PCI scan API to
+pci_scan_root_bus_bridge()") converted the xgene PCI host driver to
+the new pci_scan_root_bus_bridge() bus scanning API but erroneously left
+the existing pci_scan_child_bus() call in place which resulted in duplicate
+PCI bus enumerations.
 
-  8086:1513  CV82524  [Light Ridge 4C  2010]
-  8086:151a  DSL2310  [Eagle Ridge 2C  2011]
-  8086:151b  CVL2510  [Light Peak 2C   2010]
-  8086:1547  DSL3510  [Cactus Ridge 4C 2012]
-  8086:1548  DSL3310  [Cactus Ridge 2C 2012]
-  8086:1549  DSL2210  [Port Ridge 1C   2011]
+Remove the leftover pci_scan_child_bus() call to properly complete the API
+conversion.
 
-All known newer chips (Redwood Ridge and onwards) set No Command Completed
-Support, indicating that they do not support Command Completed events.
-
-The user-visible impact is that after unplugging such a device, 2 seconds
-elapse until pciehp is unbound.  That's because on ->remove,
-pcie_write_cmd() is called via pcie_disable_notification() and every call
-to pcie_write_cmd() takes 2 seconds (1 second for each invocation of
-pcie_wait_cmd()):
-
-  [  337.942727] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x1038 (issued 21176 msec ago)
-  [  340.014735] pciehp 0000:0a:00.0:pcie204: Timeout on hotplug command 0x0000 (issued 2072 msec ago)
-
-That by itself has always been unpleasant, but the situation has become
-worse with commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown"):  Now pciehp is unbound on ->shutdown.  Because Thunderbolt
-controllers typically have 4 hotplug ports, every reboot and shutdown is
-now delayed by 8 seconds, plus another 2 seconds for every attached
-Thunderbolt 1 device.
-
-Thunderbolt hotplug slots are not physical slots that one inserts cards
-into, but rather logical hotplug slots implemented in silicon.  Devices
-appear beyond those logical slots once a PCI tunnel is established on top
-of the Thunderbolt Converged I/O switch.  One would expect commands written
-to the Slot Control register to be executed immediately by the silicon, so
-for simplicity we always assume NoCompl+ for Thunderbolt ports.
-
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Sinan Kaya <okaya@codeaurora.org>
-Cc: Yehezkel Bernat <yehezkel.bernat@intel.com>
-Cc: Michael Jamet <michael.jamet@intel.com>
-Cc: Andreas Noever <andreas.noever@gmail.com>
+Fixes: 9af275be15f7 ("PCI: xgene: Convert PCI scan API to pci_scan_root_bus_bridge()")
+Tested-by: Khuong Dinh <kdinh@apm.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: <stable@vger.kernel.org> # 4.13+
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Tanmay Inamdar <tinamdar@apm.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/hotplug/pciehp_hpc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -863,6 +863,13 @@ struct controller *pcie_init(struct pcie
- 	if (pdev->hotplug_user_indicators)
- 		slot_cap &= ~(PCI_EXP_SLTCAP_AIP | PCI_EXP_SLTCAP_PIP);
+---
+ drivers/pci/host/pci-xgene.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/pci/host/pci-xgene.c
++++ b/drivers/pci/host/pci-xgene.c
+@@ -686,7 +686,6 @@ static int xgene_pcie_probe_bridge(struc
  
-+	/*
-+	 * We assume no Thunderbolt controllers support Command Complete events,
-+	 * but some controllers falsely claim they do.
-+	 */
-+	if (pdev->is_thunderbolt)
-+		slot_cap |= PCI_EXP_SLTCAP_NCCS;
-+
- 	ctrl->slot_cap = slot_cap;
- 	mutex_init(&ctrl->ctrl_lock);
- 	init_waitqueue_head(&ctrl->queue);
+ 	bus = bridge->bus;
+ 
+-	pci_scan_child_bus(bus);
+ 	pci_assign_unassigned_bus_resources(bus);
+ 	list_for_each_entry(child, &bus->children, node)
+ 		pcie_bus_configure_settings(child);
 
 
