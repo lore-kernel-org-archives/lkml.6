@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20400C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE55C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB18F20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB18F20840
+	by mail.kernel.org (Postfix) with ESMTP id 0F9B320841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9B320841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbeHAUXS (ORCPT
+        id S2404121AbeHATDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:23:18 -0400
+        Wed, 1 Aug 2018 15:03:33 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403981AbeHATDd (ORCPT
+        with ESMTP id S2403961AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:33 -0400
+        Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CC82129D;
-        Wed,  1 Aug 2018 17:10:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35EA71251;
+        Wed,  1 Aug 2018 17:09:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 318/336] net: lan78xx: fix rx handling before first packet is send
-Date:   Wed,  1 Aug 2018 18:50:53 +0200
-Message-Id: <20180801165041.208399938@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 286/336] media: cec: fix smatch error
+Date:   Wed,  1 Aug 2018 18:50:21 +0200
+Message-Id: <20180801165039.971012946@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,35 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit 136f55f660192ce04af091642efc75d85e017364 ]
+[ Upstream commit b66d448487a478c203368f2b72d7d9156a01f6be ]
 
-As long the bh tasklet isn't scheduled once, no packet from the rx path
-will be handled. Since the tx path also schedule the same tasklet
-this situation only persits until the first packet transmission.
-So fix this issue by scheduling the tasklet after link reset.
+drivers/media/cec/cec-pin-error-inj.c:231
+cec_pin_error_inj_parse_line() error: uninitialized symbol 'pos'.
 
-Link: https://github.com/raspberrypi/linux/issues/2617
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
-Suggested-by: Floris Bos <bos@je-eigen-domein.nl>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The tx-add-bytes command didn't check for the presence of an argument, and
+also didn't check that it was > 0.
+
+This should fix this error.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/cec/cec-pin-error-inj.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1216,6 +1216,8 @@ static int lan78xx_link_reset(struct lan
- 			mod_timer(&dev->stat_monitor,
- 				  jiffies + STAT_UPDATE_TIMER);
+--- a/drivers/media/cec/cec-pin-error-inj.c
++++ b/drivers/media/cec/cec-pin-error-inj.c
+@@ -204,16 +204,18 @@ bool cec_pin_error_inj_parse_line(struct
+ 		mode_mask = CEC_ERROR_INJ_MODE_MASK << mode_offset;
+ 		arg_idx = cec_error_inj_cmds[i].arg_idx;
+ 
+-		if (mode_offset == CEC_ERROR_INJ_RX_ARB_LOST_OFFSET ||
+-		    mode_offset == CEC_ERROR_INJ_TX_ADD_BYTES_OFFSET)
+-			is_bit_pos = false;
+-
+ 		if (mode_offset == CEC_ERROR_INJ_RX_ARB_LOST_OFFSET) {
+ 			if (has_op)
+ 				return false;
+ 			if (!has_pos)
+ 				pos = 0x0f;
++			is_bit_pos = false;
++		} else if (mode_offset == CEC_ERROR_INJ_TX_ADD_BYTES_OFFSET) {
++			if (!has_pos || !pos)
++				return false;
++			is_bit_pos = false;
  		}
 +
-+		tasklet_schedule(&dev->bh);
- 	}
- 
- 	return ret;
+ 		if (arg_idx >= 0 && is_bit_pos) {
+ 			if (!has_pos || pos >= 160)
+ 				return false;
 
 
