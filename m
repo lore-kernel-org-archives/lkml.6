@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474B7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AC9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0944020840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0944020840
+	by mail.kernel.org (Postfix) with ESMTP id 1F2C420840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2C420840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733201AbeHAUT3 (ORCPT
+        id S1733178AbeHAUT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:19:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404179AbeHATDf (ORCPT
+        with ESMTP id S2404197AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA78E1194;
-        Wed,  1 Aug 2018 17:07:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53AA7103A;
+        Wed,  1 Aug 2018 17:00:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 264/336] staging: vchiq_core: Fix missing semaphore release in error case
-Date:   Wed,  1 Aug 2018 18:49:59 +0200
-Message-Id: <20180801165039.148873152@linuxfoundation.org>
+Subject: [PATCH 4.17 143/336] ima: based on policy verify firmware signatures (pre-allocated buffer)
+Date:   Wed,  1 Aug 2018 18:47:58 +0200
+Message-Id: <20180801165034.610410799@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,32 +55,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-[ Upstream commit 8113b89fc615cfb531df0334fb3a091cf6a45ce0 ]
+[ Upstream commit fd90bc559bfba743ae8de87ff23b92a5e4668062 ]
 
-The bail out branch in case of a invalid tx_pos missed a semaphore
-release. Dan Carpenter found this with a static checker.
+Don't differentiate, for now, between kernel_read_file_id READING_FIRMWARE
+and READING_FIRMWARE_PREALLOC_BUFFER enumerations.
 
-Fixes: d1eab9dec610 ("staging: vchiq_core: Bail out in case of invalid tx_pos")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: a098ecd firmware: support loading into a pre-allocated buffer (since 4.8)
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c |    1 +
+ security/integrity/ima/ima_main.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -601,6 +601,7 @@ reserve_space(VCHIQ_STATE_T *state, size
- 		}
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -449,6 +449,7 @@ int ima_read_file(struct file *file, enu
  
- 		if (tx_pos == (state->slot_queue_available * VCHIQ_SLOT_SIZE)) {
-+			up(&state->slot_available_event);
- 			pr_warn("%s: invalid tx_pos: %d\n", __func__, tx_pos);
- 			return NULL;
- 		}
+ static int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 
 
