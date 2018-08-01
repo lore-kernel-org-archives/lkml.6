@@ -2,130 +2,79 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743A4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A943BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9FA20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9FA20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 482E720862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:44:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="sBbVzqBq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482E720862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388891AbeHAN0r (ORCPT
+        id S2388869AbeHANaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:26:47 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:47042 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387610AbeHAN0q (ORCPT
+        Wed, 1 Aug 2018 09:30:20 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38620 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387799AbeHANaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:26:46 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fkpUm-0001QR-7g; Wed, 01 Aug 2018 13:40:48 +0200
-Date:   Wed, 1 Aug 2018 13:40:48 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        David Miller <davem@davemloft.net>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org,
-        Network Development <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dave Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-Message-ID: <20180801114048.ufkr7zwmir7ps3vl@breakpoint.cc>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <CACT4Y+aYZumcc-Od5T1AnP4mwn8-FaWfxvfb93MnNwQPqG8TDw@mail.gmail.com>
- <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com>
- <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
- <CACT4Y+aHWpgDZygXv=smWwdVMWfjpedyajuVvvLDGMK-wFD5Lw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aHWpgDZygXv=smWwdVMWfjpedyajuVvvLDGMK-wFD5Lw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 1 Aug 2018 09:30:20 -0400
+Received: from trochilidae.toradex.int (unknown [IPv6:2a02:169:34b6::e71])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id AD12B5C03BB;
+        Wed,  1 Aug 2018 13:44:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533123894;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=YXf50igpmZ3Und0zC2FUpgOLYWlGtvwnAjZoXcq9WEM=;
+        b=sBbVzqBqF1BfoSwS0w+3NB61SaeGxyaHuFgLoO4nl61/gRdX9QqecLaxvOfdLnLZ8ngSv5
+        j1+WZ2neFdpC8ElztK4zT1Eh5ymDZRowEQ9Mr0cqQXhXFWUUW8nXi21GPbIF/c1+rtAn/B
+        JF3fZECtJrIR26UzwjX6z00Dw/kWQ0o=
+From:   Stefan Agner <stefan@agner.ch>
+To:     fugang.duan@nxp.com, davem@davemloft.net
+Cc:     krzk@kernel.org, robin.murphy@arm.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] net: fec: check DMA addressing limitations
+Date:   Wed,  1 Aug 2018 13:44:49 +0200
+Message-Id: <20180801114449.21208-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Aug 1, 2018 at 12:35 PM, Florian Westphal <fw@strlen.de> wrote:
-> > Dmitry Vyukov <dvyukov@google.com> wrote:
-> >> Still can't grasp all details.
-> >> There is state that we read without taking ct->ct_general.use ref
-> >> first, namely ct->state and what's used by nf_ct_key_equal.
-> >> So let's say the entry we want to find is in the list, but
-> >> ____nf_conntrack_find finds a wrong entry earlier because all state it
-> >> looks at is random garbage, so it returns the wrong entry to
-> >> __nf_conntrack_find_get.
-> >
-> > If an entry can be found, it can't be random garbage.
-> > We never link entries into global table until state has been set up.
-> 
-> But... we don't hold a reference to the entry. So say it's in the
-> table with valid state, now ____nf_conntrack_find discovers it, now
-> the entry is removed and reused a dozen of times will all associated
-> state reinitialization. And nf_ct_key_equal looks at it concurrently
-> and decides if it's the entry we are looking for or now. I think
-> unless we hold a ref to the entry, it's state needs to be considered
-> random garbage for correctness reasoning.
+Check DMA addressing limitations as suggested by the DMA API
+how-to. This does not fix a particular issue seen but is
+considered good style.
 
-It checks if it might be the entry we're looking for.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-If this was complete random garbage, scheme would not work, as then
-we could have entry that isn't in table, has nonzero refcount, but
-has its confirmed bit set.
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index c729665107f5..af0fb200e936 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3146,6 +3146,12 @@ static int fec_enet_init(struct net_device *ndev)
+ 	fep->tx_align = 0x3;
+ #endif
+ 
++	/* Check mask of the streaming and coherent API */
++	if (dma_set_mask_and_coherent(&fep->pdev->dev, DMA_BIT_MASK(32))) {
++		dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
++		return -ENODEV;
++	}
++
+ 	fec_enet_alloc_queue(ndev);
+ 
+ 	bd_size = (fep->total_tx_ring_size + fep->total_rx_ring_size) * dsize;
+-- 
+2.18.0
 
-I don't see how that would be possible, any reallocation
-makes sure ct->status has CONFIRMED bit clear before setting refcount
-to nonzero value.
-
-I think this is the scenario you hint at is:
-1. nf_ct_key_equal is true
-2. the entry is free'd (or was already free'd)
-3. we return NULL to caller due to atomic_inc_not_zero() failure
-
-but i fail to see how thats wrong?
-
-Sure, we could restart lookup but how would that help?
-
-We'd not find the 'candidate' entry again.
-
-We might find entry that has been inserted at this very instant but
-newly allocated entries are only inserted into global table until the skb that
-created the nf_conn object has made it through the network stack
-(postrouting for fowarded, or input for local delivery).
-
-So, the likelyhood of such restart finding another candidate is close to 0,
-and won't prevent 'insert race' from happening.
