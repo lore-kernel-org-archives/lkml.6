@@ -3,99 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED99C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253B4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 880D8208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 880D8208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C9CB9208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:32:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CB9208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389885AbeHARRi (ORCPT
+        id S2389814AbeHARSq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:17:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45323 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389437AbeHARRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:17:38 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AC4A2FC1CAB65;
-        Wed,  1 Aug 2018 23:31:19 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
- 23:31:16 +0800
-Message-ID: <5B61D243.9050608@huawei.com>
-Date:   Wed, 1 Aug 2018 23:31:15 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Wed, 1 Aug 2018 13:18:46 -0400
+Received: from mga06.intel.com ([134.134.136.31]:62701 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388988AbeHARSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:18:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 08:32:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
+   d="scan'208";a="61557531"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by orsmga008.jf.intel.com with ESMTP; 01 Aug 2018 08:32:28 -0700
+Received: from orsmsx112.amr.corp.intel.com (10.22.240.13) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 1 Aug 2018 08:32:29 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.212]) by
+ ORSMSX112.amr.corp.intel.com ([169.254.3.12]) with mapi id 14.03.0319.002;
+ Wed, 1 Aug 2018 08:32:29 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] ia64: Make stack VMA anonymous
+Thread-Topic: [PATCH] ia64: Make stack VMA anonymous
+Thread-Index: AQHUKZjB0G/JytOauU+QNn2XhXzFDKSrBhQg
+Date:   Wed, 1 Aug 2018 15:32:28 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D38B551@ORSMSX110.amr.corp.intel.com>
+References: <20180801130801.30095-1-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20180801130801.30095-1-kirill.shutemov@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODNhMzRiOWEtMjVlYS00YzAzLWFmNzctZTE3Y2VjODM3Yjk0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC9WaklHV1wvdkY5UGJtTlJ0NitBVVM1MkF6SWRrRTkyNjhISjAxKzlZZWYwYnM4eDlsam55b0xkbTZYdjhDenJHIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-To:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Oleg Nesterov <oleg@redhat.com>
-CC:     Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [Question] A novel case happened when using mempool allocate memory.
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,  Everyone
+> IA64 allocates stack in a custom way. Stack has to be marked as
+> anonymous otherwise the process will be killed with SIGBUS on the first
+> access to the stack.
+>
+> Add missing vma_set_anonymous().
 
- I ran across the following novel case similar to memory leak in linux-4.1 stable when allocating
- memory object by kmem_cache_alloc.   it rarely can be reproduced.
+That does the trick. Applied this patch on top of -rc7 and ia64 boots again.
 
-I create a specific  mempool with 24k size based on the slab.  it can not be merged with
-other kmem cache.  I  record the allocation and free usage by atomic_add/sub.    After a while,
-I watch the specific slab consume most of total memory.   After halting the code execution.
-The counter of allocation and free is equal.  Therefore,  I am sure that module have released
-all meory resource.  but the statistic of specific slab is very high but stable by checking /proc/slabinfo.
+Tested-by: Tony Luck <tony.luck@intel.com>
 
-but It is strange that the specific slab will free get back all memory when unregister the module.
-I got the following information from specific slab data structure when halt the module execution.
-
-
-kmem_cache_node                                                          kmem_cache
-
-nr_partial = 1,                                                             min_partial = 7
-partial = {                                                                    cpu_partial = 2
-        next = 0xffff7c00085cae20                             object_size = 24576
-        prev = 0xffff7c00085cae20
-},
-
-nr_slabs = {
-    counter = 365610
- },
-
-total_objects = {
- counter = 365610
-},
-
-full = {
-      next =  0xffff8013e44f75f0,
-     prev =  0xffff8013e44f75f0
-},
-
-From the above restricted information , we can know that the node full list is empty.  and partial list only
-have a  slab.   A slab contain a object.  I think that most of slab stay in the cpu_partial
-list even though it seems to be impossible theoretically.  because I come to the conclusion based on the case
-that slab take up the memory will be release when unregister the moudle.
-
-but I check the code(mm/slub.c) carefully . I can not find any clue to prove my assumption.
-I will be appreciate if anyone have any idea about the case. 
-
-
-Thanks
-zhong jiang
-
+-Tony
