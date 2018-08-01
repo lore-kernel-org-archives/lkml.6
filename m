@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17193C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB76C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C543520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C543520862
+	by mail.kernel.org (Postfix) with ESMTP id 1F89320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F89320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404754AbeHATVM (ORCPT
+        id S2404962AbeHATVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:21:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52924 "EHLO
+        Wed, 1 Aug 2018 15:21:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436588AbeHATSk (ORCPT
+        with ESMTP id S2436612AbeHATSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:40 -0400
+        Wed, 1 Aug 2018 15:18:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 730DCF31;
-        Wed,  1 Aug 2018 16:56:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 723E9F49;
+        Wed,  1 Aug 2018 16:56:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Filippo Muzzini <filippo.muzzini@outlook.it>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 067/336] disable loading f2fs module on PAGE_SIZE > 4KB
-Date:   Wed,  1 Aug 2018 18:46:42 +0200
-Message-Id: <20180801165031.702144991@linuxfoundation.org>
+Subject: [PATCH 4.17 076/336] block, bfq: remove wrong lock in bfq_requests_merged
+Date:   Wed,  1 Aug 2018 18:46:51 +0200
+Message-Id: <20180801165032.039582885@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,62 +53,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anatoly Pugachev <matorola@gmail.com>
+From: Filippo Muzzini <filippo.muzzini@outlook.it>
 
-[ Upstream commit 4071e67cffcc5c2a007116a02437471351f550eb ]
+[ Upstream commit a12bffebc0c9d6a5851f062aaea3aa7c4adc6042 ]
 
-The following patch disables loading of f2fs module on architectures
-which have PAGE_SIZE > 4096 , since it is impossible to mount f2fs on
-such architectures , log messages are:
+In bfq_requests_merged(), there is a deadlock because the lock on
+bfqq->bfqd->lock is held by the calling function, but the code of
+this function tries to grab the lock again.
 
-mount: /mnt: wrong fs type, bad option, bad superblock on
-/dev/vdiskb1, missing codepage or helper program, or other error.
-/dev/vdiskb1: F2FS filesystem,
-UUID=1d8b9ca4-2389-4910-af3b-10998969f09c, volume name ""
+This deadlock is currently hidden by another bug (fixed by next commit
+for this source file), which causes the body of bfq_requests_merged()
+to be never executed.
 
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-filesystem in 1th superblock
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-filesystem in 2th superblock
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
+This commit removes the deadlock by removing the lock/unlock pair.
 
-which was introduced by git commit 5c9b469295fb6b10d98923eab5e79c4edb80ed20
-
-tested on git kernel 4.17.0-rc6-00309-gec30dcf7f425
-
-with patch applied:
-
-modprobe: ERROR: could not insert 'f2fs': Invalid argument
-May 28 01:40:28 v215 kernel: F2FS not supported on PAGE_SIZE(8192) != 4096
-
-Signed-off-by: Anatoly Pugachev <matorola@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Filippo Muzzini <filippo.muzzini@outlook.it>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ block/bfq-iosched.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3063,6 +3063,12 @@ static int __init init_f2fs_fs(void)
- {
- 	int err;
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -1898,7 +1898,6 @@ static void bfq_requests_merged(struct r
  
-+	if (PAGE_SIZE != F2FS_BLKSIZE) {
-+		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
-+				PAGE_SIZE, F2FS_BLKSIZE);
-+		return -EINVAL;
-+	}
-+
- 	f2fs_build_trace_ios();
+ 	if (!RB_EMPTY_NODE(&rq->rb_node))
+ 		goto end;
+-	spin_lock_irq(&bfqq->bfqd->lock);
  
- 	err = init_inodecache();
+ 	/*
+ 	 * If next and rq belong to the same bfq_queue and next is older
+@@ -1923,7 +1922,6 @@ static void bfq_requests_merged(struct r
+ 	bfq_remove_request(q, next);
+ 	bfqg_stats_update_io_remove(bfqq_group(bfqq), next->cmd_flags);
+ 
+-	spin_unlock_irq(&bfqq->bfqd->lock);
+ end:
+ 	bfqg_stats_update_io_merged(bfqq_group(bfqq), next->cmd_flags);
+ }
 
 
