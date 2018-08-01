@@ -2,122 +2,159 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC81C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC66C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E502083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E502083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 967E92083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1VXtdoA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967E92083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387408AbeHATvp (ORCPT
+        id S2387444AbeHATv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:51:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50152 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405797AbeHATIh (ORCPT
+        Wed, 1 Aug 2018 15:51:57 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40157 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732581AbeHATv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:37 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E134510EC;
-        Wed,  1 Aug 2018 17:04:02 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 167/336] gpu: host1x: Acquire a reference to the IOVA cache
-Date:   Wed,  1 Aug 2018 18:48:22 +0200
-Message-Id: <20180801165035.504894446@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 1 Aug 2018 15:51:56 -0400
+Received: by mail-pf1-f193.google.com with SMTP id e13-v6so8244616pff.7
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2pWiTqMDsoMOxuo1kybX0qJyORiAw5vulAq9JPZVfNM=;
+        b=Y1VXtdoAKANAKkUMTCZ5E6fH/sbsr6Z/ijoW8ERft+cXnzHEgLRliFtYgbYn0kjzqX
+         NVAXHm5y9DLAiNQEoOZAALILuETls29QGLFk2YnMrdBMgoaS+0pZ6nSTEHHRKzSRW5XV
+         afQo8F3R16Blz3N2d2HlTgULqn4XmH79D7Q8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2pWiTqMDsoMOxuo1kybX0qJyORiAw5vulAq9JPZVfNM=;
+        b=mHqD3QURAqRVbNlB0VcoY8QJmbAkNxqchUsUoo7ozCL4BrRmOBVQDi1mE5ceX6MWUv
+         zaecsXuZNFGkvEsQ9quodYwjwDPeNsMyLec+julx7eA0cVjiv+oIj0N1gaN8HFVE4cAe
+         dGT37nGEXSwBq9FLwVEXkjU3TUE3Kr6tEI543+GUnET4SSt+Inf9VLGRLxgXY/gYoOvG
+         6tQpr0y9XYSy9tjOu0nRh9e8nFxgp6VQiG2KQ29GTwbJOktIhSjaXohSd0GIA8trbFPJ
+         xWYypjSQL2lPRAoakJl2w5hJ1Hi5xJci18AR3Qq4O0rlQYPXlxzlT7EKYAdeufzcL5Bo
+         Il/Q==
+X-Gm-Message-State: AOUpUlEcbeN8TTUjgoSWouzTq6cmQ5CCd1+qo9NYAXSsaY+XE59haAQA
+        1etPCF03o0GiDQq0t1GUEAxP
+X-Google-Smtp-Source: AAOMgpc6cao8i4/xrx7/1eUxm/n0/XZHhwRHr0WznSqQEqY7B8QjtIgvSXpSUcZUQL63B0Fw/OQm/w==
+X-Received: by 2002:a62:f0d:: with SMTP id x13-v6mr27547729pfi.123.1533146701256;
+        Wed, 01 Aug 2018 11:05:01 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:73c1:5a70:e532:a47d:7290:5aa6])
+        by smtp.gmail.com with ESMTPSA id x80-v6sm12961649pfe.129.2018.08.01.11.04.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 11:04:49 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v8 3/6] arm64: dts: actions: Add Actions Semiconductor S900 I2C controller nodes
+Date:   Wed,  1 Aug 2018 23:32:29 +0530
+Message-Id: <20180801180232.23680-4-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Add I2C controller nodes for Actions Semiconductor S900 SoC.
 
-------------------
-
-From: Thierry Reding <treding@nvidia.com>
-
-[ Upstream commit f40e1590c5270e5559fb95a5a0a7c1f5266a522d ]
-
-The IOVA API uses a memory cache to allocate IOVA nodes from. To make
-sure that this cache is available, obtain a reference to it and release
-the reference when the cache is no longer needed.
-
-On 64-bit ARM this is hidden by the fact that the DMA mapping API gets
-that reference and never releases it. On 32-bit ARM, this is papered
-over by the Tegra DRM driver (the sole user of the host1x API requiring
-the cache) acquiring a reference to the IOVA cache for its own purposes.
-However, there may be additional users of this API in the future, so fix
-this upfront to avoid surprises.
-
-Fixes: 404bfb78daf3 ("gpu: host1x: Add IOMMU support")
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/gpu/host1x/dev.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/actions/s900.dtsi | 60 +++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -223,10 +223,14 @@ static int host1x_probe(struct platform_
- 		struct iommu_domain_geometry *geometry;
- 		unsigned long order;
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 7ae8b931f000..6f7b89edbe4d 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -174,6 +174,66 @@
+ 			#clock-cells = <1>;
+ 		};
  
-+		err = iova_cache_get();
-+		if (err < 0)
-+			goto put_group;
++		i2c0: i2c@e0170000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0170000 0 0x1000>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c0_default>;
++		};
 +
- 		host->domain = iommu_domain_alloc(&platform_bus_type);
- 		if (!host->domain) {
- 			err = -ENOMEM;
--			goto put_group;
-+			goto put_cache;
- 		}
- 
- 		err = iommu_attach_group(host->domain, host->group);
-@@ -234,6 +238,7 @@ static int host1x_probe(struct platform_
- 			if (err == -ENODEV) {
- 				iommu_domain_free(host->domain);
- 				host->domain = NULL;
-+				iova_cache_put();
- 				iommu_group_put(host->group);
- 				host->group = NULL;
- 				goto skip_iommu;
-@@ -308,6 +313,9 @@ fail_detach_device:
- fail_free_domain:
- 	if (host->domain)
- 		iommu_domain_free(host->domain);
-+put_cache:
-+	if (host->group)
-+		iova_cache_put();
- put_group:
- 	iommu_group_put(host->group);
- 
-@@ -328,6 +336,7 @@ static int host1x_remove(struct platform
- 		put_iova_domain(&host->iova);
- 		iommu_detach_group(host->domain, host->group);
- 		iommu_domain_free(host->domain);
-+		iova_cache_put();
- 		iommu_group_put(host->group);
- 	}
- 
-
++		i2c1: i2c@e0172000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0172000 0 0x1000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c1_default>;
++		};
++
++		i2c2: i2c@e0174000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0174000 0 0x1000>;
++			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c2_default>;
++		};
++
++		i2c3: i2c@e0176000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0176000 0 0x1000>;
++			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@e0178000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0178000 0 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c5: i2c@e017a000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe017a000 0 0x1000>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		pinctrl: pinctrl@e01b0000 {
+ 			compatible = "actions,s900-pinctrl";
+ 			reg = <0x0 0xe01b0000 0x0 0x1000>;
+-- 
+2.17.1
 
