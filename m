@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A67C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5DB2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5DB2083D
+	by mail.kernel.org (Postfix) with ESMTP id 8C8502083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8502083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387569AbeHAUIy (ORCPT
+        id S2387544AbeHAUIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:08:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+        Wed, 1 Aug 2018 16:08:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404386AbeHATDj (ORCPT
+        with ESMTP id S2404417AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25002F8F;
-        Wed,  1 Aug 2018 16:57:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21431105A;
+        Wed,  1 Aug 2018 17:01:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 091/336] iwlwifi: mvm: open BA session only when sta is authorized
-Date:   Wed,  1 Aug 2018 18:47:06 +0200
-Message-Id: <20180801165032.656508746@linuxfoundation.org>
+Subject: [PATCH 4.17 151/336] net: mvpp2: Add missing VLAN tag detection
+Date:   Wed,  1 Aug 2018 18:48:06 +0200
+Message-Id: <20180801165034.913590796@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,291 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gregory Greenman <gregory.greenman@intel.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-[ Upstream commit d94c5a820d107fdde711ec72c16848876027713d ]
+[ Upstream commit 62c8a069b510d905039abd4097434f190a316941 ]
 
-Currently, a BA session is opened when the tx traffic exceeds
-10 frames per second. As a result of inter-op problems with some
-APs, add a condition to open BA session only when station is
-already authorized.
+Marvell PPv2 Header Parser sets some bits in the 'result_info' field in
+each lookup iteration, to identify different packet attributes such as
+DSA / VLAN tag, protocol infos, etc. This is used in further
+classification stages in the controller.
 
-Fixes: 482e48440a0e ("iwlwifi: mvm: change open and close criteria of a BA session")
-Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+It's the DSA tag detection entry that is in charge of detecting when there
+is a single VLAN tag.
+
+This commits adds the missing update of the result_info in this case.
+
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    8 +---
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c       |   38 +++++++++++-----------
- drivers/net/wireless/intel/iwlwifi/mvm/rs.h       |    7 +---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c      |    2 -
- drivers/net/wireless/intel/iwlwifi/mvm/sta.h      |   10 ++---
- 5 files changed, 29 insertions(+), 36 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -2652,7 +2652,7 @@ static int iwl_mvm_mac_sta_state(struct
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -2109,6 +2109,9 @@ static void mvpp2_prs_dsa_tag_set(struct
+ 				mvpp2_prs_sram_ai_update(&pe, 0,
+ 							MVPP2_PRS_SRAM_AI_MASK);
  
- 	mutex_lock(&mvm->mutex);
- 	/* track whether or not the station is associated */
--	mvm_sta->associated = new_state >= IEEE80211_STA_ASSOC;
-+	mvm_sta->sta_state = new_state;
- 
- 	if (old_state == IEEE80211_STA_NOTEXIST &&
- 	    new_state == IEEE80211_STA_NONE) {
-@@ -2704,8 +2704,7 @@ static int iwl_mvm_mac_sta_state(struct
- 			iwl_mvm_mac_ctxt_changed(mvm, vif, false, NULL);
- 		}
- 
--		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band,
--				     true);
-+		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band);
- 		ret = iwl_mvm_update_sta(mvm, vif, sta);
- 	} else if (old_state == IEEE80211_STA_ASSOC &&
- 		   new_state == IEEE80211_STA_AUTHORIZED) {
-@@ -2721,8 +2720,7 @@ static int iwl_mvm_mac_sta_state(struct
- 		/* enable beacon filtering */
- 		WARN_ON(iwl_mvm_enable_beacon_filter(mvm, vif, 0));
- 
--		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band,
--				     false);
-+		iwl_mvm_rs_rate_init(mvm, sta, mvmvif->phy_ctxt->channel->band);
- 
- 		ret = 0;
- 	} else if (old_state == IEEE80211_STA_AUTHORIZED &&
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -3,6 +3,7 @@
-  * Copyright(c) 2005 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms of version 2 of the GNU General Public License as
-@@ -13,10 +14,6 @@
-  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-  * more details.
-  *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
-- *
-  * The full GNU General Public License is included in this distribution in the
-  * file called LICENSE.
-  *
-@@ -651,9 +648,10 @@ static void rs_tl_turn_on_agg(struct iwl
- 	}
- 
- 	tid_data = &mvmsta->tid_data[tid];
--	if ((tid_data->state == IWL_AGG_OFF) &&
-+	if (mvmsta->sta_state >= IEEE80211_STA_AUTHORIZED &&
-+	    tid_data->state == IWL_AGG_OFF &&
- 	    (lq_sta->tx_agg_tid_en & BIT(tid)) &&
--	    (tid_data->tx_count_last >= IWL_MVM_RS_AGG_START_THRESHOLD)) {
-+	    tid_data->tx_count_last >= IWL_MVM_RS_AGG_START_THRESHOLD) {
- 		IWL_DEBUG_RATE(mvm, "try to aggregate tid %d\n", tid);
- 		if (rs_tl_turn_on_agg_for_tid(mvm, lq_sta, tid, sta) == 0)
- 			tid_data->state = IWL_AGG_QUEUED;
-@@ -1257,7 +1255,7 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
- 		       (unsigned long)(lq_sta->last_tx +
- 				       (IWL_MVM_RS_IDLE_TIMEOUT * HZ)))) {
- 		IWL_DEBUG_RATE(mvm, "Tx idle for too long. reinit rs\n");
--		iwl_mvm_rs_rate_init(mvm, sta, info->band, false);
-+		iwl_mvm_rs_rate_init(mvm, sta, info->band);
- 		return;
- 	}
- 	lq_sta->last_tx = jiffies;
-@@ -2684,9 +2682,9 @@ static void rs_get_initial_rate(struct i
- 				struct ieee80211_sta *sta,
- 				struct iwl_lq_sta *lq_sta,
- 				enum nl80211_band band,
--				struct rs_rate *rate,
--				bool init)
-+				struct rs_rate *rate)
- {
-+	struct iwl_mvm_sta *mvmsta = iwl_mvm_sta_from_mac80211(sta);
- 	int i, nentries;
- 	unsigned long active_rate;
- 	s8 best_rssi = S8_MIN;
-@@ -2748,7 +2746,8 @@ static void rs_get_initial_rate(struct i
- 		 * bandwidth rate, and after authorization, when the phy context
- 		 * is already up-to-date, re-init rs with the correct bw.
- 		 */
--		u32 bw = init ? RATE_MCS_CHAN_WIDTH_20 : rs_bw_from_sta_bw(sta);
-+		u32 bw = mvmsta->sta_state < IEEE80211_STA_AUTHORIZED ?
-+				RATE_MCS_CHAN_WIDTH_20 : rs_bw_from_sta_bw(sta);
- 
- 		switch (bw) {
- 		case RATE_MCS_CHAN_WIDTH_40:
-@@ -2833,9 +2832,9 @@ void rs_update_last_rssi(struct iwl_mvm
- static void rs_initialize_lq(struct iwl_mvm *mvm,
- 			     struct ieee80211_sta *sta,
- 			     struct iwl_lq_sta *lq_sta,
--			     enum nl80211_band band,
--			     bool init)
-+			     enum nl80211_band band)
- {
-+	struct iwl_mvm_sta *mvmsta = iwl_mvm_sta_from_mac80211(sta);
- 	struct iwl_scale_tbl_info *tbl;
- 	struct rs_rate *rate;
- 	u8 active_tbl = 0;
-@@ -2851,7 +2850,7 @@ static void rs_initialize_lq(struct iwl_
- 	tbl = &(lq_sta->lq_info[active_tbl]);
- 	rate = &tbl->rate;
- 
--	rs_get_initial_rate(mvm, sta, lq_sta, band, rate, init);
-+	rs_get_initial_rate(mvm, sta, lq_sta, band, rate);
- 	rs_init_optimal_rate(mvm, sta, lq_sta);
- 
- 	WARN_ONCE(rate->ant != ANT_A && rate->ant != ANT_B,
-@@ -2864,7 +2863,8 @@ static void rs_initialize_lq(struct iwl_
- 	rs_set_expected_tpt_table(lq_sta, tbl);
- 	rs_fill_lq_cmd(mvm, sta, lq_sta, rate);
- 	/* TODO restore station should remember the lq cmd */
--	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq, init);
-+	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq,
-+			    mvmsta->sta_state < IEEE80211_STA_AUTHORIZED);
- }
- 
- static void rs_drv_get_rate(void *mvm_r, struct ieee80211_sta *sta,
-@@ -3117,7 +3117,7 @@ void iwl_mvm_update_frame_stats(struct i
-  * Called after adding a new station to initialize rate scaling
-  */
- static void rs_drv_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
--			     enum nl80211_band band, bool init)
-+			     enum nl80211_band band)
- {
- 	int i, j;
- 	struct ieee80211_hw *hw = mvm->hw;
-@@ -3196,7 +3196,7 @@ static void rs_drv_rate_init(struct iwl_
- #ifdef CONFIG_IWLWIFI_DEBUGFS
- 	iwl_mvm_reset_frame_stats(mvm);
- #endif
--	rs_initialize_lq(mvm, sta, lq_sta, band, init);
-+	rs_initialize_lq(mvm, sta, lq_sta, band);
- }
- 
- static void rs_drv_rate_update(void *mvm_r,
-@@ -3216,7 +3216,7 @@ static void rs_drv_rate_update(void *mvm
- 	for (tid = 0; tid < IWL_MAX_TID_COUNT; tid++)
- 		ieee80211_stop_tx_ba_session(sta, tid);
- 
--	iwl_mvm_rs_rate_init(mvm, sta, sband->band, false);
-+	iwl_mvm_rs_rate_init(mvm, sta, sband->band);
- }
- 
- #ifdef CONFIG_MAC80211_DEBUGFS
-@@ -4062,12 +4062,12 @@ static const struct rate_control_ops rs_
- };
- 
- void iwl_mvm_rs_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
--			  enum nl80211_band band, bool init)
-+			  enum nl80211_band band)
- {
- 	if (iwl_mvm_has_tlc_offload(mvm))
- 		rs_fw_rate_init(mvm, sta, band);
- 	else
--		rs_drv_rate_init(mvm, sta, band, init);
-+		rs_drv_rate_init(mvm, sta, band);
- }
- 
- int iwl_mvm_rate_control_register(void)
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.h
-@@ -3,6 +3,7 @@
-  * Copyright(c) 2003 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2015 Intel Mobile Communications GmbH
-  * Copyright(c) 2017 Intel Deutschland GmbH
-+ * Copyright(c) 2018 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms of version 2 of the GNU General Public License as
-@@ -13,10 +14,6 @@
-  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-  * more details.
-  *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
-- *
-  * The full GNU General Public License is included in this distribution in the
-  * file called LICENSE.
-  *
-@@ -410,7 +407,7 @@ struct iwl_lq_sta {
- 
- /* Initialize station's rate scaling information after adding station */
- void iwl_mvm_rs_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
--			  enum nl80211_band band, bool init);
-+			  enum nl80211_band band);
- 
- /* Notify RS about Tx status */
- void iwl_mvm_rs_tx_status(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -214,7 +214,7 @@ int iwl_mvm_sta_send_to_fw(struct iwl_mv
- 		cpu_to_le32(agg_size << STA_FLG_MAX_AGG_SIZE_SHIFT);
- 	add_sta_cmd.station_flags |=
- 		cpu_to_le32(mpdu_dens << STA_FLG_AGG_MPDU_DENS_SHIFT);
--	if (mvm_sta->associated)
-+	if (mvm_sta->sta_state >= IEEE80211_STA_ASSOC)
- 		add_sta_cmd.assoc_id = cpu_to_le16(sta->aid);
- 
- 	if (sta->wme) {
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
-@@ -8,6 +8,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2014 Intel Mobile Communications GmbH
-  * Copyright(c) 2015 - 2016 Intel Deutschland GmbH
-+ * Copyright(c) 2018 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of version 2 of the GNU General Public License as
-@@ -18,11 +19,6 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * General Public License for more details.
-  *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110,
-- * USA
-- *
-  * The full GNU General Public License is included in this distribution
-  * in the file called COPYING.
-  *
-@@ -35,6 +31,7 @@
-  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
-  * Copyright(c) 2013 - 2014 Intel Mobile Communications GmbH
-  * Copyright(c) 2015 - 2016 Intel Deutschland GmbH
-+ * Copyright(c) 2018 Intel Corporation
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -376,6 +373,7 @@ struct iwl_mvm_rxq_dup_data {
-  *	tid.
-  * @max_agg_bufsize: the maximal size of the AGG buffer for this station
-  * @sta_type: station type
-+ * @sta_state: station state according to enum %ieee80211_sta_state
-  * @bt_reduced_txpower: is reduced tx power enabled for this station
-  * @next_status_eosp: the next reclaimed packet is a PS-Poll response and
-  *	we need to signal the EOSP
-@@ -414,6 +412,7 @@ struct iwl_mvm_sta {
- 	u16 tid_disable_agg;
- 	u8 max_agg_bufsize;
- 	enum iwl_sta_type sta_type;
-+	enum ieee80211_sta_state sta_state;
- 	bool bt_reduced_txpower;
- 	bool next_status_eosp;
- 	spinlock_t lock;
-@@ -438,7 +437,6 @@ struct iwl_mvm_sta {
- 	bool disable_tx;
- 	bool tlc_amsdu;
- 	bool sleeping;
--	bool associated;
- 	u8 agg_tids;
- 	u8 sleep_tx_count;
- 	u8 avg_energy;
++			/* Set result info bits to 'single vlan' */
++			mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_SINGLE,
++						 MVPP2_PRS_RI_VLAN_MASK);
+ 			/* If packet is tagged continue check vid filtering */
+ 			mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VID);
+ 		} else {
 
 
