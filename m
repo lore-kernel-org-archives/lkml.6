@@ -2,145 +2,145 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4537C43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B31C43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5380820894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9176620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:37:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lZA3diMx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5380820894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxmo9Rpz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9176620894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732962AbeHADSQ (ORCPT
+        id S1732963AbeHADUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 23:18:16 -0400
-Received: from ozlabs.org ([203.11.71.1]:48027 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732855AbeHADSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 23:18:15 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41gG8F319Gz9s0R;
-        Wed,  1 Aug 2018 11:35:09 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533087309;
-        bh=STnLippQ4FM+5xbFYhdBKi2vNAfwjIgv7R7wC3st4Fw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lZA3diMxOlBiHlyQSFAWLcINW/SuhSCd79qVNrHxaVgULIhrPRE3jkDYN463RWEpI
-         1oap2kGGjIYM8beCu3B3K0al3KA+kHA31beq3wMz1rmr5ThW41wEODpH6FV2kUxcEu
-         ypigcHCJ82YTdy3S2O7riVU5j1BSCyXTRwyxKYUQlJo4GFpBX6/hhGCo7xE1mtOhtL
-         7Ghaby1Z7awX913/A4Txg0jOc3oJwONfGdFuUQ3xkCWKXIQANzWqcHTtq96L04v9SP
-         ir9a3Lv2cW/GcA/nAEVtp+aR/fMQXEtc5jCSf407OGFSVfqCrZbcJnirEVyr4u0Ehq
-         +tCks4dHsAmfg==
-Date:   Wed, 1 Aug 2018 11:35:08 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yonghong Song <yhs@fb.com>, Okash Khawaja <osk@fb.com>
-Subject: linux-next: manual merge of the net-next tree with the bpf tree
-Message-ID: <20180801113508.54323706@canb.auug.org.au>
+        Tue, 31 Jul 2018 23:20:15 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41813 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732855AbeHADUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 23:20:15 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w8-v6so7969607ply.8
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 18:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=hjP4cZ4lFUElEFcorr5fEhhlbyPyB38GZF2k/Y+v/ko=;
+        b=dxmo9RpzgLvGCIp+m61FCzbd+AqN/knm7HeQtsmCF9YdG77+uxx+6gg6/QpAl5NPxr
+         662hCCJAqfwCOPswBLFtAoB9ApnH76F7NpRGDYSeOlWNyTrkPh6qnP4Cu/dHpCna7cYj
+         VOuhet2mIgYEycmi9UIueKz7kB6/bdY8drVY4VKqVvBTwp3Apajrz9SsYKYCTALwzMDt
+         qOL+VrXlqU/8ELL843NeCwWrd7VsekZPgTt/sl46oxfG1fx5YuNQH9g5NUUMyoflTe4Z
+         cHBbTJTeTH6u0QdPhhx6bIyCDJ+7BynJYQeg3bKMT8/DkNQafq5NTjFfK3Arv0x+NxJq
+         +Ctw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=hjP4cZ4lFUElEFcorr5fEhhlbyPyB38GZF2k/Y+v/ko=;
+        b=KLIGnH4PCD9A5ngEY9IlbCltDl25c0qbZNCO+PYFlZ57KdeBo7WWXuKMAetgfA/YxA
+         N7fX63IP+QoLLxZjMzW+Y/aoyATAe9ozBRJftgEKt2dqbd1bP7xp4zQZFKEPEgacfevh
+         5Hsvsy95GFwmn4y1TtoHxVEbWMQMaLJN08z78yXDUaGcK3yt6WvR8Vjua6y7x7fPYe3J
+         MwKLBQmsNZ8JazmNC0W+h779CT6VMqsEZ2JOXLYU8lQfJKkcHrXfDz9WbmZnGDKY+hUe
+         XFKW8IJb7g130/Zx8kgmnkoHYKC3dvf7+V6vqpFD1k1qdSdup1LaRo1MZdDYDQwuqJid
+         LP0Q==
+X-Gm-Message-State: AOUpUlEGnkI7nuO/Luabfr4LZ2Um/lOJxAFN8/aEr8jplm4xFV17OT6v
+        iO8P2hMgIoqxzaAJctDcsC4=
+X-Google-Smtp-Source: AAOMgpcnaUNiUkpFHOxd951It49lI+f/ipu7ft8w+Q0g1xpDJsdu/KWszt/yCtkh1ejNGwDjCwLYYQ==
+X-Received: by 2002:a17:902:76c7:: with SMTP id j7-v6mr17752732plt.275.1533087431545;
+        Tue, 31 Jul 2018 18:37:11 -0700 (PDT)
+Received: from [10.61.2.228] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id y20-v6sm3069036pgv.31.2018.07.31.18.37.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Jul 2018 18:37:10 -0700 (PDT)
+Subject: Re: Infinite looping observed in __offline_pages
+To:     John Allen <jallen@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     mhocko@suse.cz, n-horiguchi@ah.jp.nec.com,
+        kamezawa.hiroyu@jp.fujitsu.com, mgorman@suse.de
+References: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com>
+From:   Rashmica <rashmica.g@gmail.com>
+Message-ID: <b79a4cc4-34d4-a9ca-4d17-367be7d7cc1d@gmail.com>
+Date:   Wed, 1 Aug 2018 11:37:05 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6_.gedhC4A+UgcVCzLtjUyh"; protocol="application/pgp-signature"
+In-Reply-To: <20180725181115.hmlyd3tmnu3mn3sf@p50.austin.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6_.gedhC4A+UgcVCzLtjUyh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+On 26/07/18 04:11, John Allen wrote:
+> Hi All,
+>
+> Under heavy stress and constant memory hot add/remove, I have observed
+> the following loop to occasionally loop infinitely:
+>
+> mm/memory_hotplug.c:__offline_pages
+>
+> repeat:
+>        /* start memory hot removal */
+>        ret = -EINTR;
+>        if (signal_pending(current))
+>                goto failed_removal;
+>
+>        cond_resched();
+>        lru_add_drain_all();
+>        drain_all_pages(zone);
+>
+>        pfn = scan_movable_pages(start_pfn, end_pfn);
+>        if (pfn) { /* We have movable pages */
+>                ret = do_migrate_range(pfn, end_pfn);
+>                goto repeat;
+>        }
+>
 
-  tools/bpf/bpftool/map.c
+What is CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE set to for you?
 
-between commit:
+I have also observed this when hot removing and adding memory. However I
+only have only seen this when my kernel has
+CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE=n (when it is set to online
+automatically I do not have this issue) so I assumed that I wasn't
+onlining the memory properly...
 
-  573b3aa69406 ("tools/bpftool: fix a percpu_array map dump problem")
+> What appears to be happening in this case is that do_migrate_range
+> returns a failure code which is being ignored. The failure is stemming
+> from migrate_pages returning "1" which I'm guessing is the result of
+> us hitting the following case:
+>
+> mm/migrate.c: migrate_pages
+>
+>     default:
+>         /*
+>          * Permanent failure (-EBUSY, -ENOSYS, etc.):
+>          * unlike -EAGAIN case, the failed page is
+>          * removed from migration page list and not
+>          * retried in the next outer loop.
+>          */
+>         nr_failed++;
+>         break;
+>     }
+>
+> Does a failure in do_migrate_range indicate that the range is
+> unmigratable and the loop in __offline_pages should terminate and goto
+> failed_removal? Or should we allow a certain number of retrys before we
+> give up on migrating the range?
+>
+> This issue was observed on a ppc64le lpar on a 4.18-rc6 kernel.
+>
+> -John
+>
 
-from the bpf tree and commit:
-
-  2d3feca8c44f ("bpf: btf: print map dump and lookup with btf info")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/bpf/bpftool/map.c
-index f74a8bcbda87,9c8191845585..000000000000
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@@ -34,9 -34,7 +34,8 @@@
-  #include <assert.h>
-  #include <errno.h>
-  #include <fcntl.h>
- +#include <linux/kernel.h>
-+ #include <linux/err.h>
-  #include <stdbool.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-@@@ -162,11 -262,20 +264,21 @@@ static void print_entry_json(struct bpf
-  		print_hex_data_json(key, info->key_size);
-  		jsonw_name(json_wtr, "value");
-  		print_hex_data_json(value, info->value_size);
-+ 		if (btf) {
-+ 			struct btf_dumper d =3D {
-+ 				.btf =3D btf,
-+ 				.jw =3D json_wtr,
-+ 				.is_plain_text =3D false,
-+ 			};
-+=20
-+ 			jsonw_name(json_wtr, "formatted");
-+ 			do_dump_btf(&d, info, key, value);
-+ 		}
-  	} else {
- -		unsigned int i, n;
- +		unsigned int i, n, step;
- =20
-  		n =3D get_possible_cpus();
- +		step =3D round_up(info->value_size, 8);
- =20
-  		jsonw_name(json_wtr, "key");
-  		print_hex_data_json(key, info->key_size);
-
---Sig_/6_.gedhC4A+UgcVCzLtjUyh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlthDkwACgkQAVBC80lX
-0Gznegf/QzA4G36j7kLiJwsq0+f+eYGEMMl/tf4RTiHRPSbWZPvpyDMPXrF+oFDM
-Jx9smZVtD96s9MJUgt8lW4Et9HS9rOeVGSzUHUfdnvnR2pQ+YkcOjHOFV43++LtA
-Tm6GfV3n9U0/nZ41CY4Sz/SBsAA+DkygTDv4dDw8ZHlyO3CAbocgT8hwvEfTR0+v
-3zRAwwrlgnWxlAtZ4si90Ot6e6IcKizcfM2mCRsOI4nJMkkjSeDjAE9HEBAPtniw
-ekfdwK45J1PxIWq6TTDzvk8GJ+AnsFXZPIWG+5Lx5SCcrTiR2obU62j8G/p+fJn3
-xd+g+0NkA11+5AVKenpeNc1H4FKBKA==
-=Ex7n
------END PGP SIGNATURE-----
-
---Sig_/6_.gedhC4A+UgcVCzLtjUyh--
