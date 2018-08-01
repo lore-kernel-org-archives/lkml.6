@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E61C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D2CC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4893420844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4893420844
+	by mail.kernel.org (Postfix) with ESMTP id 03383208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03383208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389129AbeHAOJa (ORCPT
+        id S2389205AbeHAOJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:09:30 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41014 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388530AbeHAOJ3 (ORCPT
+        Wed, 1 Aug 2018 10:09:31 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53436 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387673AbeHAOJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:09:29 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j5-v6so19933261wrr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:23:57 -0700 (PDT)
+        Wed, 1 Aug 2018 10:09:30 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s9-v6so6755595wmh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:23:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=D64Mkwf8KbDFNcAAymsFtzvDXY06XAPrzkCh16O3amM=;
-        b=ogxuivwM0UwzlJum9duNoU5e6OxW8b+z0t+wYn6MXtwz5e8+bsr3I0W1zXuFkR6a6j
-         Tvi/dbRnKG9uJru7U29pCXg2Upr9EVYiCOq2aIf1eb+V+X34HxYw6Gq2fjB7S3berA0k
-         M+18K/1k/B4yBQACKmfQFk266CXx3+FjlUY00fUADwxBrrSGssjrytNXK2GeIjDU/zkG
-         FKEjh5mFQ7qkvHBnr1H76SCHFLBmErlnN8U3sY6ryLwqHgs2xrkDV47Us9wdkqt2y6L4
-         ej4fNzWP+YNxbeLqfCT/vwbGYI57iJxc5PUfim5Og6WOhIr947DCAx1+KnNg2Ik2PJwg
-         R9tw==
-X-Gm-Message-State: AOUpUlGElOv1oUACSnYJkLkYfhv/kckMqqqp4w9f1WYOjUfd/yARZT1A
-        P8wepnS/qsgtBfBdIVvTrPg=
-X-Google-Smtp-Source: AAOMgpdjFDxaWWdeTyt7e+4z4+awOFIx6ROpYIPfHwG64sOC/bXlHEdM2SQz1BeK8g3QD34PLwHdIw==
-X-Received: by 2002:adf:a541:: with SMTP id j1-v6mr25580112wrb.155.1533126236593;
-        Wed, 01 Aug 2018 05:23:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mAoLSSretO233e7nE9tPJv3281GRJk2A72FvTsbUgPA=;
+        b=XlUXKCchtTLqjRkXrsgHRKXDOhw+7C6ccxlobLLiWlGkREzHXk9mwCXTLpDf/qLGQT
+         s7vXl1JAv2D3JV54mVw6grZDPFYhMJo5nqLPqMGqu9PXZ1lTCezCXc5UTaL0jLBP1aEI
+         HOAWqsidz5FXxK6b08iLRJLKNmLm+t1fgexvJ3AfU5WkV2MXyiIyx++EDTKt/eJLuGs9
+         fezTtcX/ZLFfXgMuOiXH83P6beeIg+9spOmgLgTirf3LbQ35TWhWUo8kdkDQsvEZooS7
+         n6AidGkjDXLmQ2d5Gv6El8w3eVcdBtQpSiaHCyoRLnXR7b9urSFJVzxi1e9SEYW5WUyW
+         U9MQ==
+X-Gm-Message-State: AOUpUlHp4za7/uoHivYI9KtxEKFaGKH/NZRy8rXL+mPcPme0lnDTDD3z
+        PgYTD+3g4E40OkBggpvjlyE=
+X-Google-Smtp-Source: AAOMgpc5EIihffVMmLtQ0cpbYmVKzqIlB0E0kMDNHRYgkTczQh1kkc0Odd+/iOEbx7A/v5myFe6GHg==
+X-Received: by 2002:a1c:168a:: with SMTP id 132-v6mr2854484wmw.13.1533126235999;
+        Wed, 01 Aug 2018 05:23:55 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id d42-v6sm2445508wma.0.2018.08.01.05.23.55
+        by smtp.gmail.com with ESMTPSA id l5-v6sm3375320wmh.0.2018.08.01.05.23.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 05:23:56 -0700 (PDT)
+        Wed, 01 Aug 2018 05:23:55 -0700 (PDT)
 Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id B222712453F;
+        by techadventures.net (Postfix) with ESMTPA id 462F312453D;
         Wed,  1 Aug 2018 14:23:54 +0200 (CEST)
 From:   osalvador@techadventures.net
 To:     akpm@linux-foundation.org
@@ -55,12 +54,10 @@ Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
         iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
         david@redhat.com, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v6 1/5] mm/page_alloc: Move ifdefery out of free_area_init_core
-Date:   Wed,  1 Aug 2018 14:23:44 +0200
-Message-Id: <20180801122348.21588-2-osalvador@techadventures.net>
+Subject: [PATCH v6 0/5] Refactor free_area_init_core and add free_area_init_core_hotplug
+Date:   Wed,  1 Aug 2018 14:23:43 +0200
+Message-Id: <20180801122348.21588-1-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180801122348.21588-1-osalvador@techadventures.net>
-References: <20180801122348.21588-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -68,85 +65,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oscar Salvador <osalvador@suse.de>
 
-Moving the #ifdefs out of the function makes it easier to follow.
+Changes:
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- mm/page_alloc.c | 50 +++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+v5 -> v6:
+        - Added patch from Pavel that removes __paginginit
+        - Convert all __meminit(old __paginginit) to __init
+          for functions we do not need after initialization.
+        - Move definition of free_area_init_core_hotplug
+          to include/linux/memory_hotplug.h
+        - Add Acked-by from Michal Hocko
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 02e4b84038f8..f5e36713c5d4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6196,6 +6196,37 @@ static unsigned long __paginginit calc_memmap_size(unsigned long spanned_pages,
- 	return PAGE_ALIGN(pages * sizeof(struct page)) >> PAGE_SHIFT;
- }
- 
-+#ifdef CONFIG_NUMA_BALANCING
-+static void pgdat_init_numabalancing(struct pglist_data *pgdat)
-+{
-+	spin_lock_init(&pgdat->numabalancing_migrate_lock);
-+	pgdat->numabalancing_migrate_nr_pages = 0;
-+	pgdat->numabalancing_migrate_next_window = jiffies;
-+}
-+#else
-+static void pgdat_init_numabalancing(struct pglist_data *pgdat) {}
-+#endif
-+
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static void pgdat_init_split_queue(struct pglist_data *pgdat)
-+{
-+	spin_lock_init(&pgdat->split_queue_lock);
-+	INIT_LIST_HEAD(&pgdat->split_queue);
-+	pgdat->split_queue_len = 0;
-+}
-+#else
-+static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
-+#endif
-+
-+#ifdef CONFIG_COMPACTION
-+static void pgdat_init_kcompactd(struct pglist_data *pgdat)
-+{
-+	init_waitqueue_head(&pgdat->kcompactd_wait);
-+}
-+#else
-+static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
-+#endif
-+
- /*
-  * Set up the zone data structures:
-  *   - mark all pages reserved
-@@ -6210,21 +6241,14 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
- 	int nid = pgdat->node_id;
- 
- 	pgdat_resize_init(pgdat);
--#ifdef CONFIG_NUMA_BALANCING
--	spin_lock_init(&pgdat->numabalancing_migrate_lock);
--	pgdat->numabalancing_migrate_nr_pages = 0;
--	pgdat->numabalancing_migrate_next_window = jiffies;
--#endif
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	spin_lock_init(&pgdat->split_queue_lock);
--	INIT_LIST_HEAD(&pgdat->split_queue);
--	pgdat->split_queue_len = 0;
--#endif
-+
-+	pgdat_init_numabalancing(pgdat);
-+	pgdat_init_split_queue(pgdat);
-+	pgdat_init_kcompactd(pgdat);
-+
- 	init_waitqueue_head(&pgdat->kswapd_wait);
- 	init_waitqueue_head(&pgdat->pfmemalloc_wait);
--#ifdef CONFIG_COMPACTION
--	init_waitqueue_head(&pgdat->kcompactd_wait);
--#endif
-+
- 	pgdat_page_ext_init(pgdat);
- 	spin_lock_init(&pgdat->lru_lock);
- 	lruvec_init(node_lruvec(pgdat));
+v4 -> v5:
+        - Remove __ref from hotadd_new_pgdat and placed it to
+          free_area_init_core_hotplug. (Suggested by Pavel)
+        - Since free_area_init_core_hotplug is now allowed to be in a different
+          section (__ref), remove the __paginginit.)
+        - Stylecode in free_area_init_core_hotplug (Suggested by Pavel)
+        - Replace s/@__paginginit/@__init for free_area_init_node/free_area_init_core
+          as these functions are now only called during early init.
+        - Add Reviewd-by from Pavel
+
+v3 -> v4:
+        - Unify patch-5 and patch-4.
+        - Make free_area_init_core __init (Suggested by Michal).
+        - Make zone_init_internals __paginginit (Suggested by Pavel).
+        - Add Reviewed-by/Acked-by:
+
+v2 -> v3:
+        - Think better about split free_area_init_core for
+          memhotplug/early init context (Suggested by Michal).
+
+This patchset does the following things:
+
+ 1) Clean up/refactor free_area_init_core/free_area_init_node
+    by moving the ifdefery out of the functions.
+ 2) Move the pgdat/zone initialization in free_area_init_core to its
+    own function.
+ 3) Introduce free_area_init_core_hotplug, a small subset of free_area_init_core,
+    which is only called from memhotlug code path.
+    In this way, we have:
+ 4) Remove __paginginit and convert it to __meminit
+ 5) Reconvert all __meminit to __init for functions we do not need after
+    initialization.
+
+After this, we have:
+
+    free_area_init_core: called during early initialization
+    free_area_init_core_hotplug: called whenever a new node is allocated/re-used (memhotplug path)
+
+Oscar Salvador (3):
+  mm/page_alloc: Move ifdefery out of free_area_init_core
+  mm/page_alloc: Inline function to handle
+    CONFIG_DEFERRED_STRUCT_PAGE_INIT
+  mm/page_alloc: Introduce free_area_init_core_hotplug
+
+Pavel Tatashin (2):
+  mm: access zone->node via zone_to_nid() and zone_set_nid()
+  mm: remove __paginginit
+
+ include/linux/memory_hotplug.h |   1 +
+ include/linux/mm.h             |  11 +--
+ include/linux/mmzone.h         |  26 +++++--
+ mm/internal.h                  |  12 ----
+ mm/memory_hotplug.c            |  16 ++---
+ mm/mempolicy.c                 |   4 +-
+ mm/mm_init.c                   |   9 +--
+ mm/page_alloc.c                | 151 +++++++++++++++++++++++++++++------------
+ 8 files changed, 137 insertions(+), 93 deletions(-)
+
 -- 
 2.13.6
 
