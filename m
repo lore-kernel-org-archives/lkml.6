@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2E5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0C3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E14E5208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14E5208A4
+	by mail.kernel.org (Postfix) with ESMTP id 7E32A208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E32A208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390314AbeHATiF (ORCPT
+        id S2390421AbeHATiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:38:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
+        Wed, 1 Aug 2018 15:38:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406036AbeHATIl (ORCPT
+        with ESMTP id S2406043AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E4B01379;
-        Wed,  1 Aug 2018 17:13:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7A74D27;
+        Wed,  1 Aug 2018 17:21:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        SCSI ML <linux-scsi@vger.kernel.org>,
+        DM ML <dm-devel@redhat.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/246] powerpc/eeh: Fix use-after-release of EEH driver
-Date:   Wed,  1 Aug 2018 18:49:18 +0200
-Message-Id: <20180801165014.025848432@linuxfoundation.org>
+Subject: [PATCH 4.14 204/246] scsi: scsi_dh: replace too broad "TP9" string with the exact models
+Date:   Wed,  1 Aug 2018 18:51:54 +0200
+Message-Id: <20180801165021.487524990@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,70 +57,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Xose Vazquez Perez <xose.vazquez@gmail.com>
 
-[ Upstream commit 46d4be41b987a6b2d25a2ebdd94cafb44e21d6c5 ]
+[ Upstream commit 37b37d2609cb0ac267280ef27350b962d16d272e ]
 
-Correct two cases where eeh_pcid_get() is used to reference the driver's
-module but the reference is dropped before the driver pointer is used.
+SGI/TP9100 is not an RDAC array:
+    ^^^
+https://git.opensvc.com/gitweb.cgi?p=multipath-tools/.git;a=blob;f=libmultipath/hwtable.c;h=88b4700beb1d8940008020fbe4c3cd97d62f4a56;hb=HEAD#l235
 
-In eeh_rmv_device() also refactor a little so that only two calls to
-eeh_pcid_put() are needed, rather than three and the reference isn't
-taken at all if it wasn't needed.
+This partially reverts commit 35204772ea03 ("[SCSI] scsi_dh_rdac :
+Consolidate rdac strings together")
 
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[mkp: fixed up the new entries to align with rest of struct]
+
+Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: SCSI ML <linux-scsi@vger.kernel.org>
+Cc: DM ML <dm-devel@redhat.com>
+Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/eeh_driver.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/scsi/scsi_dh.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/eeh_driver.c
-+++ b/arch/powerpc/kernel/eeh_driver.c
-@@ -450,9 +450,11 @@ static void *eeh_add_virt_device(void *d
- 
- 	driver = eeh_pcid_get(dev);
- 	if (driver) {
--		eeh_pcid_put(dev);
--		if (driver->err_handler)
-+		if (driver->err_handler) {
-+			eeh_pcid_put(dev);
- 			return NULL;
-+		}
-+		eeh_pcid_put(dev);
- 	}
- 
- #ifdef CONFIG_PPC_POWERNV
-@@ -489,17 +491,19 @@ static void *eeh_rmv_device(void *data,
- 	if (eeh_dev_removed(edev))
- 		return NULL;
- 
--	driver = eeh_pcid_get(dev);
--	if (driver) {
--		eeh_pcid_put(dev);
--		if (removed &&
--		    eeh_pe_passed(edev->pe))
--			return NULL;
--		if (removed &&
--		    driver->err_handler &&
--		    driver->err_handler->error_detected &&
--		    driver->err_handler->slot_reset)
-+	if (removed) {
-+		if (eeh_pe_passed(edev->pe))
- 			return NULL;
-+		driver = eeh_pcid_get(dev);
-+		if (driver) {
-+			if (driver->err_handler &&
-+			    driver->err_handler->error_detected &&
-+			    driver->err_handler->slot_reset) {
-+				eeh_pcid_put(dev);
-+				return NULL;
-+			}
-+			eeh_pcid_put(dev);
-+		}
- 	}
- 
- 	/* Remove it from PCI subsystem */
+--- a/drivers/scsi/scsi_dh.c
++++ b/drivers/scsi/scsi_dh.c
+@@ -58,7 +58,10 @@ static const struct scsi_dh_blist scsi_d
+ 	{"IBM", "3526",			"rdac", },
+ 	{"IBM", "3542",			"rdac", },
+ 	{"IBM", "3552",			"rdac", },
+-	{"SGI", "TP9",			"rdac", },
++	{"SGI", "TP9300",		"rdac", },
++	{"SGI", "TP9400",		"rdac", },
++	{"SGI", "TP9500",		"rdac", },
++	{"SGI", "TP9700",		"rdac", },
+ 	{"SGI", "IS",			"rdac", },
+ 	{"STK", "OPENstorage",		"rdac", },
+ 	{"STK", "FLEXLINE 380",		"rdac", },
 
 
