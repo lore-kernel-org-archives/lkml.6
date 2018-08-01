@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A8FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABB9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A792208B3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A792208B3
+	by mail.kernel.org (Postfix) with ESMTP id 6C9C620840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9C620840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbeHAUPc (ORCPT
+        id S1732984AbeHAUPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:15:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
+        Wed, 1 Aug 2018 16:15:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404221AbeHATDg (ORCPT
+        with ESMTP id S2404269AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A55B7FB1;
-        Wed,  1 Aug 2018 16:58:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F69612F3;
+        Wed,  1 Aug 2018 17:11:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 103/336] media: cec-pin-error-inj: avoid a false-positive Spectre detection
-Date:   Wed,  1 Aug 2018 18:47:18 +0200
-Message-Id: <20180801165033.106147009@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 329/336] tcp: do not force quickack when receiving out-of-order packets
+Date:   Wed,  1 Aug 2018 18:51:04 +0200
+Message-Id: <20180801165041.627134154@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,81 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit a3d71f256c8a8b5d51ea0dfd09cd85ce3a09d9e1 ]
+[ Upstream commit a3893637e1eb0ef5eb1bbc52b3a8d2dfa317a35d ]
 
-The current logic makes Smatch to false-detect a Spectre variant 1
-vulnerability. The problem is that it initializes an u32 indirectly
-from user space input.
+As explained in commit 9f9843a751d0 ("tcp: properly handle stretch
+acks in slow start"), TCP stacks have to consider how many packets
+are acknowledged in one single ACK, because of GRO, but also
+because of ACK compression or losses.
 
-After trying to write a fixup, after a while I realized that, in
-practice, this shouldn't be a problem, as an u32 is initialized
-from u8, but it took some time to discover it.
+We plan to add SACK compression in the following patch, we
+must therefore not call tcp_enter_quickack_mode()
 
-So, do some code cleanup to make it clearer for both humans
-and machines about the valid range for "op".
-
-Fix this warning:
-	drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() warn: potential spectre issue 'pin->error_inj_args'
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/cec/cec-pin-error-inj.c |   23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ net/ipv4/tcp_input.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/media/cec/cec-pin-error-inj.c
-+++ b/drivers/media/cec/cec-pin-error-inj.c
-@@ -81,10 +81,9 @@ bool cec_pin_error_inj_parse_line(struct
- 	u64 *error;
- 	u8 *args;
- 	bool has_op;
--	u32 op;
-+	u8 op;
- 	u8 mode;
- 	u8 pos;
--	u8 v;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4678,8 +4678,6 @@ drop:
+ 	if (!before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt + tcp_receive_window(tp)))
+ 		goto out_of_window;
  
- 	p = skip_spaces(p);
- 	token = strsep(&p, delims);
-@@ -146,12 +145,18 @@ bool cec_pin_error_inj_parse_line(struct
- 	comma = strchr(token, ',');
- 	if (comma)
- 		*comma++ = '\0';
--	if (!strcmp(token, "any"))
--		op = CEC_ERROR_INJ_OP_ANY;
--	else if (!kstrtou8(token, 0, &v))
--		op = v;
--	else
-+	if (!strcmp(token, "any")) {
-+		has_op = false;
-+		error = pin->error_inj + CEC_ERROR_INJ_OP_ANY;
-+		args = pin->error_inj_args[CEC_ERROR_INJ_OP_ANY];
-+	} else if (!kstrtou8(token, 0, &op)) {
-+		has_op = true;
-+		error = pin->error_inj + op;
-+		args = pin->error_inj_args[op];
-+	} else {
- 		return false;
-+	}
-+
- 	mode = CEC_ERROR_INJ_MODE_ONCE;
- 	if (comma) {
- 		if (!strcmp(comma, "off"))
-@@ -166,10 +171,6 @@ bool cec_pin_error_inj_parse_line(struct
- 			return false;
- 	}
- 
--	error = pin->error_inj + op;
--	args = pin->error_inj_args[op];
--	has_op = op <= 0xff;
+-	tcp_enter_quickack_mode(sk);
 -
- 	token = strsep(&p, delims);
- 	if (p) {
- 		p = skip_spaces(p);
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt)) {
+ 		/* Partial packet, seq < rcv_next < end_seq */
+ 		SOCK_DEBUG(sk, "partial packet: rcv_next %X seq %X - %X\n",
 
 
