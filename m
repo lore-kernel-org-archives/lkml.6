@@ -2,134 +2,277 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE77EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EE1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C80D2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsxtuiRv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C80D2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id D506F2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D506F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733061AbeHAUK2 (ORCPT
+        id S2387429AbeHAUKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:10:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37082 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731500AbeHAUK2 (ORCPT
+        Wed, 1 Aug 2018 16:10:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404398AbeHATDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:10:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n7-v6so11226320pgq.4;
-        Wed, 01 Aug 2018 11:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EWf0VW5aUhoa979lhJ0aysKT+iQ4faN+4WDPZzsCyls=;
-        b=TsxtuiRvSn8R7WMN/bSedaYzEzmb5WON3qqa+UhZStffixRL4HG5Ttq1PsZRmTCJUN
-         LZdPw1DoUIi06eut0s2zBfWRhJ0q68sUNGheyeyBoRqQFoI95pEvaqBzbZqhf0/9s+Zo
-         3+gGU/caGh72Af0ZwRn6c5BQVVdIUQJfcFs/VCI8tshV/usVw9jzxiJOAtau7lFhpZyM
-         iK5EEauSHkvcMeXPKv20ZAFt74tydYmJb2L0BCfLKZOcRs2SkYNSSe7vEG1NrKc6zFuE
-         afSaFpjG7ZIB5tAbWKH6Kj5Bf2Iooz1X5tJPp9oM5RaXOnh6u2CLl01wIZkRm1MBFF+F
-         1yCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EWf0VW5aUhoa979lhJ0aysKT+iQ4faN+4WDPZzsCyls=;
-        b=f8cjis4O0hrD42LKEEnryS48wmq0x0bK3usgZTu6SAf2zLnVpnWvt4qceUlVrccq9k
-         JcycCETxbbJYyFyG+UFjOX0BhVt7XVikZbPy6I4FPv1CtIrFf1avoJhWyquNImPjlnpV
-         Fu+MtrVh+iSrzYVO1iJ9JZ/ML0khQ0qnqsJT2trIVHOkJnpluO1US8eCA94qiNN9h5jB
-         f3UwbFNLxHkTFDbDoVGB/bez1CFjUg7VZkJFFI/bI0i0HGLcebFl8oqlOfYaG6s9wG1m
-         ru3GPUNBsu/23JR7QB9emUomPfIi/2XsG3uLXYjL0UudYOES2Us2z4pTAkqmaNxqVwgY
-         xfrQ==
-X-Gm-Message-State: AOUpUlHyR/MfLF2SoprrW5vWCrE7bDJsVF/v6cHUbhvKvzVP7Od8SRfQ
-        sxdZW4BHdUgmmUVYjzs2egA=
-X-Google-Smtp-Source: AAOMgpew/69pY4AkWmuZmvKYicFez3Z2wNKffJtOG8pEsKFN0si1jGvEgrCpVmOunktHA7n4jAD90g==
-X-Received: by 2002:a63:a347:: with SMTP id v7-v6mr24967706pgn.182.1533147808447;
-        Wed, 01 Aug 2018 11:23:28 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h29-v6sm3766766pgh.37.2018.08.01.11.23.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 11:23:27 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 11:23:26 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Stefan Agner <stefan@agner.ch>, Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-Message-ID: <20180801182326.GA20550@roeck-us.net>
-References: <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
- <f67628ad-4cae-96cd-d0c4-3b2f7d12a822@roeck-us.net>
- <4ce17098-850f-3bb0-b977-8d7932e74e06@arm.com>
- <20180731154353.GA29601@roeck-us.net>
- <10c2ca4d-d587-2705-2802-b6df3dc72fd4@arm.com>
- <20180731173859.GA17007@roeck-us.net>
- <9f32010e-3bcb-2153-dac3-996e9d1b1e9b@arm.com>
+        Wed, 1 Aug 2018 15:03:38 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F75A1215;
+        Wed,  1 Aug 2018 17:08:54 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 285/336] media: atomisp: compat32: fix __user annotations
+Date:   Wed,  1 Aug 2018 18:50:20 +0200
+Message-Id: <20180801165039.936849028@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f32010e-3bcb-2153-dac3-996e9d1b1e9b@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 05:33:30PM +0100, Robin Murphy wrote:
-> On 31/07/18 18:38, Guenter Roeck wrote:
-> >On Tue, Jul 31, 2018 at 04:58:41PM +0100, Robin Murphy wrote:
-> >>On 31/07/18 16:43, Guenter Roeck wrote:
-> >>>On Tue, Jul 31, 2018 at 03:09:34PM +0100, Robin Murphy wrote:
-> >>>>>Please note that sparc images still generate the warning (next-20180731).
-> >>>>
-> >>>>Ugh, OK, any ideas what sparc does to create these platform devices that
-> >>>>isn't of_platform_device_create_pdata() and has somehow grown an implicit
-> >>>>dependency on of_dma_configure() since 4.12? I'm looking, but nothing jumps
-> >>>>out...
-> >>>>
-> >>>
-> >>>I suspect it might be of_device_register(), called from
-> >>>	arch/sparc/kernel/of_device_64.c:scan_one_device()
-> >>>	arch/sparc/kernel/of_device_32.c:scan_one_device()
-> >>
-> >>Right, that's as far as I got as well, so I'm struggling to see how these
-> >>things ever got DMA masks set before the of_dma_configure() call moved out
-> >>of of_platform_device_create_pdata(), or why it wasn't a problem prior to
-> >>the generic dma_ops rework if they didn't :/
-> >>
-> >Ah, ok. No idea, sorry. All I know is that the messages were first seen
-> >with next-20180727.
-> 
-> OK, I spent this afternoon wrangling toolchains and QEMU to boot an
-> instrumented 4.11 kernel, and the answer is that the warnings are arguably
-> correct. These masks have indeed never been set where they should have been,
-> but then the sbus_dma_ops don't reference them anyway.
-> 
-> The coherent mask WARN_ON *should* have started appearing in 4.16 with
-> 205e1b7f51e4("dma-mapping: warn when there is no coherent_dma_mask"), but
-> happened to be hidden by the inadvertent side-effect of the prior
-> dma_configure() change. Since there's seemingly no actual regression of
-> functionality, I'm inclined to leave this in the hands of whoever cares
-> about sparc32.
-> 
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-You mean there is now a warning stating that coherent_dma_mask is not set,
-but coherent_dma_mask isn't used by sparc32 in the first place ?
+------------------
 
-Guenter
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+
+[ Upstream commit ad4222a0e29664666a71685a6e732923ca7c7e45 ]
+
+The __user annotations at the compat32 code is not right:
+
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18:    expected void *base
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23:    expected unsigned int [usertype] *xcoords_y
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23:    expected unsigned int [usertype] *ycoords_y
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24:    expected unsigned int [usertype] *xcoords_uv
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24:    expected unsigned int [usertype] *ycoords_uv
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29:    expected unsigned int [usertype] *effective_width
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29:    expected unsigned int [usertype] *effective_width
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19:    expected struct v4l2_framebuffer *frame
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29:    expected unsigned short *calb_grp_values
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:701:39: warning: cast removes address space of expression
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21:    expected void const volatile [noderef] <asn:1>*<noident>
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21:    got unsigned int [usertype] *src
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43:    expected struct atomisp_shading_table *shading_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44:    got struct atomisp_shading_table *shading_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41:    expected struct atomisp_morph_table *morph_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44:    got struct atomisp_morph_table *morph_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40:    expected struct atomisp_dvs2_coefficients *dvs2_coefs
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44:    got struct atomisp_dvs2_coefficients *dvs2_coefs
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46:    expected struct atomisp_dvs_6axis_config *dvs_6axis_config
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44:    got struct atomisp_dvs_6axis_config *dvs_6axis_config
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17:    expected struct atomisp_sensor_ae_bracketing_lut_entry *lut
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17:    got void [noderef] <asn:1>*
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c |   49 +++++-----
+ 1 file changed, 26 insertions(+), 23 deletions(-)
+
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c
+@@ -77,7 +77,7 @@ static int get_v4l2_framebuffer32(struct
+ 		get_user(kp->flags, &up->flags))
+ 			return -EFAULT;
+ 
+-	kp->base = compat_ptr(tmp);
++	kp->base = (void __force *)compat_ptr(tmp);
+ 	get_v4l2_pix_format((struct v4l2_pix_format *)&kp->fmt, &up->fmt);
+ 	return 0;
+ }
+@@ -228,10 +228,10 @@ static int get_atomisp_dvs_6axis_config3
+ 		get_user(ycoords_uv, &up->ycoords_uv))
+ 			return -EFAULT;
+ 
+-	kp->xcoords_y = compat_ptr(xcoords_y);
+-	kp->ycoords_y = compat_ptr(ycoords_y);
+-	kp->xcoords_uv = compat_ptr(xcoords_uv);
+-	kp->ycoords_uv = compat_ptr(ycoords_uv);
++	kp->xcoords_y = (void __force *)compat_ptr(xcoords_y);
++	kp->ycoords_y = (void __force *)compat_ptr(ycoords_y);
++	kp->xcoords_uv = (void __force *)compat_ptr(xcoords_uv);
++	kp->ycoords_uv = (void __force *)compat_ptr(ycoords_uv);
+ 	return 0;
+ }
+ 
+@@ -292,7 +292,7 @@ static int get_atomisp_metadata_stat32(s
+ 			return -EFAULT;
+ 
+ 	kp->data = compat_ptr(data);
+-	kp->effective_width = compat_ptr(effective_width);
++	kp->effective_width = (void __force *)compat_ptr(effective_width);
+ 	return 0;
+ }
+ 
+@@ -356,7 +356,7 @@ static int get_atomisp_metadata_by_type_
+ 			return -EFAULT;
+ 
+ 	kp->data = compat_ptr(data);
+-	kp->effective_width = compat_ptr(effective_width);
++	kp->effective_width = (void __force *)compat_ptr(effective_width);
+ 	return 0;
+ }
+ 
+@@ -433,7 +433,7 @@ static int get_atomisp_overlay32(struct
+ 		get_user(kp->overlay_start_x, &up->overlay_start_y))
+ 			return -EFAULT;
+ 
+-	kp->frame = compat_ptr(frame);
++	kp->frame = (void __force *)compat_ptr(frame);
+ 	return 0;
+ }
+ 
+@@ -477,7 +477,7 @@ static int get_atomisp_calibration_group
+ 		get_user(calb_grp_values, &up->calb_grp_values))
+ 			return -EFAULT;
+ 
+-	kp->calb_grp_values = compat_ptr(calb_grp_values);
++	kp->calb_grp_values = (void __force *)compat_ptr(calb_grp_values);
+ 	return 0;
+ }
+ 
+@@ -699,8 +699,8 @@ static int get_atomisp_parameters32(stru
+ 			return -EFAULT;
+ 
+ 	while (n >= 0) {
+-		compat_uptr_t *src = (compat_uptr_t *)up + n;
+-		uintptr_t *dst = (uintptr_t *)kp + n;
++		compat_uptr_t __user *src = ((compat_uptr_t __user *)up) + n;
++		uintptr_t *dst = ((uintptr_t *)kp) + n;
+ 
+ 		if (get_user((*dst), src))
+ 			return -EFAULT;
+@@ -747,12 +747,12 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->shading_table = user_ptr + offset;
++			kp->shading_table = (void __force *)user_ptr + offset;
+ 			offset = sizeof(struct atomisp_shading_table);
+ 			if (!kp->shading_table)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->shading_table,
++			if (copy_to_user((void __user *)kp->shading_table,
+ 					 &karg.shading_table,
+ 					 sizeof(struct atomisp_shading_table)))
+ 				return -EFAULT;
+@@ -773,13 +773,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->morph_table = user_ptr + offset;
++			kp->morph_table = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_morph_table);
+ 			if (!kp->morph_table)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->morph_table, &karg.morph_table,
+-					   sizeof(struct atomisp_morph_table)))
++			if (copy_to_user((void __user *)kp->morph_table,
++					 &karg.morph_table,
++					 sizeof(struct atomisp_morph_table)))
+ 				return -EFAULT;
+ 		}
+ 
+@@ -798,13 +799,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->dvs2_coefs = user_ptr + offset;
++			kp->dvs2_coefs = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_dis_coefficients);
+ 			if (!kp->dvs2_coefs)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->dvs2_coefs, &karg.dvs2_coefs,
+-				sizeof(struct atomisp_dis_coefficients)))
++			if (copy_to_user((void __user *)kp->dvs2_coefs,
++					 &karg.dvs2_coefs,
++					 sizeof(struct atomisp_dis_coefficients)))
+ 				return -EFAULT;
+ 		}
+ 		/* handle dvs 6axis configuration */
+@@ -822,13 +824,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->dvs_6axis_config = user_ptr + offset;
++			kp->dvs_6axis_config = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_dvs_6axis_config);
+ 			if (!kp->dvs_6axis_config)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->dvs_6axis_config, &karg.dvs_6axis_config,
+-				sizeof(struct atomisp_dvs_6axis_config)))
++			if (copy_to_user((void __user *)kp->dvs_6axis_config,
++					 &karg.dvs_6axis_config,
++					 sizeof(struct atomisp_dvs_6axis_config)))
+ 				return -EFAULT;
+ 		}
+ 	}
+@@ -887,7 +890,7 @@ static int get_atomisp_sensor_ae_bracket
+ 		get_user(lut, &up->lut))
+ 			return -EFAULT;
+ 
+-	kp->lut = compat_ptr(lut);
++	kp->lut = (void __force *)compat_ptr(lut);
+ 	return 0;
+ }
+ 
+
+
