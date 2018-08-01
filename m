@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F321C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F107F2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F107F2083D
+	by mail.kernel.org (Postfix) with ESMTP id 5760F2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5760F2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407099AbeHATNX (ORCPT
+        id S2407109AbeHATN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51616 "EHLO
+        Wed, 1 Aug 2018 15:13:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405523AbeHATNW (ORCPT
+        with ESMTP id S2405523AbeHATNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:22 -0400
+        Wed, 1 Aug 2018 15:13:25 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB143CC3;
-        Wed,  1 Aug 2018 17:26:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF04ECC9;
+        Wed,  1 Aug 2018 17:26:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 045/144] mwifiex: handle race during mwifiex_usb_disconnect
-Date:   Wed,  1 Aug 2018 18:51:12 +0200
-Message-Id: <20180801164952.261036995@linuxfoundation.org>
+Subject: [PATCH 4.9 019/144] mm/slub.c: add __printf verification to slab_err()
+Date:   Wed,  1 Aug 2018 18:50:46 +0200
+Message-Id: <20180801164950.730112368@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,47 +56,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ganapathi Bhat <gbhat@marvell.com>
+From: Mathieu Malaterre <malat@debian.org>
 
-[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
+[ Upstream commit a38965bf941b7c2af50de09c96bc5f03e136caef ]
 
-Race condition is observed during rmmod of mwifiex_usb:
+__printf is useful to verify format and arguments.  Remove the following
+warning (with W=1):
 
-1. The rmmod thread will call mwifiex_usb_disconnect(), download
-   SHUTDOWN command and do wait_event_interruptible_timeout(),
-   waiting for response.
+  mm/slub.c:721:2: warning: function might be possible candidate for `gnu_printf' format attribute [-Wsuggest-attribute=format]
 
-2. The main thread will handle the response and will do a
-   wake_up_interruptible(), unblocking rmmod thread.
-
-3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
-   mwifiex_usb_free().
-
-4. The main thread will try to resubmit rx_cmd.urb in
-   mwifiex_usb_submit_rx_urb(), which is NULL.
-
-To fix, wait for main thread to complete before calling
-mwifiex_usb_free().
-
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: http://lkml.kernel.org/r/20180505200706.19986-1-malat@debian.org
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/mwifiex/usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ mm/slub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/usb.c
-+++ b/drivers/net/wireless/marvell/mwifiex/usb.c
-@@ -624,6 +624,9 @@ static void mwifiex_usb_disconnect(struc
- 					 MWIFIEX_FUNC_SHUTDOWN);
- 	}
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -673,7 +673,7 @@ void object_err(struct kmem_cache *s, st
+ 	print_trailer(s, page, object);
+ }
  
-+	if (adapter->workqueue)
-+		flush_workqueue(adapter->workqueue);
-+
- 	mwifiex_usb_free(card);
- 
- 	mwifiex_dbg(adapter, FATAL,
+-static void slab_err(struct kmem_cache *s, struct page *page,
++static __printf(3, 4) void slab_err(struct kmem_cache *s, struct page *page,
+ 			const char *fmt, ...)
+ {
+ 	va_list args;
 
 
