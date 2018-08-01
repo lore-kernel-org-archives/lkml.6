@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07B4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96A4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A3720840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A3720840
+	by mail.kernel.org (Postfix) with ESMTP id AAF1120840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF1120840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733245AbeHAUTz (ORCPT
+        id S1733230AbeHAUTz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:19:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404173AbeHATDf (ORCPT
+        with ESMTP id S2404176AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E827B1233;
-        Wed,  1 Aug 2018 17:09:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E882F12CC;
+        Wed,  1 Aug 2018 17:10:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Smart <james.smart@broadcom.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.17 299/336] nvmet-fc: fix target sgl list on large transfers
-Date:   Wed,  1 Aug 2018 18:50:34 +0200
-Message-Id: <20180801165040.487665002@linuxfoundation.org>
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 291/336] ARM: dts: imx6qdl-wandboard: Let the codec control MCLK pinctrl
+Date:   Wed,  1 Aug 2018 18:50:26 +0200
+Message-Id: <20180801165040.157166087@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,126 +51,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-commit d082dc1562a2ff0947b214796f12faaa87e816a9 upstream.
+[ Upstream commit 6e1386b2ee6822b00ae944a3de2c3304d2d422e6 ]
 
-The existing code to carve up the sg list expected an sg element-per-page
-which can be very incorrect with iommu's remapping multiple memory pages
-to fewer bus addresses. To hit this error required a large io payload
-(greater than 256k) and a system that maps on a per-page basis. It's
-possible that large ios could get by fine if the system condensed the
-sgl list into the first 64 elements.
+sgtl5000 codec needs MCLK clock to be present so that it can
+successfully read/write via I2C.
 
-This patch corrects the sg list handling by specifically walking the
-sg list element by element and attempting to divide the transfer up
-on a per-sg element boundary. While doing so, it still tries to keep
-sequences under 256k, but will exceed that rule if a single sg element
-is larger than 256k.
+In the case of wandboard, MCLK is provided via
+MX6QDL_PAD_GPIO_0__CCM_CLKO1 pad.
 
-Fixes: 48fa362b6c3f ("nvmet-fc: simplify sg list handling")
-Cc: <stable@vger.kernel.org> # 4.14
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Move the MCLK pinctrl from hog group to the codec group, so that the
+codec clock can be present prior to reading the codec ID.
+
+This avoids the following error that happens from time to time:
+
+[    2.484443] sgtl5000 1-000a: Error reading chip id -6
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/nvme/target/fc.c |   44 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/imx6qdl-wandboard-revb1.dtsi |    1 -
+ arch/arm/boot/dts/imx6qdl-wandboard-revc1.dtsi |    1 -
+ arch/arm/boot/dts/imx6qdl-wandboard-revd1.dtsi |    1 -
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi       |    8 ++++++++
+ 4 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -58,8 +58,8 @@ struct nvmet_fc_ls_iod {
- 	struct work_struct		work;
- } __aligned(sizeof(unsigned long long));
+--- a/arch/arm/boot/dts/imx6qdl-wandboard-revb1.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard-revb1.dtsi
+@@ -17,7 +17,6 @@
+ 	imx6qdl-wandboard {
+ 		pinctrl_hog: hoggrp {
+ 			fsl,pins = <
+-				MX6QDL_PAD_GPIO_0__CCM_CLKO1		0x130b0		/* GPIO_0_CLKO */
+ 				MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x80000000	/* uSDHC1 CD */
+ 				MX6QDL_PAD_EIM_DA9__GPIO3_IO09		0x80000000	/* uSDHC3 CD */
+ 				MX6QDL_PAD_EIM_EB1__GPIO2_IO29		0x0f0b0		/* WL_REF_ON */
+--- a/arch/arm/boot/dts/imx6qdl-wandboard-revc1.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard-revc1.dtsi
+@@ -17,7 +17,6 @@
+ 	imx6qdl-wandboard {
+ 		pinctrl_hog: hoggrp {
+ 			fsl,pins = <
+-				MX6QDL_PAD_GPIO_0__CCM_CLKO1		0x130b0		/* GPIO_0_CLKO */
+ 				MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x80000000	/* uSDHC1 CD */
+ 				MX6QDL_PAD_EIM_DA9__GPIO3_IO09		0x80000000	/* uSDHC3 CD */
+ 				MX6QDL_PAD_CSI0_DAT14__GPIO6_IO00	0x0f0b0		/* WIFI_ON (reset, active low) */
+--- a/arch/arm/boot/dts/imx6qdl-wandboard-revd1.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard-revd1.dtsi
+@@ -147,7 +147,6 @@
+ 	imx6qdl-wandboard {
+ 		pinctrl_hog: hoggrp {
+ 			fsl,pins = <
+-				MX6QDL_PAD_GPIO_0__CCM_CLKO1     	0x130b0
+ 				MX6QDL_PAD_EIM_D22__USB_OTG_PWR		0x80000000	/* USB Power Enable */
+ 				MX6QDL_PAD_GPIO_2__GPIO1_IO02		0x80000000	/* USDHC1 CD */
+ 				MX6QDL_PAD_EIM_DA9__GPIO3_IO09		0x80000000	/* uSDHC3 CD */
+--- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+@@ -83,6 +83,8 @@
+ 	status = "okay";
  
-+/* desired maximum for a single sequence - if sg list allows it */
- #define NVMET_FC_MAX_SEQ_LENGTH		(256 * 1024)
--#define NVMET_FC_MAX_XFR_SGENTS		(NVMET_FC_MAX_SEQ_LENGTH / PAGE_SIZE)
+ 	codec: sgtl5000@a {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_mclk>;
+ 		compatible = "fsl,sgtl5000";
+ 		reg = <0x0a>;
+ 		clocks = <&clks IMX6QDL_CLK_CKO>;
+@@ -142,6 +144,12 @@
+ 			>;
+ 		};
  
- enum nvmet_fcp_datadir {
- 	NVMET_FCP_NODATA,
-@@ -74,6 +74,7 @@ struct nvmet_fc_fcp_iod {
- 	struct nvme_fc_cmd_iu		cmdiubuf;
- 	struct nvme_fc_ersp_iu		rspiubuf;
- 	dma_addr_t			rspdma;
-+	struct scatterlist		*next_sg;
- 	struct scatterlist		*data_sg;
- 	int				data_sg_cnt;
- 	u32				offset;
-@@ -1025,8 +1026,7 @@ nvmet_fc_register_targetport(struct nvme
- 	INIT_LIST_HEAD(&newrec->assoc_list);
- 	kref_init(&newrec->ref);
- 	ida_init(&newrec->assoc_cnt);
--	newrec->max_sg_cnt = min_t(u32, NVMET_FC_MAX_XFR_SGENTS,
--					template->max_sgl_segments);
-+	newrec->max_sg_cnt = template->max_sgl_segments;
- 
- 	ret = nvmet_fc_alloc_ls_iodlist(newrec);
- 	if (ret) {
-@@ -1722,6 +1722,7 @@ nvmet_fc_alloc_tgt_pgs(struct nvmet_fc_f
- 				((fod->io_dir == NVMET_FCP_WRITE) ?
- 					DMA_FROM_DEVICE : DMA_TO_DEVICE));
- 				/* note: write from initiator perspective */
-+	fod->next_sg = fod->data_sg;
- 
- 	return 0;
- 
-@@ -1866,24 +1867,49 @@ nvmet_fc_transfer_fcp_data(struct nvmet_
- 				struct nvmet_fc_fcp_iod *fod, u8 op)
- {
- 	struct nvmefc_tgt_fcp_req *fcpreq = fod->fcpreq;
-+	struct scatterlist *sg = fod->next_sg;
- 	unsigned long flags;
--	u32 tlen;
-+	u32 remaininglen = fod->req.transfer_len - fod->offset;
-+	u32 tlen = 0;
- 	int ret;
- 
- 	fcpreq->op = op;
- 	fcpreq->offset = fod->offset;
- 	fcpreq->timeout = NVME_FC_TGTOP_TIMEOUT_SEC;
- 
--	tlen = min_t(u32, tgtport->max_sg_cnt * PAGE_SIZE,
--			(fod->req.transfer_len - fod->offset));
-+	/*
-+	 * for next sequence:
-+	 *  break at a sg element boundary
-+	 *  attempt to keep sequence length capped at
-+	 *    NVMET_FC_MAX_SEQ_LENGTH but allow sequence to
-+	 *    be longer if a single sg element is larger
-+	 *    than that amount. This is done to avoid creating
-+	 *    a new sg list to use for the tgtport api.
-+	 */
-+	fcpreq->sg = sg;
-+	fcpreq->sg_cnt = 0;
-+	while (tlen < remaininglen &&
-+	       fcpreq->sg_cnt < tgtport->max_sg_cnt &&
-+	       tlen + sg_dma_len(sg) < NVMET_FC_MAX_SEQ_LENGTH) {
-+		fcpreq->sg_cnt++;
-+		tlen += sg_dma_len(sg);
-+		sg = sg_next(sg);
-+	}
-+	if (tlen < remaininglen && fcpreq->sg_cnt == 0) {
-+		fcpreq->sg_cnt++;
-+		tlen += min_t(u32, sg_dma_len(sg), remaininglen);
-+		sg = sg_next(sg);
-+	}
-+	if (tlen < remaininglen)
-+		fod->next_sg = sg;
-+	else
-+		fod->next_sg = NULL;
++		pinctrl_mclk: mclkgrp {
++			fsl,pins = <
++				MX6QDL_PAD_GPIO_0__CCM_CLKO1		0x130b0
++			>;
++		};
 +
- 	fcpreq->transfer_length = tlen;
- 	fcpreq->transferred_length = 0;
- 	fcpreq->fcp_error = 0;
- 	fcpreq->rsplen = 0;
- 
--	fcpreq->sg = &fod->data_sg[fod->offset / PAGE_SIZE];
--	fcpreq->sg_cnt = DIV_ROUND_UP(tlen, PAGE_SIZE);
--
- 	/*
- 	 * If the last READDATA request: check if LLDD supports
- 	 * combined xfr with response.
+ 		pinctrl_spdif: spdifgrp {
+ 			fsl,pins = <
+ 				MX6QDL_PAD_ENET_RXD0__SPDIF_OUT		0x1b0b0
 
 
