@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA803C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEC0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAF42083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAF42083D
+	by mail.kernel.org (Postfix) with ESMTP id 6D3B22083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D3B22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407728AbeHATRG (ORCPT
+        id S2407740AbeHATRK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52574 "EHLO
+        Wed, 1 Aug 2018 15:17:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52584 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389856AbeHATRG (ORCPT
+        with ESMTP id S2389856AbeHATRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:06 -0400
+        Wed, 1 Aug 2018 15:17:09 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBC7DD54;
-        Wed,  1 Aug 2018 17:30:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DB4DD4A;
+        Wed,  1 Aug 2018 17:30:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yixun Lan <yixun.lan@amlogic.com>,
-        Rob Herring <robh@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 114/144] dt-bindings: net: meson-dwmac: new compatible name for AXG SoC
-Date:   Wed,  1 Aug 2018 18:52:21 +0200
-Message-Id: <20180801164957.453141621@linuxfoundation.org>
+Subject: [PATCH 4.9 115/144] fasync: Fix deadlock between task-context and interrupt-context kill_fasync()
+Date:   Wed,  1 Aug 2018 18:52:22 +0200
+Message-Id: <20180801164957.501054849@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,32 +51,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit 7e5d05e18ba1ed491c6f836edee7f0b90f3167bc ]
+[ Upstream commit 7a107c0f55a3b4c6f84a4323df5610360bde1684 ]
 
-We need to introduce a new compatible name for the Meson-AXG SoC
-in order to support the RMII 100M ethernet PHY, since the PRG_ETH0
-register of the dwmac glue layer is changed from previous old SoC.
+I observed the following deadlock between them:
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[task 1]                          [task 2]                         [task 3]
+kill_fasync()                     mm_update_next_owner()           copy_process()
+ spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        write_lock_irq(&tasklist_lock)
+  send_sigio()                    <IRQ>                             ...
+   read_lock(&fown->lock)         kill_fasync()                     ...
+    read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
+
+Task 1 can't acquire read locked tasklist_lock, since there is
+already task 3 expressed its wish to take the lock exclusive.
+Task 2 holds the read locked lock, but it can't take the spin lock.
+
+Also, there is possible another deadlock (which I haven't observed):
+
+[task 1]                            [task 2]
+f_getown()                          kill_fasync()
+ read_lock(&f_own->lock)             spin_lock_irqsave(&fa->fa_lock,)
+ <IRQ>                               send_sigio()                     write_lock_irq(&f_own->lock)
+  kill_fasync()                       read_lock(&fown->lock)
+   spin_lock_irqsave(&fa->fa_lock,)
+
+Actually, we do not need exclusive fa->fa_lock in kill_fasync_rcu(),
+as it guarantees fa->fa_file->f_owner integrity only. It may seem,
+that it used to give a task a small possibility to receive two sequential
+signals, if there are two parallel kill_fasync() callers, and task
+handles the first signal fastly, but the behaviour won't become
+different, since there is exclusive sighand lock in do_send_sig_info().
+
+The patch converts fa_lock into rwlock_t, and this fixes two above
+deadlocks, as rwlock is allowed to be taken from interrupt handler
+by qrwlock design.
+
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/net/meson-dwmac.txt |    1 +
- 1 file changed, 1 insertion(+)
+ fs/fcntl.c         |   15 +++++++--------
+ include/linux/fs.h |    2 +-
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
---- a/Documentation/devicetree/bindings/net/meson-dwmac.txt
-+++ b/Documentation/devicetree/bindings/net/meson-dwmac.txt
-@@ -10,6 +10,7 @@ Required properties on all platforms:
- 			- "amlogic,meson6-dwmac"
- 			- "amlogic,meson8b-dwmac"
- 			- "amlogic,meson-gxbb-dwmac"
-+			- "amlogic,meson-axg-dwmac"
- 		Additionally "snps,dwmac" and any applicable more
- 		detailed version number described in net/stmmac.txt
- 		should be used.
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -588,9 +588,9 @@ int fasync_remove_entry(struct file *fil
+ 		if (fa->fa_file != filp)
+ 			continue;
+ 
+-		spin_lock_irq(&fa->fa_lock);
++		write_lock_irq(&fa->fa_lock);
+ 		fa->fa_file = NULL;
+-		spin_unlock_irq(&fa->fa_lock);
++		write_unlock_irq(&fa->fa_lock);
+ 
+ 		*fp = fa->fa_next;
+ 		call_rcu(&fa->fa_rcu, fasync_free_rcu);
+@@ -635,13 +635,13 @@ struct fasync_struct *fasync_insert_entr
+ 		if (fa->fa_file != filp)
+ 			continue;
+ 
+-		spin_lock_irq(&fa->fa_lock);
++		write_lock_irq(&fa->fa_lock);
+ 		fa->fa_fd = fd;
+-		spin_unlock_irq(&fa->fa_lock);
++		write_unlock_irq(&fa->fa_lock);
+ 		goto out;
+ 	}
+ 
+-	spin_lock_init(&new->fa_lock);
++	rwlock_init(&new->fa_lock);
+ 	new->magic = FASYNC_MAGIC;
+ 	new->fa_file = filp;
+ 	new->fa_fd = fd;
+@@ -704,14 +704,13 @@ static void kill_fasync_rcu(struct fasyn
+ {
+ 	while (fa) {
+ 		struct fown_struct *fown;
+-		unsigned long flags;
+ 
+ 		if (fa->magic != FASYNC_MAGIC) {
+ 			printk(KERN_ERR "kill_fasync: bad magic number in "
+ 			       "fasync_struct!\n");
+ 			return;
+ 		}
+-		spin_lock_irqsave(&fa->fa_lock, flags);
++		read_lock(&fa->fa_lock);
+ 		if (fa->fa_file) {
+ 			fown = &fa->fa_file->f_owner;
+ 			/* Don't send SIGURG to processes which have not set a
+@@ -720,7 +719,7 @@ static void kill_fasync_rcu(struct fasyn
+ 			if (!(sig == SIGURG && fown->signum == 0))
+ 				send_sigio(fown, fa->fa_fd, band);
+ 		}
+-		spin_unlock_irqrestore(&fa->fa_lock, flags);
++		read_unlock(&fa->fa_lock);
+ 		fa = rcu_dereference(fa->fa_next);
+ 	}
+ }
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1277,7 +1277,7 @@ static inline int locks_lock_file_wait(s
+ }
+ 
+ struct fasync_struct {
+-	spinlock_t		fa_lock;
++	rwlock_t		fa_lock;
+ 	int			magic;
+ 	int			fa_fd;
+ 	struct fasync_struct	*fa_next; /* singly linked list */
 
 
