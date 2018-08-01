@@ -2,158 +2,87 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985CCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949E3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37AE4208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:53:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ePCmzjhQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37AE4208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 50BB0208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BB0208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389996AbeHARjn (ORCPT
+        id S2390011AbeHARmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:39:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33438 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389881AbeHARjm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:39:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d4-v6so7838961pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gj4hlaaw5Ugm9054KtpHasbpgZFKdiT/LM0RVQfMkbg=;
-        b=ePCmzjhQnt5GdCTiXc5PRxTYa3tFfJes8lq7xYcoLicHLV9vz2xWRHyQ5H6oLAN2LQ
-         5qSCosJwP+EUpKkpTuIvTuVYK61aklE9y0WZ4gy1be6kqtXdeaFgs10YI07kbuFZe55Y
-         Omi99gDqjsw9yhZxdWHjDAFb7vBeJaWqg6Xg4hR5wPYZq04zEP6jczlD+RXLzyv3GBag
-         VJV1++z+KMI14ZDVrFnw9kaNiAS0Z34uT07Nozy55NzVeKpG4NHyTuRwxl5sv40Sj+1R
-         gwrH+cZjy86xKRzVCDLkyfFOOrJ/jlR9fF8nokWnPQbPnvNZzcGUsciOuQTJ7I5UkCkF
-         V3lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gj4hlaaw5Ugm9054KtpHasbpgZFKdiT/LM0RVQfMkbg=;
-        b=ifIxgJKH1ScO2cBGimMIPVkJ4yXbAPb6N/yC8eaJZyRM9S8qX34rksNdYCKLWQ4JUG
-         32Thk2i0H9Imdp/cldxoiZA09SMMB0KdP8bGvOdkzViqejQ9QoEI4rM3xOdKoDUHb9d/
-         d0beZtyW9NL3VtMc03xx7Z4pTr+dywkvN/wzZTaVKz+eF7W2ZqZPNCKzc3KnxhEixJ3a
-         GuoK5dV5PgB9cUFYEC6J+ICK1AsAMHf2PcZTDKH8OPoVD8xXqrV8PcTC1+PS8aw/xsks
-         nvRSalMD9v4WpUWfvmDYF3Loq4BEzSvjv2KIcCyXCkDkAWt0UXpvPASunqTr1dL2zF4i
-         j+nQ==
-X-Gm-Message-State: AOUpUlGMF37MwJ2Mj1O8XOeoiTN6tL6Mxwy94/Hd+1khNeOVzHrlLkWH
-        o3g90fu6oWWV0O3Xm1atkAWjycZ8r5a99bpw+we6FQ==
-X-Google-Smtp-Source: AAOMgpe0H0GUcKasJZS1Sv6rNRRjm8vkG0joqrV1V1cE+aS6L5PvbjGr21AjOrjSb3BoJgysiLDsowKUL+RHyWF0V1g=
-X-Received: by 2002:a63:c046:: with SMTP id z6-v6mr16576589pgi.114.1533138800969;
- Wed, 01 Aug 2018 08:53:20 -0700 (PDT)
+        Wed, 1 Aug 2018 13:42:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389557AbeHARmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:42:05 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F82F7DAC7;
+        Wed,  1 Aug 2018 15:55:43 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15C651C640;
+        Wed,  1 Aug 2018 15:55:42 +0000 (UTC)
+Subject: Re: [PATCH v2] arch/x86: Fix boot_cpu_data.microcode version output
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sironi@amazon.de, tony.luck@intel.com,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <20180601121939.GA23298@nazgul.tnic>
+ <20180731112739.32338-1-prarit@redhat.com>
+ <20180801154255.GC13988@nazgul.tnic>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <92d17176-e7cd-134c-c6aa-0507f8599cfe@redhat.com>
+Date:   Wed, 1 Aug 2018 11:55:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 1 Aug 2018 08:53:00
- -0700 (PDT)
-In-Reply-To: <CANn89i+KtwtLvSw1c=Ux8okKP+XyMxzYbuKhYb2qhYeMw=NTzg@mail.gmail.com>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <30ee6c72-dc90-275a-8e23-54221f393cb0@virtuozzo.com> <c03fd1ca-0169-4492-7d6f-2df7a91bff5e@gmail.com>
- <CACT4Y+bLbDunoz+0qB=atbQXJ9Gu3N6+UXPwNnqMbq5RyZu1mQ@mail.gmail.com>
- <cf751136-c459-853a-0210-abf16f54ad17@gmail.com> <CACT4Y+b6aCHMTQD21fSf2AMZoH5g8p-FuCVHviMLF00uFV+zGg@mail.gmail.com>
- <01000164f60f3f12-b1253c6e-ee57-49fc-aed8-0944ab4fd7a2-000000@email.amazonses.com>
- <CANn89i+KtwtLvSw1c=Ux8okKP+XyMxzYbuKhYb2qhYeMw=NTzg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 1 Aug 2018 17:53:00 +0200
-Message-ID: <CACT4Y+axXa3HXG7ZoJSmP-g2QqtnvQ77oUZuioX-V9Ydi-56Dw@mail.gmail.com>
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org, netdev <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180801154255.GC13988@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:55:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:55:43 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 5:37 PM, Eric Dumazet <edumazet@google.com> wrote:
-> On Wed, Aug 1, 2018 at 8:15 AM Christopher Lameter <cl@linux.com> wrote:
->>
->> On Wed, 1 Aug 2018, Dmitry Vyukov wrote:
->>
->> > But we are trading 1 indirect call for comparable overhead removed
->> > from much more common path. The path that does ctors is also calling
->> > into page alloc, which is much more expensive.
->> > So ctor should be a net win on performance front, no?
->>
->> ctor would make it esier to review the flow and guarantee that the object
->> always has certain fields set as required before any use by the subsystem.
->>
->> ctors are run once on allocation of the slab page for all objects in it.
->>
->> ctors are not called duiring allocation and freeing of objects from the
->> slab page. So we could avoid the intialization of the spinlock on each
->> object allocation which actually should be faster.
->
->
-> This strategy might have been a win 30 years ago when cpu had no
-> caches (or too small anyway)
->
-> What probability is that the 60 bytes around the spinlock are not
-> touched after the object is freshly allocated ?
->
-> -> None
->
-> Writing 60 bytes  in one cache line instead of 64 has really the same
-> cost. The cache line miss is the real killer.
->
-> Feel free to write the patches, test them,  but I doubt you will have any gain.
->
-> Remember btw that TCP sockets can be either completely fresh
-> (socket() call, using memset() to clear the whole object),
-> or clones (accept() thus copying the parent socket)
->
-> The idea of having a ctor() would only be a win if all the fields that
-> can be initialized in the ctor are contiguous and fill an integral
-> number of cache lines.
 
-Code size can have some visible performance impact too.
 
-But either way, what you say only means that ctors are not necessary
-significantly faster. But your original point was that they are
-slower.
-If they are not slower, then what Andrey said seems to make sense:
-some gain on code comprehension front re type-stability invariant +
-some gain on performance front (even if not too big) and no downsides.
+On 08/01/2018 11:43 AM, Borislav Petkov wrote:
+> (dropping stable@)
+> 
+> On Tue, Jul 31, 2018 at 07:27:39AM -0400, Prarit Bhargava wrote:
+>> I tested this on AMD Ryzen & Intel Broadwell system and dumped the
+>> boot_cpu_data before and after a microcode update.  On the Intel
+>> system I also did a fatal MCE using mce-inject to confirm the output
+>> from the mce handling code.
+> 
+> Ok, sending the two patches I've massaged into submission as a reply to
+> this message - please run them on your boxes. You can also inject MCEs
+> on the AMD box to verify - simply enable CONFIG_X86_MCE_INJECT, go to
+> debugfs and do, for example:
+> 
+> cd /sys/kernel/debug/mce-inject/
+> echo 10 > /sys/devices/system/machinecheck/machinecheck0/check_interval
+> echo 0x9c7d410092080813 > status; echo 0x000000006d3d483b > addr; echo 2 > cpu; echo 4 > bank; echo hw > flags
+> echo 0xbc00200000010015 > status; echo 0x00000000942e4d98 > addr; echo 6 > cpu; echo 2 > bank; echo hw > flags
+> echo 0xfe000010000b0c0f > status; echo 0xe1101add1e550012 > addr; echo 0xcafebeef > misc; echo 2 > cpu; echo hw > flags; echo 4 > bank
+> 
+
+Borislav, I'm not sure if you saw his comments but Oleksandr, cc'd, has an
+objection to overwriting the stored microcode version in boot_cpu_data.  He has
+found that information useful in debugging microcode issues.
+
+P.
+
+> Thanks!
+> 
