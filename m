@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6771C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C75C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E39720840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E39720840
+	by mail.kernel.org (Postfix) with ESMTP id E1A6320840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A6320840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732726AbeHAUSj (ORCPT
+        id S1732499AbeHAUSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:18:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46152 "EHLO
+        Wed, 1 Aug 2018 16:18:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404206AbeHATDf (ORCPT
+        with ESMTP id S2404217AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CEA512A7;
-        Wed,  1 Aug 2018 17:10:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1539EF90;
+        Wed,  1 Aug 2018 16:57:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 320/336] NET: stmmac: align DMA stuff to largest cache line length
-Date:   Wed,  1 Aug 2018 18:50:55 +0200
-Message-Id: <20180801165041.285375992@linuxfoundation.org>
+        Thierry Escande <thierry.escande@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 092/336] Bluetooth: hci_qca: Fix "Sleep inside atomic section" warning
+Date:   Wed,  1 Aug 2018 18:47:07 +0200
+Message-Id: <20180801165032.690562472@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,38 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Thierry Escande <thierry.escande@linaro.org>
 
-[ Upstream commit 9939a46d90c6c76f4533d534dbadfa7b39dc6acc ]
+[ Upstream commit 9960521c44a5d828f29636ceac0600603ecbddbf ]
 
-As for today STMMAC_ALIGN macro (which is used to align DMA stuff)
-relies on L1 line length (L1_CACHE_BYTES).
-This isn't correct in case of system with several cache levels
-which might have L1 cache line length smaller than L2 line. This
-can lead to sharing one cache line between DMA buffer and other
-data, so we can lose this data while invalidate DMA buffer before
-DMA transaction.
+This patch fixes the following warning during boot:
 
-Fix that by using SMP_CACHE_BYTES instead of L1_CACHE_BYTES for
-aligning.
+ do not call blocking ops when !TASK_RUNNING; state=1 set at
+ [<(ptrval)>] qca_setup+0x194/0x750 [hci_uart]
+ WARNING: CPU: 2 PID: 1878 at kernel/sched/core.c:6135
+ __might_sleep+0x7c/0x88
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In qca_set_baudrate(), the current task state is set to
+TASK_UNINTERRUPTIBLE before going to sleep for 300ms. It was then
+restored to TASK_INTERRUPTIBLE. This patch sets the current task state
+back to TASK_RUNNING instead.
+
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    2 +-
+ drivers/bluetooth/hci_qca.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -51,7 +51,7 @@
- #include <linux/of_mdio.h>
- #include "dwmac1000.h"
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -880,7 +880,7 @@ static int qca_set_baudrate(struct hci_d
+ 	 */
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+-	set_current_state(TASK_INTERRUPTIBLE);
++	set_current_state(TASK_RUNNING);
  
--#define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
-+#define	STMMAC_ALIGN(x)		__ALIGN_KERNEL(x, SMP_CACHE_BYTES)
- #define	TSO_MAX_BUFF_SIZE	(SZ_16K - 1)
- 
- /* Module parameters */
+ 	return 0;
+ }
 
 
