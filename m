@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53A2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41641C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4D42208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D42208A3
+	by mail.kernel.org (Postfix) with ESMTP id 0620E20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0620E20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732643AbeHATpj (ORCPT
+        id S1732628AbeHATpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:45:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49886 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50152 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405912AbeHATIj (ORCPT
+        with ESMTP id S2405925AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00CB1114F;
-        Wed,  1 Aug 2018 17:05:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F75810E5;
+        Wed,  1 Aug 2018 17:03:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 231/336] mmc: sdhci-omap: Fix when capabilities are obtained from SDHCI_CAPABILITIES reg
-Date:   Wed,  1 Aug 2018 18:49:26 +0200
-Message-Id: <20180801165037.906437707@linuxfoundation.org>
+Subject: [PATCH 4.17 201/336] media: media-device: fix ioctl function types
+Date:   Wed,  1 Aug 2018 18:48:56 +0200
+Message-Id: <20180801165036.782245847@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,66 +53,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Sami Tolvanen <samitolvanen@google.com>
 
-[ Upstream commit 0ec4ee3c9b9755b28fd2e89b2ceaae6f15403368 ]
+[ Upstream commit daa36370b62428cca6d48d1b2530a8419f631c8c ]
 
-sdhci_omap_config_iodelay_pinctrl_state() requires caps and caps2 to be
-initialized (speed mode capabilities like UHS/HS200) before it is
-invoked. While mmc_of_parse() initializes caps/caps2 if capabilities is
-populated in device tree, it will remain uninitialized for capabilities
-obtained from SDHCI_CAPABILITIES register.
-Fix sdhci_omap_config_iodelay_pinctrl_state() to be used even while
-getting the capabilities from SDHCI_CAPABILITIES register by invoking
-sdhci_setup_host() before sdhci_omap_config_iodelay_pinctrl_state().
+This change fixes function types for media device ioctls to avoid
+indirect call mismatches with Control-Flow Integrity checking.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-omap.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/media/media-device.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -916,10 +916,6 @@ static int sdhci_omap_probe(struct platf
- 		goto err_put_sync;
- 	}
- 
--	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
--	if (ret)
--		goto err_put_sync;
--
- 	host->mmc_host_ops.get_ro = mmc_gpio_get_ro;
- 	host->mmc_host_ops.start_signal_voltage_switch =
- 					sdhci_omap_start_signal_voltage_switch;
-@@ -930,12 +926,23 @@ static int sdhci_omap_probe(struct platf
- 	sdhci_read_caps(host);
- 	host->caps |= SDHCI_CAN_DO_ADMA2;
- 
--	ret = sdhci_add_host(host);
-+	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto err_put_sync;
- 
-+	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
+--- a/drivers/media/media-device.c
++++ b/drivers/media/media-device.c
+@@ -54,9 +54,10 @@ static int media_device_close(struct fil
  	return 0;
+ }
  
-+err_cleanup_host:
-+	sdhci_cleanup_host(host);
+-static int media_device_get_info(struct media_device *dev,
+-				 struct media_device_info *info)
++static long media_device_get_info(struct media_device *dev, void *arg)
+ {
++	struct media_device_info *info = arg;
 +
- err_put_sync:
- 	pm_runtime_put_sync(dev);
+ 	memset(info, 0, sizeof(*info));
  
+ 	if (dev->driver_name[0])
+@@ -93,9 +94,9 @@ static struct media_entity *find_entity(
+ 	return NULL;
+ }
+ 
+-static long media_device_enum_entities(struct media_device *mdev,
+-				       struct media_entity_desc *entd)
++static long media_device_enum_entities(struct media_device *mdev, void *arg)
+ {
++	struct media_entity_desc *entd = arg;
+ 	struct media_entity *ent;
+ 
+ 	ent = find_entity(mdev, entd->id);
+@@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(co
+ 	upad->flags = kpad->flags;
+ }
+ 
+-static long media_device_enum_links(struct media_device *mdev,
+-				    struct media_links_enum *links)
++static long media_device_enum_links(struct media_device *mdev, void *arg)
+ {
++	struct media_links_enum *links = arg;
+ 	struct media_entity *entity;
+ 
+ 	entity = find_entity(mdev, links->entity);
+@@ -195,9 +196,9 @@ static long media_device_enum_links(stru
+ 	return 0;
+ }
+ 
+-static long media_device_setup_link(struct media_device *mdev,
+-				    struct media_link_desc *linkd)
++static long media_device_setup_link(struct media_device *mdev, void *arg)
+ {
++	struct media_link_desc *linkd = arg;
+ 	struct media_link *link = NULL;
+ 	struct media_entity *source;
+ 	struct media_entity *sink;
+@@ -225,9 +226,9 @@ static long media_device_setup_link(stru
+ 	return __media_entity_setup_link(link, linkd->flags);
+ }
+ 
+-static long media_device_get_topology(struct media_device *mdev,
+-				      struct media_v2_topology *topo)
++static long media_device_get_topology(struct media_device *mdev, void *arg)
+ {
++	struct media_v2_topology *topo = arg;
+ 	struct media_entity *entity;
+ 	struct media_interface *intf;
+ 	struct media_pad *pad;
 
 
