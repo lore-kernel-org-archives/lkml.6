@@ -6,42 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5456DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A47C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182E720862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182E720862
+	by mail.kernel.org (Postfix) with ESMTP id BB3CF20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3CF20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732611AbeHATpi (ORCPT
+        id S1729735AbeHATph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:45:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50080 "EHLO
+        Wed, 1 Aug 2018 15:45:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405933AbeHATIj (ORCPT
+        with ESMTP id S2405714AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB96F1391;
-        Wed,  1 Aug 2018 17:15:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 869031120;
+        Wed,  1 Aug 2018 17:04:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/246] mfd: cros_ec: Fail early if we cannot identify the EC
-Date:   Wed,  1 Aug 2018 18:49:46 +0200
-Message-Id: <20180801165015.351751032@linuxfoundation.org>
+Subject: [PATCH 4.17 204/336] media: em28xx: Fix DualHD broken second tuner
+Date:   Wed,  1 Aug 2018 18:48:59 +0200
+Message-Id: <20180801165036.890907866@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -51,45 +48,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Vincent Palatin <vpalatin@chromium.org>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit 0dbbf25561b29ffab5ba6277429760abdf49ceff ]
+[ Upstream commit 01affb000e00cfa0a9e9954476ef50962eb8b168 ]
 
-If we cannot communicate with the EC chip to detect the protocol version
-and its features, it's very likely useless to continue. Else we will
-commit all kind of uninformed mistakes (using the wrong protocol, the
-wrong buffer size, mixing the EC with other chips).
+The use of a hard coded i2c address breaks the creation of the
+second tuner in DualHD 01595 models. The issue is compounded
+by lack of any error message stating that a driver failed
+initialization. Use addr, which contains the correct address
+for each tuner.
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Acked-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: ad32495b1513 ("media: em28xx-dvb: simplify DVB module probing logic")
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mfd/cros_ec.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-dvb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -112,7 +112,11 @@ int cros_ec_register(struct cros_ec_devi
+--- a/drivers/media/usb/em28xx/em28xx-dvb.c
++++ b/drivers/media/usb/em28xx/em28xx-dvb.c
+@@ -1392,7 +1392,7 @@ static int em28174_dvb_init_hauppauge_wi
  
- 	mutex_init(&ec_dev->lock);
- 
--	cros_ec_query_all(ec_dev);
-+	err = cros_ec_query_all(ec_dev);
-+	if (err) {
-+		dev_err(dev, "Cannot identify the EC: error %d\n", err);
-+		return err;
-+	}
- 
- 	if (ec_dev->irq) {
- 		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+ 	dvb->i2c_client_tuner = dvb_module_probe("si2157", NULL,
+ 						 adapter,
+-						 0x60, &si2157_config);
++						 addr, &si2157_config);
+ 	if (!dvb->i2c_client_tuner) {
+ 		dvb_module_release(dvb->i2c_client_demod);
+ 		return -ENODEV;
 
 
