@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B3AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F35C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835D72083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835D72083D
+	by mail.kernel.org (Postfix) with ESMTP id A770B20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A770B20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408067AbeHATSn (ORCPT
+        id S2408083AbeHATSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52932 "EHLO
+        Wed, 1 Aug 2018 15:18:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436606AbeHATSj (ORCPT
+        with ESMTP id S2408069AbeHATSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:39 -0400
+        Wed, 1 Aug 2018 15:18:45 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21FA5F3E;
-        Wed,  1 Aug 2018 16:56:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4557EC37;
+        Wed,  1 Aug 2018 17:32:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 072/336] f2fs: Fix deadlock in shutdown ioctl
-Date:   Wed,  1 Aug 2018 18:46:47 +0200
-Message-Id: <20180801165031.893099245@linuxfoundation.org>
+Subject: [PATCH 4.9 106/144] thermal: exynos: fix setting rising_threshold for Exynos5433
+Date:   Wed,  1 Aug 2018 18:52:13 +0200
+Message-Id: <20180801164957.036802651@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
+References: <20180801164949.023217860@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,59 +48,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-[ Upstream commit 60b2b4ee2bc01dd052f99fa9d65da2232102ef8e ]
+[ Upstream commit 8bfc218d0ebbabcba8ed2b8ec1831e0cf1f71629 ]
 
-f2fs_ioc_shutdown() ioctl gets stuck in the below path
-when issued with F2FS_GOING_DOWN_FULLSYNC option.
+Add missing clearing of the previous value when setting rising
+temperature threshold.
 
-__switch_to+0x90/0xc4
-percpu_down_write+0x8c/0xc0
-freeze_super+0xec/0x1e4
-freeze_bdev+0xc4/0xcc
-f2fs_ioctl+0xc0c/0x1ce0
-f2fs_compat_ioctl+0x98/0x1f0
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/file.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1851,9 +1851,11 @@ static int f2fs_ioc_shutdown(struct file
- 	if (get_user(in, (__u32 __user *)arg))
- 		return -EFAULT;
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -598,6 +598,7 @@ static int exynos5433_tmu_initialize(str
+ 		threshold_code = temp_to_code(data, temp);
  
--	ret = mnt_want_write_file(filp);
--	if (ret)
--		return ret;
-+	if (in != F2FS_GOING_DOWN_FULLSYNC) {
-+		ret = mnt_want_write_file(filp);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	switch (in) {
- 	case F2FS_GOING_DOWN_FULLSYNC:
-@@ -1894,7 +1896,8 @@ static int f2fs_ioc_shutdown(struct file
- 
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
--	mnt_drop_write_file(filp);
-+	if (in != F2FS_GOING_DOWN_FULLSYNC)
-+		mnt_drop_write_file(filp);
- 	return ret;
- }
+ 		rising_threshold = readl(data->base + rising_reg_offset);
++		rising_threshold &= ~(0xff << j * 8);
+ 		rising_threshold |= (threshold_code << j * 8);
+ 		writel(rising_threshold, data->base + rising_reg_offset);
  
 
 
