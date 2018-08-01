@@ -2,191 +2,136 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D0EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A16C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F04920841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E877220840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lK1Xp75+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F04920841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qqx37g9r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E877220840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388627AbeHAVBA (ORCPT
+        id S1732270AbeHAVKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:01:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36023 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387668AbeHAVAA (ORCPT
+        Wed, 1 Aug 2018 17:10:34 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37087 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727608AbeHAVKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:00:00 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b11-v6so3157634pfo.3;
-        Wed, 01 Aug 2018 12:12:46 -0700 (PDT)
+        Wed, 1 Aug 2018 17:10:33 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j8-v6so14112985lfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lfq9Nv984HkcP7oUkGd2GXSTmizO1ISnyBumKhQAggs=;
-        b=lK1Xp75+h3F9r4dOb+8BMefNtmb+fka7NPcaLwGtN5Rwq1W7pVbUeifOU/fMAlsiRX
-         OkVk69o3JYqVhKKVvQ0Zmv5JZqhnu8rA/WZEhC/+sTzyFDOgnxtj1bady1xa+VTIATjZ
-         rjQxM8n0DECunGJ1iyrmwFFtoCBbx3HYEBzJ2cz3OXWT3tGBLnPmjtFSp/OZVIvbViTV
-         CJ5uelGDvpU/UL3KdDtnsKCu+b1HIZUnhZ7ef2iM5LHsoR7qRNhpkAtFUdI/CCFyNAHM
-         qbZy/ZVryTI16iyJ6jTr9wxFo4zO/BBWuVTiq65DUfXWIoiznninLXgJ78K9y4D5dlMh
-         JWGw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tkh6lwZA8JMHQqH5OvWbTjGHbZ4sBHRIh4AUzQZ0g3U=;
+        b=Qqx37g9rJ+uOAsVs7WdIDbeRnUNhMAi7StoIUBSINmHzMc/Bau4ZcVuwXz4uX5fST2
+         ue2F0ov8BwPdXagcwBi/rX+6Uu3V762YRBjEOQeviqKlNWJY+4/h/0zDQYh13saDb15f
+         HYh6A6rFp5ZiTxc9XhukHhBaBarc3HrEMVXbw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lfq9Nv984HkcP7oUkGd2GXSTmizO1ISnyBumKhQAggs=;
-        b=YxORYQfgIhUHfRUkApP2nVZtLEWn9bwaEHs7bZG5G94mmEMCx6q9rTvqhrH6Knwqla
-         f+86PmvYzteGb2pngSa+uv4+F6WziPE8MqsSlTqOo4OddVDyAOKFZl23j5HwJ46KStP7
-         oMibPSGid0DXC2kCDod6Qpw+FkrXA7EY/0ePmjm2qXfbyPEsSYnd4sEbfnA+vyObMEXi
-         p5eUaLOP1GOK6PZ8nPYNtpMfNcwaQ1aTMRbpKJ7ZbEXKz4nmdze+y9obAY8nAwEEm1lI
-         DcM8M7q2Ls3iAcJyiofcmowygZK37UYrsl60vKqObVdGRWymOv1GZf3SwJrk6ZLDlIE7
-         AN/Q==
-X-Gm-Message-State: AOUpUlFJ47qSOA/qhNHIikR5yAUfilHlVZwxezHeH9eNHyh0Ne5HdbaH
-        2xYD/IxzlYFvJ03R+0JTFx/pjSzx
-X-Google-Smtp-Source: AAOMgpettd0THUKJjWtYHFdIoRTGosLJZZTWv7HcwqEJZK0LCxW+HMDAIGcWqum1TF9fkhVflU4tfQ==
-X-Received: by 2002:a63:ab0c:: with SMTP id p12-v6mr25533298pgf.190.1533150766028;
-        Wed, 01 Aug 2018 12:12:46 -0700 (PDT)
-Received: from mappy.world.mentorg.com (c-24-5-209-231.hsd1.ca.comcast.net. [24.5.209.231])
-        by smtp.googlemail.com with ESMTPSA id u42-v6sm31171336pgn.1.2018.08.01.12.12.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 12:12:45 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
-        IMX), linux-kernel@vger.kernel.org (open list),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
-Subject: [PATCH v3 06/14] gpu: ipu-v3: Add planar support to interlaced scan
-Date:   Wed,  1 Aug 2018 12:12:19 -0700
-Message-Id: <1533150747-30677-7-git-send-email-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533150747-30677-1-git-send-email-steve_longerbeam@mentor.com>
-References: <1533150747-30677-1-git-send-email-steve_longerbeam@mentor.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tkh6lwZA8JMHQqH5OvWbTjGHbZ4sBHRIh4AUzQZ0g3U=;
+        b=iMhDt0vNBDi/tJ8i3rv7oPR63WvWomUfBBnYYTHASnYOcdo0xF43S/b16PlcRJnMoK
+         5v/Kyx6Bou2byrWaS7XnnCFJL3J4Q3nUdqCQ9F94eGY776k4MBUTB5ZvL6sDOU1WMpJu
+         0oVAUIcPU32DDVrpy+aUOwFs2+9SHCcLZhjSUkN9n6q6eTcIynRTm1twDRf6DbZOyG0t
+         Y9IJNXdD0CRf86tv1cOmkPmtFvW4E6qia3Dd4ABzhXXCxWtfZsKYlBbklypIMaIml4AI
+         wlUlBHxhGQqLJ1xNXsOyBctiKwPu4pZoINAUf6Tu3grAgZKzK4D43K3hqsHL63P5c0bM
+         kEQA==
+X-Gm-Message-State: AOUpUlHlp8IpskH9bPFGeBMEmcDWt9+r+nUL/QkgEnTaqUpRXMFwqpxE
+        71mx5Kg4uw0F+6e6xMJ9cTcu3rZCPR2oTqF0bfewsw==
+X-Google-Smtp-Source: AAOMgpe8opEWIakyu0p9u1RfVBNpJgU1pvS6RTSs1cZpVKBKZAa1Za6WFInpcRA2kSz/Q1ckKSHs3hWj7hbVTxCDAlU=
+X-Received: by 2002:a19:548e:: with SMTP id b14-v6mr15869390lfl.10.1533151396326;
+ Wed, 01 Aug 2018 12:23:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
+ <1532609691-16863-3-git-send-email-suzuki.poulose@arm.com>
+ <20180731170731.GA11692@xps15> <7b311596-025a-f4f4-1859-6f3531258b75@arm.com>
+In-Reply-To: <7b311596-025a-f4f4-1859-6f3531258b75@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 1 Aug 2018 13:23:04 -0600
+Message-ID: <CANLsYkzyb0Lmb3DNomVuK-Bon2gfS7jGYRnX4F7LQghR-aMZCw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/13] coresight: etb10: Fix handling of perf mode
+To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        coresight@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support interlaced scan with planar formats, cpmem SLUV must
-be programmed with the correct chroma line stride. For full and
-partial planar 4:2:2 (YUV422P, NV16), chroma line stride must
-be doubled. For full and partial planar 4:2:0 (YUV420, YVU420, NV12),
-chroma line stride must _not_ be doubled, since a single chroma line
-is shared by two luma lines.
+On Tue, 31 Jul 2018 at 15:32, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>
+> On 07/31/2018 06:07 PM, Mathieu Poirier wrote:
+> > Hello,
+> >
+> > On Thu, Jul 26, 2018 at 01:54:40PM +0100, Suzuki K Poulose wrote:
+> >> If the ETB is already enabled in sysfs mode, the ETB reports
+> >> success even if a perf mode is requested. Fix this by checking
+> >> the requested mode.
+> >>
+> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >> ---
+> >>   drivers/hwtracing/coresight/coresight-etb10.c | 8 ++++++--
+> >>   1 file changed, 6 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+> >> index 306119e..e5808fd 100644
+> >> --- a/drivers/hwtracing/coresight/coresight-etb10.c
+> >> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
+> >> @@ -148,8 +148,12 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
+> >>              return -EBUSY;
+> >>
+> >>      /* Nothing to do, the tracer is already enabled. */
+> >> -    if (val == CS_MODE_SYSFS)
+> >> -            goto out;
+> >> +    if (val == CS_MODE_SYSFS) {
+> >> +            if (mode == CS_MODE_SYSFS)
+> >> +                    goto out;
+> >> +            else
+> >> +                    return -EBUSY;
+> >> +    }
+> >
+> > How about:
+> >
+> >          if (val == CS_MODE_PERF)
+> >                  return -EBUSY;
+> >
+> > +       /* Don't let perf disturb sysFS sessions */
+> > +       if (val == CS_MODE_SYSFS && mode = CS_MODE_PERF)
+> > +               return -EBUSY;
+> > +
+> >          /* Nothing to do, the tracer is already enabled. */
+> >          if (val == CS_MODE_SYSFS)
+> >                  goto out;
+> >
+> >
+> > I just find it more readable that way.
+>
+> Sure, thats fine by me.
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
----
- drivers/gpu/ipu-v3/ipu-cpmem.c              | 26 ++++++++++++++++++++++++--
- drivers/staging/media/imx/imx-ic-prpencvf.c |  3 ++-
- drivers/staging/media/imx/imx-media-csi.c   |  3 ++-
- include/video/imx-ipu-v3.h                  |  3 ++-
- 4 files changed, 30 insertions(+), 5 deletions(-)
+Ok good.  Doing another round just to address this is cumbersome so I
+just fixed it in my tree.  Also, I still think the WARN_ON() in patch
+5/13 is superfluous but once again not important enough to make a big
+deal out of it.  I have applied this set.
 
-diff --git a/drivers/gpu/ipu-v3/ipu-cpmem.c b/drivers/gpu/ipu-v3/ipu-cpmem.c
-index 8cd9e37..eae0f63 100644
---- a/drivers/gpu/ipu-v3/ipu-cpmem.c
-+++ b/drivers/gpu/ipu-v3/ipu-cpmem.c
-@@ -267,9 +267,10 @@ void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off)
- }
- EXPORT_SYMBOL_GPL(ipu_cpmem_set_uv_offset);
- 
--void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
-+void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
-+			       u32 pixelformat)
- {
--	u32 ilo, sly;
-+	u32 ilo, sly, sluv;
- 
- 	if (stride < 0) {
- 		stride = -stride;
-@@ -280,9 +281,30 @@ void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
- 
- 	sly = (stride * 2) - 1;
- 
-+	switch (pixelformat) {
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YVU420:
-+		sluv = stride / 2 - 1;
-+		break;
-+	case V4L2_PIX_FMT_NV12:
-+		sluv = stride - 1;
-+		break;
-+	case V4L2_PIX_FMT_YUV422P:
-+		sluv = stride - 1;
-+		break;
-+	case V4L2_PIX_FMT_NV16:
-+		sluv = stride * 2 - 1;
-+		break;
-+	default:
-+		sluv = 0;
-+		break;
-+	}
-+
- 	ipu_ch_param_write_field(ch, IPU_FIELD_SO, 1);
- 	ipu_ch_param_write_field(ch, IPU_FIELD_ILO, ilo);
- 	ipu_ch_param_write_field(ch, IPU_FIELD_SLY, sly);
-+	if (sluv)
-+		ipu_ch_param_write_field(ch, IPU_FIELD_SLUV, sluv);
- };
- EXPORT_SYMBOL_GPL(ipu_cpmem_interlaced_scan);
- 
-diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
-index 28f41ca..af72248 100644
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@ -412,7 +412,8 @@ static int prp_setup_channel(struct prp_priv *priv,
- 	if (image.pix.field == V4L2_FIELD_NONE &&
- 	    V4L2_FIELD_HAS_BOTH(infmt->field) &&
- 	    channel == priv->out_ch)
--		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline);
-+		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline,
-+					  image.pix.pixelformat);
- 
- 	ret = ipu_ic_task_idma_init(priv->ic, channel,
- 				    image.pix.width, image.pix.height,
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 2fdd21d..1c468ec 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -509,7 +509,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
- 	if (image.pix.field == V4L2_FIELD_NONE &&
- 	    V4L2_FIELD_HAS_BOTH(infmt->field))
- 		ipu_cpmem_interlaced_scan(priv->idmac_ch,
--					  image.pix.bytesperline);
-+					  image.pix.bytesperline,
-+					  image.pix.pixelformat);
- 
- 	ipu_idmac_set_double_buffer(priv->idmac_ch, true);
- 
-diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
-index f44a351..e888c66 100644
---- a/include/video/imx-ipu-v3.h
-+++ b/include/video/imx-ipu-v3.h
-@@ -255,7 +255,8 @@ void ipu_cpmem_set_stride(struct ipuv3_channel *ch, int stride);
- void ipu_cpmem_set_high_priority(struct ipuv3_channel *ch);
- void ipu_cpmem_set_buffer(struct ipuv3_channel *ch, int bufnum, dma_addr_t buf);
- void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off);
--void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride);
-+void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
-+			       u32 pixelformat);
- void ipu_cpmem_set_axi_id(struct ipuv3_channel *ch, u32 id);
- int ipu_cpmem_get_burstsize(struct ipuv3_channel *ch);
- void ipu_cpmem_set_burstsize(struct ipuv3_channel *ch, int burstsize);
--- 
-2.7.4
+Thanks,
+Mathieu
 
+>
+> Cheers
+> Suzuki
+>
