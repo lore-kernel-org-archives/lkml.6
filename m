@@ -2,103 +2,159 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138F4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3CBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C5C20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C5C20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 4715420894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:40:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2mWDl83"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4715420894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389058AbeHALWi (ORCPT
+        id S2388902AbeHALZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:22:38 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29694 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389003AbeHALWh (ORCPT
+        Wed, 1 Aug 2018 07:25:25 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43923 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387856AbeHALZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:22:37 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719Tav8009421;
-        Wed, 1 Aug 2018 11:37:23 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kjnaddbcr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 01 Aug 2018 11:37:23 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 655A831;
-        Wed,  1 Aug 2018 09:37:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 37A6C289D;
-        Wed,  1 Aug 2018 09:37:23 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:22 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:22 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 00/14] mmc: mmci: prepare dma callbacks with mmci_host_ops
-Date:   Wed, 1 Aug 2018 11:36:47 +0200
-Message-ID: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 1 Aug 2018 07:25:25 -0400
+Received: by mail-oi0-f66.google.com with SMTP id b15-v6so33411499oib.10;
+        Wed, 01 Aug 2018 02:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=vnzbhlXPkLpemDsdY13D6KE0aYQPyzedPywqzD0RHBY=;
+        b=N2mWDl83cW1E7Sj8zPqaJ4dYjYpoX2XHK13RP50t3sRZSIuX/Gv8qWY2UMy02kJBSB
+         ZZDL8QjLz/eymdmamSh9seBa1B2VjCWibE6+o4RSDW4PZ4lPZVD5im+7vSmdmXfu0syw
+         tsG6FGOtuj7s6bY6DXKFJi66Ky8G6k/jkTC/tVsVs3QIzu9TmAxGdDAHEBoWuTguIAjm
+         RGrwL5NtO1DNI6DGMyqKjS+jJFzhNs/w6Qzyj8TsuXkk2pTKNllg0CyuuHbnm1GWgC3u
+         9IuzTOS+Rp83M3lhQdjB2EWhT/T8HOTsBceaEx4YNQPolQHRrzZp/ykd5CIG5hZ1JJ3T
+         uLRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=vnzbhlXPkLpemDsdY13D6KE0aYQPyzedPywqzD0RHBY=;
+        b=b+LhEZkW0nxMCrGGYgBP+8i1+LyDglPO7SPUmimz/pn595N3ahlegYi4SHtotMu9VI
+         iNokbi0mZCn7yblSMENZ8PbLDurP13YFEn1xH3IgeXoIu3S2UqTL2L1iX5l7gbei7xNs
+         E3hkwj1CSB285yqeYQFdRo2vfa7HjrAQHvpXhHbe57VlwTNQGznQyA/fBrGAvmvKZE+T
+         /RzhCm2QqWQ7uEF2JV+YaQ2l3pwa6JHojoNKhGHGG+iASLjsj4NrjThJBN9YNPU3MWKd
+         w9GKO8iDT0D9mcfGT+CM73wRMwhbVoN9dwZOs/C4dmrjVj0cJIIX1opdc5Iu7dqWawH8
+         8iTA==
+X-Gm-Message-State: AOUpUlHyowq5wL0Y91tfJdTTKj8+rIph6QTQJT31aNHwdZmaBNxad2io
+        da65p7Q/KL2xOyziVpPzRDiJeQfI1cEQ9W0ExkY=
+X-Google-Smtp-Source: AAOMgpf8C6oRTQyr+ZowUL3q3VDA0E9e2bN7JjVJrd7kIVgUVRsLXLuXsQHyKEpplRiUEMNER7S7NcpdCuz9DnVh0MQ=
+X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr2842754oie.174.1533116431201;
+ Wed, 01 Aug 2018 02:40:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_03:,,
- signatures=0
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 02:40:30 -0700 (PDT)
+In-Reply-To: <20180801092325.g2upcivcvdo62hub@queper01-ThinkPad-T460s>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-11-quentin.perret@arm.com> <331552975e858911db66bc78c2c8e720@codeaurora.org>
+ <20180731075950.tfvxef6yuja3ad2k@queper01-lin> <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
+ <CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com>
+ <20180801082353.egym4tsbr7ppql27@queper01-lin> <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
+ <20180801092325.g2upcivcvdo62hub@queper01-ThinkPad-T460s>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 1 Aug 2018 11:40:30 +0200
+X-Google-Sender-Auth: R0js_MjXRfhGnnjg6QBxkzWfvvI
+Message-ID: <CAJZ5v0g7VK3Gh5L5PM_z3_GbuaguAd_Dz17RmA6-0pTChuW+Sg@mail.gmail.com>
+Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
+ aggregation method
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@quicinc.com,
+        skannan@quicinc.com, Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On Wed, Aug 1, 2018 at 11:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
+> On Wednesday 01 Aug 2018 at 10:35:32 (+0200), Rafael J. Wysocki wrote:
+>> On Wed, Aug 1, 2018 at 10:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
+>> > On Wednesday 01 Aug 2018 at 09:32:49 (+0200), Rafael J. Wysocki wrote:
+>> >> On Tue, Jul 31, 2018 at 9:31 PM,  <skannan@codeaurora.org> wrote:
+>> >> >> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
+>> >> >>> If it's going to be a different aggregation from what's done for
+>> >> >>> frequency
+>> >> >>> guidance, I don't see the point of having this inside schedutil. Why not
+>> >> >>> keep it inside the scheduler files?
+>> >> >>
+>> >> >> This code basically results from a discussion we had with Peter on v4.
+>> >> >> Keeping everything centralized can make sense from a maintenance
+>> >> >> perspective, I think. That makes it easy to see the impact of any change
+>> >> >> to utilization signals for both EAS and schedutil.
+>> >> >
+>> >> > In that case, I'd argue it makes more sense to keep the code centralized in
+>> >> > the scheduler. The scheduler can let schedutil know about the utilization
+>> >> > after it aggregates them. There's no need for a cpufreq governor to know
+>> >> > that there are scheduling classes or how many there are. And the scheduler
+>> >> > can then choose to aggregate one way for task packing and another way for
+>> >> > frequency guidance.
+>> >>
+>> >> Also the aggregate utilization may be used by cpuidle governors in
+>> >> principle to decide how deep they can go with idle state selection.
+>> >
+>> > The only issue I see with this right now is that some of the things done
+>> > in this function are policy decisions which really belong to the governor,
+>> > I think.
+>>
+>> Well, the scheduler makes policy decisions too, in quite a few places. :-)
+>
+> That is true ... ;-) But not so much about frequency selection yet I guess
+>
+>> The really important consideration here is whether or not there may be
+>> multiple governors making different policy decisions in that respect.
+>> If not, then where exactly the single policy decision is made doesn't
+>> particularly matter IMO.
+>
+> I think some users of the aggregated utilization signal do want to make
+> slightly different decisions (I'm thinking about the RT-go-to-max thing
+> again which makes perfect sense in sugov, but could possibly hurt EAS).
 
-This patch series prepares and adds callbacks for dma transfert at
-mmci_host_ops. This series is composed of 3 parts:
--Internalize specific needs of legacy dmaengine.
--Create and setup dma_priv pointer
--Create generic callbacks  which share some features
-(like cookie...) and call specific needs
+Fair enough.
 
-This patch series must be applied on top of 
-"mmc: mmci: Add and implement a ->dma_setup() callback for qcom dml"
+> So the "hard" part of this work is to figure out what really is a
+> governor-specific policy decision, and what is common between all users.
+> I put "hard" between quotes because I only see the case of RT as truly
+> sugov-specific for now.
 
-Ludovic Barre (14):
-  mmc: mmci: fix qcom dma issue during mmci init with new dma_setup
-    callback
-  mmc: mmci: internalize dma map/unmap into mmci dma functions
-  mmc: mmci: internalize dma_inprogress into mmci dma functions
-  mmc: mmci: introduce dma_priv pointer to mmci_host
-  mmc: mmci: move mmci next cookie to mci host
-  mmc: mmci: merge prepare data functions
-  mmc: mmci: add prepare/unprepare_data callbacks
-  mmc: mmci: add get_next_data callback
-  mmc: mmci: modify dma_setup callback
-  mmc: mmci: add dma_release callback
-  mmc: mmci: add dma_start callback
-  mmc: mmci: add dma_finalize callback
-  mmc: mmci: add dma_error callback
-  mmc: mmci: add validate_data callback
+OK
 
- drivers/mmc/host/mmci.c          | 458 ++++++++++++++++++++++++---------------
- drivers/mmc/host/mmci.h          |  45 ++--
- drivers/mmc/host/mmci_qcom_dml.c |  15 +-
- 3 files changed, 322 insertions(+), 196 deletions(-)
+> If we also want a special case for DL, Peter's enum should work OK, and
+> enable to add more special cases for new users (cpuidle ?) if needed.
+> But maybe that is something for later ?
 
--- 
-2.7.4
-
+I agree.  That can be done later if need be.
