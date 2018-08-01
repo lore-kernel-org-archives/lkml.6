@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0D7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548B4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D3E20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF02C208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:40:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cDpJ2Sg7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D3E20840
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fx9EH1c0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF02C208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732945AbeHAFXq (ORCPT
+        id S1732991AbeHAFX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 01:23:46 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35685 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730957AbeHAFXq (ORCPT
+        Wed, 1 Aug 2018 01:23:59 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39856 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731051AbeHAFX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 01:23:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6-v6so10097965pgv.2
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 20:40:19 -0700 (PDT)
+        Wed, 1 Aug 2018 01:23:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so7106709pff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 20:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nLg8nF2BVGhHBSt4qBWUxorV5/Diq0j0iCeB6+14Bu0=;
-        b=cDpJ2Sg7+xTvhO/XV7boURbpH+hTQpETKhd5CsCXhbGtk37EPIe93+0S8UZeNS2wae
-         mNOV9md7MCmqL21HP/9CfENPIqBQafmHEHGu6aUo6A16jzysJmLCeqYeBuJ/WuGGXtPA
-         bk5FCH3UfQ9249y8GgE+ZIp8XRT3uEj8hQLgs=
+        bh=DFOLXivB49bmcMKwO1dGAMausF59FrddEHKCGI/sQ6k=;
+        b=Fx9EH1c0ckh3gH32Q8FrFsIJh2rE2D+Z5yYgSsonPpIh2p9O480nTPV+S2Eo70D9uX
+         TU6W60wuuq0yiNu6IxZr+OIYRNe7DOyURqffwPcN/W77znJLlBoOVLgid4QM2CaqyY36
+         ajYFwknEwx2vLig5xLbm2XT60ndGX/Ig9jo9I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nLg8nF2BVGhHBSt4qBWUxorV5/Diq0j0iCeB6+14Bu0=;
-        b=uXm68eRpMTEZSAw0jRK3/SVVP7w0igPy4WWKdiaLxbCfE/snT9fjihD682qF2mE3on
-         9Xg/DBr9auSyF9nx2OPExIqh5TymFsMjeVNkUbQyEeaXVfE8EkrPp732BCvg0Bx7fZ3u
-         nCaIHXlkf9JpJmZu7Gk5U4YyvAQpGDXD/zMKBw1JTyGdH+Vrcx7TN1KgGpGxNfbH3QRn
-         byYhKmai/PdOdkACAWNHYbkuV0a2RffGvgXqJ9LFi7ukNSzVINRMXTd4sw2HN1E8LvAB
-         3WzxLCE3RjFkakNJuzcvuaJhoyDd06Nn+6s7cQeT8q9YEOSwXTduKi+66ry4U/d/+wmh
-         VkWw==
-X-Gm-Message-State: AOUpUlF5OcvM7ujFOZjOqdUFPS3vrj/ysKIE1UTAYnEjXZG2pKIlymEs
-        4J4eySTiJBVHX9s4/nh7LxtM
-X-Google-Smtp-Source: AAOMgpc+CncLM+oT4KbG11DOrYzfzrkeMAptSxioVxsQH3+3nEcCzl15PlHFEu+1jALiTc6rp+DFnQ==
-X-Received: by 2002:a63:ae02:: with SMTP id q2-v6mr22509271pgf.189.1533094819428;
-        Tue, 31 Jul 2018 20:40:19 -0700 (PDT)
+        bh=DFOLXivB49bmcMKwO1dGAMausF59FrddEHKCGI/sQ6k=;
+        b=b5kMjVA0AHUOqA6OzkipME01nrscpiW0StXmqLwTviCuyu+LlzZbrEfH2rI+Hq1KkL
+         doGuh27MwZ8u/ESRDPel4mkmk06Ph4B71OQw6aSmvapa4peIAT1eOxJt/ZUgyfM55mrv
+         YnJ975jQbF0CAov8Pd0Mt1xb9k7KFDNLRnLLShn1tLCWQYteviiyV490MLPD0wzEMiot
+         Xr92PidCEQ/5OBWVwu/XLE5tOhehWEcnYgiv9HMDftrIvIJx4gfHTS0fSSbjZ0lkdEap
+         XKoUd1rc4xmDdI3K5SwNDT9UxWlzyEynVP0kHTCSsLh9bt2FEF8NA0K1y73jODq5l70T
+         4V1w==
+X-Gm-Message-State: AOUpUlENeqIu+n8uTx8WryLr50QU+v0D/mkCa7r4IO9RlubZHYZlYFmX
+        izU9nr5LIwVqUlqFNGVyB1tP
+X-Google-Smtp-Source: AAOMgpeaEsJu+KAfD4MhFdiYUIK2gbmebr7xI8/zQ725+nvbeEnGkRtwFDMVc/kC/Xn9WGCutaNqkw==
+X-Received: by 2002:a63:ce43:: with SMTP id r3-v6mr22750823pgi.439.1533094831456;
+        Tue, 31 Jul 2018 20:40:31 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:730e:f0ae:ac4e:9cdd:28a2:4bf9])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm34879545pgi.50.2018.07.31.20.40.07
+        by smtp.gmail.com with ESMTPSA id d19-v6sm34879545pgi.50.2018.07.31.20.40.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 31 Jul 2018 20:40:18 -0700 (PDT)
+        Tue, 31 Jul 2018 20:40:30 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
         afaerber@suse.de, robh+dt@kernel.org, lee.jones@linaro.org,
@@ -67,9 +67,9 @@ Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
         thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
         pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 03/10] clk: actions: Add syscon support for Actions Semi Owl SoCs
-Date:   Wed,  1 Aug 2018 09:09:08 +0530
-Message-Id: <20180801033915.15880-4-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 04/10] dt-bindings: reset: Add Actions Semi S900 SoC RMU support
+Date:   Wed,  1 Aug 2018 09:09:09 +0530
+Message-Id: <20180801033915.15880-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
 References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
@@ -78,63 +78,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the clock and reset management units are sharing the same memory
-map, convert the Owl common clock driver to support System Controller so
-that the reset driver can reuse the same memory region.
+Add RMU (Reset Management Unit) support for the Actions Semi S900
+SoC which is a part of the Actions Semi Owl family series.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/actions/owl-common.c | 20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
+ .../bindings/reset/actions,owl-reset.txt      | 33 ++++++++++
+ include/dt-bindings/reset/actions,s900-rmu.h  | 65 +++++++++++++++++++
+ 2 files changed, 98 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/actions,owl-reset.txt
+ create mode 100644 include/dt-bindings/reset/actions,s900-rmu.h
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 61c1071b5180..080f980b2ec4 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -8,6 +8,7 @@
- // Copyright (c) 2018 Linaro Ltd.
- // Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- 
-+#include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-@@ -15,14 +16,6 @@
- 
- #include "owl-common.h"
- 
--static const struct regmap_config owl_regmap_config = {
--	.reg_bits	= 32,
--	.reg_stride	= 4,
--	.val_bits	= 32,
--	.max_register	= 0x00cc,
--	.fast_io	= true,
--};
--
- static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
- 			 struct regmap *regmap)
- {
-@@ -41,18 +34,11 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
- int owl_clk_regmap_init(struct platform_device *pdev,
- 			 const struct owl_clk_desc *desc)
- {
--	void __iomem *base;
- 	struct regmap *regmap;
--	struct resource *res;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
- 
--	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
-+	regmap = syscon_node_to_regmap(of_get_parent(pdev->dev.of_node));
- 	if (IS_ERR(regmap)) {
--		pr_err("failed to init regmap\n");
-+		dev_err(&pdev->dev, "failed to get regmap\n");
- 		return PTR_ERR(regmap);
- 	}
- 
+diff --git a/Documentation/devicetree/bindings/reset/actions,owl-reset.txt b/Documentation/devicetree/bindings/reset/actions,owl-reset.txt
+new file mode 100644
+index 000000000000..38e2c7051d86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/actions,owl-reset.txt
+@@ -0,0 +1,33 @@
++Actions Semi Owl SoCs Reset Management Unit (RMU)
++=================================================
++
++Please also refer to reset.txt in this directory for common reset
++controller binding usage.
++
++The RMU registers are part of the system-controller block on Owl SoCs.
++
++Required properties:
++- compatible: Should be "actions,s900-rmu"
++- #reset-cells: Should be 1
++
++All available resets are defined as preprocessor macros in corresponding
++dt-bindings/reset/actions,s900-rmu.h header and can be used in device
++tree sources.
++
++Parent node should have the following properties :
++- compatible: "syscon", "simple-mfd"
++- reg: physical base address of the system controller and length of
++  memory mapped region.
++
++Example:
++
++        sysctrl: system-controller@e0160000 {
++                compatible = "syscon", "simple-mfd";
++                reg = <0x0 0xe0160000 0x0 0x1000>;
++
++                rmu: reset-controller {
++                        compatible = "actions,s900-rmu";
++                        #reset-cells = <1>;
++                };
++        };
++
+diff --git a/include/dt-bindings/reset/actions,s900-rmu.h b/include/dt-bindings/reset/actions,s900-rmu.h
+new file mode 100644
+index 000000000000..09e6dca46936
+--- /dev/null
++++ b/include/dt-bindings/reset/actions,s900-rmu.h
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++//
++// Device Tree binding constants for Actions Semi S900 Reset Management Unit
++//
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef _DT_BINDINGS_ACTIONS_S900_RESET_H
++#define _DT_BINDINGS_ACTIONS_S900_RESET_H
++
++#define S900_RESET_CHIPID		0
++#define S900_RESET_CPU_SCNT		1
++#define S900_RESET_SRAMI		2
++#define S900_RESET_DDR_CTL_PHY		3
++#define S900_RESET_DMAC			4
++#define S900_RESET_GPIO			5
++#define S900_RESET_BISP_AXI		6
++#define S900_RESET_CSI0			7
++#define S900_RESET_CSI1			8
++#define S900_RESET_DE			9
++#define S900_RESET_DSI			10
++#define S900_RESET_GPU3D_PA		11
++#define S900_RESET_GPU3D_PB		12
++#define S900_RESET_HDE			13
++#define S900_RESET_I2C0			14
++#define S900_RESET_I2C1			15
++#define S900_RESET_I2C2			16
++#define S900_RESET_I2C3			17
++#define S900_RESET_I2C4			18
++#define S900_RESET_I2C5			19
++#define S900_RESET_IMX			20
++#define S900_RESET_NANDC0		21
++#define S900_RESET_NANDC1		22
++#define S900_RESET_SD0			23
++#define S900_RESET_SD1			24
++#define S900_RESET_SD2			25
++#define S900_RESET_SD3			26
++#define S900_RESET_SPI0			27
++#define S900_RESET_SPI1			28
++#define S900_RESET_SPI2			29
++#define S900_RESET_SPI3			30
++#define S900_RESET_UART0		31
++#define S900_RESET_UART1		32
++#define S900_RESET_UART2		33
++#define S900_RESET_UART3		34
++#define S900_RESET_UART4		35
++#define S900_RESET_UART5		36
++#define S900_RESET_UART6		37
++#define S900_RESET_HDMI			38
++#define S900_RESET_LVDS			39
++#define S900_RESET_EDP			40
++#define S900_RESET_USB2HUB		41
++#define S900_RESET_USB2HSIC		42
++#define S900_RESET_USB3			43
++#define S900_RESET_PCM1			44
++#define S900_RESET_AUDIO		45
++#define S900_RESET_PCM0			46
++#define S900_RESET_SE			47
++#define S900_RESET_GIC			48
++#define S900_RESET_DDR_CTL_PHY_AXI	49
++#define S900_RESET_CMU_DDR		50
++#define S900_RESET_DMM			51
++#define S900_RESET_HDCP2TX		52
++#define S900_RESET_ETHERNET		53
++
++#endif /* _DT_BINDINGS_ACTIONS_S900_RESET_H */
 -- 
 2.17.1
 
