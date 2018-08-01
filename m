@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2789C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0F2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE85208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35B60208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:37:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TP25neYl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE85208A6
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kk30rHih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B60208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732574AbeHAXZA (ORCPT
+        id S1732590AbeHAXZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:25:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38816 "EHLO mail.kernel.org"
+        Wed, 1 Aug 2018 19:25:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732307AbeHAXY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:24:59 -0400
+        id S1732307AbeHAXZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 19:25:02 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5C80208A5;
-        Wed,  1 Aug 2018 21:37:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85667208B0;
+        Wed,  1 Aug 2018 21:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533159432;
-        bh=QSC6DBvofKuopxJf1cvfqlS/cy1HjZLD7djW3WF0rNc=;
+        s=default; t=1533159435;
+        bh=fF3FI3U+vJ93faRndH+kgqnTEBycquDI02/U/0L2SXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TP25neYlfhPb0YW+dF6S73n4lRn8cFCBdnuWr5WKot8UNLQkiPIWR4Ftae6Nytegq
-         /ZgpzlLssDhGrTKeFTtNUcmXJDrZgkInbKfZzQczHdPzvJ5FFNFYra2ySCUHD76yAB
-         srG0wQAFdZo3nAdgtidi943sMYX8MipKd6qbWRgc=
+        b=kk30rHihxfgFFu4TcFD6+bS00dWXwTlk2R67mIs0bgVL9bIN/N90bHRoyrXQgtKk9
+         E+66D2sJyBpdaGaOWtwSZSwsGGyE+9ryZQzC0AExNTgjoyq32Ykw02dvKner3cDR6T
+         C14DoemTi1n9/RlDK+b5mKRXk4/YfO+2bSC+upIs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/21] perf tests: Fix complex event name parsing
-Date:   Wed,  1 Aug 2018 18:36:30 -0300
-Message-Id: <20180801213648.4814-4-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 04/21] tools include uapi: Grab a copy of linux/in.h
+Date:   Wed,  1 Aug 2018 18:36:31 -0300
+Message-Id: <20180801213648.4814-5-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180801213648.4814-1-acme@kernel.org>
 References: <20180801213648.4814-1-acme@kernel.org>
@@ -56,80 +56,346 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-The 'umask' event parameter is unsupported on some architectures like
-powerpc64.
+We'll use it to create tables for the 'protocol' argument to the
+socket syscall when the 'family' arg is one of AF_INET or AF_INET6.
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
+Add it to check_headers.sh so that when a new protocol gets added we get
+a notification during the build process.
 
-  # perf test "Parse event definition strings" -v
-   6: Parse event definition strings                        :
-  --- start ---
-  test child forked, pid 45915
-  ...
-  running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp'Invalid event/parameter 'umask'
-  Invalid event/parameter 'umask'
-  failed to parse event 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp', err 1, str 'unknown term'
-  event syntax error: '..,event=0x2,umask=0x3/ukp'
-                                    \___ unknown term
-
-  valid terms: event,mark,pmc,cache_sel,pmcxsel,unit,thresh_stop,thresh_start,combine,thresh_sel,thresh_cmp,sample_mode,config,config1,config2,name,period,freq,branch_type,time,call-graph,stack-size,no-inherit,inherit,max-stack,no-overwrite,overwrite,driver-config
-
-  mem_access -> cpu/event=0x10401e0/
-  running test 0 'config=10,config1,config2=3,umask=1'
-  test child finished with 1
-  ---- end ----
-  Parse event definition strings: FAILED!
-
-Committer testing:
-
-After applying the patch these test passes and in verbose mode we get:
-
-  # perf test -v "event definition"
-   6: Parse event definition strings:
-  --- start ---
-  test child forked, pid 11061
-  running test 0 'syscalls:sys_enter_openat'Using CPUID GenuineIntel-6-9E
-  <SNIP>
-  running test 53 'cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk'
-  running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-  running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-  running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-  running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
-  <SNIP>
-  test child finished with 0
-  ---- end ----
-  Parse event definition strings: Ok
-  #
-
-Suggested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Fixes: 06dc5bf21f3f ("perf tests: Check that complex event name is parsed correctly")
-Link: http://lkml.kernel.org/r/20180726105502.31670-1-sandipan@linux.ibm.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2amnveu1ns4emjn70xuavpje@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/include/uapi/linux/in.h | 301 ++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/check-headers.sh   |   1 +
+ 2 files changed, 302 insertions(+)
+ create mode 100644 tools/include/uapi/linux/in.h
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index a36313daec4e..3b97ac018d5a 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1690,7 +1690,7 @@ static struct evlist_test test__events_pmu[] = {
- 		.id    = 2,
- 	},
- 	{
--		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp",
-+		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
- 		.check = test__checkevent_complex_name,
- 		.id    = 3,
- 	}
+diff --git a/tools/include/uapi/linux/in.h b/tools/include/uapi/linux/in.h
+new file mode 100644
+index 000000000000..48e8a225b985
+--- /dev/null
++++ b/tools/include/uapi/linux/in.h
+@@ -0,0 +1,301 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/*
++ * INET		An implementation of the TCP/IP protocol suite for the LINUX
++ *		operating system.  INET is implemented using the  BSD Socket
++ *		interface as the means of communication with the user level.
++ *
++ *		Definitions of the Internet Protocol.
++ *
++ * Version:	@(#)in.h	1.0.1	04/21/93
++ *
++ * Authors:	Original taken from the GNU Project <netinet/in.h> file.
++ *		Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
++ *
++ *		This program is free software; you can redistribute it and/or
++ *		modify it under the terms of the GNU General Public License
++ *		as published by the Free Software Foundation; either version
++ *		2 of the License, or (at your option) any later version.
++ */
++#ifndef _UAPI_LINUX_IN_H
++#define _UAPI_LINUX_IN_H
++
++#include <linux/types.h>
++#include <linux/libc-compat.h>
++#include <linux/socket.h>
++
++#if __UAPI_DEF_IN_IPPROTO
++/* Standard well-defined IP protocols.  */
++enum {
++  IPPROTO_IP = 0,		/* Dummy protocol for TCP		*/
++#define IPPROTO_IP		IPPROTO_IP
++  IPPROTO_ICMP = 1,		/* Internet Control Message Protocol	*/
++#define IPPROTO_ICMP		IPPROTO_ICMP
++  IPPROTO_IGMP = 2,		/* Internet Group Management Protocol	*/
++#define IPPROTO_IGMP		IPPROTO_IGMP
++  IPPROTO_IPIP = 4,		/* IPIP tunnels (older KA9Q tunnels use 94) */
++#define IPPROTO_IPIP		IPPROTO_IPIP
++  IPPROTO_TCP = 6,		/* Transmission Control Protocol	*/
++#define IPPROTO_TCP		IPPROTO_TCP
++  IPPROTO_EGP = 8,		/* Exterior Gateway Protocol		*/
++#define IPPROTO_EGP		IPPROTO_EGP
++  IPPROTO_PUP = 12,		/* PUP protocol				*/
++#define IPPROTO_PUP		IPPROTO_PUP
++  IPPROTO_UDP = 17,		/* User Datagram Protocol		*/
++#define IPPROTO_UDP		IPPROTO_UDP
++  IPPROTO_IDP = 22,		/* XNS IDP protocol			*/
++#define IPPROTO_IDP		IPPROTO_IDP
++  IPPROTO_TP = 29,		/* SO Transport Protocol Class 4	*/
++#define IPPROTO_TP		IPPROTO_TP
++  IPPROTO_DCCP = 33,		/* Datagram Congestion Control Protocol */
++#define IPPROTO_DCCP		IPPROTO_DCCP
++  IPPROTO_IPV6 = 41,		/* IPv6-in-IPv4 tunnelling		*/
++#define IPPROTO_IPV6		IPPROTO_IPV6
++  IPPROTO_RSVP = 46,		/* RSVP Protocol			*/
++#define IPPROTO_RSVP		IPPROTO_RSVP
++  IPPROTO_GRE = 47,		/* Cisco GRE tunnels (rfc 1701,1702)	*/
++#define IPPROTO_GRE		IPPROTO_GRE
++  IPPROTO_ESP = 50,		/* Encapsulation Security Payload protocol */
++#define IPPROTO_ESP		IPPROTO_ESP
++  IPPROTO_AH = 51,		/* Authentication Header protocol	*/
++#define IPPROTO_AH		IPPROTO_AH
++  IPPROTO_MTP = 92,		/* Multicast Transport Protocol		*/
++#define IPPROTO_MTP		IPPROTO_MTP
++  IPPROTO_BEETPH = 94,		/* IP option pseudo header for BEET	*/
++#define IPPROTO_BEETPH		IPPROTO_BEETPH
++  IPPROTO_ENCAP = 98,		/* Encapsulation Header			*/
++#define IPPROTO_ENCAP		IPPROTO_ENCAP
++  IPPROTO_PIM = 103,		/* Protocol Independent Multicast	*/
++#define IPPROTO_PIM		IPPROTO_PIM
++  IPPROTO_COMP = 108,		/* Compression Header Protocol		*/
++#define IPPROTO_COMP		IPPROTO_COMP
++  IPPROTO_SCTP = 132,		/* Stream Control Transport Protocol	*/
++#define IPPROTO_SCTP		IPPROTO_SCTP
++  IPPROTO_UDPLITE = 136,	/* UDP-Lite (RFC 3828)			*/
++#define IPPROTO_UDPLITE		IPPROTO_UDPLITE
++  IPPROTO_MPLS = 137,		/* MPLS in IP (RFC 4023)		*/
++#define IPPROTO_MPLS		IPPROTO_MPLS
++  IPPROTO_RAW = 255,		/* Raw IP packets			*/
++#define IPPROTO_RAW		IPPROTO_RAW
++  IPPROTO_MAX
++};
++#endif
++
++#if __UAPI_DEF_IN_ADDR
++/* Internet address. */
++struct in_addr {
++	__be32	s_addr;
++};
++#endif
++
++#define IP_TOS		1
++#define IP_TTL		2
++#define IP_HDRINCL	3
++#define IP_OPTIONS	4
++#define IP_ROUTER_ALERT	5
++#define IP_RECVOPTS	6
++#define IP_RETOPTS	7
++#define IP_PKTINFO	8
++#define IP_PKTOPTIONS	9
++#define IP_MTU_DISCOVER	10
++#define IP_RECVERR	11
++#define IP_RECVTTL	12
++#define	IP_RECVTOS	13
++#define IP_MTU		14
++#define IP_FREEBIND	15
++#define IP_IPSEC_POLICY	16
++#define IP_XFRM_POLICY	17
++#define IP_PASSSEC	18
++#define IP_TRANSPARENT	19
++
++/* BSD compatibility */
++#define IP_RECVRETOPTS	IP_RETOPTS
++
++/* TProxy original addresses */
++#define IP_ORIGDSTADDR       20
++#define IP_RECVORIGDSTADDR   IP_ORIGDSTADDR
++
++#define IP_MINTTL       21
++#define IP_NODEFRAG     22
++#define IP_CHECKSUM	23
++#define IP_BIND_ADDRESS_NO_PORT	24
++#define IP_RECVFRAGSIZE	25
++
++/* IP_MTU_DISCOVER values */
++#define IP_PMTUDISC_DONT		0	/* Never send DF frames */
++#define IP_PMTUDISC_WANT		1	/* Use per route hints	*/
++#define IP_PMTUDISC_DO			2	/* Always DF		*/
++#define IP_PMTUDISC_PROBE		3       /* Ignore dst pmtu      */
++/* Always use interface mtu (ignores dst pmtu) but don't set DF flag.
++ * Also incoming ICMP frag_needed notifications will be ignored on
++ * this socket to prevent accepting spoofed ones.
++ */
++#define IP_PMTUDISC_INTERFACE		4
++/* weaker version of IP_PMTUDISC_INTERFACE, which allos packets to get
++ * fragmented if they exeed the interface mtu
++ */
++#define IP_PMTUDISC_OMIT		5
++
++#define IP_MULTICAST_IF			32
++#define IP_MULTICAST_TTL 		33
++#define IP_MULTICAST_LOOP 		34
++#define IP_ADD_MEMBERSHIP		35
++#define IP_DROP_MEMBERSHIP		36
++#define IP_UNBLOCK_SOURCE		37
++#define IP_BLOCK_SOURCE			38
++#define IP_ADD_SOURCE_MEMBERSHIP	39
++#define IP_DROP_SOURCE_MEMBERSHIP	40
++#define IP_MSFILTER			41
++#define MCAST_JOIN_GROUP		42
++#define MCAST_BLOCK_SOURCE		43
++#define MCAST_UNBLOCK_SOURCE		44
++#define MCAST_LEAVE_GROUP		45
++#define MCAST_JOIN_SOURCE_GROUP		46
++#define MCAST_LEAVE_SOURCE_GROUP	47
++#define MCAST_MSFILTER			48
++#define IP_MULTICAST_ALL		49
++#define IP_UNICAST_IF			50
++
++#define MCAST_EXCLUDE	0
++#define MCAST_INCLUDE	1
++
++/* These need to appear somewhere around here */
++#define IP_DEFAULT_MULTICAST_TTL        1
++#define IP_DEFAULT_MULTICAST_LOOP       1
++
++/* Request struct for multicast socket ops */
++
++#if __UAPI_DEF_IP_MREQ
++struct ip_mreq  {
++	struct in_addr imr_multiaddr;	/* IP multicast address of group */
++	struct in_addr imr_interface;	/* local IP address of interface */
++};
++
++struct ip_mreqn {
++	struct in_addr	imr_multiaddr;		/* IP multicast address of group */
++	struct in_addr	imr_address;		/* local IP address of interface */
++	int		imr_ifindex;		/* Interface index */
++};
++
++struct ip_mreq_source {
++	__be32		imr_multiaddr;
++	__be32		imr_interface;
++	__be32		imr_sourceaddr;
++};
++
++struct ip_msfilter {
++	__be32		imsf_multiaddr;
++	__be32		imsf_interface;
++	__u32		imsf_fmode;
++	__u32		imsf_numsrc;
++	__be32		imsf_slist[1];
++};
++
++#define IP_MSFILTER_SIZE(numsrc) \
++	(sizeof(struct ip_msfilter) - sizeof(__u32) \
++	+ (numsrc) * sizeof(__u32))
++
++struct group_req {
++	__u32				 gr_interface;	/* interface index */
++	struct __kernel_sockaddr_storage gr_group;	/* group address */
++};
++
++struct group_source_req {
++	__u32				 gsr_interface;	/* interface index */
++	struct __kernel_sockaddr_storage gsr_group;	/* group address */
++	struct __kernel_sockaddr_storage gsr_source;	/* source address */
++};
++
++struct group_filter {
++	__u32				 gf_interface;	/* interface index */
++	struct __kernel_sockaddr_storage gf_group;	/* multicast address */
++	__u32				 gf_fmode;	/* filter mode */
++	__u32				 gf_numsrc;	/* number of sources */
++	struct __kernel_sockaddr_storage gf_slist[1];	/* interface index */
++};
++
++#define GROUP_FILTER_SIZE(numsrc) \
++	(sizeof(struct group_filter) - sizeof(struct __kernel_sockaddr_storage) \
++	+ (numsrc) * sizeof(struct __kernel_sockaddr_storage))
++#endif
++
++#if __UAPI_DEF_IN_PKTINFO
++struct in_pktinfo {
++	int		ipi_ifindex;
++	struct in_addr	ipi_spec_dst;
++	struct in_addr	ipi_addr;
++};
++#endif
++
++/* Structure describing an Internet (IP) socket address. */
++#if  __UAPI_DEF_SOCKADDR_IN
++#define __SOCK_SIZE__	16		/* sizeof(struct sockaddr)	*/
++struct sockaddr_in {
++  __kernel_sa_family_t	sin_family;	/* Address family		*/
++  __be16		sin_port;	/* Port number			*/
++  struct in_addr	sin_addr;	/* Internet address		*/
++
++  /* Pad to size of `struct sockaddr'. */
++  unsigned char		__pad[__SOCK_SIZE__ - sizeof(short int) -
++			sizeof(unsigned short int) - sizeof(struct in_addr)];
++};
++#define sin_zero	__pad		/* for BSD UNIX comp. -FvK	*/
++#endif
++
++#if __UAPI_DEF_IN_CLASS
++/*
++ * Definitions of the bits in an Internet address integer.
++ * On subnets, host and network parts are found according
++ * to the subnet mask, not these masks.
++ */
++#define	IN_CLASSA(a)		((((long int) (a)) & 0x80000000) == 0)
++#define	IN_CLASSA_NET		0xff000000
++#define	IN_CLASSA_NSHIFT	24
++#define	IN_CLASSA_HOST		(0xffffffff & ~IN_CLASSA_NET)
++#define	IN_CLASSA_MAX		128
++
++#define	IN_CLASSB(a)		((((long int) (a)) & 0xc0000000) == 0x80000000)
++#define	IN_CLASSB_NET		0xffff0000
++#define	IN_CLASSB_NSHIFT	16
++#define	IN_CLASSB_HOST		(0xffffffff & ~IN_CLASSB_NET)
++#define	IN_CLASSB_MAX		65536
++
++#define	IN_CLASSC(a)		((((long int) (a)) & 0xe0000000) == 0xc0000000)
++#define	IN_CLASSC_NET		0xffffff00
++#define	IN_CLASSC_NSHIFT	8
++#define	IN_CLASSC_HOST		(0xffffffff & ~IN_CLASSC_NET)
++
++#define	IN_CLASSD(a)		((((long int) (a)) & 0xf0000000) == 0xe0000000)
++#define	IN_MULTICAST(a)		IN_CLASSD(a)
++#define IN_MULTICAST_NET	0xF0000000
++
++#define	IN_EXPERIMENTAL(a)	((((long int) (a)) & 0xf0000000) == 0xf0000000)
++#define	IN_BADCLASS(a)		IN_EXPERIMENTAL((a))
++
++/* Address to accept any incoming messages. */
++#define	INADDR_ANY		((unsigned long int) 0x00000000)
++
++/* Address to send to all hosts. */
++#define	INADDR_BROADCAST	((unsigned long int) 0xffffffff)
++
++/* Address indicating an error return. */
++#define	INADDR_NONE		((unsigned long int) 0xffffffff)
++
++/* Network number for local host loopback. */
++#define	IN_LOOPBACKNET		127
++
++/* Address to loopback in software to local host.  */
++#define	INADDR_LOOPBACK		0x7f000001	/* 127.0.0.1   */
++#define	IN_LOOPBACK(a)		((((long int) (a)) & 0xff000000) == 0x7f000000)
++
++/* Defines for Multicast INADDR */
++#define INADDR_UNSPEC_GROUP   	0xe0000000U	/* 224.0.0.0   */
++#define INADDR_ALLHOSTS_GROUP 	0xe0000001U	/* 224.0.0.1   */
++#define INADDR_ALLRTRS_GROUP    0xe0000002U	/* 224.0.0.2 */
++#define INADDR_MAX_LOCAL_GROUP  0xe00000ffU	/* 224.0.0.255 */
++#endif
++
++/* <asm/byteorder.h> contains the htonl type stuff.. */
++#include <asm/byteorder.h> 
++
++
++#endif /* _UAPI_LINUX_IN_H */
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 814aaf269949..de28466c0186 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -7,6 +7,7 @@ include/uapi/drm/i915_drm.h
+ include/uapi/linux/fcntl.h
+ include/uapi/linux/kcmp.h
+ include/uapi/linux/kvm.h
++include/uapi/linux/in.h
+ include/uapi/linux/perf_event.h
+ include/uapi/linux/prctl.h
+ include/uapi/linux/sched.h
 -- 
 2.14.4
 
