@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C245C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2781C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50EC208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50EC208A5
+	by mail.kernel.org (Postfix) with ESMTP id 86E262083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E262083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732807AbeHATxI (ORCPT
+        id S1732789AbeHATxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:53:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405815AbeHATIh (ORCPT
+        with ESMTP id S2405816AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 580A6132C;
-        Wed,  1 Aug 2018 17:11:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 571A01392;
+        Wed,  1 Aug 2018 17:15:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Dave Jones <dsj@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Snyder <joshs@netflix.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 012/246] delayacct: fix crash in delayacct_blkio_end() after delayacct init failure
-Date:   Wed,  1 Aug 2018 18:48:42 +0200
-Message-Id: <20180801165012.280528692@linuxfoundation.org>
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 024/246] ALSA: emu10k1: add error handling for snd_ctl_add
+Date:   Wed,  1 Aug 2018 18:48:54 +0200
+Message-Id: <20180801165012.852292715@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,78 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-commit b512719f771a82180211c9a315b8a7f628832b3d upstream.
+[ Upstream commit 6d531e7b972cb62ded011c2dfcc2d9f72ea6c421 ]
 
-While forking, if delayacct init fails due to memory shortage, it
-continues expecting all delayacct users to check task->delays pointer
-against NULL before dereferencing it, which all of them used to do.
+When snd_ctl_add fails, the lack of error-handling code may
+cause unexpected results.
 
-Commit c96f5471ce7d ("delayacct: Account blkio completion on the correct
-task"), while updating delayacct_blkio_end() to take the target task
-instead of always using %current, made the function test NULL on
-%current->delays and then continue to operated on @p->delays.  If
-%current succeeded init while @p didn't, it leads to the following
-crash.
+This patch adds error-handling code after calling snd_ctl_add.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
- IP: __delayacct_blkio_end+0xc/0x40
- PGD 8000001fd07e1067 P4D 8000001fd07e1067 PUD 1fcffbb067 PMD 0
- Oops: 0000 [#1] SMP PTI
- CPU: 4 PID: 25774 Comm: QIOThread0 Not tainted 4.16.0-9_fbk1_rc2_1180_g6b593215b4d7 #9
- RIP: 0010:__delayacct_blkio_end+0xc/0x40
- Call Trace:
-  try_to_wake_up+0x2c0/0x600
-  autoremove_wake_function+0xe/0x30
-  __wake_up_common+0x74/0x120
-  wake_up_page_bit+0x9c/0xe0
-  mpage_end_io+0x27/0x70
-  blk_update_request+0x78/0x2c0
-  scsi_end_request+0x2c/0x1e0
-  scsi_io_completion+0x20b/0x5f0
-  blk_mq_complete_request+0xa2/0x100
-  ata_scsi_qc_complete+0x79/0x400
-  ata_qc_complete_multiple+0x86/0xd0
-  ahci_handle_port_interrupt+0xc9/0x5c0
-  ahci_handle_port_intr+0x54/0xb0
-  ahci_single_level_irq_intr+0x3b/0x60
-  __handle_irq_event_percpu+0x43/0x190
-  handle_irq_event_percpu+0x20/0x50
-  handle_irq_event+0x2a/0x50
-  handle_edge_irq+0x80/0x1c0
-  handle_irq+0xaf/0x120
-  do_IRQ+0x41/0xc0
-  common_interrupt+0xf/0xf
-
-Fix it by updating delayacct_blkio_end() check @p->delays instead.
-
-Link: http://lkml.kernel.org/r/20180724175542.GP1934745@devbig577.frc2.facebook.com
-Fixes: c96f5471ce7d ("delayacct: Account blkio completion on the correct task")
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Dave Jones <dsj@fb.com>
-Debugged-by: Dave Jones <dsj@fb.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Josh Snyder <joshs@netflix.com>
-Cc: <stable@vger.kernel.org>	[4.15+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/delayacct.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/emu10k1/emupcm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -124,7 +124,7 @@ static inline void delayacct_blkio_start
+--- a/sound/pci/emu10k1/emupcm.c
++++ b/sound/pci/emu10k1/emupcm.c
+@@ -1850,7 +1850,9 @@ int snd_emu10k1_pcm_efx(struct snd_emu10
+ 	if (!kctl)
+ 		return -ENOMEM;
+ 	kctl->id.device = device;
+-	snd_ctl_add(emu->card, kctl);
++	err = snd_ctl_add(emu->card, kctl);
++	if (err < 0)
++		return err;
  
- static inline void delayacct_blkio_end(struct task_struct *p)
- {
--	if (current->delays)
-+	if (p->delays)
- 		__delayacct_blkio_end(p);
- 	delayacct_clear_flag(DELAYACCT_PF_BLKIO);
- }
+ 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(emu->pci), 64*1024, 64*1024);
+ 
 
 
