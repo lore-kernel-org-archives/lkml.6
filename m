@@ -2,99 +2,98 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEA8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281F02083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FpcJnp5Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281F02083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 860AA20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860AA20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407346AbeHATQE (ORCPT
+        id S2407566AbeHATQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:04 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33836 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390457AbeHATQD (ORCPT
+        Wed, 1 Aug 2018 15:16:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52356 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390457AbeHATQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:03 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n96-v6so13884259lfi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PJ21CmLyzJjxpa5d5A+5XCX7HnX6XA3RPkUMCARv3eE=;
-        b=FpcJnp5QEd/HDSCGJyzdnzdG2R9RwWPgw4s6xxDdrwT74b6TzSt4klI4kyAjdryv44
-         UuSXECpL94jKoy0DcFUrEg38q3+uZFY9NlLd30ZTYeLHIdaX9a6MDtW+ebv0w+EtVIyO
-         oE3XWgRlp2F5L94mcl5J5ffHqrb9ZfFcPcYa4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PJ21CmLyzJjxpa5d5A+5XCX7HnX6XA3RPkUMCARv3eE=;
-        b=EldCNQ3eTecbjzNu/zIMH2Q1aiavcMJ9SXTmnlFBJl+X0rKnJFcupo42CvfnDHVzlz
-         /NlYO0/NM9WPZoruG4pOfYVDd8Caoben9vNcX/zyIhV2tOwFxbw4DToXv8jczDwTl1xj
-         9oJP8Hz8PaQ1pfVVl9B0Q8z8E7oBOJAqKK4T3YJQ8DxH/re64T8jekF4JZgsQpih2iFm
-         z+yMucLleCgO26lmLd5GcT8lG7FjzgxPFD/celtS9tFCmdSWKRr4/quZYS/yFDnfuY/t
-         jG00YyEboPT4npmTaxjkNaZEfm4p6gJgCh+bg6Xo67tBckJYHdEPe9K1ivVVYmm4U/DH
-         MNzA==
-X-Gm-Message-State: AOUpUlHUR42Brq32e4mbYj68g2fFfSyJjYH2N9mmJg6rnCH1vPcMCrEr
-        mYeGzxdojwT1hoCJh3psBexLl4F3VoKRFX1x3GHugUUp
-X-Google-Smtp-Source: AAOMgpfrO+NPmYr+YcP9laEsHho/GPntdhs4KF6f+ph0DDKNfshj2xIfd5/xD6oalaJdgw/7odMFlDpWmDQpne7c4qY=
-X-Received: by 2002:a19:5788:: with SMTP id l130-v6mr17244735lfb.93.1533142854982;
- Wed, 01 Aug 2018 10:00:54 -0700 (PDT)
+        Wed, 1 Aug 2018 15:16:05 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 510F8D57;
+        Wed,  1 Aug 2018 17:29:21 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 094/144] libata: Fix command retry decision
+Date:   Wed,  1 Aug 2018 18:52:01 +0200
+Message-Id: <20180801164956.325175848@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
+References: <20180801164949.023217860@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <1533050894-33214-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1533050894-33214-1-git-send-email-zhongjiang@huawei.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 1 Aug 2018 11:00:43 -0600
-Message-ID: <CANLsYkwFfBdnt5YdA7n36abg1rGEoh_UqPJ01pxDE69trF8cJg@mail.gmail.com>
-Subject: Re: [PATCH] driver/hwtracing: use ERR_CAST instead of ERR_PTR
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018 at 09:40, zhong jiang <zhongjiang@huawei.com> wrote:
->
-> Use ERR_CAT inlined function to replace the ERR_PTR(PTR_ERR). It
-> make the code more concise.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/hwtracing/coresight/coresight-tmc-etr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index 2eda5de..1196364 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -536,7 +536,7 @@ static void tmc_etr_sg_table_populate(struct etr_sg_table *etr_table)
->         sg_table = tmc_alloc_sg_table(dev, node, nr_tpages, nr_dpages, pages);
->         if (IS_ERR(sg_table)) {
->                 kfree(etr_table);
-> -               return ERR_PTR(PTR_ERR(sg_table));
-> +               return ERR_CAST(sg_table);
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Applied - thanks.
-Mathieu
+------------------
 
->         }
->
->         etr_table->sg_table = sg_table;
-> --
-> 1.7.12.4
->
+From: Damien Le Moal <damien.lemoal@wdc.com>
+
+[ Upstream commit 804689ad2d9b66d0d3920b48cf05881049d44589 ]
+
+For failed commands with valid sense data (e.g. NCQ commands),
+scsi_check_sense() is used in ata_analyze_tf() to determine if the
+command can be retried. In such case, rely on this decision and ignore
+the command error mask based decision done in ata_worth_retry().
+
+This fixes useless retries of commands such as unaligned writes on zoned
+disks (TYPE_ZAC).
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/ata/libata-eh.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -2282,12 +2282,16 @@ static void ata_eh_link_autopsy(struct a
+ 		if (qc->err_mask & ~AC_ERR_OTHER)
+ 			qc->err_mask &= ~AC_ERR_OTHER;
+ 
+-		/* SENSE_VALID trumps dev/unknown error and revalidation */
++		/*
++		 * SENSE_VALID trumps dev/unknown error and revalidation. Upper
++		 * layers will determine whether the command is worth retrying
++		 * based on the sense data and device class/type. Otherwise,
++		 * determine directly if the command is worth retrying using its
++		 * error mask and flags.
++		 */
+ 		if (qc->flags & ATA_QCFLAG_SENSE_VALID)
+ 			qc->err_mask &= ~(AC_ERR_DEV | AC_ERR_OTHER);
+-
+-		/* determine whether the command is worth retrying */
+-		if (ata_eh_worth_retry(qc))
++		else if (ata_eh_worth_retry(qc))
+ 			qc->flags |= ATA_QCFLAG_RETRY;
+ 
+ 		/* accumulate error info */
+
+
