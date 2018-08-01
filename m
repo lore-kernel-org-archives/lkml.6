@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C88C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE83C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EDF20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EDF20862
+	by mail.kernel.org (Postfix) with ESMTP id 2D3F020862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3F020862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436675AbeHATSl (ORCPT
+        id S2436662AbeHATSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:18:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52926 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52942 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436533AbeHATSi (ORCPT
+        with ESMTP id S2436556AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58983F0B;
-        Wed,  1 Aug 2018 16:55:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F9CBF2F;
+        Wed,  1 Aug 2018 16:56:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 053/336] powerpc/eeh: Fix use-after-release of EEH driver
-Date:   Wed,  1 Aug 2018 18:46:28 +0200
-Message-Id: <20180801165031.106239765@linuxfoundation.org>
+Subject: [PATCH 4.17 066/336] NFS: Fix up nfs_post_op_update_inode() to force ctime updates
+Date:   Wed,  1 Aug 2018 18:46:41 +0200
+Message-Id: <20180801165031.663338928@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,70 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 46d4be41b987a6b2d25a2ebdd94cafb44e21d6c5 ]
+[ Upstream commit d554168f87a55b35b7c59921a0dc45b6ba17d08d ]
 
-Correct two cases where eeh_pcid_get() is used to reference the driver's
-module but the reference is dropped before the driver pointer is used.
+We do not want to ignore ctime updates that originate from functions
+such as link().
 
-In eeh_rmv_device() also refactor a little so that only two calls to
-eeh_pcid_put() are needed, rather than three and the reference isn't
-taken at all if it wasn't needed.
-
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/eeh_driver.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ fs/nfs/inode.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/eeh_driver.c
-+++ b/arch/powerpc/kernel/eeh_driver.c
-@@ -458,9 +458,11 @@ static void *eeh_add_virt_device(void *d
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -1629,7 +1629,8 @@ int nfs_post_op_update_inode(struct inod
+ 	nfs_fattr_set_barrier(fattr);
+ 	status = nfs_post_op_update_inode_locked(inode, fattr,
+ 			NFS_INO_INVALID_CHANGE
+-			| NFS_INO_INVALID_CTIME);
++			| NFS_INO_INVALID_CTIME
++			| NFS_INO_REVAL_FORCED);
+ 	spin_unlock(&inode->i_lock);
  
- 	driver = eeh_pcid_get(dev);
- 	if (driver) {
--		eeh_pcid_put(dev);
--		if (driver->err_handler)
-+		if (driver->err_handler) {
-+			eeh_pcid_put(dev);
- 			return NULL;
-+		}
-+		eeh_pcid_put(dev);
- 	}
- 
- #ifdef CONFIG_PCI_IOV
-@@ -497,17 +499,19 @@ static void *eeh_rmv_device(void *data,
- 	if (eeh_dev_removed(edev))
- 		return NULL;
- 
--	driver = eeh_pcid_get(dev);
--	if (driver) {
--		eeh_pcid_put(dev);
--		if (removed &&
--		    eeh_pe_passed(edev->pe))
--			return NULL;
--		if (removed &&
--		    driver->err_handler &&
--		    driver->err_handler->error_detected &&
--		    driver->err_handler->slot_reset)
-+	if (removed) {
-+		if (eeh_pe_passed(edev->pe))
- 			return NULL;
-+		driver = eeh_pcid_get(dev);
-+		if (driver) {
-+			if (driver->err_handler &&
-+			    driver->err_handler->error_detected &&
-+			    driver->err_handler->slot_reset) {
-+				eeh_pcid_put(dev);
-+				return NULL;
-+			}
-+			eeh_pcid_put(dev);
-+		}
- 	}
- 
- 	/* Remove it from PCI subsystem */
+ 	return status;
 
 
