@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2913C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12917C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85DA82083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85DA82083D
+	by mail.kernel.org (Postfix) with ESMTP id B45382083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45382083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404302AbeHATDg (ORCPT
+        id S1733014AbeHAUPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+        Wed, 1 Aug 2018 16:15:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404192AbeHATDe (ORCPT
+        with ESMTP id S2404263AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:34 -0400
+        Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EBF82FA7;
-        Wed,  1 Aug 2018 16:57:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A6AD1201;
+        Wed,  1 Aug 2018 17:08:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eyal Reizer <eyalr@ti.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 099/336] wlcore: sdio: check for valid platform device data before suspend
-Date:   Wed,  1 Aug 2018 18:47:14 +0200
-Message-Id: <20180801165032.956034936@linuxfoundation.org>
+Subject: [PATCH 4.17 250/336] memory: tegra: Apply interrupts mask per SoC
+Date:   Wed,  1 Aug 2018 18:49:45 +0200
+Message-Id: <20180801165038.623140967@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,39 +51,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eyal Reizer <eyalreizer@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 6e91d48371e79862ea2c05867aaebe4afe55a865 ]
+[ Upstream commit 1c74d5c0de0c2cc29fef97a19251da2ad6f579bd ]
 
-the wl pointer can be null In case only wlcore_sdio is probed while
-no WiLink module is successfully probed, as in the case of mounting a
-wl12xx module while using a device tree file configured with wl18xx
-related settings.
-In this case the system was crashing in wl1271_suspend() as platform
-device data is not set.
-Make sure wl the pointer is valid before using it.
+Currently we are enabling handling of interrupts specific to Tegra124+
+which happen to overlap with previous generations. Let's specify
+interrupts mask per SoC generation for consistency and in a preparation
+of squashing of Tegra20 driver into the common one that will enable
+handling of GART faults which may be undesirable by newer generations.
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wlcore/sdio.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/memory/tegra/mc.c       |   21 +++------------------
+ drivers/memory/tegra/mc.h       |    9 +++++++++
+ drivers/memory/tegra/tegra114.c |    2 ++
+ drivers/memory/tegra/tegra124.c |    6 ++++++
+ drivers/memory/tegra/tegra210.c |    3 +++
+ drivers/memory/tegra/tegra30.c  |    2 ++
+ include/soc/tegra/mc.h          |    2 ++
+ 7 files changed, 27 insertions(+), 18 deletions(-)
 
---- a/drivers/net/wireless/ti/wlcore/sdio.c
-+++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -406,6 +406,11 @@ static int wl1271_suspend(struct device
- 	mmc_pm_flag_t sdio_flags;
- 	int ret = 0;
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -20,14 +20,6 @@
+ #include "mc.h"
  
-+	if (!wl) {
-+		dev_err(dev, "no wilink module was probed\n");
-+		goto out;
-+	}
+ #define MC_INTSTATUS 0x000
+-#define  MC_INT_DECERR_MTS (1 << 16)
+-#define  MC_INT_SECERR_SEC (1 << 13)
+-#define  MC_INT_DECERR_VPR (1 << 12)
+-#define  MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
+-#define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
+-#define  MC_INT_ARBITRATION_EMEM (1 << 9)
+-#define  MC_INT_SECURITY_VIOLATION (1 << 8)
+-#define  MC_INT_DECERR_EMEM (1 << 6)
+ 
+ #define MC_INTMASK 0x004
+ 
+@@ -248,13 +240,11 @@ static const char *const error_names[8]
+ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ {
+ 	struct tegra_mc *mc = data;
+-	unsigned long status, mask;
++	unsigned long status;
+ 	unsigned int bit;
+ 
+ 	/* mask all interrupts to avoid flooding */
+-	mask = mc_readl(mc, MC_INTMASK);
+-	status = mc_readl(mc, MC_INTSTATUS) & mask;
+-
++	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+ 	if (!status)
+ 		return IRQ_NONE;
+ 
+@@ -349,7 +339,6 @@ static int tegra_mc_probe(struct platfor
+ 	const struct of_device_id *match;
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+-	u32 value;
+ 	int err;
+ 
+ 	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
+@@ -417,11 +406,7 @@ static int tegra_mc_probe(struct platfor
+ 
+ 	WARN(!mc->soc->client_id_mask, "Missing client ID mask for this SoC\n");
+ 
+-	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
+-		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
+-		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
+-
+-	mc_writel(mc, value, MC_INTMASK);
++	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+ 
+ 	return 0;
+ }
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -14,6 +14,15 @@
+ 
+ #include <soc/tegra/mc.h>
+ 
++#define MC_INT_DECERR_MTS (1 << 16)
++#define MC_INT_SECERR_SEC (1 << 13)
++#define MC_INT_DECERR_VPR (1 << 12)
++#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
++#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
++#define MC_INT_ARBITRATION_EMEM (1 << 9)
++#define MC_INT_SECURITY_VIOLATION (1 << 8)
++#define MC_INT_DECERR_EMEM (1 << 6)
 +
- 	dev_dbg(dev, "wl1271 suspend. wow_enabled: %d\n",
- 		wl->wow_enabled);
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+ {
+ 	return readl(mc->regs + offset);
+--- a/drivers/memory/tegra/tegra114.c
++++ b/drivers/memory/tegra/tegra114.c
+@@ -945,4 +945,6 @@ const struct tegra_mc_soc tegra114_mc_so
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra114_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -1035,6 +1035,9 @@ const struct tegra_mc_soc tegra124_mc_so
+ 	.smmu = &tegra124_smmu_soc,
+ 	.emem_regs = tegra124_mc_emem_regs,
+ 	.num_emem_regs = ARRAY_SIZE(tegra124_mc_emem_regs),
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_124_SOC */
  
+@@ -1059,5 +1062,8 @@ const struct tegra_mc_soc tegra132_mc_so
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra132_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1092,4 +1092,7 @@ const struct tegra_mc_soc tegra210_mc_so
+ 	.atom_size = 64,
+ 	.client_id_mask = 0xff,
+ 	.smmu = &tegra210_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -967,4 +967,6 @@ const struct tegra_mc_soc tegra30_mc_soc
+ 	.atom_size = 16,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra30_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -108,6 +108,8 @@ struct tegra_mc_soc {
+ 	u8 client_id_mask;
+ 
+ 	const struct tegra_smmu_soc *smmu;
++
++	u32 intmask;
+ };
+ 
+ struct tegra_mc {
 
 
