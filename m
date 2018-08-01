@@ -2,149 +2,125 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2ACC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F71AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F27E20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="pIP8qEJ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F27E20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 4257820894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:58:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4257820894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389244AbeHAOlL (ORCPT
+        id S2389271AbeHAOo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:41:11 -0400
-Received: from imap.thunk.org ([74.207.234.97]:51774 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389081AbeHAOlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:41:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=IeReGwaeq+lqD3iUgh0ryeJiKud8EBxtFTtVNSFHEPw=; b=pIP8qEJ2OELHFR203s5AbP4uF9
-        OqeGTZUmE/sAchxZ2jyUDns66hyqc7tjFjzHPKxhO9Ci3tJ0O5h0dvO7fTrs7ikHrdeU9VKbBrlI/
-        24WUO9xW9MB3MfXx7AzXsj3qE/Hh3HbvNcbwxkJ7UdTqe5ttiwv862hxlQ8Mr4WppH/k=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fkqeo-0002Fe-7K; Wed, 01 Aug 2018 12:55:14 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 89BC17A614D; Wed,  1 Aug 2018 08:55:12 -0400 (EDT)
-Date:   Wed, 1 Aug 2018 08:55:12 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     willy@infradead.org, adilger.kernel@dilger.ca,
-        darrick.wong@oracle.com, axboe@kernel.dk, agruenba@redhat.com,
-        ebiggers@google.com, gregkh@linuxfoundation.org,
-        kemi.wang@intel.com, sabyasachi.linux@gmail.com,
-        brajeswar.linux@gmail.com, linux-ext4@vger.kernel.org,
+        Wed, 1 Aug 2018 10:44:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57908 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389226AbeHAOo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 10:44:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8D028197022;
+        Wed,  1 Aug 2018 12:58:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 546A120389E1;
+        Wed,  1 Aug 2018 12:58:46 +0000 (UTC)
+Subject: [PATCH net-next 00/10] rxrpc: Development
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Convert int to vm_fault_t type
-Message-ID: <20180801125512.GA10761@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Souptick Joarder <jrdr.linux@gmail.com>, willy@infradead.org,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com, axboe@kernel.dk,
-        agruenba@redhat.com, ebiggers@google.com,
-        gregkh@linuxfoundation.org, kemi.wang@intel.com,
-        sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
+Date:   Wed, 01 Aug 2018 13:58:45 +0100
+Message-ID: <153312832565.27702.15302541876382957550.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 12:58:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 12:58:46 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 28, 2018 at 02:20:00PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for ext4_page_mkwrite
-> handler and block_page_mkwrite_return.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-FYI, this patch was very sloppy, and didn't do the right thing.  That's
-because of how you messed with the changing how the return codes are
-now handled.
+Here are some patches that add some more tracepoints to AF_RXRPC and fix
+some issues therein.  The most significant points are:
 
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -6108,27 +6108,27 @@ static int ext4_bh_unmapped(handle_t *handle, struct buffer_head *bh)
->  	return !buffer_mapped(bh);
->  }
->  
-> -int ext4_page_mkwrite(struct vm_fault *vmf)
-> +vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	struct page *page = vmf->page;
->  	loff_t size;
->  	unsigned long len;
-> -	int ret;
-> +	vm_fault_t ret;
->  	struct file *file = vma->vm_file;
->  	struct inode *inode = file_inode(file);
->  	struct address_space *mapping = inode->i_mapping;
->  	handle_t *handle;
->  	get_block_t *get_block;
-> -	int retries = 0;
-> +	int retries = 0, err;
+ (1) Display the call timeout information in /proc/net/rxrpc/calls.
 
-OK, ret now is a vm_fault_t, and err is an error return....
+ (2) Save the call's debug_id in the rxrpc_channel struct so that it can be
+     used in traces after the rxrpc_call struct has been destroyed.
 
-> @@ -6138,9 +6138,9 @@ int ext4_page_mkwrite(struct vm_fault *vmf)
->  		do {
->  			ret = block_page_mkwrite(vma, vmf,
->  						   ext4_da_get_block_prep);
+ (3) Increase the size of the kAFS Rx window from 32 to 63 to be about the
+     same as the Auristor server.
 
-But block_page_mkwrite() still returns an int, not a vm_fault_t....
+ (4) Propose the terminal ACK for a client call after it has received all
+     its data to be transmitted after a short interval so that it will get
+     transmitted if not first superseded by a new call on the same channel.
 
->  -		} while (ret == -ENOSPC &&
-> +		} while (ret == VM_FAULT_SIGBUS &&
->  		       ext4_should_retry_alloc(inode->i_sb, &retries));
+ (5) Flush ACKs during the data reception if we detect that we've run out
+     of data.[*]
 
-So this is Just wrong,  This needed to be:
+ (6) Trace successful packet transmission and softirq to process context
+     socket notification.
 
-  		do {
-  			err = block_page_mkwrite(vma, vmf,
-  						   ext4_da_get_block_prep);
-		} while (err == -ENOSPC &&
-  		         ext4_should_retry_alloc(inode->i_sb, &retries));
-		goto out_ret;
+[*] Note that on a uncontended gigabit network, rxrpc runs in to trouble
+    with ACK packets getting batched together (up to ~32 at a time)
+    somewhere between the IP transmit queue on the client and the ethernet
+    receive queue on the server.
 
-That's because out_ret is what will translate the int error code to
-the vm_fault_t via:
+    I can see the kernel afs filesystem client and Auristor userspace
+    server stalling occasionally on a 512MB single read.  Sticking
+    tracepoints in the network driver at either end seems to show that,
+    although the ACK transmissions made by the client are reasonably spaced
+    timewise, the received ACKs come in batches from the network card on
+    the server.
 
-	ret = block_page_mkwrite_return(err);
+    I'm not sure what, if anything, can be done about this.
 
-The fact that ext4_page_mkwrite() returns a vm_fault_t, while
-block_page_mkwrite() returns an int which then has to get translated
-into a vm_fault_t via block_page_mkwrite_return() is I suspect going
-to confuse an awful lot of callers.
 
-I'll fix up the patch, but I just wanted to call your attention to
-this pitfall in the patch which confused even you as the patch author....
+The patches are tagged here:
 
-(BTW, the buggy patch triggered a new failure, ext4/307, which is how
-I noticed that the patch was all wrong.  If you had run any kind of
-static code checker you would have noticed that block_page_mkwrite()
-was returning an int and that was getting assigned into a variable of
-type vm_fault_t.  The fact that you *didn't* notice makes me worry
-that all of this code churn may, in the end, not actually help us as
-much as we thought.  :-(
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	rxrpc-next-20180801
 
-     	     	    	  		      - Ted
+and can also be found on this branch:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-next
+
+David
+---
+David Howells (9):
+      rxrpc: Display call expect-receive-by timeout in proc
+      rxrpc: Show some more information through /proc files
+      rxrpc: Fix the trace for terminal ACK (re)transmission
+      rxrpc: Trace packet transmission
+      rxrpc: Fix ACK proposal tracepoint
+      rxrpc: Trace socket notification
+      rxrpc: Increase the size of a call's Rx window
+      rxrpc: Propose, but don't immediately transmit, the final ACK for a call
+      rxrpc: Transmit more ACKs during data reception
+
+YueHaibing (1):
+      rxrpc: remove redundant variables 'sp' and 'did_discard'
+
+
+ include/trace/events/rxrpc.h |  129 ++++++++++++++++++++++++++++++------------
+ net/rxrpc/ar-internal.h      |    4 +
+ net/rxrpc/call_event.c       |    2 -
+ net/rxrpc/conn_client.c      |    3 -
+ net/rxrpc/conn_event.c       |   17 ++++--
+ net/rxrpc/input.c            |   15 ++++-
+ net/rxrpc/local_event.c      |    5 +-
+ net/rxrpc/output.c           |   32 ++++++++--
+ net/rxrpc/proc.c             |   23 ++++++-
+ net/rxrpc/recvmsg.c          |   23 ++++++-
+ net/rxrpc/rxkad.c            |    7 ++
+ 11 files changed, 193 insertions(+), 67 deletions(-)
+
