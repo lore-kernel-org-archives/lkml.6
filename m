@@ -2,127 +2,137 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B1CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C219920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2882320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="EBb//U20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C219920862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mmp+dtBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2882320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390213AbeHASJk (ORCPT
+        id S2390154AbeHASKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:09:40 -0400
-Received: from imap.thunk.org ([74.207.234.97]:53024 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389907AbeHASJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:09:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=z/Jx42RNanAvB7nTZNqa7xcx6Pj16FbmSIKW5ftTkvo=; b=EBb//U206xLsCk01LTnRSW4ZPy
-        t2Ri3jRxA75jMH6vck7GuHD8s8yJp+Jf12B1plsKN8ue7JhkWxXwkY/iM/0n9Oy9EbG2HB7GuG6E5
-        z+UH3lhdguCIJey8/rGEwuRcz++jEn+QkdSwZOA9gcEp2r+HW4oQJAgpnq+teTOXQq+4=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fkttt-0004Oi-09; Wed, 01 Aug 2018 16:23:01 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 0E3277A614D; Wed,  1 Aug 2018 12:23:00 -0400 (EDT)
-Date:   Wed, 1 Aug 2018 12:22:59 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Convert int to vm_fault_t type
-Message-ID: <20180801162259.GF10761@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
- <20180801125512.GA10761@thunk.org>
- <CAFqt6zbxpj5DS=ONUGTJ9zaeH5k=qZpQYy-J+08tr9y0gOsCAg@mail.gmail.com>
- <20180801131330.GA4734@bombadil.infradead.org>
- <CAFqt6zYJv7SdkntY7KOBvNyfk-9MRaXBMmkbsc4J7P-tq616DA@mail.gmail.com>
- <20180801143830.GB10761@thunk.org>
- <20180801160618.GE10761@thunk.org>
- <20180801161319.GC4039@bombadil.infradead.org>
+        Wed, 1 Aug 2018 14:10:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46738 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389942AbeHASKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 14:10:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=wdkQz0ZkLYt54fvU11F3mRcDZOTKFRUiJbAH3YozcIE=; b=Mmp+dtBUwwBuq6nh5PflLu/sXD
+        z+Wj5nSJovvLODUwOc3iSCkj25BzI/px2vfSkU2f5WMFfnFwkX+CQ6jJ9Zfe5MPiepfbEdOnuWq/0
+        F0frS1V8Wmwdw5ByVoLX3XfzRKs7onQPTASkIa1TfRrFpw8R17V/5DrhssHrotlpK1fVPGD34x21p
+        Z4u4RkhAojvszzAZMpATklIxrOHqmNFg7w8LC83phCbS+u+JfD+8NJqfIUhCmY5LZPdRqlYUTNjoS
+        9bwFN2D3oTPrAY/wGozZ4RXXzyJAazW2bf9KzlIxb+fYvZ2P4BmxEBSWE9g1WIXEyIzyIn+S5RqGy
+        Ndd4Oj4w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fktun-0007JX-0n; Wed, 01 Aug 2018 16:23:57 +0000
+Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
+To:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Cc:     linuxarm@huawei.com
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801102221.5308-4-nek.in.cn@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d11c7745-2f31-0f33-1bd8-78379dc66e6e@infradead.org>
+Date:   Wed, 1 Aug 2018 09:23:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801161319.GC4039@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180801102221.5308-4-nek.in.cn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 09:13:19AM -0700, Matthew Wilcox wrote:
-> On Wed, Aug 01, 2018 at 12:06:18PM -0400, Theodore Y. Ts'o wrote:
-> > On Wed, Aug 01, 2018 at 10:38:30AM -0400, Theodore Y. Ts'o wrote:
-> > > I'm going to drop the whole ext4 changes for vm_fault_t for this
-> > > cycle, and I'll let you try to fix it up properly for the next cycle.
-> > 
-> > Here's the fixed up commit that I'm going to drop since you plan to be
-> > making changes in block_page_mkwrite(), and I don't want us to get out
-> > of sync.
+On 08/01/2018 03:22 AM, Kenneth Lee wrote:
+> From: Kenneth Lee <liguozhu@hisilicon.com>
 > 
-> This looks sane to me.
+> SPIMDEV is "Share Parent IOMMU Mdev". It is a vfio-mdev. But differ from
+> the general vfio-mdev:
+> 
+> 1. It shares its parent's IOMMU.
+> 2. There is no hardware resource attached to the mdev is created. The
+> hardware resource (A `queue') is allocated only when the mdev is
+> opened.
+> 
+> Currently only the vfio type-1 driver is updated to make it to be aware
+> of.
+> 
+> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+> Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
+> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+> ---
+>  drivers/vfio/Kconfig                |   1 +
+>  drivers/vfio/Makefile               |   1 +
+>  drivers/vfio/spimdev/Kconfig        |  10 +
+>  drivers/vfio/spimdev/Makefile       |   3 +
+>  drivers/vfio/spimdev/vfio_spimdev.c | 421 ++++++++++++++++++++++++++++
+>  drivers/vfio/vfio_iommu_type1.c     | 136 ++++++++-
+>  include/linux/vfio_spimdev.h        |  95 +++++++
+>  include/uapi/linux/vfio_spimdev.h   |  28 ++
+>  8 files changed, 689 insertions(+), 6 deletions(-)
+>  create mode 100644 drivers/vfio/spimdev/Kconfig
+>  create mode 100644 drivers/vfio/spimdev/Makefile
+>  create mode 100644 drivers/vfio/spimdev/vfio_spimdev.c
+>  create mode 100644 include/linux/vfio_spimdev.h
+>  create mode 100644 include/uapi/linux/vfio_spimdev.h
+> 
+> diff --git a/drivers/vfio/spimdev/Kconfig b/drivers/vfio/spimdev/Kconfig
+> new file mode 100644
+> index 000000000000..1226301f9d0e
+> --- /dev/null
+> +++ b/drivers/vfio/spimdev/Kconfig
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +config VFIO_SPIMDEV
+> +	tristate "Support for Share Parent IOMMU MDEV"
+> +	depends on VFIO_MDEV_DEVICE
+> +	help
+> +	  Support for VFIO Share Parent IOMMU MDEV, which enable the kernel to
 
-Yeah, it's fine except for the cognitive load to the file system
-programmer where block_page_mkwrite() returns an int, and not a
-vm_fault_t, and you have use block_page_mkwrite_return() in order to
-convert from the negative error code convention to a vm_fault_t.
+	                                                  enables
 
-Souptick has a separate patch out which changes block_page_mkpage() to
-return a vm_fault_t.  It's broken in that it clobbers the error return
-and doesn't provide a way for the caller to get the error return.  So
-Souptick, please consider that other patch to have received a NACK
-from me, as it *will* break ext4.
+> +	  support for the light weight hardware accelerator framework, WrapDrive.
 
-Souptick, perhaps you could change block_page_mkwrite() so that its
-function signature looks like this instead:
+	  support the lightweight hardware accelerator framework, WrapDrive.
 
-vm_fault_t block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
-	   		      get_block_t get_block, int *err)
+> +
+> +	  To compile this as a module, choose M here: the module will be called
+> +	  spimdev.
 
-...that's sane.  Or you can maybe simply change the *name* of the
-function so it's clear it's differnt from all other xxx_page_mkwrite()
-functions in that it returns an int.
 
-I'll let you decide what you want to do --- since part of your
-development to be a sophisticated programmer is to get experience
-making these sorts of decisions that involve having good programming
-"taste".
-
-Regards,
-
-						- Ted
+-- 
+~Randy
