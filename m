@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01A2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9B8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3122083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3122083D
+	by mail.kernel.org (Postfix) with ESMTP id 879B02083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879B02083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732936AbeHAUHu (ORCPT
+        id S1732908AbeHAUHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:07:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404449AbeHATDj (ORCPT
+        with ESMTP id S2404451AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43AE11219;
-        Wed,  1 Aug 2018 17:08:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41C551064;
+        Wed,  1 Aug 2018 17:01:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 294/336] drm/dp/mst: Fix off-by-one typo when dump payload table
-Date:   Wed,  1 Aug 2018 18:50:29 +0200
-Message-Id: <20180801165040.286155727@linuxfoundation.org>
+Subject: [PATCH 4.17 155/336] drm/nouveau: remove fence wait code from deferred client work handler
+Date:   Wed,  1 Aug 2018 18:48:10 +0200
+Message-Id: <20180801165035.053908707@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,65 +50,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 7056a2bccc3b5afc51f9b35b30a46f0d9219968d ]
+[ Upstream commit 11e451e74050d9e9030581ce40337838acfcea5b ]
 
-It seems there is a classical off-by-one typo from the beginning
-when commit
+Fences attached to deferred client work items now originate from channels
+belonging to the client, meaning we can be certain they've been signalled
+before we destroy a client.
 
-  ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+This closes a race that could happen if the dma_fence_wait_timeout() call
+didn't succeed.  When the fence was later signalled, a use-after-free was
+possible.
 
-introduced a new helper.
-
-Fix a typo by introducing a macro constant.
-
-Cc: Dave Airlie <airlied@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180319141932.37290-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_drm.c |   30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2941,12 +2941,14 @@ static void drm_dp_mst_dump_mstb(struct
- 	}
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -116,24 +116,22 @@ nouveau_name(struct drm_device *dev)
  }
  
-+#define DP_PAYLOAD_TABLE_SIZE		64
-+
- static bool dump_dp_payload_table(struct drm_dp_mst_topology_mgr *mgr,
- 				  char *buf)
+ static inline bool
+-nouveau_cli_work_ready(struct dma_fence *fence, bool wait)
++nouveau_cli_work_ready(struct dma_fence *fence)
  {
- 	int i;
+-	if (!dma_fence_is_signaled(fence)) {
+-		if (!wait)
+-			return false;
+-		WARN_ON(dma_fence_wait_timeout(fence, false, 2 * HZ) <= 0);
+-	}
++	if (!dma_fence_is_signaled(fence))
++		return false;
+ 	dma_fence_put(fence);
+ 	return true;
+ }
  
--	for (i = 0; i < 64; i += 16) {
-+	for (i = 0; i < DP_PAYLOAD_TABLE_SIZE; i += 16) {
- 		if (drm_dp_dpcd_read(mgr->aux,
- 				     DP_PAYLOAD_TABLE_UPDATE_STATUS + i,
- 				     &buf[i], 16) != 16)
-@@ -3015,7 +3017,7 @@ void drm_dp_mst_dump_topology(struct seq
+ static void
+-nouveau_cli_work_flush(struct nouveau_cli *cli, bool wait)
++nouveau_cli_work(struct work_struct *w)
+ {
++	struct nouveau_cli *cli = container_of(w, typeof(*cli), work);
+ 	struct nouveau_cli_work *work, *wtmp;
+ 	mutex_lock(&cli->lock);
+ 	list_for_each_entry_safe(work, wtmp, &cli->worker, head) {
+-		if (!work->fence || nouveau_cli_work_ready(work->fence, wait)) {
++		if (!work->fence || nouveau_cli_work_ready(work->fence)) {
+ 			list_del(&work->head);
+ 			work->func(work);
+ 		}
+@@ -162,16 +160,16 @@ nouveau_cli_work_queue(struct nouveau_cl
+ }
  
- 	mutex_lock(&mgr->lock);
- 	if (mgr->mst_primary) {
--		u8 buf[64];
-+		u8 buf[DP_PAYLOAD_TABLE_SIZE];
- 		int ret;
- 
- 		ret = drm_dp_dpcd_read(mgr->aux, DP_DPCD_REV, buf, DP_RECEIVER_CAP_SIZE);
-@@ -3033,8 +3035,7 @@ void drm_dp_mst_dump_topology(struct seq
- 		seq_printf(m, " revision: hw: %x.%x sw: %x.%x\n",
- 			   buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
- 		if (dump_dp_payload_table(mgr, buf))
--			seq_printf(m, "payload table: %*ph\n", 63, buf);
+ static void
+-nouveau_cli_work(struct work_struct *w)
+-{
+-	struct nouveau_cli *cli = container_of(w, typeof(*cli), work);
+-	nouveau_cli_work_flush(cli, false);
+-}
 -
-+			seq_printf(m, "payload table: %*ph\n", DP_PAYLOAD_TABLE_SIZE, buf);
- 	}
- 
- 	mutex_unlock(&mgr->lock);
+-static void
+ nouveau_cli_fini(struct nouveau_cli *cli)
+ {
+-	nouveau_cli_work_flush(cli, true);
++	/* All our channels are dead now, which means all the fences they
++	 * own are signalled, and all callback functions have been called.
++	 *
++	 * So, after flushing the workqueue, there should be nothing left.
++	 */
++	flush_work(&cli->work);
++	WARN_ON(!list_empty(&cli->worker));
++
+ 	usif_client_fini(cli);
+ 	nouveau_vmm_fini(&cli->vmm);
+ 	nvif_mmu_fini(&cli->mmu);
 
 
