@@ -2,177 +2,114 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D6CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B757C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D2120841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D2120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C7DC420841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:55:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DC420841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mut-group.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733295AbeHAHjB (ORCPT
+        id S2387415AbeHAHj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:39:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39534 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733124AbeHAHjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:39:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 568CDAE77;
-        Wed,  1 Aug 2018 05:55:05 +0000 (UTC)
-Date:   Wed, 1 Aug 2018 07:55:03 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm, oom: introduce memory.oom.group
-Message-ID: <20180801055503.GB16767@dhcp22.suse.cz>
-References: <20180730180100.25079-1-guro@fb.com>
- <20180730180100.25079-4-guro@fb.com>
- <20180731090700.GF4557@dhcp22.suse.cz>
- <20180801011447.GB25953@castle.DHCP.thefacebook.com>
+        Wed, 1 Aug 2018 03:39:26 -0400
+Received: from mut-gw.mut-group.com ([213.209.114.184]:59442 "EHLO
+        mut-gw.mut-group.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733303AbeHAHj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 03:39:26 -0400
+Received: from [192.168.20.11] (port=12401 helo=zcom03.mut-group.com)
+        by mut-gw.mut-group.com with esmtps (TLSv1.2:AES256-SHA:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <mhellwig@mut-group.com>)
+        id 1fkk6T-0004PA-1e; Wed, 01 Aug 2018 07:55:21 +0200
+Received: from ZCOM03.mut-group.com (192.168.20.11) by ZCOM03.mut-group.com
+ (192.168.20.11) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Wed, 1 Aug
+ 2018 07:55:20 +0200
+Received: from ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960]) by
+ ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960%12]) with mapi id
+ 15.00.1263.000; Wed, 1 Aug 2018 07:55:20 +0200
+From:   Marcel Hellwig <mhellwig@mut-group.com>
+To:     'Eric Dumazet' <eric.dumazet@gmail.com>,
+        "'davem@davemloft.net'" <davem@davemloft.net>,
+        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
+        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
+        "'andrew@lunn.ch'" <andrew@lunn.ch>
+CC:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "Matthias Wystrik" <mwystrik@mut-group.com>
+Subject: AW: PROBLEM: Kernel Oops in UDP stack
+Thread-Topic: PROBLEM: Kernel Oops in UDP stack
+Thread-Index: AdQo32X7ylxOxyzCQIq96qKkvZ0yzv//7rwA//78udA=
+Date:   Wed, 1 Aug 2018 05:55:20 +0000
+Message-ID: <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
+References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+ <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+In-Reply-To: <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.21.69]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801011447.GB25953@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 31-07-18 18:14:48, Roman Gushchin wrote:
-> On Tue, Jul 31, 2018 at 11:07:00AM +0200, Michal Hocko wrote:
-> > On Mon 30-07-18 11:01:00, Roman Gushchin wrote:
-> > > For some workloads an intervention from the OOM killer
-> > > can be painful. Killing a random task can bring
-> > > the workload into an inconsistent state.
-> > > 
-> > > Historically, there are two common solutions for this
-> > > problem:
-> > > 1) enabling panic_on_oom,
-> > > 2) using a userspace daemon to monitor OOMs and kill
-> > >    all outstanding processes.
-> > > 
-> > > Both approaches have their downsides:
-> > > rebooting on each OOM is an obvious waste of capacity,
-> > > and handling all in userspace is tricky and requires
-> > > a userspace agent, which will monitor all cgroups
-> > > for OOMs.
-> > > 
-> > > In most cases an in-kernel after-OOM cleaning-up
-> > > mechanism can eliminate the necessity of enabling
-> > > panic_on_oom. Also, it can simplify the cgroup
-> > > management for userspace applications.
-> > > 
-> > > This commit introduces a new knob for cgroup v2 memory
-> > > controller: memory.oom.group. The knob determines
-> > > whether the cgroup should be treated as a single
-> > > unit by the OOM killer. If set, the cgroup and its
-> > > descendants are killed together or not at all.
-> > 
-> > I do not want to nit pick on wording but unit is not really a good
-> > description. I would expect that to mean that the oom killer will
-> > consider the unit also when selecting the task and that is not the case.
-> > I would be more explicit about this being a single killable entity
-> > because it forms an indivisible workload.
-> > 
-> > You can reuse http://lkml.kernel.org/r/20180730080357.GA24267@dhcp22.suse.cz
-> > if you want.
-> 
-> Ok, I'll do my best to make it clearer.
-> 
-> > 
-> > [...]
-> > > +/**
-> > > + * mem_cgroup_get_oom_group - get a memory cgroup to clean up after OOM
-> > > + * @victim: task to be killed by the OOM killer
-> > > + * @oom_domain: memcg in case of memcg OOM, NULL in case of system-wide OOM
-> > > + *
-> > > + * Returns a pointer to a memory cgroup, which has to be cleaned up
-> > > + * by killing all belonging OOM-killable tasks.
-> > 
-> > Caller has to call mem_cgroup_put on the returned non-null memcg.
-> 
-> Added.
-> 
-> > 
-> > > + */
-> > > +struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
-> > > +					    struct mem_cgroup *oom_domain)
-> > > +{
-> > > +	struct mem_cgroup *oom_group = NULL;
-> > > +	struct mem_cgroup *memcg;
-> > > +
-> > > +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
-> > > +		return NULL;
-> > > +
-> > > +	if (!oom_domain)
-> > > +		oom_domain = root_mem_cgroup;
-> > > +
-> > > +	rcu_read_lock();
-> > > +
-> > > +	memcg = mem_cgroup_from_task(victim);
-> > > +	if (!memcg || memcg == root_mem_cgroup)
-> > > +		goto out;
-> > 
-> > When can we have memcg == NULL? victim should be always non-NULL.
-> > Also why do you need to special case the root_mem_cgroup here. The loop
-> > below should handle that just fine no?
-> 
-> Idk, I prefer to keep an explicit root_mem_cgroup check,
-> rather than traversing the tree and relying on an inability
-> to set oom_group on the root.
-
-I will not insist but this just makes the code harder to read.
-
-[...]
-> > > +	if (oom_group) {
-> > 
-> > we want a printk explaining that we are going to tear down the whole
-> > oom_group here.
-> 
-> Does this looks good?
-> Or it's better to remove "memory." prefix?
-> 
-> [   52.835327] Out of memory: Kill process 1221 (allocate) score 241 or sacrifice child
-> [   52.836625] Killed process 1221 (allocate) total-vm:2257144kB, anon-rss:2009128kB, file-rss:4kB, shmem-rss:0kB
-> [   52.841431] Tasks in /A1 are going to be killed due to memory.oom.group set
-
-Yes, looks good to me.
-
-> [   52.869439] Killed process 1217 (allocate) total-vm:2052344kB, anon-rss:1704036kB, file-rss:0kB, shmem-rss:0kB
-> [   52.875601] Killed process 1218 (allocate) total-vm:106668kB, anon-rss:24668kB, file-rss:0kB, shmem-rss:0kB
-> [   52.882914] Killed process 1219 (allocate) total-vm:106668kB, anon-rss:21528kB, file-rss:0kB, shmem-rss:0kB
-> [   52.891806] Killed process 1220 (allocate) total-vm:2257144kB, anon-rss:1984120kB, file-rss:4kB, shmem-rss:0kB
-> [   52.903770] Killed process 1221 (allocate) total-vm:2257144kB, anon-rss:2009128kB, file-rss:4kB, shmem-rss:0kB
-> [   52.905574] Killed process 1222 (allocate) total-vm:2257144kB, anon-rss:2063640kB, file-rss:0kB, shmem-rss:0kB
-> [   53.202153] oom_reaper: reaped process 1222 (allocate), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-> 
-> > 
-> > > +		mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
-> > > +		mem_cgroup_put(oom_group);
-> > > +	}
-> > >  }
-> > 
-> > Other than that looks good to me. My concern that the previous
-> > implementation was more consistent because we were comparing memcgs
-> > still holds but if there is no way forward that direction this should be
-> > acceptable as well.
-> > 
-> > After above small things are addressed you can add
-> > Acked-by: Michal Hocko <mhocko@suse.com> 
-> 
-> Thank you!
-
--- 
-Michal Hocko
-SUSE Labs
+T24gVHVlLCBKdWwgMzEsIDIwMTggYXQgMTU6MzY6MDVQTSArMDAwMCBBbmRyZXcgTHVubiB3cm90
+ZToNCg0KPiBJcyB0aGlzIG1haW5saW5lIDMuNC4xMTMsIG9yIExQQyB2ZXJzaW9uPw0KTWFpbmxp
+bmUsIGFmYWlrIHRoZXJlIGlzIG5vIG5ld2VyIHZlcnNpb24gb2YgdGhlIGxwYyBrZXJuZWwgYW5k
+IHRoZSBscGMgZHJpdmVyIGFyZSB1cHN0cmVhbSBzaW5jZSAzLjQgKGhlbmNlIHRoZSAzLjQuMTEz
+IGtlcm5lbCB2ZXJzaW9uIHdlIHRyaWVkKS4NCg0KPiBIb3cgbXVjaCB3b3JrIGlzIGludm9sdmVk
+IGluIHRlc3RpbmcgYSBuZXdlciBrZXJuZWwuIFlvdSBhcmUgbm90IGdvaW5nIHRvIGdldCB0b28g
+bXVjaCBoZWxwIGZyb20gdGhlIGNvbW11bml0eSB3aXRoIHN1Y2ggYW4gb2xkIGtlcm5lbC4gSWYg
+eW91IGNhbiByZXByb2R1Y2UgaXQgd2l0aCBhIG1vZGVybiBkYXkga2VybmVsLCB0aGVuIHBlb3Bs
+ZSBhcmUgbW9yZSBsaWtlbHkgdG8gaGVscC4NCg0KV2UgaGF2ZW4ndCB0cmllZCBhbnkgbmV3ZXIg
+dmVyc2lvbiwgYmVjYXVzZSBEVFMgaXMgbWFuZGF0b3J5IHNpbmNlIDMuNSBhZmFpaz8gV2UgaGFk
+bid0IHRoZSB0aW1lIHRvIGxvb2sgaW50bywgYWx0aG91Z2ggaXQgbG9va3MgcHJldHR5IHN0cmFp
+Z2h0IGZvcndhcmQuDQoNCj4+IEtlcm5lbCBvb3BzOg0KPj4gWyAxMTI1LjA5MDAwMF0gVW5hYmxl
+IHRvIGhhbmRsZSBrZXJuZWwgcGFnaW5nIHJlcXVlc3QgYXQgdmlydHVhbCANCj4+IGFkZHJlc3Mg
+YzE0ZmU2M2EgWyAxMTI1LjEwMDAwMF0gcGdkID0gYzE0ZDgwMDAgWyAxMTI1LjEwMDAwMF0gDQo+
+PiBbYzE0ZmU2M2FdICpwZ2Q9ODE0MDA0MWUoYmFkKSBbIDExMjUuMTAwMDAwXSBJbnRlcm5hbCBl
+cnJvcjogT29wczogMSANCj4+IFsjMV0gUFJFRU1QVCBBUk0gWyAxMTI1LjEwMDAwMF0gTW9kdWxl
+cyBsaW5rZWQgaW46DQo+PiBbIDExMjUuMTAwMDAwXSBDUFU6IDAgICAgTm90IHRhaW50ZWQgICgz
+LjQuMTEzLjcgIzEpDQo+PiBbIDExMjUuMTAwMDAwXSBQQyBpcyBhdCB1ZHBfcmVjdm1zZysweDI4
+NC8weDMzYyBbIDExMjUuMTAwMDAwXSBMUiBpcyANCj4+IGF0IDB4MA0KPiBMUiA9PSAwIGlzIHN1
+c3BpY2lvdXMuIEl0IHNob3VsZCBjb250YWluIHRoZSByZXR1cm4gYWRkcmVzcywgaW5ldF9yZWN2
+bXNnKzB4MzgvMHg0Yy4gVGhhdCBpcyBhc3N1bWluZyB0aGUgY2FsbGluZyBjb252ZW50aW9uIGlz
+IHRoZSBzYW1lIGZvciB0aGlzIG9sZCBrZXJuZWwgYXMgdG9kYXlzIGtlcm5lbHMgb24gQVJNLg0K
+DQpJIHdpbGwgZG8gYSBsaXR0bGUgZGVidWdnaW5nIHdoeSBMUiBpcyAwIGhlcmUuIE1heWJlIHRo
+YXQncyB0aGUgY2x1ZS4NCg0KPiBDb3VsZCB5b3UgcHJvZHVjZSBuZXQvaXB2NC91ZHAubHN0IGZv
+ciB0aGlzIGV4YWN0IGtlcm5lbCBidWlsZD8NCg0KU3VyZTogaHR0cHM6Ly9naXN0LmdpdGh1Yi5j
+b20vaGVsbG93NTU0LzZiMTFjNmMwODI3ZDVkYjgwYTdlNjZmNzFmNTYzNmZmI2ZpbGUtbmV0X3Vp
+cHY0X3VkcC1sc3QNCg0KPiBBbnkgaWRlYSBob3cgeW91IGNvdWxkIGdldCBmaWxlOmxpbmUgaW5m
+b3JtYXRpb24gPw0KPiAoIGxpa2UgOiB1ZHBfc2V0c29ja29wdCsweDYyLzB4YTAgbmV0L2lwdjQv
+dWRwLmM6MjUwMiApDQoNCls8YzAyMjhhZGM+XSAodWRwX3JlY3Ztc2crMHgyODQvMHgzM2MpIGZy
+b20gWzxjMDIzMDZlMD5dIChpbmV0X3JlY3Ztc2crMHgzOC8weDRjKTogbmV0L2lwdjQvdWRwLmM6
+MTIzNA0KWzxjMDIzMDZlMD5dIChpbmV0X3JlY3Ztc2crMHgzOC8weDRjKSBmcm9tIFs8YzAxZDJj
+Mzg+XSAoc29ja19yZWN2bXNnKzB4YTgvMHhjYyk6IGluY2x1ZGUvbGludXgvZmlsZS5oOjI1DQpb
+PGMwMWQyYzM4Pl0gKHNvY2tfcmVjdm1zZysweGE4LzB4Y2MpIGZyb20gWzxjMDFkM2ZhYz5dIChf
+X19zeXNfcmVjdm1zZy5wYXJ0LjQrMHhlMC8weDFiYyk6IG5ldC9zb2NrZXQuYzo3NTENCls8YzAx
+ZDNmYWM+XSAoX19fc3lzX3JlY3Ztc2cucGFydC40KzB4ZTAvMHgxYmMpIGZyb20gWzxjMDFkNGZi
+Yz5dIChfX3N5c19yZWN2bXNnKzB4NTAvMHg4MCk6IG5ldC9zb2NrZXQuYzoyMTkzDQpbPGMwMWQ0
+ZmJjPl0gKF9fc3lzX3JlY3Ztc2crMHg1MC8weDgwKSBmcm9tIFs8YzAwMGRmZTA+XSAocmV0X2Zh
+c3Rfc3lzY2FsbCsweDAvMHgyYyk6IGluY2x1ZGUvbGludXgvZmlsZS5oOjI1IChmcm9tIGFyY2gv
+YXJtL2tlcm5lbC9lbnRyeS1jb21tb24uUzozNCkNCg0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5j
+b20vbGludXgvdjMuNC4xMTMvc291cmNlIDopDQoNCg0KTWFueSB0aGFua3MgZm9yIHRoZSBhbnN3
+ZXIsIEkgaG9wZSBJIGNvdWxkIGFuc3dlciB5b3VyIHF1ZXN0aW9ucy4NCg0KDQpNaXQgZnJldW5k
+bGljaGVuIEdyw7zDn2VuIC8gV2l0aCBraW5kIHJlZ2FyZHMNCg0KTWFyY2VsIEhlbGx3aWcNCkIu
+IFNjLiBJbmZvcm1hdGlrDQpFbnR3aWNrbGVyDQoNCm0tdS10wqBHbWJIDQpBbSBNYXJpZW5ob2Yg
+Mg0KMjI4ODAgV2VkZWwNCkdlcm1hbnkNCg0KUGhvbmU6CSs0OSA0MTAzIDkzMDggLSA0NzQNCkZh
+eDrCoMKgCSs0OSA0MTAzIDkzMDggLSA5OQ0KbWhlbGx3aWdAbXV0LWdyb3VwLmNvbQ0KDQp3d3cu
+bXV0LWdyb3VwLmNvbQ0KDQpHZXNjaMOkZnRzZsO8aHJlcsKgKE1hbmFnaW5nIERpcmVjdG9yKTog
+RmFiaWFuIFBldGVycw0KQW10c2dlcmljaHQgUGlubmViZXJnIChDb21tZXJjaWFsIFJlZ2lzdGVy
+IE5vLik6IEhSQsKgMTAzMDQgUEkNClVTdC1JZE5yLiAoVkFULU5vLik6IERFMjI4Mjc1MzkwDQpX
+RUVFLVJlZy1Oci46IERFIDcyMjcxODA4DQoNCg0K
