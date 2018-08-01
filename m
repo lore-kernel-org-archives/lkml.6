@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8C9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D0EC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6986F20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6986F20841
+	by mail.kernel.org (Postfix) with ESMTP id 21AA9208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AA9208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732953AbeHAUJa (ORCPT
+        id S1732986AbeHAUJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:09:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
+        Wed, 1 Aug 2018 16:09:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404425AbeHATDj (ORCPT
+        with ESMTP id S2404396AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25D42119E;
-        Wed,  1 Aug 2018 17:07:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21D15FBE;
+        Wed,  1 Aug 2018 16:58:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sergey Kubushyn <ksi@koi8.net>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 263/336] platform/x86: dell-smbios: Match on www.dell.com in OEM strings too
-Date:   Wed,  1 Aug 2018 18:49:58 +0200
-Message-Id: <20180801165039.110623083@linuxfoundation.org>
+Subject: [PATCH 4.17 107/336] btrfs: add barriers to btrfs_sync_log before log_commit_wait wakeups
+Date:   Wed,  1 Aug 2018 18:47:22 +0200
+Message-Id: <20180801165033.248563808@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,43 +51,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mario Limonciello <mario.limonciello@dell.com>
+From: David Sterba <dsterba@suse.com>
 
-[ Upstream commit b004b21cc664ca00782508514dade43e29eebf94 ]
+[ Upstream commit 3d3a2e610ea5e7c6d4f9481ecce5d8e2d8317843 ]
 
-Sergey reported that some much older Dell systems don't support
-the OEM string "Dell System" but instead supported www.dell.com
-in OEM strings.
+Currently the code assumes that there's an implied barrier by the
+sequence of code preceding the wakeup, namely the mutex unlock.
 
-Match both of these to indicate that this driver is running on
-a Dell system.
+As Nikolay pointed out:
 
-Reported-by: Sergey Kubushyn <ksi@koi8.net>
-Tested-by: Sergey Kubushyn <ksi@koi8.net>
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-[dvhart: Simplify DMI logic and eliminate unnecessary variables]
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+I think this is wrong (not your code) but the original assumption that
+the RELEASE semantics provided by mutex_unlock is sufficient.
+According to memory-barriers.txt:
+
+Section 'LOCK ACQUISITION FUNCTIONS' states:
+
+ (2) RELEASE operation implication:
+
+     Memory operations issued before the RELEASE will be completed before the
+     RELEASE operation has completed.
+
+     Memory operations issued after the RELEASE *may* be completed before the
+     RELEASE operation has completed.
+
+(I've bolded the may portion)
+
+The example given there:
+
+As an example, consider the following:
+
+    *A = a;
+    *B = b;
+    ACQUIRE
+    *C = c;
+    *D = d;
+    RELEASE
+    *E = e;
+    *F = f;
+
+The following sequence of events is acceptable:
+
+    ACQUIRE, {*F,*A}, *E, {*C,*D}, *B, RELEASE
+
+So if we assume that *C is modifying the flag which the waitqueue is checking,
+and *E is the actual wakeup, then those accesses can be re-ordered...
+
+IMHO this code should be considered broken...
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+To be on the safe side, add the barriers. The synchronization logic
+around log using the mutexes and several other threads does not make it
+easy to reason for/against the barrier.
+
+CC: Nikolay Borisov <nborisov@suse.com>
+Link: https://lkml.kernel.org/r/6ee068d8-1a69-3728-00d1-d86293d43c9f@suse.com
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/dell-smbios-base.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/btrfs/tree-log.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/platform/x86/dell-smbios-base.c
-+++ b/drivers/platform/x86/dell-smbios-base.c
-@@ -555,11 +555,10 @@ static void free_group(struct platform_d
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3116,8 +3116,11 @@ out_wake_log_root:
+ 	mutex_unlock(&log_root_tree->log_mutex);
  
- static int __init dell_smbios_init(void)
- {
--	const struct dmi_device *valid;
- 	int ret, wmi, smm;
+ 	/*
+-	 * The barrier before waitqueue_active is implied by mutex_unlock
++	 * The barrier before waitqueue_active is needed so all the updates
++	 * above are seen by the woken threads. It might not be necessary, but
++	 * proving that seems to be hard.
+ 	 */
++	smp_mb();
+ 	if (waitqueue_active(&log_root_tree->log_commit_wait[index2]))
+ 		wake_up(&log_root_tree->log_commit_wait[index2]);
+ out:
+@@ -3128,8 +3131,11 @@ out:
+ 	mutex_unlock(&root->log_mutex);
  
--	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
--	if (!valid) {
-+	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
-+	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
- 		pr_err("Unable to run on non-Dell system\n");
- 		return -ENODEV;
- 	}
+ 	/*
+-	 * The barrier before waitqueue_active is implied by mutex_unlock
++	 * The barrier before waitqueue_active is needed so all the updates
++	 * above are seen by the woken threads. It might not be necessary, but
++	 * proving that seems to be hard.
+ 	 */
++	smp_mb();
+ 	if (waitqueue_active(&root->log_commit_wait[index1]))
+ 		wake_up(&root->log_commit_wait[index1]);
+ 	return ret;
 
 
