@@ -2,132 +2,107 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B27C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A16C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1AE20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3742420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gKOoATMF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K1t+6S3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D1AE20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NATdBx/h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3742420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732235AbeHAUe4 (ORCPT
+        id S1731948AbeHAUh0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:34:56 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:41927 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbeHAUez (ORCPT
+        Wed, 1 Aug 2018 16:37:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41951 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbeHAUhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:34:55 -0400
-Received: by mail-yb0-f194.google.com with SMTP id s8-v6so7940657ybe.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:47:48 -0700 (PDT)
+        Wed, 1 Aug 2018 16:37:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y10-v6so8305984pfn.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:50:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=l8hLZL8NdtfJMN8z9J4kFr4FGtr+tH0fRo06r4vH2XA=;
-        b=gKOoATMFZqZULzjBidG2rGFateL1EqhZsgdf196YarsH+VeuZUZjklTSXwr2SpD9U2
-         krO0WSPZouzUJV4He7ruFraxBaDtNTy076FINDKAv0YBhQJFm1QNt8JFoUHKp/7rc5F6
-         PScgi2EIzclMGq0vYQapIoQ6gvAJV8G6eGv8MujQBbfvzaGhgAPE2/QENmreDt+tb1Zf
-         H5xgO2euzcWDUYpUvAfzoAK7x32IUEm96XiXCCpphxrgeqNZTWWv4STjEzZ/9+E/rD4a
-         AIh8cm6a44Tm9Nt56Z1zN+l8l83ikoCI1cPPg7kbxCpu96sKkiqie+tjOs+0+CcMPFTM
-         uYUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=l8hLZL8NdtfJMN8z9J4kFr4FGtr+tH0fRo06r4vH2XA=;
-        b=K1t+6S3den10kNihHf8xWYSpk3PvPzwokiHPTU22PkdlWOD1dXIdvFfqoo29nedvoj
-         6Y2p29lCglQQ072hHuIdWNF2FLgpIrPR7oXhUDXRdflnqcutHj2U+3JwN05MMkEeslcg
-         iGwo9XZTFJFvrTNoZCYlOvHMww2halpr6orOU=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zH0tq50so2YpVnbKcqMI4M1uhoRhE/vxXTzoc7ONzvY=;
+        b=NATdBx/hm6Uk4yPPYpMr/R2D7tUGGH2VIuVLzfWy7Jm9pVgaimNxf8a6+vkYoFzNTm
+         H+QOHuEtta6GjznyINinJavS5egXCZm+0PlCx8CSCsjZCt/7X+lbAq7WpQ19mZzc5sKs
+         OSsvOmyP93l3cNHpXRUCJPmiH+gITXYB+LHIFeqviWNevn0EDIgoqLmbLPMWqD/qC/7j
+         EpTQKuOVqrQV5LzRL2sE68u0KoPNKC2/eE1VurwF/fqBLXh9OgZi+4725RJ1FjMv0U4p
+         V7xTRnmNXi0bor54LxyfR8qZelMyyuNg/k5c+0mtqV9LOalaf9NGMo7Ee89uGKH9EVsV
+         4f6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=l8hLZL8NdtfJMN8z9J4kFr4FGtr+tH0fRo06r4vH2XA=;
-        b=t6JlaGOjq5YM6AOU9F9P6fRlJLHS07YKzo/ZIOFTKrqvsxQcG2L3IGmDwoYnfwCXeL
-         jIaNGOHmbLKJdtFp2uHpTVDiUuw9RorkjdTJvFplD/8Fe+wJF/+jrtxuQbVJcX2gKg0F
-         kLf/IGCdJdVRG7KnHFtkZw1HBznTcgUrTZaWkqI1nr2eydfwl5dIZqYsS3g19agKbTRA
-         M+aUNqrHVFb/Wdoxubyuxc0Gt67rMoPxOipzqbwKfl7jcugvgwoql1tZjsR0tk8JMdhM
-         CB0s13ElZntNMbKOQKuZm7gxoPDVx5QGBMBdupSK4nU69/+RezzF227DSFdelNzFlIq2
-         UYQw==
-X-Gm-Message-State: AOUpUlEcC8YOvpDMHPpoSzoxgkB9vTdep052IICeMlsQP/tLYfEl1IJo
-        24L8aUo2LUi3NrQ3yCAooy92Unl5IpFLmtL7BWmjOw==
-X-Google-Smtp-Source: AAOMgpffQQFHAtHm6nb/FTunWoCyHJFEOV7a79ZMwuqbQSCxS20XYL2IoqglUGL/87LYw7znR+9PLBKdL0u21kBC8wI=
-X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr13866019ybj.343.1533149268125;
- Wed, 01 Aug 2018 11:47:48 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zH0tq50so2YpVnbKcqMI4M1uhoRhE/vxXTzoc7ONzvY=;
+        b=fM8spGqP/zocyBzZKmeHkCZm5bM16NVJlLUD73F5qUDpWmkQ5NOs9YWVCON0/m+XjH
+         Bx3W4JkIrUGWZwUUH+mjCBp0uAFjjkkUUOEHuT6KZgIuyFAcSA7zSV+/43fA/guIxye5
+         sllYQL6ZuKp6G+zjO02isMP8lhM6VjpEiGmiOBM9xdUtcSeB8+6xP8XGJ0L5o7hkIZAK
+         TO+yDS3SgyYSWhsaUTz/AGm1EQUtzAnbK6QpzVff+8CoN2pAPzWFZM1o59tXliv/JYb+
+         zYOqRT7qb/rOQenwOnOVriH/tTPAoaJUCrd6bir/cOJOWDpwiEOfryhic+/aUtpudaMY
+         7S+g==
+X-Gm-Message-State: AOUpUlGuDiUJ++7B/eNfZyjmjZuNPT8nEGwnpBrprbXd/RkrKGhO2d15
+        KLh+Dginy/5kp9ydk51BlAj00BoJoenQt0PE1CjqUg==
+X-Google-Smtp-Source: AAOMgpeEkJ3kvrd3tRxYtOKPY90LVizz9XcBYjniGcSEhonpahabCdG2AnjgH9vL09Bz/kmSKRcNbYFhKmKKmXBZjbE=
+X-Received: by 2002:a62:8d7:: with SMTP id 84-v6mr28091513pfi.172.1533149417492;
+ Wed, 01 Aug 2018 11:50:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 11:47:47 -0700 (PDT)
-In-Reply-To: <20180801175815.GA25489@gmail.com>
-References: <20180801175815.GA25489@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 1 Aug 2018 11:47:47 -0700
-X-Google-Sender-Auth: JYDeBZUc78KPcokV8ZP4Sjm34RI
-Message-ID: <CAGXu5jJUa36N+Q0K9dbc9xX_LoN=4AZ+CxrDiem==8LEXrdF=w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] auxdisplay: panel: avoid gcc 8's
- Wstringop-truncation warning
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+References: <20180801182943.22176-1-ndesaulniers@google.com>
+In-Reply-To: <20180801182943.22176-1-ndesaulniers@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 1 Aug 2018 11:50:06 -0700
+Message-ID: <CAKwvOd=DnrfVcuO8Pg=FBrub1M4A8LzarZbtv6m=JO_r6Ea6aQ@mail.gmail.com>
+Subject: Re: [PATCH] sh: dwarf: prefer _THIS_IP_ to current_text_addr
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Martin Sebor <msebor@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Arnd Bergmann <arnd@arndb.de>
+        linux-sh@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 10:58 AM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> Let gcc know it is not meant to be NUL-terminated by annotating with
-> the new __nonstring variable attribute; and remove the comment since it
-> conveys the same information.
+On Wed, Aug 1, 2018 at 11:29 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
 >
-> Cc: Willy Tarreau <w@1wt.eu>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Martin Sebor <msebor@gmail.com>
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> As part of the effort to reduce the code duplication between _THIS_IP_
+> and current_text_addr(), let's consolidate callers of
+> current_text_addr() to use _THIS_IP_.
+>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 > ---
->  drivers/auxdisplay/panel.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  arch/sh/kernel/dwarf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
-> index 3b25a643058c..21b9b2f2470a 100644
-> --- a/drivers/auxdisplay/panel.c
-> +++ b/drivers/auxdisplay/panel.c
-> @@ -155,10 +155,9 @@ struct logical_input {
->                         int release_data;
->                 } std;
->                 struct {        /* valid when type == INPUT_TYPE_KBD */
-> -                       /* strings can be non null-terminated */
-> -                       char press_str[sizeof(void *) + sizeof(int)];
-> -                       char repeat_str[sizeof(void *) + sizeof(int)];
-> -                       char release_str[sizeof(void *) + sizeof(int)];
-> +                       char press_str[sizeof(void *) + sizeof(int)] __nonstring;
-> +                       char repeat_str[sizeof(void *) + sizeof(int)] __nonstring;
-> +                       char release_str[sizeof(void *) + sizeof(int)] __nonstring;
->                 } kbd;
->         } u;
->  };
+> diff --git a/arch/sh/kernel/dwarf.c b/arch/sh/kernel/dwarf.c
+> index 1a2526676a87..bb511e2d9d68 100644
+> --- a/arch/sh/kernel/dwarf.c
+> +++ b/arch/sh/kernel/dwarf.c
+> @@ -599,7 +599,7 @@ struct dwarf_frame *dwarf_unwind_stack(unsigned long pc,
+>          * time this function makes its first function call.
+>          */
+>         if (!pc || !prev)
+> -               pc = (unsigned long)current_text_addr();
+> +               pc = _THIS_IP_;
+>
+>  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>         /*
+> --
+> 2.18.0.597.ga71716f1ad-goog
+>
 
-If it's not a string, why not use "u8" instead of "char"? Does the
-warning persist?
-
--Kees
-
+Sorry, there's another call site in the arch/sh/ tree
+(arch/sh/include/asm/kexec.h#64).  Let me fix both and send as a
+single patch in v2.
 -- 
-Kees Cook
-Pixel Security
+Thanks,
+~Nick Desaulniers
