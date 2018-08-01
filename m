@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30D3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8367C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794F82083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794F82083D
+	by mail.kernel.org (Postfix) with ESMTP id AC2D120844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2D120844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407604AbeHATQP (ORCPT
+        id S2407612AbeHATQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52404 "EHLO
+        Wed, 1 Aug 2018 15:16:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407367AbeHATQO (ORCPT
+        with ESMTP id S2407606AbeHATQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:14 -0400
+        Wed, 1 Aug 2018 15:16:17 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD97BD54;
-        Wed,  1 Aug 2018 17:29:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8491D4A;
+        Wed,  1 Aug 2018 17:29:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jane Wan <Jane.Wan@nokia.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Sean Lanigan <sean@lano.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 097/144] mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all ONFI parameter pages
-Date:   Wed,  1 Aug 2018 18:52:04 +0200
-Message-Id: <20180801164956.475599504@linuxfoundation.org>
+Subject: [PATCH 4.9 098/144] brcmfmac: Add support for bcm43364 wireless chipset
+Date:   Wed,  1 Aug 2018 18:52:05 +0200
+Message-Id: <20180801164956.529846552@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,57 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jane Wan <Jane.Wan@nokia.com>
+From: Sean Lanigan <sean@lano.id.au>
 
-[ Upstream commit a75bbe71a27875fdc61cde1af6d799037cef6bed ]
+[ Upstream commit 9c4a121e82634aa000a702c98cd6f05b27d6e186 ]
 
-Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
-read is not valid, the host should read redundant parameter page copies.
-Fix FSL NAND driver to read the two redundant copies which are mandatory
-in the specification.
+Add support for the BCM43364 chipset via an SDIO interface, as used in
+e.g. the Murata 1FX module.
 
-Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+The BCM43364 uses the same firmware as the BCM43430 (which is already
+included), the only difference is the omission of Bluetooth.
+
+However, the SDIO_ID for the BCM43364 is 02D0:A9A4, giving it a MODALIAS
+of sdio:c00v02D0dA9A4, which doesn't get recognised and hence doesn't
+load the brcmfmac module. Adding the 'A9A4' ID in the appropriate place
+triggers the brcmfmac driver to load, and then correctly use the
+firmware file 'brcmfmac43430-sdio.bin'.
+
+Signed-off-by: Sean Lanigan <sean@lano.id.au>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/fsl_ifc_nand.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c |    1 +
+ include/linux/mmc/sdio_ids.h                              |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/mtd/nand/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/fsl_ifc_nand.c
-@@ -372,9 +372,16 @@ static void fsl_ifc_cmdfunc(struct mtd_i
- 
- 	case NAND_CMD_READID:
- 	case NAND_CMD_PARAM: {
-+		/*
-+		 * For READID, read 8 bytes that are currently used.
-+		 * For PARAM, read all 3 copies of 256-bytes pages.
-+		 */
-+		int len = 8;
- 		int timing = IFC_FIR_OP_RB;
--		if (command == NAND_CMD_PARAM)
-+		if (command == NAND_CMD_PARAM) {
- 			timing = IFC_FIR_OP_RBCD;
-+			len = 256 * 3;
-+		}
- 
- 		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
- 			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
-@@ -384,12 +391,8 @@ static void fsl_ifc_cmdfunc(struct mtd_i
- 			  &ifc->ifc_nand.nand_fcr0);
- 		ifc_out32(column, &ifc->ifc_nand.row3);
- 
--		/*
--		 * although currently it's 8 bytes for READID, we always read
--		 * the maximum 256 bytes(for PARAM)
--		 */
--		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
--		ifc_nand_ctrl->read_bytes = 256;
-+		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
-+		ifc_nand_ctrl->read_bytes = len;
- 
- 		set_addr(mtd, 0, 0, 0);
- 		fsl_ifc_run_command(mtd);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+@@ -1099,6 +1099,7 @@ static const struct sdio_device_id brcmf
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43340),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43341),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43362),
++ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43364),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4335_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43430),
+--- a/include/linux/mmc/sdio_ids.h
++++ b/include/linux/mmc/sdio_ids.h
+@@ -34,6 +34,7 @@
+ #define SDIO_DEVICE_ID_BROADCOM_4335_4339	0x4335
+ #define SDIO_DEVICE_ID_BROADCOM_4339		0x4339
+ #define SDIO_DEVICE_ID_BROADCOM_43362		0xa962
++#define SDIO_DEVICE_ID_BROADCOM_43364		0xa9a4
+ #define SDIO_DEVICE_ID_BROADCOM_43430		0xa9a6
+ #define SDIO_DEVICE_ID_BROADCOM_4345		0x4345
+ #define SDIO_DEVICE_ID_BROADCOM_4354		0x4354
 
 
