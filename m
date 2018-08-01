@@ -2,130 +2,93 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D7BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D25C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD4D2083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:24:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD4D2083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 75F622083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:24:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOrRhGPX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F622083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388577AbeHAKIu (ORCPT
+        id S2388613AbeHAKI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:08:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34287 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387750AbeHAKIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:08:49 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7BFBD2074F; Wed,  1 Aug 2018 10:24:14 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A985020740;
-        Wed,  1 Aug 2018 10:24:13 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 10:24:13 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        f.fainelli@gmail.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 07/10] dt-bindings: phy: add DT binding for Microsemi
- Ocelot SerDes muxing
-Message-ID: <20180801082413.2mjm52vwxw3anun6@qschulz>
-References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
- <cd75c96640cc7fe306ee355acb1db85adb5b796f.1532954208.git-series.quentin.schulz@bootlin.com>
- <20180730133448.GD13198@lunn.ch>
+        Wed, 1 Aug 2018 06:08:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50856 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387721AbeHAKI7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 06:08:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bMXYbd/2W2b99gk+kc4NjTlHj7CX0Zf1ocahnBfBlfs=; b=IOrRhGPXS7d0WZKK/9u1NmwjW
+        nX5Toi8oFOo1dH6aoyv5wB7ruhwLmmMnoQTHmRchbk+UghYLBMkjjGAjFz0vMqUjHHTIeSUGQzJCO
+        Le53roGJmLIwvPKW0OS47iIUBWo+M7hiK8WBs3p+c1i4HRGZpkXuHqKZOKm6lKVGvgYea+0oOAg4C
+        FfL98u0dbQvOifCObID4iHBeoEMCdJGeF7u2IuzozCsSHoySs+yT+UdxwifM2jGbUxWkpWY8BozD3
+        QZn7fgBgRvolS8eHnpVZ/ZrJXe0hJBq20HeqrSTHbWPdMv+Lc8nWunIJZj3XbvuTOKqXKZcKptGwd
+        hnBVitvLA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fkmQR-0000lD-K4; Wed, 01 Aug 2018 08:24:07 +0000
+Date:   Wed, 1 Aug 2018 01:24:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Juergen Gross <jgross@suse.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        David Kershner <david.kershner@unisys.com>,
+        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/9] cdrom: Use struct scsi_sense_hdr internally
+Message-ID: <20180801082407.GC26378@infradead.org>
+References: <20180731195155.46664-1-keescook@chromium.org>
+ <20180731195155.46664-8-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aipy2f7xx2epmgoe"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180730133448.GD13198@lunn.ch>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180731195155.46664-8-keescook@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 31, 2018 at 12:51:52PM -0700, Kees Cook wrote:
+> This removes more casts of struct request_sense and uses the standard
+> struct scsi_sense_hdr instead. This also fixes any possible stale values
+> since the prior code did not check the sense length.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
---aipy2f7xx2epmgoe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good,
 
-Hi Andrew,
-
-On Mon, Jul 30, 2018 at 03:34:48PM +0200, Andrew Lunn wrote:
-> > +Required properties:
-> > +
-> > +- compatible: should be "mscc,vsc7514-serdes"
-> > +- #phy-cells : from the generic phy bindings, must be 3. The first num=
-ber
-> > +               defines the kind of Serdes (1 for SERDES1G_X, 6 for
-> > +	       SERDES6G_X), the second defines the macros in the specified
-> > +	       kind of Serdes (X for SERDES1G_X or SERDES6G_X) and the
-> > +	       last one defines the input port to use for a given SerDes
-> > +	       macro,
->=20
-> It looks like there are some space vs tab issues here.
->=20
-
-Yup.
-
-> > +
-> > +Example:
-> > +
-> > +	serdes: serdes {
->=20
-> Maybe this should be serdes-mux? The SERDES itself should have some
-> registers somewhere. If you ever decide to make use of phylink,
-> e.g. to support SFP, you are going to need to know if the SERDES is
-> up. So you might need to add the actual SERDES device, in addition to
-> the mux for the SERDES.
->=20
-
-I'm not sure to follow.
-
-To be honest, I might have mislead you. The whole configuration of the
-serdes is in the hsio register address space. For now, muxing is the
-only reason there is a driver for the serdes but there are other things
-that can be configured (though not used yet): de/serializer, input/output
-buffers, PLL, ... configuration registers for the SerDes.
-
-So I think I should remove the mention to muxing and just say in the
-cover letter and commit log it's for muxing the SerDes among other
-configurations.
-
-So I think we're good with the current driver and DT, just poor wording
-on my side for the commit log/cover letter. Do you agree?
-
-Quentin
-
---aipy2f7xx2epmgoe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlthbi0ACgkQhLiadT7g
-8aOyLA/9HtLbvOJgwUIZRSo5DLUGfIBcDAtRbCl1SaO8iLbCWTxaIoBuNXuNO8XI
-yUjneskEuXEAf0cuKpvrCmc34rK/ccezT1FoI7GSZ1avKosbpBo7CexZNoIPlp5S
-ABoiNORwbiTeZgth+ppgT1rSYB7RkxH0Rn3PeArX6jOdxUQz2iSZVfDK/6WmoHaA
-tWwfivFI428uVRq+dD5PRUW+eOF4EA+wnvGGL0I/Dl1Tsp6Z93hxdKLrkT6d6pxn
-n/JR5d9r/U7uyTJ20/oK+202y2/dG+5Iy6+UIUFH+Y5CuxeOroJJbLAfhk2yC2sI
-BgKLVqrH5i6UI1dWmdyC1YGKOyQE8WZ3oJ2Nht1VvYs92OKfEF8RIn9v788RdkgI
-bB7s4KM5hT9qnon+t2iw7q1UKmyTCcV1Mcdm1j/yNDWE4grK3DkeOQXBhBhpeZhf
-jFdKmNUkrTCrxtoOLlm7NYNGJLlY9gAmOJiXeGRmQZYnzpJvZ8vbPx0MzSSdoqqR
-wxuNrOC2pzv5zc5Vv33WDtC62Nz5IkZMdVqm4tDlI/HVgcdLgyf/UOuJIqhWd3Zy
-oSLPrS0OrWac72jJ3MYORq+EqxDcdHEqbUl6kaDNlXTwonZ7mHyS92IKdtUIrhdx
-jvHh8+OmPTht1cRXtWpoIvPyOIrEF/H3DV7b5Ikp1eHEDCnjsAg=
-=0DPF
------END PGP SIGNATURE-----
-
---aipy2f7xx2epmgoe--
+Reviewed-by: Christoph Hellwig <hch@lst.de>
