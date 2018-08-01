@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F410C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7E9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E6420841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E6420841
+	by mail.kernel.org (Postfix) with ESMTP id 08A392083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A392083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbeHAUH0 (ORCPT
+        id S2404483AbeHATDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46030 "EHLO
+        Wed, 1 Aug 2018 15:03:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404450AbeHATDk (ORCPT
+        with ESMTP id S2404254AbeHATDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:40 -0400
+        Wed, 1 Aug 2018 15:03:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 412E2104E;
-        Wed,  1 Aug 2018 17:00:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D10811D9;
+        Wed,  1 Aug 2018 17:08:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Thomas Hebb <tommyhebb@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 147/336] net: hns3: Fix for CMDQ and Misc. interrupt init order problem
-Date:   Wed,  1 Aug 2018 18:48:02 +0200
-Message-Id: <20180801165034.765495878@linuxfoundation.org>
+Subject: [PATCH 4.17 278/336] ath10k: search all IEs for variant before falling back
+Date:   Wed,  1 Aug 2018 18:50:13 +0200
+Message-Id: <20180801165039.663700166@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,76 +51,245 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Thomas Hebb <tommyhebb@gmail.com>
 
-[ Upstream commit eddf04626d1d6d0bcd01ac6a287e49f5ddb90a26 ]
+[ Upstream commit c8489668065a283d3027e86e877b103a87f99d22 ]
 
-When vf module is loading, the cmd queue initialization should
-happen before misc interrupt initialization, otherwise the misc
-interrupt handle will cause using uninitialized cmd queue problem.
-There is also the same issue when vf module is unloading.
+commit f2593cb1b291 ("ath10k: Search SMBIOS for OEM board file
+extension") added a feature to ath10k that allows Board Data File
+(BDF) conflicts between multiple devices that use the same device IDs
+but have different calibration requirements to be resolved by allowing
+a "variant" string to be stored in SMBIOS [and later device tree, added
+by commit d06f26c5c8a4 ("ath10k: search DT for qcom,ath10k-calibration-
+variant")] that gets appended to the ID stored in board-2.bin.
 
-This patch fixes it by adjusting the location of some function.
+This original patch had a regression, however. Namely that devices with
+a variant present in SMBIOS that didn't need custom BDFs could no longer
+find the default BDF, which has no variant appended. The patch was
+reverted and re-applied with a fix for this issue in commit 1657b8f84ed9
+("search SMBIOS for OEM board file extension").
 
-Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But the fix to fall back to a default BDF introduced another issue: the
+driver currently parses IEs in board-2.bin one by one, and for each one
+it first checks to see if it matches the ID with the variant appended.
+If it doesn't, it checks to see if it matches the "fallback" ID with no
+variant. If a matching BDF is found at any point during this search, the
+search is terminated and that BDF is used. The issue is that it's very
+possible (and is currently the case for board-2.bin files present in the
+ath10k-firmware repository) for the default BDF to occur in an earlier
+IE than the variant-specific BDF. In this case, the current code will
+happily choose the default BDF even though a better-matching BDF is
+present later in the file.
+
+This patch fixes the issue by first searching the entire file for the ID
+with variant, and searching for the fallback ID only if that search
+fails. It also includes some code cleanup in the area, as
+ath10k_core_fetch_board_data_api_n() no longer does its own string
+mangling to remove the variant from an ID, instead leaving that job to a
+new flag passed to ath10k_core_create_board_name().
+
+I've tested this patch on a QCA4019 and verified that the driver behaves
+correctly for 1) both fallback and variant BDFs present, 2) only fallback
+BDF present, and 3) no matching BDFs present.
+
+Fixes: 1657b8f84ed9 ("ath10k: search SMBIOS for OEM board file extension")
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |   16 +++++++-------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.c |  134 +++++++++++++++++----------------
+ 1 file changed, 72 insertions(+), 62 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1631,6 +1631,10 @@ static int hclgevf_init_hdev(struct hclg
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -1253,14 +1253,61 @@ out:
+ 	return ret;
+ }
  
- 	hclgevf_state_init(hdev);
- 
-+	ret = hclgevf_cmd_init(hdev);
-+	if (ret)
-+		goto err_cmd_init;
++static int ath10k_core_search_bd(struct ath10k *ar,
++				 const char *boardname,
++				 const u8 *data,
++				 size_t len)
++{
++	size_t ie_len;
++	struct ath10k_fw_ie *hdr;
++	int ret = -ENOENT, ie_id;
 +
- 	ret = hclgevf_misc_irq_init(hdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed(%d) to init Misc IRQ(vector0)\n",
-@@ -1638,10 +1642,6 @@ static int hclgevf_init_hdev(struct hclg
- 		goto err_misc_irq_init;
++	while (len > sizeof(struct ath10k_fw_ie)) {
++		hdr = (struct ath10k_fw_ie *)data;
++		ie_id = le32_to_cpu(hdr->id);
++		ie_len = le32_to_cpu(hdr->len);
++
++		len -= sizeof(*hdr);
++		data = hdr->data;
++
++		if (len < ALIGN(ie_len, 4)) {
++			ath10k_err(ar, "invalid length for board ie_id %d ie_len %zu len %zu\n",
++				   ie_id, ie_len, len);
++			return -EINVAL;
++		}
++
++		switch (ie_id) {
++		case ATH10K_BD_IE_BOARD:
++			ret = ath10k_core_parse_bd_ie_board(ar, data, ie_len,
++							    boardname);
++			if (ret == -ENOENT)
++				/* no match found, continue */
++				break;
++
++			/* either found or error, so stop searching */
++			goto out;
++		}
++
++		/* jump over the padding */
++		ie_len = ALIGN(ie_len, 4);
++
++		len -= ie_len;
++		data += ie_len;
++	}
++
++out:
++	/* return result of parse_bd_ie_board() or -ENOENT */
++	return ret;
++}
++
+ static int ath10k_core_fetch_board_data_api_n(struct ath10k *ar,
+ 					      const char *boardname,
++					      const char *fallback_boardname,
+ 					      const char *filename)
+ {
+-	size_t len, magic_len, ie_len;
+-	struct ath10k_fw_ie *hdr;
++	size_t len, magic_len;
+ 	const u8 *data;
+-	int ret, ie_id;
++	int ret;
+ 
+ 	ar->normal_mode_fw.board = ath10k_fetch_fw_file(ar,
+ 							ar->hw_params.fw.dir,
+@@ -1298,69 +1345,23 @@ static int ath10k_core_fetch_board_data_
+ 	data += magic_len;
+ 	len -= magic_len;
+ 
+-	while (len > sizeof(struct ath10k_fw_ie)) {
+-		hdr = (struct ath10k_fw_ie *)data;
+-		ie_id = le32_to_cpu(hdr->id);
+-		ie_len = le32_to_cpu(hdr->len);
+-
+-		len -= sizeof(*hdr);
+-		data = hdr->data;
+-
+-		if (len < ALIGN(ie_len, 4)) {
+-			ath10k_err(ar, "invalid length for board ie_id %d ie_len %zu len %zu\n",
+-				   ie_id, ie_len, len);
+-			ret = -EINVAL;
+-			goto err;
+-		}
++	/* attempt to find boardname in the IE list */
++	ret = ath10k_core_search_bd(ar, boardname, data, len);
+ 
+-		switch (ie_id) {
+-		case ATH10K_BD_IE_BOARD:
+-			ret = ath10k_core_parse_bd_ie_board(ar, data, ie_len,
+-							    boardname);
+-			if (ret == -ENOENT && ar->id.bdf_ext[0] != '\0') {
+-				/* try default bdf if variant was not found */
+-				char *s, *v = ",variant=";
+-				char boardname2[100];
+-
+-				strlcpy(boardname2, boardname,
+-					sizeof(boardname2));
+-
+-				s = strstr(boardname2, v);
+-				if (s)
+-					*s = '\0';  /* strip ",variant=%s" */
+-
+-				ret = ath10k_core_parse_bd_ie_board(ar, data,
+-								    ie_len,
+-								    boardname2);
+-			}
++	/* if we didn't find it and have a fallback name, try that */
++	if (ret == -ENOENT && fallback_boardname)
++		ret = ath10k_core_search_bd(ar, fallback_boardname, data, len);
+ 
+-			if (ret == -ENOENT)
+-				/* no match found, continue */
+-				break;
+-			else if (ret)
+-				/* there was an error, bail out */
+-				goto err;
+-
+-			/* board data found */
+-			goto out;
+-		}
+-
+-		/* jump over the padding */
+-		ie_len = ALIGN(ie_len, 4);
+-
+-		len -= ie_len;
+-		data += ie_len;
+-	}
+-
+-out:
+-	if (!ar->normal_mode_fw.board_data || !ar->normal_mode_fw.board_len) {
++	if (ret == -ENOENT) {
+ 		ath10k_err(ar,
+ 			   "failed to fetch board data for %s from %s/%s\n",
+ 			   boardname, ar->hw_params.fw.dir, filename);
+ 		ret = -ENODATA;
+-		goto err;
  	}
  
--	ret = hclgevf_cmd_init(hdev);
--	if (ret)
--		goto err_cmd_init;
--
- 	ret = hclgevf_configure(hdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed(%d) to fetch configuration\n", ret);
-@@ -1689,10 +1689,10 @@ static int hclgevf_init_hdev(struct hclg
++	if (ret)
++		goto err;
++
  	return 0;
  
- err_config:
--	hclgevf_cmd_uninit(hdev);
--err_cmd_init:
- 	hclgevf_misc_irq_uninit(hdev);
- err_misc_irq_init:
-+	hclgevf_cmd_uninit(hdev);
-+err_cmd_init:
- 	hclgevf_state_uninit(hdev);
- 	hclgevf_uninit_msi(hdev);
- err_irq_init:
-@@ -1702,9 +1702,9 @@ err_irq_init:
- 
- static void hclgevf_uninit_hdev(struct hclgevf_dev *hdev)
- {
--	hclgevf_cmd_uninit(hdev);
--	hclgevf_misc_irq_uninit(hdev);
- 	hclgevf_state_uninit(hdev);
-+	hclgevf_misc_irq_uninit(hdev);
-+	hclgevf_cmd_uninit(hdev);
- 	hclgevf_uninit_msi(hdev);
- 	hclgevf_pci_uninit(hdev);
+ err:
+@@ -1369,12 +1370,12 @@ err:
  }
+ 
+ static int ath10k_core_create_board_name(struct ath10k *ar, char *name,
+-					 size_t name_len)
++					 size_t name_len, bool with_variant)
+ {
+ 	/* strlen(',variant=') + strlen(ar->id.bdf_ext) */
+ 	char variant[9 + ATH10K_SMBIOS_BDF_EXT_STR_LENGTH] = { 0 };
+ 
+-	if (ar->id.bdf_ext[0] != '\0')
++	if (with_variant && ar->id.bdf_ext[0] != '\0')
+ 		scnprintf(variant, sizeof(variant), ",variant=%s",
+ 			  ar->id.bdf_ext);
+ 
+@@ -1400,17 +1401,26 @@ out:
+ 
+ static int ath10k_core_fetch_board_file(struct ath10k *ar)
+ {
+-	char boardname[100];
++	char boardname[100], fallback_boardname[100];
+ 	int ret;
+ 
+-	ret = ath10k_core_create_board_name(ar, boardname, sizeof(boardname));
++	ret = ath10k_core_create_board_name(ar, boardname,
++					    sizeof(boardname), true);
+ 	if (ret) {
+ 		ath10k_err(ar, "failed to create board name: %d", ret);
+ 		return ret;
+ 	}
+ 
++	ret = ath10k_core_create_board_name(ar, fallback_boardname,
++					    sizeof(boardname), false);
++	if (ret) {
++		ath10k_err(ar, "failed to create fallback board name: %d", ret);
++		return ret;
++	}
++
+ 	ar->bd_api = 2;
+ 	ret = ath10k_core_fetch_board_data_api_n(ar, boardname,
++						 fallback_boardname,
+ 						 ATH10K_BOARD_API2_FILE);
+ 	if (!ret)
+ 		goto success;
 
 
