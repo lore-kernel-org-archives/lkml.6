@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222B3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994BBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D807620844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D807620844
+	by mail.kernel.org (Postfix) with ESMTP id 5764220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5764220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405192AbeHATGK (ORCPT
+        id S2405203AbeHATGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48234 "EHLO
+        Wed, 1 Aug 2018 15:06:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATGK (ORCPT
+        with ESMTP id S2403884AbeHATGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:10 -0400
+        Wed, 1 Aug 2018 15:06:12 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5439D0A;
-        Wed,  1 Aug 2018 17:19:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F46DCC3;
+        Wed,  1 Aug 2018 17:19:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
+        stable@vger.kernel.org, Sean Lanigan <sean@lano.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 147/246] tty: Fix data race in tty_insert_flip_string_fixed_flag
-Date:   Wed,  1 Aug 2018 18:50:57 +0200
-Message-Id: <20180801165018.767325472@linuxfoundation.org>
+Subject: [PATCH 4.14 156/246] brcmfmac: Add support for bcm43364 wireless chipset
+Date:   Wed,  1 Aug 2018 18:51:06 +0200
+Message-Id: <20180801165019.195490377@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,96 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: DaeRyong Jeong <threeearcat@gmail.com>
+From: Sean Lanigan <sean@lano.id.au>
 
-[ Upstream commit b6da31b2c07c46f2dcad1d86caa835227a16d9ff ]
+[ Upstream commit 9c4a121e82634aa000a702c98cd6f05b27d6e186 ]
 
-Unlike normal serials, in pty layer, there is no guarantee that multiple
-threads don't insert input characters at the same time. If it is happened,
-tty_insert_flip_string_fixed_flag can be executed concurrently. This can
-lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
+Add support for the BCM43364 chipset via an SDIO interface, as used in
+e.g. the Murata 1FX module.
 
-Call sequences are as follows.
-CPU0                                    CPU1
-n_tty_ioctl_helper                      n_tty_ioctl_helper
-__start_tty                             tty_send_xchar
-tty_wakeup                              pty_write
-n_hdlc_tty_wakeup                       tty_insert_flip_string
-n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
-pty_write
-tty_insert_flip_string
-tty_insert_flip_string_fixed_flag
+The BCM43364 uses the same firmware as the BCM43430 (which is already
+included), the only difference is the omission of Bluetooth.
 
-To fix the race, acquire port->lock in pty_write() before it inserts input
-characters to tty buffer. It prevents multiple threads from inserting
-input characters concurrently.
+However, the SDIO_ID for the BCM43364 is 02D0:A9A4, giving it a MODALIAS
+of sdio:c00v02D0dA9A4, which doesn't get recognised and hence doesn't
+load the brcmfmac module. Adding the 'A9A4' ID in the appropriate place
+triggers the brcmfmac driver to load, and then correctly use the
+firmware file 'brcmfmac43430-sdio.bin'.
 
-The crash log is as follows:
-BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
-0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
-Write of size 1792 by task syz-executor0/30017
-CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
- 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
- ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
- ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
-Call Trace:
- __dump_stack lib/dump_stack.c:15 [inline]
- dump_stack+0xb3/0x110 lib/dump_stack.c:51
- kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
- print_address_description mm/kasan/report.c:194 [inline]
- kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
- kasan_report+0x36/0x40 mm/kasan/report.c:303
- check_memory_region_inline mm/kasan/kasan.c:292 [inline]
- check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
- memcpy+0x37/0x50 mm/kasan/kasan.c:335
- tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
- tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
- pty_write+0x7f/0xc0 drivers/tty/pty.c:115
- n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
- n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
- tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
- __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
- __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
- n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
- n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
- tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
- vfs_ioctl fs/ioctl.c:43 [inline]
- do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
- SYSC_ioctl fs/ioctl.c:694 [inline]
- SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
- entry_SYSCALL_64_fastpath+0x1f/0xbd
-
-Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sean Lanigan <sean@lano.id.au>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/pty.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c |    1 +
+ include/linux/mmc/sdio_ids.h                              |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -110,16 +110,19 @@ static void pty_unthrottle(struct tty_st
- static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
- {
- 	struct tty_struct *to = tty->link;
-+	unsigned long flags;
- 
- 	if (tty->stopped)
- 		return 0;
- 
- 	if (c > 0) {
-+		spin_lock_irqsave(&to->port->lock, flags);
- 		/* Stuff the data into the input queue of the other end */
- 		c = tty_insert_flip_string(to->port, buf, c);
- 		/* And shovel */
- 		if (c)
- 			tty_flip_buffer_push(to->port);
-+		spin_unlock_irqrestore(&to->port->lock, flags);
- 	}
- 	return c;
- }
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+@@ -1098,6 +1098,7 @@ static const struct sdio_device_id brcmf
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43340),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43341),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43362),
++ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43364),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4335_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43430),
+--- a/include/linux/mmc/sdio_ids.h
++++ b/include/linux/mmc/sdio_ids.h
+@@ -35,6 +35,7 @@
+ #define SDIO_DEVICE_ID_BROADCOM_4335_4339	0x4335
+ #define SDIO_DEVICE_ID_BROADCOM_4339		0x4339
+ #define SDIO_DEVICE_ID_BROADCOM_43362		0xa962
++#define SDIO_DEVICE_ID_BROADCOM_43364		0xa9a4
+ #define SDIO_DEVICE_ID_BROADCOM_43430		0xa9a6
+ #define SDIO_DEVICE_ID_BROADCOM_4345		0x4345
+ #define SDIO_DEVICE_ID_BROADCOM_43455		0xa9bf
 
 
