@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629C8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D30C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2495B2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2495B2083D
+	by mail.kernel.org (Postfix) with ESMTP id EDE922083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE922083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407696AbeHATQ5 (ORCPT
+        id S2407703AbeHATRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52540 "EHLO
+        Wed, 1 Aug 2018 15:17:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389856AbeHATQ4 (ORCPT
+        with ESMTP id S2389856AbeHATQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:56 -0400
+        Wed, 1 Aug 2018 15:16:59 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A861D57;
-        Wed,  1 Aug 2018 17:30:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46932D54;
+        Wed,  1 Aug 2018 17:30:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Yao <xiaoyao@rock-chips.com>,
-        Ziyuan <xzy.xu@rock-chips.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
+        stable@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 111/144] mmc: dw_mmc: update actual clock for mmc debugfs
-Date:   Wed,  1 Aug 2018 18:52:18 +0200
-Message-Id: <20180801164957.294239168@linuxfoundation.org>
+Subject: [PATCH 4.9 112/144] mmc: pwrseq: Use kmalloc_array instead of stack VLA
+Date:   Wed,  1 Aug 2018 18:52:19 +0200
+Message-Id: <20180801164957.346610720@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -53,57 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: "Tobin C. Harding" <me@tobin.cc>
 
-[ Upstream commit ff178981bd5fd1667f373098740cb1c6d6efa1ba ]
+[ Upstream commit 486e6661367b40f927aadbed73237693396cbf94 ]
 
-Respect the actual clock for mmc debugfs to help better debug
-the hardware.
+The use of stack Variable Length Arrays needs to be avoided, as they
+can be a vector for stack exhaustion, which can be both a runtime bug
+(kernel Oops) or a security flaw (overwriting memory beyond the
+stack). Also, in general, as code evolves it is easy to lose track of
+how big a VLA can get. Thus, we can end up having runtime failures
+that are hard to debug. As part of the directive[1] to remove all VLAs
+from the kernel, and build with -Wvla.
 
-mmc_host mmc0: Bus speed (slot 0) = 135475200Hz (slot req 150000000Hz,
-actual 135475200HZ div = 0)
+Currently driver is using a VLA declared using the number of descriptors.  This
+array is used to store integer values and is later used as an argument to
+`gpiod_set_array_value_cansleep()` This can be avoided by using
+`kmalloc_array()` to allocate memory for the array of integer values.  Memory is
+free'd before return from function.
 
-cat /sys/kernel/debug/mmc0/ios
-clock:          150000000 Hz
-actual clock:   135475200 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    9 (mmc HS200)
-signal voltage: 0 (1.80 V)
-driver type:    0 (driver type B)
+>From the code it appears that it is safe to sleep so we can use GFP_KERNEL
+(based _cansleep() suffix of function `gpiod_set_array_value_cansleep()`.
 
-Cc: Xiao Yao <xiaoyao@rock-chips.com>
-Cc: Ziyuan <xzy.xu@rock-chips.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+It can be expected that this patch will result in a small increase in overhead
+due to the use of `kmalloc_array()`
+
+[1] https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/dw_mmc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mmc/core/pwrseq_simple.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1164,6 +1164,8 @@ static void dw_mci_setup_bus(struct dw_m
- 	if (host->state == STATE_WAITING_CMD11_DONE)
- 		sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH;
+--- a/drivers/mmc/core/pwrseq_simple.c
++++ b/drivers/mmc/core/pwrseq_simple.c
+@@ -39,14 +39,18 @@ static void mmc_pwrseq_simple_set_gpios_
+ 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
  
-+	slot->mmc->actual_clock = 0;
+ 	if (!IS_ERR(reset_gpios)) {
+-		int i;
+-		int values[reset_gpios->ndescs];
++		int i, *values;
++		int nvalues = reset_gpios->ndescs;
+ 
+-		for (i = 0; i < reset_gpios->ndescs; i++)
++		values = kmalloc_array(nvalues, sizeof(int), GFP_KERNEL);
++		if (!values)
++			return;
 +
- 	if (!clock) {
- 		mci_writel(host, CLKENA, 0);
- 		mci_send_cmd(slot, sdmmc_cmd_bits, 0);
-@@ -1209,6 +1211,8 @@ static void dw_mci_setup_bus(struct dw_m
++		for (i = 0; i < nvalues; i++)
+ 			values[i] = value;
  
- 		/* keep the last clock value that was requested from core */
- 		slot->__clk_old = clock;
-+		slot->mmc->actual_clock = div ? ((host->bus_hz / div) >> 1) :
-+					  host->bus_hz;
+-		gpiod_set_array_value_cansleep(
+-			reset_gpios->ndescs, reset_gpios->desc, values);
++		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc, values);
++		kfree(values);
  	}
+ }
  
- 	host->current_speed = clock;
 
 
