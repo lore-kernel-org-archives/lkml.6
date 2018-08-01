@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74454C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFEFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30AF520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30AF520844
+	by mail.kernel.org (Postfix) with ESMTP id DF68B20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF68B20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404887AbeHATEt (ORCPT
+        id S2404899AbeHATEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46756 "EHLO
+        Wed, 1 Aug 2018 15:04:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404873AbeHATEt (ORCPT
+        with ESMTP id S2404873AbeHATEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:49 -0400
+        Wed, 1 Aug 2018 15:04:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 172BCCC3;
-        Wed,  1 Aug 2018 17:18:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01ACACCC;
+        Wed,  1 Aug 2018 17:18:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Jack Wang <jinpu.wang@profitbricks.com>,
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
         Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 127/246] md/raid1: add error handling of read error from FailFast device
-Date:   Wed,  1 Aug 2018 18:50:37 +0200
-Message-Id: <20180801165017.808784896@linuxfoundation.org>
+Subject: [PATCH 4.14 128/246] md: fix NULL dereference of mddev->pers in remove_and_add_spares()
+Date:   Wed,  1 Aug 2018 18:50:38 +0200
+Message-Id: <20180801165017.857751373@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,38 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gioh Kim <gi-oh.kim@profitbricks.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit b33d10624fdc15cdf1495f3f00481afccec76783 ]
+[ Upstream commit c42a0e2675721e1444f56e6132a07b7b1ec169ac ]
 
-Current handle_read_error() function calls fix_read_error()
-only if md device is RW and rdev does not include FailFast flag.
-It does not handle a read error from a RW device including
-FailFast flag.
+We met NULL pointer BUG as follow:
 
-I am not sure it is intended. But I found that write IO error
-sets rdev faulty. The md module should handle the read IO error and
-write IO error equally. So I think read IO error should set rdev faulty.
+[  151.760358] BUG: unable to handle kernel NULL pointer dereference at 0000000000000060
+[  151.761340] PGD 80000001011eb067 P4D 80000001011eb067 PUD 1011ea067 PMD 0
+[  151.762039] Oops: 0000 [#1] SMP PTI
+[  151.762406] Modules linked in:
+[  151.762723] CPU: 2 PID: 3561 Comm: mdadm-test Kdump: loaded Not tainted 4.17.0-rc1+ #238
+[  151.763542] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc26 04/01/2014
+[  151.764432] RIP: 0010:remove_and_add_spares.part.56+0x13c/0x3a0
+[  151.765061] RSP: 0018:ffffc90001d7fcd8 EFLAGS: 00010246
+[  151.765590] RAX: 0000000000000000 RBX: ffff88013601d600 RCX: 0000000000000000
+[  151.766306] RDX: 0000000000000000 RSI: ffff88013601d600 RDI: ffff880136187000
+[  151.767014] RBP: ffff880136187018 R08: 0000000000000003 R09: 0000000000000051
+[  151.767728] R10: ffffc90001d7fed8 R11: 0000000000000000 R12: ffff88013601d600
+[  151.768447] R13: ffff8801298b1300 R14: ffff880136187000 R15: 0000000000000000
+[  151.769160] FS:  00007f2624276700(0000) GS:ffff88013ae80000(0000) knlGS:0000000000000000
+[  151.769971] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  151.770554] CR2: 0000000000000060 CR3: 0000000111aac000 CR4: 00000000000006e0
+[  151.771272] Call Trace:
+[  151.771542]  md_ioctl+0x1df2/0x1e10
+[  151.771906]  ? __switch_to+0x129/0x440
+[  151.772295]  ? __schedule+0x244/0x850
+[  151.772672]  blkdev_ioctl+0x4bd/0x970
+[  151.773048]  block_ioctl+0x39/0x40
+[  151.773402]  do_vfs_ioctl+0xa4/0x610
+[  151.773770]  ? dput.part.23+0x87/0x100
+[  151.774151]  ksys_ioctl+0x70/0x80
+[  151.774493]  __x64_sys_ioctl+0x16/0x20
+[  151.774877]  do_syscall_64+0x5b/0x180
+[  151.775258]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Reviewed-by: Jack Wang <jinpu.wang@profitbricks.com>
+For raid6, when two disk of the array are offline, two spare disks can
+be added into the array. Before spare disks recovery completing,
+system reboot and mdadm thinks it is ok to restart the degraded
+array by md_ioctl(). Since disks in raid6 is not only_parity(),
+raid5_run() will abort, when there is no PPL feature or not setting
+'start_dirty_degraded' parameter. Therefore, mddev->pers is NULL.
+
+But, mddev->raid_disks has been set and it will not be cleared when
+raid5_run abort. md_ioctl() can execute cmd 'HOT_REMOVE_DISK' to
+remove a disk by mdadm, which will cause NULL pointer dereference
+in remove_and_add_spares() finally.
+
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid1.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/md/md.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2462,6 +2462,8 @@ static void handle_read_error(struct r1c
- 		fix_read_error(conf, r1_bio->read_disk,
- 			       r1_bio->sector, r1_bio->sectors);
- 		unfreeze_array(conf);
-+	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
-+		md_error(mddev, rdev);
- 	} else {
- 		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
- 	}
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -6498,6 +6498,9 @@ static int hot_remove_disk(struct mddev
+ 	char b[BDEVNAME_SIZE];
+ 	struct md_rdev *rdev;
+ 
++	if (!mddev->pers)
++		return -ENODEV;
++
+ 	rdev = find_rdev(mddev, dev);
+ 	if (!rdev)
+ 		return -ENXIO;
 
 
