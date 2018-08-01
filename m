@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98E5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A10C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3AD20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3AD20841
+	by mail.kernel.org (Postfix) with ESMTP id 3A46220840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A46220840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387737AbeHAURX (ORCPT
+        id S2387788AbeHAURg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:17:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
+        Wed, 1 Aug 2018 16:17:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404223AbeHATDg (ORCPT
+        with ESMTP id S2404216AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16F31FCD;
-        Wed,  1 Aug 2018 16:58:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 182AB1211;
+        Wed,  1 Aug 2018 17:08:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
+        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 112/336] soc: qcom: qmi: fix a buffer sizing bug
-Date:   Wed,  1 Aug 2018 18:47:27 +0200
-Message-Id: <20180801165033.438294313@linuxfoundation.org>
+Subject: [PATCH 4.17 243/336] i40e: avoid overflow in i40e_ptp_adjfreq()
+Date:   Wed,  1 Aug 2018 18:49:38 +0200
+Message-Id: <20180801165038.360068881@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,58 +52,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Elder <elder@linaro.org>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit 7df5ff258bd27900d516fea88da10d05602bf8c7 ]
+[ Upstream commit 830e0dd9996c4644e42412aa6c46ed8f8eab0cca ]
 
-In qmi_handle_init(), a buffer is allocated for to hold messages
-received through the handle's socket.  Any "normal" messages
-(expected by the caller) will have a header prepended, so the
-buffer size is adjusted to accomodate that.
+When operating at 1GbE, the base incval for the PTP clock is so large
+that multiplying it by numbers close to the max_adj can overflow the
+u64.
 
-The buffer must also be of sufficient size to receive control
-messages, so the size is increased if necessary to ensure these
-will fit.
+Rather than attempting to limit the max_adj to a value small enough to
+avoid overflow, instead calculate the incvalue adjustment based on the
+40GbE incvalue, and then multiply that by the scaling factor for the
+link speed.
 
-Unfortunately the calculation is done wrong, making it possible
-for the calculated buffer size to be too small to hold a "normal"
-message.  Specifically, if:
+This sacrifices a small amount of precision in the adjustment but we
+avoid erratic behavior of the clock due to the overflow caused if ppb is
+very near the maximum adjustment.
 
-  recv_buf_size > sizeof(struct qrtr_ctrl_pkt) - sizeof(struct qmi_header)
-		AND
-  recv_buf_size < sizeof(struct qrtr_ctrl_pkt)
-
-the current logic will use sizeof(struct qrtr_ctrl_pkt) as the
-receive buffer size, which is not enough to hold the maximum
-"normal" message plus its header.  Currently this problem occurs
-for (13 < recv_buf_size < 20).
-
-This patch corrects this.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/qcom/qmi_interface.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e.h     |    2 -
+ drivers/net/ethernet/intel/i40e/i40e_ptp.c |   41 +++++++++++++++++++----------
+ 2 files changed, 28 insertions(+), 15 deletions(-)
 
---- a/drivers/soc/qcom/qmi_interface.c
-+++ b/drivers/soc/qcom/qmi_interface.c
-@@ -639,10 +639,11 @@ int qmi_handle_init(struct qmi_handle *q
- 	if (ops)
- 		qmi->ops = *ops;
+--- a/drivers/net/ethernet/intel/i40e/i40e.h
++++ b/drivers/net/ethernet/intel/i40e/i40e.h
+@@ -608,7 +608,7 @@ struct i40e_pf {
+ 	unsigned long ptp_tx_start;
+ 	struct hwtstamp_config tstamp_config;
+ 	struct mutex tmreg_lock; /* Used to protect the SYSTIME registers. */
+-	u64 ptp_base_adj;
++	u32 ptp_adj_mult;
+ 	u32 tx_hwtstamp_timeouts;
+ 	u32 tx_hwtstamp_skipped;
+ 	u32 rx_hwtstamp_cleared;
+--- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
+@@ -40,9 +40,9 @@
+  * At 1Gb link, the period is multiplied by 20. (32ns)
+  * 1588 functionality is not supported at 100Mbps.
+  */
+-#define I40E_PTP_40GB_INCVAL 0x0199999999ULL
+-#define I40E_PTP_10GB_INCVAL 0x0333333333ULL
+-#define I40E_PTP_1GB_INCVAL  0x2000000000ULL
++#define I40E_PTP_40GB_INCVAL		0x0199999999ULL
++#define I40E_PTP_10GB_INCVAL_MULT	2
++#define I40E_PTP_1GB_INCVAL_MULT	20
  
-+	/* Make room for the header */
-+	recv_buf_size += sizeof(struct qmi_header);
-+	/* Must also be sufficient to hold a control packet */
- 	if (recv_buf_size < sizeof(struct qrtr_ctrl_pkt))
- 		recv_buf_size = sizeof(struct qrtr_ctrl_pkt);
--	else
--		recv_buf_size += sizeof(struct qmi_header);
+ #define I40E_PRTTSYN_CTL1_TSYNTYPE_V1  BIT(I40E_PRTTSYN_CTL1_TSYNTYPE_SHIFT)
+ #define I40E_PRTTSYN_CTL1_TSYNTYPE_V2  (2 << \
+@@ -130,17 +130,24 @@ static int i40e_ptp_adjfreq(struct ptp_c
+ 		ppb = -ppb;
+ 	}
  
- 	qmi->recv_buf_size = recv_buf_size;
- 	qmi->recv_buf = kzalloc(recv_buf_size, GFP_KERNEL);
+-	smp_mb(); /* Force any pending update before accessing. */
+-	adj = READ_ONCE(pf->ptp_base_adj);
+-
+-	freq = adj;
++	freq = I40E_PTP_40GB_INCVAL;
+ 	freq *= ppb;
+ 	diff = div_u64(freq, 1000000000ULL);
+ 
+ 	if (neg_adj)
+-		adj -= diff;
++		adj = I40E_PTP_40GB_INCVAL - diff;
+ 	else
+-		adj += diff;
++		adj = I40E_PTP_40GB_INCVAL + diff;
++
++	/* At some link speeds, the base incval is so large that directly
++	 * multiplying by ppb would result in arithmetic overflow even when
++	 * using a u64. Avoid this by instead calculating the new incval
++	 * always in terms of the 40GbE clock rate and then multiplying by the
++	 * link speed factor afterwards. This does result in slightly lower
++	 * precision at lower link speeds, but it is fairly minor.
++	 */
++	smp_mb(); /* Force any pending update before accessing. */
++	adj *= READ_ONCE(pf->ptp_adj_mult);
+ 
+ 	wr32(hw, I40E_PRTTSYN_INC_L, adj & 0xFFFFFFFF);
+ 	wr32(hw, I40E_PRTTSYN_INC_H, adj >> 32);
+@@ -467,6 +474,7 @@ void i40e_ptp_set_increment(struct i40e_
+ 	struct i40e_link_status *hw_link_info;
+ 	struct i40e_hw *hw = &pf->hw;
+ 	u64 incval;
++	u32 mult;
+ 
+ 	hw_link_info = &hw->phy.link_info;
+ 
+@@ -474,10 +482,10 @@ void i40e_ptp_set_increment(struct i40e_
+ 
+ 	switch (hw_link_info->link_speed) {
+ 	case I40E_LINK_SPEED_10GB:
+-		incval = I40E_PTP_10GB_INCVAL;
++		mult = I40E_PTP_10GB_INCVAL_MULT;
+ 		break;
+ 	case I40E_LINK_SPEED_1GB:
+-		incval = I40E_PTP_1GB_INCVAL;
++		mult = I40E_PTP_1GB_INCVAL_MULT;
+ 		break;
+ 	case I40E_LINK_SPEED_100MB:
+ 	{
+@@ -488,15 +496,20 @@ void i40e_ptp_set_increment(struct i40e_
+ 				 "1588 functionality is not supported at 100 Mbps. Stopping the PHC.\n");
+ 			warn_once++;
+ 		}
+-		incval = 0;
++		mult = 0;
+ 		break;
+ 	}
+ 	case I40E_LINK_SPEED_40GB:
+ 	default:
+-		incval = I40E_PTP_40GB_INCVAL;
++		mult = 1;
+ 		break;
+ 	}
+ 
++	/* The increment value is calculated by taking the base 40GbE incvalue
++	 * and multiplying it by a factor based on the link speed.
++	 */
++	incval = I40E_PTP_40GB_INCVAL * mult;
++
+ 	/* Write the new increment value into the increment register. The
+ 	 * hardware will not update the clock until both registers have been
+ 	 * written.
+@@ -505,7 +518,7 @@ void i40e_ptp_set_increment(struct i40e_
+ 	wr32(hw, I40E_PRTTSYN_INC_H, incval >> 32);
+ 
+ 	/* Update the base adjustement value. */
+-	WRITE_ONCE(pf->ptp_base_adj, incval);
++	WRITE_ONCE(pf->ptp_adj_mult, mult);
+ 	smp_mb(); /* Force the above update. */
+ }
+ 
 
 
