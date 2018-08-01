@@ -2,133 +2,85 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5ACC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67299C46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E52208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4WY1k+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E52208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 20696208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20696208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbeHAW4H (ORCPT
+        id S1732236AbeHAXC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 18:56:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbeHAW4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 18:56:07 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 1 Aug 2018 19:02:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58996 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726043AbeHAXC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 19:02:58 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 193E8208A3;
-        Wed,  1 Aug 2018 21:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533157706;
-        bh=dvd1bgd6Cp6l2Qnao5MXj+DB44/IYYzXa7d1T8QP2pI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O4WY1k+mYmAqVkW9h+Anmh24oz+qayYE8epqvll34b4aukSMFVELfEM+tY9LSC+RO
-         4aZv09HQzqucG4YYZcVJ5xoUfezuatm3Yj0DM1LWLUYODv2rMWQiLRbclKm6B5LDYA
-         762T1E405X5Gw57IHSMStKkauOonDiORrxMHD6/Q=
-Date:   Wed, 1 Aug 2018 23:08:23 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
- timer softirq
-Message-ID: <20180801210822.GA20627@lerouge>
-References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
- <alpine.DEB.2.21.1808011812160.1835@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808011812160.1835@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        by mx1.redhat.com (Postfix) with ESMTPS id 869B640241D5;
+        Wed,  1 Aug 2018 21:15:16 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 363862026D68;
+        Wed,  1 Aug 2018 21:15:16 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, stable@vger.kernel.org,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/8] drm/nouveau: Enable polling even if we have runtime PM
+Date:   Wed,  1 Aug 2018 17:14:52 -0400
+Message-Id: <20180801211459.7731-3-lyude@redhat.com>
+In-Reply-To: <20180801211459.7731-1-lyude@redhat.com>
+References: <20180801211459.7731-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 21:15:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 21:15:16 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 07:46:10PM +0200, Thomas Gleixner wrote:
-> On Wed, 1 Aug 2018, Frederic Weisbecker wrote:
-> > Before updating the full nohz tick or the idle time on IRQ exit, we
-> > check first if we are not in a nesting interrupt, whether the inner
-> > interrupt is a hard or a soft IRQ.
-> > 
-> > There is a historical reason for that: the dyntick idle mode used to
-> > reprogram the tick on IRQ exit, after softirq processing, and there was
-> > no point in doing that job in the outer nesting interrupt because the
-> > tick update will be performed through the end of the inner interrupt
-> > eventually, with even potential new timer updates.
-> > 
-> > One corner case could show up though: if an idle tick interrupts a softirq
-> > executing inline in the idle loop (through a call to local_bh_enable())
-> 
-> Where does this happen? Why is anything in the idle loop doing a
-> local_bh_disable/enable() pair?
-> 
-> Or are you talking about NOHZ FULL and arbitrary task context?
+Having runtime PM makes no difference on whether or not we want polling,
+and it's now safe to just enable polling unconditionally in drm_load()
+thanks to d61a5c106351 ("drm/nouveau: Fix deadlock on runtime suspend")
 
-It's about the idle loop. But I'm not aware of any example in practice, this is
-a purely theoretical, and more importantly it doesn't concern upstream anymore since
-we don't stop the tick from IRQ-tail anymore in dynticks-idle mode after Rafael's
-changes.
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> 
-> > after we entered in dynticks mode, the IRQ won't reprogram the tick
-> > because it assumes the softirq executes on an inner IRQ-tail. As a
-> > result we might put the CPU in sleep mode with the tick completely
-> > stopped whereas a timer can still be enqueued. Indeed there is no tick
-> > reprogramming in local_bh_enable(). We probably asssumed there was no bh
-> > disabled section in idle, although there didn't seem to be debug code
-> > ensuring that.
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 5fdc1fbe2ee5..ee2546db09c9 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -592,10 +592,11 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
+ 		pm_runtime_allow(dev->dev);
+ 		pm_runtime_mark_last_busy(dev->dev);
+ 		pm_runtime_put(dev->dev);
+-	} else {
+-		/* enable polling for external displays */
+-		drm_kms_helper_poll_enable(dev);
+ 	}
++
++	/* enable polling for connectors without hpd */
++	drm_kms_helper_poll_enable(dev);
++
+ 	return 0;
+ 
+ fail_dispinit:
+-- 
+2.17.1
 
-In fact I should remove this whole paragraph, it's about code history that's
-not relevant anymore and it confuses the whole explanation which should
-concern nohz_full only.
-
-> > 
-> > Nowadays the nesting interrupt optimization still stands but only concern
-> > full dynticks. The tick is stopped on IRQ exit in full dynticks mode
-> > and we want to wait for the end of the inner IRQ to reprogramm the tick.
-> > But in_interrupt() doesn't make a difference between softirqs executing
-> > on IRQ tail and those executing inline. What was to be considered a
-> > corner case in dynticks-idle mode now becomes a serious opportunity for
-> > a bug in full dynticks mode: if a tick interrupts a task executing
-> > softirq inline, the tick reprogramming will be ignored and we may exit
-> > to userspace after local_bh_enable() with an enqueued timer that will
-> > never fire.
-> > 
-> > To fix this, simply keep reprogramming the tick if we are in a hardirq
-> > interrupting softirq. We can still figure out a way later to restore
-> > this optimization while excluding inline softirq processing.
-> 
-> I'm not really happy with that 'fix' because what happens if:
-> 
->   ....
->   local_bh_enable()
->     do_softirq()
->       --> interrupt()
-> 	     tick_nohz_irq_exit();
->       arm_timer();
-> 
-> So if that new timer is the only one on the CPU, what is going to arm the
-> timer hardware which was just switched off in tick_nohz_irq_exit()?
-> 
-> I haven't looked deep enough, but a simple unconditional call to
-> tick_irq_exit() at the end of do_softirq() might do the trick.
-
-Nope it should be ok, nohz_full is supposed to support timers queued on the fly
-while the tick is stopped, we issue a self-IPI if necessary:
-
-    internal_add_timer() -> trigger_dyntick_cpu() -> wake_up_nohz_cpu()
-
-Thanks.
