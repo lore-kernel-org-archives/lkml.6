@@ -2,208 +2,222 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31094C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F2DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E8B20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:40:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLWmOomL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E8B20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E0D0220840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D0220840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387959AbeHAU1o (ORCPT
+        id S1732522AbeHAU3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:27:44 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37998 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387618AbeHAU1o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:27:44 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x17-v6so8304615pfh.5;
-        Wed, 01 Aug 2018 11:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cMGv6HIv+8fIXjftzc5RafosjzHXxwJg9TaV91GDe7o=;
-        b=gLWmOomLyfVJspSl8jCWonbb6G6P3NpkcU1M9GY1WrGjnovMuH7Vrn9XWtNctg5Gjs
-         lIfsHpgOagsfoKhlbxzYm1HDSIAMF3Wlh2BIDQ1sh6ciPviZ6E/rRD1k2NO8I4zP6Bul
-         SSTJGNg7FS78ixbSCeMOcKSLHAqT/MGEYlw9qWX8HqVg4+3w0FnBzvecE6Kp6tbNO9Mj
-         HcBWNDW0ZuhCdEI5VzakAXilXuk+0otRh69ueSpD5hsCXCWB7OV36jXAI8DxcjphOZBI
-         Wi01H9fwowDdaWxxhidNJnYs7eIuyI1hWmnmm5Cl8alabFRU8sdYqDDaiDiK/s4C6Aen
-         azcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=cMGv6HIv+8fIXjftzc5RafosjzHXxwJg9TaV91GDe7o=;
-        b=hVfyUg52CzHrTKHsxqgC2wUSTQvSPJoNRN+CJ6SyI6zNLeUUa3kQQcRDxpq//WFAhr
-         cGesrXR44qZppxw61MbeLN4i+jWL5K5k89UOa/gkPBMrC//oFWWe+83vQxhMsdX4NDSO
-         1OR4QXcS6JTrZXxlJae1ljVnUTmk8OyUzZnB1giX2gCv/JZCiNOtZzNVCZ0WGLANc4Zh
-         sAPKQbObNfRLB7iJX/UyF9Ds2ogy3XQ2H6j0jP9WaAWL6P8e17nH5lLmRDSyKoU2j1XK
-         2J6g4zN1w6RcMH2E/ORBIrMZY3LTxAPyyQa+a2YizLECg3SAVpJ57UcJZSe/n7rIz+IG
-         zKBg==
-X-Gm-Message-State: AOUpUlGLjU4+ZoNPirGRgIkJRUm3H1kLWsnPeou53hK3lOz84vTteJCy
-        FGopvc0mPotGH0LX+O9yR6gL6XOz
-X-Google-Smtp-Source: AAOMgpdDAetMghEDHsBM79P3Pn5PUgg0asL0lk8COK2fI5yxOVuWU+tx4YfQpuu9a3tU6fdzsdrOHw==
-X-Received: by 2002:a62:5dd7:: with SMTP id n84-v6mr28219833pfj.68.1533148838618;
-        Wed, 01 Aug 2018 11:40:38 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id z90-v6sm35016657pfk.85.2018.08.01.11.40.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 11:40:37 -0700 (PDT)
-Subject: Re: [PATCH v3 7/8] net: phy: Add support to configure clock in
- Broadcom iProc mdio mux
-To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <1533146186-8374-1-git-send-email-arun.parameswaran@broadcom.com>
- <1533146186-8374-8-git-send-email-arun.parameswaran@broadcom.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <0cc6db4f-7008-0ad3-58d7-9e93060f152f@gmail.com>
-Date:   Wed, 1 Aug 2018 11:40:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1533146186-8374-8-git-send-email-arun.parameswaran@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 1 Aug 2018 16:29:36 -0400
+Received: from mga04.intel.com ([192.55.52.120]:4447 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731600AbeHAU3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 16:29:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 11:42:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
+   d="scan'208";a="58935312"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Aug 2018 11:42:30 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tim C Chen <tim.c.chen@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Subject: [PATCH V3] x86/speculation: Support Enhanced IBRS on future CPUs
+Date:   Wed,  1 Aug 2018 11:42:25 -0700
+Message-Id: <1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2018 10:56 AM, Arun Parameswaran wrote:
-> Add support to configure the internal rate adjust register based on the
-> core clock supplied through device tree in the Broadcom iProc mdio mux.
-> 
-> The operating frequency of the mdio mux block is 11MHz. This is derrived
-> by dividing the clock to the mdio mux with the rate adjust register.
-> 
-> In some SoC's the default values of the rate adjust register do not yield
-> 11MHz. These SoC's are required to specify the clock via the device tree
-> for proper operation.
-> 
-> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
-> ---
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-[snip]
+Future Intel processors will support "Enhanced IBRS" which is an "always
+on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and never
+disabled.
 
->  static int iproc_mdio_wait_for_idle(void __iomem *base, bool result)
-> @@ -204,6 +225,20 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  
-> +	md->core_clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(md->core_clk)) {
-> +		if (PTR_ERR(md->core_clk) == -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +
-> +		md->core_clk = NULL;
+From the specification [1]:
 
-I would simplify this a bit:
+ "With enhanced IBRS, the predicted targets of indirect branches
+  executed cannot be controlled by software that was executed in a less
+  privileged predictor mode or on another logical processor. As a
+  result, software operating on a processor with enhanced IBRS need not
+  use WRMSR to set IA32_SPEC_CTRL.IBRS after every transition to a more
+  privileged predictor mode. Software can isolate predictor modes
+  effectively simply by setting the bit once. Software need not disable
+  enhanced IBRS prior to entering a sleep state such as MWAIT or HLT."
 
-	if (IS_ERR(md->core_clk) && PTR_ERR(md->core_clk) == -EPROBE_DEFER)
-		return PTR_ERR(md->core_clk);
-	else
-		md->core_clk = NULL;
+If Enhanced IBRS is supported by the processor then use it as the
+preferred spectre v2 mitigation mechanism instead of Retpoline. Intel's
+Retpoline white paper [2] states:
 
-	rc = clk_prepare_enable(md->core_clk);
+ "Retpoline is known to be an effective branch target injection (Spectre
+  variant 2) mitigation on Intel processors belonging to family 6
+  (enumerated by the CPUID instruction) that do not have support for
+  enhanced IBRS. On processors that support enhanced IBRS, it should be
+  used for mitigation instead of retpoline."
 
-and continue that way.
+The reason why Enhanced IBRS is the recommended mitigation on processors
+which support it is that these processors also support CET which
+provides a defense against ROP attacks. Retpoline is very similar to ROP
+techniques and might trigger false positives in the CET defense.
 
-> +	} else {
-> +		rc = clk_prepare_enable(md->core_clk);
-> +		if (rc) {
-> +			dev_err(&pdev->dev, "failed to enable core clk\n");
-> +			return rc;
-> +		}
-> +	}
-> +
->  	bus = md->mii_bus;
->  	bus->priv = md;
->  	bus->name = "iProc MDIO mux bus";
-> @@ -217,7 +252,7 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->  	rc = mdiobus_register(bus);
->  	if (rc) {
->  		dev_err(&pdev->dev, "mdiomux registration failed\n");
-> -		return rc;
-> +		goto out_clk;
->  	}
->  
->  	platform_set_drvdata(pdev, md);
-> @@ -237,6 +272,8 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
->  
->  out_register:
->  	mdiobus_unregister(bus);
-> +out_clk:
-> +	clk_disable_unprepare(md->core_clk);
->  	return rc;
->  }
->  
-> @@ -246,6 +283,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
->  
->  	mdio_mux_uninit(md->mux_handle);
->  	mdiobus_unregister(md->mii_bus);
-> +	clk_disable_unprepare(md->core_clk);
->  	platform_set_drvdata(pdev, NULL);
->  
->  	return 0;
-> 
+If Enhanced IBRS is selected as the mitigation technique for spectre v2,
+the IBRS bit in SPEC_CTRL MSR is set once at boot time and never
+cleared. Kernel also has to make sure that IBRS bit remains set after
+VMEXIT because the guest might have cleared the bit. This is already
+covered by the existing x86_spec_ctrl_set_guest() and
+x86_spec_ctrl_restore_host() speculation control functions.
 
+Enhanced IBRS still requires IBPB for full mitigation.
 
+[1] Speculative-Execution-Side-Channel-Mitigations.pdf
+[2] Retpoline-A-Branch-Target-Injection-Mitigation.pdf
+Both the documents are available at:
+https://bugzilla.kernel.org/show_bug.cgi?id=199511
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Originally-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Tim C Chen <tim.c.chen@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+---
+ arch/x86/include/asm/cpufeatures.h   |  1 +
+ arch/x86/include/asm/nospec-branch.h |  2 +-
+ arch/x86/kernel/cpu/bugs.c           | 23 +++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c         |  3 +++
+ 4 files changed, 26 insertions(+), 3 deletions(-)
+
+ Changes from V2 to V3:
+ 1. Improve commit message as suggested by Thomas i.e.
+    a. Use indentation when quoting from specification.
+    b. Refrain from using "this patch" and "we".
+    c. Restructuring and enhancing information on the real reason for
+       using Enhanced IBRS as the default spectre V2 mitigation technique.
+ 2. Remove "ibrs_enhanced" feature string as its not needed.
+ 3. Remove unnecessary WARN_ON_ONCE().
+ 4. Add explicit wrmsrl() after setting IBRS bit in x86_spec_ctrl_base.
+
+ Changes from V1 to V2:
+ 1. Explicitly spell out in the change log, the reason for using Enhanced
+     IBRS as the default spectre V2 mitigation technique instead of Retpoline.
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 5701f5cecd31..568fa20254f7 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -219,6 +219,7 @@
+ #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
++#define X86_FEATURE_IBRS_ENHANCED	( 7*32+29) /* Enhanced IBRS */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index f6f6c63da62f..fd2a8c1b88bc 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -214,7 +214,7 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
++	SPECTRE_V2_IBRS_ENHANCED,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 5c0ea39311fe..4e4be8512a77 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -130,6 +130,7 @@ static const char *spectre_v2_strings[] = {
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+ };
+ 
+ #undef pr_fmt
+@@ -349,6 +350,8 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	case SPECTRE_V2_CMD_FORCE:
+ 	case SPECTRE_V2_CMD_AUTO:
++		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED))
++			goto skip_retpoline_enable_ibrs;
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+@@ -385,7 +388,16 @@ static void __init spectre_v2_select_mitigation(void)
+ 					 SPECTRE_V2_RETPOLINE_MINIMAL;
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
++	goto enable_other_mitigations;
+ 
++skip_retpoline_enable_ibrs:
++	mode = SPECTRE_V2_IBRS_ENHANCED;
++
++	/* Ensure SPEC_CTRL_IBRS is set after VMEXIT from a guest */
++	x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++
++enable_other_mitigations:
+ 	spectre_v2_enabled = mode;
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+@@ -415,9 +427,16 @@ static void __init spectre_v2_select_mitigation(void)
+ 
+ 	/*
+ 	 * Retpoline means the kernel is safe because it has no indirect
+-	 * branches. But firmware isn't, so use IBRS to protect that.
++	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
++	 * speculation around firmware calls only when Enhanced IBRS isn't
++	 * supported.
++	 *
++	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
++	 * the user might select retpoline on the kernel command line and if
++	 * the CPU supports Enhanced IBRS, kernel might un-intentionally not
++	 * enable IBRS around firmware calls.
+ 	 */
+-	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..8ed73a46511f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1005,6 +1005,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
++	if (ia32_cap & ARCH_CAP_IBRS_ALL)
++		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
++
+ 	if (x86_match_cpu(cpu_no_meltdown))
+ 		return;
+ 
 -- 
-Florian
+2.7.4
+
