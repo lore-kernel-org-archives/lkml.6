@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D75FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1D7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31332083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31332083D
+	by mail.kernel.org (Postfix) with ESMTP id B389A2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B389A2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407954AbeHATSa (ORCPT
+        id S2407964AbeHATSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52856 "EHLO
+        Wed, 1 Aug 2018 15:18:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52864 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389912AbeHATSa (ORCPT
+        with ESMTP id S2390532AbeHATSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:30 -0400
+        Wed, 1 Aug 2018 15:18:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB881D57;
-        Wed,  1 Aug 2018 17:31:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB4DCD57;
+        Wed,  1 Aug 2018 17:31:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 138/144] ext4: fix inline data updates with checksums enabled
-Date:   Wed,  1 Aug 2018 18:52:45 +0200
-Message-Id: <20180801164958.866869440@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.9 139/144] ext4: check for allocation block validity with block group locked
+Date:   Wed,  1 Aug 2018 18:52:46 +0200
+Message-Id: <20180801164958.920203558@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,164 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 362eca70b53389bddf3143fe20f53dcce2cfdf61 upstream.
+commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef upstream.
 
-The inline data code was updating the raw inode directly; this is
-problematic since if metadata checksums are enabled,
-ext4_mark_inode_dirty() must be called to update the inode's checksum.
-In addition, the jbd2 layer requires that get_write_access() be called
-before the metadata buffer is modified.  Fix both of these problems.
+With commit 044e6e3d74a3: "ext4: don't update checksum of new
+initialized bitmaps" the buffer valid bit will get set without
+actually setting up the checksum for the allocation bitmap, since the
+checksum will get calculated once we actually allocate an inode or
+block.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200443
+If we are doing this, then we need to (re-)check the verified bit
+after we take the block group lock.  Otherwise, we could race with
+another process reading and verifying the bitmap, which would then
+complain about the checksum being invalid.
+
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |   19 +++++++++++--------
- fs/ext4/inode.c  |   16 +++++++---------
- 2 files changed, 18 insertions(+), 17 deletions(-)
+ fs/ext4/balloc.c |    3 +++
+ fs/ext4/ialloc.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -679,6 +679,10 @@ int ext4_try_to_write_inline_data(struct
- 		goto convert;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -378,6 +378,8 @@ static int ext4_validate_block_bitmap(st
+ 		return -EFSCORRUPTED;
+ 
+ 	ext4_lock_group(sb, block_group);
++	if (buffer_verified(bh))
++		goto verified;
+ 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
+ 			desc, bh))) {
+ 		ext4_unlock_group(sb, block_group);
+@@ -400,6 +402,7 @@ static int ext4_validate_block_bitmap(st
+ 		return -EFSCORRUPTED;
  	}
- 
-+	ret = ext4_journal_get_write_access(handle, iloc.bh);
-+	if (ret)
-+		goto out;
-+
- 	flags |= AOP_FLAG_NOFS;
- 
- 	page = grab_cache_page_write_begin(mapping, 0, flags);
-@@ -707,7 +711,7 @@ int ext4_try_to_write_inline_data(struct
- out_up_read:
- 	up_read(&EXT4_I(inode)->xattr_sem);
- out:
--	if (handle)
-+	if (handle && (ret != 1))
- 		ext4_journal_stop(handle);
- 	brelse(iloc.bh);
- 	return ret;
-@@ -749,6 +753,7 @@ int ext4_write_inline_data_end(struct in
- 
- 	ext4_write_unlock_xattr(inode, &no_expand);
- 	brelse(iloc.bh);
-+	mark_inode_dirty(inode);
- out:
- 	return copied;
+ 	set_buffer_verified(bh);
++verified:
+ 	ext4_unlock_group(sb, block_group);
+ 	return 0;
  }
-@@ -895,7 +900,6 @@ retry_journal:
- 		goto out;
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -88,6 +88,8 @@ static int ext4_validate_inode_bitmap(st
+ 		return -EFSCORRUPTED;
+ 
+ 	ext4_lock_group(sb, block_group);
++	if (buffer_verified(bh))
++		goto verified;
+ 	blk = ext4_inode_bitmap(sb, desc);
+ 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
+ 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
+@@ -105,6 +107,7 @@ static int ext4_validate_inode_bitmap(st
+ 		return -EFSBADCRC;
  	}
- 
--
- 	page = grab_cache_page_write_begin(mapping, 0, flags);
- 	if (!page) {
- 		ret = -ENOMEM;
-@@ -913,6 +917,9 @@ retry_journal:
- 		if (ret < 0)
- 			goto out_release_page;
- 	}
-+	ret = ext4_journal_get_write_access(handle, iloc.bh);
-+	if (ret)
-+		goto out_release_page;
- 
- 	up_read(&EXT4_I(inode)->xattr_sem);
- 	*pagep = page;
-@@ -933,7 +940,6 @@ int ext4_da_write_inline_data_end(struct
- 				  unsigned len, unsigned copied,
- 				  struct page *page)
- {
--	int i_size_changed = 0;
- 	int ret;
- 
- 	ret = ext4_write_inline_data_end(inode, pos, len, copied, page);
-@@ -951,10 +957,8 @@ int ext4_da_write_inline_data_end(struct
- 	 * But it's important to update i_size while still holding page lock:
- 	 * page writeout could otherwise come in and zero beyond i_size.
- 	 */
--	if (pos+copied > inode->i_size) {
-+	if (pos+copied > inode->i_size)
- 		i_size_write(inode, pos+copied);
--		i_size_changed = 1;
--	}
- 	unlock_page(page);
- 	put_page(page);
- 
-@@ -964,8 +968,7 @@ int ext4_da_write_inline_data_end(struct
- 	 * ordering of page lock and transaction start for journaling
- 	 * filesystems.
- 	 */
--	if (i_size_changed)
--		mark_inode_dirty(inode);
-+	mark_inode_dirty(inode);
- 
- 	return copied;
+ 	set_buffer_verified(bh);
++verified:
+ 	ext4_unlock_group(sb, block_group);
+ 	return 0;
  }
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1318,9 +1318,10 @@ static int ext4_write_end(struct file *f
- 	loff_t old_size = inode->i_size;
- 	int ret = 0, ret2;
- 	int i_size_changed = 0;
-+	int inline_data = ext4_has_inline_data(inode);
- 
- 	trace_ext4_write_end(inode, pos, len, copied);
--	if (ext4_has_inline_data(inode)) {
-+	if (inline_data) {
- 		ret = ext4_write_inline_data_end(inode, pos, len,
- 						 copied, page);
- 		if (ret < 0) {
-@@ -1348,7 +1349,7 @@ static int ext4_write_end(struct file *f
- 	 * ordering of page lock and transaction start for journaling
- 	 * filesystems.
- 	 */
--	if (i_size_changed)
-+	if (i_size_changed || inline_data)
- 		ext4_mark_inode_dirty(handle, inode);
- 
- 	if (pos + len > inode->i_size && ext4_can_truncate(inode))
-@@ -1422,6 +1423,7 @@ static int ext4_journalled_write_end(str
- 	int partial = 0;
- 	unsigned from, to;
- 	int size_changed = 0;
-+	int inline_data = ext4_has_inline_data(inode);
- 
- 	trace_ext4_journalled_write_end(inode, pos, len, copied);
- 	from = pos & (PAGE_SIZE - 1);
-@@ -1429,7 +1431,7 @@ static int ext4_journalled_write_end(str
- 
- 	BUG_ON(!ext4_handle_valid(handle));
- 
--	if (ext4_has_inline_data(inode)) {
-+	if (inline_data) {
- 		ret = ext4_write_inline_data_end(inode, pos, len,
- 						 copied, page);
- 		if (ret < 0) {
-@@ -1460,7 +1462,7 @@ static int ext4_journalled_write_end(str
- 	if (old_size < pos)
- 		pagecache_isize_extended(inode, old_size, pos);
- 
--	if (size_changed) {
-+	if (size_changed || inline_data) {
- 		ret2 = ext4_mark_inode_dirty(handle, inode);
- 		if (!ret)
- 			ret = ret2;
-@@ -1958,11 +1960,7 @@ static int __ext4_journalled_writepage(s
- 	}
- 
- 	if (inline_data) {
--		BUFFER_TRACE(inode_bh, "get write access");
--		ret = ext4_journal_get_write_access(handle, inode_bh);
--
--		err = ext4_handle_dirty_metadata(handle, inode, inode_bh);
--
-+		ret = ext4_mark_inode_dirty(handle, inode);
- 	} else {
- 		ret = ext4_walk_page_buffers(handle, page_bufs, 0, len, NULL,
- 					     do_journal_get_write_access);
 
 
