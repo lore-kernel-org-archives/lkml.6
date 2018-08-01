@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6315BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5661C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B642083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B642083D
+	by mail.kernel.org (Postfix) with ESMTP id 97E732083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E732083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733102AbeHAULe (ORCPT
+        id S2404393AbeHATDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:11:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404285AbeHATDi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404311AbeHATDh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 887311287;
-        Wed,  1 Aug 2018 17:10:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8DB0128F;
+        Wed,  1 Aug 2018 17:10:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 287/336] media: si470x: fix __be16 annotations
-Date:   Wed,  1 Aug 2018 18:50:22 +0200
-Message-Id: <20180801165040.008349141@linuxfoundation.org>
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 315/336] netdevsim: dont leak devlink resources
+Date:   Wed,  1 Aug 2018 18:50:50 +0200
+Message-Id: <20180801165041.098352498@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,58 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 90db5c829692a0a7845e977e45719b4699216bd4 ]
+[ Upstream commit c259b4fb33ee6e7667bf1d34bf0803b7c5fdbdce ]
 
-The annotations there are wrong as warned:
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24: warning: incorrect type in assignment (different base types)
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    expected unsigned short [unsigned] [short] <noident>
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    got restricted __be16 [usertype] <noident>
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
+Devlink resources registered with devlink_resource_register() have
+to be unregistered.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/radio/si470x/radio-si470x-i2c.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/netdevsim/devlink.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-+++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -91,7 +91,7 @@ MODULE_PARM_DESC(max_rds_errors, "RDS ma
-  */
- int si470x_get_register(struct si470x_device *radio, int regnr)
- {
--	u16 buf[READ_REG_NUM];
-+	__be16 buf[READ_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
-@@ -116,7 +116,7 @@ int si470x_get_register(struct si470x_de
- int si470x_set_register(struct si470x_device *radio, int regnr)
- {
- 	int i;
--	u16 buf[WRITE_REG_NUM];
-+	__be16 buf[WRITE_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
-@@ -146,7 +146,7 @@ int si470x_set_register(struct si470x_de
- static int si470x_get_all_registers(struct si470x_device *radio)
- {
- 	int i;
--	u16 buf[READ_REG_NUM];
-+	__be16 buf[READ_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
+--- a/drivers/net/netdevsim/devlink.c
++++ b/drivers/net/netdevsim/devlink.c
+@@ -206,6 +206,7 @@ void nsim_devlink_teardown(struct netdev
+ 		struct net *net = nsim_to_net(ns);
+ 		bool *reg_devlink = net_generic(net, nsim_devlink_id);
+ 
++		devlink_resources_unregister(ns->devlink, NULL);
+ 		devlink_unregister(ns->devlink);
+ 		devlink_free(ns->devlink);
+ 		ns->devlink = NULL;
 
 
