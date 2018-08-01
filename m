@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A654C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4439C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF232083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF232083D
+	by mail.kernel.org (Postfix) with ESMTP id 5E6052083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6052083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436489AbeHATRZ (ORCPT
+        id S2407790AbeHATR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52638 "EHLO
+        Wed, 1 Aug 2018 15:17:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404830AbeHATRY (ORCPT
+        with ESMTP id S2404830AbeHATR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:24 -0400
+        Wed, 1 Aug 2018 15:17:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9472ED54;
-        Wed,  1 Aug 2018 17:30:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1120D4A;
+        Wed,  1 Aug 2018 17:30:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Adam Radford <aradford@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 120/144] drm/gma500: fix psb_intel_lvds_mode_valid()s return type
-Date:   Wed,  1 Aug 2018 18:52:27 +0200
-Message-Id: <20180801164957.788508638@linuxfoundation.org>
+Subject: [PATCH 4.9 103/144] scsi: 3w-xxxx: fix a missing-check bug
+Date:   Wed,  1 Aug 2018 18:52:10 +0200
+Message-Id: <20180801164956.832111702@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,47 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit 2ea009095c6e7396915a1d0dd480c41f02985f79 ]
+[ Upstream commit 9899e4d3523faaef17c67141aa80ff2088f17871 ]
 
-The method struct drm_connector_helper_funcs::mode_valid is defined
-as returning an 'enum drm_mode_status' but the driver implementation
-for this method, psb_intel_lvds_mode_valid(), uses an 'int' for it.
+In tw_chrdev_ioctl(), the length of the data buffer is firstly copied
+from the userspace pointer 'argp' and saved to the kernel object
+'data_buffer_length'. Then a security check is performed on it to make
+sure that the length is not more than 'TW_MAX_IOCTL_SECTORS *
+512'. Otherwise, an error code -EINVAL is returned. If the security
+check is passed, the entire ioctl command is copied again from the
+'argp' pointer and saved to the kernel object 'tw_ioctl'. Then, various
+operations are performed on 'tw_ioctl' according to the 'cmd'. Given
+that the 'argp' pointer resides in userspace, a malicious userspace
+process can race to change the buffer length between the two
+copies. This way, the user can bypass the security check and inject
+invalid data buffer length. This can cause potential security issues in
+the following execution.
 
-Fix this by using 'enum drm_mode_status' for psb_intel_lvds_mode_valid().
+This patch checks for capable(CAP_SYS_ADMIN) in tw_chrdev_open() to
+avoid the above issues.
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180424131458.2060-1-luc.vanoostenryck@gmail.com
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/gma500/psb_intel_drv.h  |    2 +-
- drivers/gpu/drm/gma500/psb_intel_lvds.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/3w-xxxx.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/gma500/psb_intel_drv.h
-+++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
-@@ -255,7 +255,7 @@ extern int intelfb_remove(struct drm_dev
- extern bool psb_intel_lvds_mode_fixup(struct drm_encoder *encoder,
- 				      const struct drm_display_mode *mode,
- 				      struct drm_display_mode *adjusted_mode);
--extern int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+extern enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				     struct drm_display_mode *mode);
- extern int psb_intel_lvds_set_property(struct drm_connector *connector,
- 					struct drm_property *property,
---- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-@@ -343,7 +343,7 @@ static void psb_intel_lvds_restore(struc
- 	}
- }
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -1034,6 +1034,9 @@ static int tw_chrdev_open(struct inode *
  
--int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				 struct drm_display_mode *mode)
- {
- 	struct drm_psb_private *dev_priv = connector->dev->dev_private;
+ 	dprintk(KERN_WARNING "3w-xxxx: tw_ioctl_open()\n");
+ 
++	if (!capable(CAP_SYS_ADMIN))
++		return -EACCES;
++
+ 	minor_number = iminor(inode);
+ 	if (minor_number >= tw_device_extension_count)
+ 		return -ENODEV;
 
 
