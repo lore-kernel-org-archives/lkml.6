@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59528C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDF8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BFA2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BFA2083D
+	by mail.kernel.org (Postfix) with ESMTP id 93BB92083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BB92083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404457AbeHATDj (ORCPT
+        id S2387586AbeHAUIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+        Wed, 1 Aug 2018 16:08:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46152 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404373AbeHATDi (ORCPT
+        with ESMTP id S2404395AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:38 -0400
+        Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84A4B1050;
-        Wed,  1 Aug 2018 17:00:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20AC51244;
+        Wed,  1 Aug 2018 17:09:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 148/336] net: hns3: Fix the missing client list node initialization
-Date:   Wed,  1 Aug 2018 18:48:03 +0200
-Message-Id: <20180801165034.800719567@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Phillip Lougher <phillip@squashfs.org.uk>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 302/336] squashfs: be more careful about metadata corruption
+Date:   Wed,  1 Aug 2018 18:50:37 +0200
+Message-Id: <20180801165040.604756917@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,34 +53,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xi Wang <wangxi11@huawei.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 13562d1f5e2fbe2cf33b23a00abca3f71264c4ac ]
+commit 01cfb7937a9af2abb1136c7e89fbf3fd92952956 upstream.
 
-This patch fixes the missing initialization of the client list node
-in the hnae3_register_client() function.
+Anatoly Trosinenko reports that a corrupted squashfs image can cause a
+kernel oops.  It turns out that squashfs can end up being confused about
+negative fragment lengths.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+The regular squashfs_read_data() does check for negative lengths, but
+squashfs_read_metadata() did not, and the fragment size code just
+blindly trusted the on-disk value.  Fix both the fragment parsing and
+the metadata reading code.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3602,6 +3602,8 @@ static int __init hns3_init_module(void)
+---
+ fs/squashfs/cache.c       |    3 +++
+ fs/squashfs/file.c        |    8 ++++++--
+ fs/squashfs/fragment.c    |    4 +---
+ fs/squashfs/squashfs_fs.h |    6 ++++++
+ 4 files changed, 16 insertions(+), 5 deletions(-)
+
+--- a/fs/squashfs/cache.c
++++ b/fs/squashfs/cache.c
+@@ -350,6 +350,9 @@ int squashfs_read_metadata(struct super_
  
- 	client.ops = &client_ops;
+ 	TRACE("Entered squashfs_read_metadata [%llx:%x]\n", *block, *offset);
  
-+	INIT_LIST_HEAD(&client.node);
++	if (unlikely(length < 0))
++		return -EIO;
 +
- 	ret = hnae3_register_client(&client);
- 	if (ret)
- 		return ret;
+ 	while (length) {
+ 		entry = squashfs_cache_get(sb, msblk->block_cache, *block, 0);
+ 		if (entry->error) {
+--- a/fs/squashfs/file.c
++++ b/fs/squashfs/file.c
+@@ -194,7 +194,11 @@ static long long read_indexes(struct sup
+ 		}
+ 
+ 		for (i = 0; i < blocks; i++) {
+-			int size = le32_to_cpu(blist[i]);
++			int size = squashfs_block_size(blist[i]);
++			if (size < 0) {
++				err = size;
++				goto failure;
++			}
+ 			block += SQUASHFS_COMPRESSED_SIZE_BLOCK(size);
+ 		}
+ 		n -= blocks;
+@@ -367,7 +371,7 @@ static int read_blocklist(struct inode *
+ 			sizeof(size));
+ 	if (res < 0)
+ 		return res;
+-	return le32_to_cpu(size);
++	return squashfs_block_size(size);
+ }
+ 
+ /* Copy data into page cache  */
+--- a/fs/squashfs/fragment.c
++++ b/fs/squashfs/fragment.c
+@@ -61,9 +61,7 @@ int squashfs_frag_lookup(struct super_bl
+ 		return size;
+ 
+ 	*fragment_block = le64_to_cpu(fragment_entry.start_block);
+-	size = le32_to_cpu(fragment_entry.size);
+-
+-	return size;
++	return squashfs_block_size(fragment_entry.size);
+ }
+ 
+ 
+--- a/fs/squashfs/squashfs_fs.h
++++ b/fs/squashfs/squashfs_fs.h
+@@ -129,6 +129,12 @@
+ 
+ #define SQUASHFS_COMPRESSED_BLOCK(B)	(!((B) & SQUASHFS_COMPRESSED_BIT_BLOCK))
+ 
++static inline int squashfs_block_size(__le32 raw)
++{
++	u32 size = le32_to_cpu(raw);
++	return (size >> 25) ? -EIO : size;
++}
++
+ /*
+  * Inode number ops.  Inodes consist of a compressed block number, and an
+  * uncompressed offset within that block
 
 
