@@ -6,32 +6,31 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B52C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30099C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D32220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D32220844
+	by mail.kernel.org (Postfix) with ESMTP id E745720844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E745720844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388960AbeHAMfI (ORCPT
+        id S2388928AbeHAMfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 08:35:08 -0400
-Received: from nbd.name ([46.4.11.11]:55692 "EHLO nbd.name"
+Received: from nbd.name ([46.4.11.11]:55698 "EHLO nbd.name"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388688AbeHAMfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388505AbeHAMfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 08:35:07 -0400
 From:   John Crispin <john@phrozen.org>
 To:     Alban Bedel <albeu@free.fr>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        John Crispin <john@phrozen.org>, Rob Herring <robh@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH V2 1/3] dt-bindings: phy-qcom-ipq4019-usb: add binding document
-Date:   Wed,  1 Aug 2018 12:49:39 +0200
-Message-Id: <20180801104941.29432-2-john@phrozen.org>
+        John Crispin <john@phrozen.org>
+Subject: [PATCH V2 3/3] qcom: ipq4019: add USB devicetree nodes
+Date:   Wed,  1 Aug 2018 12:49:41 +0200
+Message-Id: <20180801104941.29432-4-john@phrozen.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180801104941.29432-1-john@phrozen.org>
 References: <20180801104941.29432-1-john@phrozen.org>
@@ -40,44 +39,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the binding documentation for the HS/SS USB PHY found
-inside Qualcomm Dakota SoCs.
+This patch makes USB work on the Dakota EVB.
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
 Signed-off-by: John Crispin <john@phrozen.org>
 ---
- .../bindings/phy/phy-qcom-ipq4019-usb.txt           | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 20 +++++++
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 76 +++++++++++++++++++++++++++
+ 2 files changed, 96 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt b/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
-new file mode 100644
-index 000000000000..320a596c45b4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-qcom-ipq4019-usb.txt
-@@ -0,0 +1,21 @@
-+Qualcom Dakota HS/SS USB PHY
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+index 418f9a022336..0c226de1c672 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+@@ -109,5 +109,25 @@
+ 		wifi@a800000 {
+ 			status = "ok";
+ 		};
 +
-+Required properties:
-+ - compatible: "qcom,ipq4019-usb-ss-phy",
-+	       "qcom,ipq4019-usb-hs-phy"
-+ - reg: offset and length of the registers
-+ - #phy-cells: should be 0
-+ - resets: the reset controllers as listed below
-+ - reset-names: the names of the reset controllers
-+	"por" - the POR reset line for SS and HS phys
-+	"srif" - the SRIF reset line for HS phys
-+Example:
++		usb3_ss_phy: usb-phy@9a000 {
++			status = "ok";
++		};
 +
-+usb-phy@a8000 {
-+	compatible = "qcom,ipq4019-usb-hs-phy";
-+	phy-cells = <0>;
-+	reg = <0xa8000 0x40>;
-+	resets = <&gcc USB2_HSPHY_POR_ARES>,
-+		 <&gcc USB2_HSPHY_S_ARES>;
-+	reset-names = "por", "srif";
-+};
++		usb3_hs_phy: usb-phy@a6000 {
++			status = "ok";
++		};
++
++		usb3: usb3@8af8800 {
++			status = "ok";
++		};
++
++		usb2_hs_phy: usb-phy@a8000 {
++			status = "ok";
++		};
++
++		usb2: usb2@60f8800 {
++			status = "ok";
++		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index 4620beafa84d..2ef20749b446 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -553,5 +553,81 @@
+ 					  "legacy";
+ 			status = "disabled";
+ 		};
++
++		usb3_ss_phy: usb-phy@9a000 {
++			compatible = "qcom,ipq4019-usb-ss-phy";
++			#phy-cells = <0>;
++			reg = <0x9a000 0x800>;
++			reg-names = "phy_base";
++			resets = <&gcc USB3_UNIPHY_PHY_ARES>;
++			reset-names = "por";
++			status = "disabled";
++		};
++
++		usb3_hs_phy: usb-phy@a6000 {
++			compatible = "qcom,ipq4019-usb-hs-phy";
++			#phy-cells = <0>;
++			reg = <0xa6000 0x40>;
++			reg-names = "phy_base";
++			resets = <&gcc USB3_HSPHY_POR_ARES>,
++				 <&gcc USB3_HSPHY_S_ARES>;
++			reset-names = "por", "srif";
++			status = "disabled";
++		};
++
++		usb3@8af8800 {
++			compatible = "qcom,dwc3";
++			reg = <0x8af8800 0x100>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			clocks = <&gcc GCC_USB3_MASTER_CLK>,
++				 <&gcc GCC_USB3_SLEEP_CLK>,
++				 <&gcc GCC_USB3_MOCK_UTMI_CLK>;
++			clock-names = "master", "sleep", "mock_utmi";
++			ranges;
++			status = "disabled";
++
++			dwc3@8a00000 {
++				compatible = "snps,dwc3";
++				reg = <0x8a00000 0xf8000>;
++				interrupts = <0 132 0>;
++				phys = <&usb3_hs_phy>, <&usb3_ss_phy>;
++				phy-names = "usb2-phy", "usb3-phy";
++				dr_mode = "host";
++			};
++		};
++
++		usb2_hs_phy: usb-phy@a8000 {
++			compatible = "qcom,ipq4019-usb-hs-phy";
++			#phy-cells = <0>;
++			reg = <0xa8000 0x40>;
++			reg-names = "phy_base";
++			resets = <&gcc USB2_HSPHY_POR_ARES>,
++				 <&gcc USB2_HSPHY_S_ARES>;
++			reset-names = "por", "srif";
++			status = "disabled";
++		};
++
++		usb2@60f8800 {
++			compatible = "qcom,dwc3";
++			reg = <0x60f8800 0x100>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			clocks = <&gcc GCC_USB2_MASTER_CLK>,
++				 <&gcc GCC_USB2_SLEEP_CLK>,
++				 <&gcc GCC_USB2_MOCK_UTMI_CLK>;
++			clock-names = "master", "sleep", "mock_utmi";
++			ranges;
++			status = "disabled";
++
++			dwc3@6000000 {
++				compatible = "snps,dwc3";
++				reg = <0x6000000 0xf8000>;
++				interrupts = <0 136 0>;
++				phys = <&usb2_hs_phy>;
++				phy-names = "usb2-phy";
++				dr_mode = "host";
++			};
++		};
+ 	};
+ };
 -- 
 2.11.0
 
