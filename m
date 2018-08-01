@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC404C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3A82083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3A82083D
+	by mail.kernel.org (Postfix) with ESMTP id 615632083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615632083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406415AbeHATKZ (ORCPT
+        id S2406423AbeHATK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:10:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50996 "EHLO
+        Wed, 1 Aug 2018 15:10:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389790AbeHATKZ (ORCPT
+        with ESMTP id S2389790AbeHATK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:10:25 -0400
+        Wed, 1 Aug 2018 15:10:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D459D40;
-        Wed,  1 Aug 2018 17:23:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4CCA1D2F;
+        Wed,  1 Aug 2018 17:23:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 197/246] soc: imx: gpcv2: Do not pass static memory as platform data
-Date:   Wed,  1 Aug 2018 18:51:47 +0200
-Message-Id: <20180801165021.152438216@linuxfoundation.org>
+Subject: [PATCH 4.14 188/246] drm/gma500: fix psb_intel_lvds_mode_valid()s return type
+Date:   Wed,  1 Aug 2018 18:51:38 +0200
+Message-Id: <20180801165020.711203656@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -54,78 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-[ Upstream commit 050f810e238f268670f14a8f8b793ba2dbf2e92f ]
+[ Upstream commit 2ea009095c6e7396915a1d0dd480c41f02985f79 ]
 
-Platform device core assumes the ownership of dev.platform_data as
-well as that it is dynamically allocated and it will try to kfree it
-as a part of platform_device_release(). Change the code to use
-platform_device_add_data() n instead of a pointer to a static memory
-to avoid causing a BUG() when calling platform_device_put().
+The method struct drm_connector_helper_funcs::mode_valid is defined
+as returning an 'enum drm_mode_status' but the driver implementation
+for this method, psb_intel_lvds_mode_valid(), uses an 'int' for it.
 
-The problem can be reproduced by artificially enabling the error path
-of platform_device_add() call (around line 357).
+Fix this by using 'enum drm_mode_status' for psb_intel_lvds_mode_valid().
 
-Note that this change also allows us to constify imx7_pgc_domains,
-since we no longer need to be able to modify it.
-
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180424131458.2060-1-luc.vanoostenryck@gmail.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/imx/gpcv2.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/gma500/psb_intel_drv.h  |    2 +-
+ drivers/gpu/drm/gma500/psb_intel_lvds.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/soc/imx/gpcv2.c
-+++ b/drivers/soc/imx/gpcv2.c
-@@ -155,7 +155,7 @@ static int imx7_gpc_pu_pgc_sw_pdn_req(st
- 	return imx7_gpc_pu_pgc_sw_pxx_req(genpd, false);
+--- a/drivers/gpu/drm/gma500/psb_intel_drv.h
++++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
+@@ -255,7 +255,7 @@ extern int intelfb_remove(struct drm_dev
+ extern bool psb_intel_lvds_mode_fixup(struct drm_encoder *encoder,
+ 				      const struct drm_display_mode *mode,
+ 				      struct drm_display_mode *adjusted_mode);
+-extern int psb_intel_lvds_mode_valid(struct drm_connector *connector,
++extern enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
+ 				     struct drm_display_mode *mode);
+ extern int psb_intel_lvds_set_property(struct drm_connector *connector,
+ 					struct drm_property *property,
+--- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
++++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
+@@ -343,7 +343,7 @@ static void psb_intel_lvds_restore(struc
+ 	}
  }
  
--static struct imx7_pgc_domain imx7_pgc_domains[] = {
-+static const struct imx7_pgc_domain imx7_pgc_domains[] = {
- 	[IMX7_POWER_DOMAIN_MIPI_PHY] = {
- 		.genpd = {
- 			.name      = "mipi-phy",
-@@ -321,11 +321,6 @@ static int imx_gpcv2_probe(struct platfo
- 			continue;
- 		}
- 
--		domain = &imx7_pgc_domains[domain_index];
--		domain->regmap = regmap;
--		domain->genpd.power_on  = imx7_gpc_pu_pgc_sw_pup_req;
--		domain->genpd.power_off = imx7_gpc_pu_pgc_sw_pdn_req;
--
- 		pd_pdev = platform_device_alloc("imx7-pgc-domain",
- 						domain_index);
- 		if (!pd_pdev) {
-@@ -334,7 +329,20 @@ static int imx_gpcv2_probe(struct platfo
- 			return -ENOMEM;
- 		}
- 
--		pd_pdev->dev.platform_data = domain;
-+		ret = platform_device_add_data(pd_pdev,
-+					       &imx7_pgc_domains[domain_index],
-+					       sizeof(imx7_pgc_domains[domain_index]));
-+		if (ret) {
-+			platform_device_put(pd_pdev);
-+			of_node_put(np);
-+			return ret;
-+		}
-+
-+		domain = pd_pdev->dev.platform_data;
-+		domain->regmap = regmap;
-+		domain->genpd.power_on  = imx7_gpc_pu_pgc_sw_pup_req;
-+		domain->genpd.power_off = imx7_gpc_pu_pgc_sw_pdn_req;
-+
- 		pd_pdev->dev.parent = dev;
- 		pd_pdev->dev.of_node = np;
- 
+-int psb_intel_lvds_mode_valid(struct drm_connector *connector,
++enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
+ 				 struct drm_display_mode *mode)
+ {
+ 	struct drm_psb_private *dev_priv = connector->dev->dev_private;
 
 
