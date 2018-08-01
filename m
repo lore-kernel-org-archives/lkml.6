@@ -3,104 +3,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D6AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EB7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A62B208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:19:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A62B208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 662AC208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:20:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662AC208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389542AbeHAQFQ (ORCPT
+        id S2389586AbeHAQGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:05:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389448AbeHAQFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:05:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 871BA40241C0;
-        Wed,  1 Aug 2018 14:19:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5175C2026D68;
-        Wed,  1 Aug 2018 14:19:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed,  1 Aug 2018 16:19:17 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 16:19:15 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     =?iso-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] prctl: add PR_[GS]ET_KILLABLE
-Message-ID: <20180801141914.GA21248@redhat.com>
-References: <20180730075241.24002-1-j@bitron.ch>
- <20180731070337.61004-1-j@bitron.ch>
- <20180731143949.GA1890@redhat.com>
- <f21a22c9730ab455504f58a5fbda72cba0eb1227.camel@bitron.ch>
+        Wed, 1 Aug 2018 12:06:06 -0400
+Received: from fieldses.org ([173.255.197.46]:33880 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389547AbeHAQGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 12:06:06 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 2869A1EF5; Wed,  1 Aug 2018 10:20:07 -0400 (EDT)
+Date:   Wed, 1 Aug 2018 10:20:07 -0400
+From:   Bruce Fields <bfields@fieldses.org>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        trond.myklebust@hammerspace.com,
+        Anna Schumaker <anna.schumaker@netapp.com>, jlayton@kernel.org,
+        ebiggers@google.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: [PATCH] sunrpc: remove redundant variables
+ 'checksumlen','blocksize' and 'data'
+Message-ID: <20180801142007.GE16651@fieldses.org>
+References: <20180801062810.19752-1-yuehaibing@huawei.com>
+ <9BA49886-5754-480E-BBB3-CC76E5A2C3B7@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f21a22c9730ab455504f58a5fbda72cba0eb1227.camel@bitron.ch>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 14:19:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 14:19:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+In-Reply-To: <9BA49886-5754-480E-BBB3-CC76E5A2C3B7@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31, J�rg Billeter wrote:
->
-> > Could you explain your use-case? Why a shell wants to use
-> > CLONE_NEWPID?
->
-> To guarantee that there won't be any runaway processes, i.e., ensure
-> that no descendants (background helper daemons or misbehaving
-> processes) survive when the child process is terminated.
+On Wed, Aug 01, 2018 at 10:15:29AM -0400, Chuck Lever wrote:
+> 
+> 
+> > On Aug 1, 2018, at 2:28 AM, YueHaibing <yuehaibing@huawei.com> wrote:
+> > 
+> > Variables 'checksumlen','blocksize' and 'data' are being assigned,
+> > but are never used,hence they are redundant and can be removed.
+> > 
+> > fix fllowing warning:
+> 
+> ^fllowing^following
+> 
+> For the svc_rdma.c part:
+> 
+> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
 
-We already have PR_SET_CHILD_SUBREAPER.
+Thanks.--b.
 
-Perhaps we can finally add PR_KILL_MY_DESCENDANTS_ON_EXIT? This was already
-discussed some time ago, but I can't find the previous discussion... Simple
-to implement.
-
-> And to prevent
-> children from killing their ancestors.
-
-OK, this is the only reason for CLONE_NEWPID which I can understand so far.
-Not that I understand why this is that useful ;)
-
-> > >  * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
-> > >    itself, it's not possible to implement the stop action in a custom
-> > >    SIGTSTP handler.
-> >
-> > Yes. So may be we actually want to change __isig() paths to use
-> > SEND_SIG_FORCED (this is not that simple), or perhaps we can change
-> > __send_signal() to not drop SIGSTOP sent to itself, or may be we can even
-> > introduce SIG_DFL_EVEN_IF_INIT, I dunno.
->
-> In my opinion, my patch is much simpler and also more general as it
-
-Yes, yes, let me repeat that I am not arguing with your patch, I am just trying
-to understand what
-
-> > I can't understand this. An application should be changed anyway to do
-> > PR_SET_KILLABLE?
->
-> PR_SET_KILLABLE can be called (e.g., by the shell) between clone() and
-> execve().
-
-OK, this is true.
-
-Oleg.
-
+> 
+> 
+> > net/sunrpc/auth_gss/gss_krb5_wrap.c:443:7: warning: variable ‘blocksize’ set but not used [-Wunused-but-set-variable]
+> > net/sunrpc/auth_gss/gss_krb5_crypto.c:376:15: warning: variable ‘checksumlen’ set but not used [-Wunused-but-set-variable]
+> > net/sunrpc/xprtrdma/svc_rdma.c:97:9: warning: variable ‘data’ set but not used [-Wunused-but-set-variable]
+> > 
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> > net/sunrpc/auth_gss/gss_krb5_crypto.c | 2 --
+> > net/sunrpc/auth_gss/gss_krb5_wrap.c   | 2 --
+> > net/sunrpc/xprtrdma/svc_rdma.c        | 2 --
+> > 3 files changed, 6 deletions(-)
+> > 
+> > diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > index 8654494..84a16fd 100644
+> > --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > @@ -373,7 +373,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
+> > 	struct scatterlist sg[1];
+> > 	int err = -1;
+> > 	u8 *checksumdata;
+> > -	unsigned int checksumlen;
+> > 
+> > 	if (kctx->gk5e->keyed_cksum == 0) {
+> > 		dprintk("%s: expected keyed hash for %s\n",
+> > @@ -393,7 +392,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
+> > 	tfm = crypto_alloc_ahash(kctx->gk5e->cksum_name, 0, CRYPTO_ALG_ASYNC);
+> > 	if (IS_ERR(tfm))
+> > 		goto out_free_cksum;
+> > -	checksumlen = crypto_ahash_digestsize(tfm);
+> > 
+> > 	req = ahash_request_alloc(tfm, GFP_NOFS);
+> > 	if (!req)
+> > diff --git a/net/sunrpc/auth_gss/gss_krb5_wrap.c b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+> > index a737c2d..9a1347f 100644
+> > --- a/net/sunrpc/auth_gss/gss_krb5_wrap.c
+> > +++ b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+> > @@ -440,7 +440,6 @@ static u32
+> > gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
+> > 		     struct xdr_buf *buf, struct page **pages)
+> > {
+> > -	int		blocksize;
+> > 	u8		*ptr, *plainhdr;
+> > 	s32		now;
+> > 	u8		flags = 0x00;
+> > @@ -473,7 +472,6 @@ gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
+> > 	*ptr++ = 0xff;
+> > 	be16ptr = (__be16 *)ptr;
+> > 
+> > -	blocksize = crypto_skcipher_blocksize(kctx->acceptor_enc);
+> > 	*be16ptr++ = 0;
+> > 	/* "inner" token header always uses 0 for RRC */
+> > 	*be16ptr++ = 0;
+> > diff --git a/net/sunrpc/xprtrdma/svc_rdma.c b/net/sunrpc/xprtrdma/svc_rdma.c
+> > index 357ba90..134bef6a 100644
+> > --- a/net/sunrpc/xprtrdma/svc_rdma.c
+> > +++ b/net/sunrpc/xprtrdma/svc_rdma.c
+> > @@ -94,7 +94,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
+> > 		atomic_set(stat, 0);
+> > 	else {
+> > 		char str_buf[32];
+> > -		char *data;
+> > 		int len = snprintf(str_buf, 32, "%d\n", atomic_read(stat));
+> > 		if (len >= 32)
+> > 			return -EFAULT;
+> > @@ -103,7 +102,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
+> > 			*lenp = 0;
+> > 			return 0;
+> > 		}
+> > -		data = &str_buf[*ppos];
+> > 		len -= *ppos;
+> > 		if (len > *lenp)
+> > 			len = *lenp;
+> > -- 
+> > 2.7.0
+> > 
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> --
+> Chuck Lever
+> 
+> 
