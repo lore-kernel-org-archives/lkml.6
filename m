@@ -2,79 +2,97 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB828C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366C0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7C020862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D4F20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ohy/EcSR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B7C020862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQnwOCOp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D4F20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389923AbeHARXl (ORCPT
+        id S2389952AbeHARYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:23:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55690 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389740AbeHARXl (ORCPT
+        Wed, 1 Aug 2018 13:24:02 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43246 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389698AbeHARYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:23:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tNvby4XvqzZyAT+ihwUpd0SQE5FUUE6BRch0tASGIBs=; b=Ohy/EcSRBm24I60Hmlbja9KjJ
-        +mWTUrgyXBeUr020tHyb1b9zhFSF3YyiQEiXJo2OQFvAhR4KlTtoU1AJCcuIWsteKqXO2pqbkFJMZ
-        NgZxPy71zTSGSbASBPVo8j+cSdn1kDM0k3344qvbZ4Kr0RQ0dn8dl19Jpo5w9crqQ7PrGIdAbVo6b
-        xdfeF+ML0yWa48tSYpPzr7XXUG6yFUS4CPkOjauowEQY6yMwfqtq+NIElEG2KfdLTJEZXBh827/90
-        cT4K3rjyFjvddKxnfNOWlKiNpA7zzpBI2ZdOyOU8yJi8J6d6VitybVLACYp2j3ejz5kERPLILpqnh
-        /eesvLN1g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fktBZ-0007tl-PU; Wed, 01 Aug 2018 15:37:13 +0000
-Date:   Wed, 1 Aug 2018 08:37:13 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Question] A novel case happened when using mempool allocate
- memory.
-Message-ID: <20180801153713.GA4039@bombadil.infradead.org>
-References: <5B61D243.9050608@huawei.com>
+        Wed, 1 Aug 2018 13:24:02 -0400
+Received: by mail-vk0-f67.google.com with SMTP id s17-v6so9508982vke.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=PtCG9U/WhstThGMeBKuPO1IiNp0+HQaoB3lAc8Wj3KU=;
+        b=CQnwOCOpdWdQOlbxYoNjbzGxpQqvlUlHYSn6MWvQgCvKefXsfiJB5Epqeht3UeXQeJ
+         ILDmimJ2zp/Dff4sRsCUlrubB+LZak4VHFUMBCekXxXALMIiAN2u1B3SiGbMUoSXBi4p
+         kq0EuBUSBfjQbOu8FS//H3XZ5RdUVgdMYCBz3tuSYua3DBnLFxow8Bvxpikbt/F4BEO7
+         Tc652YnUfIIPUIBjkq+KzyAP4uUMTIr1BUZ2XoSJu0eqmALkAbkMn44khQNvg9JSl/Hn
+         2TjkH7W7ftNqTXrN3UlJIgJyl6Y2dmkmpC0eykgL1TtryMNYx784V9O+OKMQtK6F85AQ
+         gZRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=PtCG9U/WhstThGMeBKuPO1IiNp0+HQaoB3lAc8Wj3KU=;
+        b=Hr4/AIQJlIZ+tsmWyz4m3s5wiVNFME8H2N0nUGhiATpmMp66oPFNfWalZLTirigf1r
+         8WpSV2ijUtlPevIq0iaBg0KjGaVUr9Z/ih4WBNkqefBVZaaVvVPMLdjqfqKoluZnsWXS
+         mHQIQoN/H95ELKNyXy3jonixsO3pIH+wgjnTQCMxv5z3LsOW82vxjsVy7MLRhleeICnV
+         XNSwu4iZBcxWqh23xDsj82SP8/PALPQFml+k7Fcx0J44ZmJlXtW5GKmmRjOXEBePUvfS
+         fXhLSI37gPeasc7MD9G0C7KBPBscWtKZvXD4sgBoI/0XyE6QDhrz0fBUVpH0WnnCWBu9
+         kwnQ==
+X-Gm-Message-State: AOUpUlElkg6mEcC9lzY3WVsLnQwZogUFk9lzJZuBPS0W1VLgwDNJ9oXk
+        OjAcil7c0o89ibg9GKD23l50Kauw/cbqwxdo1Kg=
+X-Google-Smtp-Source: AAOMgpcbuqLuaFgT+zAi3+wPcYAjPYdJoCXf+DbQhrdGwsvZlULUfGrHlbIL8hBB128DnvMRFbrFhoD0Z3X5tDubR8Y=
+X-Received: by 2002:a1f:844e:: with SMTP id g75-v6mr17297353vkd.16.1533137864897;
+ Wed, 01 Aug 2018 08:37:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B61D243.9050608@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 08:37:44 -0700 (PDT)
+In-Reply-To: <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
+References: <CAHp75VfktnjL+G0vjHNHr=8mbDXu+4BDogsnxrp_2Bo4em=r2Q@mail.gmail.com>
+ <20180801115557.7086-1-vasilyev@ispras.ru> <CAHp75VeSr-dDC+BvvTi1f2JBDL0UB31O=umatKE4y=0HQ4_8UQ@mail.gmail.com>
+ <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 1 Aug 2018 18:37:44 +0300
+Message-ID: <CAHp75VfxjZVCTQc_RS=x-sWCG=k=wkL8CnrcdZswA5KQOPK1+w@mail.gmail.com>
+Subject: Re: [PATCH v5] staging: rts5208: add error handling into rtsx_probe
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Gaurav Pathak <gauravpathak129@gmail.com>,
+        Hannes Reinecke <hare@suse.de>, devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ldv-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 11:31:15PM +0800, zhong jiang wrote:
-> Hi,  Everyone
-> 
->  I ran across the following novel case similar to memory leak in linux-4.1 stable when allocating
->  memory object by kmem_cache_alloc.   it rarely can be reproduced.
-> 
-> I create a specific  mempool with 24k size based on the slab.  it can not be merged with
-> other kmem cache.  I  record the allocation and free usage by atomic_add/sub.    After a while,
-> I watch the specific slab consume most of total memory.   After halting the code execution.
-> The counter of allocation and free is equal.  Therefore,  I am sure that module have released
-> all meory resource.  but the statistic of specific slab is very high but stable by checking /proc/slabinfo.
+On Wed, Aug 1, 2018 at 5:08 PM, Anton Vasilyev <vasilyev@ispras.ru> wrote:
+> I found that staging-next already contains my patch v3, committed by Greg
+> Kroah-Hartman.
+>
+> Do I need to send a new patch
 
-Please post the code.
+Yes. Based on staging-next.
+
+> with a label renaming based on Dan Carpenter
+> comments?
+
+Dan is talking for himself :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
