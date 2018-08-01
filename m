@@ -2,88 +2,140 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BA9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0416C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F28120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:35:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F28120844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F4B520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4B520844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733126AbeHAHT3 (ORCPT
+        id S1733155AbeHAHUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:19:29 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:37182 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731897AbeHAHT3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:19:29 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 1 Aug 2018 14:35:28 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.126 with ESMTP; 1 Aug 2018 14:35:28 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Wed, 1 Aug 2018 14:35:21 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        ying.huang@intel.com, mingo@kernel.org, jiangshanlai@gmail.com,
-        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, joel@joelfernandes.org,
-        len.brown@intel.com, glider@google.com, peter@hurleysoftware.com,
-        aik@ozlabs.ru
-Subject: Re: [QUESTION] llist: Comment releasing 'must delete' restriction
- before traversing
-Message-ID: <20180801053521.GB25338@X58A-UD3R>
-References: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
- <20180731085257.GR2494@hirez.programming.kicks-ass.net>
- <20180731093809.GC12241@X58A-UD3R>
- <20180731094616.6d70c130@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731094616.6d70c130@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 1 Aug 2018 03:20:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35220 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731897AbeHAHUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 03:20:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5187ED1;
+        Tue, 31 Jul 2018 22:36:41 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F2D13F2EA;
+        Tue, 31 Jul 2018 22:35:57 -0700 (PDT)
+Date:   Wed, 01 Aug 2018 06:35:25 +0100
+Message-ID: <867elay7he.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: bisected - arm64 kvm unit test failures
+In-Reply-To: <1533061729.12487.26.camel@gmx.de>
+References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+        <1532768831.9882.71.camel@gmx.de>
+        <1532847330.1618.8.camel@gmx.de>
+        <1532864867.1618.32.camel@gmx.de>
+        <1532967899.30205.62.camel@gmx.de>
+        <1533061729.12487.26.camel@gmx.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:46:16AM -0400, Steven Rostedt wrote:
-> On Tue, 31 Jul 2018 18:38:09 +0900
-> Byungchul Park <byungchul.park@lge.com> wrote:
-> 
-> > On Tue, Jul 31, 2018 at 10:52:57AM +0200, Peter Zijlstra wrote:
-> > > On Tue, Jul 31, 2018 at 09:58:36AM +0900, Byungchul Park wrote:  
-> > > > In restrictive cases like only addtions happen but never deletion, can't
-> > > > we safely traverse a llist? I believe llist can be more useful if we can
-> > > > release the restriction. Can't we?  
-> > > 
-> > > Yes you can, but I'm not sure it makes much sense to confuse the
-> > > comments with this.
-> > > 
-> > > This really ends up in the 'you had better know what you're doing'
-> > > category.  
-> > 
-> > Partially agree with you. But why not add more explanation?
-> > 
-> > If you think the comment confuse us, then it's ok to keep it itself.
-> > 
-> 
-> It appears that you will only have your own users that will be doing
-> this, correct? How many use cases have no deletion? I wouldn't change
-> the generic comments on llist for something that's a one off and hardly
-> used.
+On Tue, 31 Jul 2018 19:28:49 +0100,
+Mike Galbraith <efault@gmx.de> wrote:
 
-Thanks for the comment. OK.
+Hi Mike,
 
-> -- Steve
+> 
+> [1  <text/plain; ISO-8859-15 (7bit)>]
+> On Mon, 2018-07-30 at 18:24 +0200, Mike Galbraith wrote:
+> > On Sun, 2018-07-29 at 13:47 +0200, Mike Galbraith wrote:
+> > > FYI, per kvm unit tests, 4.16-rt definitely has more kvm issues.
+> 
+> But it's not RT, or rather most of it isn't...
+> 
+> > > huawei5:/abuild/mike/kvm-unit-tests # uname -r
+> > > 4.16.18-rt11-rt
+> > > huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
+> > > PASS selftest-setup (2 tests)
+> > > FAIL selftest-vectors-kernel 
+> > > FAIL selftest-vectors-user 
+> > > PASS selftest-smp (65 tests)
+> > > PASS pci-test (1 tests)
+> > > PASS pmu (3 tests)
+> > > FAIL gicv2-ipi 
+> > > FAIL gicv3-ipi 
+> > > FAIL gicv2-active 
+> > > FAIL gicv3-active 
+> > > PASS psci (4 tests)
+> > > FAIL timer 
+> > > huawei5:/abuild/mike/kvm-unit-tests #
+> > > 
+> > > 4.14-rt passes all tests.  The above is with the kvm raw_spinlock_t
+> > > conversion patch applied, but the 4.12 based SLERT tree I cloned to
+> > > explore arm-land in the first place shows only one timer failure, and
+> > > has/needs it applied as well, which would seem to vindicate it.
+> > > 
+> > > huawei5:/abuild/mike/kvm-unit-tests # uname -r
+> > > 4.12.14-0.gec0b559-rt
+> > > huawei5:/abuild/mike/kvm-unit-tests # ./run_tests.sh
+> > > PASS selftest-setup (2 tests)
+> > > PASS selftest-vectors-kernel (2 tests)
+> > > PASS selftest-vectors-user (2 tests)
+> > > PASS selftest-smp (65 tests)
+> > > PASS pci-test (1 tests)
+> > > PASS pmu (3 tests)
+> > > PASS gicv2-ipi (3 tests)
+> > > PASS gicv3-ipi (3 tests)
+> > > PASS gicv2-active (1 tests)
+> > > PASS gicv3-active (1 tests)
+> > > PASS psci (4 tests)
+> > > FAIL timer (8 tests, 1 unexpected failures)
+> > 
+> > FWIW, this single timer failure wass inspired by something in the 4-15
+> > merge window.
+> 
+> As noted, the single timer failure is an RT issue of some sort, and
+> remains.  The rest I bisected in @stable with the attached config, and
+> confirmed that revert fixes up 4.16-rt as well (modulo singleton).
+
+Is it something that is reproducible with the current mainline (non-RT)?
+
+> 
+> a9c0e12ebee56ef06b7eccdbc73bab71d0018df8 is the first bad commit
+> commit a9c0e12ebee56ef06b7eccdbc73bab71d0018df8
+> Author: Marc Zyngier <marc.zyngier@arm.com>
+> Date:   Mon Oct 23 17:11:20 2017 +0100
+> 
+>     KVM: arm/arm64: Only clean the dcache on translation fault
+>     
+>     The only case where we actually need to perform a dcache maintenance
+>     is when we map the page for the first time, and subsequent permission
+>     faults do not require cache maintenance. Let's make it conditional
+>     on not being a permission fault (and thus a translation fault).
+>     
+>     Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+>     Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>     Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+
+Pretty worrying. What HW is that on?
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
