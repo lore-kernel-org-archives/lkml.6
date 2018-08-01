@@ -2,177 +2,156 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_ADSP_ALL,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606E8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA50EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E200420841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E200420841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 210A420841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:38:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="pYFKLptI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210A420841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387467AbeHAIV1 (ORCPT
+        id S2387487AbeHAIWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 04:21:27 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:49089 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729769AbeHAIV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 04:21:26 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41gNrf2tnsz9tvqG;
-        Wed,  1 Aug 2018 08:37:06 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id J04Q4ohTvEPf; Wed,  1 Aug 2018 08:37:06 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41gNrf2CzHz9tvq9;
-        Wed,  1 Aug 2018 08:37:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id AF7E78B82B;
-        Wed,  1 Aug 2018 08:37:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id y4cpvG8Fouo4; Wed,  1 Aug 2018 08:37:18 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A6508B756;
-        Wed,  1 Aug 2018 08:37:18 +0200 (CEST)
-Subject: Re: [PATCH v3 5/9] powerpc/traps: Print signal name for unhandled
- signals
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Alastair D'Silva <alastair@d-silva.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Cyril Bur <cyrilbur@gmail.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Joe Perches <joe@perches.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Simon Guo <wei.guo.simon@gmail.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org
-References: <20180731145020.14009-1-muriloo@linux.ibm.com>
- <20180731145020.14009-6-muriloo@linux.ibm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <631e9a9b-dbbe-ede7-eb81-81520cc36ad5@c-s.fr>
-Date:   Wed, 1 Aug 2018 08:37:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 1 Aug 2018 04:22:24 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:33440 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387444AbeHAIWX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 04:22:23 -0400
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 7C07C3BD178;
+        Wed,  1 Aug 2018 08:38:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1533105494;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references;
+        bh=7A90u1Ua7tw5ZpW2yxxAXzOixNxENpJ/9VkmoWyl7JU=;
+        b=pYFKLptIqHd/cbkSqJMrkAi+M1QWstjCDHG9WUaOeTP+UbHwPqvDgtT2YUvlhIcSgjfixu
+        NiGeHSt6yIda2BtMFggOqqbnVuJYFjxO+jdCIV9Rb+TiqHfyMvO6kGumxykMFcV6Pdo4RK
+        BbBn1Hkl2YgEClwD7l5xTd1k/8um0Mw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 7C07C3BD178
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-In-Reply-To: <20180731145020.14009-6-muriloo@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 01 Aug 2018 08:38:14 +0200
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     prarit@redhat.com
+Cc:     bp@alien8.de, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sironi@amazon.de,
+        stable@vger.kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v2] arch/x86: Fix boot_cpu_data.microcode version output
+In-Reply-To:  <<20180731112739.32338-1-prarit@redhat.com>>
+Message-ID: <d8ac835211e5649b5494141a0decc3bc@natalenko.name>
+X-Sender: oleksandr@natalenko.name
+User-Agent: Roundcube Webmail/1.3.6
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1533105495;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references;
+        bh=7A90u1Ua7tw5ZpW2yxxAXzOixNxENpJ/9VkmoWyl7JU=;
+        b=sWpIg5wvy0bCAZrBjJuSAdeofdkEkyFxIJJJJkTyLE3ujAcGl2x4CsMRx1V/cZfMcxmxjL
+        TJ++Mt0uQxdOpuheqdY859soh4YmjjtfxeQMVluX8gJnbLiaGB0VIylphvfu6DMb4cXpDq
+        0U388wILpfkHmH8hhXE4+uX/UXwoGCc=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1533105495; a=rsa-sha256;
+        cv=none;
+        b=nHqE7FmzWJRMHowrjt1cp6WC/JFZpejrsMTCS0t+100FwWkPafZjfN9bTjRdT7sGGmUqcD04B/v8EotmYq16lmGCNDJDux9WNz6zXAUCYuc8ykfc0LInizdmdlXxz3ZENgzZD+AIGUEFYLnxXA4SHaP9NiMlLDkmRkCX1in0wJw=
+ARC-Authentication-Results: i=1; vulcan.natalenko.name;
+        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi.
 
-
-Le 31/07/2018 à 16:50, Murilo Opsfelder Araujo a écrit :
-> This adds a human-readable name in the unhandled signal message.
+> I tested this on AMD Ryzen & Intel Broadwell system and dumped the
+> boot_cpu_data before and after a microcode update.  On the Intel
+> system I also did a fatal MCE using mce-inject to confirm the output
+> from the mce handling code.
 > 
-> Before this patch, a page fault looked like:
+> P.
 > 
->    pandafault[6303]: unhandled signal 11 at 100007d0 nip 1000061c lr 7fff93c55100 code 2 in pandafault[10000000+10000]
+> ---8<---
 > 
-> After this patch, a page fault looks like:
+> On systems where a runtime microcode update has occurred the microcode
+> version output in a MCE log record is wrong because
+> boot_cpu_data.microcode is not updated during runtime.
 > 
->    pandafault[6352]: segfault (11) at 13a2a09f8 nip 13a2a086c lr 7fffb63e5100 code 2 in pandafault[13a2a0000+10000]
+> Update boot_cpu_data.microcode when the BSP's microcode is updated.
 > 
-> Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+> Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check 
+> records")
+> Suggested-by: Borislav Petkov <bp@alien8.com>
+> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> Cc: stable@vger.kernel.org
+> Cc: sironi@amazon.de
+> Cc: tony.luck@intel.com
 > ---
->   arch/powerpc/kernel/traps.c | 39 +++++++++++++++++++++++++++++++++++--
->   1 file changed, 37 insertions(+), 2 deletions(-)
+> Changes in v2: Use mc_amd->hdr.patch_id on AMD
 > 
-> diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-> index 1c4f06fca370..e71f12bca146 100644
-> --- a/arch/powerpc/kernel/traps.c
-> +++ b/arch/powerpc/kernel/traps.c
-> @@ -96,6 +96,41 @@ EXPORT_SYMBOL(__debugger_fault_handler);
->   #define TM_DEBUG(x...) do { } while(0)
->   #endif
->   
-> +static const char *signames[SIGRTMIN + 1] = {
-> +	"UNKNOWN",
-> +	"SIGHUP",			// 1
-> +	"SIGINT",			// 2
-> +	"SIGQUIT",			// 3
-> +	"SIGILL",			// 4
-> +	"unhandled trap",		// 5 = SIGTRAP
-> +	"SIGABRT",			// 6 = SIGIOT
-> +	"bus error",			// 7 = SIGBUS
-> +	"floating point exception",	// 8 = SIGFPE
-> +	"illegal instruction",		// 9 = SIGILL
-> +	"SIGUSR1",			// 10
-> +	"segfault",			// 11 = SIGSEGV
-> +	"SIGUSR2",			// 12
-> +	"SIGPIPE",			// 13
-> +	"SIGALRM",			// 14
-> +	"SIGTERM",			// 15
-> +	"SIGSTKFLT",			// 16
-> +	"SIGCHLD",			// 17
-> +	"SIGCONT",			// 18
-> +	"SIGSTOP",			// 19
-> +	"SIGTSTP",			// 20
-> +	"SIGTTIN",			// 21
-> +	"SIGTTOU",			// 22
-> +	"SIGURG",			// 23
-> +	"SIGXCPU",			// 24
-> +	"SIGXFSZ",			// 25
-> +	"SIGVTALRM",			// 26
-> +	"SIGPROF",			// 27
-> +	"SIGWINCH",			// 28
-> +	"SIGIO",			// 29 = SIGPOLL = SIGLOST
-> +	"SIGPWR",			// 30
-> +	"SIGSYS",			// 31 = SIGUNUSED
-> +};
-
-I don't think is is worth having that full table when we only use a few 
-of them. (As discussed in v1 https://patchwork.ozlabs.org/patch/948802/)
-
-I would suggest to instead use a function like this:
-
-static const char *signame(int signr)
-{
-	if (signr == SIGBUS)
-		return "bus error";
-	if (signr == SIGFPE)
-		return "floating point exception";
-	if (signr == SIGILL)
-		return "illegal instruction";
-	if (signr == SIGILL)
-		return "segfault";
-	if (signr == SIGTRAP)
-		return "unhandled trap";
-	return "unknown signal";
-}
-
-Christophe
-
+>  arch/x86/kernel/cpu/microcode/amd.c   | 4 ++++
+>  arch/x86/kernel/cpu/microcode/intel.c | 4 ++++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c 
+> b/arch/x86/kernel/cpu/microcode/amd.c
+> index 0624957aa068..63b072377ba4 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_amd(int 
+> cpu)
+>  	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+>  	c->microcode = mc_amd->hdr.patch_id;
+> 
+> +	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+> +	if (c->cpu_index == boot_cpu_data.cpu_index)
+> +		boot_cpu_data.microcode =  mc_amd->hdr.patch_id;
 > +
->   /*
->    * Trap & Exception support
->    */
-> @@ -314,8 +349,8 @@ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
->   	if (!unhandled_signal(current, signr))
->   		return;
->   
-> -	pr_info("%s[%d]: unhandled signal %d at %lx nip %lx lr %lx code %x",
-> -		current->comm, current->pid, signr,
-> +	pr_info("%s[%d]: %s (%d) at %lx nip %lx lr %lx code %x",
-> +		current->comm, current->pid, signames[signr], signr,
->   		addr, regs->nip, regs->link, code);
->   
->   	print_vma_addr(KERN_CONT " in ", regs->nip);
+>  	return UCODE_UPDATED;
+>  }
 > 
+> diff --git a/arch/x86/kernel/cpu/microcode/intel.c 
+> b/arch/x86/kernel/cpu/microcode/intel.c
+> index 97ccf4c3b45b..256d336cbc04 100644
+> --- a/arch/x86/kernel/cpu/microcode/intel.c
+> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+> @@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_intel(int 
+> cpu)
+>  	uci->cpu_sig.rev = rev;
+>  	c->microcode = rev;
+> 
+> +	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+> +	if (c->cpu_index == boot_cpu_data.cpu_index)
+> +		boot_cpu_data.microcode = rev;
+> +
+>  	return UCODE_UPDATED;
+>  }
+> 
+> --
+> 2.17.0
+
+After this patch, do we preserve an original microcode version 
+somewhere? If no, why? Sometimes it is useful while debugging another 
+crash because of faulty microcode.
+
+Thanks.
+
+-- 
+   Oleksandr Natalenko (post-factum)
