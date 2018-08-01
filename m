@@ -2,82 +2,85 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DAAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E36C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654A820841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:14:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654A820841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A48F20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A48F20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733240AbeHAI6k (ORCPT
+        id S1733304AbeHAJAq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 04:58:40 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49714 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733096AbeHAI6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 04:58:39 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1E51A1395F176;
-        Wed,  1 Aug 2018 15:14:22 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
- 15:14:13 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <santosh.shilimkar@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <rds-devel@oss.oracle.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] rds: remove redundant variable 'rds_ibdev'
-Date:   Wed, 1 Aug 2018 15:14:07 +0800
-Message-ID: <20180801071407.22044-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Wed, 1 Aug 2018 05:00:46 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:50190 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733123AbeHAJAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 05:00:46 -0400
+Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 9A087CF355;
+        Wed,  1 Aug 2018 09:23:28 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] HID: Bluetooth: hidp: buffer overflow in
+ hidp_process_report
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180731220225.159741-1-salyzyn@android.com>
+Date:   Wed, 1 Aug 2018 09:16:29 +0200
+Cc:     linux-kernel@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        security@kernel.org, kernel-team@android.com,
+        Jiri Kosina <jkosina@suse.cz>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <037EC694-953E-4510-9B34-64035958918D@holtmann.org>
+References: <20180731220225.159741-1-salyzyn@android.com>
+To:     Mark Salyzyn <salyzyn@android.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable 'rds_ibdev' is being assigned but never used,
-so can be removed.
+Hi Mark,
 
-fix this clang warning:
- net/rds/ib_send.c:762:24: warning: variable ‘rds_ibdev’ set but not used [-Wunused-but-set-variable]
+> CVE-2018-9363
+> 
+> The buffer length is unsigned at all layers, but gets cast to int and
+> checked in hidp_process_report and can lead to a buffer overflow.
+> Switch len parameter to unsigned int to resolve issue.
+> 
+> This affects 3.18 and newer kernels.
+> 
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Cc: Johan Hedberg <johan.hedberg@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Cc: linux-bluetooth@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: security@kernel.org
+> Cc: kernel-team@android.com
+> ---
+> net/bluetooth/hidp/core.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/rds/ib_send.c | 3 ---
- 1 file changed, 3 deletions(-)
+patch has been applied to bluetooth-next tree.
 
-diff --git a/net/rds/ib_send.c b/net/rds/ib_send.c
-index c4cdfe49..c8dd312 100644
---- a/net/rds/ib_send.c
-+++ b/net/rds/ib_send.c
-@@ -759,14 +759,11 @@ int rds_ib_xmit_atomic(struct rds_connection *conn, struct rm_atomic_op *op)
- 	struct rds_ib_connection *ic = conn->c_transport_data;
- 	struct rds_ib_send_work *send = NULL;
- 	struct ib_send_wr *failed_wr;
--	struct rds_ib_device *rds_ibdev;
- 	u32 pos;
- 	u32 work_alloc;
- 	int ret;
- 	int nr_sig = 0;
- 
--	rds_ibdev = ib_get_client_data(ic->i_cm_id->device, &rds_ib_client);
--
- 	work_alloc = rds_ib_ring_alloc(&ic->i_send_ring, 1, &pos);
- 	if (work_alloc != 1) {
- 		rds_ib_stats_inc(s_ib_tx_ring_full);
--- 
-2.7.0
+Regards
 
+Marcel
 
