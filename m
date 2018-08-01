@@ -2,146 +2,86 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D0EC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E4CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21AA9208A5
+	by mail.kernel.org (Postfix) with ESMTP id DCCB3208A5
 	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AA9208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xSqBGVUJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCB3208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732986AbeHAUJb (ORCPT
+        id S1733003AbeHAUJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 1 Aug 2018 16:09:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732977AbeHAUJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 16:09:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404396AbeHATDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:39 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21D15FBE;
-        Wed,  1 Aug 2018 16:58:26 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 107/336] btrfs: add barriers to btrfs_sync_log before log_commit_wait wakeups
-Date:   Wed,  1 Aug 2018 18:47:22 +0200
-Message-Id: <20180801165033.248563808@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C76CC2083D;
+        Wed,  1 Aug 2018 18:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533147752;
+        bh=sNwA9r2G2XvJvjj0WbH/o/T/WDlfKzHXeuSuJV23RH4=;
+        h=Subject:From:To:Cc:Date:From;
+        b=xSqBGVUJVqW+0ZYxHQgmSx8T/O8nwqkTXNN1W6lIUGFVEne01kQXFiRSCdxUhZYSw
+         Y5Uvo71WeSBZuA9Lx/ObBgnSohZkeztMxL0fJSSik6UGSgrk20wR14ZRoz8snzugOo
+         5Nqf/+bG7B8LLJSRsq4ihxlhD/se/DDP8FbHb6Zw=
+Message-ID: <1533147750.7905.8.camel@kernel.org>
+Subject: [ANNOUNCE] 3.18.117-rt104
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Julia Cartwright <julia@ni.com>
+Date:   Wed, 01 Aug 2018 13:22:30 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Hello RT Folks!
 
-------------------
+I'm pleased to announce the 3.18.117-rt104 stable release.
 
-From: David Sterba <dsterba@suse.com>
+This release is just an update to the new stable 3.18.117 version
+and no RT specific changes have been made.
 
-[ Upstream commit 3d3a2e610ea5e7c6d4f9481ecce5d8e2d8317843 ]
+You can get this release via the git tree at:
 
-Currently the code assumes that there's an implied barrier by the
-sequence of code preceding the wakeup, namely the mutex unlock.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-As Nikolay pointed out:
+  branch: v3.18-rt
+  Head SHA1: e6a7a51bc0c7f124d97e412fdda291ce2ca96a28
 
-I think this is wrong (not your code) but the original assumption that
-the RELEASE semantics provided by mutex_unlock is sufficient.
-According to memory-barriers.txt:
+Or to build 3.18.117-rt104 directly, the following patches should be applied:
 
-Section 'LOCK ACQUISITION FUNCTIONS' states:
+  http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
 
- (2) RELEASE operation implication:
+  http://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.117.xz
 
-     Memory operations issued before the RELEASE will be completed before the
-     RELEASE operation has completed.
+  http://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.117-rt104.patch.xz
 
-     Memory operations issued after the RELEASE *may* be completed before the
-     RELEASE operation has completed.
 
-(I've bolded the may portion)
-
-The example given there:
-
-As an example, consider the following:
-
-    *A = a;
-    *B = b;
-    ACQUIRE
-    *C = c;
-    *D = d;
-    RELEASE
-    *E = e;
-    *F = f;
-
-The following sequence of events is acceptable:
-
-    ACQUIRE, {*F,*A}, *E, {*C,*D}, *B, RELEASE
-
-So if we assume that *C is modifying the flag which the waitqueue is checking,
-and *E is the actual wakeup, then those accesses can be re-ordered...
-
-IMHO this code should be considered broken...
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-
-To be on the safe side, add the barriers. The synchronization logic
-around log using the mutexes and several other threads does not make it
-easy to reason for/against the barrier.
-
-CC: Nikolay Borisov <nborisov@suse.com>
-Link: https://lkml.kernel.org/r/6ee068d8-1a69-3728-00d1-d86293d43c9f@suse.com
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/tree-log.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3116,8 +3116,11 @@ out_wake_log_root:
- 	mutex_unlock(&log_root_tree->log_mutex);
- 
- 	/*
--	 * The barrier before waitqueue_active is implied by mutex_unlock
-+	 * The barrier before waitqueue_active is needed so all the updates
-+	 * above are seen by the woken threads. It might not be necessary, but
-+	 * proving that seems to be hard.
- 	 */
-+	smp_mb();
- 	if (waitqueue_active(&log_root_tree->log_commit_wait[index2]))
- 		wake_up(&log_root_tree->log_commit_wait[index2]);
- out:
-@@ -3128,8 +3131,11 @@ out:
- 	mutex_unlock(&root->log_mutex);
- 
- 	/*
--	 * The barrier before waitqueue_active is implied by mutex_unlock
-+	 * The barrier before waitqueue_active is needed so all the updates
-+	 * above are seen by the woken threads. It might not be necessary, but
-+	 * proving that seems to be hard.
- 	 */
-+	smp_mb();
- 	if (waitqueue_active(&root->log_commit_wait[index1]))
- 		wake_up(&root->log_commit_wait[index1]);
- 	return ret;
-
+Enjoy!
+   
+   Tom
 
