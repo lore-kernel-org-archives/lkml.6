@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D21AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCCEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 156CD2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156CD2083D
+	by mail.kernel.org (Postfix) with ESMTP id 0F49C2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F49C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407669AbeHATQn (ORCPT
+        id S2407265AbeHATQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52504 "EHLO
+        Wed, 1 Aug 2018 15:16:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389856AbeHATQn (ORCPT
+        with ESMTP id S2389856AbeHATQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:43 -0400
+        Wed, 1 Aug 2018 15:16:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7100BD4D;
-        Wed,  1 Aug 2018 17:29:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C402D54;
+        Wed,  1 Aug 2018 17:30:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 068/144] PCI: pciehp: Request control of native hotplug only if supported
-Date:   Wed,  1 Aug 2018 18:51:35 +0200
-Message-Id: <20180801164954.841440980@linuxfoundation.org>
+Subject: [PATCH 4.9 059/144] ath: Add regulatory mapping for Bermuda
+Date:   Wed,  1 Aug 2018 18:51:26 +0200
+Message-Id: <20180801164953.448801802@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,41 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 408fec36a1ab3d14273c2116b449ef1e9be3cb8b ]
+[ Upstream commit 9c790f2d234f65697e3b0948adbfdf36dbe63dd7 ]
 
-Currently we request control of native PCIe hotplug unconditionally.
-Native PCIe hotplug events are handled by the pciehp driver, and if it is
-not enabled those events will be lost.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Request control of native PCIe hotplug only if the pciehp driver is
-enabled, so we will actually handle native PCIe hotplug events.
+  Invalid EEPROM contents
 
-Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The current CTL mappings for this country are:
+
+* 2.4GHz: FCC
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pci_root.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -472,9 +472,11 @@ static void negotiate_os_control(struct
- 	}
- 
- 	control = OSC_PCI_EXPRESS_CAPABILITY_CONTROL
--		| OSC_PCI_EXPRESS_NATIVE_HP_CONTROL
- 		| OSC_PCI_EXPRESS_PME_CONTROL;
- 
-+	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE))
-+		control |= OSC_PCI_EXPRESS_NATIVE_HP_CONTROL;
-+
- 	if (pci_aer_available()) {
- 		if (aer_acpi_firmware_first())
- 			dev_info(&device->dev,
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -74,6 +74,7 @@ enum CountryCode {
+ 	CTRY_BELARUS = 112,
+ 	CTRY_BELGIUM = 56,
+ 	CTRY_BELIZE = 84,
++	CTRY_BERMUDA = 60,
+ 	CTRY_BOLIVIA = 68,
+ 	CTRY_BOSNIA_HERZ = 70,
+ 	CTRY_BRAZIL = 76,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -313,6 +313,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_BELGIUM, ETSI1_WORLD, "BE"},
+ 	{CTRY_BELGIUM2, ETSI4_WORLD, "BL"},
+ 	{CTRY_BELIZE, APL1_ETSIC, "BZ"},
++	{CTRY_BERMUDA, FCC3_FCCA, "BM"},
+ 	{CTRY_BOLIVIA, APL1_ETSIC, "BO"},
+ 	{CTRY_BOSNIA_HERZ, ETSI1_WORLD, "BA"},
+ 	{CTRY_BRAZIL, FCC3_WORLD, "BR"},
 
 
