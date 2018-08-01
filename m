@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717DBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3469C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2558F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2558F20862
+	by mail.kernel.org (Postfix) with ESMTP id AB460208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB460208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732317AbeHAT7q (ORCPT
+        id S1732754AbeHAT7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:59:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49886 "EHLO
+        Wed, 1 Aug 2018 15:59:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390325AbeHATIe (ORCPT
+        with ESMTP id S2389715AbeHATIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5AFC10C3;
-        Wed,  1 Aug 2018 17:03:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B171B1330;
+        Wed,  1 Aug 2018 17:12:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 197/336] net: phy: phylink: Release link GPIO
-Date:   Wed,  1 Aug 2018 18:48:52 +0200
-Message-Id: <20180801165036.630208270@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 014/246] tracing: Fix possible double free in event_enable_trigger_func()
+Date:   Wed,  1 Aug 2018 18:48:44 +0200
+Message-Id: <20180801165012.385193023@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,37 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit daab3349ad1a69663ccad278ed71d55974d104b4 ]
+commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
 
-We are not releasing the link GPIO descriptor with gpiod_put() which results in
-subsequent probing to get -EBUSY when calling fwnode_get_named_gpiod(). Fix this
-by doing the release in phylink_destroy().
+There was a case that triggered a double free in event_trigger_callback()
+due to the called reg() function freeing the trigger_data and then it
+getting freed again by the error return by the caller. The solution there
+was to up the trigger_data ref count.
 
-Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Code inspection found that event_enable_trigger_func() has the same issue,
+but is not as easy to trigger (requires harder to trigger failures). It
+needs to be solved slightly different as it needs more to clean up when the
+reg() function fails.
+
+Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
+Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/phy/phylink.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -612,6 +612,8 @@ void phylink_destroy(struct phylink *pl)
- {
- 	if (pl->sfp_bus)
- 		sfp_unregister_upstream(pl->sfp_bus);
-+	if (!IS_ERR(pl->link_gpio))
-+		gpiod_put(pl->link_gpio);
+---
+ kernel/trace/trace_events_trigger.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -1396,6 +1396,9 @@ int event_enable_trigger_func(struct eve
+ 		goto out;
+ 	}
  
- 	cancel_work_sync(&pl->resolve);
- 	kfree(pl);
++	/* Up the trigger_data count to make sure nothing frees it on failure */
++	event_trigger_init(trigger_ops, trigger_data);
++
+ 	if (trigger) {
+ 		number = strsep(&trigger, ":");
+ 
+@@ -1446,6 +1449,7 @@ int event_enable_trigger_func(struct eve
+ 		goto out_disable;
+ 	/* Just return zero, not the number of enabled functions */
+ 	ret = 0;
++	event_trigger_free(trigger_ops, trigger_data);
+  out:
+ 	return ret;
+ 
+@@ -1456,7 +1460,7 @@ int event_enable_trigger_func(struct eve
+  out_free:
+ 	if (cmd_ops->set_filter)
+ 		cmd_ops->set_filter(NULL, trigger_data, NULL);
+-	kfree(trigger_data);
++	event_trigger_free(trigger_ops, trigger_data);
+ 	kfree(enable_data);
+ 	goto out;
+ }
 
 
