@@ -2,50 +2,51 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D2CC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09705C46462
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03383208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03383208A6
+	by mail.kernel.org (Postfix) with ESMTP id C06B420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:24:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06B420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389205AbeHAOJb (ORCPT
+        id S2389246AbeHAOJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:09:31 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53436 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387673AbeHAOJa (ORCPT
+        Wed, 1 Aug 2018 10:09:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37991 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388530AbeHAOJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:09:30 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s9-v6so6755595wmh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:23:56 -0700 (PDT)
+        Wed, 1 Aug 2018 10:09:31 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t25-v6so6788111wmi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:23:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mAoLSSretO233e7nE9tPJv3281GRJk2A72FvTsbUgPA=;
-        b=XlUXKCchtTLqjRkXrsgHRKXDOhw+7C6ccxlobLLiWlGkREzHXk9mwCXTLpDf/qLGQT
-         s7vXl1JAv2D3JV54mVw6grZDPFYhMJo5nqLPqMGqu9PXZ1lTCezCXc5UTaL0jLBP1aEI
-         HOAWqsidz5FXxK6b08iLRJLKNmLm+t1fgexvJ3AfU5WkV2MXyiIyx++EDTKt/eJLuGs9
-         fezTtcX/ZLFfXgMuOiXH83P6beeIg+9spOmgLgTirf3LbQ35TWhWUo8kdkDQsvEZooS7
-         n6AidGkjDXLmQ2d5Gv6El8w3eVcdBtQpSiaHCyoRLnXR7b9urSFJVzxi1e9SEYW5WUyW
-         U9MQ==
-X-Gm-Message-State: AOUpUlHp4za7/uoHivYI9KtxEKFaGKH/NZRy8rXL+mPcPme0lnDTDD3z
-        PgYTD+3g4E40OkBggpvjlyE=
-X-Google-Smtp-Source: AAOMgpc5EIihffVMmLtQ0cpbYmVKzqIlB0E0kMDNHRYgkTczQh1kkc0Odd+/iOEbx7A/v5myFe6GHg==
-X-Received: by 2002:a1c:168a:: with SMTP id 132-v6mr2854484wmw.13.1533126235999;
-        Wed, 01 Aug 2018 05:23:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ornNtZGLjdDbInVqSj+nx7qc7v1pmCahLcgawCtYU7A=;
+        b=DtTmULkGWX7ddf1FOqR6gjjmvO27Z/6Sr30ft8ahXKUiNVg3O/LZ0HLnpIexKk/SWP
+         WZ24c5hA36GlfDWmhTtGh18MEcJpXpy5aKhDLZPJB6YAeKDU4APobCvBS+W1bdaUDOEb
+         nxB3YB+M8wWIA6CWvig3+LXSo54W0cfnfAfkNJM8LvUOeDCzorH80nCOQiZzxy92NAZZ
+         TRNCE7qBTXNJmtoswPjSsaCV8Jz8dWjFhvaEsfJs8KCE0J5hns7skW7dpWh/FiAmTB6T
+         BhXjFCmdq2Id8lPDBhU7d2M89kEI4BQ0mIcIsVmfSnnCnKeGOKoc0rwdPChJMXMeUpHP
+         uTEg==
+X-Gm-Message-State: AOUpUlELU6sLeOXFll6/cWdjdR4VrA2tpB9rdm4fKZetfq6ijwHTzN1F
+        xdrs1QrXVd/rshCkfU+WgTE=
+X-Google-Smtp-Source: AAOMgpdADN54w3AEgylfn2uo+tjdYllrnKQ3Ko8nlYwAujih9Xn79Ffrw5H1PySEQPrATJl0SRFBpg==
+X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr2493425wmd.144.1533126237749;
+        Wed, 01 Aug 2018 05:23:57 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm3375320wmh.0.2018.08.01.05.23.55
+        by smtp.gmail.com with ESMTPSA id a14-v6sm4891640wmb.44.2018.08.01.05.23.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 05:23:55 -0700 (PDT)
+        Wed, 01 Aug 2018 05:23:56 -0700 (PDT)
 Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 462F312453D;
+        by techadventures.net (Postfix) with ESMTPA id EFDAD124540;
         Wed,  1 Aug 2018 14:23:54 +0200 (CEST)
 From:   osalvador@techadventures.net
 To:     akpm@linux-foundation.org
@@ -54,85 +55,178 @@ Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
         iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
         david@redhat.com, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v6 0/5] Refactor free_area_init_core and add free_area_init_core_hotplug
-Date:   Wed,  1 Aug 2018 14:23:43 +0200
-Message-Id: <20180801122348.21588-1-osalvador@techadventures.net>
+Subject: [PATCH v6 2/5] mm: access zone->node via zone_to_nid() and zone_set_nid()
+Date:   Wed,  1 Aug 2018 14:23:45 +0200
+Message-Id: <20180801122348.21588-3-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180801122348.21588-1-osalvador@techadventures.net>
+References: <20180801122348.21588-1-osalvador@techadventures.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-Changes:
+zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+have inline functions to access this field in order to avoid ifdef's in
+c files.
 
-v5 -> v6:
-        - Added patch from Pavel that removes __paginginit
-        - Convert all __meminit(old __paginginit) to __init
-          for functions we do not need after initialization.
-        - Move definition of free_area_init_core_hotplug
-          to include/linux/memory_hotplug.h
-        - Add Acked-by from Michal Hocko
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/mm.h     |  9 ---------
+ include/linux/mmzone.h | 26 ++++++++++++++++++++------
+ mm/mempolicy.c         |  4 ++--
+ mm/mm_init.c           |  9 ++-------
+ mm/page_alloc.c        | 10 ++++------
+ 5 files changed, 28 insertions(+), 30 deletions(-)
 
-v4 -> v5:
-        - Remove __ref from hotadd_new_pgdat and placed it to
-          free_area_init_core_hotplug. (Suggested by Pavel)
-        - Since free_area_init_core_hotplug is now allowed to be in a different
-          section (__ref), remove the __paginginit.)
-        - Stylecode in free_area_init_core_hotplug (Suggested by Pavel)
-        - Replace s/@__paginginit/@__init for free_area_init_node/free_area_init_core
-          as these functions are now only called during early init.
-        - Add Reviewd-by from Pavel
-
-v3 -> v4:
-        - Unify patch-5 and patch-4.
-        - Make free_area_init_core __init (Suggested by Michal).
-        - Make zone_init_internals __paginginit (Suggested by Pavel).
-        - Add Reviewed-by/Acked-by:
-
-v2 -> v3:
-        - Think better about split free_area_init_core for
-          memhotplug/early init context (Suggested by Michal).
-
-This patchset does the following things:
-
- 1) Clean up/refactor free_area_init_core/free_area_init_node
-    by moving the ifdefery out of the functions.
- 2) Move the pgdat/zone initialization in free_area_init_core to its
-    own function.
- 3) Introduce free_area_init_core_hotplug, a small subset of free_area_init_core,
-    which is only called from memhotlug code path.
-    In this way, we have:
- 4) Remove __paginginit and convert it to __meminit
- 5) Reconvert all __meminit to __init for functions we do not need after
-    initialization.
-
-After this, we have:
-
-    free_area_init_core: called during early initialization
-    free_area_init_core_hotplug: called whenever a new node is allocated/re-used (memhotplug path)
-
-Oscar Salvador (3):
-  mm/page_alloc: Move ifdefery out of free_area_init_core
-  mm/page_alloc: Inline function to handle
-    CONFIG_DEFERRED_STRUCT_PAGE_INIT
-  mm/page_alloc: Introduce free_area_init_core_hotplug
-
-Pavel Tatashin (2):
-  mm: access zone->node via zone_to_nid() and zone_set_nid()
-  mm: remove __paginginit
-
- include/linux/memory_hotplug.h |   1 +
- include/linux/mm.h             |  11 +--
- include/linux/mmzone.h         |  26 +++++--
- mm/internal.h                  |  12 ----
- mm/memory_hotplug.c            |  16 ++---
- mm/mempolicy.c                 |   4 +-
- mm/mm_init.c                   |   9 +--
- mm/page_alloc.c                | 151 +++++++++++++++++++++++++++++------------
- 8 files changed, 137 insertions(+), 93 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 644c6329336b..70edbc3f21a8 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -957,15 +957,6 @@ static inline int page_zone_id(struct page *page)
+ 	return (page->flags >> ZONEID_PGSHIFT) & ZONEID_MASK;
+ }
+ 
+-static inline int zone_to_nid(struct zone *zone)
+-{
+-#ifdef CONFIG_NUMA
+-	return zone->node;
+-#else
+-	return 0;
+-#endif
+-}
+-
+ #ifdef NODE_NOT_IN_PAGE_FLAGS
+ extern int page_to_nid(const struct page *page);
+ #else
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 83b1d11e90eb..805b990b27ab 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -841,6 +841,25 @@ static inline bool populated_zone(struct zone *zone)
+ 	return zone->present_pages;
+ }
+ 
++#ifdef CONFIG_NUMA
++static inline int zone_to_nid(struct zone *zone)
++{
++	return zone->node;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid)
++{
++	zone->node = nid;
++}
++#else
++static inline int zone_to_nid(struct zone *zone)
++{
++	return 0;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid) {}
++#endif
++
+ extern int movable_zone;
+ 
+ #ifdef CONFIG_HIGHMEM
+@@ -956,12 +975,7 @@ static inline int zonelist_zone_idx(struct zoneref *zoneref)
+ 
+ static inline int zonelist_node_idx(struct zoneref *zoneref)
+ {
+-#ifdef CONFIG_NUMA
+-	/* zone_to_nid not available in this context */
+-	return zoneref->zone->node;
+-#else
+-	return 0;
+-#endif /* CONFIG_NUMA */
++	return zone_to_nid(zoneref->zone);
+ }
+ 
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 4861ba738d6f..da858f794eb6 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1784,7 +1784,7 @@ unsigned int mempolicy_slab_node(void)
+ 		zonelist = &NODE_DATA(node)->node_zonelists[ZONELIST_FALLBACK];
+ 		z = first_zones_zonelist(zonelist, highest_zoneidx,
+ 							&policy->v.nodes);
+-		return z->zone ? z->zone->node : node;
++		return z->zone ? zone_to_nid(z->zone) : node;
+ 	}
+ 
+ 	default:
+@@ -2326,7 +2326,7 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 				node_zonelist(numa_node_id(), GFP_HIGHUSER),
+ 				gfp_zone(GFP_HIGHUSER),
+ 				&pol->v.nodes);
+-		polnid = z->zone->node;
++		polnid = zone_to_nid(z->zone);
+ 		break;
+ 
+ 	default:
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 5b72266b4b03..6838a530789b 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -53,13 +53,8 @@ void __init mminit_verify_zonelist(void)
+ 				zone->name);
+ 
+ 			/* Iterate the zonelist */
+-			for_each_zone_zonelist(zone, z, zonelist, zoneid) {
+-#ifdef CONFIG_NUMA
+-				pr_cont("%d:%s ", zone->node, zone->name);
+-#else
+-				pr_cont("0:%s ", zone->name);
+-#endif /* CONFIG_NUMA */
+-			}
++			for_each_zone_zonelist(zone, z, zonelist, zoneid)
++				pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+ 			pr_cont("\n");
+ 		}
+ 	}
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index f5e36713c5d4..295977c6acae 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2915,10 +2915,10 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z)
+ 	if (!static_branch_likely(&vm_numa_stat_key))
+ 		return;
+ 
+-	if (z->node != numa_node_id())
++	if (zone_to_nid(z) != numa_node_id())
+ 		local_stat = NUMA_OTHER;
+ 
+-	if (z->node == preferred_zone->node)
++	if (zone_to_nid(z) == zone_to_nid(preferred_zone))
+ 		__inc_numa_state(z, NUMA_HIT);
+ 	else {
+ 		__inc_numa_state(z, NUMA_MISS);
+@@ -5284,7 +5284,7 @@ int local_memory_node(int node)
+ 	z = first_zones_zonelist(node_zonelist(node, GFP_KERNEL),
+ 				   gfp_zone(GFP_KERNEL),
+ 				   NULL);
+-	return z->zone->node;
++	return zone_to_nid(z->zone);
+ }
+ #endif
+ 
+@@ -6301,9 +6301,7 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
+ 		 * And all highmem pages will be managed by the buddy system.
+ 		 */
+ 		zone->managed_pages = freesize;
+-#ifdef CONFIG_NUMA
+-		zone->node = nid;
+-#endif
++		zone_set_nid(zone, nid);
+ 		zone->name = zone_names[j];
+ 		zone->zone_pgdat = pgdat;
+ 		spin_lock_init(&zone->lock);
 -- 
 2.13.6
 
