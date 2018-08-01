@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFBDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90395C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EEA2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67EEA2083D
+	by mail.kernel.org (Postfix) with ESMTP id 53CAC20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53CAC20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406710AbeHATMA (ORCPT
+        id S2406725AbeHATMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51312 "EHLO
+        Wed, 1 Aug 2018 15:12:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51318 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405388AbeHATMA (ORCPT
+        with ESMTP id S2406712AbeHATMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:00 -0400
+        Wed, 1 Aug 2018 15:12:02 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6250CC3;
-        Wed,  1 Aug 2018 17:25:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14291CC3;
+        Wed,  1 Aug 2018 17:25:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 006/144] tracing: Fix possible double free in event_enable_trigger_func()
-Date:   Wed,  1 Aug 2018 18:50:33 +0200
-Message-Id: <20180801164949.379792171@linuxfoundation.org>
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Snild Dolkow <snild@sony.com>
+Subject: [PATCH 4.9 007/144] kthread, tracing: Dont expose half-written comm when creating kthreads
+Date:   Wed,  1 Aug 2018 18:50:34 +0200
+Message-Id: <20180801164949.458907249@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,60 +51,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Snild Dolkow <snild@sony.com>
 
-commit 15cc78644d0075e76d59476a4467e7143860f660 upstream.
+commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
 
-There was a case that triggered a double free in event_trigger_callback()
-due to the called reg() function freeing the trigger_data and then it
-getting freed again by the error return by the caller. The solution there
-was to up the trigger_data ref count.
+There is a window for racing when printing directly to task->comm,
+allowing other threads to see a non-terminated string. The vsnprintf
+function fills the buffer, counts the truncated chars, then finally
+writes the \0 at the end.
 
-Code inspection found that event_enable_trigger_func() has the same issue,
-but is not as easy to trigger (requires harder to trigger failures). It
-needs to be solved slightly different as it needs more to clean up when the
-reg() function fails.
+	creator                     other
+	vsnprintf:
+	  fill (not terminated)
+	  count the rest            trace_sched_waking(p):
+	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
+	  write \0
 
-Link: http://lkml.kernel.org/r/20180725124008.7008e586@gandalf.local.home
+The consequences depend on how 'other' uses the string. In our case,
+it was copied into the tracing system's saved cmdlines, a buffer of
+adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
+
+	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
+	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
+
+...and a strcpy out of there would cause stack corruption:
+
+	[224761.522292] Kernel panic - not syncing: stack-protector:
+	    Kernel stack is corrupted in: ffffff9bf9783c78
+
+	crash-arm64> kbt | grep 'comm\|trace_print_context'
+	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
+	      comm (char [16]) =  "irq/497-pwr_even"
+
+	crash-arm64> rd 0xffffffd4d0e17d14 8
+	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
+	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
+	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
+	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
+
+The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
+likely needed because of this same bug.
+
+Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
+This way, there won't be a window where comm is not terminated.
+
+Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
 
 Cc: stable@vger.kernel.org
-Fixes: 7862ad1846e99 ("tracing: Add 'enable_event' and 'disable_event' event trigger commands")
-Reivewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Snild Dolkow <snild@sony.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_trigger.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/kthread.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1389,6 +1389,9 @@ int event_enable_trigger_func(struct eve
- 		goto out;
- 	}
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -290,8 +290,14 @@ static struct task_struct *__kthread_cre
+ 	task = create->result;
+ 	if (!IS_ERR(task)) {
+ 		static const struct sched_param param = { .sched_priority = 0 };
++		char name[TASK_COMM_LEN];
  
-+	/* Up the trigger_data count to make sure nothing frees it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
-+
- 	if (trigger) {
- 		number = strsep(&trigger, ":");
- 
-@@ -1439,6 +1442,7 @@ int event_enable_trigger_func(struct eve
- 		goto out_disable;
- 	/* Just return zero, not the number of enabled functions */
- 	ret = 0;
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
- 
-@@ -1449,7 +1453,7 @@ int event_enable_trigger_func(struct eve
-  out_free:
- 	if (cmd_ops->set_filter)
- 		cmd_ops->set_filter(NULL, trigger_data, NULL);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_ops, trigger_data);
- 	kfree(enable_data);
- 	goto out;
- }
+-		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
++		/*
++		 * task is already visible to other tasks, so updating
++		 * COMM must be protected.
++		 */
++		vsnprintf(name, sizeof(name), namefmt, args);
++		set_task_comm(task, name);
+ 		/*
+ 		 * root may have changed our (kthreadd's) priority or CPU mask.
+ 		 * The kernel thread should not inherit these properties.
 
 
