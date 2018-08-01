@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12917C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B35C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45382083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45382083D
+	by mail.kernel.org (Postfix) with ESMTP id 6940D2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6940D2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733014AbeHAUPF (ORCPT
+        id S1733152AbeHAUPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:15:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
+        Wed, 1 Aug 2018 16:15:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404263AbeHATDg (ORCPT
+        with ESMTP id S2404252AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A6AD1201;
-        Wed,  1 Aug 2018 17:08:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F271BFC4;
+        Wed,  1 Aug 2018 16:58:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 250/336] memory: tegra: Apply interrupts mask per SoC
-Date:   Wed,  1 Aug 2018 18:49:45 +0200
-Message-Id: <20180801165038.623140967@linuxfoundation.org>
+Subject: [PATCH 4.17 110/336] PM / wakeup: Make s2idle_lock a RAW_SPINLOCK
+Date:   Wed,  1 Aug 2018 18:47:25 +0200
+Message-Id: <20180801165033.366893454@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,161 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 1c74d5c0de0c2cc29fef97a19251da2ad6f579bd ]
+[ Upstream commit 62fc00a6611a0014c85763f9def1fc07c15d1302 ]
 
-Currently we are enabling handling of interrupts specific to Tegra124+
-which happen to overlap with previous generations. Let's specify
-interrupts mask per SoC generation for consistency and in a preparation
-of squashing of Tegra20 driver into the common one that will enable
-handling of GART faults which may be undesirable by newer generations.
+The `s2idle_lock' is acquired during suspend while interrupts are
+disabled even on RT. The lock is acquired for short sections only.
+Make it a RAW lock which avoids "sleeping while atomic" warnings on RT.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/memory/tegra/mc.c       |   21 +++------------------
- drivers/memory/tegra/mc.h       |    9 +++++++++
- drivers/memory/tegra/tegra114.c |    2 ++
- drivers/memory/tegra/tegra124.c |    6 ++++++
- drivers/memory/tegra/tegra210.c |    3 +++
- drivers/memory/tegra/tegra30.c  |    2 ++
- include/soc/tegra/mc.h          |    2 ++
- 7 files changed, 27 insertions(+), 18 deletions(-)
+ kernel/power/suspend.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -20,14 +20,6 @@
- #include "mc.h"
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -60,7 +60,7 @@ static const struct platform_s2idle_ops
+ static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
  
- #define MC_INTSTATUS 0x000
--#define  MC_INT_DECERR_MTS (1 << 16)
--#define  MC_INT_SECERR_SEC (1 << 13)
--#define  MC_INT_DECERR_VPR (1 << 12)
--#define  MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
--#define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
--#define  MC_INT_ARBITRATION_EMEM (1 << 9)
--#define  MC_INT_SECURITY_VIOLATION (1 << 8)
--#define  MC_INT_DECERR_EMEM (1 << 6)
+ enum s2idle_states __read_mostly s2idle_state;
+-static DEFINE_SPINLOCK(s2idle_lock);
++static DEFINE_RAW_SPINLOCK(s2idle_lock);
  
- #define MC_INTMASK 0x004
- 
-@@ -248,13 +240,11 @@ static const char *const error_names[8]
- static irqreturn_t tegra_mc_irq(int irq, void *data)
+ void s2idle_set_ops(const struct platform_s2idle_ops *ops)
  {
- 	struct tegra_mc *mc = data;
--	unsigned long status, mask;
-+	unsigned long status;
- 	unsigned int bit;
+@@ -78,12 +78,12 @@ static void s2idle_enter(void)
+ {
+ 	trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, true);
  
- 	/* mask all interrupts to avoid flooding */
--	mask = mc_readl(mc, MC_INTMASK);
--	status = mc_readl(mc, MC_INTSTATUS) & mask;
--
-+	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
- 	if (!status)
- 		return IRQ_NONE;
+-	spin_lock_irq(&s2idle_lock);
++	raw_spin_lock_irq(&s2idle_lock);
+ 	if (pm_wakeup_pending())
+ 		goto out;
  
-@@ -349,7 +339,6 @@ static int tegra_mc_probe(struct platfor
- 	const struct of_device_id *match;
- 	struct resource *res;
- 	struct tegra_mc *mc;
--	u32 value;
- 	int err;
+ 	s2idle_state = S2IDLE_STATE_ENTER;
+-	spin_unlock_irq(&s2idle_lock);
++	raw_spin_unlock_irq(&s2idle_lock);
  
- 	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
-@@ -417,11 +406,7 @@ static int tegra_mc_probe(struct platfor
+ 	get_online_cpus();
+ 	cpuidle_resume();
+@@ -97,11 +97,11 @@ static void s2idle_enter(void)
+ 	cpuidle_pause();
+ 	put_online_cpus();
  
- 	WARN(!mc->soc->client_id_mask, "Missing client ID mask for this SoC\n");
+-	spin_lock_irq(&s2idle_lock);
++	raw_spin_lock_irq(&s2idle_lock);
  
--	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
--		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
--		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
--
--	mc_writel(mc, value, MC_INTMASK);
-+	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+  out:
+ 	s2idle_state = S2IDLE_STATE_NONE;
+-	spin_unlock_irq(&s2idle_lock);
++	raw_spin_unlock_irq(&s2idle_lock);
  
- 	return 0;
+ 	trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, false);
  }
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -14,6 +14,15 @@
- 
- #include <soc/tegra/mc.h>
- 
-+#define MC_INT_DECERR_MTS (1 << 16)
-+#define MC_INT_SECERR_SEC (1 << 13)
-+#define MC_INT_DECERR_VPR (1 << 12)
-+#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
-+#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
-+#define MC_INT_ARBITRATION_EMEM (1 << 9)
-+#define MC_INT_SECURITY_VIOLATION (1 << 8)
-+#define MC_INT_DECERR_EMEM (1 << 6)
-+
- static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+@@ -156,12 +156,12 @@ void s2idle_wake(void)
  {
- 	return readl(mc->regs + offset);
---- a/drivers/memory/tegra/tegra114.c
-+++ b/drivers/memory/tegra/tegra114.c
-@@ -945,4 +945,6 @@ const struct tegra_mc_soc tegra114_mc_so
- 	.atom_size = 32,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra114_smmu_soc,
-+	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
-+		   MC_INT_DECERR_EMEM,
- };
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1035,6 +1035,9 @@ const struct tegra_mc_soc tegra124_mc_so
- 	.smmu = &tegra124_smmu_soc,
- 	.emem_regs = tegra124_mc_emem_regs,
- 	.num_emem_regs = ARRAY_SIZE(tegra124_mc_emem_regs),
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
+ 	unsigned long flags;
  
-@@ -1059,5 +1062,8 @@ const struct tegra_mc_soc tegra132_mc_so
- 	.atom_size = 32,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra132_smmu_soc,
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -1092,4 +1092,7 @@ const struct tegra_mc_soc tegra210_mc_so
- 	.atom_size = 64,
- 	.client_id_mask = 0xff,
- 	.smmu = &tegra210_smmu_soc,
-+	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
- };
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -967,4 +967,6 @@ const struct tegra_mc_soc tegra30_mc_soc
- 	.atom_size = 16,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra30_smmu_soc,
-+	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
-+		   MC_INT_DECERR_EMEM,
- };
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -108,6 +108,8 @@ struct tegra_mc_soc {
- 	u8 client_id_mask;
+-	spin_lock_irqsave(&s2idle_lock, flags);
++	raw_spin_lock_irqsave(&s2idle_lock, flags);
+ 	if (s2idle_state > S2IDLE_STATE_NONE) {
+ 		s2idle_state = S2IDLE_STATE_WAKE;
+ 		wake_up(&s2idle_wait_head);
+ 	}
+-	spin_unlock_irqrestore(&s2idle_lock, flags);
++	raw_spin_unlock_irqrestore(&s2idle_lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(s2idle_wake);
  
- 	const struct tegra_smmu_soc *smmu;
-+
-+	u32 intmask;
- };
- 
- struct tegra_mc {
 
 
