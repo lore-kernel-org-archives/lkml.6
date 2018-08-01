@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461D6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20400C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0904C20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0904C20841
+	by mail.kernel.org (Postfix) with ESMTP id CB18F20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB18F20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387702AbeHAUXI (ORCPT
+        id S2387551AbeHAUXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:23:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+        Wed, 1 Aug 2018 16:23:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403987AbeHATDd (ORCPT
+        with ESMTP id S2403981AbeHATDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C94EE128B;
-        Wed,  1 Aug 2018 17:10:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CC82129D;
+        Wed,  1 Aug 2018 17:10:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        stable@vger.kernel.org, Floris Bos <bos@je-eigen-domein.nl>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 314/336] ipv4: remove BUG_ON() from fib_compute_spec_dst
-Date:   Wed,  1 Aug 2018 18:50:49 +0200
-Message-Id: <20180801165041.060762622@linuxfoundation.org>
+Subject: [PATCH 4.17 318/336] net: lan78xx: fix rx handling before first packet is send
+Date:   Wed,  1 Aug 2018 18:50:53 +0200
+Message-Id: <20180801165041.208399938@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,48 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit 9fc12023d6f51551d6ca9ed7e02ecc19d79caf17 ]
+[ Upstream commit 136f55f660192ce04af091642efc75d85e017364 ]
 
-Remove BUG_ON() from fib_compute_spec_dst routine and check
-in_dev pointer during flowi4 data structure initialization.
-fib_compute_spec_dst routine can be run concurrently with device removal
-where ip_ptr net_device pointer is set to NULL. This can happen
-if userspace enables pkt info on UDP rx socket and the device
-is removed while traffic is flowing
+As long the bh tasklet isn't scheduled once, no packet from the rx path
+will be handled. Since the tx path also schedule the same tasklet
+this situation only persits until the first packet transmission.
+So fix this issue by scheduling the tasklet after link reset.
 
-Fixes: 35ebf65e851c ("ipv4: Create and use fib_compute_spec_dst() helper")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Link: https://github.com/raspberrypi/linux/issues/2617
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet")
+Suggested-by: Floris Bos <bos@je-eigen-domein.nl>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fib_frontend.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/usb/lan78xx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -292,19 +292,19 @@ __be32 fib_compute_spec_dst(struct sk_bu
- 		return ip_hdr(skb)->daddr;
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1216,6 +1216,8 @@ static int lan78xx_link_reset(struct lan
+ 			mod_timer(&dev->stat_monitor,
+ 				  jiffies + STAT_UPDATE_TIMER);
+ 		}
++
++		tasklet_schedule(&dev->bh);
+ 	}
  
- 	in_dev = __in_dev_get_rcu(dev);
--	BUG_ON(!in_dev);
- 
- 	net = dev_net(dev);
- 
- 	scope = RT_SCOPE_UNIVERSE;
- 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
-+		bool vmark = in_dev && IN_DEV_SRC_VMARK(in_dev);
- 		struct flowi4 fl4 = {
- 			.flowi4_iif = LOOPBACK_IFINDEX,
- 			.flowi4_oif = l3mdev_master_ifindex_rcu(dev),
- 			.daddr = ip_hdr(skb)->saddr,
- 			.flowi4_tos = RT_TOS(ip_hdr(skb)->tos),
- 			.flowi4_scope = scope,
--			.flowi4_mark = IN_DEV_SRC_VMARK(in_dev) ? skb->mark : 0,
-+			.flowi4_mark = vmark ? skb->mark : 0,
- 		};
- 		if (!fib_lookup(net, &fl4, &res, 0))
- 			return FIB_RES_PREFSRC(net, res);
+ 	return ret;
 
 
