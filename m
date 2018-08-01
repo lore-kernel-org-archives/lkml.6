@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BC6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D823C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1832A20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1832A20862
+	by mail.kernel.org (Postfix) with ESMTP id DF60E2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF60E2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407208AbeHATOA (ORCPT
+        id S2407220AbeHATOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:14:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51894 "EHLO
+        Wed, 1 Aug 2018 15:14:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405636AbeHATN7 (ORCPT
+        with ESMTP id S2404699AbeHATOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:59 -0400
+        Wed, 1 Aug 2018 15:14:03 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF70CD2F;
-        Wed,  1 Aug 2018 17:27:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAE7EC3C;
+        Wed,  1 Aug 2018 17:27:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 055/144] ath: Add regulatory mapping for APL2_FCCA
-Date:   Wed,  1 Aug 2018 18:51:22 +0200
-Message-Id: <20180801164952.876285153@linuxfoundation.org>
+Subject: [PATCH 4.9 020/144] rtc: ensure rtc_set_alarm fails when alarms are not supported
+Date:   Wed,  1 Aug 2018 18:50:47 +0200
+Message-Id: <20180801164950.777761867@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,47 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 4f183687e3fad3ce0e06e38976cad81bc4541990 ]
+[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
 
-The regdomain code is used to select the correct the correct conformance
-test limits (CTL) for a country. If the regdomain code isn't available and
-it is still programmed in the EEPROM then it will cause an error and stop
-the initialization with:
+When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
+rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
+subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
+case.
 
-  Invalid EEPROM contents
+Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
+programs think the alarms are working for a particular RTC when they are
+not.
 
-The current CTL mappings for this regdomain code are:
-
-* 2.4GHz: FCC
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd_common.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rtc/interface.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -61,6 +61,7 @@ enum EnumRd {
- 	MKK1_MKKA1 = 0x4A,
- 	MKK1_MKKA2 = 0x4B,
- 	MKK1_MKKC = 0x4C,
-+	APL2_FCCA = 0x4D,
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -359,6 +359,11 @@ int rtc_set_alarm(struct rtc_device *rtc
+ {
+ 	int err;
  
- 	APL3_FCCA = 0x50,
- 	APL1_WORLD = 0x52,
-@@ -193,6 +194,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{FCC1_FCCA, CTL_FCC, CTL_FCC},
- 	{APL1_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL2_WORLD, CTL_FCC, CTL_ETSI},
-+	{APL2_FCCA, CTL_FCC, CTL_FCC},
- 	{APL3_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL4_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL5_WORLD, CTL_FCC, CTL_ETSI},
++	if (!rtc->ops)
++		return -ENODEV;
++	else if (!rtc->ops->set_alarm)
++		return -EINVAL;
++
+ 	err = rtc_valid_tm(&alarm->time);
+ 	if (err != 0)
+ 		return err;
 
 
