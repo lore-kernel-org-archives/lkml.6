@@ -2,93 +2,57 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B99E4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7200FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6797B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:38:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tEY43cNA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6797B20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id E963C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 20:51:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E963C20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732433AbeHAW03 (ORCPT
+        id S1732209AbeHAWif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 18:26:29 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:53228 "EHLO vps0.lunn.ch"
+        Wed, 1 Aug 2018 18:38:35 -0400
+Received: from namei.org ([65.99.196.166]:41424 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728226AbeHAW03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 18:26:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=wVt/njjw90u5LI5OVyTjIogIfG2pqiT7QONbf8S7fQM=;
-        b=tEY43cNAW3vTSOIij66g4Ac/8hNcWkqg0RcUFt+L7pdMulTUJlrmyzPhnquFltKeLk6TpYASmKgxOc54AXRUqzDH+Ms3zXXQqDe5/5wlH9P0hl2f07NgOB+E5CX0HZTEE1ur2y+IZfwlr+K5rMwfw8+4wtCYe21KBgRLij7kLN0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fkxtO-0006jY-DJ; Wed, 01 Aug 2018 22:38:46 +0200
-Date:   Wed, 1 Aug 2018 22:38:46 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 7/8] net: phy: Add support to configure clock in
- Broadcom iProc mdio mux
-Message-ID: <20180801203846.GE19257@lunn.ch>
-References: <1533146186-8374-1-git-send-email-arun.parameswaran@broadcom.com>
- <1533146186-8374-8-git-send-email-arun.parameswaran@broadcom.com>
- <0cc6db4f-7008-0ad3-58d7-9e93060f152f@gmail.com>
- <20180801184659.GG30658@n2100.armlinux.org.uk>
- <9af7e7a3-54d4-8802-f64a-fc4f9c49c8b9@broadcom.com>
- <20180801200712.GD19257@lunn.ch>
- <20180801202313.GH30658@n2100.armlinux.org.uk>
+        id S1729639AbeHAWie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 18:38:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w71KosJI013706;
+        Wed, 1 Aug 2018 20:50:54 GMT
+Date:   Thu, 2 Aug 2018 06:50:54 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     David Howells <dhowells@redhat.com>
+cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/33] vfs: Add LSM hooks for the new mount API [ver
+ #11]
+In-Reply-To: <153313709864.13253.2279983851744713211.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1808020650230.13125@namei.org>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313709864.13253.2279983851744713211.stgit@warthog.procyon.org.uk>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801202313.GH30658@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 09:23:14PM +0100, Russell King - ARM Linux wrote:
-> On Wed, Aug 01, 2018 at 10:07:12PM +0200, Andrew Lunn wrote:
-> > You might want to consider adding clk_optional_get() and
-> > devm_clk_optional_get().
-> 
-> I think there's attempts to add such APIs but I don't think it's
-> trivial - it seems to require a _lot_ of discussion.
-> 
-> I think part of that is because of the quirky use of error codes.
-> If you look at clk_get(), it calls __of_clk_get_by_name() which
-> returns:
-> 
->  -ENOENT if DT is disabled
->  -ENOENT if the device has no DT node
->  -EPROBE_DEFER if the lookup in DT succeeds but there's no registered
->    clock
->  -EINVAL if the device has a DT node but the lookup of the name
->    failed (in otherwords, the optional clock was omitted)
->  -ENOENT if the clocks = property has not enough clocks for the
->     clock-names property
->  -ENOMEM if we fail to allocate the clk
->  -ENOENT if __clk_get() fails
+On Wed, 1 Aug 2018, David Howells wrote:
 
-That makes it hard. I added phy_optional_get() early on, when the
-error cases were simple. Hopefully they remain simple...
+>  (2) A hook to snoop source specifications.  
 
-      Andrew
+
+What are source specifications?
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
