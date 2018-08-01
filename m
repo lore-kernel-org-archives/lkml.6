@@ -2,91 +2,98 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5B2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DBDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6234920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6234920862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0F11620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F11620862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388517AbeHAViC (ORCPT
+        id S2388562AbeHAViG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:38:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34828 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387403AbeHAViC (ORCPT
+        Wed, 1 Aug 2018 17:38:06 -0400
+Received: from gateway20.websitewelcome.com ([192.185.55.25]:26102 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387562AbeHAViF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:38:02 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fkx8h-0001GL-0b; Wed, 01 Aug 2018 21:50:31 +0200
-Date:   Wed, 1 Aug 2018 21:50:29 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Aashish Lakhwara <aashish.l@samsung.com>
-cc:     linux-kernel@vger.kernel.org, himanshu.sh@samssung.com,
-        a.sahrawat@samsung.com, pankaj.m@samsung.com,
-        Himanshu Shukla <himanshu.sh@samsung.com>
-Subject: Re: [PATCH] posix-timers: Remove the stack variable clockid_t
- introduced as part of Protect posix clock array access against speculation
-In-Reply-To: <20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6~GrS4x1NZj0970809708epcas5p3l@epcas5p3.samsung.com>
-Message-ID: <alpine.DEB.2.21.1808012140160.1835@nanos.tec.linutronix.de>
-References: <CGME20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6@epcas5p3.samsung.com> <20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6~GrS4x1NZj0970809708epcas5p3l@epcas5p3.samsung.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 1 Aug 2018 17:38:05 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id D48D0400DDB12
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 14:50:42 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id kx8XftrgjBcCXkx8jfVVjE; Wed, 01 Aug 2018 14:50:42 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.61.218] (port=37636 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fkx8X-004BPo-0V; Wed, 01 Aug 2018 14:50:21 -0500
+Date:   Wed, 1 Aug 2018 14:50:20 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 03/11] ASoC: rt5677: Mark expected switch fall-through
+Message-ID: <e23dbec89964bff8832d5ff4ae5a50fd1a6c185f.1533151956.git.gustavo@embeddedor.com>
+References: <cover.1533151956.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1533151956.git.gustavo@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.61.218
+X-Source-L: No
+X-Exim-ID: 1fkx8X-004BPo-0V
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.61.218]:37636
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 30
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018, Aashish Lakhwara wrote:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> Subject: [PATCH] posix-timers: Remove the stack variable clockid_t introduced as part of
-    Protect posix clock array access against speculation
+Addresses-Coverity-ID: 1271174 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/soc/codecs/rt5677.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Documentation/process/submitting-patches.rst:
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 8a0181a..922becf 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -4417,6 +4417,7 @@ static int rt5677_set_tdm_slot(struct snd_soc_dai *dai, unsigned int tx_mask,
+ 		break;
+ 	case 25:
+ 		slot_width_25 = 0x8080;
++		/* fall through */
+ 	case 24:
+ 		val |= (2 << 8);
+ 		break;
+-- 
+2.7.4
 
-  For these reasons, the ``summary`` must be no more than 70-75
-  characters, and it must describe both what the patch changes, as well
-  as why the patch might be necessary.  It is challenging to be both
-  succinct and descriptive, but that is what a well-written summary
-  should do.
-
-The above $subject violates all of these rules.
-
-> The "array_index_mask_nospec" code has been updated to allow index
-> argument to have const-qualified type.
-
-> Now the stack variable "idx" is no longer required and can be removed.
-> We should directly pass the const variable "id" to array_index_mask_nospec
-
-We should? Changelogs are about facts. So having:
-
-  The "array_index_mask_nospec" code has been updated to allow index
-  argument to have const-qualified type.
-
-  So the stack variable "idx" which was introduced in commit 19b558db12f9
-  ("posix-timers: Protect posix clock array access against speculation") to
-  cast the const argument 'id' is not longer required.
-
-is factual and precise. Hmm?
-
-> Signed-off-by: Aashish Lakhwara <aashish.l@samsung.com>
-> Signed-off-by: Himanshu Shukla <himanshu.sh@samsung.com>
-
-This SOB chain is wrong. Please read and follow the Docuentation.
-
-Thanks,
-
-	tglx
