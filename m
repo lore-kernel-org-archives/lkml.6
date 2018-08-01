@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAABC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E005C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B29EA2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29EA2083D
+	by mail.kernel.org (Postfix) with ESMTP id EAF85208B1
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF85208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407497AbeHATPi (ORCPT
+        id S2407512AbeHATPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52258 "EHLO
+        Wed, 1 Aug 2018 15:15:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404699AbeHATPi (ORCPT
+        with ESMTP id S2404699AbeHATPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:38 -0400
+        Wed, 1 Aug 2018 15:15:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E048FD4A;
-        Wed,  1 Aug 2018 17:28:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16ED9D4D;
+        Wed,  1 Aug 2018 17:28:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 087/144] EDAC, altera: Fix ARM64 build warning
-Date:   Wed,  1 Aug 2018 18:51:54 +0200
-Message-Id: <20180801164955.918159963@linuxfoundation.org>
+Subject: [PATCH 4.9 088/144] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
+Date:   Wed,  1 Aug 2018 18:51:55 +0200
+Message-Id: <20180801164955.993068757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -54,45 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 9ef20753e044f7468c4113e5aecd785419b0b3cc ]
+[ Upstream commit 7207b94754b6f503b278b5b200faaf662ffa1da8 ]
 
-The kbuild test robot reported the following warning:
+The PMU node references two interrupts, but lacks the interrupt-affinity
+property, which is required in that case:
 
-  drivers/edac/altera_edac.c: In function 'ocram_free_mem':
-  drivers/edac/altera_edac.c:1410:42: warning: cast from pointer to integer
-	of different size [-Wpointer-to-int-cast]
-    gen_pool_free((struct gen_pool *)other, (u32)p, size);
-                                             ^
+    hw perfevents: no interrupt-affinity property for /pmu, guessing.
 
-After adding support for ARM64 architectures, the unsigned long
-parameter is 64 bits and causes a build warning on 64-bit configs. Fix
-by casting to the correct size (unsigned long) instead of u32.
+Add the missing property to fix this.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Fixes: c3eea1942a16 ("EDAC, altera: Add Altera L2 cache and OCRAM support")
-Link: http://lkml.kernel.org/r/1526317441-4996-1-git-send-email-thor.thayer@linux.intel.com
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/edac/altera_edac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/emev2.dtsi |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1111,7 +1111,7 @@ static void *ocram_alloc_mem(size_t size
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -30,13 +30,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- static void ocram_free_mem(void *p, size_t size, void *other)
- {
--	gen_pool_free((struct gen_pool *)other, (u32)p, size);
-+	gen_pool_free((struct gen_pool *)other, (unsigned long)p, size);
- }
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <533000000>;
+ 		};
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+@@ -56,6 +56,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
+ 	};
  
- static const struct edac_device_prv_data ocramecc_data = {
+ 	clocks@e0110000 {
 
 
