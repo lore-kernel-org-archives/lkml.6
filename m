@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6CAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D265C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2003208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2003208A3
+	by mail.kernel.org (Postfix) with ESMTP id 1450F2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1450F2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408133AbeHATS6 (ORCPT
+        id S2408141AbeHATTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53042 "EHLO
+        Wed, 1 Aug 2018 15:19:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53052 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404021AbeHATS5 (ORCPT
+        with ESMTP id S2389982AbeHATTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:57 -0400
+        Wed, 1 Aug 2018 15:19:00 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B052B74;
-        Wed,  1 Aug 2018 17:32:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C64AA74;
+        Wed,  1 Aug 2018 17:32:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Connor McAdams <conmanx360@gmail.com>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 110/144] ALSA: hda/ca0132: fix build failure when a local macro is defined
-Date:   Wed,  1 Aug 2018 18:52:17 +0200
-Message-Id: <20180801164957.243546993@linuxfoundation.org>
+Subject: [PATCH 4.9 101/144] bnxt_en: Check unsupported speeds in bnxt_update_link() on PF only.
+Date:   Wed,  1 Aug 2018 18:52:08 +0200
+Message-Id: <20180801164956.716558020@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,51 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 8e142e9e628975b0dddd05cf1b095331dff6e2de ]
+[ Upstream commit dac0490718bd17df5e3995ffca14255e5f9ed22d ]
 
-DECLARE_TLV_DB_SCALE (alias of SNDRV_CTL_TLVD_DECLARE_DB_SCALE) is used but
-tlv.h is not included. This causes build failure when local macro is
-defined by comment-out.
+Only non-NPAR PFs need to actively check and manage unsupported link
+speeds.  NPAR functions and VFs do not control the link speed and
+should skip the unsupported speed detection logic, to avoid warning
+messages from firmware rejecting the unsupported firmware calls.
 
-This commit fixes the bug. At the same time, the alias macro is replaced
-with a destination macro added at a commit 46e860f76804 ("ALSA: rename
-TLV-related macros so that they're friendly to user applications")
-
-Reported-by: Connor McAdams <conmanx360@gmail.com>
-Fixes: 44f0c9782cc6 ('ALSA: hda/ca0132: Add tuning controls')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/patch_ca0132.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -38,6 +38,10 @@
- /* Enable this to see controls for tuning purpose. */
- /*#define ENABLE_TUNING_CONTROLS*/
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -5257,6 +5257,9 @@ static int bnxt_update_link(struct bnxt
+ 	}
+ 	mutex_unlock(&bp->hwrm_cmd_lock);
  
-+#ifdef ENABLE_TUNING_CONTROLS
-+#include <sound/tlv.h>
-+#endif
++	if (!BNXT_SINGLE_PF(bp))
++		return 0;
 +
- #define FLOAT_ZERO	0x00000000
- #define FLOAT_ONE	0x3f800000
- #define FLOAT_TWO	0x40000000
-@@ -3067,8 +3071,8 @@ static int equalizer_ctl_put(struct snd_
- 	return 1;
- }
- 
--static const DECLARE_TLV_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
--static const DECLARE_TLV_DB_SCALE(eq_db_scale, -2400, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(eq_db_scale, -2400, 100, 0);
- 
- static int add_tuning_control(struct hda_codec *codec,
- 				hda_nid_t pnid, hda_nid_t nid,
+ 	diff = link_info->support_auto_speeds ^ link_info->advertising;
+ 	if ((link_info->support_auto_speeds | diff) !=
+ 	    link_info->support_auto_speeds) {
 
 
