@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD350C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59528C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10BD52083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BD52083D
+	by mail.kernel.org (Postfix) with ESMTP id 13BFA2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BFA2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387441AbeHAUIR (ORCPT
+        id S2404457AbeHATDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:08:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404452AbeHATDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404373AbeHATDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4882CFDD;
-        Wed,  1 Aug 2018 16:59:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84A4B1050;
+        Wed,  1 Aug 2018 17:00:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 117/336] ath: Add regulatory mapping for FCC3_ETSIC
-Date:   Wed,  1 Aug 2018 18:47:32 +0200
-Message-Id: <20180801165033.625511039@linuxfoundation.org>
+Subject: [PATCH 4.17 148/336] net: hns3: Fix the missing client list node initialization
+Date:   Wed,  1 Aug 2018 18:48:03 +0200
+Message-Id: <20180801165034.800719567@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,47 +53,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Xi Wang <wangxi11@huawei.com>
 
-[ Upstream commit 01fb2994a98dc72c8818c274f7b5983d5dd885c7 ]
+[ Upstream commit 13562d1f5e2fbe2cf33b23a00abca3f71264c4ac ]
 
-The regdomain code is used to select the correct the correct conformance
-test limits (CTL) for a country. If the regdomain code isn't available and
-it is still programmed in the EEPROM then it will cause an error and stop
-the initialization with:
+This patch fixes the missing initialization of the client list node
+in the hnae3_register_client() function.
 
-  Invalid EEPROM contents
-
-The current CTL mappings for this regdomain code are:
-
-* 2.4GHz: ETSI
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd_common.h |    2 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -35,6 +35,7 @@ enum EnumRd {
- 	FRANCE_RES = 0x31,
- 	FCC3_FCCA = 0x3A,
- 	FCC3_WORLD = 0x3B,
-+	FCC3_ETSIC = 0x3F,
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3602,6 +3602,8 @@ static int __init hns3_init_module(void)
  
- 	ETSI1_WORLD = 0x37,
- 	ETSI3_ETSIA = 0x32,
-@@ -168,6 +169,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{FCC2_ETSIC, CTL_FCC, CTL_ETSI},
- 	{FCC3_FCCA, CTL_FCC, CTL_FCC},
- 	{FCC3_WORLD, CTL_FCC, CTL_ETSI},
-+	{FCC3_ETSIC, CTL_FCC, CTL_ETSI},
- 	{FCC4_FCCA, CTL_FCC, CTL_FCC},
- 	{FCC5_FCCA, CTL_FCC, CTL_FCC},
- 	{FCC6_FCCA, CTL_FCC, CTL_FCC},
+ 	client.ops = &client_ops;
+ 
++	INIT_LIST_HEAD(&client.node);
++
+ 	ret = hnae3_register_client(&client);
+ 	if (ret)
+ 		return ret;
 
 
