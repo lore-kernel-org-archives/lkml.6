@@ -6,86 +6,137 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC6EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7FCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F5F2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:08:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F5F2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C1441208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1441208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388298AbeHAMxY (ORCPT
+        id S2388678AbeHAMym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:53:24 -0400
-Received: from mga05.intel.com ([192.55.52.43]:16904 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387592AbeHAMxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:53:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 04:08:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,431,1526367600"; 
-   d="scan'208";a="71677732"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga003.jf.intel.com with ESMTP; 01 Aug 2018 04:08:04 -0700
-Message-ID: <5B619599.1000307@intel.com>
-Date:   Wed, 01 Aug 2018 19:12:25 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Wed, 1 Aug 2018 08:54:42 -0400
+Received: from 5.mo1.mail-out.ovh.net ([178.33.45.107]:36809 "EHLO
+        5.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730915AbeHAMym (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 08:54:42 -0400
+Received: from player798.ha.ovh.net (unknown [10.109.160.226])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 7ABB3117474
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 12:52:28 +0200 (CEST)
+Received: from bahia.lan (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player798.ha.ovh.net (Postfix) with ESMTPSA id CDD835400C5;
+        Wed,  1 Aug 2018 12:52:23 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 12:52:22 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     piaojun <piaojun@huawei.com>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+Subject: Re: [PATCH] net/9p/trans_virtio.c: add a terminal char for mount
+ tag
+Message-ID: <20180801125222.3ba39416@bahia.lan>
+In-Reply-To: <5B616E3B.4050205@huawei.com>
+References: <5B6164F6.60004@huawei.com>
+        <20180801081157.GA20127@nautica>
+        <5B616E3B.4050205@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 2/2] virtio_balloon: replace oom notifier with shrinker
-References: <1532683495-31974-1-git-send-email-wei.w.wang@intel.com> <1532683495-31974-3-git-send-email-wei.w.wang@intel.com> <20180730090041.GC24267@dhcp22.suse.cz>
-In-Reply-To: <20180730090041.GC24267@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 10442721637903210982
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtiedrledvgdefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/30/2018 05:00 PM, Michal Hocko wrote:
-> On Fri 27-07-18 17:24:55, Wei Wang wrote:
->> The OOM notifier is getting deprecated to use for the reasons mentioned
->> here by Michal Hocko: https://lkml.org/lkml/2018/7/12/314
->>
->> This patch replaces the virtio-balloon oom notifier with a shrinker
->> to release balloon pages on memory pressure.
-> It would be great to document the replacement. This is not a small
-> change...
+On Wed, 1 Aug 2018 16:24:27 +0800
+piaojun <piaojun@huawei.com> wrote:
 
-OK. I plan to document the following to the commit log:
+> Hi Dominique,
+> 
+> On 2018/8/1 16:11, Dominique Martinet wrote:
+> > piaojun wrote on Wed, Aug 01, 2018:  
+> >> chan->tag has no terminal char at last which will result in printing messy
+> >> code when debugging code. So we should add '\0' for tag.  
+> > 
+> > 9p is full of non null-terminated string so I'm not sure how I feel
+> > about it, is there anything wrong with how this is used or was this just
+> > when you tried to printf it?  
+> 
 
-   The OOM notifier is getting deprecated to use for the reasons:
-     - As a callout from the oom context, it is too subtle and easy to
-       generate bugs and corner cases which are hard to track;
-     - It is called too late (after the reclaiming has been performed).
-       Drivers with large amuont of reclaimable memory is expected to be
-       released them at an early age of memory pressure;
-     - The notifier callback isn't aware of the oom contrains;
-     Link: https://lkml.org/lkml/2018/7/12/314
+The mount tag isn't a 9P thingy actually. It is provided by the server
+in the device config space, and it is never used in any 9P message.
+It could have been a nul terminated string from the beginning. Not
+sure why people opted to store it that way.
 
-     This patch replaces the virtio-balloon oom notifier with a shrinker
-     to release balloon pages on memory pressure. Users can set the 
-amount of
-     memory pages to release each time a shrinker_scan is called via the
-     module parameter balloon_pages_to_shrink, and the default amount is 256
-     pages. Historically, the feature VIRTIO_BALLOON_F_DEFLATE_ON_OOM has
-     been used to release balloon pages on OOM. We continue to use this
-     feature bit for the shrinker, so the shrinker is only registered when
-     this feature bit has been negotiated with host.
+> There is nothing wrong at the places using tag, as they calculated the
+> tag_len carefully. Adding '\0' for it will make the code more robust. And
+> I'm glad to hear others' opinions.
+> 
 
-     In addition, the bug in the replaced virtballoon_oom_notify that only
-     VIRTIO_BALLOON_ARRAY_PFNS_MAX (i.e 256) balloon pages can be freed
-     though the user has specified more than that number is fixed in the
-     shrinker_scan function.
+So this patch basically turns chan->tag into a nul terminated string,
+which is indeed more convenient and robust. Maybe you can update the
+rest of the code accordingly and drop chan->tag_len then ?
+
+> Thanks,
+> Jun
+> 
+> > 
+> > If it's just for debugging I'd suggest using the printf format "%.*s"
+> > with "chan->tag_len, chan->tag" arguments,
+
+FWIW, 9P strings received from the client are also converted to
+nul terminated strings:
+
+static int
+p9pdu_vreadf(struct p9_fcall *pdu, int proto_version, const char *fmt,
+	va_list ap)
+{
+[...]
+		case 's':{
+[...]
+				*sptr = kmalloc(len + 1, GFP_NOFS);
+[...]
+					(*sptr)[len] = 0;
+			}
 
 
-Best,
-Wei
+Cheers,
+
+--
+Greg
+
+> > 
+> > 
+> > That said it's not like this is costly, so I'll take it if someone else
+> > thinks this is helpful
+> >   
+> >>
+> >> Signed-off-by: Jun Piao <piaojun@huawei.com>
+> >> ---
+> >>  net/9p/trans_virtio.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> >> index d422bfc..49d71d6 100644
+> >> --- a/net/9p/trans_virtio.c
+> >> +++ b/net/9p/trans_virtio.c
+> >> @@ -585,7 +585,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+> >>  		err = -EINVAL;
+> >>  		goto out_free_vq;
+> >>  	}
+> >> -	tag = kmalloc(tag_len, GFP_KERNEL);
+> >> +	tag = kzalloc(tag_len + 1, GFP_KERNEL);
+> >>  	if (!tag) {
+> >>  		err = -ENOMEM;
+> >>  		goto out_free_vq;
+> >> --   
+
