@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20E1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E4DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8681E20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8681E20862
+	by mail.kernel.org (Postfix) with ESMTP id F39B620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39B620862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408201AbeHATXJ (ORCPT
+        id S2408187AbeHATXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:23:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52922 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436532AbeHATSi (ORCPT
+        with ESMTP id S2436551AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59B2FE33;
-        Wed,  1 Aug 2018 16:53:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C92BF2B;
+        Wed,  1 Aug 2018 16:56:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 020/336] hv_netvsc: fix network namespace issues with VF support
-Date:   Wed,  1 Aug 2018 18:45:55 +0200
-Message-Id: <20180801165029.768231364@linuxfoundation.org>
+Subject: [PATCH 4.17 064/336] netfilter: nf_tables: check msg_type before nft_trans_set(trans)
+Date:   Wed,  1 Aug 2018 18:46:39 +0200
+Message-Id: <20180801165031.588645616@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,131 +52,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-[ Upstream commit 7bf7bb37f16a80465ee3bd7c6c966f96f5a075a6 ]
+[ Upstream commit 9c7f96fd77b0dbe1fe7ed1f9c462c45dc48a1076 ]
 
-When finding the parent netvsc device, the search needs to be across
-all netvsc device instances (independent of network namespace).
+The patch moves the "trans->msg_type == NFT_MSG_NEWSET" check before
+using nft_trans_set(trans). Otherwise we can get out of bounds read.
 
-Find parent device of VF using upper_dev_get routine which
-searches only adjacent list.
+For example, KASAN reported the one when running 0001_cache_handling_0 nft
+test. In this case "trans->msg_type" was NFT_MSG_NEWTABLE:
 
-Fixes: e8ff40d4bff1 ("hv_netvsc: improve VF device matching")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+[75517.177808] BUG: KASAN: slab-out-of-bounds in nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75517.279094] Read of size 8 at addr ffff881bdb643fc8 by task nft/7356
+...
+[75517.375605] CPU: 26 PID: 7356 Comm: nft Tainted: G  E   4.17.0-rc7.1.x86_64 #1
+[75517.489587] Hardware name: Oracle Corporation SUN SERVER X4-2
+[75517.618129] Call Trace:
+[75517.648821]  dump_stack+0xd1/0x13b
+[75517.691040]  ? show_regs_print_info+0x5/0x5
+[75517.742519]  ? kmsg_dump_rewind_nolock+0xf5/0xf5
+[75517.799300]  ? lock_acquire+0x143/0x310
+[75517.846738]  print_address_description+0x85/0x3a0
+[75517.904547]  kasan_report+0x18d/0x4b0
+[75517.949892]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.019153]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.088420]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.157689]  nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.224869]  nf_tables_newsetelem+0x1a5/0x5d0 [nf_tables]
+[75518.291024]  ? nft_add_set_elem+0x2280/0x2280 [nf_tables]
+[75518.357154]  ? nla_parse+0x1a5/0x300
+[75518.401455]  ? kasan_kmalloc+0xa6/0xd0
+[75518.447842]  nfnetlink_rcv+0xc43/0x1bdf [nfnetlink]
+[75518.507743]  ? nfnetlink_rcv+0x7a5/0x1bdf [nfnetlink]
+[75518.569745]  ? nfnl_err_reset+0x3c0/0x3c0 [nfnetlink]
+[75518.631711]  ? lock_acquire+0x143/0x310
+[75518.679133]  ? netlink_deliver_tap+0x9b/0x1070
+[75518.733840]  ? kasan_unpoison_shadow+0x31/0x40
+[75518.788542]  netlink_unicast+0x45d/0x680
+[75518.837111]  ? __isolate_free_page+0x890/0x890
+[75518.891913]  ? netlink_attachskb+0x6b0/0x6b0
+[75518.944542]  netlink_sendmsg+0x6fa/0xd30
+[75518.993107]  ? netlink_unicast+0x680/0x680
+[75519.043758]  ? netlink_unicast+0x680/0x680
+[75519.094402]  sock_sendmsg+0xd9/0x160
+[75519.138810]  ___sys_sendmsg+0x64d/0x980
+[75519.186234]  ? copy_msghdr_from_user+0x350/0x350
+[75519.243118]  ? lock_downgrade+0x650/0x650
+[75519.292738]  ? do_raw_spin_unlock+0x5d/0x250
+[75519.345456]  ? _raw_spin_unlock+0x24/0x30
+[75519.395065]  ? __handle_mm_fault+0xbde/0x3410
+[75519.448830]  ? sock_setsockopt+0x3d2/0x1940
+[75519.500516]  ? __lock_acquire.isra.25+0xdc/0x19d0
+[75519.558448]  ? lock_downgrade+0x650/0x650
+[75519.608057]  ? __audit_syscall_entry+0x317/0x720
+[75519.664960]  ? __fget_light+0x58/0x250
+[75519.711325]  ? __sys_sendmsg+0xde/0x170
+[75519.758850]  __sys_sendmsg+0xde/0x170
+[75519.804193]  ? __ia32_sys_shutdown+0x90/0x90
+[75519.856725]  ? syscall_trace_enter+0x897/0x10e0
+[75519.912354]  ? trace_event_raw_event_sys_enter+0x920/0x920
+[75519.979432]  ? __audit_syscall_entry+0x720/0x720
+[75520.036118]  do_syscall_64+0xa3/0x3d0
+[75520.081248]  ? prepare_exit_to_usermode+0x47/0x1d0
+[75520.139904]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[75520.201680] RIP: 0033:0x7fc153320ba0
+[75520.245772] RSP: 002b:00007ffe294c3638 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[75520.337708] RAX: ffffffffffffffda RBX: 00007ffe294c4820 RCX: 00007fc153320ba0
+[75520.424547] RDX: 0000000000000000 RSI: 00007ffe294c46b0 RDI: 0000000000000003
+[75520.511386] RBP: 00007ffe294c47b0 R08: 0000000000000004 R09: 0000000002114090
+[75520.598225] R10: 00007ffe294c30a0 R11: 0000000000000246 R12: 00007ffe294c3660
+[75520.684961] R13: 0000000000000001 R14: 00007ffe294c3650 R15: 0000000000000001
 
-netns aware byref
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[75520.790946] Allocated by task 7356:
+[75520.833994]  kasan_kmalloc+0xa6/0xd0
+[75520.878088]  __kmalloc+0x189/0x450
+[75520.920107]  nft_trans_alloc_gfp+0x20/0x190 [nf_tables]
+[75520.983961]  nf_tables_newtable+0xcd0/0x1bd0 [nf_tables]
+[75521.048857]  nfnetlink_rcv+0xc43/0x1bdf [nfnetlink]
+[75521.108655]  netlink_unicast+0x45d/0x680
+[75521.157013]  netlink_sendmsg+0x6fa/0xd30
+[75521.205271]  sock_sendmsg+0xd9/0x160
+[75521.249365]  ___sys_sendmsg+0x64d/0x980
+[75521.296686]  __sys_sendmsg+0xde/0x170
+[75521.341822]  do_syscall_64+0xa3/0x3d0
+[75521.386957]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[75521.467867] Freed by task 23454:
+[75521.507804]  __kasan_slab_free+0x132/0x180
+[75521.558137]  kfree+0x14d/0x4d0
+[75521.596005]  free_rt_sched_group+0x153/0x280
+[75521.648410]  sched_autogroup_create_attach+0x19a/0x520
+[75521.711330]  ksys_setsid+0x2ba/0x400
+[75521.755529]  __ia32_sys_setsid+0xa/0x10
+[75521.802850]  do_syscall_64+0xa3/0x3d0
+[75521.848090]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[75521.929000] The buggy address belongs to the object at ffff881bdb643f80
+ which belongs to the cache kmalloc-96 of size 96
+[75522.079797] The buggy address is located 72 bytes inside of
+ 96-byte region [ffff881bdb643f80, ffff881bdb643fe0)
+[75522.221234] The buggy address belongs to the page:
+[75522.280100] page:ffffea006f6d90c0 count:1 mapcount:0 mapping:0000000000000000 index:0x0
+[75522.377443] flags: 0x2fffff80000100(slab)
+[75522.426956] raw: 002fffff80000100 0000000000000000 0000000000000000 0000000180200020
+[75522.521275] raw: ffffea006e6fafc0 0000000c0000000c ffff881bf180f400 0000000000000000
+[75522.615601] page dumped because: kasan: bad access detected
+
+Fixes: 37a9cc525525 ("netfilter: nf_tables: add generation mask to sets")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/hyperv_net.h |    2 +
- drivers/net/hyperv/netvsc_drv.c |   45 ++++++++++++++++++----------------------
- 2 files changed, 23 insertions(+), 24 deletions(-)
+ net/netfilter/nf_tables_api.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -738,6 +738,8 @@ struct net_device_context {
- 	struct hv_device *device_ctx;
- 	/* netvsc_device */
- 	struct netvsc_device __rcu *nvdev;
-+	/* list of netvsc net_devices */
-+	struct list_head list;
- 	/* reconfigure work */
- 	struct delayed_work dwork;
- 	/* last reconfig time */
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -69,6 +69,8 @@ static int debug = -1;
- module_param(debug, int, 0444);
- MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2728,12 +2728,13 @@ static struct nft_set *nf_tables_set_loo
+ 	u32 id = ntohl(nla_get_be32(nla));
  
-+static LIST_HEAD(netvsc_dev_list);
-+
- static void netvsc_change_rx_flags(struct net_device *net, int change)
- {
- 	struct net_device_context *ndev_ctx = netdev_priv(net);
-@@ -1779,13 +1781,10 @@ out_unlock:
+ 	list_for_each_entry(trans, &net->nft.commit_list, list) {
+-		struct nft_set *set = nft_trans_set(trans);
++		if (trans->msg_type == NFT_MSG_NEWSET) {
++			struct nft_set *set = nft_trans_set(trans);
  
- static struct net_device *get_netvsc_bymac(const u8 *mac)
- {
--	struct net_device *dev;
--
--	ASSERT_RTNL();
-+	struct net_device_context *ndev_ctx;
- 
--	for_each_netdev(&init_net, dev) {
--		if (dev->netdev_ops != &device_ops)
--			continue;	/* not a netvsc device */
-+	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
-+		struct net_device *dev = hv_get_drvdata(ndev_ctx->device_ctx);
- 
- 		if (ether_addr_equal(mac, dev->perm_addr))
- 			return dev;
-@@ -1796,25 +1795,18 @@ static struct net_device *get_netvsc_bym
- 
- static struct net_device *get_netvsc_byref(struct net_device *vf_netdev)
- {
-+	struct net_device_context *net_device_ctx;
- 	struct net_device *dev;
- 
--	ASSERT_RTNL();
--
--	for_each_netdev(&init_net, dev) {
--		struct net_device_context *net_device_ctx;
--
--		if (dev->netdev_ops != &device_ops)
--			continue;	/* not a netvsc device */
--
--		net_device_ctx = netdev_priv(dev);
--		if (!rtnl_dereference(net_device_ctx->nvdev))
--			continue;	/* device is removed */
-+	dev = netdev_master_upper_dev_get(vf_netdev);
-+	if (!dev || dev->netdev_ops != &device_ops)
-+		return NULL;	/* not a netvsc device */
-+
-+	net_device_ctx = netdev_priv(dev);
-+	if (!rtnl_dereference(net_device_ctx->nvdev))
-+		return NULL;	/* device is removed */
- 
--		if (rtnl_dereference(net_device_ctx->vf_netdev) == vf_netdev)
--			return dev;	/* a match */
--	}
--
--	return NULL;
-+	return dev;
- }
- 
- /* Called when VF is injecting data into network stack.
-@@ -2094,15 +2086,19 @@ static int netvsc_probe(struct hv_device
- 	else
- 		net->max_mtu = ETH_DATA_LEN;
- 
--	ret = register_netdev(net);
-+	rtnl_lock();
-+	ret = register_netdevice(net);
- 	if (ret != 0) {
- 		pr_err("Unable to register netdev.\n");
- 		goto register_failed;
+-		if (trans->msg_type == NFT_MSG_NEWSET &&
+-		    id == nft_trans_set_id(trans) &&
+-		    nft_active_genmask(set, genmask))
+-			return set;
++			if (id == nft_trans_set_id(trans) &&
++			    nft_active_genmask(set, genmask))
++				return set;
++		}
  	}
- 
--	return ret;
-+	list_add(&net_device_ctx->list, &netvsc_dev_list);
-+	rtnl_unlock();
-+	return 0;
- 
- register_failed:
-+	rtnl_unlock();
- 	rndis_filter_device_remove(dev, nvdev);
- rndis_failed:
- 	free_percpu(net_device_ctx->vf_stats);
-@@ -2148,6 +2144,7 @@ static int netvsc_remove(struct hv_devic
- 		rndis_filter_device_remove(dev, nvdev);
- 
- 	unregister_netdevice(net);
-+	list_del(&ndev_ctx->list);
- 
- 	rtnl_unlock();
- 	rcu_read_unlock();
+ 	return ERR_PTR(-ENOENT);
+ }
 
 
