@@ -2,92 +2,76 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F05C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35740C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A4720894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:47:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A4720894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id DD5AD20894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5AD20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389431AbeHAPcu (ORCPT
+        id S2389428AbeHAPiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:32:50 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:47588 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389217AbeHAPct (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:32:49 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1fkrSO-00029X-Oq; Wed, 01 Aug 2018 15:46:28 +0200
-Date:   Wed, 1 Aug 2018 15:46:28 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        David Miller <davem@davemloft.net>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org,
-        Network Development <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dave Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-Message-ID: <20180801134628.ueyzwg2gszrvk2hc@breakpoint.cc>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <CACT4Y+aYZumcc-Od5T1AnP4mwn8-FaWfxvfb93MnNwQPqG8TDw@mail.gmail.com>
- <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com>
- <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
- <CACT4Y+aHWpgDZygXv=smWwdVMWfjpedyajuVvvLDGMK-wFD5Lw@mail.gmail.com>
- <20180801114048.ufkr7zwmir7ps3vl@breakpoint.cc>
- <CACT4Y+ZNnYojj0x_DoUxeUREaEgzcf3UG=UW_P4vzsnZNjjgMQ@mail.gmail.com>
+        Wed, 1 Aug 2018 11:38:07 -0400
+Received: from ms.lwn.net ([45.79.88.28]:40106 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389226AbeHAPiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 11:38:07 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 285D5AB5;
+        Wed,  1 Aug 2018 13:52:15 +0000 (UTC)
+Date:   Wed, 1 Aug 2018 07:52:12 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 03/13] docs: net: Add filter to index toctree
+Message-ID: <20180801075212.6e42fa0c@lwn.net>
+In-Reply-To: <20180801050908.29970-4-me@tobin.cc>
+References: <20180801050908.29970-1-me@tobin.cc>
+        <20180801050908.29970-4-me@tobin.cc>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZNnYojj0x_DoUxeUREaEgzcf3UG=UW_P4vzsnZNjjgMQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> wrote:
-> If that scenario is possible that a fix would be to make
+On Wed,  1 Aug 2018 15:08:58 +1000
+"Tobin C. Harding" <me@tobin.cc> wrote:
 
-Looks possible.
+> filter.rst was just created (from filter.txt).  We should include it in
+> the networking docs toctree.
+> 
+> Add filter to Documentation/networking/index.rst toctree.
 
-> __nf_conntrack_find_get ever return NULL iff it got NULL from
-> ____nf_conntrack_find (not if any of the checks has failed).
+So...the minorest of nits just to prove that I actually looked at
+this...:)  Adding it to the toctree at this point is going to make the
+docs build messy (OK, even messier than it already is) because the RST
+conversion hasn't really been done yet.  I'd do this at the end of the
+series, just in case somebody, somewhere, is crazy enough to try to
+bisect a docs build.
 
-I don't see why we need to restart on nf_ct_is_dying(), but other
-than that this seems ok.
+Something that's a bit more relevant, perhaps: this document is a bit of
+a mishmash.  It starts by talking about how to use cBPF for socket
+filters, then includes a long discussion about the features of eBPF
+which, as I understand it, is still not accessible to user space for
+socket filters. That latter part certainly merits being in its own file
+where people will actually find it?  And if it were me, I would move that
+file into the core API guide, since it will be relevant beyond networking.
+
+Thanks,
+
+jon
