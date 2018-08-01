@@ -2,138 +2,88 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9547AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C07EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C6B82083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:28:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5CpSO0X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6B82083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B97D420894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97D420894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mut-group.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389114AbeHANOL (ORCPT
+        id S2388581AbeHANQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:14:11 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41714 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387552AbeHANOK (ORCPT
+        Wed, 1 Aug 2018 09:16:26 -0400
+Received: from mut-gw.mut-group.com ([213.209.114.184]:59952 "EHLO
+        mut-gw.mut-group.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387673AbeHANQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:14:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y10-v6so7702097pfn.8;
-        Wed, 01 Aug 2018 04:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=axBW+C2qhs8KpcwuTnehyg1qCt8MA3c1BUtzovIwVUg=;
-        b=a5CpSO0X/ZQnZPLY8PG4ROm89i91XAcfX15i1cF8F2Hs2M7jt/A0qwgW+gbi9DsoK4
-         nWqBFrgBulJ6rt5FIKhBaRdg9/RFF/s0DxAhC+LWlTPNk2yZHgcNUaNv/bkGXCkdwE9M
-         pWlYwvioJFRF3+IroSyJVxB/G16ktewcKCuyYNS3WbkaIT8XK55U1W7Q0on1/4kI+QCX
-         L49bfO9Ml2GPYtcKq8QM3uC4mgBud4BpAoUEAcEd294oJ7juEf04xza+6RAHU9YM/Sn0
-         FBRkMyEFht1+JTd1E+J28odFWsCORC14OzotXmiWMAzqtiqXaKwZXbtDGumyjFWhdB+B
-         NtQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=axBW+C2qhs8KpcwuTnehyg1qCt8MA3c1BUtzovIwVUg=;
-        b=my6YMK7LS6VLynXB2Bv2+uwOaEsmZLOIbju8TuvA4riytoCMbf0As9XN+iGuaEjW/c
-         e2sr253XCvbBSrh5wEJOSGzTHdjzwDrK82av11AY+z2gQeeJWIZPoN9WjgPIpb4zWQId
-         GXCt7/nFcS+8WVlNGCp22SyLDJ1a9z2dCL6XZ3phXiY8LZA6HNOnid3oXhx6F5IhHK8j
-         EahKBsvWpY+PVTUSD4L/WJEncW6weVYM3xZPhsxz5uI3sP61yiIN1MSDLsSbe96t8gI9
-         c9OhdZpR3m+iCAYW384dBErYk/odKJ2Xvf6qQs+nnyteAAiqufPdpsA4EUNjYQs46kpE
-         O0MQ==
-X-Gm-Message-State: AOUpUlGeqnN4sTRQYXgM8RwgmGOLMhWXMlI9GUzdclLqmIbeGVEU5t6O
-        vJ6Foj4IJMvhyz8sK0gH28w=
-X-Google-Smtp-Source: AAOMgpc0R8PJVaoVe1RaOP8S2utyZ1TgD6zQuFqQy3p5oLj6rgX16a7l9EWGbk/x9dgRrbD6VypPGw==
-X-Received: by 2002:a62:234d:: with SMTP id j74-v6mr2592232pfj.106.1533122929996;
-        Wed, 01 Aug 2018 04:28:49 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm24652882pgc.86.2018.08.01.04.28.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 04:28:49 -0700 (PDT)
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org,
-        Network Development <netdev@vger.kernel.org>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dave Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <30ee6c72-dc90-275a-8e23-54221f393cb0@virtuozzo.com>
- <c03fd1ca-0169-4492-7d6f-2df7a91bff5e@gmail.com>
- <CACT4Y+bLbDunoz+0qB=atbQXJ9Gu3N6+UXPwNnqMbq5RyZu1mQ@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <cf751136-c459-853a-0210-abf16f54ad17@gmail.com>
-Date:   Wed, 1 Aug 2018 04:28:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 1 Aug 2018 09:16:26 -0400
+Received: from [192.168.20.11] (port=49130 helo=zcom03.mut-group.com)
+        by mut-gw.mut-group.com with esmtps (TLSv1.2:AES256-SHA:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <mhellwig@mut-group.com>)
+        id 1fkpLJ-0005wK-2Y; Wed, 01 Aug 2018 13:31:01 +0200
+Received: from ZCOM03.mut-group.com (192.168.20.11) by ZCOM03.mut-group.com
+ (192.168.20.11) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Wed, 1 Aug
+ 2018 13:31:01 +0200
+Received: from ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960]) by
+ ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960%12]) with mapi id
+ 15.00.1263.000; Wed, 1 Aug 2018 13:31:01 +0200
+From:   Marcel Hellwig <mhellwig@mut-group.com>
+To:     'Eric Dumazet' <eric.dumazet@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "'davem@davemloft.net'" <davem@davemloft.net>,
+        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
+        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
+        "'andrew@lunn.ch'" <andrew@lunn.ch>
+CC:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "Matthias Wystrik" <mwystrik@mut-group.com>
+Subject: AW: AW: AW: PROBLEM: Kernel Oops in UDP stack
+Thread-Topic: AW: AW: PROBLEM: Kernel Oops in UDP stack
+Thread-Index: AdQo32X7ylxOxyzCQIq96qKkvZ0yzgAqvTNOAAAfmqA=
+Date:   Wed, 1 Aug 2018 11:31:01 +0000
+Message-ID: <7feb4b8950b842469265672f4c7b381d@ZCOM03.mut-group.com>
+References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+ <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+ <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
+ <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
+ <9f9d731107594b368504cbbaf698bc3d@ZCOM03.mut-group.com>
+ <225373e97b42e0e5ee6210b329f0bbb94055b651.camel@redhat.com>
+ <cd53c2fe-5349-c0e2-c6f5-8bcebdef7024@gmail.com>
+ <b727135a-a428-72bc-fa04-dbd64095b21e@gmail.com>
+In-Reply-To: <b727135a-a428-72bc-fa04-dbd64095b21e@gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.21.69]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bLbDunoz+0qB=atbQXJ9Gu3N6+UXPwNnqMbq5RyZu1mQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/01/2018 03:34 AM, Dmitry Vyukov wrote:
-> On Wed, Aug 1, 2018 at 12:23 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->> On 08/01/2018 02:03 AM, Andrey Ryabinin wrote:
->>
->>> I can't think of any advantage in not having the constructor.
->>
->> I can't see any advantage adding another indirect call,
->> in RETPOLINE world.
-> 
-> Can you please elaborate what's the problem here?
-> If slab ctor call have RETPOLINE, then using ctors more does not
-> introduce any security problems and they are not _that_ slow.
-
-They _are_ slow, when we have dozens of them in a code path.
-
-I object "having to add" yet another indirect call, if this can be avoided [*]
-
-If some people want to use ctor, fine, but do not request this.
-
-[*] This can be tricky, but worth the pain.
+PiBJIHN1c3BlY3QgdGhlIGZvbGxvd2luZyBwYXRjaCBteSBuZWVkIHRvIGJlIGJhY2twb3J0ZWQs
+IHBsZWFzZSBNYXJjZWwgZ2l0IGl0IGEgdHJ5Lg0KPg0KDQpUaGUgcGF0Y2ggaXMgYWxyZWFkeSBp
+biAzLjQuMTEzIHdoaWNoIHN0aWxsIGhhcyB0aGUgcHJvYmxlbSAodGhhdCB2ZXJzaW9uIGlzIGZy
+b20gT2N0b2JlciAyMDE2LCBzbyBub3QgdGhhdCBhbmNpZW50LCBidXQgb2xkIPCfmIogKQ0KDQo+
+QW5vdGhlciB3YXkgdG8gc3BvdCB0aGUgcHJvYmxlbSB3b3VsZCBiZSB0byBhZGQgYSBjaGVjayBp
+biBwc2tiX2V4cGFuZF9oZWFkKCkNCj4NCg0KSSdsbCB0cnkgdGhhdC4gTW9yZSBzdWdnZXN0aW9u
+cyBhcmUgd2VsY29tZS4NCg0KVGhhbmtzIGZvciB5b3VyIGVuZ2FnZW1lbnQhDQoNCg0KTWl0IGZy
+ZXVuZGxpY2hlbiBHcsO8w59lbiAvIFdpdGgga2luZCByZWdhcmRzDQoNCk1hcmNlbCBIZWxsd2ln
+DQpCLiBTYy4gSW5mb3JtYXRpaw0KRW50d2lja2xlcg0KDQptLXUtdMKgR21iSA0KQW0gTWFyaWVu
+aG9mIDINCjIyODgwIFdlZGVsDQpHZXJtYW55DQoNClBob25lOgkrNDkgNDEwMyA5MzA4IC0gNDc0
+DQpGYXg6wqDCoAkrNDkgNDEwMyA5MzA4IC0gOTkNCm1oZWxsd2lnQG11dC1ncm91cC5jb20NCg0K
+d3d3Lm11dC1ncm91cC5jb20NCg0KR2VzY2jDpGZ0c2bDvGhyZXLCoChNYW5hZ2luZyBEaXJlY3Rv
+cik6IEZhYmlhbiBQZXRlcnMNCkFtdHNnZXJpY2h0IFBpbm5lYmVyZyAoQ29tbWVyY2lhbCBSZWdp
+c3RlciBOby4pOiBIUkLCoDEwMzA0IFBJDQpVU3QtSWROci4gKFZBVC1Oby4pOiBERTIyODI3NTM5
+MA0KV0VFRS1SZWctTnIuOiBERSA3MjI3MTgwOA0KDQoNCg==
