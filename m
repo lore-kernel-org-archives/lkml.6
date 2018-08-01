@@ -2,130 +2,90 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E30C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38428C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A4020841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A4020841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E004720841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E004720841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387460AbeHAIMf (ORCPT
+        id S2387479AbeHAIOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 04:12:35 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60915 "EHLO huawei.com"
+        Wed, 1 Aug 2018 04:14:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51030 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387419AbeHAIMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 04:12:34 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 36282B15B6AB6;
-        Wed,  1 Aug 2018 14:28:26 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
- 14:28:18 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <trond.myklebust@hammerspace.com>,
-        <anna.schumaker@netapp.com>, <bfields@fieldses.org>,
-        <jlayton@kernel.org>, <ebiggers@google.com>,
-        <chuck.lever@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] sunrpc: remove redundant variables 'checksumlen','blocksize' and 'data'
-Date:   Wed, 1 Aug 2018 14:28:10 +0800
-Message-ID: <20180801062810.19752-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2387419AbeHAIOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 04:14:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4EF48AEB9;
+        Wed,  1 Aug 2018 06:30:14 +0000 (UTC)
+Subject: Re: [PATCH 1/3] fcoe: fix use-after-free in fcoe_ctlr_els_send
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        ard <ard@kwaak.net>
+References: <20180731134603.20089-1-jthumshirn@suse.de>
+ <20180731134603.20089-2-jthumshirn@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <a3ad59a7-3ccb-46e7-60b6-6ce073417564@suse.de>
+Date:   Wed, 1 Aug 2018 08:30:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180731134603.20089-2-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variables 'checksumlen','blocksize' and 'data' are being assigned,
-but are never used,hence they are redundant and can be removed.
+On 07/31/2018 03:46 PM, Johannes Thumshirn wrote:
+> KASAN reports a use-after-free in fcoe_ctlr_els_send() when we're
+> sending a LOGO and have FIP debugging enabled. This is because we're
+> first freeing the skb and then printing the frame's DID. But the DID
+> is a member of the FC frame header which in turn is the skb's payload.
+> 
+> Exchange the debug print and kfree_skb() calls so we're not touching
+> the freed data.
+> 
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> ---
+>  drivers/scsi/fcoe/fcoe_ctlr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+> index ea23c8dffc25..ceb35ebbeb8f 100644
+> --- a/drivers/scsi/fcoe/fcoe_ctlr.c
+> +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+> @@ -799,9 +799,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr *fip, struct fc_lport *lport,
+>  	fip->send(fip, skb);
+>  	return -EINPROGRESS;
+>  drop:
+> -	kfree_skb(skb);
+>  	LIBFCOE_FIP_DBG(fip, "drop els_send op %u d_id %x\n",
+>  			op, ntoh24(fh->fh_d_id));
+> +	kfree_skb(skb);
+>  	return -EINVAL;
+>  }
+>  EXPORT_SYMBOL(fcoe_ctlr_els_send);
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-fix fllowing warning:
+Cheers,
 
-net/sunrpc/auth_gss/gss_krb5_wrap.c:443:7: warning: variable ‘blocksize’ set but not used [-Wunused-but-set-variable]
-net/sunrpc/auth_gss/gss_krb5_crypto.c:376:15: warning: variable ‘checksumlen’ set but not used [-Wunused-but-set-variable]
-net/sunrpc/xprtrdma/svc_rdma.c:97:9: warning: variable ‘data’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/sunrpc/auth_gss/gss_krb5_crypto.c | 2 --
- net/sunrpc/auth_gss/gss_krb5_wrap.c   | 2 --
- net/sunrpc/xprtrdma/svc_rdma.c        | 2 --
- 3 files changed, 6 deletions(-)
-
-diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-index 8654494..84a16fd 100644
---- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-@@ -373,7 +373,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
- 	struct scatterlist sg[1];
- 	int err = -1;
- 	u8 *checksumdata;
--	unsigned int checksumlen;
- 
- 	if (kctx->gk5e->keyed_cksum == 0) {
- 		dprintk("%s: expected keyed hash for %s\n",
-@@ -393,7 +392,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
- 	tfm = crypto_alloc_ahash(kctx->gk5e->cksum_name, 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(tfm))
- 		goto out_free_cksum;
--	checksumlen = crypto_ahash_digestsize(tfm);
- 
- 	req = ahash_request_alloc(tfm, GFP_NOFS);
- 	if (!req)
-diff --git a/net/sunrpc/auth_gss/gss_krb5_wrap.c b/net/sunrpc/auth_gss/gss_krb5_wrap.c
-index a737c2d..9a1347f 100644
---- a/net/sunrpc/auth_gss/gss_krb5_wrap.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_wrap.c
-@@ -440,7 +440,6 @@ static u32
- gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
- 		     struct xdr_buf *buf, struct page **pages)
- {
--	int		blocksize;
- 	u8		*ptr, *plainhdr;
- 	s32		now;
- 	u8		flags = 0x00;
-@@ -473,7 +472,6 @@ gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
- 	*ptr++ = 0xff;
- 	be16ptr = (__be16 *)ptr;
- 
--	blocksize = crypto_skcipher_blocksize(kctx->acceptor_enc);
- 	*be16ptr++ = 0;
- 	/* "inner" token header always uses 0 for RRC */
- 	*be16ptr++ = 0;
-diff --git a/net/sunrpc/xprtrdma/svc_rdma.c b/net/sunrpc/xprtrdma/svc_rdma.c
-index 357ba90..134bef6a 100644
---- a/net/sunrpc/xprtrdma/svc_rdma.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma.c
-@@ -94,7 +94,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
- 		atomic_set(stat, 0);
- 	else {
- 		char str_buf[32];
--		char *data;
- 		int len = snprintf(str_buf, 32, "%d\n", atomic_read(stat));
- 		if (len >= 32)
- 			return -EFAULT;
-@@ -103,7 +102,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
- 			*lenp = 0;
- 			return 0;
- 		}
--		data = &str_buf[*ppos];
- 		len -= *ppos;
- 		if (len > *lenp)
- 			len = *lenp;
+Hannes
 -- 
-2.7.0
-
-
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
