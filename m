@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBD8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18D8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1BE520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BE520844
+	by mail.kernel.org (Postfix) with ESMTP id A91862083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91862083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406644AbeHATLi (ORCPT
+        id S2406653AbeHATLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51234 "EHLO
+        Wed, 1 Aug 2018 15:11:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404619AbeHATLh (ORCPT
+        with ESMTP id S2404619AbeHATLl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:37 -0400
+        Wed, 1 Aug 2018 15:11:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AF5ECC9;
-        Wed,  1 Aug 2018 17:24:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 511D3CC9;
+        Wed,  1 Aug 2018 17:24:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 013/144] xen/netfront: raise max number of slots in xennet_get_responses()
-Date:   Wed,  1 Aug 2018 18:50:40 +0200
-Message-Id: <20180801164949.884772004@linuxfoundation.org>
+Subject: [PATCH 4.9 014/144] ALSA: emu10k1: add error handling for snd_ctl_add
+Date:   Wed,  1 Aug 2018 18:50:41 +0200
+Message-Id: <20180801164950.025564719@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,55 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 57f230ab04d2910a06d17d988f1c4d7586a59113 ]
+[ Upstream commit 6d531e7b972cb62ded011c2dfcc2d9f72ea6c421 ]
 
-The max number of slots used in xennet_get_responses() is set to
-MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
+When snd_ctl_add fails, the lack of error-handling code may
+cause unexpected results.
 
-In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
-difference is resulting in frequent messages "too many slots" and a
-reduced network throughput for some workloads (factor 10 below that of
-a kernel-xen based guest).
+This patch adds error-handling code after calling snd_ctl_add.
 
-Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
-the max number of slots to use solves that problem (tests showed no
-more messages "too many slots" and throughput was as high as with the
-kernel-xen based guest system).
-
-Replace MAX_SKB_FRAGS-2 by XEN_NETIF_NR_SLOTS_MIN-1 in
-netfront_tx_slot_available() for making it clearer what is really being
-tested without actually modifying the tested value.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/emu10k1/emupcm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -238,7 +238,7 @@ static void rx_refill_timeout(unsigned l
- static int netfront_tx_slot_available(struct netfront_queue *queue)
- {
- 	return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
--		(NET_TX_RING_SIZE - MAX_SKB_FRAGS - 2);
-+		(NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
- }
+--- a/sound/pci/emu10k1/emupcm.c
++++ b/sound/pci/emu10k1/emupcm.c
+@@ -1850,7 +1850,9 @@ int snd_emu10k1_pcm_efx(struct snd_emu10
+ 	if (!kctl)
+ 		return -ENOMEM;
+ 	kctl->id.device = device;
+-	snd_ctl_add(emu->card, kctl);
++	err = snd_ctl_add(emu->card, kctl);
++	if (err < 0)
++		return err;
  
- static void xennet_maybe_wake_tx(struct netfront_queue *queue)
-@@ -789,7 +789,7 @@ static int xennet_get_responses(struct n
- 	RING_IDX cons = queue->rx.rsp_cons;
- 	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
- 	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
--	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
-+	int max = XEN_NETIF_NR_SLOTS_MIN + (rx->status <= RX_COPY_THRESHOLD);
- 	int slots = 1;
- 	int err = 0;
- 	unsigned long ret;
+ 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(emu->pci), 64*1024, 64*1024);
+ 
 
 
