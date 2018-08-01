@@ -3,66 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834B2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC9CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42CEA208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42CEA208A2
+	by mail.kernel.org (Postfix) with ESMTP id C736820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C736820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389109AbeHALsC (ORCPT
+        id S2389167AbeHALsJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:48:02 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:55884 "EHLO
+        Wed, 1 Aug 2018 07:48:09 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:55910 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389005AbeHALsC (ORCPT
+        with ESMTP id S2389114AbeHALsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:48:02 -0400
+        Wed, 1 Aug 2018 07:48:09 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1fkny6-00010M-8b; Wed, 01 Aug 2018 06:02:58 -0400
+        id 1fkny6-00010M-Fu; Wed, 01 Aug 2018 06:02:58 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, mingo@kernel.org, peterz@infradead.org,
         luto@kernel.org, x86@kernel.org, efault@gmx.de,
-        dave.hansen@intel.com
-Subject: [PATCH v2 0/11] x86,tlb,mm: more lazy TLB cleanups & optimizations
-Date:   Wed,  1 Aug 2018 06:02:44 -0400
-Message-Id: <20180801100255.4278-1-riel@surriel.com>
+        dave.hansen@intel.com, Rik van Riel <riel@surriel.com>
+Subject: [PATCH 07/11] x86,mm: remove leave_mm cpu argument
+Date:   Wed,  1 Aug 2018 06:02:51 -0400
+Message-Id: <20180801100255.4278-8-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180801100255.4278-1-riel@surriel.com>
+References: <20180801100255.4278-1-riel@surriel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series implements the cleanups suggested by Peter and Andy,
-removes lazy TLB mm refcounting on x86, and shows how other architectures
-could implement that same optimization.
+The function leave_mm does not use its cpu argument, but always works on
+the CPU where it is called.  Change the argument to a void *, so leave_mm
+can be called directly from smp_call_function_mask, and stop looking up the
+CPU number in current leave_mm callers.
 
-The previous patch series already seems to have removed most of the
-cache line contention I was seeing at context switch time, so CPU use
-of the memcache and memcache-like workloads has not changed measurably
-with this patch series.
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ arch/x86/include/asm/mmu.h    | 2 +-
+ arch/x86/mm/tlb.c             | 2 +-
+ arch/x86/xen/mmu_pv.c         | 2 +-
+ drivers/acpi/processor_idle.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-However, the memory bandwidth used by the memcache system has been
-reduced by about 1%, to serve the same number of queries per second.
-
-This happens on two socket Haswell and Broadwell systems. Maybe on
-larger systems (4 or 8 socket) one might also see a measurable drop
-in the amount of CPU time used, with workloads where the previous
-patch series does not remove all cache line contention on the mm.
-
-This is against the latest -tip tree, and seems to be stable (on top
-of another tree) with workloads that do over a million context switches
-a second.
-
-V2 of the series uses Peter's logic flow in context_switch(), and
-is a step in the direction of completely getting rid of ->active_mm.
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index 5ff3e8af2c20..ec27966f338f 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -61,6 +61,6 @@ typedef struct {
+ 		.ctx_id = 1,						\
+ 	}
+ 
+-void leave_mm(int cpu);
++void leave_mm(void * dummy);
+ 
+ #endif /* _ASM_X86_MMU_H */
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 149fb64e4bf4..ea4ef5ceaba2 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -121,7 +121,7 @@ static void load_new_mm_cr3(pgd_t *pgdir, u16 new_asid, bool need_flush)
+ 	write_cr3(new_mm_cr3);
+ }
+ 
+-void leave_mm(int cpu)
++void leave_mm(void *dummy)
+ {
+ 	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 52206ad81e4b..3402d2bf4ae0 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -984,7 +984,7 @@ static void drop_mm_ref_this_cpu(void *info)
+ 	struct mm_struct *mm = info;
+ 
+ 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == mm)
+-		leave_mm(smp_processor_id());
++		leave_mm(NULL);
+ 
+ 	/*
+ 	 * If this cpu still has a stale cr3 reference, then make sure
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index abb559cd28d7..675ffacdd82b 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -714,7 +714,7 @@ static DEFINE_RAW_SPINLOCK(c3_lock);
+ static void acpi_idle_enter_bm(struct acpi_processor *pr,
+ 			       struct acpi_processor_cx *cx, bool timer_bc)
+ {
+-	acpi_unlazy_tlb(smp_processor_id());
++	acpi_unlazy_tlb(NULL);
+ 
+ 	/*
+ 	 * Must be done before busmaster disable as we might need to
+-- 
+2.14.4
 
