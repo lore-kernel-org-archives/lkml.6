@@ -2,94 +2,155 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6951AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D53BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28BF920844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28BF920844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C46DA20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46DA20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388485AbeHAUXs (ORCPT
+        id S2387833AbeHAUXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:23:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61277 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732267AbeHAUXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:23:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 11:36:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
-   d="scan'208";a="250896472"
-Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
-  by fmsmga006.fm.intel.com with ESMTP; 01 Aug 2018 11:36:25 -0700
-Date:   Wed, 1 Aug 2018 11:36:25 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        youling 257 <youling257@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@google.com>
-Subject: Re: Linux 4.18-rc7
-Message-ID: <20180801183625.GA4412@agluck-desk>
-References: <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com>
- <alpine.LSU.2.11.1807301410470.4805@eggly.anvils>
- <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
- <alpine.LSU.2.11.1807301940460.5904@eggly.anvils>
- <CALAqxLU3cmu4g+HaB6A7=VhY-hW=d9e68EZ=_4JiwX_BigzjPQ@mail.gmail.com>
- <CAMi1Hd0-2eDod4HiBifKCxY0cUUEW_A-yv7sZ7GRgL0whWQt+w@mail.gmail.com>
- <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com>
- <20180731170328.ocb5oikwhwtkyzrj@kshutemo-mobl1>
- <20180731174349.GA12944@agluck-desk>
- <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
+        Wed, 1 Aug 2018 16:23:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403951AbeHATDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:32 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B854512C6;
+        Wed,  1 Aug 2018 17:10:49 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Kirill Marinushkin <k.marinushkin@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        alsa-devel@alsa-project.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 290/336] ASoC: topology: Add missing clock gating parameter when parsing hw_configs
+Date:   Wed,  1 Aug 2018 18:50:25 +0200
+Message-Id: <20180801165040.119336345@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 10:15:05AM -0700, Linus Torvalds wrote:
-> Tony, can you please double-check my commit ebad825cdd4e ("ia64: mark
-> special ia64 memory areas anonymous") fixes things for  you? I didn't
-> even compile it, but it really looks so obvious that I just committed
-> it directly. It's not pushed out yet (I'm doing the normal full build
-> test because of the ashmem commit first), but it should be out in
-> about 20 minutes when my testing has finished.
-> 
-> I'd like to get this sorted out asap, although at this point I still
-> think that I'll have to do an rc8 even though I feel like we may have
-> caught everything.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-I pulled and got HEAD = 44960f2a7b63e224b1091b3e1d6f60e0cdf4be0c which
-includes ebad825cdd4e.
+------------------
 
-ia64 boots fine with no issues.
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 
-Thanks
+[ Upstream commit 933e1c4a667103c4d10ebdc9505a0a6abd8c3fbd ]
 
--Tony
+Clock gating parameter is a part of `dai_fmt`. It is supported by
+`alsa-lib` when creating a topology binary file, but ignored by kernel
+when loading this topology file.
+
+After applying this commit, the clock gating parameter is not ignored any
+more. This solution is backwards compatible. The existing behaviour is
+not broken, because by default the parameter value is 0 and is ignored.
+
+snd_soc_tplg_hw_config.clock_gated = 0 => no effect
+snd_soc_tplg_hw_config.clock_gated = 1 => SND_SOC_DAIFMT_GATED
+snd_soc_tplg_hw_config.clock_gated = 2 => SND_SOC_DAIFMT_CONT
+
+For example, the following config, based on
+alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
+
+~~~~
+SectionHWConfig."CodecHWConfig" {
+        id "1"
+        format "I2S"            # physical audio format.
+        pm_gate_clocks "true"   # clock can be gated
+}
+
+SectionLink."Codec" {
+
+        # used for binding to the physical link
+        id "0"
+
+        hw_configs [
+                "CodecHWConfig"
+        ]
+
+        default_hw_conf_id "1"
+}
+~~~~
+
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Pan Xiuli <xiuli.pan@linux.intel.com>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/uapi/sound/asoc.h |    7 ++++++-
+ sound/soc/soc-topology.c  |    7 +++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+--- a/include/uapi/sound/asoc.h
++++ b/include/uapi/sound/asoc.h
+@@ -139,6 +139,11 @@
+ #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_CHANNELS      (1 << 1)
+ #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+ 
++/* DAI clock gating */
++#define SND_SOC_TPLG_DAI_CLK_GATE_UNDEFINED	0
++#define SND_SOC_TPLG_DAI_CLK_GATE_GATED	1
++#define SND_SOC_TPLG_DAI_CLK_GATE_CONT		2
++
+ /* DAI physical PCM data formats.
+  * Add new formats to the end of the list.
+  */
+@@ -324,7 +329,7 @@ struct snd_soc_tplg_hw_config {
+ 	__le32 size;            /* in bytes of this structure */
+ 	__le32 id;		/* unique ID - - used to match */
+ 	__le32 fmt;		/* SND_SOC_DAI_FORMAT_ format value */
+-	__u8 clock_gated;	/* 1 if clock can be gated to save power */
++	__u8 clock_gated;	/* SND_SOC_TPLG_DAI_CLK_GATE_ value */
+ 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
+ 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
+ 	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2006,6 +2006,13 @@ static void set_link_hw_format(struct sn
+ 
+ 		link->dai_fmt = hw_config->fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+ 
++		/* clock gating */
++		if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
++			link->dai_fmt |= SND_SOC_DAIFMT_GATED;
++		else if (hw_config->clock_gated ==
++			 SND_SOC_TPLG_DAI_CLK_GATE_CONT)
++			link->dai_fmt |= SND_SOC_DAIFMT_CONT;
++
+ 		/* clock signal polarity */
+ 		invert_bclk = hw_config->invert_bclk;
+ 		invert_fsync = hw_config->invert_fsync;
+
+
