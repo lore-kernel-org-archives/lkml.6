@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614E4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B711FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23EA6208B4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23EA6208B4
+	by mail.kernel.org (Postfix) with ESMTP id 68F9F20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F9F20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404771AbeHATEZ (ORCPT
+        id S2404784AbeHATE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46506 "EHLO
+        Wed, 1 Aug 2018 15:04:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404758AbeHATEY (ORCPT
+        with ESMTP id S2404073AbeHATE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:24 -0400
+        Wed, 1 Aug 2018 15:04:27 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEFF5C96;
-        Wed,  1 Aug 2018 17:17:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A04BBC96;
+        Wed,  1 Aug 2018 17:17:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Vic Wei <vwei@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 120/246] drm/nouveau/fifo/gk104-: poll for runlist update completion
-Date:   Wed,  1 Aug 2018 18:50:30 +0200
-Message-Id: <20180801165017.476605359@linuxfoundation.org>
+Subject: [PATCH 4.14 121/246] Bluetooth: btusb: add ID for LiteOn 04ca:301a
+Date:   Wed,  1 Aug 2018 18:50:31 +0200
+Message-Id: <20180801165017.515265921@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,39 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Vic Wei <vwei@codeaurora.org>
 
-[ Upstream commit 4f2fc25c0f8bcc8db1b8a7b21e88c3d7f35c5acb ]
+[ Upstream commit d666fc5479ad76a1bcbe6476d4997cea714bab2d ]
 
-Newer HW doesn't appear to send this event, which will cause long delays
-in runlist updates if they don't complete immediately.
+Contains a QCA6174A chipset, with USB BT. Let's support loading
+firmware on it.
 
-RM doesn't use these events anywhere, and an NVGPU commit message notes
-that polling is the preferred method even on HW that supports the event.
+>From usb-devices:
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
+D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=04ca ProdID=301a Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Vic Wei <vwei@codeaurora.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/bluetooth/btusb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
-@@ -155,10 +155,10 @@ gk104_fifo_runlist_commit(struct gk104_f
- 				    (target << 28));
- 	nvkm_wr32(device, 0x002274, (runl << 20) | nr);
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -279,6 +279,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x04ca, 0x3011), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x3015), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x3016), .driver_info = BTUSB_QCA_ROME },
++	{ USB_DEVICE(0x04ca, 0x301a), .driver_info = BTUSB_QCA_ROME },
  
--	if (wait_event_timeout(fifo->runlist[runl].wait,
--			       !(nvkm_rd32(device, 0x002284 + (runl * 0x08))
--				       & 0x00100000),
--			       msecs_to_jiffies(2000)) == 0)
-+	if (nvkm_msec(device, 2000,
-+		if (!(nvkm_rd32(device, 0x002284 + (runl * 0x08)) & 0x00100000))
-+			break;
-+	) < 0)
- 		nvkm_error(subdev, "runlist %d update timeout\n", runl);
- unlock:
- 	mutex_unlock(&subdev->mutex);
+ 	/* Broadcom BCM2035 */
+ 	{ USB_DEVICE(0x0a5c, 0x2009), .driver_info = BTUSB_BCM92035 },
 
 
