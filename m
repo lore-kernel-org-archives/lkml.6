@@ -2,399 +2,242 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF653C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D374FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3ED20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CB9820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p7oL2wf9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3ED20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="auuMZD4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB9820844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388548AbeHAKUK (ORCPT
+        id S2388632AbeHAKUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:20:10 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44447 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387573AbeHAKUK (ORCPT
+        Wed, 1 Aug 2018 06:20:47 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:64747 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387644AbeHAKUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:20:10 -0400
-Received: by mail-oi0-f68.google.com with SMTP id s198-v6so33133055oih.11;
-        Wed, 01 Aug 2018 01:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=FqZifYWcdWdX32kAU1/VIWpZnpE7RiqEjk1gtqTXvr8=;
-        b=p7oL2wf9mTnyY0MHqNyg7aadTs/rFwMzJEaSc9/0Dl8fBOrOVg6E/0UPM69G0sWGK1
-         C6UTJ/0oy9tQ5nPCMHhqpGjwxf7rdTNnd2bQdvs0qUoF8ut/CuenmZ57xbZwT6w2K6xm
-         qAzlxoBAZOhbw1aP+VhGbU0SuAqKm8xzPrlwZwgGQNrlF2AiHJvTWJL3z7BCX/UsBlEQ
-         iRNt+8TLlD0OHS4bQbHo+XHUVxTIpoopM1LAMNFsVIkaO6KEywT9WEetyGIyCfRXf6/I
-         xVQOMDy76y5YMDl6RUVEW37soNQsIMYELXH26jXmZfuSdeMfh18XaJYUaYVbd8o6M1d5
-         F6qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=FqZifYWcdWdX32kAU1/VIWpZnpE7RiqEjk1gtqTXvr8=;
-        b=eeljzF3/Ik+h328JqZn+u9lnXLWozA7NCf1CozAVPyDoUzYGX02sWQePbJeZnpB7sK
-         moxzrXq6/yYeYQ/icBgDyR0fKT4mMVrZHOB0L9oo4KA35KKR4NxpW4uIM6Mwet0Pg4js
-         cwfzPpGdArbDyERozSLsDribbrTNssgI6VZH+Qrf+Qzb4epoSEu9SWnqfhYidAV/Dsa5
-         2hfnR5AgkYYmbLWorKVXApqVoARfRtHtZNKMGtssfEjmnMeo+9POuoQHsQwVEs63U2BG
-         vb8Lif8kpWE8olUI75i7Mp1AYlXjFHfGDrtg57imjYfKPa5S9D0UFb4MO5GY1WdXdRH+
-         d36w==
-X-Gm-Message-State: AOUpUlFCd3WdTzD7XzLEhygVM/ettkMd+uHJdf4sgv7/dmGsmKixCK+v
-        lywU7z24Mbmg1SxY0P2W5Eq8ByfWnNKUG1gNLdw=
-X-Google-Smtp-Source: AAOMgpfL4euXl49/MZJeemOJJIr2xsRcP/oltTNmYuXSlTi630BGkQ0a6ptr6pPw0/YTO75MTjuQ0D3mL9Z+LWBCyTI=
-X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr2652706oie.174.1533112532707;
- Wed, 01 Aug 2018 01:35:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 01:35:32 -0700 (PDT)
-In-Reply-To: <20180801082353.egym4tsbr7ppql27@queper01-lin>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com> <331552975e858911db66bc78c2c8e720@codeaurora.org>
- <20180731075950.tfvxef6yuja3ad2k@queper01-lin> <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
- <CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com> <20180801082353.egym4tsbr7ppql27@queper01-lin>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 1 Aug 2018 10:35:32 +0200
-X-Google-Sender-Auth: WCNu7ydNPvZdP4h7eQUPdMr4Lf4
-Message-ID: <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@quicinc.com,
-        skannan@quicinc.com, Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Aug 2018 06:20:46 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180801083607epoutp030d6de20194e6e247e5cc3bb06ecc3614~GtcHv50_o2749427494epoutp03X;
+        Wed,  1 Aug 2018 08:36:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180801083607epoutp030d6de20194e6e247e5cc3bb06ecc3614~GtcHv50_o2749427494epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533112567;
+        bh=NDLzxArRetfNSNc+OShDz+kUd7xcm84RVMbeqSjkCao=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=auuMZD4FQwLd8fawIAUkVsTCDQIMvDPI96LJ/uND8aaTt7DFpqQfi5ivY1IR3w7Hr
+         tZletFEswZWtatN1Hkl0wP7irn4wHhr5lwpK9Brxqw24id8lAt0HRySLZHsxkzBeFQ
+         /NOmPTG9hfswjd3/0H+9FdaqWUvf88gQ0RjGX4pE=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20180801083605epcas1p391d6c042deced0df39d8eacc97b484a0~GtcFT60hO3071830718epcas1p3E;
+        Wed,  1 Aug 2018 08:36:05 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E4.2A.04210.5F0716B5; Wed,  1 Aug 2018 17:36:05 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180801083604epcas1p17fe882ab53e3371a7c0b6a119f4fcb57~GtcFCLaIY0146201462epcas1p1Q;
+        Wed,  1 Aug 2018 08:36:04 +0000 (GMT)
+X-AuditID: b6c32a36-73bff70000001072-0b-5b6170f56712
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id DD.D2.03704.4F0716B5; Wed,  1 Aug
+        2018 17:36:04 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PCR001ZHX83TLA0@mmp2.samsung.com>; Wed, 01 Aug 2018 17:36:04 +0900 (KST)
+Message-id: <5B6170F4.4070102@samsung.com>
+Date:   Wed, 01 Aug 2018 17:36:04 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
+        kernel@collabora.com, robin.murphy@arm.com,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/8] devfreq: rockchip-dfi: Move GRF definitions to a
+ common place.
+In-reply-to: <20180730081124.30698-2-enric.balletbo@collabora.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOJsWRmVeSWpSXmKPExsWy7bCmru7XgsRog/XdLBa9504yWbzavIfN
+        4srX92wWa24fYrT4/+g1q8XcSbUWPzacYrbYfK6H1eJs0xt2i02Pr7FafOy5x2pxedccNovP
+        vUcYLT49+M9scfGUq8XtxhVsFq17j7BbHPzwhNXi37WNLBZ3N5xltHj58QSLg6jHmnlrGD3e
+        32hl95jdcJHFY8fdJYwem1Z1snls//aA1eN+93Emj81L6j3+ztrP4tG3ZRWjx/Zr85g9Pm+S
+        C+CJSrXJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAXpW
+        SaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrFG1oaKRnaGCuZ2QEpI1jrYxMgUoSUjNO/PnO
+        WLBIpmLC1m2MDYx/xLoYOTkkBEwk5t15wtbFyMUhJLCDUaKjqZkZwvnOKHHpzGQmmKrDx6cx
+        QSQ2MEqcnjqJDSTBKyAo8WPyPZYuRg4OZgF5iSOXskHCzAKaElt3r2eHqL/LKPFheQMTRL2W
+        xIWueYwgNouAqsTTxefAbDag+P4XN8Bm8gsoSlz98RgsLioQIbFz/jewQSIC/cwSnzubwa5g
+        FrjPJHFlwnmwDmGBSIljWz6wg9icAk4Siy9tBPtBQuAtu0Tf2m/MED+4SEw4dZ4RwhaWeHV8
+        CzvI2RIC0hKXjtpC1LczSnx50cwK4UwAuvvUZmgAGEs8W9jFBPEcn8S7rz2sEM28Eh1tQhCm
+        h8TRV0oQL59llLh/6AnLBEbZWUihNAsRSrOQQmkBI/MqRrHUguLc9NRiwwIjveLE3OLSvHS9
+        5PzcTYzgRK1ltoNx0TmfQ4wCHIxKPLwFlQnRQqyJZcWVuYcYJTiYlUR4bWTio4V4UxIrq1KL
+        8uOLSnNSiw8xmgIDeSKzlGhyPjCL5JXEG5oaGRsbW5gYmpkaGiqJ8xr5BUcLCaQnlqRmp6YW
+        pBbB9DFxcEo1MLZt1XyzdM3if8uqrR1f+jz4d/f8FdXrrTKf9jMcOlHLeSlQyvXgjGnZD63F
+        GhiSqtSE3K98ZP01Xbhq3Uz925H6n3awz54gaP16/WzlCuvwFzWaF57m8amF6GuWz2dhv+jW
+        MNVg/tqH4u4a/yLKZuQrmmmciXUNWvWp5PtHSc/JTy81BUf05CuxFGckGmoxFxUnAgAqq+Jo
+        6gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t9jQd0vBYnRBttXalv0njvJZPFq8x42
+        iytf37NZrLl9iNHi/6PXrBZzJ9Va/Nhwitli87keVouzTW/YLTY9vsZq8bHnHqvF5V1z2Cw+
+        9x5htPj04D+zxcVTrha3G1ewWbTuPcJucfDDE1aLf9c2sljc3XCW0eLlxxMsDqIea+atYfR4
+        f6OV3WN2w0UWjx13lzB6bFrVyeax/dsDVo/73ceZPDYvqff4O2s/i0ffllWMHtuvzWP2+LxJ
+        LoAnissmJTUnsyy1SN8ugSvjxJ/vjAWLZCombN3G2MD4R6yLkZNDQsBE4vDxaUxdjFwcQgLr
+        GCXO9+1iB0nwCghK/Jh8j6WLkYODWUBe4silbJAws4C6xKR5i5gh6u8zSky/+4EZol5L4kLX
+        PEYQm0VAVeLp4nNgNhtQfP+LG2wgNr+AosTVH48ZQWaKCkRIdJ+oBJkjItDPLDHt2hlGEIdZ
+        4D6TxKV368CahQUiJY5t+cAOse0so8Sm+bNYQBKcAk4Siy9tZJ7AKDALybGzEI6dheTYBYzM
+        qxglUwuKc9Nzi40KDPNSy/WKE3OLS/PS9ZLzczcxAmN322Gtvh2M95fEH2IU4GBU4uE9UZ0Q
+        LcSaWFZcmXuIUYKDWUmE10YmPlqINyWxsiq1KD++qDQntfgQozQHi5I47+28Y5FCAumJJanZ
+        qakFqUUwWSYOTqkGRnt+AzfNCRYPXFN0ooPDuKZsrRZ57Vs6ad5dByWWxQ+VQ3U/tmwTrkpz
+        Cvv19HWMSeuhe9rzHZLbbnNayCz+0/SsWFtS2aZv8afqRSdqWeYtL1x7LPz35FI5xrmvCrf+
+        6ntWOe/dcp/gyX0yfW6zDq1csv3C9CkhyQfZPmpdv7lxbQm335knfkosxRmJhlrMRcWJAHLx
+        qtjZAgAA
+X-CMS-MailID: 20180801083604epcas1p17fe882ab53e3371a7c0b6a119f4fcb57
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180730081245epcas3p2794d7d7c21f4059ab89ec59a0ef9fa22
+References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+        <CGME20180730081245epcas3p2794d7d7c21f4059ab89ec59a0ef9fa22@epcas3p2.samsung.com>
+        <20180730081124.30698-2-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 10:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
-> On Wednesday 01 Aug 2018 at 09:32:49 (+0200), Rafael J. Wysocki wrote:
->> On Tue, Jul 31, 2018 at 9:31 PM,  <skannan@codeaurora.org> wrote:
->> > On 2018-07-31 00:59, Quentin Perret wrote:
->> >>
->> >> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
->> >> [...]
->> >>>
->> >>> If it's going to be a different aggregation from what's done for
->> >>> frequency
->> >>> guidance, I don't see the point of having this inside schedutil. Why not
->> >>> keep it inside the scheduler files?
->> >>
->> >>
->> >> This code basically results from a discussion we had with Peter on v4.
->> >> Keeping everything centralized can make sense from a maintenance
->> >> perspective, I think. That makes it easy to see the impact of any change
->> >> to utilization signals for both EAS and schedutil.
->> >
->> >
->> > In that case, I'd argue it makes more sense to keep the code centralized in
->> > the scheduler. The scheduler can let schedutil know about the utilization
->> > after it aggregates them. There's no need for a cpufreq governor to know
->> > that there are scheduling classes or how many there are. And the scheduler
->> > can then choose to aggregate one way for task packing and another way for
->> > frequency guidance.
->>
->> Also the aggregate utilization may be used by cpuidle governors in
->> principle to decide how deep they can go with idle state selection.
->
-> The only issue I see with this right now is that some of the things done
-> in this function are policy decisions which really belong to the governor,
-> I think.
+Hi Enric,
 
-Well, the scheduler makes policy decisions too, in quite a few places. :-)
+On 2018년 07월 30일 17:11, Enric Balletbo i Serra wrote:
+> Some rk3399 GRF (Generic Register Files) definitions can be used for
+> different drivers. Move these definitions to a common include so we
+> don't need to duplicate these definitions.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+> Changes in v1:
+> - [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-The really important consideration here is whether or not there may be
-multiple governors making different policy decisions in that respect.
-If not, then where exactly the single policy decision is made doesn't
-particularly matter IMO.
+Even if you add the changes log, you are missing my Acked-by tag.
 
-> The RT-go-to-max-freq thing in particular. And I really don't
-> think EAS should cope with that, at least for now.
->
-> But if this specific bit is factored out of the aggregation function, I
-> suppose we could move it somewhere else. Maybe pelt.c ?
->
-> How ugly is something like the below (totally untested) code ? It would
-> change slightly how we deal with DL utilization in EAS but I don't think
-> this is an issue.
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index af86050edcf5..51c9ac9f30e8 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -178,121 +178,17 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
->         return cpufreq_driver_resolve_freq(policy, freq);
->  }
->
-> -/*
-> - * This function computes an effective utilization for the given CPU, to be
-> - * used for frequency selection given the linear relation: f = u * f_max.
-> - *
-> - * The scheduler tracks the following metrics:
-> - *
-> - *   cpu_util_{cfs,rt,dl,irq}()
-> - *   cpu_bw_dl()
-> - *
-> - * Where the cfs,rt and dl util numbers are tracked with the same metric and
-> - * synchronized windows and are thus directly comparable.
-> - *
-> - * The cfs,rt,dl utilization are the running times measured with rq->clock_task
-> - * which excludes things like IRQ and steal-time. These latter are then accrued
-> - * in the irq utilization.
-> - *
-> - * The DL bandwidth number otoh is not a measured metric but a value computed
-> - * based on the task model parameters and gives the minimal utilization
-> - * required to meet deadlines.
-> - */
-> -unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> -                                 enum schedutil_type type)
-> -{
-> -       struct rq *rq = cpu_rq(cpu);
-> -       unsigned long util, irq, max;
-> -
-> -       max = arch_scale_cpu_capacity(NULL, cpu);
-> -
-> -       if (type == frequency_util && rt_rq_is_runnable(&rq->rt))
-> -               return max;
-> -
-> -       /*
-> -        * Early check to see if IRQ/steal time saturates the CPU, can be
-> -        * because of inaccuracies in how we track these -- see
-> -        * update_irq_load_avg().
-> -        */
-> -       irq = cpu_util_irq(rq);
-> -       if (unlikely(irq >= max))
-> -               return max;
-> -
-> -       /*
-> -        * Because the time spend on RT/DL tasks is visible as 'lost' time to
-> -        * CFS tasks and we use the same metric to track the effective
-> -        * utilization (PELT windows are synchronized) we can directly add them
-> -        * to obtain the CPU's actual utilization.
-> -        */
-> -       util = util_cfs;
-> -       util += cpu_util_rt(rq);
-> -
-> -       if (type == frequency_util) {
-> -               /*
-> -                * For frequency selection we do not make cpu_util_dl() a
-> -                * permanent part of this sum because we want to use
-> -                * cpu_bw_dl() later on, but we need to check if the
-> -                * CFS+RT+DL sum is saturated (ie. no idle time) such
-> -                * that we select f_max when there is no idle time.
-> -                *
-> -                * NOTE: numerical errors or stop class might cause us
-> -                * to not quite hit saturation when we should --
-> -                * something for later.
-> -                */
-> -
-> -               if ((util + cpu_util_dl(rq)) >= max)
-> -                       return max;
-> -       } else {
-> -               /*
-> -                * OTOH, for energy computation we need the estimated
-> -                * running time, so include util_dl and ignore dl_bw.
-> -                */
-> -               util += cpu_util_dl(rq);
-> -               if (util >= max)
-> -                       return max;
-> -       }
-> -
-> -       /*
-> -        * There is still idle time; further improve the number by using the
-> -        * irq metric. Because IRQ/steal time is hidden from the task clock we
-> -        * need to scale the task numbers:
-> -        *
-> -        *              1 - irq
-> -        *   U' = irq + ------- * U
-> -        *                max
-> -        */
-> -       util *= (max - irq);
-> -       util /= max;
-> -       util += irq;
-> -
-> -       if (type == frequency_util) {
-> -               /*
-> -                * Bandwidth required by DEADLINE must always be granted
-> -                * while, for FAIR and RT, we use blocked utilization of
-> -                * IDLE CPUs as a mechanism to gracefully reduce the
-> -                * frequency when no tasks show up for longer periods of
-> -                * time.
-> -                *
-> -                * Ideally we would like to set bw_dl as min/guaranteed
-> -                * freq and util + bw_dl as requested freq. However,
-> -                * cpufreq is not yet ready for such an interface. So,
-> -                * we only do the latter for now.
-> -                */
-> -               util += cpu_bw_dl(rq);
-> -       }
-> -
-> -       return min(max, util);
-> -}
-> -
->  static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
->  {
->         struct rq *rq = cpu_rq(sg_cpu->cpu);
-> -       unsigned long util = cpu_util_cfs(rq);
->
->         sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
->         sg_cpu->bw_dl = cpu_bw_dl(rq);
->
-> -       return schedutil_freq_util(sg_cpu->cpu, util, frequency_util);
-> +       if (rt_rq_is_runnable(&rq->rt))
-> +               return sg_cpu->max;
+> - [RFC 1/10] s/Generic/General/ (Robin Murphy)
+> - [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
+> - [RFC 7/10] Removed from the series. I did not found a use case where this matters.
+> 
+>  drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+>  include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+>  2 files changed, 28 insertions(+), 16 deletions(-)
+>  create mode 100644 include/soc/rockchip/rk3399_grf.h
+> 
+> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+> index 22b113363ffc..2fbbcbeb644f 100644
+> --- a/drivers/devfreq/event/rockchip-dfi.c
+> +++ b/drivers/devfreq/event/rockchip-dfi.c
+> @@ -26,6 +26,8 @@
+>  #include <linux/list.h>
+>  #include <linux/of.h>
+>  
+> +#include <soc/rockchip/rk3399_grf.h>
 > +
-> +       return cpu_util_total(sg_cpu->cpu, cpu_util_cfs(rq));
->  }
->
->  /**
-> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-> index 35475c0c5419..5f99bd564dfc 100644
-> --- a/kernel/sched/pelt.c
-> +++ b/kernel/sched/pelt.c
-> @@ -397,3 +397,77 @@ int update_irq_load_avg(struct rq *rq, u64 running)
->         return ret;
->  }
->  #endif
-> +
-> +/*
-> + * This function computes an effective utilization for the given CPU, to be
-> + * used for frequency selection given the linear relation: f = u * f_max.
-> + *
-> + * The scheduler tracks the following metrics:
-> + *
-> + *   cpu_util_{cfs,rt,dl,irq}()
-> + *   cpu_bw_dl()
-> + *
-> + * Where the cfs,rt and dl util numbers are tracked with the same metric and
-> + * synchronized windows and are thus directly comparable.
-> + *
-> + * The cfs,rt,dl utilization are the running times measured with rq->clock_task
-> + * which excludes things like IRQ and steal-time. These latter are then accrued
-> + * in the irq utilization.
-> + *
-> + * The DL bandwidth number otoh is not a measured metric but a value computed
-> + * based on the task model parameters and gives the minimal utilization
-> + * required to meet deadlines.
-> + */
-> +unsigned long cpu_util_total(int cpu, unsigned long util_cfs)
-> +{
-> +       struct rq *rq = cpu_rq(cpu);
-> +       unsigned long util, irq, max;
-> +
-> +       max = arch_scale_cpu_capacity(NULL, cpu);
-> +
-> +       /*
-> +        * Early check to see if IRQ/steal time saturates the CPU, can be
-> +        * because of inaccuracies in how we track these -- see
-> +        * update_irq_load_avg().
-> +        */
-> +       irq = cpu_util_irq(rq);
-> +       if (unlikely(irq >= max))
-> +               return max;
-> +
-> +       /*
-> +        * Because the time spend on RT/DL tasks is visible as 'lost' time to
-> +        * CFS tasks and we use the same metric to track the effective
-> +        * utilization (PELT windows are synchronized) we can directly add them
-> +        * to obtain the CPU's actual utilization.
-> +        */
-> +       util = util_cfs;
-> +       util += cpu_util_rt(rq);
-> +
-> +       if ((util + cpu_util_dl(rq)) >= max)
-> +               return max;
-> +
-> +       /*
-> +        * There is still idle time; further improve the number by using the
-> +        * irq metric. Because IRQ/steal time is hidden from the task clock we
-> +        * need to scale the task numbers:
-> +        *
-> +        *              1 - irq
-> +        *   U' = irq + ------- * U
-> +        *                max
-> +        */
-> +       util *= (max - irq);
-> +       util /= max;
-> +       util += irq;
-> +
-> +       /*
-> +        * Bandwidth required by DEADLINE must always be granted while, for
-> +        * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
-> +        * to gracefully reduce the frequency when no tasks show up for longer
-> +        * periods of time.
-> +        *
-> +        * Ideally we would like to set bw_dl as min/guaranteed freq and util +
-> +        * bw_dl as requested freq. However, cpufreq is not yet ready for such
-> +        * an interface. So, we only do the latter for now.
-> +        */
-> +       return min(max, util + cpu_bw_dl(rq));
-> +}
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 51e7f113ee23..7ad037bb653e 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2185,14 +2185,9 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
->  # define arch_scale_freq_invariant()   false
->  #endif
->
-> -enum schedutil_type {
-> -       frequency_util,
-> -       energy_util,
+>  #define RK3399_DMC_NUM_CH	2
+>  
+>  /* DDRMON_CTRL */
+> @@ -43,18 +45,6 @@
+>  #define DDRMON_CH1_COUNT_NUM		0x3c
+>  #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+>  
+> -/* pmu grf */
+> -#define PMUGRF_OS_REG2	0x308
+> -#define DDRTYPE_SHIFT	13
+> -#define DDRTYPE_MASK	7
+> -
+> -enum {
+> -	DDR3 = 3,
+> -	LPDDR3 = 6,
+> -	LPDDR4 = 7,
+> -	UNUSED = 0xFF
 > -};
->
-> -#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-> -unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
-> -                                 enum schedutil_type type);
-> +#ifdef CONFIG_SMP
-> +unsigned long cpu_util_total(int cpu, unsigned long cfs_util);
->
->  static inline unsigned long cpu_bw_dl(struct rq *rq)
->  {
-> @@ -2233,12 +2228,6 @@ static inline unsigned long cpu_util_irq(struct rq *rq)
->  }
->
->  #endif
-> -#else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
-> -static inline unsigned long schedutil_freq_util(int cpu, unsigned long util,
-> -                                 enum schedutil_type type)
-> -{
-> -       return util;
-> -}
->  #endif
->
->  #ifdef CONFIG_SMP
+> -
+>  struct dmc_usage {
+>  	u32 access;
+>  	u32 total;
+> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+>  	u32 ddr_type;
+>  
+>  	/* get ddr type */
+> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
+> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+> +		    RK3399_PMUGRF_DDRTYPE_MASK;
+>  
+>  	/* clear DDRMON_CTRL setting */
+>  	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+>  
+>  	/* set ddr type to dfi */
+> -	if (ddr_type == LPDDR3)
+> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+>  		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+> -	else if (ddr_type == LPDDR4)
+> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+>  		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+>  
+>  	/* enable count, use software mode */
+> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
+> new file mode 100644
+> index 000000000000..3eebabcb2812
+> --- /dev/null
+> +++ b/include/soc/rockchip/rk3399_grf.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Rockchip General Register Files definitions
+> + *
+> + * Copyright (c) 2018, Collabora Ltd.
+> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> + */
+> +
+> +#ifndef __SOC_RK3399_GRF_H
+> +#define __SOC_RK3399_GRF_H
+> +
+> +/* PMU GRF Registers */
+> +#define RK3399_PMUGRF_OS_REG2		0x308
+> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
+> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
+> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
+> +
+> +#endif
+> 
 
-This doesn't look objectionable to me.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
