@@ -2,106 +2,83 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A9DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF05C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5289208AD
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGvk5UGT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5289208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BC90A208AD
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC90A208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404924AbeHATjw (ORCPT
+        id S2404758AbeHATjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:39:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34549 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404867AbeHATjw (ORCPT
+        Wed, 1 Aug 2018 15:39:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406006AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:39:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c13-v6so20964762wrt.1;
-        Wed, 01 Aug 2018 10:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aMMiABw1UTW4y1tNGY0jBjEtMtWnBMeJj226274ives=;
-        b=VGvk5UGTq9c8g/0AejCHNZ/G9SK75pP2w5iOUQMsJTyUTHZ/ur4UswAqWfKS14fUP6
-         PBdwphIR6kErddv2ZVithAXFF1yEi5DFiBvyCguJrKNkx9kyvUX/6UrVpZzB46Mp7k8Y
-         3wjVRAIMUiPFQLpk2K82mma8fQAmg5GtYtkZJITLM8feK608qO02XYVbQcoex9h4Awf6
-         ilwK/6/W9Xse/FznSKaRK94extEo2xS2mTsmHOWcsPU0wX3/N4Eua6CvYukDEPQj0XGu
-         HlCznfnFm5LYFOuHDW3z2jvBqkaWLL/IgPIeRwAcTQ4XoKBlgDGhkOrQT2LHvpZ9OZQU
-         bP3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aMMiABw1UTW4y1tNGY0jBjEtMtWnBMeJj226274ives=;
-        b=RAGpoHSfAhDGZ31UApRgrWli0Nm+IQ2/6QvchOYUWOY1NXN7YKtvFYOj+Mb4pNhCfp
-         kIvJC5qwHerhakc0QseQBA8Wuq12jhtjsdKoTUuXP2+Bypm0JgdxgvK3hPjxZD06hhR/
-         qIqQstawYdwDcB+fHKH0yTk5BIGvmWioF+/BHvYoeQ6EtHApv7UXK158FZBI9t4cEmjL
-         1dvigtz6//5pHlUdcpkJKnvij1Rfq+GtjiYyP8rxMkG+CmIEFG3hdAXY10mn9ia3ZWke
-         xYzDuvdL6ljN4p3SP2fdOhHaOl/Dr1gl2jShMsUHQGAxp1zV17yMra8ekVg0m/L3aJPL
-         vRdA==
-X-Gm-Message-State: AOUpUlHwvPoKTY0smLW9Za6U8jm0jxFjmporY5qcI0EJTLOxBb3zPyyg
-        u72bEwDzN5A3XMS//YMKwnk=
-X-Google-Smtp-Source: AAOMgpf1ps7i+aPkUddZAuDlpIo9b+IGNLvWUi4MiydET6RpbumsSCjdzMi3VCSDfBZfzxmid1ZR5g==
-X-Received: by 2002:adf:83c6:: with SMTP id 64-v6mr24073135wre.5.1533145979591;
-        Wed, 01 Aug 2018 10:52:59 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm6013599wma.18.2018.08.01.10.52.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 10:52:58 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 10:52:57 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/144] 4.9.117-stable review
-Message-ID: <20180801175257.GA24758@flashbox>
-References: <20180801164949.023217860@linuxfoundation.org>
+        Wed, 1 Aug 2018 15:08:41 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4118813B7;
+        Wed,  1 Aug 2018 17:15:24 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 072/246] iwlwifi: pcie: fix race in Rx buffer allocator
+Date:   Wed,  1 Aug 2018 18:49:42 +0200
+Message-Id: <20180801165015.156042452@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 06:50:27PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.117 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri Aug  3 16:49:15 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.117-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Merged, compiled with -Werror, and installed onto my OnePlus 6.
+------------------
 
-No initial issues noticed in dmesg or general usage.
+From: Shaul Triebitz <shaul.triebitz@intel.com>
 
-Thanks!
-Nathan
+[ Upstream commit 0f22e40053bd5378ad1e3250e65c574fd61c0cd6 ]
+
+Make sure the rx_allocator worker is canceled before running the
+rx_init routine.  rx_init frees and re-allocates all rxb's pages.  The
+rx_allocator worker also allocates pages for the used rxb's.  Running
+rx_init and rx_allocator simultaniously causes a kernel panic.  Fix
+that by canceling the work in rx_init.
+
+Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -901,6 +901,8 @@ static int _iwl_pcie_rx_init(struct iwl_
+ 	}
+ 	def_rxq = trans_pcie->rxq;
+ 
++	cancel_work_sync(&rba->rx_alloc);
++
+ 	spin_lock(&rba->lock);
+ 	atomic_set(&rba->req_pending, 0);
+ 	atomic_set(&rba->req_ready, 0);
+
+
