@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E901C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADEDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC3C20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC3C20862
+	by mail.kernel.org (Postfix) with ESMTP id 67E2020862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67E2020862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407879AbeHATY3 (ORCPT
+        id S2407768AbeHATY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:24:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52944 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436536AbeHATSi (ORCPT
+        with ESMTP id S2436559AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57900DB8;
-        Wed,  1 Aug 2018 16:53:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF45AF13;
+        Wed,  1 Aug 2018 16:55:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Artem Savkov <asavkov@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.17 011/336] tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure
-Date:   Wed,  1 Aug 2018 18:45:46 +0200
-Message-Id: <20180801165029.364629380@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Looijmans <mike.looijmans@topic.nl>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 056/336] clk-si544: Properly round requested frequency to nearest match
+Date:   Wed,  1 Aug 2018 18:46:31 +0200
+Message-Id: <20180801165031.218891845@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,63 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Artem Savkov <asavkov@redhat.com>
+From: Mike Looijmans <mike.looijmans@topic.nl>
 
-commit 57ea2a34adf40f3a6e88409aafcf803b8945619a upstream.
+[ Upstream commit 4d3f36c5e9ca0f947eed71660239c529c501141a ]
 
-If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
-it returns an error, but does not unset the tp flags it set previously.
-This results in a probe being considered enabled and failures like being
-unable to remove the probe through kprobe_events file since probes_open()
-expects every probe to be disabled.
+The si544 driver had a rounding problem that using the result of clk_round_rate
+may set the clock to yet another rate, for example:
+clk_round_rate(195000000) = 194999999
+clk_round_rate(194999999) = 194999998
 
-Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
-Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
+Clients would expect that after clk_set_rate(clk, freq2=clk_round_rate(clk, freq)) the
+chip will be running at exactly freq2.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+The problem was in the calculation of the feedback divider, it was always rounded
+down instead of to the nearest possible VCO value.
+
+After this change, the following holds true for any supported frequency:
+actual_freq = clk_round_rate(clk, freq);
+clk_set_rate(clk, actual_freq);
+clk_round_rate(clk, actual_freq) == actual_freq && clk_get_rate(clk) == actual_freq
+
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Fixes: 953cc3e81170 ("clk: Add driver for the si544 clock generator chip")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/trace/trace_kprobe.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clk/clk-si544.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -400,11 +400,10 @@ static struct trace_kprobe *find_trace_k
- static int
- enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- {
-+	struct event_file_link *link;
- 	int ret = 0;
+--- a/drivers/clk/clk-si544.c
++++ b/drivers/clk/clk-si544.c
+@@ -207,6 +207,7 @@ static int si544_calc_muldiv(struct clk_
  
- 	if (file) {
--		struct event_file_link *link;
--
- 		link = kmalloc(sizeof(*link), GFP_KERNEL);
- 		if (!link) {
- 			ret = -ENOMEM;
-@@ -424,6 +423,16 @@ enable_trace_kprobe(struct trace_kprobe
- 		else
- 			ret = enable_kprobe(&tk->rp.kp);
- 	}
-+
-+	if (ret) {
-+		if (file) {
-+			list_del_rcu(&link->list);
-+			kfree(link);
-+			tk->tp.flags &= ~TP_FLAG_TRACE;
-+		} else {
-+			tk->tp.flags &= ~TP_FLAG_PROFILE;
-+		}
-+	}
-  out:
- 	return ret;
- }
+ 	/* And the fractional bits using the remainder */
+ 	vco = (u64)tmp << 32;
++	vco += FXO / 2; /* Round to nearest multiple */
+ 	do_div(vco, FXO);
+ 	settings->fb_div_frac = vco;
+ 
 
 
