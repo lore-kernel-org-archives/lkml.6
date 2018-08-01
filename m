@@ -2,147 +2,154 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A50EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76D1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D85F20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D85F20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 79A6420894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A6420894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389001AbeHALWZ (ORCPT
+        id S2389024AbeHALWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:22:25 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46133 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733265AbeHALWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:22:24 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41gSrZ57l9z9tvqF;
-        Wed,  1 Aug 2018 11:37:18 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id yFThIYM4jKcV; Wed,  1 Aug 2018 11:37:18 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41gSrZ4WSJz9tvq9;
-        Wed,  1 Aug 2018 11:37:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 42A128B839;
-        Wed,  1 Aug 2018 11:37:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id DWXSDuRMbRgn; Wed,  1 Aug 2018 11:37:31 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.4])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DAD908B756;
-        Wed,  1 Aug 2018 11:37:30 +0200 (CEST)
-Subject: Re: [PATCH] perf tools: allow overriding MAX_NR_CPUS at compile time
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <20170922112043.8349468C57@po15668-vm-win7.idsi0.si.c-s.fr>
- <20180503134037.GB8442@kernel.org>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <dc8f1911-fa9a-c1c8-0dd5-fd33236da69a@c-s.fr>
-Date:   Wed, 1 Aug 2018 11:37:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 1 Aug 2018 07:22:36 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:18730 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733265AbeHALWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 07:22:35 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719SV9J016568;
+        Wed, 1 Aug 2018 11:37:27 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2kgdxvjuxa-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 01 Aug 2018 11:37:27 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4040731;
+        Wed,  1 Aug 2018 09:37:27 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 01A66290E;
+        Wed,  1 Aug 2018 09:37:26 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
+ 11:37:26 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
+ 11:37:25 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH 03/14] mmc: mmci: internalize dma_inprogress into mmci dma functions
+Date:   Wed, 1 Aug 2018 11:36:50 +0200
+Message-ID: <1533116221-380-4-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
+References: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503134037.GB8442@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ludovic Barre <ludovic.barre@st.com>
 
+This patch internalizes the dma_inprogress into mmci dma interfaces.
+This allows to simplify and prepare the next dma callbacks
+for mmci host ops. __dma_inprogress is called in mmci_dma_data_error
+and mmci_dma_finalize.
 
-Le 03/05/2018 à 15:40, Arnaldo Carvalho de Melo a écrit :
-> Em Fri, Sep 22, 2017 at 01:20:43PM +0200, Christophe Leroy escreveu:
->> After update of kernel, perf tool doesn't run anymore on my
->> 32MB RAM powerpc board, but still runs on a 128MB RAM board:
-> 
-> Cleaning up my inbox, found this one, simple enough, still applies,
-> applied.
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ drivers/mmc/host/mmci.c | 16 ++++++++++------
+ drivers/mmc/host/mmci.h |  4 +---
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
-Did you finally apply it ? I can't see it in linux-next. Will it be 
-merged into 4.19 ?
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index d8fa178..8144a87 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -497,6 +497,9 @@ static void __mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
+ 
+ static void mmci_dma_data_error(struct mmci_host *host)
+ {
++	if (!__dma_inprogress(host))
++		return;
++
+ 	dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
+ 	dmaengine_terminate_all(host->dma_current);
+ 	host->dma_in_progress = false;
+@@ -512,6 +515,9 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+ 	u32 status;
+ 	int i;
+ 
++	if (!__dma_inprogress(dmae))
++		return;
++
+ 	/* Wait up to 1ms for the DMA to complete */
+ 	for (i = 0; ; i++) {
+ 		status = readl(host->base + MMCISTATUS);
+@@ -903,8 +909,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+ 		u32 remain, success;
+ 
+ 		/* Terminate the DMA transfer */
+-		if (dma_inprogress(host))
+-			mmci_dma_data_error(host);
++		mmci_dma_data_error(host);
+ 
+ 		/*
+ 		 * Calculate how far we are into the transfer.  Note that
+@@ -942,8 +947,8 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+ 		dev_err(mmc_dev(host->mmc), "stray MCI_DATABLOCKEND interrupt\n");
+ 
+ 	if (status & MCI_DATAEND || data->error) {
+-		if (dma_inprogress(host))
+-			mmci_dma_finalize(host, data);
++		mmci_dma_finalize(host, data);
++
+ 		mmci_stop_data(host);
+ 
+ 		if (!data->error)
+@@ -1050,8 +1055,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
+ 	if ((!sbc && !cmd->data) || cmd->error) {
+ 		if (host->data) {
+ 			/* Terminate the DMA transfer */
+-			if (dma_inprogress(host))
+-				mmci_dma_data_error(host);
++			mmci_dma_data_error(host);
+ 
+ 			mmci_stop_data(host);
+ 		}
+diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+index 696a066..f1ec066 100644
+--- a/drivers/mmc/host/mmci.h
++++ b/drivers/mmc/host/mmci.h
+@@ -332,9 +332,7 @@ struct mmci_host {
+ 	struct mmci_host_next	next_data;
+ 	bool			dma_in_progress;
+ 
+-#define dma_inprogress(host)	((host)->dma_in_progress)
+-#else
+-#define dma_inprogress(host)	(0)
++#define __dma_inprogress(host)	((host)->dma_in_progress)
+ #endif
+ };
+ 
+-- 
+2.7.4
 
-Thanks
-Christophe
-
-> 
-> These all needs to be dynamicly allocated, but still, with this one can
-> get a functioning tool, apply it.
-> 
-> - Arnaldo
->   
->> ~# strace perf
->> execve("/usr/sbin/perf", ["perf"], [/* 12 vars */]) = -1 ENOMEM (Cannot allocate memory)
->> --- SIGSEGV {si_signo=SIGSEGV, si_code=SI_KERNEL, si_addr=0} ---
->> +++ killed by SIGSEGV +++
->> Segmentation fault
->>
->> objdump -x shows that .bss section has a huge size of 24Mbytes:
->>
->>   27 .bss          016baca8  101cebb8  101cebb8  001cd988  2**3
->>
->> With especially the following objects having quite big size
->>
->> 10205f80 l     O .bss	00140000              runtime_cycles_stats
->> 10345f80 l     O .bss	00140000              runtime_stalled_cycles_front_stats
->> 10485f80 l     O .bss	00140000              runtime_stalled_cycles_back_stats
->> 105c5f80 l     O .bss	00140000              runtime_branches_stats
->> 10705f80 l     O .bss	00140000              runtime_cacherefs_stats
->> 10845f80 l     O .bss	00140000              runtime_l1_dcache_stats
->> 10985f80 l     O .bss	00140000              runtime_l1_icache_stats
->> 10ac5f80 l     O .bss	00140000              runtime_ll_cache_stats
->> 10c05f80 l     O .bss	00140000              runtime_itlb_cache_stats
->> 10d45f80 l     O .bss	00140000              runtime_dtlb_cache_stats
->> 10e85f80 l     O .bss	00140000              runtime_cycles_in_tx_stats
->> 10fc5f80 l     O .bss	00140000              runtime_transaction_stats
->> 11105f80 l     O .bss	00140000              runtime_elision_stats
->> 11245f80 l     O .bss	00140000              runtime_topdown_total_slots
->> 11385f80 l     O .bss	00140000              runtime_topdown_slots_retired
->> 114c5f80 l     O .bss	00140000              runtime_topdown_slots_issued
->> 11605f80 l     O .bss	00140000              runtime_topdown_fetch_bubbles
->> 11745f80 l     O .bss	00140000              runtime_topdown_recovery_bubbles
->>
->> This is due to commit 4d255766d28b1 ("perf: Bump max number of cpus
->> to 1024"), because many tables are sized with MAX_NR_CPUS
->>
->> This patch gives the opportunity to redefine MAX_NR_CPUS via
->>
->> make EXTRA_CFLAGS=-DMAX_NR_CPUS=1
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   tools/perf/perf.h | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
->> index dc442ba21bf6..a9db563da0a9 100644
->> --- a/tools/perf/perf.h
->> +++ b/tools/perf/perf.h
->> @@ -23,7 +23,9 @@ static inline unsigned long long rdclock(void)
->>   	return ts.tv_sec * 1000000000ULL + ts.tv_nsec;
->>   }
->>   
->> +#ifndef MAX_NR_CPUS
->>   #define MAX_NR_CPUS			1024
->> +#endif
->>   
->>   extern const char *input_name;
->>   extern bool perf_host, perf_guest;
->> -- 
->> 2.13.3
