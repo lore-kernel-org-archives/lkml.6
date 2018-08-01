@@ -2,130 +2,100 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC58C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8BEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425A320844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425A320844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CD0520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:25:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v4oXWOPH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD0520844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388822AbeHALIa (ORCPT
+        id S2388861AbeHALKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:08:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:38168 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732437AbeHALIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:08:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93F5918A;
-        Wed,  1 Aug 2018 02:23:40 -0700 (PDT)
-Received: from queper01-ThinkPad-T460s (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD27C3F5BA;
-        Wed,  1 Aug 2018 02:23:33 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 10:23:27 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Saravana Kannan <skannan@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@quicinc.com,
-        skannan@quicinc.com, Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-Message-ID: <20180801092325.g2upcivcvdo62hub@queper01-ThinkPad-T460s>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com>
- <331552975e858911db66bc78c2c8e720@codeaurora.org>
- <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
- <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
- <CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com>
- <20180801082353.egym4tsbr7ppql27@queper01-lin>
- <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
+        Wed, 1 Aug 2018 07:10:21 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60256 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387643AbeHALKV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 07:10:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tuvA9/tIcmjF4vEv/ty5hOsRxvI+zAjncrMUP3/c/oM=; b=v4oXWOPH7sxXEjSb50U1SqRVq
+        fwmmHkDqw6CIiegvc/iP83WBz8oUsW910FvK2Zmg3dYD8JZ//BIOlemxUbTFUVHR9q+LOFZ09iY8A
+        Us7nFXfRxjtFUUxwVnsXCPpiF3BOMzLAvmRoFpF9LEtT+KIvbJlpLWTLeuMV0ITOOVALQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fknNY-0000hb-Kj; Wed, 01 Aug 2018 09:25:12 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2523F1124216; Wed,  1 Aug 2018 10:25:12 +0100 (BST)
+Date:   Wed, 1 Aug 2018 10:25:12 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v2 2/5] regulator: rk808: add RK809 and RK817 support.
+Message-ID: <20180801092512.GA5509@sirena.org.uk>
+References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+ <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
+X-Cookie: You are as I am with You.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 01 Aug 2018 at 10:35:32 (+0200), Rafael J. Wysocki wrote:
-> On Wed, Aug 1, 2018 at 10:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
-> > On Wednesday 01 Aug 2018 at 09:32:49 (+0200), Rafael J. Wysocki wrote:
-> >> On Tue, Jul 31, 2018 at 9:31 PM,  <skannan@codeaurora.org> wrote:
-> >> >> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
-> >> >>> If it's going to be a different aggregation from what's done for
-> >> >>> frequency
-> >> >>> guidance, I don't see the point of having this inside schedutil. Why not
-> >> >>> keep it inside the scheduler files?
-> >> >>
-> >> >> This code basically results from a discussion we had with Peter on v4.
-> >> >> Keeping everything centralized can make sense from a maintenance
-> >> >> perspective, I think. That makes it easy to see the impact of any change
-> >> >> to utilization signals for both EAS and schedutil.
-> >> >
-> >> > In that case, I'd argue it makes more sense to keep the code centralized in
-> >> > the scheduler. The scheduler can let schedutil know about the utilization
-> >> > after it aggregates them. There's no need for a cpufreq governor to know
-> >> > that there are scheduling classes or how many there are. And the scheduler
-> >> > can then choose to aggregate one way for task packing and another way for
-> >> > frequency guidance.
-> >>
-> >> Also the aggregate utilization may be used by cpuidle governors in
-> >> principle to decide how deep they can go with idle state selection.
-> >
-> > The only issue I see with this right now is that some of the things done
-> > in this function are policy decisions which really belong to the governor,
-> > I think.
-> 
-> Well, the scheduler makes policy decisions too, in quite a few places. :-)
 
-That is true ... ;-) But not so much about frequency selection yet I guess
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> The really important consideration here is whether or not there may be
-> multiple governors making different policy decisions in that respect.
-> If not, then where exactly the single policy decision is made doesn't
-> particularly matter IMO.
+On Tue, Jul 31, 2018 at 03:57:27PM +0800, Tony Xie wrote:
 
-I think some users of the aggregated utilization signal do want to make
-slightly different decisions (I'm thinking about the RT-go-to-max thing
-again which makes perfect sense in sugov, but could possibly hurt EAS).
+> +	default:
+> +		pr_warn("%s ramp_delay: %d not supported, setting 10000\n",
+> +			rdev->desc->name, ramp_delay);
+> +	}
 
-So the "hard" part of this work is to figure out what really is a
-governor-specific policy decision, and what is common between all users.
-I put "hard" between quotes because I only see the case of RT as truly
-sugov-specific for now.
+This looks mostly good but I notice that most of the prints in the
+driver are pr_ rather than dev_ ones - using dev_ is better as it allows
+people to see which device was affected.
 
-If we also want a special case for DL, Peter's enum should work OK, and
-enable to add more special cases for new users (cpuidle ?) if needed.
-But maybe that is something for later ?
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Quentin
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthfHcACgkQJNaLcl1U
+h9C8Igf/dgHh7kVnRuWvWyT7b/+8mMS+HNtVuTBMtiUf5textB9vCDqH+oOZoZE/
+2PEPQccsJdhF2tkxfuArUQtY8lxO7BQFu3HFxD70ROweX9CfuvfnJBVDAw094Wx6
+Z4G8HLLp0WqLiqSdGvASehN8jspMmWRkV4ucf6ED/yUjGKZMUf3ow7cwgfg2e6S/
+It4Yp/5Z4QrXpQchKhRWYvJZ6xAbtGevKaEvjBWegj7L9vFJTZn1uSJJeDrrnste
+b0I0q4MUN6cfgQwYFK8JeBLvJWkmAC4bBQYv0ulDzboDtRB5VcP6WnjnDiWHBCnj
+G39mcKBy/R9YlALxB1kxGxp2Aj3Y9g==
+=3sW2
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
