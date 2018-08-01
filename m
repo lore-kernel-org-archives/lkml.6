@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF20C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD57C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2765520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2765520844
+	by mail.kernel.org (Postfix) with ESMTP id 03CE42083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03CE42083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390454AbeHATKi (ORCPT
+        id S2406461AbeHATKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:10:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51044 "EHLO
+        Wed, 1 Aug 2018 15:10:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390435AbeHATKh (ORCPT
+        with ESMTP id S2390435AbeHATKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:10:37 -0400
+        Wed, 1 Aug 2018 15:10:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98FDDD27;
-        Wed,  1 Aug 2018 17:23:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5E1ACC3;
+        Wed,  1 Aug 2018 17:23:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <rong.a.chen@intel.com>,
-        Dmitry Safonov <dima@arista.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 241/246] netlink: Dont shift with UB on nlk->ngroups
-Date:   Wed,  1 Aug 2018 18:52:31 +0200
-Message-Id: <20180801165023.293235855@linuxfoundation.org>
+Subject: [PATCH 4.14 242/246] tcp: do not force quickack when receiving out-of-order packets
+Date:   Wed,  1 Aug 2018 18:52:32 +0200
+Message-Id: <20180801165023.331724911@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,37 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 61f4b23769f0cc72ae62c9a81cf08f0397d40da8 ]
+[ Upstream commit a3893637e1eb0ef5eb1bbc52b3a8d2dfa317a35d ]
 
-On i386 nlk->ngroups might be 32 or 0. Which leads to UB, resulting in
-hang during boot.
-Check for 0 ngroups and use (unsigned long long) as a type to shift.
+As explained in commit 9f9843a751d0 ("tcp: properly handle stretch
+acks in slow start"), TCP stacks have to consider how many packets
+are acknowledged in one single ACK, because of GRO, but also
+because of ACK compression or losses.
 
-Fixes: 7acf9d4237c4 ("netlink: Do not subscribe to non-existent groups").
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+We plan to add SACK compression in the following patch, we
+must therefore not call tcp_enter_quickack_mode()
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlink/af_netlink.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -976,7 +976,11 @@ static int netlink_bind(struct socket *s
- 		if (err)
- 			return err;
- 	}
--	groups &= (1UL << nlk->ngroups) - 1;
-+
-+	if (nlk->ngroups == 0)
-+		groups = 0;
-+	else
-+		groups &= (1ULL << nlk->ngroups) - 1;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4721,8 +4721,6 @@ drop:
+ 	if (!before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt + tcp_receive_window(tp)))
+ 		goto out_of_window;
  
- 	bound = nlk->bound;
- 	if (bound) {
+-	tcp_enter_quickack_mode(sk);
+-
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->rcv_nxt)) {
+ 		/* Partial packet, seq < rcv_next < end_seq */
+ 		SOCK_DEBUG(sk, "partial packet: rcv_next %X seq %X - %X\n",
 
 
