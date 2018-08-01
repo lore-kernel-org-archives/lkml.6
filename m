@@ -2,348 +2,158 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963BBC43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90907C43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385FF20851
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:39:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF5620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y/R/18PQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385FF20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AJ7Z0M0N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BF5620894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732902AbeHACVu (ORCPT
+        id S1732893AbeHACZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 22:21:50 -0400
-Received: from mail-io0-f201.google.com ([209.85.223.201]:48455 "EHLO
-        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732804AbeHACVu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 22:21:50 -0400
-Received: by mail-io0-f201.google.com with SMTP id t11-v6so12576852iog.15
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 17:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=ZzOnaBTkwDj+NGTEeEMrQCVnhrUfq9KmDdHQenlOi3o=;
-        b=Y/R/18PQ6qbX80IjUPmi9In8TwpgwhaOpM8WXaE5MUDDv31xVdo/5YNYsadoS6Y6yN
-         Nbly/Da/SA5Kxshnk2jCQ6Rtum5GzfhiMratjWZEFH3fIRKprVNKEWp/BBLdlV9hZSu3
-         Mk1xLSqCs6Fces+4BCuIYf/erucO5g84WZzIFG1PqjIGsTVsI/0uZIRB3YE4QglnGF50
-         38NxA0an566MX9nL0VgNs3IXMlaBVpPMIRqQj2VPqCf9pvWNznOJx9C8lwvxItqkBkOM
-         2i9wcANC5DeUOE/V7dgZnY3vUKkwxpybUfcF8kdaPwK53BLyli9mtsddOMTsF9YwSksn
-         GiIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=ZzOnaBTkwDj+NGTEeEMrQCVnhrUfq9KmDdHQenlOi3o=;
-        b=iwQD/JYfjLSWCHm2yjN+02FRu6AY/Rrv6W4B7D6hdPwuyDpmy99OmbBHCPSTx+NbGM
-         1FW3iwEI8HydQ0dLEt+4FfL6fxutB2Q6WAVcR6vpQ/gTi4n5IOuFXef1lErxOtul/+z7
-         JPje9RWWVzr99QrmtH0/mjJqia1Ei+6Vo49E8tkSPmotNCSE3bx3orJ6LPgKIWzsfW+/
-         wL6zpQUTTsBGVDB4NYH9aHfVEpSHWhC9DtXu4T17eGfpEERPfVNcmNXMJOMzXOvArgN3
-         A8JDGhLvvMKXH3GW0/pm3kSEDyK0Y1T67ZxSDr8S5PPH7DMvFTaIHGFF9NyQij4iOfYB
-         YQqA==
-X-Gm-Message-State: AOUpUlF20EFgb0bwky3a0YyezBOSAuBdHHFoup9yoyXP7zcy8agXg+Y2
-        NqVxJRqMoF/OFdavaLVkaDl0CgpW
-X-Google-Smtp-Source: AAOMgpfZIxdijdscZEIVCftFQ6jGRo4bb4dw4MvhZIxbYhGpON9SLUvvAotoy4X6tE6uAshpyr/C47mQ
-X-Received: by 2002:a24:56ce:: with SMTP id o197-v6mr2606823itb.32.1533083937027;
- Tue, 31 Jul 2018 17:38:57 -0700 (PDT)
-Date:   Tue, 31 Jul 2018 17:38:50 -0700
-Message-Id: <20180801003850.181947-1-rkir@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
-Subject: [PATCH] platform: goldfish: Retire pdev_bus
-From:   rkir@google.com
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
-        Roman Kiryanov <rkir@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 31 Jul 2018 22:25:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:42497 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732804AbeHACZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 22:25:30 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41gDzY2hG0z9s3q;
+        Wed,  1 Aug 2018 10:42:33 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533084154;
+        bh=/RxSL9+KjWB7JhIkmCKn//AR06c5iuEDmofXlV6lcfY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=AJ7Z0M0NotESVV5mH5Lx8y3HimvdtdtvMLJXQQrx2MbGXLkdlXL+O5LqxtdkTr4O+
+         O6mx+rp7FHE/k10jxeSlMM+4Bf5Cql9chryifP/xXSllvSjaN6VcH9XUqjh0Curjea
+         gID+3GfNYDd06MJKibblcw3NbL/Zta2C1jgv+HnssXgKDBXc6UCfjKKT3ymJdr6WMo
+         /9Oqzu4Ggjdd/RXmccbw9iQsz1UboU1x03UM/b/ATVsQHIwjwVLHnm1BRnazpanxL9
+         MnhzUKFsOmlVFNvaA9EqwKZdJIcKEqZXifNtSC8zMuUnYAYfbzl7noANX+3fsiWP1D
+         kzKrxnWsdLDiQ==
+Date:   Wed, 1 Aug 2018 10:42:27 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hari Vyas <hari.vyas@broadcom.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: linux-next: manual merge of the pci tree with the pci-current tree
+Message-ID: <20180801104227.7e52b06d@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/29FLhPHXSNImZfmVC35++5m"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Kiryanov <rkir@google.com>
+--Sig_/29FLhPHXSNImZfmVC35++5m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not used by goldfish.
+Hi Bjorn,
 
-Signed-off-by: Roman Kiryanov <rkir@google.com>
----
- drivers/platform/goldfish/Kconfig    |   5 -
- drivers/platform/goldfish/Makefile   |   1 -
- drivers/platform/goldfish/pdev_bus.c | 232 ---------------------------
- 3 files changed, 238 deletions(-)
- delete mode 100644 drivers/platform/goldfish/pdev_bus.c
+Today's linux-next merge of the pci tree got a conflict in:
 
-diff --git a/drivers/platform/goldfish/Kconfig b/drivers/platform/goldfish/Kconfig
-index fefbb8370da0..479031aa4f88 100644
---- a/drivers/platform/goldfish/Kconfig
-+++ b/drivers/platform/goldfish/Kconfig
-@@ -10,11 +10,6 @@ menuconfig GOLDFISH
- 
- if GOLDFISH
- 
--config GOLDFISH_BUS
--	bool "Goldfish platform bus"
--	---help---
--	  This is a virtual bus to host Goldfish Android Virtual Devices.
--
- config GOLDFISH_PIPE
- 	tristate "Goldfish virtual device for QEMU pipes"
- 	---help---
-diff --git a/drivers/platform/goldfish/Makefile b/drivers/platform/goldfish/Makefile
-index d3487125838c..e0c202df9674 100644
---- a/drivers/platform/goldfish/Makefile
-+++ b/drivers/platform/goldfish/Makefile
-@@ -1,5 +1,4 @@
- #
- # Makefile for Goldfish platform specific drivers
- #
--obj-$(CONFIG_GOLDFISH_BUS)	+= pdev_bus.o
- obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe.o
-diff --git a/drivers/platform/goldfish/pdev_bus.c b/drivers/platform/goldfish/pdev_bus.c
-deleted file mode 100644
-index dd9ea463c2a4..000000000000
---- a/drivers/platform/goldfish/pdev_bus.c
-+++ /dev/null
-@@ -1,232 +0,0 @@
--/*
-- * Copyright (C) 2007 Google, Inc.
-- * Copyright (C) 2011 Intel, Inc.
-- * Copyright (C) 2013 Intel, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/interrupt.h>
--#include <linux/irq.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
--#include <linux/io.h>
--
--#define PDEV_BUS_OP_DONE        (0x00)
--#define PDEV_BUS_OP_REMOVE_DEV  (0x04)
--#define PDEV_BUS_OP_ADD_DEV     (0x08)
--
--#define PDEV_BUS_OP_INIT        (0x00)
--
--#define PDEV_BUS_OP             (0x00)
--#define PDEV_BUS_GET_NAME       (0x04)
--#define PDEV_BUS_NAME_LEN       (0x08)
--#define PDEV_BUS_ID             (0x0c)
--#define PDEV_BUS_IO_BASE        (0x10)
--#define PDEV_BUS_IO_SIZE        (0x14)
--#define PDEV_BUS_IRQ            (0x18)
--#define PDEV_BUS_IRQ_COUNT      (0x1c)
--#define PDEV_BUS_GET_NAME_HIGH  (0x20)
--
--struct pdev_bus_dev {
--	struct list_head list;
--	struct platform_device pdev;
--	struct resource resources[0];
--};
--
--static void goldfish_pdev_worker(struct work_struct *work);
--
--static void __iomem *pdev_bus_base;
--static unsigned long pdev_bus_addr;
--static unsigned long pdev_bus_len;
--static u32 pdev_bus_irq;
--static LIST_HEAD(pdev_bus_new_devices);
--static LIST_HEAD(pdev_bus_registered_devices);
--static LIST_HEAD(pdev_bus_removed_devices);
--static DECLARE_WORK(pdev_bus_worker, goldfish_pdev_worker);
--
--
--static void goldfish_pdev_worker(struct work_struct *work)
--{
--	int ret;
--	struct pdev_bus_dev *pos, *n;
--
--	list_for_each_entry_safe(pos, n, &pdev_bus_removed_devices, list) {
--		list_del(&pos->list);
--		platform_device_unregister(&pos->pdev);
--		kfree(pos);
--	}
--	list_for_each_entry_safe(pos, n, &pdev_bus_new_devices, list) {
--		list_del(&pos->list);
--		ret = platform_device_register(&pos->pdev);
--		if (ret)
--			pr_err("goldfish_pdev_worker failed to register device, %s\n",
--								pos->pdev.name);
--		list_add_tail(&pos->list, &pdev_bus_registered_devices);
--	}
--}
--
--static void goldfish_pdev_remove(void)
--{
--	struct pdev_bus_dev *pos, *n;
--	u32 base;
--
--	base = readl(pdev_bus_base + PDEV_BUS_IO_BASE);
--
--	list_for_each_entry_safe(pos, n, &pdev_bus_new_devices, list) {
--		if (pos->resources[0].start == base) {
--			list_del(&pos->list);
--			kfree(pos);
--			return;
--		}
--	}
--	list_for_each_entry_safe(pos, n, &pdev_bus_registered_devices, list) {
--		if (pos->resources[0].start == base) {
--			list_del(&pos->list);
--			list_add_tail(&pos->list, &pdev_bus_removed_devices);
--			schedule_work(&pdev_bus_worker);
--			return;
--		}
--	};
--	pr_err("goldfish_pdev_remove could not find device at %x\n", base);
--}
--
--static int goldfish_new_pdev(void)
--{
--	struct pdev_bus_dev *dev;
--	u32 name_len;
--	u32 irq = -1, irq_count;
--	int resource_count = 2;
--	u32 base;
--	char *name;
--
--	base = readl(pdev_bus_base + PDEV_BUS_IO_BASE);
--
--	irq_count = readl(pdev_bus_base + PDEV_BUS_IRQ_COUNT);
--	name_len = readl(pdev_bus_base + PDEV_BUS_NAME_LEN);
--	if (irq_count)
--		resource_count++;
--
--	dev = kzalloc(sizeof(*dev) +
--		sizeof(struct resource) * resource_count +
--		name_len + 1 + sizeof(*dev->pdev.dev.dma_mask), GFP_ATOMIC);
--	if (dev == NULL)
--		return -ENOMEM;
--
--	dev->pdev.num_resources = resource_count;
--	dev->pdev.resource = (struct resource *)(dev + 1);
--	dev->pdev.name = name = (char *)(dev->pdev.resource + resource_count);
--	dev->pdev.dev.coherent_dma_mask = ~0;
--	dev->pdev.dev.dma_mask = (void *)(dev->pdev.name + name_len + 1);
--	*dev->pdev.dev.dma_mask = ~0;
--
--#ifdef CONFIG_64BIT
--	writel((u32)((u64)name>>32), pdev_bus_base + PDEV_BUS_GET_NAME_HIGH);
--#endif
--	writel((u32)(unsigned long)name, pdev_bus_base + PDEV_BUS_GET_NAME);
--	name[name_len] = '\0';
--	dev->pdev.id = readl(pdev_bus_base + PDEV_BUS_ID);
--	dev->pdev.resource[0].start = base;
--	dev->pdev.resource[0].end = base +
--				readl(pdev_bus_base + PDEV_BUS_IO_SIZE) - 1;
--	dev->pdev.resource[0].flags = IORESOURCE_MEM;
--	if (irq_count) {
--		irq = readl(pdev_bus_base + PDEV_BUS_IRQ);
--		dev->pdev.resource[1].start = irq;
--		dev->pdev.resource[1].end = irq + irq_count - 1;
--		dev->pdev.resource[1].flags = IORESOURCE_IRQ;
--	}
--
--	pr_debug("goldfish_new_pdev %s at %x irq %d\n", name, base, irq);
--	list_add_tail(&dev->list, &pdev_bus_new_devices);
--	schedule_work(&pdev_bus_worker);
--
--	return 0;
--}
--
--static irqreturn_t goldfish_pdev_bus_interrupt(int irq, void *dev_id)
--{
--	irqreturn_t ret = IRQ_NONE;
--
--	while (1) {
--		u32 op = readl(pdev_bus_base + PDEV_BUS_OP);
--
--		switch (op) {
--		case PDEV_BUS_OP_REMOVE_DEV:
--			goldfish_pdev_remove();
--			ret = IRQ_HANDLED;
--			break;
--
--		case PDEV_BUS_OP_ADD_DEV:
--			goldfish_new_pdev();
--			ret = IRQ_HANDLED;
--			break;
--
--		case PDEV_BUS_OP_DONE:
--		default:
--			return ret;
--		}
--	}
--}
--
--static int goldfish_pdev_bus_probe(struct platform_device *pdev)
--{
--	int ret;
--	struct resource *r;
--
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL)
--		return -EINVAL;
--
--	pdev_bus_addr = r->start;
--	pdev_bus_len = resource_size(r);
--
--	pdev_bus_base = ioremap(pdev_bus_addr, pdev_bus_len);
--	if (pdev_bus_base == NULL) {
--		ret = -ENOMEM;
--		dev_err(&pdev->dev, "unable to map Goldfish MMIO.\n");
--		goto free_resources;
--	}
--
--	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (r == NULL) {
--		ret = -ENOENT;
--		goto free_map;
--	}
--
--	pdev_bus_irq = r->start;
--
--	ret = request_irq(pdev_bus_irq, goldfish_pdev_bus_interrupt,
--				IRQF_SHARED, "goldfish_pdev_bus", pdev);
--	if (ret) {
--		dev_err(&pdev->dev, "unable to request Goldfish IRQ\n");
--		goto free_map;
--	}
--
--	writel(PDEV_BUS_OP_INIT, pdev_bus_base + PDEV_BUS_OP);
--	return 0;
--
--free_map:
--	iounmap(pdev_bus_base);
--free_resources:
--	release_mem_region(pdev_bus_addr, pdev_bus_len);
--	return ret;
--}
--
--static struct platform_driver goldfish_pdev_bus_driver = {
--	.probe = goldfish_pdev_bus_probe,
--	.driver = {
--		.name = "goldfish_pdev_bus"
--	}
--};
--builtin_platform_driver(goldfish_pdev_bus_driver);
--- 
-2.18.0.345.g5c9ce644c3-goog
+  drivers/pci/pci.h
 
+between commit:
+
+  44bda4b7d26e ("PCI: Fix is_added/is_busmaster race condition")
+
+from the pci-current tree and commit:
+
+  1e4511604dfa ("PCI/AER: Expose internal API for obtaining AER information=
+")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/pci.h
+index 08817253c8a2,ba078145bfaa..000000000000
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@@ -301,16 -306,34 +307,44 @@@ static inline bool pci_dev_is_disconnec
+  	return test_bit(PCI_DEV_DISCONNECTED, &dev->priv_flags);
+  }
+ =20
+ +static inline void pci_dev_assign_added(struct pci_dev *dev, bool added)
+ +{
+ +	assign_bit(PCI_DEV_ADDED, &dev->priv_flags, added);
+ +}
+ +
+ +static inline bool pci_dev_is_added(const struct pci_dev *dev)
+ +{
+ +	return test_bit(PCI_DEV_ADDED, &dev->priv_flags);
+ +}
+ +
++ #ifdef CONFIG_PCIEAER
++ #include <linux/aer.h>
++=20
++ #define AER_MAX_MULTI_ERR_DEVICES	5	/* Not likely to have more */
++=20
++ struct aer_err_info {
++ 	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
++ 	int error_dev_num;
++=20
++ 	unsigned int id:16;
++=20
++ 	unsigned int severity:2;	/* 0:NONFATAL | 1:FATAL | 2:COR */
++ 	unsigned int __pad1:5;
++ 	unsigned int multi_error_valid:1;
++=20
++ 	unsigned int first_error:5;
++ 	unsigned int __pad2:2;
++ 	unsigned int tlp_header_valid:1;
++=20
++ 	unsigned int status;		/* COR/UNCOR Error Status */
++ 	unsigned int mask;		/* COR/UNCOR Error Mask */
++ 	struct aer_header_log_regs tlp;	/* TLP Header */
++ };
++=20
++ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *i=
+nfo);
++ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
++ #endif	/* CONFIG_PCIEAER */
++=20
+  #ifdef CONFIG_PCI_ATS
+  void pci_restore_ats_state(struct pci_dev *dev);
+  #else
+
+--Sig_/29FLhPHXSNImZfmVC35++5m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlthAfMACgkQAVBC80lX
+0GxaAwf40DMgIHhrN88na26PGrtfmuK6MUDvUNx50N/GLFGDnyN+4IcF5cn9uKpA
+K1xWUGQLM5xR9aHeeQJEwJgE8UhzSDOpGYPJOJPkeiLCN40ieuPIX4dMFmPwwf1d
+bhQMg01065InQexBrvLNUlGG7Fijvwwv5o4mHH5OMpzSY0t7oWz3K3/BxTesNpmJ
+K+SKJEmAerbd8jkFKesU7OD8fQKrUsWrF9Ti3wrKxinWYMD0D3/NWssYTrYcNyCI
+s4fB85+0xlll0s0ZtJwFPVd0YHhGl+2IpeCoZ8VpIbDJFhOO70PxgFw5Y+pp5Rmh
+scnQz8hiJlzTEhb+QMmscJPu3SqC
+=KNlr
+-----END PGP SIGNATURE-----
+
+--Sig_/29FLhPHXSNImZfmVC35++5m--
