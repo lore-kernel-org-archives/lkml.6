@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70BEC46462
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE5CC46465
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FE120894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2680208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:01:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OVc/fztz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FE120894
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lnueAZA8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2680208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389545AbeHAPrD (ORCPT
+        id S2389558AbeHAPrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:47:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44213 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389515AbeHAPrD (ORCPT
+        Wed, 1 Aug 2018 11:47:05 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:37142 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389532AbeHAPrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:47:03 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so20241568wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 07:01:05 -0700 (PDT)
+        Wed, 1 Aug 2018 11:47:04 -0400
+Received: by mail-wr1-f44.google.com with SMTP id u12-v6so1913916wrr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 07:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9PZHoOy0VBO3owFL7KmvFFz5XtlMS69wKm4llIHoqtY=;
-        b=OVc/fztztqkuG87kFin39GP5UvvKfdHiWjegdRXYF3OEGre+QrWy3mv1s+S2K03Ic+
-         j1M3aitpO48i6f58wRYXLoVO2FAvJLKzzfpNObi4De5iTgYUFuGa8wYLyIgI9vO02Aai
-         q7XB9vApWr2StdlDgkHh6woOnT7KDyTighySnvy0muW84FL1be4PVVRb5N9glq9hb+kO
-         5bbVbLSwvLnFaY0g4tNt4IeVREGVmBU9H8l956JnKOC5XONuWHB3tf3b/o/O0foALA3D
-         fLsA1dTaObVtj9RA10R9aH54a8Cei0SS2jdV3/S7CT4q3i8ioeP0mTQPkMfL8OrLXRf0
-         L1dg==
+        bh=4c5uxSYxU3Q8UCIWSTlQNK284avOwd3qgO13oKZx4L4=;
+        b=lnueAZA89eV+P1vFMPb3PKft3nYNv+OBVWK+LoohuSinbbewO5wJeWWObJNoA21FCm
+         Vkp0saFxuGw3slnavP79lz5Gm4TSFdJIpcsoPjmP0hjf4jqzUjmPTEoj5xtPhWK7qter
+         RZRF96aQVOlUcjH2YisBqwfZIzoduv3a6oZ7P5t66/pCOrElc12TrMWgtRUsOo4TRO6q
+         EyZ5isGXy9XjJM1rHbC2w45/VWqzNdUhm/Pyg+qNB50qr8fAtp3MdRLsT527HrcmLL7j
+         34DhNLmpXnCtwtnHVJC8e6AV6cjBh28xOEI/9cPDTDaJaw3rP1psH8x/NGI5JfMxcgS0
+         QCZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9PZHoOy0VBO3owFL7KmvFFz5XtlMS69wKm4llIHoqtY=;
-        b=tZmV4LGKQ3gNdCVoGveFVWHGLAq6GTqP1JGuyQRECE36aXkQuSJN2kVpnsNfx21oD8
-         7JXhPtZu/FQBump7TFBXDNg2luwNTzQeJmzg8fs9/OUthOTOJJESX/mT+lq2NX+nceBS
-         vB4p3e1fCT7tHMeciRbCsldXnLBNHXqOWlEYFzAZZr7lC6M0Q5M3gxxIStQmoZP6FURT
-         NyDFvQb6RBNN88Pqvz+Y+LPeQzWYznGBIKikL/LZMGwoPnGxEqxxNJjAIyFvwtTJTq1x
-         zp83Qz1sX/Q1NpDRoisI4RXBFdbXDE7G2mR6o4B+6fMzvP4AW5G4OpiSPZuA/QqKxzQp
-         9N2w==
-X-Gm-Message-State: AOUpUlEP8okYZ70vDgYAhoWepZh45Nc2QAr3702DXflaa+c7eP84k8KZ
-        y9Bk7wVjReDcD2L3KWBCAQSXBw==
-X-Google-Smtp-Source: AAOMgpcjv6zZKYcemXa5dIETzwABQR0YOmVgbg1WGCOaSMtsUe0Q09F8YcOqdt5h36fZHWVvweC8mA==
-X-Received: by 2002:adf:9465:: with SMTP id 92-v6mr26005772wrq.283.1533132064452;
-        Wed, 01 Aug 2018 07:01:04 -0700 (PDT)
+        bh=4c5uxSYxU3Q8UCIWSTlQNK284avOwd3qgO13oKZx4L4=;
+        b=ZCglhvncwOaGoTvtHW/Nct1zdHwohtWVvy6hHW/tx6GUfAuMQu17A9OVavVvspnxLn
+         xcYslNDLPLmICRdA3YuEJGb6CHfWaBsMaUGeJV0/a31h6ZtEx5xyExgOvi42HOOdQMY7
+         JUwFYytJn+PUGtFq1kBs0OxvzYdzfsJUcnMKa1N0agXC/XSk4iBTSO9ynLt0tWrSYwY4
+         Dqg9hAbjdxRoboRP6jxk8o9pTI9nG1UDdvka+EXhh3YVaPYMphTJHlzVa+vIlMgMe7+1
+         RI3YhKKbfRnsv5063t3TWPcRqpa7Z01XBEJ50JxIaVCcL0yAyM6Mueiju80biT0dFf4n
+         SxPg==
+X-Gm-Message-State: AOUpUlEusa/mmiAh6qkOter4DUVBOQx6BjZdYci6mviQ6mSa1Lh7N0fy
+        +WW5owMA0RbcMMMULHxB89VZZA==
+X-Google-Smtp-Source: AAOMgpcx10DKdPAugv4VX5Y292OMjljKk14WRVk+fGBYaW8KT8JShtyZ8inoflEL1XGgXk+OD1RlxA==
+X-Received: by 2002:a5d:480d:: with SMTP id l13-v6mr25594381wrq.234.1533132067556;
+        Wed, 01 Aug 2018 07:01:07 -0700 (PDT)
 Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id d42-v6sm2816309wma.0.2018.08.01.07.01.02
+        by smtp.googlemail.com with ESMTPSA id d42-v6sm2816309wma.0.2018.08.01.07.01.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 07:01:03 -0700 (PDT)
+        Wed, 01 Aug 2018 07:01:05 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 3/4] clk: meson: clk-pll: remove od parameters
-Date:   Wed,  1 Aug 2018 16:00:52 +0200
-Message-Id: <20180801140053.25899-4-jbrunet@baylibre.com>
+Subject: [PATCH v2 4/4] clk: meson: clk-pll: drop hard-coded rates from pll tables
+Date:   Wed,  1 Aug 2018 16:00:53 +0200
+Message-Id: <20180801140053.25899-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180801140053.25899-1-jbrunet@baylibre.com>
 References: <20180801140053.25899-1-jbrunet@baylibre.com>
@@ -74,1568 +74,505 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove od parameters from pll clocks and add post dividers clocks
-instead. Some clock, especially the one which feature several ods,
-may provide output between those ods. Also, some drivers, such
-as the hdmi driver, may require a more detailed control of the
-clock dividers, compared to what CCF would perform automatically.
+Putting hard-coded rates inside the parameter tables assumes that
+the parent is known and will never change. That's a big assumption
+we should not make.
 
-One added benefit of removing ods is that it also greatly reduce the
-size of the rate parameter tables.
-
-In the future, we could possibly take the predivider 'n' out of this
-driver as well. To do so, we will need to understand the constraints
-for the PLL to lock and whether or not it depends on the input clock
-rate.
+We have everything we need to recalculate the output rate using
+the parent rate and the rest of the parameters. Let's do so and
+drop the rates from the tables.
 
 Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/axg.c     | 284 +++++++++++----------
- drivers/clk/meson/axg.h     |   8 +-
- drivers/clk/meson/clk-pll.c |  40 +--
- drivers/clk/meson/clkc.h    |   9 +-
- drivers/clk/meson/gxbb.c    | 484 +++++++++++++++++-------------------
- drivers/clk/meson/gxbb.h    |  10 +-
- drivers/clk/meson/meson8b.c | 151 +++++------
- drivers/clk/meson/meson8b.h |   5 +-
- 8 files changed, 493 insertions(+), 498 deletions(-)
+ drivers/clk/meson/axg.c     |  73 +++++++++++-----------
+ drivers/clk/meson/clk-pll.c |  69 ++++++++++++++-------
+ drivers/clk/meson/clkc.h    |   8 +--
+ drivers/clk/meson/gxbb.c    | 120 ++++++++++++++++++------------------
+ drivers/clk/meson/meson8b.c |  34 +++++-----
+ 5 files changed, 162 insertions(+), 142 deletions(-)
 
 diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 991fa511c05a..a5e4f7b22f39 100644
+index a5e4f7b22f39..7511b3e26d40 100644
 --- a/drivers/clk/meson/axg.c
 +++ b/drivers/clk/meson/axg.c
-@@ -22,7 +22,7 @@
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static struct clk_regmap axg_fixed_pll = {
-+static struct clk_regmap axg_fixed_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_MPLL_CNTL,
-@@ -39,11 +39,6 @@ static struct clk_regmap axg_fixed_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_MPLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_MPLL_CNTL2,
- 			.shift   = 0,
-@@ -61,14 +56,33 @@ static struct clk_regmap axg_fixed_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "fixed_pll",
-+		.name = "fixed_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
+@@ -134,36 +134,36 @@ static struct clk_regmap axg_sys_pll = {
  	},
  };
  
--static struct clk_regmap axg_sys_pll = {
-+static struct clk_regmap axg_fixed_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fixed_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "fixed_pll_dco" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock won't ever change at runtime so
-+		 * CLK_SET_RATE_PARENT is not required
-+		 */
-+	},
-+};
-+
-+static struct clk_regmap axg_sys_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
-@@ -85,11 +99,6 @@ static struct clk_regmap axg_sys_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_SYS_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
- 			.shift   = 31,
-@@ -102,101 +111,59 @@ static struct clk_regmap axg_sys_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "sys_pll",
-+		.name = "sys_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap axg_sys_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sys_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "sys_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
--	PLL_RATE(240000000, 40, 1, 2),
--	PLL_RATE(246000000, 41, 1, 2),
--	PLL_RATE(252000000, 42, 1, 2),
--	PLL_RATE(258000000, 43, 1, 2),
--	PLL_RATE(264000000, 44, 1, 2),
--	PLL_RATE(270000000, 45, 1, 2),
--	PLL_RATE(276000000, 46, 1, 2),
--	PLL_RATE(282000000, 47, 1, 2),
--	PLL_RATE(288000000, 48, 1, 2),
--	PLL_RATE(294000000, 49, 1, 2),
--	PLL_RATE(300000000, 50, 1, 2),
--	PLL_RATE(306000000, 51, 1, 2),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(318000000, 53, 1, 2),
--	PLL_RATE(324000000, 54, 1, 2),
--	PLL_RATE(330000000, 55, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(342000000, 57, 1, 2),
--	PLL_RATE(348000000, 58, 1, 2),
--	PLL_RATE(354000000, 59, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(366000000, 61, 1, 2),
--	PLL_RATE(372000000, 62, 1, 2),
--	PLL_RATE(378000000, 63, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(390000000, 65, 1, 3),
--	PLL_RATE(396000000, 66, 1, 3),
--	PLL_RATE(402000000, 67, 1, 3),
--	PLL_RATE(408000000, 68, 1, 3),
--	PLL_RATE(480000000, 40, 1, 1),
--	PLL_RATE(492000000, 41, 1, 1),
--	PLL_RATE(504000000, 42, 1, 1),
--	PLL_RATE(516000000, 43, 1, 1),
--	PLL_RATE(528000000, 44, 1, 1),
--	PLL_RATE(540000000, 45, 1, 1),
--	PLL_RATE(552000000, 46, 1, 1),
--	PLL_RATE(564000000, 47, 1, 1),
--	PLL_RATE(576000000, 48, 1, 1),
--	PLL_RATE(588000000, 49, 1, 1),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(612000000, 51, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(636000000, 53, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(660000000, 55, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(684000000, 57, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(708000000, 59, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(732000000, 61, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(756000000, 63, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(780000000, 65, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(804000000, 67, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(960000000, 40, 1, 0),
--	PLL_RATE(984000000, 41, 1, 0),
--	PLL_RATE(1008000000, 42, 1, 0),
--	PLL_RATE(1032000000, 43, 1, 0),
--	PLL_RATE(1056000000, 44, 1, 0),
--	PLL_RATE(1080000000, 45, 1, 0),
--	PLL_RATE(1104000000, 46, 1, 0),
--	PLL_RATE(1128000000, 47, 1, 0),
--	PLL_RATE(1152000000, 48, 1, 0),
--	PLL_RATE(1176000000, 49, 1, 0),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
--	PLL_RATE(1560000000, 65, 1, 0),
--	PLL_RATE(1584000000, 66, 1, 0),
--	PLL_RATE(1608000000, 67, 1, 0),
--	PLL_RATE(1632000000, 68, 1, 0),
-+	PLL_RATE(960000000, 40, 1),
-+	PLL_RATE(984000000, 41, 1),
-+	PLL_RATE(1008000000, 42, 1),
-+	PLL_RATE(1032000000, 43, 1),
-+	PLL_RATE(1056000000, 44, 1),
-+	PLL_RATE(1080000000, 45, 1),
-+	PLL_RATE(1104000000, 46, 1),
-+	PLL_RATE(1128000000, 47, 1),
-+	PLL_RATE(1152000000, 48, 1),
-+	PLL_RATE(1176000000, 49, 1),
-+	PLL_RATE(1200000000, 50, 1),
-+	PLL_RATE(1224000000, 51, 1),
-+	PLL_RATE(1248000000, 52, 1),
-+	PLL_RATE(1272000000, 53, 1),
-+	PLL_RATE(1296000000, 54, 1),
-+	PLL_RATE(1320000000, 55, 1),
-+	PLL_RATE(1344000000, 56, 1),
-+	PLL_RATE(1368000000, 57, 1),
-+	PLL_RATE(1392000000, 58, 1),
-+	PLL_RATE(1416000000, 59, 1),
-+	PLL_RATE(1440000000, 60, 1),
-+	PLL_RATE(1464000000, 61, 1),
-+	PLL_RATE(1488000000, 62, 1),
-+	PLL_RATE(1512000000, 63, 1),
-+	PLL_RATE(1536000000, 64, 1),
-+	PLL_RATE(1560000000, 65, 1),
-+	PLL_RATE(1584000000, 66, 1),
-+	PLL_RATE(1608000000, 67, 1),
-+	PLL_RATE(1632000000, 68, 1),
+-static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
+-	PLL_RATE(960000000, 40, 1),
+-	PLL_RATE(984000000, 41, 1),
+-	PLL_RATE(1008000000, 42, 1),
+-	PLL_RATE(1032000000, 43, 1),
+-	PLL_RATE(1056000000, 44, 1),
+-	PLL_RATE(1080000000, 45, 1),
+-	PLL_RATE(1104000000, 46, 1),
+-	PLL_RATE(1128000000, 47, 1),
+-	PLL_RATE(1152000000, 48, 1),
+-	PLL_RATE(1176000000, 49, 1),
+-	PLL_RATE(1200000000, 50, 1),
+-	PLL_RATE(1224000000, 51, 1),
+-	PLL_RATE(1248000000, 52, 1),
+-	PLL_RATE(1272000000, 53, 1),
+-	PLL_RATE(1296000000, 54, 1),
+-	PLL_RATE(1320000000, 55, 1),
+-	PLL_RATE(1344000000, 56, 1),
+-	PLL_RATE(1368000000, 57, 1),
+-	PLL_RATE(1392000000, 58, 1),
+-	PLL_RATE(1416000000, 59, 1),
+-	PLL_RATE(1440000000, 60, 1),
+-	PLL_RATE(1464000000, 61, 1),
+-	PLL_RATE(1488000000, 62, 1),
+-	PLL_RATE(1512000000, 63, 1),
+-	PLL_RATE(1536000000, 64, 1),
+-	PLL_RATE(1560000000, 65, 1),
+-	PLL_RATE(1584000000, 66, 1),
+-	PLL_RATE(1608000000, 67, 1),
+-	PLL_RATE(1632000000, 68, 1),
++static const struct pll_params_table axg_gp0_pll_params_table[] = {
++	PLL_PARAMS(40, 1),
++	PLL_PARAMS(41, 1),
++	PLL_PARAMS(42, 1),
++	PLL_PARAMS(43, 1),
++	PLL_PARAMS(44, 1),
++	PLL_PARAMS(45, 1),
++	PLL_PARAMS(46, 1),
++	PLL_PARAMS(47, 1),
++	PLL_PARAMS(48, 1),
++	PLL_PARAMS(49, 1),
++	PLL_PARAMS(50, 1),
++	PLL_PARAMS(51, 1),
++	PLL_PARAMS(52, 1),
++	PLL_PARAMS(53, 1),
++	PLL_PARAMS(54, 1),
++	PLL_PARAMS(55, 1),
++	PLL_PARAMS(56, 1),
++	PLL_PARAMS(57, 1),
++	PLL_PARAMS(58, 1),
++	PLL_PARAMS(59, 1),
++	PLL_PARAMS(60, 1),
++	PLL_PARAMS(61, 1),
++	PLL_PARAMS(62, 1),
++	PLL_PARAMS(63, 1),
++	PLL_PARAMS(64, 1),
++	PLL_PARAMS(65, 1),
++	PLL_PARAMS(66, 1),
++	PLL_PARAMS(67, 1),
++	PLL_PARAMS(68, 1),
  	{ /* sentinel */ },
  };
  
-@@ -208,7 +175,7 @@ static const struct reg_sequence axg_gp0_init_regs[] = {
- 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
- };
- 
--static struct clk_regmap axg_gp0_pll = {
-+static struct clk_regmap axg_gp0_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
-@@ -225,11 +192,6 @@ static struct clk_regmap axg_gp0_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -207,7 +207,7 @@ static struct clk_regmap axg_gp0_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_GP0_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_GP0_PLL_CNTL1,
- 			.shift   = 0,
-@@ -250,13 +212,29 @@ static struct clk_regmap axg_gp0_pll = {
+-		.table = axg_gp0_pll_rate_table,
++		.table = axg_gp0_pll_params_table,
+ 		.init_regs = axg_gp0_init_regs,
  		.init_count = ARRAY_SIZE(axg_gp0_init_regs),
  	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "gp0_pll",
-+		.name = "gp0_pll_dco",
- 		.ops = &meson_clk_pll_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap axg_gp0_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_GP0_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gp0_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "gp0_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct reg_sequence axg_hifi_init_regs[] = {
- 	{ .reg = HHI_HIFI_PLL_CNTL1,	.def = 0xc084b000 },
- 	{ .reg = HHI_HIFI_PLL_CNTL2,	.def = 0xb75020be },
-@@ -265,7 +243,7 @@ static const struct reg_sequence axg_hifi_init_regs[] = {
- 	{ .reg = HHI_HIFI_PLL_CNTL5,	.def = 0x00058000 },
- };
- 
--static struct clk_regmap axg_hifi_pll = {
-+static struct clk_regmap axg_hifi_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_HIFI_PLL_CNTL,
-@@ -282,11 +260,6 @@ static struct clk_regmap axg_hifi_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -275,7 +275,7 @@ static struct clk_regmap axg_hifi_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_HIFI_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_HIFI_PLL_CNTL5,
- 			.shift   = 0,
-@@ -308,13 +281,29 @@ static struct clk_regmap axg_hifi_pll = {
+-		.table = axg_gp0_pll_rate_table,
++		.table = axg_gp0_pll_params_table,
+ 		.init_regs = axg_hifi_init_regs,
+ 		.init_count = ARRAY_SIZE(axg_hifi_init_regs),
  		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "hifi_pll",
-+		.name = "hifi_pll_dco",
- 		.ops = &meson_clk_pll_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
+@@ -631,11 +631,10 @@ static struct clk_regmap axg_mpll3 = {
  	},
  };
  
-+static struct clk_regmap axg_hifi_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HIFI_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hifi_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "hifi_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_fixed_factor axg_fclk_div2_div = {
- 	.mult = 1,
- 	.div = 2,
-@@ -644,11 +633,9 @@ static struct clk_regmap axg_mpll3 = {
- 
- static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
+-static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
++static const struct pll_params_table axg_pcie_pll_params_table[] = {
  	{
--		.rate	= 100000000,
-+		.rate	= 1600000000,
- 		.m	= 200,
- 		.n	= 3,
--		.od	= 1,
--		.od2	= 3,
+-		.rate	= 1600000000,
+-		.m	= 200,
+-		.n	= 3,
++		.m = 200,
++		.n = 3,
  	},
  	{ /* sentinel */ },
  };
-@@ -660,9 +647,10 @@ static const struct reg_sequence axg_pcie_init_regs[] = {
- 	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0xc000004d },
- 	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x00078000 },
- 	{ .reg = HHI_PCIE_PLL_CNTL6,	.def = 0x002323c6 },
-+	{ .reg = HHI_PCIE_PLL_CNTL,     .def = 0x400106c8 },
- };
- 
--static struct clk_regmap axg_pcie_pll = {
-+static struct clk_regmap axg_pcie_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_PCIE_PLL_CNTL,
-@@ -679,16 +667,6 @@ static struct clk_regmap axg_pcie_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -682,7 +681,7 @@ static struct clk_regmap axg_pcie_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_PCIE_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
--		.od2 = {
--			.reg_off = HHI_PCIE_PLL_CNTL6,
--			.shift   = 6,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_PCIE_PLL_CNTL1,
- 			.shift   = 0,
-@@ -709,13 +687,45 @@ static struct clk_regmap axg_pcie_pll = {
+-		.table = axg_pcie_pll_rate_table,
++		.table = axg_pcie_pll_params_table,
+ 		.init_regs = axg_pcie_init_regs,
  		.init_count = ARRAY_SIZE(axg_pcie_init_regs),
  	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "pcie_pll",
-+		.name = "pcie_pll_dco",
- 		.ops = &meson_clk_pll_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap axg_pcie_pll_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_PCIE_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll_od",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "pcie_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap axg_pcie_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_PCIE_PLL_CNTL6,
-+		.shift = 6,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "pcie_pll_od" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap axg_pcie_mux = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = HHI_PCIE_PLL_CNTL6,
-@@ -1128,6 +1138,12 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
- 		[CLKID_GEN_CLK_SEL]		= &axg_gen_clk_sel.hw,
- 		[CLKID_GEN_CLK_DIV]		= &axg_gen_clk_div.hw,
- 		[CLKID_GEN_CLK]			= &axg_gen_clk.hw,
-+		[CLKID_SYS_PLL_DCO]		= &axg_sys_pll_dco.hw,
-+		[CLKID_FIXED_PLL_DCO]		= &axg_fixed_pll_dco.hw,
-+		[CLKID_GP0_PLL_DCO]		= &axg_gp0_pll_dco.hw,
-+		[CLKID_HIFI_PLL_DCO]		= &axg_hifi_pll_dco.hw,
-+		[CLKID_PCIE_PLL_DCO]		= &axg_pcie_pll_dco.hw,
-+		[CLKID_PCIE_PLL_OD]		= &axg_pcie_pll_od.hw,
- 		[NR_CLKS]			= NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -1206,6 +1222,8 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_fclk_div4,
- 	&axg_fclk_div5,
- 	&axg_fclk_div7,
-+	&axg_pcie_pll_dco,
-+	&axg_pcie_pll_od,
- 	&axg_pcie_pll,
- 	&axg_pcie_mux,
- 	&axg_pcie_ref,
-@@ -1215,6 +1233,12 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_gen_clk_sel,
- 	&axg_gen_clk_div,
- 	&axg_gen_clk,
-+	&axg_fixed_pll_dco,
-+	&axg_sys_pll_dco,
-+	&axg_gp0_pll_dco,
-+	&axg_hifi_pll_dco,
-+	&axg_pcie_pll_dco,
-+	&axg_pcie_pll_od,
- };
- 
- static const struct of_device_id clkc_match_table[] = {
-diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
-index 1d04144a1b2c..0431dabac629 100644
---- a/drivers/clk/meson/axg.h
-+++ b/drivers/clk/meson/axg.h
-@@ -133,8 +133,14 @@
- #define CLKID_PCIE_REF				78
- #define CLKID_GEN_CLK_SEL			82
- #define CLKID_GEN_CLK_DIV			83
-+#define CLKID_SYS_PLL_DCO			85
-+#define CLKID_FIXED_PLL_DCO			86
-+#define CLKID_GP0_PLL_DCO			87
-+#define CLKID_HIFI_PLL_DCO			88
-+#define CLKID_PCIE_PLL_DCO			89
-+#define CLKID_PCIE_PLL_OD			90
- 
--#define NR_CLKS					85
-+#define NR_CLKS					91
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/axg-clkc.h>
 diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 8aaefe67025f..348a866f09eb 100644
+index 348a866f09eb..f5b5b3fabe3c 100644
 --- a/drivers/clk/meson/clk-pll.c
 +++ b/drivers/clk/meson/clk-pll.c
-@@ -11,15 +11,19 @@
-  * In the most basic form, a Meson PLL is composed as follows:
-  *
-  *                     PLL
-- *      +------------------------------+
-- *      |                              |
-- * in -----[ /N ]---[ *M ]---[ >>OD ]----->> out
-- *      |         ^        ^           |
-- *      +------------------------------+
-- *                |        |
-- *               FREF     VCO
-+ *        +--------------------------------+
-+ *        |                                |
-+ *        |             +--+               |
-+ *  in >>-----[ /N ]--->|  |      +-----+  |
-+ *        |             |  |------| DCO |---->> out
-+ *        |  +--------->|  |      +--v--+  |
-+ *        |  |          +--+         |     |
-+ *        |  |                       |     |
-+ *        |  +--[ *(M + (F/Fmax) ]<--+     |
-+ *        |                                |
-+ *        +--------------------------------+
-  *
-- * out = in * (m + frac / frac_max) / (n << sum(ods))
-+ * out = in * (m + frac / frac_max) / n
-  */
- 
- #include <linux/clk-provider.h>
-@@ -46,7 +50,6 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
- 					  struct meson_clk_pll_data *pll)
- {
- 	u64 rate = (u64)parent_rate * pllt->m;
--	unsigned int od = pllt->od + pllt->od2 + pllt->od3;
- 
- 	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
- 		u64 frac_rate = (u64)parent_rate * frac;
-@@ -55,7 +58,7 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
- 					 (1 << pll->frac.width));
- 	}
- 
--	return DIV_ROUND_UP_ULL(rate, pllt->n << od);
-+	return DIV_ROUND_UP_ULL(rate, pllt->n);
+@@ -45,7 +45,7 @@ meson_clk_pll_data(struct clk_regmap *clk)
  }
  
- static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
-@@ -68,15 +71,6 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+-					  const struct pll_rate_table *pllt,
++					  const struct pll_params_table *pllt,
+ 					  u16 frac,
+ 					  struct meson_clk_pll_data *pll)
+ {
+@@ -66,7 +66,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	struct pll_rate_table pllt;
++	struct pll_params_table pllt;
+ 	u16 frac;
  
  	pllt.n = meson_parm_read(clk->map, &pll->n);
- 	pllt.m = meson_parm_read(clk->map, &pll->m);
--	pllt.od = meson_parm_read(clk->map, &pll->od);
--
--	pllt.od2 = MESON_PARM_APPLICABLE(&pll->od2) ?
--		meson_parm_read(clk->map, &pll->od2) :
--		0;
--
--	pllt.od3 = MESON_PARM_APPLICABLE(&pll->od3) ?
--		meson_parm_read(clk->map, &pll->od3) :
--		0;
+@@ -81,7 +81,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
  
- 	frac = MESON_PARM_APPLICABLE(&pll->frac) ?
- 		meson_parm_read(clk->map, &pll->frac) :
-@@ -93,8 +87,6 @@ static u16 __pll_params_with_frac(unsigned long rate,
+ static u16 __pll_params_with_frac(unsigned long rate,
+ 				  unsigned long parent_rate,
+-				  const struct pll_rate_table *pllt,
++				  const struct pll_params_table *pllt,
+ 				  struct meson_clk_pll_data *pll)
+ {
  	u16 frac_max = (1 << pll->frac.width);
- 	u64 val = (u64)rate * pllt->n;
+@@ -97,29 +97,50 @@ static u16 __pll_params_with_frac(unsigned long rate,
+ 	return min((u16)val, (u16)(frac_max - 1));
+ }
  
--	val <<= pllt->od + pllt->od2 + pllt->od3;
--
- 	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
- 		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
- 	else
-@@ -242,13 +234,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+-static const struct pll_rate_table *
++static bool meson_clk_pll_is_better(unsigned long rate,
++				    unsigned long best,
++				    unsigned long now,
++				    struct meson_clk_pll_data *pll)
++{
++	if (!(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
++	    MESON_PARM_APPLICABLE(&pll->frac)) {
++		/* Round down */
++		if (now < rate && best < now)
++			return true;
++	} else {
++		/* Round Closest */
++		if (abs(now - rate) < abs(best - rate))
++			return true;
++	}
++
++	return false;
++}
++
++static const struct pll_params_table *
+ meson_clk_get_pll_settings(unsigned long rate,
++			   unsigned long parent_rate,
+ 			   struct meson_clk_pll_data *pll)
+ {
+-	const struct pll_rate_table *table = pll->table;
+-	unsigned int i = 0;
++	const struct pll_params_table *table = pll->table;
++	unsigned long best = 0, now = 0;
++	unsigned int i, best_i = 0;
  
- 	meson_parm_write(clk->map, &pll->n, pllt->n);
- 	meson_parm_write(clk->map, &pll->m, pllt->m);
--	meson_parm_write(clk->map, &pll->od, pllt->od);
--
--	if (MESON_PARM_APPLICABLE(&pll->od2))
--		meson_parm_write(clk->map, &pll->od2, pllt->od2);
+ 	if (!table)
+ 		return NULL;
  
--	if (MESON_PARM_APPLICABLE(&pll->od3))
--		meson_parm_write(clk->map, &pll->od3, pllt->od3);
+-	/* Find the first table element exceeding rate */
+-	while (table[i].rate && table[i].rate <= rate)
+-		i++;
++	for (i = 0; table[i].n; i++) {
++		now = __pll_params_to_rate(parent_rate, &table[i], 0, pll);
  
- 	if (MESON_PARM_APPLICABLE(&pll->frac)) {
- 		frac = __pll_params_with_frac(rate, parent_rate, pllt, pll);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index c2ee37a78ceb..a2245e857f70 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -47,17 +47,13 @@ struct pll_rate_table {
- 	unsigned long	rate;
- 	u16		m;
- 	u16		n;
--	u16		od;
--	u16		od2;
--	u16		od3;
- };
- 
--#define PLL_RATE(_r, _m, _n, _od)					\
-+#define PLL_RATE(_r, _m, _n)						\
- 	{								\
- 		.rate		= (_r),					\
- 		.m		= (_m),					\
- 		.n		= (_n),					\
--		.od		= (_od),				\
+-	if (i != 0) {
+-		if (MESON_PARM_APPLICABLE(&pll->frac) ||
+-		    !(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
+-		    (abs(rate - table[i - 1].rate) <
+-		     abs(rate - table[i].rate)))
+-			i--;
++		/* If we get an exact match, don't bother any further */
++		if (now == rate) {
++			return &table[i];
++		} else if (meson_clk_pll_is_better(rate, best, now, pll)) {
++			best = now;
++			best_i = i;
++		}
  	}
  
- #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
-@@ -67,9 +63,6 @@ struct meson_clk_pll_data {
- 	struct parm m;
- 	struct parm n;
- 	struct parm frac;
--	struct parm od;
--	struct parm od2;
--	struct parm od3;
- 	struct parm l;
+-	return (struct pll_rate_table *)&table[i];
++	return (struct pll_params_table *)&table[best_i];
+ }
+ 
+ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -127,16 +148,18 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	const struct pll_rate_table *pllt =
+-		meson_clk_get_pll_settings(rate, pll);
++	const struct pll_params_table *pllt =
++		meson_clk_get_pll_settings(rate, *parent_rate, pll);
++	unsigned long round;
+ 	u16 frac;
+ 
+ 	if (!pllt)
+ 		return meson_clk_pll_recalc_rate(hw, *parent_rate);
+ 
+-	if (!MESON_PARM_APPLICABLE(&pll->frac)
+-	    || rate == pllt->rate)
+-		return pllt->rate;
++	round = __pll_params_to_rate(*parent_rate, pllt, 0, pll);
++
++	if (!MESON_PARM_APPLICABLE(&pll->frac) || rate == round)
++		return round;
+ 
+ 	/*
+ 	 * The rate provided by the setting is not an exact match, let's
+@@ -214,7 +237,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	const struct pll_rate_table *pllt;
++	const struct pll_params_table *pllt;
+ 	unsigned int enabled;
+ 	unsigned long old_rate;
+ 	u16 frac = 0;
+@@ -224,7 +247,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	old_rate = rate;
+ 
+-	pllt = meson_clk_get_pll_settings(rate, pll);
++	pllt = meson_clk_get_pll_settings(rate, parent_rate, pll);
+ 	if (!pllt)
+ 		return -EINVAL;
+ 
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index a2245e857f70..6b96d55c047d 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -43,15 +43,13 @@ static inline void meson_parm_write(struct regmap *map, struct parm *p,
+ }
+ 
+ 
+-struct pll_rate_table {
+-	unsigned long	rate;
++struct pll_params_table {
+ 	u16		m;
+ 	u16		n;
+ };
+ 
+-#define PLL_RATE(_r, _m, _n)						\
++#define PLL_PARAMS(_m, _n)						\
+ 	{								\
+-		.rate		= (_r),					\
+ 		.m		= (_m),					\
+ 		.n		= (_n),					\
+ 	}
+@@ -67,7 +65,7 @@ struct meson_clk_pll_data {
  	struct parm rst;
  	const struct reg_sequence *init_regs;
+ 	unsigned int init_count;
+-	const struct pll_rate_table *table;
++	const struct pll_params_table *table;
+ 	u8 flags;
+ };
+ 
 diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 01e3f80e88cc..af59f2607dc1 100644
+index af59f2607dc1..9309cfaaa464 100644
 --- a/drivers/clk/meson/gxbb.c
 +++ b/drivers/clk/meson/gxbb.c
-@@ -19,163 +19,70 @@
+@@ -18,67 +18,67 @@
+ 
  static DEFINE_SPINLOCK(meson_clk_lock);
  
- static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
--	PLL_RATE(96000000, 32, 1, 3),
--	PLL_RATE(99000000, 33, 1, 3),
--	PLL_RATE(102000000, 34, 1, 3),
--	PLL_RATE(105000000, 35, 1, 3),
--	PLL_RATE(108000000, 36, 1, 3),
--	PLL_RATE(111000000, 37, 1, 3),
--	PLL_RATE(114000000, 38, 1, 3),
--	PLL_RATE(117000000, 39, 1, 3),
--	PLL_RATE(120000000, 40, 1, 3),
--	PLL_RATE(123000000, 41, 1, 3),
--	PLL_RATE(126000000, 42, 1, 3),
--	PLL_RATE(129000000, 43, 1, 3),
--	PLL_RATE(132000000, 44, 1, 3),
--	PLL_RATE(135000000, 45, 1, 3),
--	PLL_RATE(138000000, 46, 1, 3),
--	PLL_RATE(141000000, 47, 1, 3),
--	PLL_RATE(144000000, 48, 1, 3),
--	PLL_RATE(147000000, 49, 1, 3),
--	PLL_RATE(150000000, 50, 1, 3),
--	PLL_RATE(153000000, 51, 1, 3),
--	PLL_RATE(156000000, 52, 1, 3),
--	PLL_RATE(159000000, 53, 1, 3),
--	PLL_RATE(162000000, 54, 1, 3),
--	PLL_RATE(165000000, 55, 1, 3),
--	PLL_RATE(168000000, 56, 1, 3),
--	PLL_RATE(171000000, 57, 1, 3),
--	PLL_RATE(174000000, 58, 1, 3),
--	PLL_RATE(177000000, 59, 1, 3),
--	PLL_RATE(180000000, 60, 1, 3),
--	PLL_RATE(183000000, 61, 1, 3),
--	PLL_RATE(186000000, 62, 1, 3),
--	PLL_RATE(192000000, 32, 1, 2),
--	PLL_RATE(198000000, 33, 1, 2),
--	PLL_RATE(204000000, 34, 1, 2),
--	PLL_RATE(210000000, 35, 1, 2),
--	PLL_RATE(216000000, 36, 1, 2),
--	PLL_RATE(222000000, 37, 1, 2),
--	PLL_RATE(228000000, 38, 1, 2),
--	PLL_RATE(234000000, 39, 1, 2),
--	PLL_RATE(240000000, 40, 1, 2),
--	PLL_RATE(246000000, 41, 1, 2),
--	PLL_RATE(252000000, 42, 1, 2),
--	PLL_RATE(258000000, 43, 1, 2),
--	PLL_RATE(264000000, 44, 1, 2),
--	PLL_RATE(270000000, 45, 1, 2),
--	PLL_RATE(276000000, 46, 1, 2),
--	PLL_RATE(282000000, 47, 1, 2),
--	PLL_RATE(288000000, 48, 1, 2),
--	PLL_RATE(294000000, 49, 1, 2),
--	PLL_RATE(300000000, 50, 1, 2),
--	PLL_RATE(306000000, 51, 1, 2),
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(318000000, 53, 1, 2),
--	PLL_RATE(324000000, 54, 1, 2),
--	PLL_RATE(330000000, 55, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(342000000, 57, 1, 2),
--	PLL_RATE(348000000, 58, 1, 2),
--	PLL_RATE(354000000, 59, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(366000000, 61, 1, 2),
--	PLL_RATE(372000000, 62, 1, 2),
--	PLL_RATE(384000000, 32, 1, 1),
--	PLL_RATE(396000000, 33, 1, 1),
--	PLL_RATE(408000000, 34, 1, 1),
--	PLL_RATE(420000000, 35, 1, 1),
--	PLL_RATE(432000000, 36, 1, 1),
--	PLL_RATE(444000000, 37, 1, 1),
--	PLL_RATE(456000000, 38, 1, 1),
--	PLL_RATE(468000000, 39, 1, 1),
--	PLL_RATE(480000000, 40, 1, 1),
--	PLL_RATE(492000000, 41, 1, 1),
--	PLL_RATE(504000000, 42, 1, 1),
--	PLL_RATE(516000000, 43, 1, 1),
--	PLL_RATE(528000000, 44, 1, 1),
--	PLL_RATE(540000000, 45, 1, 1),
--	PLL_RATE(552000000, 46, 1, 1),
--	PLL_RATE(564000000, 47, 1, 1),
--	PLL_RATE(576000000, 48, 1, 1),
--	PLL_RATE(588000000, 49, 1, 1),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(612000000, 51, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(636000000, 53, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(660000000, 55, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(684000000, 57, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(708000000, 59, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(732000000, 61, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 32, 1, 0),
--	PLL_RATE(792000000, 33, 1, 0),
--	PLL_RATE(816000000, 34, 1, 0),
--	PLL_RATE(840000000, 35, 1, 0),
--	PLL_RATE(864000000, 36, 1, 0),
--	PLL_RATE(888000000, 37, 1, 0),
--	PLL_RATE(912000000, 38, 1, 0),
--	PLL_RATE(936000000, 39, 1, 0),
--	PLL_RATE(960000000, 40, 1, 0),
--	PLL_RATE(984000000, 41, 1, 0),
--	PLL_RATE(1008000000, 42, 1, 0),
--	PLL_RATE(1032000000, 43, 1, 0),
--	PLL_RATE(1056000000, 44, 1, 0),
--	PLL_RATE(1080000000, 45, 1, 0),
--	PLL_RATE(1104000000, 46, 1, 0),
--	PLL_RATE(1128000000, 47, 1, 0),
--	PLL_RATE(1152000000, 48, 1, 0),
--	PLL_RATE(1176000000, 49, 1, 0),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
-+	PLL_RATE(768000000, 32, 1),
-+	PLL_RATE(792000000, 33, 1),
-+	PLL_RATE(816000000, 34, 1),
-+	PLL_RATE(840000000, 35, 1),
-+	PLL_RATE(864000000, 36, 1),
-+	PLL_RATE(888000000, 37, 1),
-+	PLL_RATE(912000000, 38, 1),
-+	PLL_RATE(936000000, 39, 1),
-+	PLL_RATE(960000000, 40, 1),
-+	PLL_RATE(984000000, 41, 1),
-+	PLL_RATE(1008000000, 42, 1),
-+	PLL_RATE(1032000000, 43, 1),
-+	PLL_RATE(1056000000, 44, 1),
-+	PLL_RATE(1080000000, 45, 1),
-+	PLL_RATE(1104000000, 46, 1),
-+	PLL_RATE(1128000000, 47, 1),
-+	PLL_RATE(1152000000, 48, 1),
-+	PLL_RATE(1176000000, 49, 1),
-+	PLL_RATE(1200000000, 50, 1),
-+	PLL_RATE(1224000000, 51, 1),
-+	PLL_RATE(1248000000, 52, 1),
-+	PLL_RATE(1272000000, 53, 1),
-+	PLL_RATE(1296000000, 54, 1),
-+	PLL_RATE(1320000000, 55, 1),
-+	PLL_RATE(1344000000, 56, 1),
-+	PLL_RATE(1368000000, 57, 1),
-+	PLL_RATE(1392000000, 58, 1),
-+	PLL_RATE(1416000000, 59, 1),
-+	PLL_RATE(1440000000, 60, 1),
-+	PLL_RATE(1464000000, 61, 1),
-+	PLL_RATE(1488000000, 62, 1),
+-static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
+-	PLL_RATE(768000000, 32, 1),
+-	PLL_RATE(792000000, 33, 1),
+-	PLL_RATE(816000000, 34, 1),
+-	PLL_RATE(840000000, 35, 1),
+-	PLL_RATE(864000000, 36, 1),
+-	PLL_RATE(888000000, 37, 1),
+-	PLL_RATE(912000000, 38, 1),
+-	PLL_RATE(936000000, 39, 1),
+-	PLL_RATE(960000000, 40, 1),
+-	PLL_RATE(984000000, 41, 1),
+-	PLL_RATE(1008000000, 42, 1),
+-	PLL_RATE(1032000000, 43, 1),
+-	PLL_RATE(1056000000, 44, 1),
+-	PLL_RATE(1080000000, 45, 1),
+-	PLL_RATE(1104000000, 46, 1),
+-	PLL_RATE(1128000000, 47, 1),
+-	PLL_RATE(1152000000, 48, 1),
+-	PLL_RATE(1176000000, 49, 1),
+-	PLL_RATE(1200000000, 50, 1),
+-	PLL_RATE(1224000000, 51, 1),
+-	PLL_RATE(1248000000, 52, 1),
+-	PLL_RATE(1272000000, 53, 1),
+-	PLL_RATE(1296000000, 54, 1),
+-	PLL_RATE(1320000000, 55, 1),
+-	PLL_RATE(1344000000, 56, 1),
+-	PLL_RATE(1368000000, 57, 1),
+-	PLL_RATE(1392000000, 58, 1),
+-	PLL_RATE(1416000000, 59, 1),
+-	PLL_RATE(1440000000, 60, 1),
+-	PLL_RATE(1464000000, 61, 1),
+-	PLL_RATE(1488000000, 62, 1),
++static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
++	PLL_PARAMS(32, 1),
++	PLL_PARAMS(33, 1),
++	PLL_PARAMS(34, 1),
++	PLL_PARAMS(35, 1),
++	PLL_PARAMS(36, 1),
++	PLL_PARAMS(37, 1),
++	PLL_PARAMS(38, 1),
++	PLL_PARAMS(39, 1),
++	PLL_PARAMS(40, 1),
++	PLL_PARAMS(41, 1),
++	PLL_PARAMS(42, 1),
++	PLL_PARAMS(43, 1),
++	PLL_PARAMS(44, 1),
++	PLL_PARAMS(45, 1),
++	PLL_PARAMS(46, 1),
++	PLL_PARAMS(47, 1),
++	PLL_PARAMS(48, 1),
++	PLL_PARAMS(49, 1),
++	PLL_PARAMS(50, 1),
++	PLL_PARAMS(51, 1),
++	PLL_PARAMS(52, 1),
++	PLL_PARAMS(53, 1),
++	PLL_PARAMS(54, 1),
++	PLL_PARAMS(55, 1),
++	PLL_PARAMS(56, 1),
++	PLL_PARAMS(57, 1),
++	PLL_PARAMS(58, 1),
++	PLL_PARAMS(59, 1),
++	PLL_PARAMS(60, 1),
++	PLL_PARAMS(61, 1),
++	PLL_PARAMS(62, 1),
  	{ /* sentinel */ },
  };
  
- static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
--	PLL_RATE(504000000, 42, 1, 1),
--	PLL_RATE(516000000, 43, 1, 1),
--	PLL_RATE(528000000, 44, 1, 1),
--	PLL_RATE(540000000, 45, 1, 1),
--	PLL_RATE(552000000, 46, 1, 1),
--	PLL_RATE(564000000, 47, 1, 1),
--	PLL_RATE(576000000, 48, 1, 1),
--	PLL_RATE(588000000, 49, 1, 1),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(612000000, 51, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(636000000, 53, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(660000000, 55, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(684000000, 57, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(708000000, 59, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(732000000, 61, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(756000000, 63, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(780000000, 65, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
-+	PLL_RATE(1008000000, 42, 1),
-+	PLL_RATE(1032000000, 43, 1),
-+	PLL_RATE(1056000000, 44, 1),
-+	PLL_RATE(1080000000, 45, 1),
-+	PLL_RATE(1104000000, 46, 1),
-+	PLL_RATE(1128000000, 47, 1),
-+	PLL_RATE(1152000000, 48, 1),
-+	PLL_RATE(1176000000, 49, 1),
-+	PLL_RATE(1200000000, 50, 1),
-+	PLL_RATE(1224000000, 51, 1),
-+	PLL_RATE(1248000000, 52, 1),
-+	PLL_RATE(1272000000, 53, 1),
-+	PLL_RATE(1296000000, 54, 1),
-+	PLL_RATE(1320000000, 55, 1),
-+	PLL_RATE(1344000000, 56, 1),
-+	PLL_RATE(1368000000, 57, 1),
-+	PLL_RATE(1392000000, 58, 1),
-+	PLL_RATE(1416000000, 59, 1),
-+	PLL_RATE(1440000000, 60, 1),
-+	PLL_RATE(1464000000, 61, 1),
-+	PLL_RATE(1488000000, 62, 1),
-+	PLL_RATE(1512000000, 63, 1),
-+	PLL_RATE(1536000000, 64, 1),
-+	PLL_RATE(1560000000, 65, 1),
-+	PLL_RATE(1584000000, 66, 1),
+-static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
+-	PLL_RATE(1008000000, 42, 1),
+-	PLL_RATE(1032000000, 43, 1),
+-	PLL_RATE(1056000000, 44, 1),
+-	PLL_RATE(1080000000, 45, 1),
+-	PLL_RATE(1104000000, 46, 1),
+-	PLL_RATE(1128000000, 47, 1),
+-	PLL_RATE(1152000000, 48, 1),
+-	PLL_RATE(1176000000, 49, 1),
+-	PLL_RATE(1200000000, 50, 1),
+-	PLL_RATE(1224000000, 51, 1),
+-	PLL_RATE(1248000000, 52, 1),
+-	PLL_RATE(1272000000, 53, 1),
+-	PLL_RATE(1296000000, 54, 1),
+-	PLL_RATE(1320000000, 55, 1),
+-	PLL_RATE(1344000000, 56, 1),
+-	PLL_RATE(1368000000, 57, 1),
+-	PLL_RATE(1392000000, 58, 1),
+-	PLL_RATE(1416000000, 59, 1),
+-	PLL_RATE(1440000000, 60, 1),
+-	PLL_RATE(1464000000, 61, 1),
+-	PLL_RATE(1488000000, 62, 1),
+-	PLL_RATE(1512000000, 63, 1),
+-	PLL_RATE(1536000000, 64, 1),
+-	PLL_RATE(1560000000, 65, 1),
+-	PLL_RATE(1584000000, 66, 1),
++static const struct pll_params_table gxl_gp0_pll_params_table[] = {
++	PLL_PARAMS(42, 1),
++	PLL_PARAMS(43, 1),
++	PLL_PARAMS(44, 1),
++	PLL_PARAMS(45, 1),
++	PLL_PARAMS(46, 1),
++	PLL_PARAMS(47, 1),
++	PLL_PARAMS(48, 1),
++	PLL_PARAMS(49, 1),
++	PLL_PARAMS(50, 1),
++	PLL_PARAMS(51, 1),
++	PLL_PARAMS(52, 1),
++	PLL_PARAMS(53, 1),
++	PLL_PARAMS(54, 1),
++	PLL_PARAMS(55, 1),
++	PLL_PARAMS(56, 1),
++	PLL_PARAMS(57, 1),
++	PLL_PARAMS(58, 1),
++	PLL_PARAMS(59, 1),
++	PLL_PARAMS(60, 1),
++	PLL_PARAMS(61, 1),
++	PLL_PARAMS(62, 1),
++	PLL_PARAMS(63, 1),
++	PLL_PARAMS(64, 1),
++	PLL_PARAMS(65, 1),
++	PLL_PARAMS(66, 1),
  	{ /* sentinel */ },
  };
  
--static struct clk_regmap gxbb_fixed_pll = {
-+static struct clk_regmap gxbb_fixed_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_MPLL_CNTL,
-@@ -192,11 +99,6 @@ static struct clk_regmap gxbb_fixed_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -380,7 +380,7 @@ static struct clk_regmap gxbb_gp0_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_MPLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_MPLL_CNTL2,
- 			.shift   = 0,
-@@ -214,13 +116,32 @@ static struct clk_regmap gxbb_fixed_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "fixed_pll",
-+		.name = "fixed_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap gxbb_fixed_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fixed_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "fixed_pll_dco" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock won't ever change at runtime so
-+		 * CLK_SET_RATE_PARENT is not required
-+		 */
-+	},
-+};
-+
- static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
- 	.mult = 2,
- 	.div = 1,
-@@ -232,7 +153,7 @@ static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
- 	},
- };
- 
--static struct clk_regmap gxbb_hdmi_pll = {
-+static struct clk_regmap gxbb_hdmi_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_HDMI_PLL_CNTL,
-@@ -254,21 +175,6 @@ static struct clk_regmap gxbb_hdmi_pll = {
- 			.shift   = 0,
- 			.width   = 12,
- 		},
--		.od = {
--			.reg_off = HHI_HDMI_PLL_CNTL2,
--			.shift   = 16,
--			.width   = 2,
--		},
--		.od2 = {
--			.reg_off = HHI_HDMI_PLL_CNTL2,
--			.shift   = 22,
--			.width   = 2,
--		},
--		.od3 = {
--			.reg_off = HHI_HDMI_PLL_CNTL2,
--			.shift   = 18,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_HDMI_PLL_CNTL,
- 			.shift   = 31,
-@@ -281,7 +187,7 @@ static struct clk_regmap gxbb_hdmi_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "hdmi_pll",
-+		.name = "hdmi_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "hdmi_pll_pre_mult" },
- 		.num_parents = 1,
-@@ -293,74 +199,103 @@ static struct clk_regmap gxbb_hdmi_pll = {
- 	},
- };
- 
-+static struct clk_regmap gxbb_hdmi_pll_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL2,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_od",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap gxbb_hdmi_pll_od2 = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL2,
-+		.shift = 22,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_od2",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_od" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap gxbb_hdmi_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL2,
-+		.shift = 18,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_od2" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap gxl_hdmi_pll_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.shift = 21,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_od",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap gxl_hdmi_pll_od2 = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.shift = 23,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_od2",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_od" },
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap gxl_hdmi_pll = {
--	.data = &(struct meson_clk_pll_data){
--		.en = {
--			.reg_off = HHI_HDMI_PLL_CNTL,
--			.shift   = 30,
--			.width   = 1,
--		},
--		.m = {
--			.reg_off = HHI_HDMI_PLL_CNTL,
--			.shift   = 0,
--			.width   = 9,
--		},
--		.n = {
--			.reg_off = HHI_HDMI_PLL_CNTL,
--			.shift   = 9,
--			.width   = 5,
--		},
--		.frac = {
--			/*
--			 * On gxl, there is a register shift due to
--			 * HHI_HDMI_PLL_CNTL1 which does not exist on gxbb,
--			 * so we compute the register offset based on the PLL
--			 * base to get it right
--			 */
--			.reg_off = HHI_HDMI_PLL_CNTL + 4,
--			.shift   = 0,
--			.width   = 12,
--		},
--		.od = {
--			.reg_off = HHI_HDMI_PLL_CNTL + 8,
--			.shift   = 21,
--			.width   = 2,
--		},
--		.od2 = {
--			.reg_off = HHI_HDMI_PLL_CNTL + 8,
--			.shift   = 23,
--			.width   = 2,
--		},
--		.od3 = {
--			.reg_off = HHI_HDMI_PLL_CNTL + 8,
--			.shift   = 19,
--			.width   = 2,
--		},
--		.l = {
--			.reg_off = HHI_HDMI_PLL_CNTL,
--			.shift   = 31,
--			.width   = 1,
--		},
--		.rst = {
--			.reg_off = HHI_HDMI_PLL_CNTL,
--			.shift   = 29,
--			.width   = 1,
--		},
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.shift = 19,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
--		.ops = &meson_clk_pll_ro_ops,
--		.parent_names = (const char *[]){ "xtal" },
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll_od2" },
- 		.num_parents = 1,
--		/*
--		 * Display directly handle hdmi pll registers ATM, we need
--		 * NOCACHE to keep our view of the clock as accurate as possible
--		 */
--		.flags = CLK_GET_RATE_NOCACHE,
-+		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
- 	},
- };
- 
--static struct clk_regmap gxbb_sys_pll = {
-+static struct clk_regmap gxbb_sys_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
-@@ -377,11 +312,6 @@ static struct clk_regmap gxbb_sys_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_SYS_PLL_CNTL,
--			.shift   = 10,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
- 			.shift   = 31,
-@@ -394,20 +324,36 @@ static struct clk_regmap gxbb_sys_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "sys_pll",
-+		.name = "sys_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap gxbb_sys_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_PLL_CNTL,
-+		.shift = 10,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sys_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "sys_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct reg_sequence gxbb_gp0_init_regs[] = {
- 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0x69c80000 },
- 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a5590c4 },
- 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0x0000500d },
- };
- 
--static struct clk_regmap gxbb_gp0_pll = {
-+static struct clk_regmap gxbb_gp0_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
-@@ -424,11 +370,6 @@ static struct clk_regmap gxbb_gp0_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_GP0_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
- 			.shift   = 31,
-@@ -444,7 +385,7 @@ static struct clk_regmap gxbb_gp0_pll = {
+-		.table = gxbb_gp0_pll_rate_table,
++		.table = gxbb_gp0_pll_params_table,
+ 		.init_regs = gxbb_gp0_init_regs,
  		.init_count = ARRAY_SIZE(gxbb_gp0_init_regs),
  	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "gp0_pll",
-+		.name = "gp0_pll_dco",
- 		.ops = &meson_clk_pll_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
-@@ -459,7 +400,7 @@ static const struct reg_sequence gxl_gp0_init_regs[] = {
- 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
- };
- 
--static struct clk_regmap gxl_gp0_pll = {
-+static struct clk_regmap gxl_gp0_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_GP0_PLL_CNTL,
-@@ -476,11 +417,6 @@ static struct clk_regmap gxl_gp0_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -432,7 +432,7 @@ static struct clk_regmap gxl_gp0_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_GP0_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_GP0_PLL_CNTL1,
- 			.shift   = 0,
-@@ -501,13 +437,29 @@ static struct clk_regmap gxl_gp0_pll = {
+-		.table = gxl_gp0_pll_rate_table,
++		.table = gxl_gp0_pll_params_table,
+ 		.init_regs = gxl_gp0_init_regs,
  		.init_count = ARRAY_SIZE(gxl_gp0_init_regs),
  	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "gp0_pll",
-+		.name = "gp0_pll_dco",
- 		.ops = &meson_clk_pll_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap gxbb_gp0_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_GP0_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gp0_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "gp0_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_fixed_factor gxbb_fclk_div2_div = {
- 	.mult = 1,
- 	.div = 2,
-@@ -1965,6 +1917,12 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_GEN_CLK_SEL]	    = &gxbb_gen_clk_sel.hw,
- 		[CLKID_GEN_CLK_DIV]	    = &gxbb_gen_clk_div.hw,
- 		[CLKID_GEN_CLK]		    = &gxbb_gen_clk.hw,
-+		[CLKID_FIXED_PLL_DCO]	    = &gxbb_fixed_pll_dco.hw,
-+		[CLKID_HDMI_PLL_DCO]	    = &gxbb_hdmi_pll_dco.hw,
-+		[CLKID_HDMI_PLL_OD]	    = &gxbb_hdmi_pll_od.hw,
-+		[CLKID_HDMI_PLL_OD2]	    = &gxbb_hdmi_pll_od2.hw,
-+		[CLKID_SYS_PLL_DCO]	    = &gxbb_sys_pll_dco.hw,
-+		[CLKID_GP0_PLL_DCO]	    = &gxbb_gp0_pll_dco.hw,
- 		[NR_CLKS]		    = NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -1980,7 +1938,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_FCLK_DIV4]	    = &gxbb_fclk_div4.hw,
- 		[CLKID_FCLK_DIV5]	    = &gxbb_fclk_div5.hw,
- 		[CLKID_FCLK_DIV7]	    = &gxbb_fclk_div7.hw,
--		[CLKID_GP0_PLL]		    = &gxl_gp0_pll.hw,
-+		[CLKID_GP0_PLL]		    = &gxbb_gp0_pll.hw,
- 		[CLKID_MPEG_SEL]	    = &gxbb_mpeg_clk_sel.hw,
- 		[CLKID_MPEG_DIV]	    = &gxbb_mpeg_clk_div.hw,
- 		[CLKID_CLK81]		    = &gxbb_clk81.hw,
-@@ -2130,19 +2088,29 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_GEN_CLK_SEL]	    = &gxbb_gen_clk_sel.hw,
- 		[CLKID_GEN_CLK_DIV]	    = &gxbb_gen_clk_div.hw,
- 		[CLKID_GEN_CLK]		    = &gxbb_gen_clk.hw,
-+		[CLKID_FIXED_PLL_DCO]	    = &gxbb_fixed_pll_dco.hw,
-+		[CLKID_HDMI_PLL_DCO]	    = &gxbb_hdmi_pll_dco.hw,
-+		[CLKID_HDMI_PLL_OD]	    = &gxl_hdmi_pll_od.hw,
-+		[CLKID_HDMI_PLL_OD2]	    = &gxl_hdmi_pll_od2.hw,
-+		[CLKID_SYS_PLL_DCO]	    = &gxbb_sys_pll_dco.hw,
-+		[CLKID_GP0_PLL_DCO]	    = &gxl_gp0_pll_dco.hw,
- 		[NR_CLKS]		    = NULL,
- 	},
- 	.num = NR_CLKS,
- };
- 
- static struct clk_regmap *const gxbb_clk_regmaps[] = {
--	&gxbb_gp0_pll,
-+	&gxbb_gp0_pll_dco,
- 	&gxbb_hdmi_pll,
-+	&gxbb_hdmi_pll_od,
-+	&gxbb_hdmi_pll_od2,
- };
- 
- static struct clk_regmap *const gxl_clk_regmaps[] = {
--	&gxl_gp0_pll,
-+	&gxl_gp0_pll_dco,
- 	&gxl_hdmi_pll,
-+	&gxl_hdmi_pll_od,
-+	&gxl_hdmi_pll_od2,
- };
- 
- static struct clk_regmap *const gx_clk_regmaps[] = {
-@@ -2297,6 +2265,10 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_gen_clk_sel,
- 	&gxbb_gen_clk_div,
- 	&gxbb_gen_clk,
-+	&gxbb_fixed_pll_dco,
-+	&gxbb_hdmi_pll_dco,
-+	&gxbb_sys_pll_dco,
-+	&gxbb_gp0_pll,
- };
- 
- struct clkc_data {
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 20dfb1daf5b8..72bc077d9663 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -159,8 +159,14 @@
- #define CLKID_VDEC_HEVC_DIV	  155
- #define CLKID_GEN_CLK_SEL	  157
- #define CLKID_GEN_CLK_DIV	  158
--
--#define NR_CLKS			  160
-+#define CLKID_FIXED_PLL_DCO	  160
-+#define CLKID_HDMI_PLL_DCO	  161
-+#define CLKID_HDMI_PLL_OD	  162
-+#define CLKID_HDMI_PLL_OD2	  163
-+#define CLKID_SYS_PLL_DCO	  164
-+#define CLKID_GP0_PLL_DCO	  165
-+
-+#define NR_CLKS			  166
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index ec1f97725b9f..4c061c1d3683 100644
+index 4c061c1d3683..978485146ec3 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -30,58 +30,21 @@ struct meson8b_clk_reset {
+@@ -29,22 +29,22 @@ struct meson8b_clk_reset {
+ 	void __iomem *base;
  };
  
- static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(312000000, 52, 1, 2),
--	PLL_RATE(336000000, 56, 1, 2),
--	PLL_RATE(360000000, 60, 1, 2),
--	PLL_RATE(384000000, 64, 1, 2),
--	PLL_RATE(408000000, 68, 1, 2),
--	PLL_RATE(432000000, 72, 1, 2),
--	PLL_RATE(456000000, 76, 1, 2),
--	PLL_RATE(480000000, 80, 1, 2),
--	PLL_RATE(504000000, 84, 1, 2),
--	PLL_RATE(528000000, 88, 1, 2),
--	PLL_RATE(552000000, 92, 1, 2),
--	PLL_RATE(576000000, 96, 1, 2),
--	PLL_RATE(600000000, 50, 1, 1),
--	PLL_RATE(624000000, 52, 1, 1),
--	PLL_RATE(648000000, 54, 1, 1),
--	PLL_RATE(672000000, 56, 1, 1),
--	PLL_RATE(696000000, 58, 1, 1),
--	PLL_RATE(720000000, 60, 1, 1),
--	PLL_RATE(744000000, 62, 1, 1),
--	PLL_RATE(768000000, 64, 1, 1),
--	PLL_RATE(792000000, 66, 1, 1),
--	PLL_RATE(816000000, 68, 1, 1),
--	PLL_RATE(840000000, 70, 1, 1),
--	PLL_RATE(864000000, 72, 1, 1),
--	PLL_RATE(888000000, 74, 1, 1),
--	PLL_RATE(912000000, 76, 1, 1),
--	PLL_RATE(936000000, 78, 1, 1),
--	PLL_RATE(960000000, 80, 1, 1),
--	PLL_RATE(984000000, 82, 1, 1),
--	PLL_RATE(1008000000, 84, 1, 1),
--	PLL_RATE(1032000000, 86, 1, 1),
--	PLL_RATE(1056000000, 88, 1, 1),
--	PLL_RATE(1080000000, 90, 1, 1),
--	PLL_RATE(1104000000, 92, 1, 1),
--	PLL_RATE(1128000000, 94, 1, 1),
--	PLL_RATE(1152000000, 96, 1, 1),
--	PLL_RATE(1176000000, 98, 1, 1),
--	PLL_RATE(1200000000, 50, 1, 0),
--	PLL_RATE(1224000000, 51, 1, 0),
--	PLL_RATE(1248000000, 52, 1, 0),
--	PLL_RATE(1272000000, 53, 1, 0),
--	PLL_RATE(1296000000, 54, 1, 0),
--	PLL_RATE(1320000000, 55, 1, 0),
--	PLL_RATE(1344000000, 56, 1, 0),
--	PLL_RATE(1368000000, 57, 1, 0),
--	PLL_RATE(1392000000, 58, 1, 0),
--	PLL_RATE(1416000000, 59, 1, 0),
--	PLL_RATE(1440000000, 60, 1, 0),
--	PLL_RATE(1464000000, 61, 1, 0),
--	PLL_RATE(1488000000, 62, 1, 0),
--	PLL_RATE(1512000000, 63, 1, 0),
--	PLL_RATE(1536000000, 64, 1, 0),
-+	PLL_RATE(1200000000, 50, 1),
-+	PLL_RATE(1224000000, 51, 1),
-+	PLL_RATE(1248000000, 52, 1),
-+	PLL_RATE(1272000000, 53, 1),
-+	PLL_RATE(1296000000, 54, 1),
-+	PLL_RATE(1320000000, 55, 1),
-+	PLL_RATE(1344000000, 56, 1),
-+	PLL_RATE(1368000000, 57, 1),
-+	PLL_RATE(1392000000, 58, 1),
-+	PLL_RATE(1416000000, 59, 1),
-+	PLL_RATE(1440000000, 60, 1),
-+	PLL_RATE(1464000000, 61, 1),
-+	PLL_RATE(1488000000, 62, 1),
-+	PLL_RATE(1512000000, 63, 1),
-+	PLL_RATE(1536000000, 64, 1),
+-static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(1200000000, 50, 1),
+-	PLL_RATE(1224000000, 51, 1),
+-	PLL_RATE(1248000000, 52, 1),
+-	PLL_RATE(1272000000, 53, 1),
+-	PLL_RATE(1296000000, 54, 1),
+-	PLL_RATE(1320000000, 55, 1),
+-	PLL_RATE(1344000000, 56, 1),
+-	PLL_RATE(1368000000, 57, 1),
+-	PLL_RATE(1392000000, 58, 1),
+-	PLL_RATE(1416000000, 59, 1),
+-	PLL_RATE(1440000000, 60, 1),
+-	PLL_RATE(1464000000, 61, 1),
+-	PLL_RATE(1488000000, 62, 1),
+-	PLL_RATE(1512000000, 63, 1),
+-	PLL_RATE(1536000000, 64, 1),
++static const struct pll_params_table sys_pll_params_table[] = {
++	PLL_PARAMS(50, 1),
++	PLL_PARAMS(51, 1),
++	PLL_PARAMS(52, 1),
++	PLL_PARAMS(53, 1),
++	PLL_PARAMS(54, 1),
++	PLL_PARAMS(55, 1),
++	PLL_PARAMS(56, 1),
++	PLL_PARAMS(57, 1),
++	PLL_PARAMS(58, 1),
++	PLL_PARAMS(59, 1),
++	PLL_PARAMS(60, 1),
++	PLL_PARAMS(61, 1),
++	PLL_PARAMS(62, 1),
++	PLL_PARAMS(63, 1),
++	PLL_PARAMS(64, 1),
  	{ /* sentinel */ },
  };
  
-@@ -94,7 +57,7 @@ static struct clk_fixed_rate meson8b_xtal = {
- 	},
- };
- 
--static struct clk_regmap meson8b_fixed_pll = {
-+static struct clk_regmap meson8b_fixed_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_MPLL_CNTL,
-@@ -111,11 +74,6 @@ static struct clk_regmap meson8b_fixed_pll = {
- 			.shift   = 9,
- 			.width   = 5,
+@@ -196,7 +196,7 @@ static struct clk_regmap meson8b_sys_pll_dco = {
+ 			.shift   = 29,
+ 			.width   = 1,
  		},
--		.od = {
--			.reg_off = HHI_MPLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.frac = {
- 			.reg_off = HHI_MPLL_CNTL2,
- 			.shift   = 0,
-@@ -133,14 +91,33 @@ static struct clk_regmap meson8b_fixed_pll = {
- 		},
+-		.table = sys_pll_rate_table,
++		.table = sys_pll_params_table,
  	},
  	.hw.init = &(struct clk_init_data){
--		.name = "fixed_pll",
-+		.name = "fixed_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
--static struct clk_regmap meson8b_vid_pll = {
-+static struct clk_regmap meson8b_fixed_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_MPLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fixed_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "fixed_pll_dco" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock won't ever change at runtime so
-+		 * CLK_SET_RATE_PARENT is not required
-+		 */
-+	},
-+};
-+
-+static struct clk_regmap meson8b_vid_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_VID_PLL_CNTL,
-@@ -157,11 +134,6 @@ static struct clk_regmap meson8b_vid_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_VID_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_VID_PLL_CNTL,
- 			.shift   = 31,
-@@ -174,14 +146,30 @@ static struct clk_regmap meson8b_vid_pll = {
- 		},
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "vid_pll",
-+		.name = "vid_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
--static struct clk_regmap meson8b_sys_pll = {
-+static struct clk_regmap meson8b_vid_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_VID_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vid_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "vid_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_sys_pll_dco = {
- 	.data = &(struct meson_clk_pll_data){
- 		.en = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
-@@ -198,11 +186,6 @@ static struct clk_regmap meson8b_sys_pll = {
- 			.shift   = 9,
- 			.width   = 5,
- 		},
--		.od = {
--			.reg_off = HHI_SYS_PLL_CNTL,
--			.shift   = 16,
--			.width   = 2,
--		},
- 		.l = {
- 			.reg_off = HHI_SYS_PLL_CNTL,
- 			.shift   = 31,
-@@ -216,13 +199,29 @@ static struct clk_regmap meson8b_sys_pll = {
- 		.table = sys_pll_rate_table,
- 	},
- 	.hw.init = &(struct clk_init_data){
--		.name = "sys_pll",
-+		.name = "sys_pll_dco",
- 		.ops = &meson_clk_pll_ro_ops,
- 		.parent_names = (const char *[]){ "xtal" },
- 		.num_parents = 1,
- 	},
- };
- 
-+static struct clk_regmap meson8b_sys_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SYS_PLL_CNTL,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sys_pll",
-+		.ops = &clk_regmap_divider_ro_ops,
-+		.parent_names = (const char *[]){ "sys_pll_dco" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_fixed_factor meson8b_fclk_div2_div = {
- 	.mult = 1,
- 	.div = 2,
-@@ -891,6 +890,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
- 		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
- 		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
-+		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
-+		[CLKID_PLL_VID_DCO]	    = &meson8b_vid_pll_dco.hw,
-+		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
- 		[CLK_NR_CLKS]		    = NULL,
- 	},
- 	.num = CLK_NR_CLKS,
-@@ -999,6 +1001,9 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_nand_clk_sel,
- 	&meson8b_nand_clk_div,
- 	&meson8b_nand_clk_gate,
-+	&meson8b_fixed_pll_dco,
-+	&meson8b_vid_pll_dco,
-+	&meson8b_sys_pll_dco,
- };
- 
- static const struct meson8b_clk_reset_line {
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 5d09412b5084..1c6fb180e6a2 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -75,8 +75,11 @@
- #define CLKID_FCLK_DIV7_DIV	109
- #define CLKID_NAND_SEL		110
- #define CLKID_NAND_DIV		111
-+#define CLKID_PLL_FIXED_DCO	113
-+#define CLKID_PLL_VID_DCO	114
-+#define CLKID_PLL_SYS_DCO	115
- 
--#define CLK_NR_CLKS		113
-+#define CLK_NR_CLKS		116
- 
- /*
-  * include the CLKID and RESETID that have
+ 		.name = "sys_pll_dco",
 -- 
 2.17.1
 
