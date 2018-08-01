@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1890C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12183C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B8120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B8120844
+	by mail.kernel.org (Postfix) with ESMTP id C889A208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C889A208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405587AbeHATIN (ORCPT
+        id S2405597AbeHATIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49374 "EHLO
+        Wed, 1 Aug 2018 15:08:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404058AbeHATIM (ORCPT
+        with ESMTP id S2389715AbeHATIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:12 -0400
+        Wed, 1 Aug 2018 15:08:15 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1226ECE6;
-        Wed,  1 Aug 2018 17:21:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30758CF7;
+        Wed,  1 Aug 2018 17:21:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jane Wan <Jane.Wan@nokia.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 155/246] mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all ONFI parameter pages
-Date:   Wed,  1 Aug 2018 18:51:05 +0200
-Message-Id: <20180801165019.144936700@linuxfoundation.org>
+Subject: [PATCH 4.14 146/246] i40e: free the skb after clearing the bitlock
+Date:   Wed,  1 Aug 2018 18:50:56 +0200
+Message-Id: <20180801165018.713618880@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,57 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jane Wan <Jane.Wan@nokia.com>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-[ Upstream commit a75bbe71a27875fdc61cde1af6d799037cef6bed ]
+[ Upstream commit c79756cb5f084736b138da9319a02f7c72644548 ]
 
-Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
-read is not valid, the host should read redundant parameter page copies.
-Fix FSL NAND driver to read the two redundant copies which are mandatory
-in the specification.
+In commit bbc4e7d273b5 ("i40e: fix race condition with PTP_TX_IN_PROGRESS
+bits") we modified the code which handles Tx timestamps so that we would
+clear the progress bit as soon as possible.
 
-Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+A later commit 0bc0706b46cd ("i40e: check for Tx timestamp timeouts during
+watchdog") introduced similar code for detecting and handling cleanup of
+a blocked Tx timestamp. This code did not use the same pattern for cleaning
+up the skb.
+
+Update this code to wait to free the skb until after the bit lock is
+free, by first setting the ptp_tx_skb to NULL and clearing the lock.
+
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/fsl_ifc_nand.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_ptp.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/fsl_ifc_nand.c
-@@ -342,9 +342,16 @@ static void fsl_ifc_cmdfunc(struct mtd_i
+--- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
+@@ -337,6 +337,8 @@ void i40e_ptp_rx_hang(struct i40e_pf *pf
+  **/
+ void i40e_ptp_tx_hang(struct i40e_pf *pf)
+ {
++	struct sk_buff *skb;
++
+ 	if (!(pf->flags & I40E_FLAG_PTP) || !pf->ptp_tx)
+ 		return;
  
- 	case NAND_CMD_READID:
- 	case NAND_CMD_PARAM: {
-+		/*
-+		 * For READID, read 8 bytes that are currently used.
-+		 * For PARAM, read all 3 copies of 256-bytes pages.
-+		 */
-+		int len = 8;
- 		int timing = IFC_FIR_OP_RB;
--		if (command == NAND_CMD_PARAM)
-+		if (command == NAND_CMD_PARAM) {
- 			timing = IFC_FIR_OP_RBCD;
-+			len = 256 * 3;
-+		}
- 
- 		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
- 			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
-@@ -354,12 +361,8 @@ static void fsl_ifc_cmdfunc(struct mtd_i
- 			  &ifc->ifc_nand.nand_fcr0);
- 		ifc_out32(column, &ifc->ifc_nand.row3);
- 
--		/*
--		 * although currently it's 8 bytes for READID, we always read
--		 * the maximum 256 bytes(for PARAM)
--		 */
--		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
--		ifc_nand_ctrl->read_bytes = 256;
-+		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
-+		ifc_nand_ctrl->read_bytes = len;
- 
- 		set_addr(mtd, 0, 0, 0);
- 		fsl_ifc_run_command(mtd);
+@@ -349,9 +351,12 @@ void i40e_ptp_tx_hang(struct i40e_pf *pf
+ 	 * within a second it is reasonable to assume that we never will.
+ 	 */
+ 	if (time_is_before_jiffies(pf->ptp_tx_start + HZ)) {
+-		dev_kfree_skb_any(pf->ptp_tx_skb);
++		skb = pf->ptp_tx_skb;
+ 		pf->ptp_tx_skb = NULL;
+ 		clear_bit_unlock(__I40E_PTP_TX_IN_PROGRESS, pf->state);
++
++		/* Free the skb after we clear the bitlock */
++		dev_kfree_skb_any(skb);
+ 		pf->tx_hwtstamp_timeouts++;
+ 	}
+ }
 
 
