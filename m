@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC269C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A8FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83C4A2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83C4A2083D
+	by mail.kernel.org (Postfix) with ESMTP id 4A792208B3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A792208B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733195AbeHAUPc (ORCPT
+        id S1733180AbeHAUPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:15:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404247AbeHATDg (ORCPT
+        with ESMTP id S2404221AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5BC51058;
-        Wed,  1 Aug 2018 17:00:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A55B7FB1;
+        Wed,  1 Aug 2018 16:58:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 150/336] fscrypt: use unbound workqueue for decryption
-Date:   Wed,  1 Aug 2018 18:48:05 +0200
-Message-Id: <20180801165034.878521891@linuxfoundation.org>
+Subject: [PATCH 4.17 103/336] media: cec-pin-error-inj: avoid a false-positive Spectre detection
+Date:   Wed,  1 Aug 2018 18:47:18 +0200
+Message-Id: <20180801165033.106147009@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,59 +52,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-[ Upstream commit 36dd26e0c8d42699eeba87431246c07c28075bae ]
+[ Upstream commit a3d71f256c8a8b5d51ea0dfd09cd85ce3a09d9e1 ]
 
-Improve fscrypt read performance by switching the decryption workqueue
-from bound to unbound.  With the bound workqueue, when multiple bios
-completed on the same CPU, they were decrypted on that same CPU.  But
-with the unbound queue, they are now decrypted in parallel on any CPU.
+The current logic makes Smatch to false-detect a Spectre variant 1
+vulnerability. The problem is that it initializes an u32 indirectly
+from user space input.
 
-Although fscrypt read performance can be tough to measure due to the
-many sources of variation, this change is most beneficial when
-decryption is slow, e.g. on CPUs without AES instructions.  For example,
-I timed tarring up encrypted directories on f2fs.  On x86 with AES-NI
-instructions disabled, the unbound workqueue improved performance by
-about 25-35%, using 1 to NUM_CPUs jobs with 4 or 8 CPUs available.  But
-with AES-NI enabled, performance was unchanged to within ~2%.
+After trying to write a fixup, after a while I realized that, in
+practice, this shouldn't be a problem, as an u32 is initialized
+from u8, but it took some time to discover it.
 
-I also did the same test on a quad-core ARM CPU using xts-speck128-neon
-encryption.  There performance was usually about 10% better with the
-unbound workqueue, bringing it closer to the unencrypted speed.
+So, do some code cleanup to make it clearer for both humans
+and machines about the valid range for "op".
 
-The unbound workqueue may be worse in some cases due to worse locality,
-but I think it's still the better default.  dm-crypt uses an unbound
-workqueue by default too, so this change makes fscrypt match.
+Fix this warning:
+	drivers/media/cec/cec-pin-error-inj.c:170 cec_pin_error_inj_parse_line() warn: potential spectre issue 'pin->error_inj_args'
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/crypto/crypto.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/media/cec/cec-pin-error-inj.c |   23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -427,8 +427,17 @@ fail:
-  */
- static int __init fscrypt_init(void)
- {
-+	/*
-+	 * Use an unbound workqueue to allow bios to be decrypted in parallel
-+	 * even when they happen to complete on the same CPU.  This sacrifices
-+	 * locality, but it's worthwhile since decryption is CPU-intensive.
-+	 *
-+	 * Also use a high-priority workqueue to prioritize decryption work,
-+	 * which blocks reads from completing, over regular application tasks.
-+	 */
- 	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
--							WQ_HIGHPRI, 0);
-+						 WQ_UNBOUND | WQ_HIGHPRI,
-+						 num_online_cpus());
- 	if (!fscrypt_read_workqueue)
- 		goto fail;
+--- a/drivers/media/cec/cec-pin-error-inj.c
++++ b/drivers/media/cec/cec-pin-error-inj.c
+@@ -81,10 +81,9 @@ bool cec_pin_error_inj_parse_line(struct
+ 	u64 *error;
+ 	u8 *args;
+ 	bool has_op;
+-	u32 op;
++	u8 op;
+ 	u8 mode;
+ 	u8 pos;
+-	u8 v;
  
+ 	p = skip_spaces(p);
+ 	token = strsep(&p, delims);
+@@ -146,12 +145,18 @@ bool cec_pin_error_inj_parse_line(struct
+ 	comma = strchr(token, ',');
+ 	if (comma)
+ 		*comma++ = '\0';
+-	if (!strcmp(token, "any"))
+-		op = CEC_ERROR_INJ_OP_ANY;
+-	else if (!kstrtou8(token, 0, &v))
+-		op = v;
+-	else
++	if (!strcmp(token, "any")) {
++		has_op = false;
++		error = pin->error_inj + CEC_ERROR_INJ_OP_ANY;
++		args = pin->error_inj_args[CEC_ERROR_INJ_OP_ANY];
++	} else if (!kstrtou8(token, 0, &op)) {
++		has_op = true;
++		error = pin->error_inj + op;
++		args = pin->error_inj_args[op];
++	} else {
+ 		return false;
++	}
++
+ 	mode = CEC_ERROR_INJ_MODE_ONCE;
+ 	if (comma) {
+ 		if (!strcmp(comma, "off"))
+@@ -166,10 +171,6 @@ bool cec_pin_error_inj_parse_line(struct
+ 			return false;
+ 	}
+ 
+-	error = pin->error_inj + op;
+-	args = pin->error_inj_args[op];
+-	has_op = op <= 0xff;
+-
+ 	token = strsep(&p, delims);
+ 	if (p) {
+ 		p = skip_spaces(p);
 
 
