@@ -6,45 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3D1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22CEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9690C2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9690C2083D
+	by mail.kernel.org (Postfix) with ESMTP id B80652083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80652083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbeHATuf (ORCPT
+        id S1732436AbeHATuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:50:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405840AbeHATIh (ORCPT
+        with ESMTP id S2405846AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17CB7135C;
-        Wed,  1 Aug 2018 17:13:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1731A13BA;
+        Wed,  1 Aug 2018 17:15:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 033/246] mm: vmalloc: avoid racy handling of debugobjects in vunmap
-Date:   Wed,  1 Aug 2018 18:49:03 +0200
-Message-Id: <20180801165013.271841319@linuxfoundation.org>
+Subject: [PATCH 4.14 074/246] Bluetooth: btusb: Add a new Realtek 8723DE ID 2ff8:b011
+Date:   Wed,  1 Aug 2018 18:49:44 +0200
+Message-Id: <20180801165015.253085993@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -61,64 +51,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chintan Pandya <cpandya@codeaurora.org>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit f3c01d2f3ade6790db67f80fef60df84424f8964 ]
+[ Upstream commit 66d9975c5a7c40aa7e4bb0ec0b0c37ba1f190923 ]
 
-Currently, __vunmap flow is,
- 1) Release the VM area
- 2) Free the debug objects corresponding to that vm area.
+Without this patch we cannot turn on the Bluethooth adapter on ASUS
+E406MA.
 
-This leave some race window open.
- 1) Release the VM area
- 1.5) Some other client gets the same vm area
- 1.6) This client allocates new debug objects on the same
-      vm area
- 2) Free the debug objects corresponding to this vm area.
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2ff8 ProdID=b011 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=802.11n WLAN Adapter
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Here, we actually free 'other' client's debug objects.
-
-Fix this by freeing the debug objects first and then releasing the VM
-area.
-
-Link: http://lkml.kernel.org/r/1523961828-9485-2-git-send-email-cpandya@codeaurora.org
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Byungchul Park <byungchul.park@lge.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmalloc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1519,7 +1519,7 @@ static void __vunmap(const void *addr, i
- 			addr))
- 		return;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -373,6 +373,9 @@ static const struct usb_device_id blackl
+ 	/* Additional Realtek 8723BU Bluetooth devices */
+ 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
  
--	area = remove_vm_area(addr);
-+	area = find_vmap_area((unsigned long)addr)->vm;
- 	if (unlikely(!area)) {
- 		WARN(1, KERN_ERR "Trying to vfree() nonexistent vm area (%p)\n",
- 				addr);
-@@ -1529,6 +1529,7 @@ static void __vunmap(const void *addr, i
- 	debug_check_no_locks_freed(addr, get_vm_area_size(area));
- 	debug_check_no_obj_freed(addr, get_vm_area_size(area));
- 
-+	remove_vm_area(addr);
- 	if (deallocate_pages) {
- 		int i;
- 
++	/* Additional Realtek 8723DE Bluetooth devices */
++	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
++
+ 	/* Additional Realtek 8821AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
 
 
