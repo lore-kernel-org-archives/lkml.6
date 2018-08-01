@@ -2,134 +2,136 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC3CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E861C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10D7620862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1E5620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Oa5qtFps";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gzisDOU+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D7620862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0dFUJ0g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E5620862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388204AbeHAVhu (ORCPT
+        id S2388506AbeHAVhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:37:50 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:41513 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732116AbeHAVhu (ORCPT
+        Wed, 1 Aug 2018 17:37:54 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42502 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387683AbeHAVhx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:37:50 -0400
-Received: by mail-yw0-f196.google.com with SMTP id q129-v6so7668139ywg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:50:27 -0700 (PDT)
+        Wed, 1 Aug 2018 17:37:53 -0400
+Received: by mail-qt0-f195.google.com with SMTP id z8-v6so21283940qto.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:50:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=R85Z+jG+ojkH4awTRqpD3S/9cdVx17Q+eg9JGbcfAl0=;
-        b=Oa5qtFpsK4WR5ETyJISS1VAT0/dHrqCkgyvjiLg+ZWmAAqg6rkkD1TM5PYT+air4n1
-         2eTK2cmBxmy9AsJ1VK1j9io7ri/EV5N7RBGH2Gs46VGzBAiI7qHw5bMYXPdKnZGPE3Wj
-         c1f1UZhDQ0zqHWRcWxecCbMsCT61CpJg4R/8/xDqkblELL0FnM8BlGZn/sbQpr9abQhJ
-         L2wgTweuoBdxNthxUoW5lkwU5D+wJkorwYhHyn/ygFLZmxY9bZFx0DPf1NOGCiHMBaa9
-         VpX8ezbqF60SHzx1/Om1XvrQ9aI5xvh4NY1ibvDmbNdGakAzUKlOnEtI7oXmzAY/0aKk
-         3kzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=R85Z+jG+ojkH4awTRqpD3S/9cdVx17Q+eg9JGbcfAl0=;
-        b=gzisDOU+WLvMjGSAkxcKz3A8I4HpkVeVlz6HYTzhp8ufGK7IQ/Vq3eFR4Hq/TN+vZA
-         2jZXSo2xbV0nYVmmStUdtrPKMnwoQeQ1H0KUoOSUcE3TaNG3KjteGa7UE3LK1Z8MYuNS
-         bj2niMv5zayzwiikkpus3QyUPZRpNGcTuhTFM=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=AQjhE/Y3KIXu/PHI4jD3V6mM1aJCngK9CXZI+6Xl0bA=;
+        b=i0dFUJ0gvxvk0NoCa7PzFITHJXzd7t2RtnSW/+ETbJpVhvegq21KZ1T7qVMPDK6Umb
+         vmWN4zhatHUd9QqdAtFZzP6moi6phB/PID5BvOT7uGoLEdlPki4jfPsVQA9NMWnP0kJv
+         ILYgal2PB5IZBUgRcyhAfINl5700vpXM2bRPpL2hZ2q3cy5hvM0KWRHm7unwNoNqL49T
+         XfyEVEBNw27gi1uZWJROI+fx7Gu/vIFw2rohpXwMbe+mjgt4U66P9paJhes+vG9eLTX6
+         Gnwg7H7ZhuC9sg3xB4FmkKeCr+lqeJLax0ixxHTNkC6mHI2pk6zsAYyzerX1dD0XtPv4
+         YP5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=R85Z+jG+ojkH4awTRqpD3S/9cdVx17Q+eg9JGbcfAl0=;
-        b=iAiYWmnNDPKIhIouEa2OXK4/9ptLd2mMWnBHSou1cidV5/s+qkyG0iOLzl6QotdHH2
-         zI6JtA8IqJtQGyAa1Iw9oQ9HHHPkC1HdAemoGiYdjCkQYHPfT74ZI/1n46pY2+f3OpTL
-         SevlaU3MG9ViHcdGkTf1+Sc0UIPxkdrXl/S2gmT3zoCanMjOjWQVcurqYv2eYZGIbjuj
-         owBlT0X+LJJv9vj6mdGgYlBd7nS+uyYKdwIetHTNZgcCm4M0TYCXPnO/UQNtEuR6kV+J
-         BgCmJ2kzMXlJn+DtNkZpSbQ4qYzfcuDGrOHSOMf684zgxemESl9J4BVmUidjYVINI7AS
-         GPtA==
-X-Gm-Message-State: AOUpUlHYWJYcQGDpai23PtNdzVAPyBit2UeWyNgLgG75cWqKyXwt3uZt
-        OBtjpE8Mz1aRQtJLjlnAc1JJtZfnjGvtLYPlaa/Pjg==
-X-Google-Smtp-Source: AAOMgpfVjLr/Ibpt3pWNQGq33pA4VB8Jg8zSvgjxmcnZy1QBs2T36pbpEkLsga457WCYqoq3plN9Pqw9wR3zJ+D7Ko0=
-X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr14688776ywe.116.1533153026933;
- Wed, 01 Aug 2018 12:50:26 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=AQjhE/Y3KIXu/PHI4jD3V6mM1aJCngK9CXZI+6Xl0bA=;
+        b=XTsRRl8urx1w6m2W8kQU+HZPy8vE98Rd8t9rjMuuCkFdyT/6j/UVXppkUT2iiWx6xG
+         Belsh8i6WLc/BTU7RVe/1XZPPrcCg4CHYCcFI8oYPaMZfNpVJKkn49NkwrGwEYCB9PCT
+         WWPNrNV4PDodr8+gIDNxdQPW9Au01SdRA78EitAsFVZtQ+5MGH7lvPf1iJkp7KQycdJz
+         PQndWFdbeTD8f1KhzMgffhbV88fu19EEsaGyJsFgNgtDQBgR4GCgnXlE48unV/ZuXaVN
+         90kcjaumqkEtX8Y0uTwGA+aCIUtbXFZ12OleNqX22nbgeixSPub7wBzwGdCQsImCwgO+
+         VyPg==
+X-Gm-Message-State: AOUpUlFRePbM0lUGec9qH1hHHGkvU5qtiAqeWnc84wmHVt9O8rT/R6ag
+        WS1zexclqttyAZQSg5DsUZT9eZWS5DeA1Ju/AOE=
+X-Google-Smtp-Source: AAOMgpdNLzkUhMTgmHfI2B5Way2XfNyr/ZFEzznRgmbsv1lyYuobVIl8IZtg6wkPxhNIfdVoUzyfQSPNVOIRytpIhos=
+X-Received: by 2002:ac8:1acd:: with SMTP id h13-v6mr26443776qtk.206.1533153029518;
+ Wed, 01 Aug 2018 12:50:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 12:50:26 -0700 (PDT)
-In-Reply-To: <6c04fc087bae896bf00b94184def3d7697a22d6c.camel@wdc.com>
-References: <20180731195155.46664-1-keescook@chromium.org> <20180731195155.46664-4-keescook@chromium.org>
- <a5b545eade66f95c9a9ecf37676306a8d395187c.camel@wdc.com> <20180731201225.GA1989@infradead.org>
- <6c04fc087bae896bf00b94184def3d7697a22d6c.camel@wdc.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 1 Aug 2018 12:50:26 -0700
-X-Google-Sender-Auth: 9PG58nQpZwWUmdJ_HS33lkZUJHk
-Message-ID: <CAGXu5jK2kLiOGTbq2TCBp97c2KZsZKPDNLSWDWY4r+RQpAP4fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] scsi: build scsi_common.o for all scsi passthrough
- request users
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        "david.kershner@unisys.com" <david.kershner@unisys.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hch@lst.de" <hch@lst.de>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "manoj@linux.vnet.ibm.com" <manoj@linux.vnet.ibm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "cyrille.pitchen@free-electrons.com" 
-        <cyrille.pitchen@free-electrons.com>,
-        "sdharia@codeaurora.org" <sdharia@codeaurora.org>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "mrochs@linux.vnet.ibm.com" <mrochs@linux.vnet.ibm.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "ukrishn@linux.vnet.ibm.com" <ukrishn@linux.vnet.ibm.com>
+Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 12:50:09 -0700 (PDT)
+In-Reply-To: <CAGXu5jJUa36N+Q0K9dbc9xX_LoN=4AZ+CxrDiem==8LEXrdF=w@mail.gmail.com>
+References: <20180801175815.GA25489@gmail.com> <CAGXu5jJUa36N+Q0K9dbc9xX_LoN=4AZ+CxrDiem==8LEXrdF=w@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 1 Aug 2018 21:50:09 +0200
+Message-ID: <CANiq72=sKO_QxujKSY7ZJSaVfT0-4atk+4U8fJFsmLJLxrjhzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] auxdisplay: panel: avoid gcc 8's
+ Wstringop-truncation warning
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Martin Sebor <msebor@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 1:18 PM, Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
-> On Tue, 2018-07-31 at 13:12 -0700, hch@infradead.org wrote:
->> It shouldn't.  All these are built into scsi_mod.o, which is only built
->> when CONFIG_SCSI is set.  Under what circumstances do you see them built?
+On Wed, Aug 1, 2018 at 8:47 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Aug 1, 2018 at 10:58 AM, Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>> Let gcc know it is not meant to be NUL-terminated by annotating with
+>> the new __nonstring variable attribute; and remove the comment since it
+>> conveys the same information.
+>>
+>> Cc: Willy Tarreau <w@1wt.eu>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Cc: Martin Sebor <msebor@gmail.com>
+>> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>> ---
+>>  drivers/auxdisplay/panel.c | 7 +++----
+>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
+>> index 3b25a643058c..21b9b2f2470a 100644
+>> --- a/drivers/auxdisplay/panel.c
+>> +++ b/drivers/auxdisplay/panel.c
+>> @@ -155,10 +155,9 @@ struct logical_input {
+>>                         int release_data;
+>>                 } std;
+>>                 struct {        /* valid when type == INPUT_TYPE_KBD */
+>> -                       /* strings can be non null-terminated */
+>> -                       char press_str[sizeof(void *) + sizeof(int)];
+>> -                       char repeat_str[sizeof(void *) + sizeof(int)];
+>> -                       char release_str[sizeof(void *) + sizeof(int)];
+>> +                       char press_str[sizeof(void *) + sizeof(int)] __nonstring;
+>> +                       char repeat_str[sizeof(void *) + sizeof(int)] __nonstring;
+>> +                       char release_str[sizeof(void *) + sizeof(int)] __nonstring;
+>>                 } kbd;
+>>         } u;
+>>  };
 >
-> Although I think you are right, I still prefer that the scsi_common.c file
-> would be moved to a new directory. That will prevent confusion later on for
-> people who want to add additional code. This patch makes it nontrivial to
-> figure out which code is built when SCSI target functionality is enabled but
-> SCSI initiator functionality is not selected. I think moving scsi_common.c
-> into a new directory would make it much easier to figure out which code is
-> built depending on the kernel configuration.
+> If it's not a string, why not use "u8" instead of "char"? Does the
+> warning persist?
 
-While I don't disagree with you, this series is the result of several
-back-and-forth discussions where that option was seemingly rejected.
-Christoph's approach seemed to satisfy Jens. If you can convince them,
-sure! I'll do whatever the consensus is. :)
+Yes, it persists (on purpose). Originally it didn't, but see the discussion at:
 
--Kees
+  https://www.spinics.net/lists/kernel/msg2737596.html
 
--- 
-Kees Cook
-Pixel Security
+And:
+
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84725
+
+Cheers,
+Miguel
+
+>
+> -Kees
+>
+> --
+> Kees Cook
+> Pixel Security
