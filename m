@@ -2,106 +2,100 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16935C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022A6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2898208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:43:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="S1OXL3+a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2898208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B80E9208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80E9208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390619AbeHATaW (ORCPT
+        id S2407258AbeHATOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:30:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51298 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389752AbeHATO7 (ORCPT
+        Wed, 1 Aug 2018 15:14:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51944 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407244AbeHATOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:14:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/zaiAw8IkCGlb8YxbaQKat50h65a0PCYWBZpyCaG9ow=; b=S1OXL3+ago16oV1ivXO+XX0fv
-        BLihU9t9AcPVYeG42IeuvAveBXW1I1l5/1U/BqaQPcEXg901T3tlYlPN5mbhXswKR2oEi/yt5usbi
-        g3RFfyMu1iNGx4MooLMnNPN627+6mg+CFRCOL+97onZNdCgsRkQDIyQOx4mLD3ccwqZhQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkuua-00015T-3c; Wed, 01 Aug 2018 17:27:48 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BB63A1124241; Wed,  1 Aug 2018 18:27:47 +0100 (BST)
-Date:   Wed, 1 Aug 2018 18:27:47 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Piotr Bugalski <bugalski.piotr@gmail.com>
-Cc:     linux-spi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Piotr Bugalski <pbu@cryptera.com>
-Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
-Message-ID: <20180801172747.GJ5509@sirena.org.uk>
-References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
- <20180627131609.13681-6-bugalski.piotr@gmail.com>
+        Wed, 1 Aug 2018 15:14:12 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B7A9C3C;
+        Wed,  1 Aug 2018 17:27:29 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 058/144] ath: Add regulatory mapping for Serbia
+Date:   Wed,  1 Aug 2018 18:51:25 +0200
+Message-Id: <20180801164953.151999951@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
+References: <20180801164949.023217860@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yhze8HlyfmXt1APY"
-Content-Disposition: inline
-In-Reply-To: <20180627131609.13681-6-bugalski.piotr@gmail.com>
-X-Cookie: You are as I am with You.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
---yhze8HlyfmXt1APY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
 
-On Wed, Jun 27, 2018 at 03:16:08PM +0200, Piotr Bugalski wrote:
-> Kernel contains QSPI driver strongly tied to MTD and nor-flash memory.
-> New spi-mem interface allows usage also other memory types, especially
-> much larger NAND with SPI interface. This driver works as SPI controller
-> and is not related to MTD, however can work with NAND-flash or other
-> peripherals using spi-mem interface.
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-This is fine from a SPI point of view but I'd like to apply it directly
-to the SPI tree rather than ack it for merge via the MTD tree - can we
-work something out with a shared branch or something?
+[ Upstream commit 2a3169a54bb53717928392a04fb84deb765b51f1 ]
 
---yhze8HlyfmXt1APY
-Content-Type: application/pgp-signature; name="signature.asc"
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
------BEGIN PGP SIGNATURE-----
+  Invalid EEPROM contents
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlth7ZIACgkQJNaLcl1U
-h9DoyAf/axay4apJ06n4JCgJFvYwhcy//Lc98dvXcnht+N+o7q386hp2kgdobQQ6
-DEtlMemWfYGAC+SKbOzlk81q5JL/+mP252rjCii5W9moO3Qm2TzCgKtjeWoH3/Va
-cjIdVv0j1AeIuMK2H8I3jFOIh0W5ehXJsuNCwN6kf6E4/4w135XlQ7xOaA7hUjrW
-UoqWfSkVkYLSHIMnUd7t2q5YVEKf3EoqYc/ddACPX1hwdTm3bE3KuWIwNyMomV1t
-e1LAyQ6hMO5ZCU6+/8zjEw2avKuUUEQZRTiBBVyuk2zC1kTg+ARtYg6CbqD96r5J
-p80N/6kIUIqOyajvbcgkUjZZCWpeow==
-=Xusq
------END PGP SIGNATURE-----
+The current CTL mappings for this country are:
 
---yhze8HlyfmXt1APY--
+* 2.4GHz: ETSI
+* 5GHz: ETSI
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -159,6 +159,7 @@ enum CountryCode {
+ 	CTRY_ROMANIA = 642,
+ 	CTRY_RUSSIA = 643,
+ 	CTRY_SAUDI_ARABIA = 682,
++	CTRY_SERBIA = 688,
+ 	CTRY_SERBIA_MONTENEGRO = 891,
+ 	CTRY_SINGAPORE = 702,
+ 	CTRY_SLOVAKIA = 703,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -452,6 +452,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_ROMANIA, NULL1_WORLD, "RO"},
+ 	{CTRY_RUSSIA, NULL1_WORLD, "RU"},
+ 	{CTRY_SAUDI_ARABIA, NULL1_WORLD, "SA"},
++	{CTRY_SERBIA, ETSI1_WORLD, "RS"},
+ 	{CTRY_SERBIA_MONTENEGRO, ETSI1_WORLD, "CS"},
+ 	{CTRY_SINGAPORE, APL6_WORLD, "SG"},
+ 	{CTRY_SLOVAKIA, ETSI1_WORLD, "SK"},
+
+
