@@ -3,37 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEC8C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E04C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A4C20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A4C20841
+	by mail.kernel.org (Postfix) with ESMTP id 974902083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974902083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733108AbeHAUOR (ORCPT
+        id S1733121AbeHAUOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:14:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
+        Wed, 1 Aug 2018 16:14:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404033AbeHATDh (ORCPT
+        with ESMTP id S2404140AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E7251067;
-        Wed,  1 Aug 2018 17:01:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98F37105F;
+        Wed,  1 Aug 2018 17:01:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Subhash Jadavani <subhashj@codeaurora.org>,
+        Maya Erez <merez@codeaurora.org>,
+        Can Guo <cang@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 156/336] drm/nouveau/gem: lookup VMAs for buffers referenced by pushbuf ioctl
-Date:   Wed,  1 Aug 2018 18:48:11 +0200
-Message-Id: <20180801165035.095315584@linuxfoundation.org>
+Subject: [PATCH 4.17 153/336] scsi: ufs: fix exception event handling
+Date:   Wed,  1 Aug 2018 18:48:08 +0200
+Message-Id: <20180801165034.984614083@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,101 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Maya Erez <merez@codeaurora.org>
 
-[ Upstream commit 19ca10d82e33bcfe92412c461fc3534ec1e14747 ]
+[ Upstream commit 2e3611e9546c2ed4def152a51dfd34e8dddae7a5 ]
 
-We previously only did this for push buffers, but an upcoming patch will
-need to attach fences to all VMAs to resolve another issue.
+The device can set the exception event bit in one of the response UPIU,
+for example to notify the need for urgent BKOPs operation.  In such a
+case, the host driver calls ufshcd_exception_event_handler to handle
+this notification.  When trying to check the exception event status (for
+finding the cause for the exception event), the device may be busy with
+additional SCSI commands handling and may not respond within the 100ms
+timeout.
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+To prevent that, we need to block SCSI commands during handling of
+exception events and allow retransmissions of the query requests, in
+case of timeout.
+
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_dma.c |   10 +---------
- drivers/gpu/drm/nouveau/nouveau_dma.h |    5 ++---
- drivers/gpu/drm/nouveau/nouveau_gem.c |   19 ++++++++++++++++---
- 3 files changed, 19 insertions(+), 15 deletions(-)
+ drivers/scsi/ufs/ufshcd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_dma.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dma.c
-@@ -80,18 +80,10 @@ READ_GET(struct nouveau_channel *chan, u
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4969,6 +4969,7 @@ static void ufshcd_exception_event_handl
+ 	hba = container_of(work, struct ufs_hba, eeh_work);
+ 
+ 	pm_runtime_get_sync(hba->dev);
++	scsi_block_requests(hba->host);
+ 	err = ufshcd_get_ee_status(hba, &status);
+ 	if (err) {
+ 		dev_err(hba->dev, "%s: failed to get exception status %d\n",
+@@ -4982,6 +4983,7 @@ static void ufshcd_exception_event_handl
+ 		ufshcd_bkops_exception_event_handler(hba);
+ 
+ out:
++	scsi_unblock_requests(hba->host);
+ 	pm_runtime_put_sync(hba->dev);
+ 	return;
  }
- 
- void
--nv50_dma_push(struct nouveau_channel *chan, struct nouveau_bo *bo,
--	      int delta, int length)
-+nv50_dma_push(struct nouveau_channel *chan, u64 offset, int length)
- {
--	struct nouveau_cli *cli = (void *)chan->user.client;
- 	struct nouveau_bo *pb = chan->push.buffer;
--	struct nouveau_vma *vma;
- 	int ip = (chan->dma.ib_put * 2) + chan->dma.ib_base;
--	u64 offset;
--
--	vma = nouveau_vma_find(bo, &cli->vmm);
--	BUG_ON(!vma);
--	offset = vma->addr + delta;
- 
- 	BUG_ON(chan->dma.ib_free < 1);
- 
---- a/drivers/gpu/drm/nouveau/nouveau_dma.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_dma.h
-@@ -31,8 +31,7 @@
- #include "nouveau_chan.h"
- 
- int nouveau_dma_wait(struct nouveau_channel *, int slots, int size);
--void nv50_dma_push(struct nouveau_channel *, struct nouveau_bo *,
--		   int delta, int length);
-+void nv50_dma_push(struct nouveau_channel *, u64 addr, int length);
- 
- /*
-  * There's a hw race condition where you can't jump to your PUT offset,
-@@ -151,7 +150,7 @@ FIRE_RING(struct nouveau_channel *chan)
- 	chan->accel_done = true;
- 
- 	if (chan->dma.ib_max) {
--		nv50_dma_push(chan, chan->push.buffer, chan->dma.put << 2,
-+		nv50_dma_push(chan, chan->push.addr + (chan->dma.put << 2),
- 			      (chan->dma.cur - chan->dma.put) << 2);
- 	} else {
- 		WRITE_PUT(chan->dma.cur);
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -432,7 +432,20 @@ retry:
- 			}
- 		}
- 
--		b->user_priv = (uint64_t)(unsigned long)nvbo;
-+		if (cli->vmm.vmm.object.oclass >= NVIF_CLASS_VMM_NV50) {
-+			struct nouveau_vmm *vmm = &cli->vmm;
-+			struct nouveau_vma *vma = nouveau_vma_find(nvbo, vmm);
-+			if (!vma) {
-+				NV_PRINTK(err, cli, "vma not found!\n");
-+				ret = -EINVAL;
-+				break;
-+			}
-+
-+			b->user_priv = (uint64_t)(unsigned long)vma;
-+		} else {
-+			b->user_priv = (uint64_t)(unsigned long)nvbo;
-+		}
-+
- 		nvbo->reserved_by = file_priv;
- 		nvbo->pbbo_index = i;
- 		if ((b->valid_domains & NOUVEAU_GEM_DOMAIN_VRAM) &&
-@@ -763,10 +776,10 @@ nouveau_gem_ioctl_pushbuf(struct drm_dev
- 		}
- 
- 		for (i = 0; i < req->nr_push; i++) {
--			struct nouveau_bo *nvbo = (void *)(unsigned long)
-+			struct nouveau_vma *vma = (void *)(unsigned long)
- 				bo[push[i].bo_index].user_priv;
- 
--			nv50_dma_push(chan, nvbo, push[i].offset,
-+			nv50_dma_push(chan, vma->addr + push[i].offset,
- 				      push[i].length);
- 		}
- 	} else
 
 
