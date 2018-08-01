@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82A7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F688C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D04208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D04208A6
+	by mail.kernel.org (Postfix) with ESMTP id C490D20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C490D20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732557AbeHAT5F (ORCPT
+        id S1732493AbeHAT5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:57:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49804 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405733AbeHATIf (ORCPT
+        with ESMTP id S2405738AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C62D810FD;
-        Wed,  1 Aug 2018 17:05:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DF2210CC;
+        Wed,  1 Aug 2018 17:05:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Felix Fietkau <nbd@nbd.name>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 230/336] drm/atomic: Handling the case when setting old crtc for plane
-Date:   Wed,  1 Aug 2018 18:49:25 +0200
-Message-Id: <20180801165037.869675854@linuxfoundation.org>
+Subject: [PATCH 4.17 229/336] mt76x2: fix avg_rssi estimation
+Date:   Wed,  1 Aug 2018 18:49:24 +0200
+Message-Id: <20180801165037.834674358@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,41 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Satendra Singh Thakur <satendra.t@samsung.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit fc2a69f3903dfd97cd47f593e642b47918c949df ]
+[ Upstream commit c990affd5abce1f338ac52539e092dad04647fb6 ]
 
-In the func drm_atomic_set_crtc_for_plane, with the current code,
-if crtc of the plane_state and crtc passed as argument to the func
-are same, entire func will executed in vein.
-It will get state of crtc and clear and set the bits in plane_mask.
-All these steps are not required for same old crtc.
-Ideally, we should do nothing in this case, this patch handles the same,
-and causes the program to return without doing anything in such scenario.
+Add leftover filter coefficients in IIR rssi estimation
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/1525326572-25854-1-git-send-email-satendra.t@samsung.com
+Fixes: 7bc04215a66b ("mt76: add driver code for MT76x2e")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Acked-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_atomic.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt76x2_phy.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -1429,7 +1429,9 @@ drm_atomic_set_crtc_for_plane(struct drm
- {
- 	struct drm_plane *plane = plane_state->plane;
- 	struct drm_crtc_state *crtc_state;
--
-+	/* Nothing to do for same crtc*/
-+	if (plane_state->crtc == crtc)
-+		return 0;
- 	if (plane_state->crtc) {
- 		crtc_state = drm_atomic_get_crtc_state(plane_state->state,
- 						       plane_state->crtc);
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_phy.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_phy.c
+@@ -492,8 +492,10 @@ mt76x2_phy_update_channel_gain(struct mt
+ 	u8 gain_delta;
+ 	int low_gain;
+ 
+-	dev->cal.avg_rssi[0] = (dev->cal.avg_rssi[0] * 15) / 16 + (rssi0 << 8);
+-	dev->cal.avg_rssi[1] = (dev->cal.avg_rssi[1] * 15) / 16 + (rssi1 << 8);
++	dev->cal.avg_rssi[0] = (dev->cal.avg_rssi[0] * 15) / 16 +
++			       (rssi0 << 8) / 16;
++	dev->cal.avg_rssi[1] = (dev->cal.avg_rssi[1] * 15) / 16 +
++			       (rssi1 << 8) / 16;
+ 	dev->cal.avg_rssi_all = (dev->cal.avg_rssi[0] +
+ 				 dev->cal.avg_rssi[1]) / 512;
+ 
 
 
