@@ -2,115 +2,95 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67ABC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4076C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9302220840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9302220840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D70920841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aqfOhZ6F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D70920841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387606AbeHAUQX (ORCPT
+        id S1732350AbeHAUQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:16:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404228AbeHATDg (ORCPT
+        Wed, 1 Aug 2018 16:16:54 -0400
+Received: from mail-it0-f73.google.com ([209.85.214.73]:41102 "EHLO
+        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729960AbeHAUQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:36 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13176123F;
-        Wed,  1 Aug 2018 17:09:18 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.17 301/336] random: mix rdrand with entropy sent in from userspace
-Date:   Wed,  1 Aug 2018 18:50:36 +0200
-Message-Id: <20180801165040.573314937@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 1 Aug 2018 16:16:53 -0400
+Received: by mail-it0-f73.google.com with SMTP id w132-v6so32610ita.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:29:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=E0pOoV86/sap3VuxCkq6uFz8gZPwpjEJfKICnjceoZ0=;
+        b=aqfOhZ6FRy2ioyzCjxdL/cLCDqaSL9SwI6gd2LaExafojxciUD8Jgnoqu1+28Qsbmf
+         vWT0+gxOr8DWuxGI3uR9zXjyBkjklYQDiG/6/r/dYNzcfzixuQ34tjTQ/LV3Jkg4d9q3
+         Iqpt+4T+XQsZseRpWyPTIc5m3dV9c+LaWxm6AVJvKzDyz5mdCjVqPH7kIZtqsx/DYOHx
+         dsqyviNp1fdYSebgZObaEp1asCj6e5D2bSFQAp53hxF6Y2SpEdFpjIZpbLRxvREV/Zd1
+         SNKjGWQyne/lZs5jke14WnP2wQ1jduAiRDtWLuP0JKcE6LQ79o+5lhnxZICFitlJPuhS
+         1AgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=E0pOoV86/sap3VuxCkq6uFz8gZPwpjEJfKICnjceoZ0=;
+        b=W1GNT60zxKOnW5seuBTT5ZcOUoNxmqsLYRlBy0ulyTSEb6yJL2AFm6yBVl/geF17pW
+         2fqEq/e88MuCM0iT5nF4vml5OQ1BXO0uZoP/zasJlYWQi3D3YcjChApWuIG/1PaDLOeI
+         T4Vl2wUEBVZaSLDRlvVGVe0OR+oD0+e++fRfs/DDv6IdOrds4k2IdWwHO+pCpGWHbH24
+         zTpJMEx5Nu3OCEKZ5a0eaFdaog+kL4FNX22d5s6qRyJ6Ey6oVog1771QBsBpHi2PSfIY
+         V1bEnpaTt+XuLRWf6wDmcH+gUg5rPraTMrReU3rLEpDXUu3PbTf713REf6xqBb/85sCk
+         B7Yg==
+X-Gm-Message-State: AOUpUlHex4KooEI+a1bPvcIF4mIwrRI5Qf7Nb35pgICep2nbLm33ZFOL
+        e6/Tu7rikWHju8HtejgY9Y78cvr0bBmz/GWWMgA=
+X-Google-Smtp-Source: AAOMgpcc9L8E7dW6ed5fUeis3PaULv2qAfm2LhAIze+syT3PLNXxiTeEPQhOWjaxeiVLdCiF+vQhwVePxvzbS69twF4=
+X-Received: by 2002:a6b:6310:: with SMTP id p16-v6mr10561579iog.43.1533148191800;
+ Wed, 01 Aug 2018 11:29:51 -0700 (PDT)
+Date:   Wed,  1 Aug 2018 11:29:43 -0700
+Message-Id: <20180801182943.22176-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+Subject: [PATCH] sh: dwarf: prefer _THIS_IP_ to current_text_addr
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     ysato@users.sourceforge.jp, dalias@libc.org
+Cc:     akpm@linux-foundation.org, alexander.levin@verizon.com,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+As part of the effort to reduce the code duplication between _THIS_IP_
+and current_text_addr(), let's consolidate callers of
+current_text_addr() to use _THIS_IP_.
 
-------------------
-
-From: Theodore Ts'o <tytso@mit.edu>
-
-commit 81e69df38e2911b642ec121dec319fad2a4782f3 upstream.
-
-Fedora has integrated the jitter entropy daemon to work around slow
-boot problems, especially on VM's that don't support virtio-rng:
-
-    https://bugzilla.redhat.com/show_bug.cgi?id=1572944
-
-It's understandable why they did this, but the Jitter entropy daemon
-works fundamentally on the principle: "the CPU microarchitecture is
-**so** complicated and we can't figure it out, so it *must* be
-random".  Yes, it uses statistical tests to "prove" it is secure, but
-AES_ENCRYPT(NSA_KEY, COUNTER++) will also pass statistical tests with
-flying colors.
-
-So if RDRAND is available, mix it into entropy submitted from
-userspace.  It can't hurt, and if you believe the NSA has backdoored
-RDRAND, then they probably have enough details about the Intel
-microarchitecture that they can reverse engineer how the Jitter
-entropy daemon affects the microarchitecture, and attack its output
-stream.  And if RDRAND is in fact an honest DRNG, it will immeasurably
-improve on what the Jitter entropy daemon might produce.
-
-This also provides some protection against someone who is able to read
-or set the entropy seed file.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- drivers/char/random.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/sh/kernel/dwarf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1895,14 +1895,22 @@ static int
- write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
- {
- 	size_t bytes;
--	__u32 buf[16];
-+	__u32 t, buf[16];
- 	const char __user *p = buffer;
+diff --git a/arch/sh/kernel/dwarf.c b/arch/sh/kernel/dwarf.c
+index 1a2526676a87..bb511e2d9d68 100644
+--- a/arch/sh/kernel/dwarf.c
++++ b/arch/sh/kernel/dwarf.c
+@@ -599,7 +599,7 @@ struct dwarf_frame *dwarf_unwind_stack(unsigned long pc,
+ 	 * time this function makes its first function call.
+ 	 */
+ 	if (!pc || !prev)
+-		pc = (unsigned long)current_text_addr();
++		pc = _THIS_IP_;
  
- 	while (count > 0) {
-+		int b, i = 0;
-+
- 		bytes = min(count, sizeof(buf));
- 		if (copy_from_user(&buf, p, bytes))
- 			return -EFAULT;
- 
-+		for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
-+			if (!arch_get_random_int(&t))
-+				break;
-+			buf[i] ^= t;
-+		}
-+
- 		count -= bytes;
- 		p += bytes;
- 
-
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	/*
+-- 
+2.18.0.597.ga71716f1ad-goog
 
