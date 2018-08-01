@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4439C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1391AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6052083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6052083D
+	by mail.kernel.org (Postfix) with ESMTP id C1DB52083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DB52083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407790AbeHATR3 (ORCPT
+        id S2436499AbeHATRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52648 "EHLO
+        Wed, 1 Aug 2018 15:17:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404830AbeHATR2 (ORCPT
+        with ESMTP id S2404830AbeHATRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:28 -0400
+        Wed, 1 Aug 2018 15:17:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1120D4A;
-        Wed,  1 Aug 2018 17:30:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B418AD54;
+        Wed,  1 Aug 2018 17:30:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Adam Radford <aradford@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Chris Novakovic <chris@chrisn.me.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 103/144] scsi: 3w-xxxx: fix a missing-check bug
-Date:   Wed,  1 Aug 2018 18:52:10 +0200
-Message-Id: <20180801164956.832111702@linuxfoundation.org>
+Subject: [PATCH 4.9 121/144] ipconfig: Correctly initialise ic_nameservers
+Date:   Wed,  1 Aug 2018 18:52:28 +0200
+Message-Id: <20180801164957.844985220@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,47 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Chris Novakovic <chris@chrisn.me.uk>
 
-[ Upstream commit 9899e4d3523faaef17c67141aa80ff2088f17871 ]
+[ Upstream commit 300eec7c0a2495f771709c7642aa15f7cc148b83 ]
 
-In tw_chrdev_ioctl(), the length of the data buffer is firstly copied
-from the userspace pointer 'argp' and saved to the kernel object
-'data_buffer_length'. Then a security check is performed on it to make
-sure that the length is not more than 'TW_MAX_IOCTL_SECTORS *
-512'. Otherwise, an error code -EINVAL is returned. If the security
-check is passed, the entire ioctl command is copied again from the
-'argp' pointer and saved to the kernel object 'tw_ioctl'. Then, various
-operations are performed on 'tw_ioctl' according to the 'cmd'. Given
-that the 'argp' pointer resides in userspace, a malicious userspace
-process can race to change the buffer length between the two
-copies. This way, the user can bypass the security check and inject
-invalid data buffer length. This can cause potential security issues in
-the following execution.
+ic_nameservers, which stores the list of name servers discovered by
+ipconfig, is initialised (i.e. has all of its elements set to NONE, or
+0xffffffff) by ic_nameservers_predef() in the following scenarios:
 
-This patch checks for capable(CAP_SYS_ADMIN) in tw_chrdev_open() to
-avoid the above issues.
+ - before the "ip=" and "nfsaddrs=" kernel command line parameters are
+   parsed (in ip_auto_config_setup());
+ - before autoconfiguring via DHCP or BOOTP (in ic_bootp_init()), in
+   order to clear any values that may have been set after parsing "ip="
+   or "nfsaddrs=" and are no longer needed.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Acked-by: Adam Radford <aradford@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This means that ic_nameservers_predef() is not called when neither "ip="
+nor "nfsaddrs=" is specified on the kernel command line. In this
+scenario, every element in ic_nameservers remains set to 0x00000000,
+which is indistinguishable from ANY and causes pnp_seq_show() to write
+the following (bogus) information to /proc/net/pnp:
+
+  #MANUAL
+  nameserver 0.0.0.0
+  nameserver 0.0.0.0
+  nameserver 0.0.0.0
+
+This is potentially problematic for systems that blindly link
+/etc/resolv.conf to /proc/net/pnp.
+
+Ensure that ic_nameservers is also initialised when neither "ip=" nor
+"nfsaddrs=" are specified by calling ic_nameservers_predef() in
+ip_auto_config(), but only when ip_auto_config_setup() was not called
+earlier. This causes the following to be written to /proc/net/pnp, and
+is consistent with what gets written when ipconfig is configured
+manually but no name servers are specified on the kernel command line:
+
+  #MANUAL
+
+Signed-off-by: Chris Novakovic <chris@chrisn.me.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/3w-xxxx.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ipconfig.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -1034,6 +1034,9 @@ static int tw_chrdev_open(struct inode *
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -779,6 +779,11 @@ static void __init ic_bootp_init_ext(u8
+  */
+ static inline void __init ic_bootp_init(void)
+ {
++	/* Re-initialise all name servers to NONE, in case any were set via the
++	 * "ip=" or "nfsaddrs=" kernel command line parameters: any IP addresses
++	 * specified there will already have been decoded but are no longer
++	 * needed
++	 */
+ 	ic_nameservers_predef();
  
- 	dprintk(KERN_WARNING "3w-xxxx: tw_ioctl_open()\n");
+ 	dev_add_pack(&bootp_packet_type);
+@@ -1401,6 +1406,13 @@ static int __init ip_auto_config(void)
+ 	int err;
+ 	unsigned int i;
  
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EACCES;
++	/* Initialise all name servers to NONE (but only if the "ip=" or
++	 * "nfsaddrs=" kernel command line parameters weren't decoded, otherwise
++	 * we'll overwrite the IP addresses specified there)
++	 */
++	if (ic_set_manually == 0)
++		ic_nameservers_predef();
 +
- 	minor_number = iminor(inode);
- 	if (minor_number >= tw_device_extension_count)
- 		return -ENODEV;
+ #ifdef CONFIG_PROC_FS
+ 	proc_create("pnp", S_IRUGO, init_net.proc_net, &pnp_seq_fops);
+ #endif /* CONFIG_PROC_FS */
+@@ -1621,6 +1633,7 @@ static int __init ip_auto_config_setup(c
+ 		return 1;
+ 	}
+ 
++	/* Initialise all name servers to NONE */
+ 	ic_nameservers_predef();
+ 
+ 	/* Parse string for static IP assignment.  */
 
 
