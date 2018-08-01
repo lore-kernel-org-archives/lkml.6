@@ -2,99 +2,109 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B42FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67733208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:53:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jbSw+7VN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67733208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 264E1208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264E1208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389657AbeHAQj1 (ORCPT
+        id S2389622AbeHAQmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:39:27 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34326 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389528AbeHAQj1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:39:27 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w71Eni57178766;
-        Wed, 1 Aug 2018 14:52:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=5bTdUsB1Yukl8KK6U8ravuJd6B78txP7+GEV4RP7a+8=;
- b=jbSw+7VNswuIp5HM6QiFtd0TgBxAhHVEGw3Wo7s7b5gAnenD4UDencXLWSTnXA5wC8Ih
- AhNoyPQqDsK76/o6MdnGc0Yxu/AuBtrOdRMt4RkJEgIUquBwGM3StwS5Jh7lY0Tc2efT
- 5r5vuBiKLs9Ebb8u+jrrqwZWeBUb/iwhmCLAPC4DePfLXuOMmGzWW1TUDzfZOJ0JA9Mm
- fJT+0XD6H4F/z3GSiiyZjDQocDtKHr2+m9XsuMy+9U7ESCmR2j3zEUliCbfNcxHXxtEc
- wnAt1cbVqMVXlQoSwqTx23FAOEAAAmkhawgm2vrnSfNwyoLyyEBHMnqOTbpNp5hVa7tN dA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kggep629b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Aug 2018 14:52:57 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w71EqtZ6009683
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Aug 2018 14:52:56 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w71Eqsbi027229;
-        Wed, 1 Aug 2018 14:52:54 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Aug 2018 07:52:53 -0700
-Date:   Wed, 1 Aug 2018 17:52:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devel@driverdev.osuosl.org, ldv-project@linuxtesting.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Gaurav Pathak <gauravpathak129@gmail.com>
-Subject: Re: [PATCH v5] staging: rts5208: add error handling into rtsx_probe
-Message-ID: <20180801145245.rkuvugnxm4fofauz@mwanda>
-References: <CAHp75VfktnjL+G0vjHNHr=8mbDXu+4BDogsnxrp_2Bo4em=r2Q@mail.gmail.com>
- <20180801115557.7086-1-vasilyev@ispras.ru>
- <CAHp75VeSr-dDC+BvvTi1f2JBDL0UB31O=umatKE4y=0HQ4_8UQ@mail.gmail.com>
- <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
+        Wed, 1 Aug 2018 12:42:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:2429 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389256AbeHAQmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 12:42:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 07:56:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
+   d="scan'208";a="76422426"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Aug 2018 07:56:01 -0700
+Received: from wljorns-mobl.amr.corp.intel.com (unknown [10.252.193.238])
+        by linux.intel.com (Postfix) with ESMTP id 72A6E580335;
+        Wed,  1 Aug 2018 07:56:00 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH 9/9] ALSA: intel_hdmi: remove redundant
+ variable cfg_val
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     alsa-devel@alsa-project.org,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        kernel-janitors@vger.kernel.org,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jaya Kumar <jayakumar.alsa@gmail.com>
+References: <20180801104742.4328-1-colin.king@canonical.com>
+ <20180801104742.4328-10-colin.king@canonical.com>
+ <s5hin4unyh0.wl-tiwai@suse.de>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <105efe0e-237e-dba0-3bfe-0f88b9ccd152@linux.intel.com>
+Date:   Wed, 1 Aug 2018 07:55:02 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=711
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1808010154
+In-Reply-To: <s5hin4unyh0.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 05:08:48PM +0300, Anton Vasilyev wrote:
-> I found that staging-next already contains my patch v3, committed by Greg
-> Kroah-Hartman.
+On 8/1/18 4:00 AM, Takashi Iwai wrote:
+> On Wed, 01 Aug 2018 12:47:42 +0200,
+> Colin King wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Variable cfg_val is being assigned but is never used hence it is
+>> redundant and can be removed.
+>>
+>> Cleans up clang warning:
+>> warning: variable 'cfg_val' set but not used [-Wunused-but-set-variable]
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>   sound/x86/intel_hdmi_audio.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
+>> index edc9f5a34eff..fa7dca5a68c8 100644
+>> --- a/sound/x86/intel_hdmi_audio.c
+>> +++ b/sound/x86/intel_hdmi_audio.c
+>> @@ -290,7 +290,6 @@ static void had_reset_audio(struct snd_intelhad *intelhaddata)
+>>   static int had_prog_status_reg(struct snd_pcm_substream *substream,
+>>   			struct snd_intelhad *intelhaddata)
+>>   {
+>> -	union aud_cfg cfg_val = {.regval = 0};
+>>   	union aud_ch_status_0 ch_stat0 = {.regval = 0};
+>>   	union aud_ch_status_1 ch_stat1 = {.regval = 0};
+>>   
+>> @@ -298,7 +297,6 @@ static int had_prog_status_reg(struct snd_pcm_substream *substream,
+>>   					  IEC958_AES0_NONAUDIO) >> 1;
+>>   	ch_stat0.regx.clk_acc = (intelhaddata->aes_bits &
+>>   					  IEC958_AES3_CON_CLOCK) >> 4;
+>> -	cfg_val.regx.val_bit = ch_stat0.regx.lpcm_id;
 > 
-> Do I need to send a new patch with a label renaming based on Dan Carpenter
-> comments?
+> Actually this made me wonder what is the definition of val_bit.
+> It seems always 1 in the current code after the commit 964ca8083c02.
+> Pierre?
 
-I had to look to see what I had said earlier...  The naming isn't really
-a problem but we should call scsi_host_put(host); if the
-"dev->chip = kzalloc(sizeof(*dev->chip), GFP_KERNEL);" allocation fails.
-
-regards,
-dan capenter
-
+I'll look into it, give me a couple of days. I vaguely remember this is 
+the AES validity bit but I am not sure why it's set with a pcm id, looks 
+like a mixup.
