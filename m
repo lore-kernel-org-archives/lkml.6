@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648EFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 841E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3F220862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3F220862
+	by mail.kernel.org (Postfix) with ESMTP id 44AA5208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44AA5208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731846AbeHAUDu (ORCPT
+        id S1731959AbeHAUFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:03:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47890 "EHLO
+        Wed, 1 Aug 2018 16:05:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405088AbeHATFn (ORCPT
+        with ESMTP id S2404816AbeHATEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:05:43 -0400
+        Wed, 1 Aug 2018 15:04:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22937D0A;
-        Wed,  1 Aug 2018 17:19:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D627C9D;
+        Wed,  1 Aug 2018 17:17:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 108/246] bpf: powerpc64: pad function address loads with NOPs
-Date:   Wed,  1 Aug 2018 18:50:18 +0200
-Message-Id: <20180801165016.878372335@linuxfoundation.org>
+Subject: [PATCH 4.14 106/246] powerpc/8xx: fix invalid register expression in head_8xx.S
+Date:   Wed,  1 Aug 2018 18:50:16 +0200
+Message-Id: <20180801165016.785751432@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,82 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 4ea69b2fd623dee2bbc77d3b6b7d8c0924e2026a ]
+[ Upstream commit e4ccb1dae6bdef228d729c076c38161ef6e7ca34 ]
 
-For multi-function programs, loading the address of a callee
-function to a register requires emitting instructions whose
-count varies from one to five depending on the nature of the
-address.
+New binutils generate the following warning
 
-Since we come to know of the callee's address only before the
-extra pass, the number of instructions required to load this
-address may vary from what was previously generated. This can
-make the JITed image grow or shrink.
+  AS      arch/powerpc/kernel/head_8xx.o
+arch/powerpc/kernel/head_8xx.S: Assembler messages:
+arch/powerpc/kernel/head_8xx.S:916: Warning: invalid register expression
 
-To avoid this, we should generate a constant five-instruction
-when loading function addresses by padding the optimized load
-sequence with NOPs.
+This patch fixes it.
 
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/net/bpf_jit_comp64.c |   34 +++++++++++++++++++++++-----------
- 1 file changed, 23 insertions(+), 11 deletions(-)
+ arch/powerpc/kernel/head_8xx.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -203,25 +203,37 @@ static void bpf_jit_build_epilogue(u32 *
- 
- static void bpf_jit_emit_func_call(u32 *image, struct codegen_context *ctx, u64 func)
- {
-+	unsigned int i, ctx_idx = ctx->idx;
-+
-+	/* Load function address into r12 */
-+	PPC_LI64(12, func);
-+
-+	/* For bpf-to-bpf function calls, the callee's address is unknown
-+	 * until the last extra pass. As seen above, we use PPC_LI64() to
-+	 * load the callee's address, but this may optimize the number of
-+	 * instructions required based on the nature of the address.
-+	 *
-+	 * Since we don't want the number of instructions emitted to change,
-+	 * we pad the optimized PPC_LI64() call with NOPs to guarantee that
-+	 * we always have a five-instruction sequence, which is the maximum
-+	 * that PPC_LI64() can emit.
-+	 */
-+	for (i = ctx->idx - ctx_idx; i < 5; i++)
-+		PPC_NOP();
-+
- #ifdef PPC64_ELF_ABI_v1
--	/* func points to the function descriptor */
--	PPC_LI64(b2p[TMP_REG_2], func);
--	/* Load actual entry point from function descriptor */
--	PPC_BPF_LL(b2p[TMP_REG_1], b2p[TMP_REG_2], 0);
--	/* ... and move it to LR */
--	PPC_MTLR(b2p[TMP_REG_1]);
- 	/*
- 	 * Load TOC from function descriptor at offset 8.
- 	 * We can clobber r2 since we get called through a
- 	 * function pointer (so caller will save/restore r2)
- 	 * and since we don't use a TOC ourself.
- 	 */
--	PPC_BPF_LL(2, b2p[TMP_REG_2], 8);
--#else
--	/* We can clobber r12 */
--	PPC_FUNC_ADDR(12, func);
--	PPC_MTLR(12);
-+	PPC_BPF_LL(2, 12, 8);
-+	/* Load actual entry point from function descriptor */
-+	PPC_BPF_LL(12, 12, 0);
- #endif
-+
-+	PPC_MTLR(12);
- 	PPC_BLRL();
- }
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -958,7 +958,7 @@ start_here:
+ 	tovirt(r6,r6)
+ 	lis	r5, abatron_pteptrs@h
+ 	ori	r5, r5, abatron_pteptrs@l
+-	stw	r5, 0xf0(r0)	/* Must match your Abatron config file */
++	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
+ 	tophys(r5,r5)
+ 	stw	r6, 0(r5)
  
 
 
