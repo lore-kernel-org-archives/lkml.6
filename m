@@ -2,1190 +2,323 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,WEIRD_QUOTING autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5029DC43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D427AC43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D479120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D479120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B458820851
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:16:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="kcCEPRGh";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="S4xUPDJ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B458820851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732935AbeHACuQ convert rfc822-to-8bit (ORCPT
+        id S1732940AbeHAC6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 22:50:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38722 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731924AbeHACuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 22:50:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00D9F40241C0;
-        Wed,  1 Aug 2018 01:07:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ADC9B2026D7E;
-        Wed,  1 Aug 2018 01:07:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180731234909.GA4206@magnolia>
-References: <20180731234909.GA4206@magnolia> <153271267980.9458.7640156373438016898.stgit@warthog.procyon.org.uk> <153271291017.9458.7827028432894772673.stgit@warthog.procyon.org.uk>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 34/38] vfs: syscall: Add fsinfo() to query filesystem information [ver #10]
+        Tue, 31 Jul 2018 22:58:10 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55680 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731924AbeHAC6J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Jul 2018 22:58:09 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7119qv2018612;
+        Tue, 31 Jul 2018 18:15:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=Y11vfCIHat6mrlTltOBYZ9djrUeYULgN2kCy8TpoQMo=;
+ b=kcCEPRGhN1FBRTopeQqyVd2CEjhR93nSPhErVikev28h+znNXb/XI1xLU5RpDfeHjEIg
+ YF6bXuwgJd6cRUazUcwn+ZusmO4BYjK84BN3aVnmSAssErgH4NOJT0YmBNY5R6l+MXzY
+ TWOxNFiMlIVGnBCf9iYs7nkVmhP3h3zx4m0= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2kk1df085h-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 31 Jul 2018 18:15:02 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.25) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 31 Jul 2018 21:14:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y11vfCIHat6mrlTltOBYZ9djrUeYULgN2kCy8TpoQMo=;
+ b=S4xUPDJ7gaqZe1+p0ewrQ4oL6pykY9ukS5MLFPvkDPaoyQLnDAMOpyBL31DWTMVnlba8i63fp1RWom69jhWpdQP0uBBsbRrB5YXgvEGHZ0QWDMqLlbvvu1vTQC+jurmaEPsPkBLclsfTZ0MDwaJ1Q99h+o0OwcUzsExYkdZGSg0=
+Received: from castle.DHCP.thefacebook.com (2620:10d:c090:200::6:ec7a) by
+ BLUPR15MB0162.namprd15.prod.outlook.com (2a01:111:e400:5249::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Wed, 1 Aug
+ 2018 01:14:54 +0000
+Date:   Tue, 31 Jul 2018 18:14:48 -0700
+From:   Roman Gushchin <guro@fb.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] mm, oom: introduce memory.oom.group
+Message-ID: <20180801011447.GB25953@castle.DHCP.thefacebook.com>
+References: <20180730180100.25079-1-guro@fb.com>
+ <20180730180100.25079-4-guro@fb.com>
+ <20180731090700.GF4557@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5130.1533085630.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Wed, 01 Aug 2018 02:07:10 +0100
-Message-ID: <5131.1533085630@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 01:07:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 01:07:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Disposition: inline
+In-Reply-To: <20180731090700.GF4557@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [2620:10d:c090:200::6:ec7a]
+X-ClientProxiedBy: MWHPR15CA0048.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::34) To BLUPR15MB0162.namprd15.prod.outlook.com
+ (2a01:111:e400:5249::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ca021210-14a8-4df5-dba5-08d5f74c3167
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR15MB0162;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;3:RnwpJrKnH3XKU4hMirrB/fBFtGtPquG3NKiilM3VE5lFYCTRjD0i3ivnUaniDXn3KfygwgOurIaFHO/F6Fvlkcvsj59Le9EcWxex4zI5KpPsBD3wwc7H/poig2fgWUV0eW5zaUxJNXwaHOE0pVqjAxun/Qirae2+U/bJqAtVdxrcIDHkJhKpQMWaeZYEe5uM2SxStUwZHI6Y+P/nmgYqoWmLVe6xdq8ntahlKdiMoxXq1uko31NBJHInQbWBa541;25:pBil9pnEBLAVcyppt23mxjcpspL/p3oJBrkKIxzL5QmmrrGmOfuUqPVRjXOoiTusDtsikN7aobghRIoQRnY17NuYPf0LXWlDPozWIXzzoANatEiRWu6dn/pouVdo16A5jqSQKkSiWrugg+RBuruIzDGJCUTaPKTb8gFYA11dM4OCCC4w2EOe8TLhHXuGdpEvPiQ0oQalDvbFMLSKXUPyJzdMZBoCZ1b16lOSsxKDcbGR1NOENy3kBvnvExV/cBqnNwilL9CxV6ZOyAnXInC27CmMqfeaOwPXnJpljxRqD9j4yDAxO3wGUQVeCmjxjIPKAAPyBCyD9XqG0izKzioTfg==;31:WVkaUy/YNUTwMSphjd3SNj2ovpepyVizAVKQ+BrAwMUB7MgfMOMrJW60ERTbWcCK3aKWxuzrTXYnU0KsI+aehUys8cwA7OFR/7BCGkLdCCn7u3wWrS3beUtFECEu7MHcAPqbWBAHLrJhxPZsOyNcHOWA3gWxm1PckeIcc5h7pVMwTQgZJEjlhYw2w4KUb9+8NuE22KRKlwVxClfAz/sK13+w8NZ9YSjq3yHOZBvJ88g=
+X-MS-TrafficTypeDiagnostic: BLUPR15MB0162:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;20:dvi3e8/4FRbY8vCNcuzGL+mbKiYFZeYcu0cCimYL2iYTx6Sgr7hiEX9Ubxq4xIZaXCBgg5iUQ+ier0A2sGrzC3HMaXLxk5fMuFeDJzp4YIH/WQEGBlLMH3qk9U6Tt0s/9q5zlaHRPt8eBv8We+CckC2zNh83V9sSBRq+PeWF7/p9SxNPvEH12Bve7K8CZjrKinSIX4I2NMb8loAr1KuWXh/FL8u9yotvfygqSJn+tgZgSKozulGyznA2QksoJxSStf1rkV3puC8gUij8xKpIM12I+4lIAE0Bcnl5mVgRSD+JsAdlFoy+kmw5Fqzk7fwnRiIjrhPrHGNUMkciHAs1gg9Rm+xNKYHGhIHnUGKxbZf67o1q3zpGl7GqmGBO5Xpa85Ypt43mrzrckiQPZH9LqiiqT0t5liIG/pzB4niaCBB7c6031N5B2rn1jHu29mEnnkXN1eRVoZgDVbfhoF2UX4YqYmU4MHsrMg3unXVqvwYjAtKTSOQlcYWWvAQdcF/i;4:XrpQi1TU6SnqnJ9v757UlPgHVr/D1sAfEEr7Y/thw84mt2Letq3SlHRIV8kvS1jLDthWNPekOSAUWQGo1owigeBLIKqBVZ2urVIIjJcl1o1VV7IqiTdhXGDRJ4Q0cBfgq/8Tje/9cgfkX0dG7Qv95vJgwd3eyMpjkAvisxAHKb8Ab17lxWtTHXIUHTf4tZnlf020o/Gf2iuIRtq66bPBsTu7bLiSGCmRy4hVP/K2Y4oDfCQk+e1GSAqNFDWBqD7wgwvOXBvizg7RwJFJNanj71SenkSzZrbnmjwyfwroufpV0RRmNHFYj0aJPRc4VQ7Q
+X-Microsoft-Antispam-PRVS: <BLUPR15MB01628B48C936AF7370FED8B4BE2D0@BLUPR15MB0162.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(42068640409301);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231311)(11241501184)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BLUPR15MB0162;BCL:0;PCL:0;RULEID:;SRVR:BLUPR15MB0162;
+X-Forefront-PRVS: 0751474A44
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(346002)(376002)(396003)(366004)(57704003)(199004)(189003)(97736004)(7696005)(9686003)(25786009)(11346002)(47776003)(7736002)(446003)(305945005)(1076002)(14444005)(50466002)(76176011)(46003)(52116002)(6306002)(6506007)(386003)(16526019)(81166006)(55016002)(186003)(81156014)(8676002)(478600001)(86362001)(229853002)(316002)(2906002)(33656002)(5660300001)(16586007)(476003)(966005)(8936002)(68736007)(105586002)(106356001)(58126008)(54906003)(4326008)(6666003)(6246003)(52396003)(53936002)(6916009)(486006)(6116002)(23726003)(18370500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0162;H:castle.DHCP.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0162;23:wJsxaeYQ1SZCh1h+npkpvhhpFmQAG45ScUrQNCs+Z?=
+ =?us-ascii?Q?9Qym61ZzbCtYxh5fj8DNNjVwEC6XihD91z7QZOJlcikCykpGJyhXC1zdN+T2?=
+ =?us-ascii?Q?OUMIET3w03hp6OaA9LyH/ch5KtU5CpwWrWUs++KhQPfuqEnn1wtTa1U1/qgb?=
+ =?us-ascii?Q?TDBgOubsO9adLP/RGMk+FKwpdx+swGMS4swKH7blyDfkCjY+WX+L5+zW/9u9?=
+ =?us-ascii?Q?YIGsYWtYim4thAYn95RB+sOqDgsXiLrGHFAxctyDtIlmJC+2G8aJGy6lvDbx?=
+ =?us-ascii?Q?xNHUvudMBCXqu87Vbovn0+7eTEZpfMr0EQhA0duBXEosn7IguKvTiYQrsmza?=
+ =?us-ascii?Q?VWyPdVtfHCWFw11fNLAOWKIknge4Pc81OCl3iThP01ORpW6VexdOtcNCwjO5?=
+ =?us-ascii?Q?wtek7zJdb8+DyrkbZLeUa90VSZoFwTA8UR2Nn3Dk8iHoHBEvJqc6e5HrBj6M?=
+ =?us-ascii?Q?5CAACuMM/5oOlKMeLfPRZ95UDH+rp5wIxjKHXZHtLhxEoRJR3CMGb9TDif6S?=
+ =?us-ascii?Q?+PNqpZXDl8VzVsnEN4APaRNVlPEQgGA/lk8CxQztkw1u7q2M5zaQolIaGUU1?=
+ =?us-ascii?Q?nROq5nAreKTrCSR8bmnieQE/Dmh6Mtame1xTE7Mf5MDm7z4Xr/bd/BEjpw3F?=
+ =?us-ascii?Q?KD7JYqbsTAodk+CN/yzVwTQULKWgxde0OpOec9c6oSJPQrLk3XFpABnCsF4G?=
+ =?us-ascii?Q?cOI274l8zlEermH97REq3i06Etv8YWv9pCtjmXxiJ2nDJjn12djeKDc+ubDU?=
+ =?us-ascii?Q?+7ewDo6tuz8nmpEAcgoSuu3ldyi5apIEWmtTcGC5muwWc1NsKjHAke/Ni6ug?=
+ =?us-ascii?Q?6tjtqE4DzDhrGhxw5rOc1P7y7TbjryVsrUZHeQXyRvZqZD3zJn5o0jRU2Dc0?=
+ =?us-ascii?Q?ETjlpuKFj+TS70JLjj5+36nemRklMW0hjQNinGqIYZfC14O54O3fB9mjvj7a?=
+ =?us-ascii?Q?oX2I6JIEguSlNun80h3l5YXQ8NeIf/KK3kUN/iMoVK4V/eDeciPqsgXBMbQy?=
+ =?us-ascii?Q?4aI+fwWtbhgTsZ0vRGTwQT0NPbqhACDSp79GVTpa+pcFdtsKzlWvXtVdXwO3?=
+ =?us-ascii?Q?Fgq4rKpkTPcIdkZQc9uQ5MRwqjmVb2ZsibojTCQA/kBCTJ62wv5/CE3JVmSp?=
+ =?us-ascii?Q?l0/LiTXD005EVcSats99bP+rhTmka7v6aHse4pv4ZA4kNzVEzeQkqhBittXn?=
+ =?us-ascii?Q?0fcr7g41XSicPlir6iXCqQGG7BdgXwAHhPOT7qmZWZW+pnV3xTmISUY+YSDg?=
+ =?us-ascii?Q?aML0/MoNeTt7B8uCUySHPP6rqPa8EoMS6n96qlf1A2HBzW1T/IUt+mV53o9v?=
+ =?us-ascii?Q?XXLhp3afHf6dTuaJriAcZ0=3D?=
+X-Microsoft-Antispam-Message-Info: o4uLli79XZGf3zbeLV9zyGSDvC3xFHiTkmeOhQo4nM6fv6oVFfw5u6KcRymxWKCy8V8GqohnNVvc4LJx9TpYqGmVEGAwx/FWnz8W0RHQtFfeIHEA48ImY1xEjSHbnijRbjsXK1yQNv+OmR2A4n3XTxirLsBrjJj4wZXQfZ0YzRyZVLjYp1pMHNoR6uXCX4CaBL3wD5SMcv6XfyBPomgxQdn1m+ncIEGQtCmzCrQOQe70jZFILEDC37aYapGPNCal1RQa6euvpXFqXNImS5P5Miq/XluslPUQzbA6Wzj6dI4unylOakj33ntOOVBu3UyfrJCRJwXwMvI12SfyF9cpY4EwCPUOuQTgXbZrwZPOyZE=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;6:P7CAR7Dbfkw3tgqqaT9gZaoRuLCCHHVf34gykkwQCQ5+vs9nyFPi7QJUyVKoI21Sj7CYdQSSoxcdlz+/slsDiU7pB6T5GDTMWCiYNn39SgwPshanaOZp3Z5rETU5O6rXAfax+fQmzylz907BRKU0+HVacywzUv8e1TofGyvet5Lw+lu6wlKlrEOhd/yxzfJIahWuJoHis4eSGGiMuHjp9cUHlGOSUbCeh3WXzIuOsGwD60/Hn84jx3FoOt13eCJNMpcT2o9z3DA6hVCILC4O8RnJHbv+VskaJaxsbo4Ai1apiU6QKJ4dGfJvaDsbMJFVVSuQGdRsftENKAYDH38/BN8Y8+2GDBnkTsTPKjYT5Wx0k5GJ/iVKac778YVMoEA/cGi7UmSEcZj27w+ohPbz07EY6SV7m2G+KgQiWJ3MlXKhnrwora0Z5lb5uEnX6sLksAc7cfQ7qQs9SagVHpfmdg==;5:3J/DT87A92mJZulIw0hi/wnHPucXLNiOmvApHVJs5hLkucU780LZHjaHvPIhoKq+tzRq5FNTV4EmsCwYB9MFx3o9vd72sMOQfHLAKaz2oq85TZvzuOUUigwvL4LPuJ6jc7V+VNHEuOL0D+SIl+DP0Bkfbo8wJBRLaYF3EBOJJMQ=;7:gcBVVVcxLuki1/1Cxd5pKAJjq+m0OWgtCpmJUAkXhpONl6k1thb2G/jTJXbP1Iuo3OFN/Cw8knXFpE/rbpU8u2QFha5KpfdPgWu6+ZHTwCHvZIj/3v2Lb3QX0vE7VMX2jnxdQ7nFkjeBrVLkBCS24aNc6sufEu/Nw457gLp4HVdOmr7/UlmgVqLKViUFc437xsqvejppTXccrfECxaGQ5e4btFm+GOsxgR9grPzT42RsjDYTD4gp3TNw/X/ptlTN
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0162;20:2ii17syH5+ioZ76S0Lo5lhN6dpgTeknucaL5LvAD0WNVFPjDeBbTQU+2VgjHgqh9NN7asvqPLfRIqRgHQKfH0AG6KlzpH+Vt+WI/j7BFP59aAowHMiwjYOZ0oDuaOwccWB1fAfPeAQDsBpbp+9lAupVRGxqy953nJc3+saDUntw=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2018 01:14:54.3914 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca021210-14a8-4df5-dba5-08d5f74c3167
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR15MB0162
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-31_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Darrick J. Wong <darrick.wong@oracle.com> wrote:
-
-> <snip> I only have time today to review the user interface bits...
-
-Thanks:-)
-
-> > +	fsinfo_attr_volume_id		= 7,	/* Volume ID (string) */
-> > +	fsinfo_attr_volume_uuid		= 8,	/* Volume UUID (LE uuid) */
-> > +	fsinfo_attr_volume_name		= 9,	/* Volume name (string) */
+On Tue, Jul 31, 2018 at 11:07:00AM +0200, Michal Hocko wrote:
+> On Mon 30-07-18 11:01:00, Roman Gushchin wrote:
+> > For some workloads an intervention from the OOM killer
+> > can be painful. Killing a random task can bring
+> > the workload into an inconsistent state.
+> > 
+> > Historically, there are two common solutions for this
+> > problem:
+> > 1) enabling panic_on_oom,
+> > 2) using a userspace daemon to monitor OOMs and kill
+> >    all outstanding processes.
+> > 
+> > Both approaches have their downsides:
+> > rebooting on each OOM is an obvious waste of capacity,
+> > and handling all in userspace is tricky and requires
+> > a userspace agent, which will monitor all cgroups
+> > for OOMs.
+> > 
+> > In most cases an in-kernel after-OOM cleaning-up
+> > mechanism can eliminate the necessity of enabling
+> > panic_on_oom. Also, it can simplify the cgroup
+> > management for userspace applications.
+> > 
+> > This commit introduces a new knob for cgroup v2 memory
+> > controller: memory.oom.group. The knob determines
+> > whether the cgroup should be treated as a single
+> > unit by the OOM killer. If set, the cgroup and its
+> > descendants are killed together or not at all.
 > 
-> What's the difference between a volume name and a volume string?
-
-Um?  There is no "volume string" defined.
-
-What the parenthesis in the comment means is that fsinfo_attr_volume_name
-returns a variable-length string rather than a fixed structure - ie. it's type
-information.
-
-> XFS has a uuid and a label that can be set by userspace (sort of);
-> should we return the label for volume_id and volume_name?
+> I do not want to nit pick on wording but unit is not really a good
+> description. I would expect that to mean that the oom killer will
+> consider the unit also when selecting the task and that is not the case.
+> I would be more explicit about this being a single killable entity
+> because it forms an indivisible workload.
 > 
-> Hmmm, I see that the default implementations set volume_id from s_id,
-> and s_id (for block device filesystems anyway) tends to be the device, I
-> guess?
+> You can reuse http://lkml.kernel.org/r/20180730080357.GA24267@dhcp22.suse.cz
+> if you want.
+
+Ok, I'll do my best to make it clearer.
+
 > 
-> So if blkid told me that:
-> /dev/sda1: LABEL="music" UUID="8d9e5b1e-a094-49e5-a179-6d94f7fd8399" TYPE="xfs"
+> [...]
+> > +/**
+> > + * mem_cgroup_get_oom_group - get a memory cgroup to clean up after OOM
+> > + * @victim: task to be killed by the OOM killer
+> > + * @oom_domain: memcg in case of memcg OOM, NULL in case of system-wide OOM
+> > + *
+> > + * Returns a pointer to a memory cgroup, which has to be cleaned up
+> > + * by killing all belonging OOM-killable tasks.
 > 
-> volume_id == sda1, volume_uuid == 8d9e5b1e-a094-49e5-a179-6d94f7fd8399,
-> and volume_name == "music" ?
+> Caller has to call mem_cgroup_put on the returned non-null memcg.
 
-I would do it like that.  Note that these things are described in the manual
-page that I posted previously.  I'll attach that here (note that it needs
-updating).
+Added.
 
-> > +	fsinfo_attr_source		= 16,	/* Nth mount source name (string) */
 > 
-> Hmm, so I guess external log devices and realtime device(s) go here?
-
-Ummm...  Not sure.  I feel like they should, but they can also go in
-FSINFO_ATTR_PARAMETER if they're already described by a mount parameter.
-
-I was thinking more of bcachefs where the "source" parameter to mount(2) looks
-something like "/dev/sda1:/dev/sda2".
-
-One of the important considerations for setting up the parser is that we still
-have to handle mount(2) for existing filesystems.
-
-> Are we tied to this enum forever, or do you plan to split up the number
-> space to allow filesystems to define their own attributes without having
-> to add them here?
+> > + */
+> > +struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
+> > +					    struct mem_cgroup *oom_domain)
+> > +{
+> > +	struct mem_cgroup *oom_group = NULL;
+> > +	struct mem_cgroup *memcg;
+> > +
+> > +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+> > +		return NULL;
+> > +
+> > +	if (!oom_domain)
+> > +		oom_domain = root_mem_cgroup;
+> > +
+> > +	rcu_read_lock();
+> > +
+> > +	memcg = mem_cgroup_from_task(victim);
+> > +	if (!memcg || memcg == root_mem_cgroup)
+> > +		goto out;
 > 
-> For example, say you let the upper 8 bits be some sort of per-fs code
-> (like how _IO{,R,W} work) and the lower 24 bits can be the subcommand.
-> 0x00 would be the generic space; XFS could (say) reserve 0x58000000 -
-> 0x58ffffff for XFS (0x58 is the prefix code used for xfs ioctls).  If
-> there ever are subdivisions of the number space it might be nice to have
-> fsinfo_fsinfo return prefix number of the fs-specific subcommands, and
-> how many fs-specific subcommands there are.
+> When can we have memcg == NULL? victim should be always non-NULL.
+> Also why do you need to special case the root_mem_cgroup here. The loop
+> below should handle that just fine no?
+
+Idk, I prefer to keep an explicit root_mem_cgroup check,
+rather than traversing the tree and relying on an inability
+to set oom_group on the root.
+
+!memcg check removed, you're right.
+
 > 
-> I mean, I guess each fs' ->fsinfo function can do that privately but I
-> suggest having some mechanism in mind to handle these things.  XFS's
-> geometry ioctl structure is nearly out of space and (some day soon) we
-> will have to expand and maybe we can use fsinfo instead.
-
-I was planning on requiring them to be added here and also listed in:
-
-	static const u16 fsinfo_buffer_sizes[FSINFO_ATTR__NR] = {
-		FSINFO_STRUCT		(STATFS,		statfs),
-		FSINFO_STRUCT		(FSINFO,		fsinfo),
-		...
-	};
-
-in fs/statfs.c.
-
-> > +	__u32	f_dev_minor;
-> > +};
+> > +
+> > +	/*
+> > +	 * Traverse the memory cgroup hierarchy from the victim task's
+> > +	 * cgroup up to the OOMing cgroup (or root) to find the
+> > +	 * highest-level memory cgroup with oom.group set.
+> > +	 */
+> > +	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
+> > +		if (memcg->oom_group)
+> > +			oom_group = memcg;
+> > +
+> > +		if (memcg == oom_domain)
+> > +			break;
+> > +	}
+> > +
+> > +	if (oom_group)
+> > +		css_get(&oom_group->css);
+> > +out:
+> > +	rcu_read_unlock();
+> > +
+> > +	return oom_group;
+> > +}
+> > +
+> [...]
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 8bded6b3205b..08f30ed5abed 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -914,6 +914,19 @@ static void __oom_kill_process(struct task_struct *victim)
+> >  }
+> >  #undef K
+> >  
+> > +/*
+> > + * Kill provided task unless it's secured by setting
+> > + * oom_score_adj to OOM_SCORE_ADJ_MIN.
+> > + */
+> > +static int oom_kill_memcg_member(struct task_struct *task, void *unused)
+> > +{
+> > +	if (task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN) {
+> > +		get_task_struct(task);
+> > +		__oom_kill_process(task);
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> >  static void oom_kill_process(struct oom_control *oc, const char *message)
+> >  {
+> >  	struct task_struct *p = oc->chosen;
+> > @@ -921,6 +934,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >  	struct task_struct *victim = p;
+> >  	struct task_struct *child;
+> >  	struct task_struct *t;
+> > +	struct mem_cgroup *oom_group;
+> >  	unsigned int victim_points = 0;
+> >  	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+> >  					      DEFAULT_RATELIMIT_BURST);
+> > @@ -974,7 +988,22 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+> >  	}
+> >  	read_unlock(&tasklist_lock);
+> >  
+> > +	/*
+> > +	 * Do we need to kill the entire memory cgroup?
+> > +	 * Or even one of the ancestor memory cgroups?
+> > +	 * Check this out before killing the victim task.
+> > +	 */
+> > +	oom_group = mem_cgroup_get_oom_group(victim, oc->memcg);
+> > +
+> >  	__oom_kill_process(victim);
+> > +
+> > +	/*
+> > +	 * If necessary, kill all tasks in the selected memory cgroup.
+> > +	 */
+> > +	if (oom_group) {
 > 
-> This structure doesn't end on a 64-bit boundary and may cause padding
-> problems...
+> we want a printk explaining that we are going to tear down the whole
+> oom_group here.
 
-I've fixed that, thanks.
+Does this looks good?
+Or it's better to remove "memory." prefix?
 
-> Maximum inode number possible, for filesystems that can allocate inodes
-> dynamically?
+[   52.835327] Out of memory: Kill process 1221 (allocate) score 241 or sacrifice child
+[   52.836625] Killed process 1221 (allocate) total-vm:2257144kB, anon-rss:2009128kB, file-rss:4kB, shmem-rss:0kB
+[   52.841431] Tasks in /A1 are going to be killed due to memory.oom.group set
+[   52.869439] Killed process 1217 (allocate) total-vm:2052344kB, anon-rss:1704036kB, file-rss:0kB, shmem-rss:0kB
+[   52.875601] Killed process 1218 (allocate) total-vm:106668kB, anon-rss:24668kB, file-rss:0kB, shmem-rss:0kB
+[   52.882914] Killed process 1219 (allocate) total-vm:106668kB, anon-rss:21528kB, file-rss:0kB, shmem-rss:0kB
+[   52.891806] Killed process 1220 (allocate) total-vm:2257144kB, anon-rss:1984120kB, file-rss:4kB, shmem-rss:0kB
+[   52.903770] Killed process 1221 (allocate) total-vm:2257144kB, anon-rss:2009128kB, file-rss:4kB, shmem-rss:0kB
+[   52.905574] Killed process 1222 (allocate) total-vm:2257144kB, anon-rss:2063640kB, file-rss:0kB, shmem-rss:0kB
+[   53.202153] oom_reaper: reaped process 1222 (allocate), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+
 > 
-> Granted, XFS will probably only ever advertise "0xffffffffffffffff"...
-
-Is that possible with any of our current interfaces?
-
-It's something I can add, but I can imagine circumstances where the inode
-number space has holes in it that can't be allocated (say inode numbers
-correspond to particular blocks on disk).  I wonder if that's something I need
-worry about.
-
-Btw, note that the fsinfo() interface is constructed such that it's practical
-to expand any particular struct in the future, provided any new fields are
-tagged on the end and don't mind defaulting to 0.  fsinfo() returns just the
-data you asked for, truncating the returned data to fit your request.  If you
-ask for more than it has, then it clears the excess space (hence the
-defaulting to 0 condition above).
-
-> > +struct fsinfo_io_size {
-> > +	__u32		dio_size_gran;	/* Size granularity for O_DIRECT */
-> > +	__u32		dio_mem_align;	/* Memory alignment for O_DIRECT */
+> > +		mem_cgroup_scan_tasks(oom_group, oom_kill_memcg_member, NULL);
+> > +		mem_cgroup_put(oom_group);
+> > +	}
+> >  }
 > 
-> max io size too?
+> Other than that looks good to me. My concern that the previous
+> implementation was more consistent because we were comparing memcgs
+> still holds but if there is no way forward that direction this should be
+> acceptable as well.
+> 
+> After above small things are addressed you can add
+> Acked-by: Michal Hocko <mhocko@suse.com> 
 
-That needs more discussion, I think, particularly involving Dave Chinner.
-
-> 64-bit too, in case we ever get that insane?
-
-If you really want.  4GiB alignment and granularity is a bit insane, though.
-
-David
----
-'\" t
-.\" Copyright (c) 2018 David Howells <dhowells@redhat.com>
-.\"
-.\" %%%LICENSE_START(VERBATIM)
-.\" Permission is granted to make and distribute verbatim copies of this
-.\" manual provided the copyright notice and this permission notice are
-.\" preserved on all copies.
-.\"
-.\" Permission is granted to copy and distribute modified versions of this
-.\" manual under the conditions for verbatim copying, provided that the
-.\" entire resulting derived work is distributed under the terms of a
-.\" permission notice identical to this one.
-.\"
-.\" Since the Linux kernel and libraries are constantly changing, this
-.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-.\" responsibility for errors or omissions, or for damages resulting from
-.\" the use of the information contained herein.  The author(s) may not
-.\" have taken the same level of care in the production of this manual,
-.\" which is licensed free of charge, as they might when working
-.\" professionally.
-.\"
-.\" Formatted or processed versions of this manual, if unaccompanied by
-.\" the source, must acknowledge the copyright and authors of this work.
-.\" %%%LICENSE_END
-.\"
-.TH FSINFO 2 2018-06-06 "Linux" "Linux Programmer's Manual"
-.SH NAME
-fsinfo \- Get filesystem information
-.SH SYNOPSIS
-.nf
-.B #include <sys/types.h>
-.br
-.B #include <sys/fsinfo.h>
-.br
-.B #include <unistd.h>
-.br
-.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
-.PP
-.BI "int fsinfo(int " dirfd ", const char *" pathname ","
-.BI "           struct fsinfo_params *" params ","
-.BI "           void *" buffer ", size_t " buf_size );
-.fi
-.PP
-.IR Note :
-There is no glibc wrapper for
-.BR fsinfo ();
-see NOTES.
-.SH DESCRIPTION
-.PP
-fsinfo() retrieves the desired filesystem attribute, as selected by the
-parameters pointed to by
-.IR params ,
-and stores its value in the buffer pointed to by
-.IR buffer .
-.PP
-The parameter structure is optional, defaulting to all the parameters being 0
-if the pointer is NULL.  The structure looks like the following:
-.PP
-.in +4n
-.nf
-struct fsinfo_params {
-    __u32 at_flags;     /* AT_SYMLINK_NOFOLLOW and similar flags */
-    __u32 request;      /* Requested attribute */
-    __u32 Nth;          /* Instance of attribute */
-    __u32 Mth;          /* Subinstance of Nth instance */
-    __u32 __reserved[6]; /* Reserved params; all must be 0 */
-};
-.fi
-.in
-.PP
-The filesystem to be queried is looked up using a combination of
-.IR dfd ", " pathname " and " params->at_flags.
-This is discussed in more detail below.
-.PP
-The desired attribute is indicated by
-.IR params->request .
-If
-.I params
-is NULL, this will default to
-.BR fsinfo_attr_statfs ,
-which retrieves some of the information returned by
-.BR statfs ().
-The available attributes are described below in the "THE ATTRIBUTES" section.
-.PP
-Some attributes can have multiple values and some can even have multiple
-instances with multiple values.  For example, a network filesystem might use
-multiple servers.  The names of each of these servers can be retrieved by
-using
-.I params->Nth
-to iterate through all the instances until error
-.B ENODATA
-occurs, indicating the end of the list.  Further, each server might have
-multiple addresses available; these can be enumerated using
-.I params->Nth
-to iterate the servers and
-.I params->Mth
-to iterate the addresses of the Nth server.
-.PP
-The amount of data written into the buffer depends on the attribute selected.
-Some attributes return variable-length strings and some return fixed-size
-structures.  If either
-.IR buffer " is  NULL  or " buf_size " is 0"
-then the size of the attribute value will be returned and nothing will be
-written into the buffer.
-.PP
-The
-.I params->__reserved
-parameters must all be 0.
-.\"_______________________________________________________
-.SS
-Allowance for Future Attribute Expansion
-.PP
-To allow for the future expansion and addition of fields to any fixed-size
-structure attribute,
-.BR fsinfo ()
-makes the following guarantees:
-.RS 4m
-.IP (1) 4m
-It will always clear any excess space in the buffer.
-.IP (2) 4m
-It will always return the actual size of the data.
-.IP (3) 4m
-It will truncate the data to fit it into the buffer rather than giving an
-error.
-.IP (4) 4m
-Any new version of a structure will incorporate all the fields from the old
-version at same offsets.
-.RE
-.PP
-So, for example, if the caller is running on an older version of the kernel
-with an older, smaller version of the structure than was asked for, the kernel
-will write the smaller version into the buffer and will clear the remainder of
-the buffer to make sure any additional fields are set to 0.  The function will
-return the actual size of the data.
-.PP
-On the other hand, if the caller is running on a newer version of the kernel
-with a newer version of the structure that is larger than the buffer, the write
-to the buffer will be truncated to fit as necessary and the actual size of the
-data will be returned.
-.PP
-Note that this doesn't apply to variable-length string attributes.
-
-.\"_______________________________________________________
-.SS
-Invoking \fBfsinfo\fR():
-.PP
-To access a file's status, no permissions are required on the file itself, but
-in the case of
-.BR fsinfo ()
-with a path, execute (search) permission is required on all of the directories
-in
-.I pathname
-that lead to the file.
-.PP
-.BR fsinfo ()
-uses
-.IR pathname ", " dirfd " and " params->at_flags
-to locate the target file in one of a variety of ways:
-.TP
-[*] By absolute path.
-.I pathname
-points to an absolute path and
-.I dirfd
-is ignored.  The file is looked up by name, starting from the root of the
-filesystem as seen by the calling process.
-.TP
-[*] By cwd-relative path.
-.I pathname
-points to a relative path and
-.IR dirfd " is " AT_FDCWD .
-The file is looked up by name, starting from the current working directory.
-.TP
-[*] By dir-relative path.
-.I pathname
-points to relative path and
-.I dirfd
-indicates a file descriptor pointing to a directory.  The file is looked up by
-name, starting from the directory specified by
-.IR dirfd .
-.TP
-[*] By file descriptor.
-.IR pathname " is " NULL " and " dirfd
-indicates a file descriptor.  The file attached to the file descriptor is
-queried directly.  The file descriptor may point to any type of file, not just
-a directory.
-.PP
-.I flags
-can be used to influence a path-based lookup.  A value for
-.I flags
-is constructed by OR'ing together zero or more of the following constants:
-.TP
-.BR AT_EMPTY_PATH
-.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
-If
-.I pathname
-is an empty string, operate on the file referred to by
-.IR dirfd
-(which may have been obtained using the
-.BR open (2)
-.B O_PATH
-flag).
-If
-.I dirfd
-is
-.BR AT_FDCWD ,
-the call operates on the current working directory.
-In this case,
-.I dirfd
-can refer to any type of file, not just a directory.
-This flag is Linux-specific; define
-.B _GNU_SOURCE
-.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-to obtain its definition.
-.TP
-.BR AT_NO_AUTOMOUNT
-Don't automount the terminal ("basename") component of
-.I pathname
-if it is a directory that is an automount point.  This allows the caller to
-gather attributes of the filesystem holding an automount point (rather than
-the filesystem it would mount).  This flag can be used in tools that scan
-directories to prevent mass-automounting of a directory of automount points.
-The
-.B AT_NO_AUTOMOUNT
-flag has no effect if the mount point has already been mounted over.
-This flag is Linux-specific; define
-.B _GNU_SOURCE
-.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-to obtain its definition.
-.TP
-.B AT_SYMLINK_NOFOLLOW
-If
-.I pathname
-is a symbolic link, do not dereference it:
-instead return information about the link itself, like
-.BR lstat ().
-.SH THE ATTRIBUTES
-.PP
-There is a range of attributes that can be selected from.  These are:
-
-.\" __________________ fsinfo_attr_statfs __________________
-.TP
-.B fsinfo_attr_statfs
-This retrieves the "dynamic"
-.B statfs
-information, such as block and file counts, that are expected to change whilst
-a filesystem is being used.  This fills in the following structure:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_statfs {
-    __u64 f_blocks;	/* Total number of blocks in fs */
-    __u64 f_bfree;	/* Total number of free blocks */
-    __u64 f_bavail;	/* Number of free blocks available to ordinary user */
-    __u64 f_files;	/* Total number of file nodes in fs */
-    __u64 f_ffree;	/* Number of free file nodes */
-    __u64 f_favail;	/* Number of free file nodes available to ordinary user */
-    __u32 f_bsize;	/* Optimal block size */
-    __u32 f_frsize;	/* Fragment size */
-};
-.fi
-.in
-.RE
-.IP
-The fields correspond to those of the same name returned by
-.BR statfs ().
-
-.\" __________________ fsinfo_attr_fsinfo __________________
-.TP
-.B fsinfo_attr_fsinfo
-This retrieves information about the
-.BR fsinfo ()
-system call itself.  This fills in the following structure:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_fsinfo {
-    __u32 max_attr;
-    __u32 max_cap;
-};
-.fi
-.in
-.RE
-.IP
-The
-.I max_attr
-value indicates the number of attributes supported by the
-.BR fsinfo ()
-system call, and
-.I max_cap
-indicates the number of capability bits supported by the
-.B fsinfo_attr_capabilities
-attribute.  The first corresponds to
-.I fsinfo_attr__nr
-and the second to
-.I fsinfo_cap__nr
-in the header file.
-
-.\" __________________ fsinfo_attr_ids __________________
-.TP
-.B fsinfo_attr_ids
-This retrieves a number of fixed IDs and other static information otherwise
-available through
-.BR statfs ().
-The following structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_ids {
-    char  f_fs_name[15 + 1]; /* Filesystem name */
-    __u64 f_flags;	/* Filesystem mount flags (MS_*) */
-    __u64 f_fsid;	/* Short 64-bit Filesystem ID */
-    __u64 f_sb_id;	/* Internal superblock ID */
-    __u32 f_fstype;	/* Filesystem type from linux/magic.h */
-    __u32 f_dev_major;	/* As st_dev_* from struct statx */
-    __u32 f_dev_minor;
-};
-.fi
-.in
-.RE
-.IP
-Most of these are filled in as for
-.BR statfs (),
-with the addition of the filesystem's symbolic name in
-.I f_fs_name
-and an identifier for use in notifications in
-.IR f_sb_id .
-
-.\" __________________ fsinfo_attr_limits __________________
-.TP
-.B fsinfo_attr_limits
-This retrieves information about the limits of what a filesystem can support.
-The following structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_limits {
-    __u64 max_file_size;
-    __u64 max_uid;
-    __u64 max_gid;
-    __u64 max_projid;
-    __u32 max_dev_major;
-    __u32 max_dev_minor;
-    __u32 max_hard_links;
-    __u32 max_xattr_body_len;
-    __u16 max_xattr_name_len;
-    __u16 max_filename_len;
-    __u16 max_symlink_len;
-    __u16 __reserved[1];
-};
-.fi
-.in
-.RE
-.IP
-These indicate the maximum supported sizes for a variety of filesystem objects,
-including the file size, the extended attribute name length and body length,
-the filename length and the symlink body length.
-.IP
-It also indicates the maximum representable values for a User ID, a Group ID,
-a Project ID, a device major number and a device minor number.
-.IP
-And finally, it indicates the maximum number of hard links that can be made to
-a file.
-.IP
-Note that some of these values may be zero if the underlying object or concept
-is not supported by the filesystem or the medium.
-
-.\" __________________ fsinfo_attr_supports __________________
-.TP
-.B fsinfo_attr_supports
-This retrieves information about what bits a filesystem supports in various
-masks.  The following structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_supports {
-    __u64 stx_attributes;
-    __u32 stx_mask;
-    __u32 ioc_flags;
-    __u32 win_file_attrs;
-    __u32 __reserved[1];
-};
-.fi
-.in
-.RE
-.IP
-The
-.IR stx_attributes " and " stx_mask
-fields indicate what bits in the struct statx fields of the matching names
-are supported by the filesystem.
-.IP
-The
-.I ioc_flags
-field indicates what FS_*_FL flag bits as used through the FS_IOC_GET/SETFLAGS
-ioctls are supported by the filesystem.
-.IP
-The
-.I win_file_attrs
-indicates what DOS/Windows file attributes a filesystem supports, if any.
-
-.\" __________________ fsinfo_attr_capabilities __________________
-.TP
-.B fsinfo_attr_capabilities
-This retrieves information about what features a filesystem supports as a
-series of single bit indicators.  The following structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_capabilities {
-    __u8 capabilities[(fsinfo_cap__nr + 7) / 8];
-};
-.fi
-.in
-.RE
-.IP
-where the bit of interest can be found by:
-.PP
-.RS
-.in +4n
-.nf
-	p->capabilities[bit / 8] & (1 << (bit % 8)))
-.fi
-.in
-.RE
-.IP
-The bits are listed by
-.I enum fsinfo_capability
-and
-.B fsinfo_cap__nr
-is one more than the last capability bit listed in the header file.
-.IP
-Note that the number of capability bits actually supported by the kernel can be
-found using the
-.B fsinfo_attr_fsinfo
-attribute.
-.IP
-The capability bits and their meanings are listed below in the "THE
-CAPABILITIES" section.
-
-.\" __________________ fsinfo_attr_timestamp_info __________________
-.TP
-.B fsinfo_attr_timestamp_info
-This retrieves information about what timestamp resolution and scope is
-supported by a filesystem for each of the file timestamps.  The following
-structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_timestamp_info {
-	__s64 minimum_timestamp;
-	__s64 maximum_timestamp;
-	__u16 atime_gran_mantissa;
-	__u16 btime_gran_mantissa;
-	__u16 ctime_gran_mantissa;
-	__u16 mtime_gran_mantissa;
-	__s8  atime_gran_exponent;
-	__s8  btime_gran_exponent;
-	__s8  ctime_gran_exponent;
-	__s8  mtime_gran_exponent;
-	__u32 __reserved[1];
-};
-.fi
-.in
-.RE
-.IP
-where
-.IR minimum_timestamp " and " maximum_timestamp
-are the limits on the timestamps that the filesystem supports and
-.IR *time_gran_mantissa " and " *time_gran_exponent
-indicate the granularity of each timestamp in terms of seconds, using the
-formula:
-.PP
-.RS
-.in +4n
-.nf
-mantissa * pow(10, exponent) Seconds
-.fi
-.in
-.RE
-.IP
-where exponent may be negative and the result may be a fraction of a second.
-.IP
-Four timestamps are detailed: \fBA\fPccess time, \fBB\fPirth/creation time,
-\fBC\fPhange time and \fBM\fPodification time.  Capability bits are defined
-that specify whether each of these exist in the filesystem or not.
-.IP
-Note that the timestamp description may be approximated or inaccurate if the
-file is actually remote or is the union of multiple objects.
-
-.\" __________________ fsinfo_attr_volume_id __________________
-.TP
-.B fsinfo_attr_volume_id
-This retrieves the system's superblock volume identifier as a variable-length
-string.  This does not necessarily represent a value stored in the medium but
-might be constructed on the fly.
-.IP
-For instance, for a block device this is the block device identifier
-(eg. "sdb2"); for AFS this would be the numeric volume identifier.
-
-.\" __________________ fsinfo_attr_volume_uuid __________________
-.TP
-.B fsinfo_attr_volume_uuid
-This retrieves the volume UUID, if there is one, as a little-endian binary
-UUID.  This fills in the following structure:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_volume_uuid {
-    __u8 uuid[16];
-};
-.fi
-.in
-.RE
-.IP
-
-.\" __________________ fsinfo_attr_volume_name __________________
-.TP
-.B fsinfo_attr_volume_name
-This retrieves the filesystem's volume name as a variable-length string.  This
-is expected to represent a name stored in the medium.
-.IP
-For a block device, this might be a label stored in the superblock.  For a
-network filesystem, this might be a logical volume name of some sort.
-
-.\" __________________ fsinfo_attr_cell/domain __________________
-.PP
-.B fsinfo_attr_cell_name
-.br
-.B fsinfo_attr_domain_name
-.br
-.IP
-These two attributes are variable-length string attributes that may be used to
-obtain information about network filesystems.  An AFS volume, for instance,
-belongs to a named cell.  CIFS shares may belong to a domain.
-
-.\" __________________ fsinfo_attr_realm_name __________________
-.TP
-.B fsinfo_attr_realm_name
-This attribute is variable-length string that indicates the Kerberos realm that
-a filesystem's authentication tokens should come from.
-
-.\" __________________ fsinfo_attr_server_name __________________
-.TP
-.B fsinfo_attr_server_name
-This attribute is a multiple-value attribute that lists the names of the
-servers that are backing a network filesystem.  Each value is a variable-length
-string.  The values are enumerated by calling
-.BR fsinfo ()
-multiple times, incrementing
-.I params->Nth
-each time until an ENODATA error occurs, thereby indicating the end of the
-list.
-
-.\" __________________ fsinfo_attr_server_address __________________
-.TP
-.B fsinfo_attr_server_address
-This attribute is a multiple-instance, multiple-value attribute that lists the
-addresses of the servers that are backing a network filesystem.  Each value is
-a structure of the following type:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_server_address {
-    struct __kernel_sockaddr_storage address;
-};
-.fi
-.in
-.RE
-.IP
-Where the address may be AF_INET, AF_INET6, AF_RXRPC or any other type as
-appropriate to the filesystem.
-.IP
-The values are enumerated by calling
-.IR fsinfo ()
-multiple times, incrementing
-.I params->Nth
-to step through the servers and
-.I params->Mth
-to step through the addresses of the Nth server each time until ENODATA errors
-occur, thereby indicating either the end of a server's address list or the end
-of the server list.
-.IP
-Barring the server list changing whilst being accessed, it is expected that the
-.I params->Nth
-will correspond to
-.I params->Nth
-for
-.BR fsinfo_attr_server_name .
-
-.\" __________________ fsinfo_attr_parameter __________________
-.TP
-.B fsinfo_attr_parameter
-This attribute is a multiple-value attribute that lists the values of the mount
-parameters for a filesystem as variable-length strings.
-.IP
-The parameters are enumerated by calling
-.BR fsinfo ()
-multiple times, incrementing
-.I params->Nth
-to step through them until error ENODATA is given.
-.IP
-Parameter strings are presented in a form akin to the way they're passed to the
-context created by the
-.BR fsopen ()
-system call.  For example, straight text parameters will be rendered as
-something like:
-.PP
-.RS
-.in +4n
-.nf
-"o data=journal"
-"o noquota"
-.fi
-.in
-.RE
-.IP
-Where the initial "word" indicates the option form.
-
-.\" __________________ fsinfo_attr_source __________________
-.TP
-.B fsinfo_attr_source
-This attribute is a multiple-value attribute that lists the mount sources for a
-filesystem as variable-length strings.  Normally only one source will be
-available, but the possibility of having more than one is allowed for.
-.IP
-The sources are enumerated by calling
-.BR fsinfo ()
-multiple times, incrementing
-.I params->Nth
-to step through them until error ENODATA is given.
-.IP
-Source strings are presented in a form akin to the way they're passed to the
-context created by the
-.BR fsopen ()
-system call.  For example, they will be rendered as something like:
-.PP
-.RS
-.in +4n
-.nf
-"s /dev/sda1"
-"s example.com/pub/linux/"
-.fi
-.in
-.RE
-.IP
-Where the initial "word" indicates the option form.
-
-.\" __________________ fsinfo_attr_name_encoding __________________
-.TP
-.B fsinfo_attr_name_encoding
-This attribute is variable-length string that indicates the filename encoding
-used by the filesystem.  The default is "utf8".  Note that this may indicate a
-non-8-bit encoding if that's what the underlying filesystem actually supports.
-
-.\" __________________ fsinfo_attr_name_codepage __________________
-.TP
-.B fsinfo_attr_name_codepage
-This attribute is variable-length string that indicates the codepage used to
-translate filenames from the filesystem to the system if this is applicable to
-the filesystem.
-
-.\" __________________ fsinfo_attr_io_size __________________
-.TP
-.B fsinfo_attr_io_size
-This retrieves information about the I/O sizes supported by the filesystem.
-The following structure is filled in:
-.PP
-.RS
-.in +4n
-.nf
-struct fsinfo_io_size {
-    __u32 block_size;
-    __u32 max_single_read_size;
-    __u32 max_single_write_size;
-    __u32 best_read_size;
-    __u32 best_write_size;
-};
-.fi
-.in
-.RE
-.IP
-Where
-.I block_size
-indicates the fundamental I/O block size of the filesystem as something
-O_DIRECT read/write sizes must be a multiple of;
-.IR max_single_write_size " and " max_single_write_size
-indicate the maximum sizes for individual unbuffered data transfer operations;
-and
-.IR best_read_size " and " best_write_size
-indicate the recommended I/O sizes.
-.IP
-Note that any of these may be zero if inapplicable or indeterminable.
-
-
-
-.SH THE CAPABILITIES
-.PP
-There are number of capability bits in a bit array that can be retrieved using
-.BR fsinfo_attr_capabilities .
-These give information about features of the filesystem driver and the specific
-filesystem.
-
-.\" __________________ fsinfo_cap_is_*_fs __________________
-.PP
-.B fsinfo_cap_is_kernel_fs
-.br
-.B fsinfo_cap_is_block_fs
-.br
-.B fsinfo_cap_is_flash_fs
-.br
-.B fsinfo_cap_is_network_fs
-.br
-.B fsinfo_cap_is_automounter_fs
-.IP
-These indicate the primary type of the filesystem.
-.B kernel
-filesystems are special communication interfaces that substitute files for
-system calls; examples include procfs and sysfs.
-.B block
-filesystems require a block device on which to operate; examples include ext4
-and XFS.
-.B flash
-filesystems require an MTD device on which to operate; examples include JFFS2.
-.B network
-filesystems require access to the network and contact one or more servers;
-examples include NFS and AFS.
-.B automounter
-filesystems are kernel special filesystems that host automount points and
-triggers to dynamically create automount points.  Examples include autofs and
-AFS's dynamic root.
-
-.\" __________________ fsinfo_cap_automounts __________________
-.TP
-.B fsinfo_cap_automounts
-The filesystem may have automount points that can be triggered by pathwalk.
-
-.\" __________________ fsinfo_cap_adv_locks __________________
-.TP
-.B fsinfo_cap_adv_locks
-The filesystem supports advisory file locks.  For a network filesystem, this
-indicates that the advisory file locks are cross-client (and also between
-server and its local filesystem on something like NFS).
-
-.\" __________________ fsinfo_cap_mand_locks __________________
-.TP
-.B fsinfo_cap_mand_locks
-The filesystem supports mandatory file locks.  For a network filesystem, this
-indicates that the mandatory file locks are cross-client (and also between
-server and its local filesystem on something like NFS).
-
-.\" __________________ fsinfo_cap_leases __________________
-.TP
-.B fsinfo_cap_leases
-The filesystem supports leases.  For a network filesystem, this means that the
-server will tell the client to clean up its state on a file before passing the
-lease to another client.
-
-.\" __________________ fsinfo_cap_*ids __________________
-.PP
-.B fsinfo_cap_uids
-.br
-.B fsinfo_cap_gids
-.br
-.B fsinfo_cap_projids
-.IP
-These indicate that the filesystem supports numeric user IDs, group IDs and
-project IDs respectively.
-
-.\" __________________ fsinfo_cap_id_* __________________
-.PP
-.B fsinfo_cap_id_names
-.br
-.B fsinfo_cap_id_guids
-.IP
-These indicate that the filesystem employs textual names and/or GUIDs as
-identifiers.
-
-.\" __________________ fsinfo_cap_windows_attrs __________________
-.TP
-.B fsinfo_cap_windows_attrs
-Indicates that the filesystem supports some Windows FILE_* attributes.
-
-.\" __________________ fsinfo_cap_*_quotas __________________
-.PP
-.B fsinfo_cap_user_quotas
-.br
-.B fsinfo_cap_group_quotas
-.br
-.B fsinfo_cap_project_quotas
-.IP
-These indicate that the filesystem supports quotas for users, groups and
-projects respectively.
-
-.\" __________________ fsinfo_cap_xattrs/filetypes __________________
-.PP
-.B fsinfo_cap_xattrs
-.br
-.B fsinfo_cap_symlinks
-.br
-.B fsinfo_cap_hard_links
-.br
-.B fsinfo_cap_hard_links_1dir
-.br
-.B fsinfo_cap_device_files
-.br
-.B fsinfo_cap_unix_specials
-.IP
-These indicate that the filesystem supports respectively extended attributes;
-symbolic links; hard links spanning direcories; hard links, but only within a
-directory; block and character device files; and UNIX special files, such as
-FIFO and socket.
-
-.\" __________________ fsinfo_cap_*journal* __________________
-.PP
-.B fsinfo_cap_journal
-.br
-.B fsinfo_cap_data_is_journalled
-.IP
-The first of these indicates that the filesystem has a journal and the second
-that the file data changes are being journalled.
-
-.\" __________________ fsinfo_cap_o_* __________________
-.PP
-.B fsinfo_cap_o_sync
-.br
-.B fsinfo_cap_o_direct
-.IP
-These indicate that O_SYNC and O_DIRECT are supported respectively.
-
-.\" __________________ fsinfo_cap_o_* __________________
-.PP
-.B fsinfo_cap_volume_id
-.br
-.B fsinfo_cap_volume_uuid
-.br
-.B fsinfo_cap_volume_name
-.br
-.B fsinfo_cap_volume_fsid
-.br
-.B fsinfo_cap_cell_name
-.br
-.B fsinfo_cap_domain_name
-.br
-.B fsinfo_cap_realm_name
-.IP
-These indicate if various attributes are supported by the filesystem, where
-.B fsinfo_cap_X
-here corresponds to
-.BR fsinfo_attr_X .
-
-.\" __________________ fsinfo_cap_iver_* __________________
-.PP
-.B fsinfo_cap_iver_all_change
-.br
-.B fsinfo_cap_iver_data_change
-.br
-.B fsinfo_cap_iver_mono_incr
-.IP
-These indicate if
-.I i_version
-on an inode in the filesystem is supported and
-how it behaves.
-.B all_change
-indicates that i_version is incremented on metadata changes as well as data
-changes.
-.B data_change
-indicates that i_version is only incremented on data changes, including
-truncation.
-.B mono_incr
-indicates that i_version is incremented by exactly 1 for each change made.
-
-.\" __________________ fsinfo_cap_resource_forks __________________
-.TP
-.B fsinfo_cap_resource_forks
-This indicates that the filesystem supports some sort of resource fork or
-alternate data stream on a file.  This isn't the same as an extended attribute.
-
-.\" __________________ fsinfo_cap_name_* __________________
-.PP
-.B fsinfo_cap_name_case_indep
-.br
-.B fsinfo_cap_name_non_utf8
-.br
-.B fsinfo_cap_name_has_codepage
-.IP
-These indicate certain facts about the filenames in a filesystem: whether
-they're case-independent; if they're not UTF-8; and if there's a codepage
-employed to map the names.
-
-.\" __________________ fsinfo_cap_sparse __________________
-.TP
-.B fsinfo_cap_sparse
-This indicates that the filesystem supports sparse files.
-
-.\" __________________ fsinfo_cap_not_persistent __________________
-.TP
-.B fsinfo_cap_not_persistent
-This indicates that the filesystem is not persistent, and that any data stored
-here will not be saved in the event that the filesystem is unmounted, the
-machine is rebooted or the machine loses power.
-
-.\" __________________ fsinfo_cap_no_unix_mode __________________
-.TP
-.B fsinfo_cap_no_unix_mode
-This indicates that the filesystem doesn't support the UNIX mode permissions
-bits.
-
-.\" __________________ fsinfo_cap_has_*time __________________
-.PP
-.B fsinfo_cap_has_atime
-.br
-.B fsinfo_cap_has_btime
-.br
-.B fsinfo_cap_has_ctime
-.br
-.B fsinfo_cap_has_mtime
-.IP
-These indicate as to what timestamps a filesystem supports, including: Access
-time, Birth/creation time, Change time (metadata and data) and Modification
-time (data only).
-
-
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.SH RETURN VALUE
-On success, the size of the value that the kernel has available is returned,
-irrespective of whether the buffer is large enough to hold that.  The data
-written to the buffer will be truncated if it is not.  On error, \-1 is
-returned, and
-.I errno
-is set appropriately.
-.SH ERRORS
-.TP
-.B EACCES
-Search permission is denied for one of the directories
-in the path prefix of
-.IR pathname .
-(See also
-.BR path_resolution (7).)
-.TP
-.B EBADF
-.I dirfd
-is not a valid open file descriptor.
-.TP
-.B EFAULT
-.I pathname
-is NULL or
-.IR pathname ", " params " or " buffer
-point to a location outside the process's accessible address space.
-.TP
-.B EINVAL
-Reserved flag specified in
-.IR params->at_flags " or one of " params->__reserved[]
-is not 0.
-.TP
-.B EOPNOTSUPP
-Unsupported attribute requested in
-.IR params->request .
-This may be beyond the limit of the supported attribute set or may just not be
-one that's supported by the filesystem.
-.TP
-.B ENODATA
-Unavailable attribute value requested by
-.IR params->Nth " and/or " params->Mth .
-.TP
-.B ELOOP
-Too many symbolic links encountered while traversing the pathname.
-.TP
-.B ENAMETOOLONG
-.I pathname
-is too long.
-.TP
-.B ENOENT
-A component of
-.I pathname
-does not exist, or
-.I pathname
-is an empty string and
-.B AT_EMPTY_PATH
-was not specified in
-.IR params->at_flags .
-.TP
-.B ENOMEM
-Out of memory (i.e., kernel memory).
-.TP
-.B ENOTDIR
-A component of the path prefix of
-.I pathname
-is not a directory or
-.I pathname
-is relative and
-.I dirfd
-is a file descriptor referring to a file other than a directory.
-.SH VERSIONS
-.BR fsinfo ()
-was added to Linux in kernel 4.18.
-.SH CONFORMING TO
-.BR fsinfo ()
-is Linux-specific.
-.SH NOTES
-Glibc does not (yet) provide a wrapper for the
-.BR fsinfo ()
-system call; call it using
-.BR syscall (2).
-.SH SEE ALSO
-.BR ioctl_iflags (2),
-.BR statx (2),
-.BR statfs (2)
+Thank you!
