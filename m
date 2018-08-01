@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B9EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7C5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AE120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AE120862
+	by mail.kernel.org (Postfix) with ESMTP id D862320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D862320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405463AbeHATHU (ORCPT
+        id S2405475AbeHATHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49170 "EHLO
+        Wed, 1 Aug 2018 15:07:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49184 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405438AbeHATHT (ORCPT
+        with ESMTP id S2404995AbeHATHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:19 -0400
+        Wed, 1 Aug 2018 15:07:22 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47D8ACC2;
-        Wed,  1 Aug 2018 17:20:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CBE5CE6;
+        Wed,  1 Aug 2018 17:20:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 176/246] spi: meson-spicc: Fix error handling in meson_spicc_probe()
-Date:   Wed,  1 Aug 2018 18:51:26 +0200
-Message-Id: <20180801165020.149845495@linuxfoundation.org>
+Subject: [PATCH 4.14 177/246] net: hns3: Fixes the out of bounds access in hclge_map_tqp
+Date:   Wed,  1 Aug 2018 18:51:27 +0200
+Message-Id: <20180801165020.193425274@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,44 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit ded5fa4e8bac25612caab8f0822691308a28a552 ]
+[ Upstream commit 38e62046d4c95272e2fb001d2d72baf48fa090e9 ]
 
-If devm_spi_register_master() fails in meson_spicc_probe(),
-spicc->core is left undisabled. The patch fixes that.
+This patch fixes the handling of the check when number of vports
+are detected to be more than available TPQs. Current handling causes
+an out of bounds access in hclge_map_tqp().
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 7df7dad633e2 ("net: hns3: Refactor the mapping of tqp to vport")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-meson-spicc.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi-meson-spicc.c
-+++ b/drivers/spi/spi-meson-spicc.c
-@@ -574,10 +574,15 @@ static int meson_spicc_probe(struct plat
- 		master->max_speed_hz = rate >> 2;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1272,8 +1272,11 @@ static int hclge_alloc_vport(struct hclg
+ 	/* We need to alloc a vport for main NIC of PF */
+ 	num_vport = hdev->num_vmdq_vport + hdev->num_req_vfs + 1;
  
- 	ret = devm_spi_register_master(&pdev->dev, master);
--	if (!ret)
--		return 0;
-+	if (ret) {
-+		dev_err(&pdev->dev, "spi master registration failed\n");
-+		goto out_clk;
+-	if (hdev->num_tqps < num_vport)
+-		num_vport = hdev->num_tqps;
++	if (hdev->num_tqps < num_vport) {
++		dev_err(&hdev->pdev->dev, "tqps(%d) is less than vports(%d)",
++			hdev->num_tqps, num_vport);
++		return -EINVAL;
 +	}
  
--	dev_err(&pdev->dev, "spi master registration failed\n");
-+	return 0;
-+
-+out_clk:
-+	clk_disable_unprepare(spicc->core);
- 
- out_master:
- 	spi_master_put(master);
+ 	/* Alloc the same number of TQPs for every vport */
+ 	tqp_per_vport = hdev->num_tqps / num_vport;
 
 
