@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4844C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF9FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EFC020862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EFC020862
+	by mail.kernel.org (Postfix) with ESMTP id 62498208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62498208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbeHAT7F (ORCPT
+        id S1732188AbeHAT7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:59:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
+        Wed, 1 Aug 2018 15:59:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405683AbeHATIf (ORCPT
+        with ESMTP id S2405701AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B63E8136D;
-        Wed,  1 Aug 2018 17:13:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 302EF13B9;
+        Wed,  1 Aug 2018 17:15:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/246] ceph: fix alignment of rasize
-Date:   Wed,  1 Aug 2018 18:49:13 +0200
-Message-Id: <20180801165013.782976544@linuxfoundation.org>
+Subject: [PATCH 4.14 073/246] Bluetooth: hci_qca: Fix "Sleep inside atomic section" warning
+Date:   Wed,  1 Aug 2018 18:49:43 +0200
+Message-Id: <20180801165015.204372917@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,35 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chengguang Xu <cgxu519@gmx.com>
+From: Thierry Escande <thierry.escande@linaro.org>
 
-[ Upstream commit c36ed50de2ad1649ce0369a4a6fc2cc11b20dfb7 ]
+[ Upstream commit 9960521c44a5d828f29636ceac0600603ecbddbf ]
 
-On currently logic:
-when I specify rasize=0~1 then it will be 4096.
-when I specify rasize=2~4097 then it will be 8192.
+This patch fixes the following warning during boot:
 
-Make it the same as rsize & wsize.
+ do not call blocking ops when !TASK_RUNNING; state=1 set at
+ [<(ptrval)>] qca_setup+0x194/0x750 [hci_uart]
+ WARNING: CPU: 2 PID: 1878 at kernel/sched/core.c:6135
+ __might_sleep+0x7c/0x88
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+In qca_set_baudrate(), the current task state is set to
+TASK_UNINTERRUPTIBLE before going to sleep for 300ms. It was then
+restored to TASK_INTERRUPTIBLE. This patch sets the current task state
+back to TASK_RUNNING instead.
+
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ceph/super.c |    2 +-
+ drivers/bluetooth/hci_qca.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -254,7 +254,7 @@ static int parse_fsopt_token(char *c, vo
- 	case Opt_rasize:
- 		if (intval < 0)
- 			return -EINVAL;
--		fsopt->rasize = ALIGN(intval + PAGE_SIZE - 1, PAGE_SIZE);
-+		fsopt->rasize = ALIGN(intval, PAGE_SIZE);
- 		break;
- 	case Opt_caps_wanted_delay_min:
- 		if (intval < 1)
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -881,7 +881,7 @@ static int qca_set_baudrate(struct hci_d
+ 	 */
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+-	set_current_state(TASK_INTERRUPTIBLE);
++	set_current_state(TASK_RUNNING);
+ 
+ 	return 0;
+ }
 
 
