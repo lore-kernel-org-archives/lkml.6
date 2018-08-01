@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB17C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C245C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4148D2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4148D2083D
+	by mail.kernel.org (Postfix) with ESMTP id C50EC208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:06:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50EC208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732824AbeHATxJ (ORCPT
+        id S1732807AbeHATxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:53:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
+        Wed, 1 Aug 2018 15:53:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405828AbeHATIh (ORCPT
+        with ESMTP id S2405815AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57CD0137D;
-        Wed,  1 Aug 2018 17:14:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 580A6132C;
+        Wed,  1 Aug 2018 17:11:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stewart Smith <stewart@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 049/246] hvc_opal: dont set tb_ticks_per_usec in udbg_init_opal_common()
-Date:   Wed,  1 Aug 2018 18:49:19 +0200
-Message-Id: <20180801165014.070184202@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Dave Jones <dsj@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Snyder <joshs@netflix.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 012/246] delayacct: fix crash in delayacct_blkio_end() after delayacct init failure
+Date:   Wed,  1 Aug 2018 18:48:42 +0200
+Message-Id: <20180801165012.280528692@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,46 +53,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stewart Smith <stewart@linux.ibm.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 447808bf500a7cc92173266a59f8a494e132b122 ]
+commit b512719f771a82180211c9a315b8a7f628832b3d upstream.
 
-time_init() will set up tb_ticks_per_usec based on reality.
-time_init() is called *after* udbg_init_opal_common() during boot.
+While forking, if delayacct init fails due to memory shortage, it
+continues expecting all delayacct users to check task->delays pointer
+against NULL before dereferencing it, which all of them used to do.
 
-from arch/powerpc/kernel/time.c:
-  unsigned long tb_ticks_per_usec = 100; /* sane default */
+Commit c96f5471ce7d ("delayacct: Account blkio completion on the correct
+task"), while updating delayacct_blkio_end() to take the target task
+instead of always using %current, made the function test NULL on
+%current->delays and then continue to operated on @p->delays.  If
+%current succeeded init while @p didn't, it leads to the following
+crash.
 
-Currently, all powernv systems have a timebase frequency of 512mhz
-(512000000/1000000 == 0x200) - although there's nothing written
-down anywhere that I can find saying that we couldn't make that
-different based on the requirements in the ISA.
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
+ IP: __delayacct_blkio_end+0xc/0x40
+ PGD 8000001fd07e1067 P4D 8000001fd07e1067 PUD 1fcffbb067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 4 PID: 25774 Comm: QIOThread0 Not tainted 4.16.0-9_fbk1_rc2_1180_g6b593215b4d7 #9
+ RIP: 0010:__delayacct_blkio_end+0xc/0x40
+ Call Trace:
+  try_to_wake_up+0x2c0/0x600
+  autoremove_wake_function+0xe/0x30
+  __wake_up_common+0x74/0x120
+  wake_up_page_bit+0x9c/0xe0
+  mpage_end_io+0x27/0x70
+  blk_update_request+0x78/0x2c0
+  scsi_end_request+0x2c/0x1e0
+  scsi_io_completion+0x20b/0x5f0
+  blk_mq_complete_request+0xa2/0x100
+  ata_scsi_qc_complete+0x79/0x400
+  ata_qc_complete_multiple+0x86/0xd0
+  ahci_handle_port_interrupt+0xc9/0x5c0
+  ahci_handle_port_intr+0x54/0xb0
+  ahci_single_level_irq_intr+0x3b/0x60
+  __handle_irq_event_percpu+0x43/0x190
+  handle_irq_event_percpu+0x20/0x50
+  handle_irq_event+0x2a/0x50
+  handle_edge_irq+0x80/0x1c0
+  handle_irq+0xaf/0x120
+  do_IRQ+0x41/0xc0
+  common_interrupt+0xf/0xf
 
-So, we've been (accidentally) thwacking the (currently) correct
-(for powernv at least) value for tb_ticks_per_usec earlier than
-we otherwise would have.
+Fix it by updating delayacct_blkio_end() check @p->delays instead.
 
-The "sane default" seems to be adequate for our purposes between
-udbg_init_opal_common() and time_init() being called, and if it isn't,
-then we should probably be setting it somewhere that isn't hvc_opal.c!
-
-Signed-off-by: Stewart Smith <stewart@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Link: http://lkml.kernel.org/r/20180724175542.GP1934745@devbig577.frc2.facebook.com
+Fixes: c96f5471ce7d ("delayacct: Account blkio completion on the correct task")
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Dave Jones <dsj@fb.com>
+Debugged-by: Dave Jones <dsj@fb.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Josh Snyder <joshs@netflix.com>
+Cc: <stable@vger.kernel.org>	[4.15+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/hvc/hvc_opal.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/drivers/tty/hvc/hvc_opal.c
-+++ b/drivers/tty/hvc/hvc_opal.c
-@@ -332,7 +332,6 @@ static void udbg_init_opal_common(void)
- 	udbg_putc = udbg_opal_putc;
- 	udbg_getc = udbg_opal_getc;
- 	udbg_getc_poll = udbg_opal_getc_poll;
--	tb_ticks_per_usec = 0x200; /* Make udelay not suck */
- }
+---
+ include/linux/delayacct.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/linux/delayacct.h
++++ b/include/linux/delayacct.h
+@@ -124,7 +124,7 @@ static inline void delayacct_blkio_start
  
- void __init hvc_opal_init_early(void)
+ static inline void delayacct_blkio_end(struct task_struct *p)
+ {
+-	if (current->delays)
++	if (p->delays)
+ 		__delayacct_blkio_end(p);
+ 	delayacct_clear_flag(DELAYACCT_PF_BLKIO);
+ }
 
 
