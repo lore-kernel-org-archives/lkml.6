@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E73CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF61CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D182083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2D182083D
+	by mail.kernel.org (Postfix) with ESMTP id 745012083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745012083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732380AbeHAUHI (ORCPT
+        id S1732471AbeHAUHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46152 "EHLO
+        Wed, 1 Aug 2018 16:07:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404466AbeHATDk (ORCPT
+        with ESMTP id S2404453AbeHATDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 442421070;
-        Wed,  1 Aug 2018 17:07:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4308711A6;
+        Wed,  1 Aug 2018 17:07:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Novakovic <chris@chrisn.me.uk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 258/336] ipconfig: Correctly initialise ic_nameservers
-Date:   Wed,  1 Aug 2018 18:49:53 +0200
-Message-Id: <20180801165038.922760509@linuxfoundation.org>
+Subject: [PATCH 4.17 268/336] serial: core: Make sure compiler barfs for 16-byte earlycon names
+Date:   Wed,  1 Aug 2018 18:50:03 +0200
+Message-Id: <20180801165039.297164296@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,86 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Novakovic <chris@chrisn.me.uk>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 300eec7c0a2495f771709c7642aa15f7cc148b83 ]
+[ Upstream commit c1c734cb1f54b062f7e67ffc9656d82f5b412b9c ]
 
-ic_nameservers, which stores the list of name servers discovered by
-ipconfig, is initialised (i.e. has all of its elements set to NONE, or
-0xffffffff) by ic_nameservers_predef() in the following scenarios:
+As part of bringup I ended up wanting to call an earlycon driver by a
+name that was exactly 16-bytes big, specifically "qcom_geni_serial".
 
- - before the "ip=" and "nfsaddrs=" kernel command line parameters are
-   parsed (in ip_auto_config_setup());
- - before autoconfiguring via DHCP or BOOTP (in ic_bootp_init()), in
-   order to clear any values that may have been set after parsing "ip="
-   or "nfsaddrs=" and are no longer needed.
+Unfortunately, when I tried this I found that things compiled just
+fine.  They just didn't work.
 
-This means that ic_nameservers_predef() is not called when neither "ip="
-nor "nfsaddrs=" is specified on the kernel command line. In this
-scenario, every element in ic_nameservers remains set to 0x00000000,
-which is indistinguishable from ANY and causes pnp_seq_show() to write
-the following (bogus) information to /proc/net/pnp:
+Specifically the compiler felt perfectly justified in initting the
+".name" field of "struct earlycon_id" with the full 16-bytes and just
+skipping the '\0'.  Needless to say, that behavior didn't seem ideal,
+but I guess someone must have allowed it for a reason.
 
-  #MANUAL
-  nameserver 0.0.0.0
-  nameserver 0.0.0.0
-  nameserver 0.0.0.0
+One way to fix this is to shorten the name field to 15 bytes and then
+add an extra byte after that nobody touches.  This should always be
+initted to 0 and we're golden.
 
-This is potentially problematic for systems that blindly link
-/etc/resolv.conf to /proc/net/pnp.
+There are, of course, other ways to fix this too.  We could audit all
+the users of the "name" field and make them stop at both null
+termination or at 16 bytes.  We could also just make the name field
+much bigger so that we're not likely to run into this.  ...but both
+seem like we'll just hit the bug again.
 
-Ensure that ic_nameservers is also initialised when neither "ip=" nor
-"nfsaddrs=" are specified by calling ic_nameservers_predef() in
-ip_auto_config(), but only when ip_auto_config_setup() was not called
-earlier. This causes the following to be written to /proc/net/pnp, and
-is consistent with what gets written when ipconfig is configured
-manually but no name servers are specified on the kernel command line:
-
-  #MANUAL
-
-Signed-off-by: Chris Novakovic <chris@chrisn.me.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ipconfig.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ include/linux/serial_core.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -748,6 +748,11 @@ static void __init ic_bootp_init_ext(u8
-  */
- static inline void __init ic_bootp_init(void)
- {
-+	/* Re-initialise all name servers to NONE, in case any were set via the
-+	 * "ip=" or "nfsaddrs=" kernel command line parameters: any IP addresses
-+	 * specified there will already have been decoded but are no longer
-+	 * needed
-+	 */
- 	ic_nameservers_predef();
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -348,7 +348,8 @@ struct earlycon_device {
+ };
  
- 	dev_add_pack(&bootp_packet_type);
-@@ -1368,6 +1373,13 @@ static int __init ip_auto_config(void)
- 	int err;
- 	unsigned int i;
- 
-+	/* Initialise all name servers to NONE (but only if the "ip=" or
-+	 * "nfsaddrs=" kernel command line parameters weren't decoded, otherwise
-+	 * we'll overwrite the IP addresses specified there)
-+	 */
-+	if (ic_set_manually == 0)
-+		ic_nameservers_predef();
-+
- #ifdef CONFIG_PROC_FS
- 	proc_create("pnp", 0444, init_net.proc_net, &pnp_seq_fops);
- #endif /* CONFIG_PROC_FS */
-@@ -1588,6 +1600,7 @@ static int __init ip_auto_config_setup(c
- 		return 1;
- 	}
- 
-+	/* Initialise all name servers to NONE */
- 	ic_nameservers_predef();
- 
- 	/* Parse string for static IP assignment.  */
+ struct earlycon_id {
+-	char	name[16];
++	char	name[15];
++	char	name_term;	/* In case compiler didn't '\0' term name */
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+ };
 
 
