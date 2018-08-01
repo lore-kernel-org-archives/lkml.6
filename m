@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DAAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF27C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3AF92083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AF92083D
+	by mail.kernel.org (Postfix) with ESMTP id 3B5322083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5322083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404578AbeHATDl (ORCPT
+        id S2404566AbeHATDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:03:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404471AbeHATDk (ORCPT
+        with ESMTP id S2404465AbeHATDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F3031223;
-        Wed,  1 Aug 2018 17:09:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F9B61005;
+        Wed,  1 Aug 2018 16:59:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Martin Wilck <mwilck@suse.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 296/336] block: bio_iov_iter_get_pages: fix size of last iovec
-Date:   Wed,  1 Aug 2018 18:50:31 +0200
-Message-Id: <20180801165040.367328395@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Renesas BSP team via Yoshihiro Shimoda 
+        <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 133/336] spi: sh-msiof: Fix setting SIRMDR1.SYNCAC to match SITMDR1.SYNCAC
+Date:   Wed,  1 Aug 2018 18:47:48 +0200
+Message-Id: <20180801165034.220548016@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,76 +55,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Wilck <mwilck@suse.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit b403ea2404889e1227812fa9657667a1deb9c694 upstream.
+[ Upstream commit 0921e11e1e12802ae0a3c19cb02e33354ca51967 ]
 
-If the last page of the bio is not "full", the length of the last
-vector slot needs to be corrected. This slot has the index
-(bio->bi_vcnt - 1), but only in bio->bi_io_vec. In the "bv" helper
-array, which is shifted by the value of bio->bi_vcnt at function
-invocation, the correct index is (nr_pages - 1).
+According to section 59.2.4 MSIOF Receive Mode Register 1 (SIRMDR1) in
+the R-Car Gen3 datasheet Rev.1.00, the value of the SIRMDR1.SYNCAC bit
+must match the value of the SITMDR1.SYNCAC bit.  However,
+sh_msiof_spi_setup() changes only the latter.
 
-v2: improved readability following suggestions from Ming Lei.
-v3: followed a formatting suggestion from Christoph Hellwig.
+Fix this by updating the SIRMDR1 register like the SITMDR1 register,
+taking into account register bits that exist in SITMDR1 only.
 
-Fixes: 2cefe4dbaadf ("block: add bio_iov_iter_get_pages()")
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin Wilck <mwilck@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 7ff0b53c4051145d ("spi: sh-msiof: Avoid writing to registers from spi_master.setup()")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/bio.c |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/spi/spi-sh-msiof.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -881,16 +881,16 @@ EXPORT_SYMBOL(bio_add_page);
-  */
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
--	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
-+	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt, idx;
- 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
- 	struct page **pages = (struct page **)bv;
--	size_t offset, diff;
-+	size_t offset;
- 	ssize_t size;
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -564,14 +564,16 @@ static int sh_msiof_spi_setup(struct spi
  
- 	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
- 	if (unlikely(size <= 0))
- 		return size ? size : -EFAULT;
--	nr_pages = (size + offset + PAGE_SIZE - 1) / PAGE_SIZE;
-+	idx = nr_pages = (size + offset + PAGE_SIZE - 1) / PAGE_SIZE;
- 
- 	/*
- 	 * Deep magic below:  We need to walk the pinned pages backwards
-@@ -903,17 +903,15 @@ int bio_iov_iter_get_pages(struct bio *b
- 	bio->bi_iter.bi_size += size;
- 	bio->bi_vcnt += nr_pages;
- 
--	diff = (nr_pages * PAGE_SIZE - offset) - size;
--	while (nr_pages--) {
--		bv[nr_pages].bv_page = pages[nr_pages];
--		bv[nr_pages].bv_len = PAGE_SIZE;
--		bv[nr_pages].bv_offset = 0;
-+	while (idx--) {
-+		bv[idx].bv_page = pages[idx];
-+		bv[idx].bv_len = PAGE_SIZE;
-+		bv[idx].bv_offset = 0;
- 	}
- 
- 	bv[0].bv_offset += offset;
- 	bv[0].bv_len -= offset;
--	if (diff)
--		bv[bio->bi_vcnt - 1].bv_len -= diff;
-+	bv[nr_pages - 1].bv_len -= nr_pages * PAGE_SIZE - offset - size;
- 
- 	iov_iter_advance(iter, size);
- 	return 0;
+ 	/* Configure native chip select mode/polarity early */
+ 	clr = MDR1_SYNCMD_MASK;
+-	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
++	set = MDR1_SYNCMD_SPI;
+ 	if (spi->mode & SPI_CS_HIGH)
+ 		clr |= BIT(MDR1_SYNCAC_SHIFT);
+ 	else
+ 		set |= BIT(MDR1_SYNCAC_SHIFT);
+ 	pm_runtime_get_sync(&p->pdev->dev);
+ 	tmp = sh_msiof_read(p, TMDR1) & ~clr;
+-	sh_msiof_write(p, TMDR1, tmp | set);
++	sh_msiof_write(p, TMDR1, tmp | set | MDR1_TRMD | TMDR1_PCON);
++	tmp = sh_msiof_read(p, RMDR1) & ~clr;
++	sh_msiof_write(p, RMDR1, tmp | set);
+ 	pm_runtime_put(&p->pdev->dev);
+ 	p->native_cs_high = spi->mode & SPI_CS_HIGH;
+ 	p->native_cs_inited = true;
 
 
