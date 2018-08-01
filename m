@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D00C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA88C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA5A20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA5A20844
+	by mail.kernel.org (Postfix) with ESMTP id 8C0D42083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0D42083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407842AbeHATRv (ORCPT
+        id S2436507AbeHATRy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52724 "EHLO
+        Wed, 1 Aug 2018 15:17:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406895AbeHATRu (ORCPT
+        with ESMTP id S2406895AbeHATRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:50 -0400
+        Wed, 1 Aug 2018 15:17:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27943D5D;
-        Wed,  1 Aug 2018 17:31:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42661D57;
+        Wed,  1 Aug 2018 17:31:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org, Dominik Bozek <dominikx.bozek@intel.com>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 127/144] microblaze: Fix simpleImage format generation
-Date:   Wed,  1 Aug 2018 18:52:34 +0200
-Message-Id: <20180801164958.211194266@linuxfoundation.org>
+Subject: [PATCH 4.9 128/144] usb: hub: Dont wait for connect state at resume for powered-off ports
+Date:   Wed,  1 Aug 2018 18:52:35 +0200
+Message-Id: <20180801164958.252392000@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,47 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Simek <michal.simek@xilinx.com>
+From: Dominik Bozek <dominikx.bozek@intel.com>
 
-[ Upstream commit ece97f3a5fb50cf5f98886fbc63c9665f2bb199d ]
+[ Upstream commit 5d111f5190848d6fb1c414dc57797efea3526a2f ]
 
-simpleImage generation was broken for some time. This patch is fixing
-steps how simpleImage.*.ub file is generated. Steps are objdump of
-vmlinux and create .ub.
-Also make sure that there is striped elf version with .strip suffix.
+wait_for_connected() wait till a port change status to
+USB_PORT_STAT_CONNECTION, but this is not possible if
+the port is unpowered. The loop will only exit at timeout.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Such case take place if an over-current incident happen
+while system is in S3. Then during resume wait_for_connected()
+will wait 2s, which may be noticeable by the user.
+
+Signed-off-by: Dominik Bozek <dominikx.bozek@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/microblaze/boot/Makefile |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/usb/core/hub.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/microblaze/boot/Makefile
-+++ b/arch/microblaze/boot/Makefile
-@@ -21,17 +21,19 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FO
- quiet_cmd_cp = CP      $< $@$2
- 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
- 
--quiet_cmd_strip = STRIP   $@
-+quiet_cmd_strip = STRIP   $< $@$2
- 	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
--				-K _fdt_start vmlinux -o $@
-+				-K _fdt_start $< -o $@$2
- 
- UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
-+UIMAGE_IN = $@
-+UIMAGE_OUT = $@.ub
- 
- $(obj)/simpleImage.%: vmlinux FORCE
- 	$(call if_changed,cp,.unstrip)
- 	$(call if_changed,objcopy)
- 	$(call if_changed,uimage)
--	$(call if_changed,strip)
--	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
-+	$(call if_changed,strip,.strip)
-+	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
- 
- clean-files += simpleImage.*.unstrip linux.bin.ub dts/*.dtb
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3363,6 +3363,10 @@ static int wait_for_connected(struct usb
+ 	while (delay_ms < 2000) {
+ 		if (status || *portstatus & USB_PORT_STAT_CONNECTION)
+ 			break;
++		if (!port_is_power_on(hub, *portstatus)) {
++			status = -ENODEV;
++			break;
++		}
+ 		msleep(20);
+ 		delay_ms += 20;
+ 		status = hub_port_status(hub, *port1, portstatus, portchange);
 
 
