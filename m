@@ -2,87 +2,92 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949E3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D47BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50BB0208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BB0208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 79D4A208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:58:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D4A208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390011AbeHARmF (ORCPT
+        id S2389906AbeHARpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:42:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389557AbeHARmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:42:05 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6F82F7DAC7;
-        Wed,  1 Aug 2018 15:55:43 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw.lab.eng.bos.redhat.com [10.16.186.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 15C651C640;
-        Wed,  1 Aug 2018 15:55:42 +0000 (UTC)
-Subject: Re: [PATCH v2] arch/x86: Fix boot_cpu_data.microcode version output
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sironi@amazon.de, tony.luck@intel.com,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <20180601121939.GA23298@nazgul.tnic>
- <20180731112739.32338-1-prarit@redhat.com>
- <20180801154255.GC13988@nazgul.tnic>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <92d17176-e7cd-134c-c6aa-0507f8599cfe@redhat.com>
-Date:   Wed, 1 Aug 2018 11:55:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 1 Aug 2018 13:45:10 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.178]:44717 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389690AbeHARpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:45:09 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 535F93D7CED
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 10:58:47 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ktW7fcO6FkBj6ktWJfvS7H; Wed, 01 Aug 2018 10:58:47 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.61.218] (port=60612 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fktW6-002Ahq-T7; Wed, 01 Aug 2018 10:58:26 -0500
+Date:   Wed, 1 Aug 2018 10:58:25 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: pcm: Mark expected switch fall-through
+Message-ID: <20180801155825.GA4876@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180801154255.GC13988@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:55:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 15:55:43 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'prarit@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.61.218
+X-Source-L: No
+X-Exim-ID: 1fktW6-002Ahq-T7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.61.218]:60612
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
+Addresses-Coverity-ID: 1357375 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/core/oss/pcm_plugin.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 08/01/2018 11:43 AM, Borislav Petkov wrote:
-> (dropping stable@)
-> 
-> On Tue, Jul 31, 2018 at 07:27:39AM -0400, Prarit Bhargava wrote:
->> I tested this on AMD Ryzen & Intel Broadwell system and dumped the
->> boot_cpu_data before and after a microcode update.  On the Intel
->> system I also did a fatal MCE using mce-inject to confirm the output
->> from the mce handling code.
-> 
-> Ok, sending the two patches I've massaged into submission as a reply to
-> this message - please run them on your boxes. You can also inject MCEs
-> on the AMD box to verify - simply enable CONFIG_X86_MCE_INJECT, go to
-> debugfs and do, for example:
-> 
-> cd /sys/kernel/debug/mce-inject/
-> echo 10 > /sys/devices/system/machinecheck/machinecheck0/check_interval
-> echo 0x9c7d410092080813 > status; echo 0x000000006d3d483b > addr; echo 2 > cpu; echo 4 > bank; echo hw > flags
-> echo 0xbc00200000010015 > status; echo 0x00000000942e4d98 > addr; echo 6 > cpu; echo 2 > bank; echo hw > flags
-> echo 0xfe000010000b0c0f > status; echo 0xe1101add1e550012 > addr; echo 0xcafebeef > misc; echo 2 > cpu; echo hw > flags; echo 4 > bank
-> 
+diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
+index 85bab92..0391cb1a 100644
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -353,6 +353,7 @@ snd_pcm_format_t snd_pcm_plug_slave_format(snd_pcm_format_t format,
+ 				if (snd_mask_test(format_mask, (__force int)format1))
+ 					return format1;
+ 			}
++			/* fall through */
+ 		default:
+ 			return (__force snd_pcm_format_t)-EINVAL;
+ 		}
+-- 
+2.7.4
 
-Borislav, I'm not sure if you saw his comments but Oleksandr, cc'd, has an
-objection to overwriting the stored microcode version in boot_cpu_data.  He has
-found that information useful in debugging microcode issues.
-
-P.
-
-> Thanks!
-> 
