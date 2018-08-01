@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB891C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950B9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0A82083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0A82083D
+	by mail.kernel.org (Postfix) with ESMTP id 4E2E72083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2E72083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406957AbeHATMl (ORCPT
+        id S2406967AbeHATMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51444 "EHLO
+        Wed, 1 Aug 2018 15:12:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389883AbeHATMk (ORCPT
+        with ESMTP id S2405547AbeHATMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:40 -0400
+        Wed, 1 Aug 2018 15:12:44 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9DF5CC9;
-        Wed,  1 Aug 2018 17:25:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D797FCC3;
+        Wed,  1 Aug 2018 17:26:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 033/144] f2fs: fix to wait page writeback during revoking atomic write
-Date:   Wed,  1 Aug 2018 18:51:00 +0200
-Message-Id: <20180801164951.568693184@linuxfoundation.org>
+Subject: [PATCH 4.9 034/144] f2fs: Fix deadlock in shutdown ioctl
+Date:   Wed,  1 Aug 2018 18:51:01 +0200
+Message-Id: <20180801164951.636587905@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,32 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit e5e5732d8120654159254c16834bc8663d8be124 ]
+[ Upstream commit 60b2b4ee2bc01dd052f99fa9d65da2232102ef8e ]
 
-After revoking atomic write, related LBA can be reused by others, so we
-need to wait page writeback before reusing the LBA, in order to avoid
-interference between old atomic written in-flight IO and new IO.
+f2fs_ioc_shutdown() ioctl gets stuck in the below path
+when issued with F2FS_GOING_DOWN_FULLSYNC option.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+__switch_to+0x90/0xc4
+percpu_down_write+0x8c/0xc0
+freeze_super+0xec/0x1e4
+freeze_bdev+0xc4/0xcc
+f2fs_ioctl+0xc0c/0x1ce0
+f2fs_compat_ioctl+0x98/0x1f0
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/file.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -207,6 +207,8 @@ static int __revoke_inmem_pages(struct i
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1670,9 +1670,11 @@ static int f2fs_ioc_shutdown(struct file
+ 	if (get_user(in, (__u32 __user *)arg))
+ 		return -EFAULT;
  
- 		lock_page(page);
+-	ret = mnt_want_write_file(filp);
+-	if (ret)
+-		return ret;
++	if (in != F2FS_GOING_DOWN_FULLSYNC) {
++		ret = mnt_want_write_file(filp);
++		if (ret)
++			return ret;
++	}
  
-+		f2fs_wait_on_page_writeback(page, DATA, true);
-+
- 		if (recover) {
- 			struct dnode_of_data dn;
- 			struct node_info ni;
+ 	switch (in) {
+ 	case F2FS_GOING_DOWN_FULLSYNC:
+@@ -1700,7 +1702,8 @@ static int f2fs_ioc_shutdown(struct file
+ 	}
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+-	mnt_drop_write_file(filp);
++	if (in != F2FS_GOING_DOWN_FULLSYNC)
++		mnt_drop_write_file(filp);
+ 	return ret;
+ }
+ 
 
 
