@@ -3,41 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61133C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0839D20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0839D20840
+	by mail.kernel.org (Postfix) with ESMTP id 97CB220841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CB220841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbeHAUQX (ORCPT
+        id S2387634AbeHAUQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:16:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46150 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404233AbeHATDg (ORCPT
+        with ESMTP id S2404253AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1806F1011;
-        Wed,  1 Aug 2018 17:00:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2FA711AB;
+        Wed,  1 Aug 2018 17:07:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 136/336] pinctrl: msm: fix gpio-hog related boot issues
-Date:   Wed,  1 Aug 2018 18:47:51 +0200
-Message-Id: <20180801165034.333442150@linuxfoundation.org>
+Subject: [PATCH 4.17 267/336] staging: ks7010: fix error handling in ks7010_upload_firmware
+Date:   Wed,  1 Aug 2018 18:50:02 +0200
+Message-Id: <20180801165039.261462592@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,100 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-[ Upstream commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 ]
+[ Upstream commit 6e043704fb99e3e1d7a1bb02030e49c093cdd943 ]
 
-Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-Setting up any gpio-hog in the device-tree for his device would
-"kill the bootup completely":
+This commit checks missing error code check when checking
+if the firmware is running reading General Communication
+Register A (GCR_A).
 
-| [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-| [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-| [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-| [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-| [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+It also set ret to EBUSY if firmware is running before
+copying it.
 
-This was also verified on a RT-AC58U (IPQ4018) which would
-no longer boot, if a gpio-hog was specified. (Tried forcing
-the USB LED PIN (GPIO0) to high.).
-
-The problem is that Pinctrl+GPIO registration is currently
-peformed in the following order in pinctrl-msm.c:
-	1. pinctrl_register()
-	2. gpiochip_add()
-	3. gpiochip_add_pin_range()
-
-The actual error code -517 == -EPROBE_DEFER is coming from
-pinctrl_get_device_gpio_range(), which is called through:
-        gpiochip_add
-            of_gpiochip_add
-                of_gpiochip_scan_gpios
-                    gpiod_hog
-                        gpiochip_request_own_desc
-                            __gpiod_request
-                                chip->request
-                                    gpiochip_generic_request
-                                       pinctrl_gpio_request
-                                          pinctrl_get_device_gpio_range
-
-pinctrl_get_device_gpio_range() is unable to find any valid
-pin ranges, since nothing has been added to the pinctrldev_list yet.
-so the range can't be found, and the operation fails with -EPROBE_DEFER.
-
-This patch fixes the issue by adding the "gpio-ranges" property to
-the pinctrl device node of all upstream Qcom SoC. The pin ranges are
-then added by the gpio core.
-
-In order to remain compatible with older, existing DTs (and ACPI)
-a check for the "gpio-ranges" property has been added to
-msm_gpio_init(). This prevents the driver of adding the same entry
-to the pinctrldev_list twice.
-
-Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/staging/ks7010/ks7010_sdio.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -890,11 +890,24 @@ static int msm_gpio_init(struct msm_pinc
- 		return ret;
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -657,8 +657,11 @@ static int ks7010_upload_firmware(struct
+ 
+ 	/* Firmware running ? */
+ 	ret = ks7010_sdio_readb(priv, GCR_A, &byte);
++	if (ret)
++		goto release_host_and_free;
+ 	if (byte == GCR_A_RUN) {
+ 		netdev_dbg(priv->net_dev, "MAC firmware running ...\n");
++		ret = -EBUSY;
+ 		goto release_host_and_free;
  	}
  
--	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to add pin range\n");
--		gpiochip_remove(&pctrl->chip);
--		return ret;
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-+		ret = gpiochip_add_pin_range(&pctrl->chip,
-+			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-+		if (ret) {
-+			dev_err(pctrl->dev, "Failed to add pin range\n");
-+			gpiochip_remove(&pctrl->chip);
-+			return ret;
-+		}
- 	}
- 
- 	ret = gpiochip_irqchip_add(chip,
 
 
