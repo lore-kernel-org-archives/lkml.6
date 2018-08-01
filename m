@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EE4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20592083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20592083D
+	by mail.kernel.org (Postfix) with ESMTP id B82122083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82122083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732761AbeHAUNL (ORCPT
+        id S2404354AbeHATDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:13:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46076 "EHLO
+        Wed, 1 Aug 2018 15:03:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404313AbeHATDh (ORCPT
+        with ESMTP id S2404285AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D70FE11EF;
-        Wed,  1 Aug 2018 17:08:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90D40100D;
+        Wed,  1 Aug 2018 16:59:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Balbir Singh <bsingharora@gmail.com>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 247/336] delayacct: Use raw_spinlocks
-Date:   Wed,  1 Aug 2018 18:49:42 +0200
-Message-Id: <20180801165038.514348943@linuxfoundation.org>
+Subject: [PATCH 4.17 135/336] pinctrl: at91-pio4: add missing of_node_put
+Date:   Wed,  1 Aug 2018 18:47:50 +0200
+Message-Id: <20180801165034.296177159@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,101 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit 02acc80d19edb0d5684c997b2004ad19f9f5236e ]
+[ Upstream commit 21816364715f508c10da1e087e352bc1e326614f ]
 
-try_to_wake_up() might invoke delayacct_blkio_end() while holding the
-pi_lock (which is a raw_spinlock_t). delayacct_blkio_end() acquires
-task_delay_info.lock which is a spinlock_t. This causes a might sleep splat
-on -RT where non raw spinlocks are converted to 'sleeping' spinlocks.
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-task_delay_info.lock is only held for a short amount of time so it's not a
-problem latency wise to make convert it to a raw spinlock.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Link: https://lkml.kernel.org/r/20180423161024.6710-1-bigeasy@linutronix.de
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
+
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/delayacct.h |    2 +-
- kernel/delayacct.c        |   17 +++++++++--------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -29,7 +29,7 @@
- 
- #ifdef CONFIG_TASK_DELAY_ACCT
- struct task_delay_info {
--	spinlock_t	lock;
-+	raw_spinlock_t	lock;
- 	unsigned int	flags;	/* Private per-task flags */
- 
- 	/* For each stat XXX, add following, aligned appropriately
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -44,23 +44,24 @@ void __delayacct_tsk_init(struct task_st
- {
- 	tsk->delays = kmem_cache_zalloc(delayacct_cache, GFP_KERNEL);
- 	if (tsk->delays)
--		spin_lock_init(&tsk->delays->lock);
-+		raw_spin_lock_init(&tsk->delays->lock);
- }
- 
- /*
-  * Finish delay accounting for a statistic using its timestamps (@start),
-  * accumalator (@total) and @count
-  */
--static void delayacct_end(spinlock_t *lock, u64 *start, u64 *total, u32 *count)
-+static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total,
-+			  u32 *count)
- {
- 	s64 ns = ktime_get_ns() - *start;
- 	unsigned long flags;
- 
- 	if (ns > 0) {
--		spin_lock_irqsave(lock, flags);
-+		raw_spin_lock_irqsave(lock, flags);
- 		*total += ns;
- 		(*count)++;
--		spin_unlock_irqrestore(lock, flags);
-+		raw_spin_unlock_irqrestore(lock, flags);
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -576,8 +576,10 @@ static int atmel_pctl_dt_node_to_map(str
+ 		for_each_child_of_node(np_config, np) {
+ 			ret = atmel_pctl_dt_subnode_to_map(pctldev, np, map,
+ 						    &reserved_maps, num_maps);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(np);
+ 				break;
++			}
+ 		}
  	}
- }
- 
-@@ -127,7 +128,7 @@ int __delayacct_add_tsk(struct taskstats
- 
- 	/* zero XXX_total, non-zero XXX_count implies XXX stat overflowed */
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	tmp = d->blkio_delay_total + tsk->delays->blkio_delay;
- 	d->blkio_delay_total = (tmp < d->blkio_delay_total) ? 0 : tmp;
- 	tmp = d->swapin_delay_total + tsk->delays->swapin_delay;
-@@ -137,7 +138,7 @@ int __delayacct_add_tsk(struct taskstats
- 	d->blkio_count += tsk->delays->blkio_count;
- 	d->swapin_count += tsk->delays->swapin_count;
- 	d->freepages_count += tsk->delays->freepages_count;
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 
- 	return 0;
- }
-@@ -147,10 +148,10 @@ __u64 __delayacct_blkio_ticks(struct tas
- 	__u64 ret;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	ret = nsec_to_clock_t(tsk->delays->blkio_delay +
- 				tsk->delays->swapin_delay);
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 	return ret;
- }
  
 
 
