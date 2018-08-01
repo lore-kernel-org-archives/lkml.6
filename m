@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC82C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE93C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF26F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF26F20862
+	by mail.kernel.org (Postfix) with ESMTP id D332420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D332420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405133AbeHATFt (ORCPT
+        id S2405146AbeHATFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:05:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48064 "EHLO
+        Wed, 1 Aug 2018 15:05:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATFs (ORCPT
+        with ESMTP id S2403884AbeHATFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:05:48 -0400
+        Wed, 1 Aug 2018 15:05:52 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9026D15;
-        Wed,  1 Aug 2018 17:19:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0955CC2;
+        Wed,  1 Aug 2018 17:19:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 145/246] nvmem: properly handle returned value nvmem_reg_read
-Date:   Wed,  1 Aug 2018 18:50:55 +0200
-Message-Id: <20180801165018.667265583@linuxfoundation.org>
+Subject: [PATCH 4.14 109/246] PCI: pciehp: Request control of native hotplug only if supported
+Date:   Wed,  1 Aug 2018 18:50:19 +0200
+Message-Id: <20180801165016.931161652@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,53 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathieu Malaterre <malat@debian.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 50808bfcc14b854775a9f1d0abe3dac2babcf5c3 ]
+[ Upstream commit 408fec36a1ab3d14273c2116b449ef1e9be3cb8b ]
 
-Function nvmem_reg_read can return a non zero value indicating an error.
-This returned value must be read and error propagated to
-nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
+Currently we request control of native PCIe hotplug unconditionally.
+Native PCIe hotplug events are handled by the pciehp driver, and if it is
+not enabled those events will be lost.
 
-drivers/nvmem/core.c:1093:9: warning: variable 'rc' set but
- not used [-Wunused-but-set-variable]
+Request control of native PCIe hotplug only if the pciehp driver is
+enabled, so we will actually handle native PCIe hotplug events.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvmem/core.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/acpi/pci_root.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1049,6 +1049,8 @@ static inline void *nvmem_cell_prepare_w
- 
- 		/* setup the first byte with lsb bits from nvmem */
- 		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
-+		if (rc)
-+			goto err;
- 		*b++ |= GENMASK(bit_offset - 1, 0) & v;
- 
- 		/* setup rest of the byte if any */
-@@ -1067,11 +1069,16 @@ static inline void *nvmem_cell_prepare_w
- 		/* setup the last byte with msb bits from nvmem */
- 		rc = nvmem_reg_read(nvmem,
- 				    cell->offset + cell->bytes - 1, &v, 1);
-+		if (rc)
-+			goto err;
- 		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
- 
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -472,9 +472,11 @@ static void negotiate_os_control(struct
  	}
  
- 	return buf;
-+err:
-+	kfree(buf);
-+	return ERR_PTR(rc);
- }
+ 	control = OSC_PCI_EXPRESS_CAPABILITY_CONTROL
+-		| OSC_PCI_EXPRESS_NATIVE_HP_CONTROL
+ 		| OSC_PCI_EXPRESS_PME_CONTROL;
  
- /**
++	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE))
++		control |= OSC_PCI_EXPRESS_NATIVE_HP_CONTROL;
++
+ 	if (pci_aer_available()) {
+ 		if (aer_acpi_firmware_first())
+ 			dev_info(&device->dev,
 
 
