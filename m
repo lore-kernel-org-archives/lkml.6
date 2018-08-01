@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CA3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C1EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 282E720862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 282E720862
+	by mail.kernel.org (Postfix) with ESMTP id 4767020894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4767020894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389015AbeHANqU (ORCPT
+        id S2389086AbeHANqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:46:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49170 "EHLO mx1.suse.de"
+        Wed, 1 Aug 2018 09:46:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49322 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387744AbeHANqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:46:20 -0400
+        id S2389033AbeHANqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:46:32 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 643C9AE5B;
-        Wed,  1 Aug 2018 12:00:52 +0000 (UTC)
-Date:   Wed, 01 Aug 2018 14:00:52 +0200
-Message-ID: <s5hh8kenvnv.wl-tiwai@suse.de>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 39029ADA7;
+        Wed,  1 Aug 2018 12:01:04 +0000 (UTC)
+Date:   Wed, 01 Aug 2018 14:01:04 +0200
+Message-ID: <s5hftzynvnj.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Colin King" <colin.king@canonical.com>
 Cc:     <alsa-devel@alsa-project.org>,
@@ -41,10 +41,10 @@ Cc:     <alsa-devel@alsa-project.org>,
         "Arnaud Pouliquen" <arnaud.pouliquen@st.com>,
         "Olivier Moysan" <olivier.moysan@st.com>,
         <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/9] ALSA: asihpi: remove redundant variable max_streams
-In-Reply-To: <20180801104742.4328-2-colin.king@canonical.com>
+Subject: Re: [PATCH 2/9] ALSA: cs5535audio: remove redundant pointer 'dma'
+In-Reply-To: <20180801104742.4328-3-colin.king@canonical.com>
 References: <20180801104742.4328-1-colin.king@canonical.com>
-        <20180801104742.4328-2-colin.king@canonical.com>
+        <20180801104742.4328-3-colin.king@canonical.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -55,16 +55,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 01 Aug 2018 12:47:34 +0200,
+On Wed, 01 Aug 2018 12:47:35 +0200,
 Colin King wrote:
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Variable max_streams is being assigned but is never used hence it is
+> Pointer 'dma' is being assigned but is never used hence it is
 > redundant and can be removed.
 > 
-> Cleans up clang warning:
-> warning: variable 'max_streams' set but not used [-Wunused-but-set-variable]
+> Cleans up two clang warnings:
+> warning: variable 'dma' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
