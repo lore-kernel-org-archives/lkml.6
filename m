@@ -2,127 +2,147 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8119C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FEDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A189120894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:33:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A189120894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B861420894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:35:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B861420894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thalesgroup.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387596AbeHAJRv (ORCPT
+        id S2387607AbeHAJTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 05:17:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10165 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387517AbeHAJRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:17:50 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 087CC612D294A;
-        Wed,  1 Aug 2018 15:33:28 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
- 15:33:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <dhowells@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-afs@lists.infradead.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] rxrpc: remove redundant variables 'xcall','sp' and 'did_discard'
-Date:   Wed, 1 Aug 2018 15:32:51 +0800
-Message-ID: <20180801073251.9808-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 1 Aug 2018 05:19:40 -0400
+Received: from thsbbfxrt01p.thalesgroup.com ([192.54.144.131]:58570 "EHLO
+        thsbbfxrt01p.thalesgroup.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733234AbeHAJTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 05:19:40 -0400
+X-Greylist: delayed 340 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Aug 2018 05:19:38 EDT
+Received: from thsbbfxrt01p.thalesgroup.com (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 41gQ1G6lsvz6Rk;
+        Wed,  1 Aug 2018 09:29:38 +0200 (CEST)
+From:   JABLONSKY Jan <Jan.JABLONSKY@thalesgroup.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+CC:     "e1000-devel@lists.sourceforge.net" 
+        <e1000-devel@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+Subject: [E1000-devel] [PATCH] igb: CPU0 latency and updating statistics
+Thread-Topic: [E1000-devel] [PATCH] igb: CPU0 latency and updating statistics
+Thread-Index: AQHUKWlliIZIPdorn0yA6udIRduKDQ==
+Date:   Wed, 1 Aug 2018 07:29:34 +0000
+Message-ID: <1533108587.16601.56.camel@atviedlbe741.rss.d3s.at.thales>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.10.4-0ubuntu2 
+x-originating-ip: [10.177.70.237]
+x-pmwin-version: 4.0.3, Antivirus-Engine: 3.72.1, Antivirus-Data: 5.53
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EE991B26B6702E41AE52E5259D1D70C6@iris.infra.thales>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variables 'xcall','sp' and 'did_discard' are being assigned,
-but are never used,hence they are redundant and can be removed.
-
-fix fllowing warning:
-
-net/rxrpc/call_accept.c:110:22: warning: variable ‘xcall’ set but not used [-Wunused-but-set-variable]
-net/rxrpc/call_event.c:165:25: warning: variable ‘sp’ set but not used [-Wunused-but-set-variable]
-net/rxrpc/conn_client.c:1054:7: warning: variable ‘did_discard’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/rxrpc/call_accept.c | 2 --
- net/rxrpc/call_event.c  | 2 --
- net/rxrpc/conn_client.c | 2 --
- 3 files changed, 6 deletions(-)
-
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index a9a9be5..7487a62 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -107,7 +107,6 @@ static int rxrpc_service_prealloc_one(struct rxrpc_sock *rx,
- 
- 	write_lock(&rx->call_lock);
- 	if (user_attach_call) {
--		struct rxrpc_call *xcall;
- 		struct rb_node *parent, **pp;
- 
- 		/* Check the user ID isn't already in use */
-@@ -115,7 +114,6 @@ static int rxrpc_service_prealloc_one(struct rxrpc_sock *rx,
- 		parent = NULL;
- 		while (*pp) {
- 			parent = *pp;
--			xcall = rb_entry(parent, struct rxrpc_call, sock_node);
- 			if (user_call_ID < call->user_call_ID)
- 				pp = &(*pp)->rb_left;
- 			else if (user_call_ID > call->user_call_ID)
-diff --git a/net/rxrpc/call_event.c b/net/rxrpc/call_event.c
-index 2021041..8e7434e 100644
---- a/net/rxrpc/call_event.c
-+++ b/net/rxrpc/call_event.c
-@@ -162,7 +162,6 @@ static void rxrpc_congestion_timeout(struct rxrpc_call *call)
-  */
- static void rxrpc_resend(struct rxrpc_call *call, unsigned long now_j)
- {
--	struct rxrpc_skb_priv *sp;
- 	struct sk_buff *skb;
- 	unsigned long resend_at;
- 	rxrpc_seq_t cursor, seq, top;
-@@ -207,7 +206,6 @@ static void rxrpc_resend(struct rxrpc_call *call, unsigned long now_j)
- 
- 		skb = call->rxtx_buffer[ix];
- 		rxrpc_see_skb(skb, rxrpc_skb_tx_seen);
--		sp = rxrpc_skb(skb);
- 
- 		if (anno_type == RXRPC_TX_ANNO_UNACK) {
- 			if (ktime_after(skb->tstamp, max_age)) {
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 5736f64..e4bfbd7 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -1051,7 +1051,6 @@ void rxrpc_discard_expired_client_conns(struct work_struct *work)
- 		container_of(work, struct rxrpc_net, client_conn_reaper);
- 	unsigned long expiry, conn_expires_at, now;
- 	unsigned int nr_conns;
--	bool did_discard = false;
- 
- 	_enter("");
- 
-@@ -1113,7 +1112,6 @@ void rxrpc_discard_expired_client_conns(struct work_struct *work)
- 	 * If someone re-sets the flag and re-gets the ref, that's fine.
- 	 */
- 	rxrpc_put_connection(conn);
--	did_discard = true;
- 	nr_conns--;
- 	goto next;
- 
--- 
-2.7.0
-
-
+VGhlIFdhdGNoZG9nIHdvcmtxdWV1ZSBpbiBpZ2IgZHJpdmVyIGlzIHNjaGVkdWxlZCBldmVyeSAy
+cyBmb3IgZWFjaCANCm5ldHdvcmsgaW50ZXJmYWNlLiBUaGF0IGluY2x1ZGVzIHVwZGF0aW5nIGEg
+c3RhdGlzdGljcyBwcm90ZWN0ZWQgYnkgDQpzcGlubG9jay4gRnVuY3Rpb24gaWdiX3VwZGF0ZV9z
+dGF0cyBpbiB0aGlzIGNhc2Ugd2lsbCBiZSBwcm90ZWN0ZWQgDQphZ2FpbnN0IHByZWVtcHRpb24u
+IEFjY29yZGluZyB0byBudW1iZXIgb2YgYSBzdGF0aXN0aWNzIHJlZ2lzdGVycyANCihjY2EgNjAp
+LCBwcm9jZXNzaW5nIHRoaXMgZnVuY3Rpb24gbWlnaHQgY2F1c2UgYWRkaXRpb25hbCBjcHUgbG9h
+ZA0KIG9uIENQVTAuDQoNCkluIGNhc2Ugb2Ygc3RhdGlzdGljcyBzcGlubG9jayBtYXkgYmUgcmVw
+bGFjZWQgd2l0aCBtdXRleCwgd2hpY2ggDQpyZWR1Y2UgbGF0ZW5jeSBvbiBDUFUwLg0KDQoNCiMg
+TWVhc3VyZW1lbnRzDQpNZWFzdXJlbWVudHMgd2VyZSBwZXJmb3JtZWQgb24gSW50ZWwgQXRvbSBF
+Mzk1MCAoUXVhZC1Db3JlKSwgDQpFMzkzMCAoRHVhbC1Db3JlKQ0KDQojIEN5Y2xpY3Rlc3QNCkhp
+Z2ggbGF0ZW5jeSBpcyBhbHdheXMgb24gQ1BVMCB3aGljaCBtaWdodCBiZSBpbiByYW5nZSANCmZy
+b20gNzB1cyB0byAxNDB1cyAoc29tZXRpbWVzIGhpZ2hlcikNCg0KDQojIGN5Y2xpY3Rlc3QgLWwx
+MDAwMDAwIC1TbXA5MCAtaTIwMCAtcQ0KDQojIEUzOTMwDQojIGRlZmF1bHQNClQ6IDAgKCAxNzQ1
+KSBQOjkwIEk6MjAwIEM6MTAwMDAwMCBNaW46IDIgQWN0OiAzIEF2ZzogMyBNYXg6IDcyDQpUOiAx
+ICggMTc0NikgUDo5MCBJOjcwMCBDOiAyODU3MzcgTWluOiAzIEFjdDogNCBBdmc6IDMgTWF4OiAx
+Mw0KDQojIHdpdGggcGF0Y2gNClQ6IDAgKCAgOTMyKSBQOjkwIEk6MjAwIEM6MTAwMDAwMCBNaW46
+IDIgQWN0OiAzIEF2ZzogMyBNYXg6IDIyDQpUOiAxICggIDkzMykgUDo5MCBJOjcwMCBDOiAyODU3
+MzYgTWluOiAyIEFjdDogMyBBdmc6IDMgTWF4OiAxMg0KDQoNCiMgRTM5NTANCiMgZGVmYXVsdA0K
+VDogMCAoIDExMDMpIFA6OTAgSToyMDAgQzoxMDAwMDAwIE1pbjogMiBBY3Q6IDIgQXZnOiAyIE1h
+eDogODkNClQ6IDEgKCAxMTA0KSBQOjkwIEk6NzAwIEM6IDI4NTczOCBNaW46IDIgQWN0OiA0IEF2
+ZzogMiBNYXg6IDkNClQ6IDIgKCAxMTA1KSBQOjkwIEk6MTIwMCBDOiAxNjY2NzggTWluOiAyIEFj
+dDogNSBBdmc6IDMgTWF4OiAyMg0KVDogMyAoIDExMDYpIFA6OTAgSToxNzAwIEM6IDExNzY1MyBN
+aW46IDIgQWN0OiA2IEF2ZzogMiBNYXg6IDEzDQoNCiMgd2l0aCBwYXRjaA0KVDogMCAoICA4Nzkp
+IFA6OTAgSToyMDAgQzoxMDAwMDAwIE1pbjogMiBBY3Q6IDMgQXZnOiAzIE1heDogMjYNClQ6IDEg
+KCAgODgwKSBQOjkwIEk6NzAwIEM6IDI4NTcyOSBNaW46IDMgQWN0OiA0IEF2ZzogMyBNYXg6IDIy
+DQpUOiAyICggIDg4MSkgUDo5MCBJOjEyMDAgQzogMTY2NjcyIE1pbjogMyBBY3Q6IDcgQXZnOiAz
+IE1heDogMjQNClQ6IDMgKCAgODgyKSBQOjkwIEk6MTcwMCBDOiAxMTc2NDkgTWluOiAzIEFjdDog
+NyBBdmc6IDMgTWF4OiA4DQoNCg0KQWRkaXRpb25hbGx5IEkgdGhpbmsgdXBkYXRpbmcgc3RhdGlz
+dGljcyBhbmQgd2F0Y2hkb2cgdGFzayBzaG91bGQgDQpiZSBpbXBsZW1lbnRlZCBpbiAyIHNlcGFy
+YXRlZCB3YXlzDQoNClBhdGNoIGlzIGNyZWF0ZWQgYWdhaW5zdCBhIGxpbnV4LTQuNA0KDQpSZXZp
+ZXdlZCBhbHNvIGJ5OiBCZXJuaGFyZCBLYWluZGwgIDxiZXJuaGFyZC5rYWluZGxAdGhhbGVzZ3Jv
+dXAuY29tPg0KDQpTaWduZWQtb2ZmLWJ5OiBKYW4gSmFibG9uc2t5IDxqYW4uamFibG9uc2t5QHRo
+YWxlc2dyb3VwLmNvbT4NCi0tLQ0KIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2lnYi9pZ2Iu
+aCAgICAgICAgIHwgIDIgKy0NCiBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX2V0
+aHRvb2wuYyB8ICA0ICsrLS0NCiBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX21h
+aW4uYyAgICB8IDE0ICsrKysrKystLS0tLS0tDQogMyBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRp
+b25zKCspLCAxMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVy
+bmV0L2ludGVsL2lnYi9pZ2IuaA0KYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdi
+LmgNCmluZGV4IGUzY2I5M2IuLjg1ZDY4ZWEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC9ldGhl
+cm5ldC9pbnRlbC9pZ2IvaWdiLmgNCisrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2ln
+Yi9pZ2IuaA0KQEAgLTQwMSw3ICs0MDEsNyBAQCBzdHJ1Y3QgaWdiX2FkYXB0ZXIgew0KIAkvKiBP
+UyBkZWZpbmVkIHN0cnVjdHMgKi8NCiAJc3RydWN0IHBjaV9kZXYgKnBkZXY7DQogDQotCXNwaW5s
+b2NrX3Qgc3RhdHM2NF9sb2NrOw0KKwlzdHJ1Y3QgbXV0ZXggc3RhdHM2NF9sb2NrOw0KIAlzdHJ1
+Y3QgcnRubF9saW5rX3N0YXRzNjQgc3RhdHM2NDsNCiANCiAJLyogc3RydWN0cyBkZWZpbmVkIGlu
+IGUxMDAwX2h3LmggKi8NCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9p
+Z2IvaWdiX2V0aHRvb2wuYw0KYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX2V0
+aHRvb2wuYw0KaW5kZXggMjUyOWJjNi4uMDdjYzJiNiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0
+L2V0aGVybmV0L2ludGVsL2lnYi9pZ2JfZXRodG9vbC5jDQorKysgYi9kcml2ZXJzL25ldC9ldGhl
+cm5ldC9pbnRlbC9pZ2IvaWdiX2V0aHRvb2wuYw0KQEAgLTIyNzYsNyArMjI3Niw3IEBAIHN0YXRp
+YyB2b2lkIGlnYl9nZXRfZXRodG9vbF9zdGF0cyhzdHJ1Y3QNCm5ldF9kZXZpY2UgKm5ldGRldiwN
+CiAJaW50IGksIGo7DQogCWNoYXIgKnA7DQogDQotCXNwaW5fbG9jaygmYWRhcHRlci0+c3RhdHM2
+NF9sb2NrKTsNCisJbXV0ZXhfbG9jaygmYWRhcHRlci0+c3RhdHM2NF9sb2NrKTsNCiAJaWdiX3Vw
+ZGF0ZV9zdGF0cyhhZGFwdGVyLCBuZXRfc3RhdHMpOw0KIA0KIAlmb3IgKGkgPSAwOyBpIDwgSUdC
+X0dMT0JBTF9TVEFUU19MRU47IGkrKykgew0KQEAgLTIzMTksNyArMjMxOSw3IEBAIHN0YXRpYyB2
+b2lkIGlnYl9nZXRfZXRodG9vbF9zdGF0cyhzdHJ1Y3QNCm5ldF9kZXZpY2UgKm5ldGRldiwNCiAJ
+CX0gd2hpbGUgKHU2NF9zdGF0c19mZXRjaF9yZXRyeV9pcnEoJnJpbmctPnJ4X3N5bmNwLCBzdGFy
+dCkpOw0KIAkJaSArPSBJR0JfUlhfUVVFVUVfU1RBVFNfTEVOOw0KIAl9DQotCXNwaW5fdW5sb2Nr
+KCZhZGFwdGVyLT5zdGF0czY0X2xvY2spOw0KKwltdXRleF91bmxvY2soJmFkYXB0ZXItPnN0YXRz
+NjRfbG9jayk7DQogfQ0KIA0KIHN0YXRpYyB2b2lkIGlnYl9nZXRfc3RyaW5ncyhzdHJ1Y3QgbmV0
+X2RldmljZSAqbmV0ZGV2LCB1MzIgc3RyaW5nc2V0LA0KdTggKmRhdGEpDQpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWluLmMNCmIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWluLmMNCmluZGV4IDAyYjIzZjYuLjlkMjIzOTggMTAw
+NjQ0DQotLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX21haW4uYw0KKysr
+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9tYWluLmMNCkBAIC0xODEwLDkg
+KzE4MTAsOSBAQCB2b2lkIGlnYl9kb3duKHN0cnVjdCBpZ2JfYWRhcHRlciAqYWRhcHRlcikNCiAJ
+ZGVsX3RpbWVyX3N5bmMoJmFkYXB0ZXItPnBoeV9pbmZvX3RpbWVyKTsNCiANCiAJLyogcmVjb3Jk
+IHRoZSBzdGF0cyBiZWZvcmUgcmVzZXQqLw0KLQlzcGluX2xvY2soJmFkYXB0ZXItPnN0YXRzNjRf
+bG9jayk7DQorCW11dGV4X2xvY2soJmFkYXB0ZXItPnN0YXRzNjRfbG9jayk7DQogCWlnYl91cGRh
+dGVfc3RhdHMoYWRhcHRlciwgJmFkYXB0ZXItPnN0YXRzNjQpOw0KLQlzcGluX3VubG9jaygmYWRh
+cHRlci0+c3RhdHM2NF9sb2NrKTsNCisJbXV0ZXhfdW5sb2NrKCZhZGFwdGVyLT5zdGF0czY0X2xv
+Y2spOw0KIA0KIAlhZGFwdGVyLT5saW5rX3NwZWVkID0gMDsNCiAJYWRhcHRlci0+bGlua19kdXBs
+ZXggPSAwOw0KQEAgLTI5NzUsNyArMjk3NSw3IEBAIHN0YXRpYyBpbnQgaWdiX3N3X2luaXQoc3Ry
+dWN0IGlnYl9hZGFwdGVyDQoqYWRhcHRlcikNCiAJCQkJICBWTEFOX0hMRU47DQogCWFkYXB0ZXIt
+Pm1pbl9mcmFtZV9zaXplID0gRVRIX1pMRU4gKyBFVEhfRkNTX0xFTjsNCiANCi0Jc3Bpbl9sb2Nr
+X2luaXQoJmFkYXB0ZXItPnN0YXRzNjRfbG9jayk7DQorCW11dGV4X2luaXQoJmFkYXB0ZXItPnN0
+YXRzNjRfbG9jayk7DQogI2lmZGVmIENPTkZJR19QQ0lfSU9WDQogCXN3aXRjaCAoaHctPm1hYy50
+eXBlKSB7DQogCWNhc2UgZTEwMDBfODI1NzY6DQpAQCAtNDM2Nyw5ICs0MzY3LDkgQEAgc3RhdGlj
+IHZvaWQgaWdiX3dhdGNoZG9nX3Rhc2soc3RydWN0IHdvcmtfc3RydWN0DQoqd29yaykNCiAJCX0N
+CiAJfQ0KIA0KLQlzcGluX2xvY2soJmFkYXB0ZXItPnN0YXRzNjRfbG9jayk7DQorCW11dGV4X2xv
+Y2soJmFkYXB0ZXItPnN0YXRzNjRfbG9jayk7DQogCWlnYl91cGRhdGVfc3RhdHMoYWRhcHRlciwg
+JmFkYXB0ZXItPnN0YXRzNjQpOw0KLQlzcGluX3VubG9jaygmYWRhcHRlci0+c3RhdHM2NF9sb2Nr
+KTsNCisJbXV0ZXhfdW5sb2NrKCZhZGFwdGVyLT5zdGF0czY0X2xvY2spOw0KIA0KIAlmb3IgKGkg
+PSAwOyBpIDwgYWRhcHRlci0+bnVtX3R4X3F1ZXVlczsgaSsrKSB7DQogCQlzdHJ1Y3QgaWdiX3Jp
+bmcgKnR4X3JpbmcgPSBhZGFwdGVyLT50eF9yaW5nW2ldOw0KQEAgLTUxNTIsMTAgKzUxNTIsMTAg
+QEAgc3RhdGljIHN0cnVjdCBydG5sX2xpbmtfc3RhdHM2NA0KKmlnYl9nZXRfc3RhdHM2NChzdHJ1
+Y3QgbmV0X2RldmljZSAqbmV0ZGV2LA0KIHsNCiAJc3RydWN0IGlnYl9hZGFwdGVyICphZGFwdGVy
+ID0gbmV0ZGV2X3ByaXYobmV0ZGV2KTsNCiANCi0Jc3Bpbl9sb2NrKCZhZGFwdGVyLT5zdGF0czY0
+X2xvY2spOw0KKwltdXRleF9sb2NrKCZhZGFwdGVyLT5zdGF0czY0X2xvY2spOw0KIAlpZ2JfdXBk
+YXRlX3N0YXRzKGFkYXB0ZXIsICZhZGFwdGVyLT5zdGF0czY0KTsNCiAJbWVtY3B5KHN0YXRzLCAm
+YWRhcHRlci0+c3RhdHM2NCwgc2l6ZW9mKCpzdGF0cykpOw0KLQlzcGluX3VubG9jaygmYWRhcHRl
+ci0+c3RhdHM2NF9sb2NrKTsNCisJbXV0ZXhfdW5sb2NrKCZhZGFwdGVyLT5zdGF0czY0X2xvY2sp
+Ow0KIA0KIAlyZXR1cm4gc3RhdHM7DQogfQ0K
