@@ -2,106 +2,179 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688CCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20631208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20631208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E7E0208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:35:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7E0208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404107AbeHASVR (ORCPT
+        id S2404126AbeHASWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:21:17 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5072 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403923AbeHASVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:21:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b61e1170000>; Wed, 01 Aug 2018 09:34:31 -0700
-Received: from HQMAIL108.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 01 Aug 2018 09:34:44 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:34:44 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
- 2018 16:34:44 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
- 2018 16:34:43 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Wed, 1 Aug 2018 16:34:43 +0000
-Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b61e1210002>; Wed, 01 Aug 2018 09:34:43 -0700
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Wed, 1 Aug 2018 14:22:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44908 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404111AbeHASWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 14:22:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD9DD80D;
+        Wed,  1 Aug 2018 09:35:37 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D5C43F5BA;
+        Wed,  1 Aug 2018 09:35:37 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B2BC81AE30FD; Wed,  1 Aug 2018 17:35:39 +0100 (BST)
+Date:   Wed, 1 Aug 2018 17:35:39 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Christoph Lameter <cl@linux.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        "Stefan Agner" <stefan@agner.ch>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 40/40] arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
-Date:   Wed, 1 Aug 2018 19:32:30 +0300
-Message-ID: <1533141150-10511-41-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
-References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
-X-NVConfidentiality: public
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
+ sanitizer
+Message-ID: <20180801163538.GA10800@arm.com>
+References: <cover.1530018818.git.andreyknvl@google.com>
+ <20180628105057.GA26019@e103592.cambridge.arm.com>
+ <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
+ <20180629110709.GA17859@arm.com>
+ <CAAeHK+wHd8B2nhat-Z2Y2=s4NVobPG7vjr2CynjFhqPTwQRepQ@mail.gmail.com>
+ <20180703173608.GF27243@arm.com>
+ <CAAeHK+wTcH+2hgm_BTkLLdn1GkjBtkhQ=vPWZCncJ6KenqgKpg@mail.gmail.com>
+ <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use assigned-clock properties to configure pllc4 as the parent clock
-for sdmmc4 on Tegra210. pllc4 offers better jitter perfomance than
-the default pllp and is required by HS200 and HS400 modes.
+Hi Andrey,
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tue, Jul 31, 2018 at 03:22:13PM +0200, Andrey Konovalov wrote:
+> On Wed, Jul 18, 2018 at 7:16 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> > On Tue, Jul 3, 2018 at 7:36 PM, Will Deacon <will.deacon@arm.com> wrote:
+> >> Hmm, but elsewhere in this thread, Evgenii is motivating the need for this
+> >> patch set precisely because the lower overhead means it's suitable for
+> >> "near-production" use. So I don't think writing this off as a debugging
+> >> feature is the right approach, and we instead need to put effort into
+> >> analysing the impact of address tags on the kernel as a whole. Playing
+> >> whack-a-mole with subtle tag issues sounds like the worst possible outcome
+> >> for the long-term.
+> >
+> > I don't see a way to find cases where pointer tags would matter
+> > statically, so I've implemented the dynamic approach that I mentioned
+> > above. I've instrumented all pointer comparisons/subtractions in an
+> > LLVM compiler pass and used a kernel module that would print a bug
+> > report whenever two pointers with different tags are being
+> > compared/subtracted (ignoring comparisons with NULL pointers and with
+> > pointers obtained by casting an error code to a pointer type). Then I
+> > tried booting the kernel in QEMU and on an Odroid C2 board and I ran
+> > syzkaller overnight.
+> >
+> > This yielded the following results.
+> >
+> > ======
+> >
+> > The two places that look interesting are:
+> >
+> > is_vmalloc_addr in include/linux/mm.h (already mentioned by Catalin)
+> > is_kernel_rodata in mm/util.c
+> >
+> > Here we compare a pointer with some fixed untagged values to make sure
+> > that the pointer lies in a particular part of the kernel address
+> > space. Since KWHASAN doesn't add tags to pointers that belong to
+> > rodata or vmalloc regions, this should work as is. To make sure I've
+> > added debug checks to those two functions that check that the result
+> > doesn't change whether we operate on pointers with or without
+> > untagging.
+> >
+> > ======
+> >
+> > A few other cases that don't look that interesting:
+> >
+> > Comparing pointers to achieve unique sorting order of pointee objects
+> > (e.g. sorting locks addresses before performing a double lock):
+> >
+> > tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
+> > pipe_double_lock in fs/pipe.c
+> > unix_state_double_lock in net/unix/af_unix.c
+> > lock_two_nondirectories in fs/inode.c
+> > mutex_lock_double in kernel/events/core.c
+> >
+> > ep_cmp_ffd in fs/eventpoll.c
+> > fsnotify_compare_groups fs/notify/mark.c
+> >
+> > Nothing needs to be done here, since the tags embedded into pointers
+> > don't change, so the sorting order would still be unique.
+> >
+> > Check that a pointer belongs to some particular allocation:
+> >
+> > is_sibling_entry lib/radix-tree.c
+> > object_is_on_stack in include/linux/sched/task_stack.h
+> >
+> > Nothing needs to be here either, since two pointers can only belong to
+> > the same allocation if they have the same tag.
+> >
+> > ======
+> >
+> > Will, Catalin, WDYT?
+> 
+> ping
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 0951acc..14da98a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1057,6 +1057,11 @@
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x7b>;
- 		nvidia,default-tap = <0x2>;
- 		nvidia,default-trim = <0x4>;
-+		assigned-clocks = <&tegra_car TEGRA210_CLK_SDMMC4>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4>;
-+		assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-+		assigned-clock-rates = <200000000>, <1000000000>, <1000000000>;
- 		status = "disabled";
- 	};
- 
-@@ -1107,6 +1112,9 @@
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
- 		nvidia,default-trim = <0x0>;
-+		assigned-clocks = <&tegra_car TEGRA210_CLK_SDMMC4>,
-+				  <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-+		assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
- 		status = "disabled";
- 	};
- 
--- 
-2.7.4
+Thanks for tracking these cases down and going through each of them. The
+obvious follow-up question is: how do we ensure that we keep on top of
+this in mainline? Are you going to repeat your experiment at every kernel
+release or every -rc or something else? I really can't see how we can
+maintain this in the long run, especially given that the coverage we have
+is only dynamic -- do you have an idea of how much coverage you're actually
+getting for, say, a defconfig+modules build?
 
+I'd really like to enable pointer tagging in the kernel, I'm just still
+failing to see how we can do it in a controlled manner where we can reason
+about the semantic changes using something other than a best-effort,
+case-by-case basis which is likely to be fragile and error-prone.
+Unfortunately, if that's all we have, then this gets relegated to a
+debug feature, which sort of defeats the point in my opinion.
+
+Will
