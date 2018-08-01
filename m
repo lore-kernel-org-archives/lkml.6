@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EED2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE12AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15FB620840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15FB620840
+	by mail.kernel.org (Postfix) with ESMTP id B3B7F20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B7F20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733190AbeHAUYo (ORCPT
+        id S2403922AbeHATDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:24:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46030 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403931AbeHATDc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45748 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403824AbeHATDb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEB28F79;
-        Wed,  1 Aug 2018 16:57:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B54F112EF;
+        Wed,  1 Aug 2018 17:11:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        acme@kernel.org, eranian@google.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 079/336] perf/x86/intel/uncore: Correct fixed counter index check in generic code
-Date:   Wed,  1 Aug 2018 18:46:54 +0200
-Message-Id: <20180801165032.152840889@linuxfoundation.org>
+        stable@vger.kernel.org, kernel test robot <rong.a.chen@intel.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 328/336] netlink: Dont shift with UB on nlk->ngroups
+Date:   Wed,  1 Aug 2018 18:51:03 +0200
+Message-Id: <20180801165041.591409494@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,41 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@intel.com>
+From: Dmitry Safonov <dima@arista.com>
 
-[ Upstream commit 4749f8196452eeb73cf2086a6a9705bae479d33d ]
+[ Upstream commit 61f4b23769f0cc72ae62c9a81cf08f0397d40da8 ]
 
-There is no index which is bigger than UNCORE_PMC_IDX_FIXED. The only
-exception is client IMC uncore, which has been specially handled.
-For generic code, it is not correct to use >= to check fixed counter.
-The code quality issue will bring problem when a new counter index is
-introduced.
+On i386 nlk->ngroups might be 32 or 0. Which leads to UB, resulting in
+hang during boot.
+Check for 0 ngroups and use (unsigned long long) as a type to shift.
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: acme@kernel.org
-Cc: eranian@google.com
-Link: http://lkml.kernel.org/r/1525371913-10597-3-git-send-email-kan.liang@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 7acf9d4237c4 ("netlink: Do not subscribe to non-existent groups").
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/uncore.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netlink/af_netlink.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -218,7 +218,7 @@ void uncore_perf_event_update(struct int
- 	u64 prev_count, new_count, delta;
- 	int shift;
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1008,7 +1008,11 @@ static int netlink_bind(struct socket *s
+ 		if (err)
+ 			return err;
+ 	}
+-	groups &= (1UL << nlk->ngroups) - 1;
++
++	if (nlk->ngroups == 0)
++		groups = 0;
++	else
++		groups &= (1ULL << nlk->ngroups) - 1;
  
--	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
-+	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
- 		shift = 64 - uncore_fixed_ctr_bits(box);
- 	else
- 		shift = 64 - uncore_perf_ctr_bits(box);
+ 	bound = nlk->bound;
+ 	if (bound) {
 
 
