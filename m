@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FEBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9A9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3930F20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3930F20844
+	by mail.kernel.org (Postfix) with ESMTP id 3D0CE20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0CE20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406326AbeHATJl (ORCPT
+        id S2406341AbeHATJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50820 "EHLO
+        Wed, 1 Aug 2018 15:09:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50828 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390400AbeHATJk (ORCPT
+        with ESMTP id S2405510AbeHATJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:40 -0400
+        Wed, 1 Aug 2018 15:09:43 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8272CD2F;
-        Wed,  1 Aug 2018 17:22:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0E9BCC9;
+        Wed,  1 Aug 2018 17:23:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.14 221/246] ext4: check for allocation block validity with block group locked
-Date:   Wed,  1 Aug 2018 18:52:11 +0200
-Message-Id: <20180801165022.280911165@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 222/246] ext4: fix check to prevent initializing reserved inodes
+Date:   Wed,  1 Aug 2018 18:52:12 +0200
+Message-Id: <20180801165022.329322870@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,67 +52,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef upstream.
+commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
 
-With commit 044e6e3d74a3: "ext4: don't update checksum of new
-initialized bitmaps" the buffer valid bit will get set without
-actually setting up the checksum for the allocation bitmap, since the
-checksum will get calculated once we actually allocate an inode or
-block.
+Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
+valid" will complain if block group zero does not have the
+EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
+since a freshly created file system has this flag cleared.  It gets
+almost immediately after the file system is mounted read-write --- but
+the following somewhat unlikely sequence will end up triggering a
+false positive report of a corrupted file system:
 
-If we are doing this, then we need to (re-)check the verified bit
-after we take the block group lock.  Otherwise, we could race with
-another process reading and verifying the bitmap, which would then
-complain about the checksum being invalid.
+   mkfs.ext4 /dev/vdc
+   mount -o ro /dev/vdc /vdc
+   mount -o remount,rw /dev/vdc
 
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
+Instead, when initializing the inode table for block group zero, test
+to make sure that itable_unused count is not too large, since that is
+the case that will result in some or all of the reserved inodes
+getting cleared.
 
+This fixes the failures reported by Eric Whiteney when running
+generic/230 and generic/231 in the the nojournal test case.
+
+Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
+Reported-by: Eric Whitney <enwlinux@gmail.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c |    3 +++
- fs/ext4/ialloc.c |    3 +++
- 2 files changed, 6 insertions(+)
+ fs/ext4/ialloc.c |    5 ++++-
+ fs/ext4/super.c  |    8 +-------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -379,6 +379,8 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
- 			desc, bh))) {
- 		ext4_unlock_group(sb, block_group);
-@@ -401,6 +403,7 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
 --- a/fs/ext4/ialloc.c
 +++ b/fs/ext4/ialloc.c
-@@ -91,6 +91,8 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSCORRUPTED;
+@@ -1397,7 +1397,10 @@ int ext4_init_inode_table(struct super_b
+ 			    ext4_itable_unused_count(sb, gdp)),
+ 			    sbi->s_inodes_per_block);
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	blk = ext4_inode_bitmap(sb, desc);
- 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
- 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
-@@ -108,6 +110,7 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSBADCRC;
+-	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
++	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
++	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
++			       ext4_itable_unused_count(sb, gdp)) <
++			      EXT4_FIRST_INO(sb)))) {
+ 		ext4_error(sb, "Something is wrong with group %u: "
+ 			   "used itable blocks: %d; "
+ 			   "itable unused count: %u",
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3103,14 +3103,8 @@ static ext4_group_t ext4_has_uninit_itab
+ 		if (!gdp)
+ 			continue;
+ 
+-		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
+-			continue;
+-		if (group != 0)
++		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
+ 			break;
+-		ext4_error(sb, "Inode table for bg 0 marked as "
+-			   "needing zeroing");
+-		if (sb_rdonly(sb))
+-			return ngroups;
  	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
+ 
+ 	return group;
 
 
