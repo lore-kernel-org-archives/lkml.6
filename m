@@ -2,124 +2,222 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F5CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FCAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C483B208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 799A420685
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxxqE1WG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C483B208A4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAwjfq6o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799A420685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387571AbeHAMI0 (ORCPT
+        id S2387621AbeHAMIt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:08:26 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38167 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733104AbeHAMIZ (ORCPT
+        Wed, 1 Aug 2018 08:08:49 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37571 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387528AbeHAMIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:08:25 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x17-v6so7633125pfh.5;
-        Wed, 01 Aug 2018 03:23:20 -0700 (PDT)
+        Wed, 1 Aug 2018 08:08:48 -0400
+Received: by mail-qk0-f193.google.com with SMTP id t79-v6so12279619qke.4;
+        Wed, 01 Aug 2018 03:23:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ihbM6kR3tBb3FxEBjAUMtN10+okD3vIaQ/ZVp6XGKaA=;
-        b=DxxqE1WG8H8D1EhAkscuVWenXMrVBZ8lQiuEDUGwEv78uZvAIucPmlFnOIW+YE+UDS
-         Ika5jx+vFPLcCCJ1LbK/X37obaiAhTy/ymFUi4e3uVBIB1D7QSU6sNS98ph0dmkw8XBr
-         IUvsibshbU8nsL+5beSKnda0aoQI2MebZA7dLHrg1TkZwkXcT12u5cBGN6JWpCVu0EOr
-         t5Gy3D0YMv3glma6mW9ID0aqY0UXqWybRqkBXiTiCUTYplgn5fXn8WAcTe8ERRnFWziy
-         wCuLBViFbkn7MlHwGHyGmm+yluk+lZJkh4GZtSTtlYoC/BPdyPqlwdTz2z01wiouriZD
-         1IMg==
+        h=from:to:cc:subject:date:message-id;
+        bh=t47TSg/XpU729y7A0WZQIYbQn6t4RDOZX46+Kk0EX+w=;
+        b=IAwjfq6oGZSq7SzH/E9V99MvJFB1OipTE18ZSOFjGri20aBtjG1cCDFPbDgn4akU/N
+         7pBqQKo0/RPNCML92qqGZ2aQjVs8+zXz+34MaAgN8z35hfXKbAZ87MHPqo5pt35WD0KS
+         emwwp0lAOHrvVV3saVTScHJ1PTcBqdVVlNzuSTDrTBQYlgxs539hXj5W1Bmafb0NNGOV
+         xk/uJVZ8s/9CfVAztz+hmpvjVeoaVpWS8pG6hpjTUbF8UQSA01s6OW9H/ZuudGrdGqH+
+         iL6G8bfFqDzlYSoixzj95MWMPn27l09vT6TfTNG1AExT2wDrf3JRK9CugVLyB5dXjbs9
+         iCUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ihbM6kR3tBb3FxEBjAUMtN10+okD3vIaQ/ZVp6XGKaA=;
-        b=JgBYIqz9GcpU2Lw1QhRjcCKjCziwIENKCG6FlRanUF25uxw9jkcch6MgBaO0OszlD1
-         0jvQs7Ey0G1Kaic2ejEhzc0MYjt7Xi4BVWgrjbz3Hwbn/r91Qezjl8bZBdQYDGCkM2E8
-         r0Vj1/EJ+T2Tkb/KNmcTSB4DjVnBDFej8cSXtJ4PHqp4/CwoTdyc22YBJJfEsOruLrxH
-         8+YlvxL2zt4YpK25HTarJqquLgBi1E6t3TjDPu12SOP2bZkGP/HX3yfr+Cdyv5QIG3u5
-         honzQM2kZCj75q4j/ANBc7gIUSoWNv/fQCRcLQsqpmaOCoaouQvz4NdDtNHpLv6JPIBa
-         pCLA==
-X-Gm-Message-State: AOUpUlHj4qrBoyxyYyPLwakSRJfREOafnbaojCv77hR+gJGoSCznjilW
-        mpP3hMqVtRsm8u7Tuxg8ovZriM0h
-X-Google-Smtp-Source: AAOMgpeKMGgcPxq+VpMUBQH7S/zq3ouOQBXIY0qva+JwxqP9moRXRMWMvjAJ8iN9JHIgMszUBz6gtw==
-X-Received: by 2002:a63:5922:: with SMTP id n34-v6mr24064285pgb.113.1533119000446;
-        Wed, 01 Aug 2018 03:23:20 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id l84-v6sm26438120pfg.3.2018.08.01.03.23.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=t47TSg/XpU729y7A0WZQIYbQn6t4RDOZX46+Kk0EX+w=;
+        b=Lq6gEtw1OA0YRCwJNWrb/0dGgwU+Tg0p8inZD5JvAzEcUzI3oMk7tjORszakj6MHX+
+         pBRtbICAITj0IR9Cv6AtF1IeMpY//XwXON0Fk0YwT9TCuJDrZtoGaPCBmu5/FgS9VNWd
+         Ba9ozaM2qaI5C4FI/aykdwKubmkYVlpYoN8nDvc+5yzqyqLNvb9tWFuodxVUitPsC3+9
+         JfWNnCiCZMjMhko6Ayr3Gy/zy2yPXj1cbCKNSYg4u/C4x3DUFD/BCMczzr2fPJpY1FQm
+         pTJ3+wuia0wjiubbsi40IZEtoGE3nSG0aZ7j/wP2ACksfy3bngysxzpi03GkW7saS7l5
+         83fQ==
+X-Gm-Message-State: AOUpUlG9LnA28f2I/tVZKB5wrwrgTQMrR4W0WtNCDRO/T74Bbc4UEfeo
+        7AG0M1VeBJPX1OT74NMzAA8=
+X-Google-Smtp-Source: AAOMgpfh8JgdBQjfiS9GZwHaS/CCNvWj7yXjNpk4tKpQwobekjpshcqqc6UmUtNMFbTNdqE4UXkiCA==
+X-Received: by 2002:a37:5a06:: with SMTP id o6-v6mr23693189qkb.44.1533119022682;
+        Wed, 01 Aug 2018 03:23:42 -0700 (PDT)
+Received: from localhost.localdomain ([104.237.86.144])
+        by smtp.gmail.com with ESMTPSA id s19-v6sm11176890qtj.61.2018.08.01.03.23.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 03:23:19 -0700 (PDT)
-Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
- 13/17] khwasan: add hooks implementation)
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org,
+        Wed, 01 Aug 2018 03:23:42 -0700 (PDT)
+From:   Kenneth Lee <nek.in.cn@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org,
-        Network Development <netdev@vger.kernel.org>,
-        gerrit@erg.abdn.ac.uk, dccp@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dave Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
- <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
- <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
- <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
- <30ee6c72-dc90-275a-8e23-54221f393cb0@virtuozzo.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <c03fd1ca-0169-4492-7d6f-2df7a91bff5e@gmail.com>
-Date:   Wed, 1 Aug 2018 03:23:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <30ee6c72-dc90-275a-8e23-54221f393cb0@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Cc:     linuxarm@huawei.com
+Subject: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Date:   Wed,  1 Aug 2018 18:22:14 +0800
+Message-Id: <20180801102221.5308-1-nek.in.cn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kenneth Lee <liguozhu@hisilicon.com>
 
+WarpDrive is an accelerator framework to expose the hardware capabilities
+directly to the user space. It makes use of the exist vfio and vfio-mdev
+facilities. So the user application can send request and DMA to the
+hardware without interaction with the kernel. This remove the latency
+of syscall and context switch.
 
-On 08/01/2018 02:03 AM, Andrey Ryabinin wrote:
+The patchset contains documents for the detail. Please refer to it for more
+information.
 
-> I can't think of any advantage in not having the constructor. 
-> 
+This patchset is intended to be used with Jean Philippe Brucker's SVA
+patch [1] (Which is also in RFC stage). But it is not mandatory. This
+patchset is tested in the latest mainline kernel without the SVA patches.
+So it support only one process for each accelerator.
 
+With SVA support, WarpDrive can support multi-process in the same
+accelerator device.  We tested it in our SoC integrated Accelerator (board
+ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
 
-I can't see any advantage adding another indirect call,
-in RETPOLINE world.
+We have noticed the IOMMU aware mdev RFC announced recently [3].
+
+The IOMMU aware mdev has similar idea but different intention comparing to
+WarpDrive. It intends to dedicate part of the hardware resource to a VM.
+And the design is supposed to be used with Scalable I/O Virtualization.
+While spimdev is intended to share the hardware resource with a big amount
+of processes.  It just requires the hardware supporting address
+translation per process (PCIE's PASID or ARM SMMU's substream ID).
+
+But we don't see serious confliction on both design. We believe they can be
+normalized as one.
+
+The patch 1 is document. The patch 2 and 3 add spimdev support. The patch
+4, 5 and 6 is drivers for Hislicon's ZIP Accelerator which is registered to
+both crypto and warpdrive(spimdev) and can be used from kernel or user
+space at the same time. The patch 7 is a user space sample demonstrating
+how WarpDrive works.
+
+Refernces:
+[1] https://www.spinics.net/lists/kernel/msg2651481.html
+[2] https://github.com/Kenneth-Lee/linux-kernel-warpdrive/tree/warpdrive-sva-v0.5
+[3] https://lkml.org/lkml/2018/7/22/34
+
+Best Regards
+Kenneth Lee
+
+Kenneth Lee (7):
+  vfio/spimdev: Add documents for WarpDrive framework
+  iommu: Add share domain interface in iommu for spimdev
+  vfio: add spimdev support
+  crypto: add hisilicon Queue Manager driver
+  crypto: Add Hisilicon Zip driver
+  crypto: add spimdev support to Hisilicon QM
+  vfio/spimdev: add user sample for spimdev
+
+ Documentation/00-INDEX                    |    2 +
+ Documentation/warpdrive/warpdrive.rst     |  153 ++++
+ Documentation/warpdrive/wd-arch.svg       |  732 +++++++++++++++
+ Documentation/warpdrive/wd.svg            |  526 +++++++++++
+ drivers/crypto/Kconfig                    |    2 +
+ drivers/crypto/Makefile                   |    1 +
+ drivers/crypto/hisilicon/Kconfig          |   15 +
+ drivers/crypto/hisilicon/Makefile         |    2 +
+ drivers/crypto/hisilicon/qm.c             | 1005 +++++++++++++++++++++
+ drivers/crypto/hisilicon/qm.h             |  123 +++
+ drivers/crypto/hisilicon/zip/Makefile     |    2 +
+ drivers/crypto/hisilicon/zip/zip.h        |   55 ++
+ drivers/crypto/hisilicon/zip/zip_crypto.c |  358 ++++++++
+ drivers/crypto/hisilicon/zip/zip_crypto.h |   18 +
+ drivers/crypto/hisilicon/zip/zip_main.c   |  182 ++++
+ drivers/iommu/iommu.c                     |   28 +-
+ drivers/vfio/Kconfig                      |    1 +
+ drivers/vfio/Makefile                     |    1 +
+ drivers/vfio/spimdev/Kconfig              |   10 +
+ drivers/vfio/spimdev/Makefile             |    3 +
+ drivers/vfio/spimdev/vfio_spimdev.c       |  421 +++++++++
+ drivers/vfio/vfio_iommu_type1.c           |  136 ++-
+ include/linux/iommu.h                     |    2 +
+ include/linux/vfio_spimdev.h              |   95 ++
+ include/uapi/linux/vfio_spimdev.h         |   28 +
+ samples/warpdrive/AUTHORS                 |    2 +
+ samples/warpdrive/ChangeLog               |    1 +
+ samples/warpdrive/Makefile.am             |    9 +
+ samples/warpdrive/NEWS                    |    1 +
+ samples/warpdrive/README                  |   32 +
+ samples/warpdrive/autogen.sh              |    3 +
+ samples/warpdrive/cleanup.sh              |   13 +
+ samples/warpdrive/configure.ac            |   52 ++
+ samples/warpdrive/drv/hisi_qm_udrv.c      |  223 +++++
+ samples/warpdrive/drv/hisi_qm_udrv.h      |   53 ++
+ samples/warpdrive/test/Makefile.am        |    7 +
+ samples/warpdrive/test/comp_hw.h          |   23 +
+ samples/warpdrive/test/test_hisi_zip.c    |  204 +++++
+ samples/warpdrive/wd.c                    |  325 +++++++
+ samples/warpdrive/wd.h                    |  153 ++++
+ samples/warpdrive/wd_adapter.c            |   74 ++
+ samples/warpdrive/wd_adapter.h            |   43 +
+ 42 files changed, 5112 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/warpdrive/warpdrive.rst
+ create mode 100644 Documentation/warpdrive/wd-arch.svg
+ create mode 100644 Documentation/warpdrive/wd.svg
+ create mode 100644 drivers/crypto/hisilicon/Kconfig
+ create mode 100644 drivers/crypto/hisilicon/Makefile
+ create mode 100644 drivers/crypto/hisilicon/qm.c
+ create mode 100644 drivers/crypto/hisilicon/qm.h
+ create mode 100644 drivers/crypto/hisilicon/zip/Makefile
+ create mode 100644 drivers/crypto/hisilicon/zip/zip.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
+ create mode 100644 drivers/vfio/spimdev/Kconfig
+ create mode 100644 drivers/vfio/spimdev/Makefile
+ create mode 100644 drivers/vfio/spimdev/vfio_spimdev.c
+ create mode 100644 include/linux/vfio_spimdev.h
+ create mode 100644 include/uapi/linux/vfio_spimdev.h
+ create mode 100644 samples/warpdrive/AUTHORS
+ create mode 100644 samples/warpdrive/ChangeLog
+ create mode 100644 samples/warpdrive/Makefile.am
+ create mode 100644 samples/warpdrive/NEWS
+ create mode 100644 samples/warpdrive/README
+ create mode 100755 samples/warpdrive/autogen.sh
+ create mode 100755 samples/warpdrive/cleanup.sh
+ create mode 100644 samples/warpdrive/configure.ac
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.c
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.h
+ create mode 100644 samples/warpdrive/test/Makefile.am
+ create mode 100644 samples/warpdrive/test/comp_hw.h
+ create mode 100644 samples/warpdrive/test/test_hisi_zip.c
+ create mode 100644 samples/warpdrive/wd.c
+ create mode 100644 samples/warpdrive/wd.h
+ create mode 100644 samples/warpdrive/wd_adapter.c
+ create mode 100644 samples/warpdrive/wd_adapter.h
+
+-- 
+2.17.1
 
