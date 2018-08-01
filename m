@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1E0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12306C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F11F208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F11F208A4
+	by mail.kernel.org (Postfix) with ESMTP id CAD19208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD19208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390507AbeHATig (ORCPT
+        id S2390569AbeHATit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:38:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
+        Wed, 1 Aug 2018 15:38:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50152 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406024AbeHATIl (ORCPT
+        with ESMTP id S2406033AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73DAA1082;
-        Wed,  1 Aug 2018 17:02:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A1851144;
+        Wed,  1 Aug 2018 17:05:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 171/336] net: ethernet: ti: cpsw-phy-sel: check bus_find_device() ret value
-Date:   Wed,  1 Aug 2018 18:48:26 +0200
-Message-Id: <20180801165035.651367733@linuxfoundation.org>
+Subject: [PATCH 4.17 225/336] bpf: fix references to free_bpf_prog_info() in comments
+Date:   Wed,  1 Aug 2018 18:49:20 +0200
+Message-Id: <20180801165037.684520778@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,51 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit c6213eb1aee308e67377fd1890d84f7284caf531 ]
+[ Upstream commit ab7f5bf0928be2f148d000a6eaa6c0a36e74750e ]
 
-This fixes klockworks warnings: Pointer 'dev' returned from call to
-function 'bus_find_device' at line 179 may be NULL and will be dereferenced
-at line 181.
+Comments in the verifier refer to free_bpf_prog_info() which
+seems to have never existed in tree.  Replace it with
+free_used_maps().
 
-    cpsw-phy-sel.c:179: 'dev' is assigned the return value from function 'bus_find_device'.
-    bus.c:342: 'bus_find_device' explicitly returns a NULL value.
-    cpsw-phy-sel.c:181: 'dev' is dereferenced by passing argument 1 to function 'dev_get_drvdata'.
-    device.h:1024: 'dev' is passed to function 'dev_get_drvdata'.
-    device.h:1026: 'dev' is explicitly dereferenced.
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-[nsekhar@ti.com: add an error message, fix return path]
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw-phy-sel.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
-+++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
-@@ -177,12 +177,18 @@ void cpsw_phy_sel(struct device *dev, ph
- 	}
- 
- 	dev = bus_find_device(&platform_bus_type, NULL, node, match);
--	of_node_put(node);
-+	if (!dev) {
-+		dev_err(dev, "unable to find platform device for %pOF\n", node);
-+		goto out;
-+	}
-+
- 	priv = dev_get_drvdata(dev);
- 
- 	priv->cpsw_phy_sel(priv, phy_mode, slave);
- 
- 	put_device(dev);
-+out:
-+	of_node_put(node);
- }
- EXPORT_SYMBOL_GPL(cpsw_phy_sel);
- 
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5065,7 +5065,7 @@ static int replace_map_fd_with_map_ptr(s
+ 			/* hold the map. If the program is rejected by verifier,
+ 			 * the map will be released by release_maps() or it
+ 			 * will be used by the valid program until it's unloaded
+-			 * and all maps are released in free_bpf_prog_info()
++			 * and all maps are released in free_used_maps()
+ 			 */
+ 			map = bpf_map_inc(map, false);
+ 			if (IS_ERR(map)) {
+@@ -5856,7 +5856,7 @@ skip_full_check:
+ err_release_maps:
+ 	if (!env->prog->aux->used_maps)
+ 		/* if we didn't copy map pointers into bpf_prog_info, release
+-		 * them now. Otherwise free_bpf_prog_info() will release them.
++		 * them now. Otherwise free_used_maps() will release them.
+ 		 */
+ 		release_maps(env);
+ 	*prog = env->prog;
 
 
