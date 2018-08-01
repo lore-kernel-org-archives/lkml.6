@@ -2,149 +2,154 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE42C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78272C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC9C208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VdOH/ZmZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC9C208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 321AD20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321AD20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbeHAUTF (ORCPT
+        id S1732960AbeHAUS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:19:05 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46054 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732623AbeHAUTE (ORCPT
+        Wed, 1 Aug 2018 16:18:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46150 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404178AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:19:04 -0400
-Received: by mail-pl0-f68.google.com with SMTP id j8-v6so9185801pll.12
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=iVO74wCV0EWaGwHK362LJP9PGuz2nnGv1IDmpsU7ky0=;
-        b=VdOH/ZmZTfj5hOGhhlnrJJx6fcRM20urlTukUW4NLlSK/Ab0DZFA2LMk2HlSt5/DpK
-         EHpabzHQ4arIwj3BNxAe676TxnQ3r6ggOdM73bxo7OI6b5I0ukJfzBRy2ScSngprE4Ge
-         Rrtv9G3vw2foFlqbD8Jr8W993yEF4d1at4TOUAtRSTdcJ7FCmabdBEfUZnGQjgNo4fPO
-         typS8p+TObZHNmdCEnV1WOTyL2+4pBvcz63Gg299TLazCOoxbv/M+dTafA7PCvRxHZ0K
-         PUOY1y1/jBfD1N1eFnRhCZ4Qac3d4UEYELkmed0Ud6K8U6Win6cdBtQ9BUVZgkqDBIQ9
-         eyvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=iVO74wCV0EWaGwHK362LJP9PGuz2nnGv1IDmpsU7ky0=;
-        b=c5brmgy1Avaw2KMorE78wAJU/6fLyvMLNY1nl+JaQmHQi9e5wlgNDcX0D3vcD25wCS
-         n8ombLJKj6V37tkeY00ZSrgQ2603dxYJ8BIDIp1mnoYZhMF+fdWpnRSvnzEo7vBH/GNp
-         0jLug1JOCnoG7cF/hTFKJbdeYWvG1OIksNvXN4PijUm/3E1gG2CrO6F3bQ1WHnFhK/Hx
-         hUo7CTkndDMqt8l0PQl61vXNMmiV2u14cftnvDnIMwv1LNXGMOgQlPWoBBuRusZPs4Nb
-         0sinh8SHgQeVy2ITebQ2s9UGXcxYqMN3OZ2jADZ4NZ30x9zCkO3r/9I3D27KovnofMPq
-         xtBQ==
-X-Gm-Message-State: AOUpUlEAJX4sPzW7KM8h/TI0uH/qBten3HsOptPx3b+qEIP0Xa400wXz
-        cBoj4NF0Ine8UDkHBYJNj7Q+tw==
-X-Google-Smtp-Source: AAOMgpc6iy0QNVFzUg3xJiy+vGs+Bv9c53UWo9tbHFJoWzz8ij3SruXoArWO/KM2nIHR3feY3UYmGA==
-X-Received: by 2002:a17:902:1121:: with SMTP id d30-v6mr26186445pla.247.1533148322061;
-        Wed, 01 Aug 2018 11:32:02 -0700 (PDT)
-Received: from [100.112.75.99] ([104.133.8.99])
-        by smtp.gmail.com with ESMTPSA id 77-v6sm22281821pga.40.2018.08.01.11.32.00
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 11:32:00 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 11:31:52 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Tony Luck <tony.luck@intel.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        youling 257 <youling257@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@google.com>
-Subject: Re: Linux 4.18-rc7
-In-Reply-To: <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
-Message-ID: <alpine.LSU.2.11.1808011042090.14313@eggly.anvils>
-References: <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com> <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1> <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com> <alpine.LSU.2.11.1807301410470.4805@eggly.anvils>
- <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com> <alpine.LSU.2.11.1807301940460.5904@eggly.anvils> <CALAqxLU3cmu4g+HaB6A7=VhY-hW=d9e68EZ=_4JiwX_BigzjPQ@mail.gmail.com> <CAMi1Hd0-2eDod4HiBifKCxY0cUUEW_A-yv7sZ7GRgL0whWQt+w@mail.gmail.com>
- <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com> <20180731170328.ocb5oikwhwtkyzrj@kshutemo-mobl1> <20180731174349.GA12944@agluck-desk> <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Wed, 1 Aug 2018 15:03:35 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0DD51054;
+        Wed,  1 Aug 2018 17:00:50 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 149/336] net: hns3: Fix for hns3 module is loaded multiple times problem
+Date:   Wed,  1 Aug 2018 18:48:04 +0200
+Message-Id: <20180801165034.835114969@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018, Linus Torvalds wrote:
-> 
-> Anyway, the upshot of all this is that I think I know what the ia64
-> problem was, and John sent the patch for the ashmem case, and I'm
-> going to hold off reverting that vma_is_anonymous() false-positives
-> commit after all.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-I'd better send deletion of zap_pmd_range()'s VM_BUG_ON_VMA(): below
-(but I've no proprietorial interest, if you prefer to do your own).
+------------------
 
-John's patch is good, and originally I thought it was safe from that
-VM_BUG_ON_VMA(), because the /dev/ashmem fd exposed to the user is
-disconnected from the vm_file in the vma, and madvise(,,MADV_REMOVE)
-insists on VM_SHARED. But afterwards read John's earlier mail,
-drawing attention to the vfs_fallocate() in there: I may be wrong,
-and I don't know if Android has THP in the config anyway, but it looks
-to me like an unmap_mapping_range() from ashmem's vfs_fallocate()
-could hit precisely the VM_BUG_ON_VMA(), once it's vma_is_anonymous().
+From: Xi Wang <wangxi11@huawei.com>
 
-(I'm not familiar with ashmem, and I certainly don't understand the
-role of MAP_PRIVATE ashmem mappings - hole-punch's zap_pte_range()
-should end up leaving any anon pages in place; but the presence of
-the BUG is requiring us all to understand too much too quickly.)
+[ Upstream commit 3c7624d8fc0b893b644b945ab904c629ebc9611e ]
 
+If the hns3 driver has been built into kernel and then loaded with
+the same driver which built as KLM, it may trigger an error like
+below:
 
-[PATCH] mm: delete historical BUG from zap_pmd_range()
+[   20.009555] hns3: Hisilicon Ethernet Network Driver for Hip08 Family - version
+[   20.016789] hns3: Copyright (c) 2017 Huawei Corporation.
+[   20.022100] Error: Driver 'hns3' is already registered, aborting...
+[   23.517397] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+...
+[   23.691583] Process insmod (pid: 1982, stack limit = 0x00000000cd5f21cb)
+[   23.698270] Call trace:
+[   23.700705]  __list_del_entry_valid+0x2c/0xd8
+[   23.705049]  hnae3_unregister_client+0x68/0xa8
+[   23.709487]  hns3_init_module+0x98/0x1000 [hns3]
+[   23.714093]  do_one_initcall+0x5c/0x170
+[   23.717918]  do_init_module+0x64/0x1f4
+[   23.721654]  load_module+0x1d14/0x24b0
+[   23.725390]  SyS_init_module+0x158/0x208
+[   23.729300]  el0_svc_naked+0x30/0x34
 
-Delete the old VM_BUG_ON_VMA() from zap_pmd_range(), which asserted
-that mmap_sem must be held when splitting an "anonymous" vma there.
-Whether that's still strictly true nowadays is not entirely clear,
-but the danger of sometimes crashing on the BUG is now fairly clear.
+This patch fixes it by adding module version info.
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
+Fixes: 38caee9d3ee8 ("net: hns3: Add support of the HNAE3 framework")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c               |    1 +
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h               |    2 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c           |    1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h           |    2 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h   |    2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h |    2 +-
+ 6 files changed, 8 insertions(+), 2 deletions(-)
 
- mm/memory.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
+@@ -283,3 +283,4 @@ EXPORT_SYMBOL(hnae3_unregister_ae_dev);
+ MODULE_AUTHOR("Huawei Tech. Co., Ltd.");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("HNAE3(Hisilicon Network Acceleration Engine) Framework");
++MODULE_VERSION(HNAE3_MOD_VERSION);
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -36,6 +36,8 @@
+ #include <linux/pci.h>
+ #include <linux/types.h>
+ 
++#define HNAE3_MOD_VERSION "1.0"
++
+ /* Device IDs */
+ #define HNAE3_DEV_ID_GE				0xA220
+ #define HNAE3_DEV_ID_25GE			0xA221
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3631,3 +3631,4 @@ MODULE_DESCRIPTION("HNS3: Hisilicon Ethe
+ MODULE_AUTHOR("Huawei Tech. Co., Ltd.");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("pci:hns-nic");
++MODULE_VERSION(HNS3_MOD_VERSION);
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -14,6 +14,8 @@
+ 
+ #include "hnae3.h"
+ 
++#define HNS3_MOD_VERSION "1.0"
++
+ extern const char hns3_driver_version[];
+ 
+ enum hns3_nic_state {
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -15,7 +15,7 @@
+ #include "hclge_cmd.h"
+ #include "hnae3.h"
+ 
+-#define HCLGE_MOD_VERSION "v1.0"
++#define HCLGE_MOD_VERSION "1.0"
+ #define HCLGE_DRIVER_NAME "hclge"
+ 
+ #define HCLGE_INVALID_VPORT 0xffff
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+@@ -9,7 +9,7 @@
+ #include "hclgevf_cmd.h"
+ #include "hnae3.h"
+ 
+-#define HCLGEVF_MOD_VERSION "v1.0"
++#define HCLGEVF_MOD_VERSION "1.0"
+ #define HCLGEVF_DRIVER_NAME "hclgevf"
+ 
+ #define HCLGEVF_ROCEE_VECTOR_NUM	0
 
---- 4.18-rc7/mm/memory.c	2018-06-16 18:48:22.041173422 -0700
-+++ linux/mm/memory.c	2018-08-01 11:01:21.397286507 -0700
-@@ -1417,11 +1417,9 @@ static inline unsigned long zap_pmd_rang
- 	do {
- 		next = pmd_addr_end(addr, end);
- 		if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)) {
--			if (next - addr != HPAGE_PMD_SIZE) {
--				VM_BUG_ON_VMA(vma_is_anonymous(vma) &&
--				    !rwsem_is_locked(&tlb->mm->mmap_sem), vma);
-+			if (next - addr != HPAGE_PMD_SIZE)
- 				__split_huge_pmd(vma, pmd, addr, false, NULL);
--			} else if (zap_huge_pmd(tlb, vma, pmd, addr))
-+			else if (zap_huge_pmd(tlb, vma, pmd, addr))
- 				goto next;
- 			/* fall through */
- 		}
+
