@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2809C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCD1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 386C520840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386C520840
+	by mail.kernel.org (Postfix) with ESMTP id 856BF20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856BF20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733279AbeHAUUQ (ORCPT
+        id S1733029AbeHAUUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:20:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
+        Wed, 1 Aug 2018 16:20:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404195AbeHATDe (ORCPT
+        with ESMTP id S2403844AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53F83FC7;
-        Wed,  1 Aug 2018 16:58:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6ABF111E7;
+        Wed,  1 Aug 2018 17:08:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 084/336] selftests: intel_pstate: return Kselftest Skip code for skipped tests
-Date:   Wed,  1 Aug 2018 18:46:59 +0200
-Message-Id: <20180801165032.397734832@linuxfoundation.org>
+Subject: [PATCH 4.17 281/336] scsi: megaraid_sas: Increase timeout by 1 sec for non-RAID fastpath IOs
+Date:   Wed,  1 Aug 2018 18:50:16 +0200
+Message-Id: <20180801165039.780920555@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,43 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-[ Upstream commit 5c30a038fb8ec8cdff011e6b5d5d51eb415381d4 ]
+[ Upstream commit 3239b8cd28fd849a2023483257d35d68c5876c74 ]
 
-When intel_pstate test is skipped because of unmet dependencies and/or
-unsupported configuration, it returns 0 which is treated as a pass
-by the Kselftest framework. This leads to false positive result even
-when the test could not be run.
+Hardware could time out Fastpath IOs one second earlier than the timeout
+provided by the host.
 
-Change it to return kselftest skip code when a test gets skipped to
-clearly report that the test could not be run.
+For non-RAID devices, driver provides timeout value based on OS provided
+timeout value. Under certain scenarios, if the OS provides a timeout
+value of 1 second, due to above behavior hardware will timeout
+immediately.
 
-Kselftest framework SKIP code is 4 and the framework prints appropriate
-messages to indicate that the test is skipped.
+Increase timeout value for non-RAID fastpath IOs by 1 second.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/intel_pstate/run.sh |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/testing/selftests/intel_pstate/run.sh
-+++ b/tools/testing/selftests/intel_pstate/run.sh
-@@ -30,9 +30,12 @@
- 
- EVALUATE_ONLY=0
- 
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -2981,6 +2981,9 @@ megasas_build_syspd_fusion(struct megasa
+ 		pRAID_Context->timeout_value = cpu_to_le16(os_timeout_value);
+ 		pRAID_Context->virtual_disk_tgt_id = cpu_to_le16(device_id);
+ 	} else {
++		if (os_timeout_value)
++			os_timeout_value++;
 +
- if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
- 	echo "$0 # Skipped: Test can only run on x86 architectures."
--	exit 0
-+	exit $ksft_skip
- fi
- 
- max_cpus=$(($(nproc)-1))
+ 		/* system pd Fast Path */
+ 		io_request->Function = MPI2_FUNCTION_SCSI_IO_REQUEST;
+ 		timeout_limit = (scmd->device->type == TYPE_DISK) ?
 
 
