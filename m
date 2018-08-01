@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF3DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615632083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615632083D
+	by mail.kernel.org (Postfix) with ESMTP id 2070C2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2070C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406423AbeHATK3 (ORCPT
+        id S2406436AbeHATKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:10:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51006 "EHLO
+        Wed, 1 Aug 2018 15:10:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389790AbeHATK2 (ORCPT
+        with ESMTP id S2389790AbeHATKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:10:28 -0400
+        Wed, 1 Aug 2018 15:10:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4CCA1D2F;
-        Wed,  1 Aug 2018 17:23:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CCCCD27;
+        Wed,  1 Aug 2018 17:23:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 188/246] drm/gma500: fix psb_intel_lvds_mode_valid()s return type
-Date:   Wed,  1 Aug 2018 18:51:38 +0200
-Message-Id: <20180801165020.711203656@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.14 240/246] netlink: Do not subscribe to non-existent groups
+Date:   Wed,  1 Aug 2018 18:52:30 +0200
+Message-Id: <20180801165023.229724039@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,47 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Dmitry Safonov <dima@arista.com>
 
-[ Upstream commit 2ea009095c6e7396915a1d0dd480c41f02985f79 ]
+[ Upstream commit 7acf9d4237c46894e0fa0492dd96314a41742e84 ]
 
-The method struct drm_connector_helper_funcs::mode_valid is defined
-as returning an 'enum drm_mode_status' but the driver implementation
-for this method, psb_intel_lvds_mode_valid(), uses an 'int' for it.
+Make ABI more strict about subscribing to group > ngroups.
+Code doesn't check for that and it looks bogus.
+(one can subscribe to non-existing group)
+Still, it's possible to bind() to all possible groups with (-1)
 
-Fix this by using 'enum drm_mode_status' for psb_intel_lvds_mode_valid().
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180424131458.2060-1-luc.vanoostenryck@gmail.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/gma500/psb_intel_drv.h  |    2 +-
- drivers/gpu/drm/gma500/psb_intel_lvds.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/netlink/af_netlink.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/gma500/psb_intel_drv.h
-+++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
-@@ -255,7 +255,7 @@ extern int intelfb_remove(struct drm_dev
- extern bool psb_intel_lvds_mode_fixup(struct drm_encoder *encoder,
- 				      const struct drm_display_mode *mode,
- 				      struct drm_display_mode *adjusted_mode);
--extern int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+extern enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				     struct drm_display_mode *mode);
- extern int psb_intel_lvds_set_property(struct drm_connector *connector,
- 					struct drm_property *property,
---- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-@@ -343,7 +343,7 @@ static void psb_intel_lvds_restore(struc
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -976,6 +976,7 @@ static int netlink_bind(struct socket *s
+ 		if (err)
+ 			return err;
  	}
- }
++	groups &= (1UL << nlk->ngroups) - 1;
  
--int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				 struct drm_display_mode *mode)
- {
- 	struct drm_psb_private *dev_priv = connector->dev->dev_private;
+ 	bound = nlk->bound;
+ 	if (bound) {
 
 
