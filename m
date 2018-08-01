@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51117C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC269C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087692083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087692083D
+	by mail.kernel.org (Postfix) with ESMTP id 83C4A2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83C4A2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733163AbeHAUPU (ORCPT
+        id S1733195AbeHAUPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:15:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
+        Wed, 1 Aug 2018 16:15:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404274AbeHATDg (ORCPT
+        with ESMTP id S2404247AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F849FCA;
-        Wed,  1 Aug 2018 16:58:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5BC51058;
+        Wed,  1 Aug 2018 17:00:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Theodore Tso <tytso@mit.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 111/336] PCI: Prevent sysfs disable of device while driver is attached
-Date:   Wed,  1 Aug 2018 18:47:26 +0200
-Message-Id: <20180801165033.403130732@linuxfoundation.org>
+Subject: [PATCH 4.17 150/336] fscrypt: use unbound workqueue for decryption
+Date:   Wed,  1 Aug 2018 18:48:05 +0200
+Message-Id: <20180801165034.878521891@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,47 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Hellwig <hch@lst.de>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 6f5cdfa802733dcb561bf664cc89d203f2fd958f ]
+[ Upstream commit 36dd26e0c8d42699eeba87431246c07c28075bae ]
 
-Manipulating the enable_cnt behind the back of the driver will wreak
-complete havoc with the kernel state, so disallow it.
+Improve fscrypt read performance by switching the decryption workqueue
+from bound to unbound.  With the bound workqueue, when multiple bios
+completed on the same CPU, they were decrypted on that same CPU.  But
+with the unbound queue, they are now decrypted in parallel on any CPU.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Acked-by: Keith Busch <keith.busch@intel.com>
+Although fscrypt read performance can be tough to measure due to the
+many sources of variation, this change is most beneficial when
+decryption is slow, e.g. on CPUs without AES instructions.  For example,
+I timed tarring up encrypted directories on f2fs.  On x86 with AES-NI
+instructions disabled, the unbound workqueue improved performance by
+about 25-35%, using 1 to NUM_CPUs jobs with 4 or 8 CPUs available.  But
+with AES-NI enabled, performance was unchanged to within ~2%.
+
+I also did the same test on a quad-core ARM CPU using xts-speck128-neon
+encryption.  There performance was usually about 10% better with the
+unbound workqueue, bringing it closer to the unencrypted speed.
+
+The unbound workqueue may be worse in some cases due to worse locality,
+but I think it's still the better default.  dm-crypt uses an unbound
+workqueue by default too, so this change makes fscrypt match.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pci-sysfs.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/crypto/crypto.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -288,13 +288,16 @@ static ssize_t enable_store(struct devic
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -427,8 +427,17 @@ fail:
+  */
+ static int __init fscrypt_init(void)
+ {
++	/*
++	 * Use an unbound workqueue to allow bios to be decrypted in parallel
++	 * even when they happen to complete on the same CPU.  This sacrifices
++	 * locality, but it's worthwhile since decryption is CPU-intensive.
++	 *
++	 * Also use a high-priority workqueue to prioritize decryption work,
++	 * which blocks reads from completing, over regular application tasks.
++	 */
+ 	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
+-							WQ_HIGHPRI, 0);
++						 WQ_UNBOUND | WQ_HIGHPRI,
++						 num_online_cpus());
+ 	if (!fscrypt_read_workqueue)
+ 		goto fail;
  
--	if (!val) {
--		if (pci_is_enabled(pdev))
--			pci_disable_device(pdev);
--		else
--			result = -EIO;
--	} else
-+	device_lock(dev);
-+	if (dev->driver)
-+		result = -EBUSY;
-+	else if (val)
- 		result = pci_enable_device(pdev);
-+	else if (pci_is_enabled(pdev))
-+		pci_disable_device(pdev);
-+	else
-+		result = -EIO;
-+	device_unlock(dev);
- 
- 	return result < 0 ? result : count;
- }
 
 
