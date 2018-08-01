@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0574C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40927C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676FA20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676FA20844
+	by mail.kernel.org (Postfix) with ESMTP id 0488420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0488420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732646AbeHATsw (ORCPT
+        id S1732728AbeHATtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:48:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
+        Wed, 1 Aug 2018 15:49:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405877AbeHATIi (ORCPT
+        with ESMTP id S2405866AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0DB81381;
-        Wed,  1 Aug 2018 17:14:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A996B1370;
+        Wed,  1 Aug 2018 17:13:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org,
+        Achim Mildenberger <admin@fph.physik.uni-karlsruhe.de>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 051/246] RDMA/mad: Convert BUG_ONs to error flows
-Date:   Wed,  1 Aug 2018 18:49:21 +0200
-Message-Id: <20180801165014.160207963@linuxfoundation.org>
+Subject: [PATCH 4.14 044/246] e1000e: Ignore TSYNCRXCTL when getting I219 clock attributes
+Date:   Wed,  1 Aug 2018 18:49:14 +0200
+Message-Id: <20180801165013.826708233@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,47 +54,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-[ Upstream commit 2468b82d69e3a53d024f28d79ba0fdb8bf43dfbf ]
+[ Upstream commit fff200caf6f9179dd9a7fc67acd659e614c3f72f ]
 
-Let's perform checks in-place instead of BUG_ONs.
+There have been multiple reports of crashes that look like
+kernel: RIP: 0010:[<ffffffff8110303f>] timecounter_read+0xf/0x50
+[...]
+kernel: Call Trace:
+kernel:  [<ffffffffa0806b0f>] e1000e_phc_gettime+0x2f/0x60 [e1000e]
+kernel:  [<ffffffffa0806c5d>] e1000e_systim_overflow_work+0x1d/0x80 [e1000e]
+kernel:  [<ffffffff810992c5>] process_one_work+0x155/0x440
+kernel:  [<ffffffff81099e16>] worker_thread+0x116/0x4b0
+kernel:  [<ffffffff8109f422>] kthread+0xd2/0xf0
+kernel:  [<ffffffff8163184f>] ret_from_fork+0x3f/0x70
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+These can be traced back to the fact that e1000e_systim_reset() skips the
+timecounter_init() call if e1000e_get_base_timinca() returns -EINVAL, which
+leads to a null deref in timecounter_read().
+
+Commit 83129b37ef35 ("e1000e: fix systim issues", v4.2-rc1) reworked
+e1000e_get_base_timinca() in such a way that it can return -EINVAL for
+e1000_pch_spt if the SYSCFI bit is not set in TSYNCRXCTL.
+
+Some experimentation has shown that on I219 (e1000_pch_spt, "MAC: 12")
+adapters, the E1000_TSYNCRXCTL_SYSCFI flag is unstable; TSYNCRXCTL reads
+sometimes don't have the SYSCFI bit set. Retrying the read shortly after
+finds the bit to be set. This was observed at boot (probe) but also link up
+and link down.
+
+Moreover, the phc (PTP Hardware Clock) seems to operate normally even after
+reads where SYSCFI=0. Therefore, remove this register read and
+unconditionally set the clock parameters.
+
+Reported-by: Achim Mildenberger <admin@fph.physik.uni-karlsruhe.de>
+Message-Id: <20180425065243.g5mqewg5irkwgwgv@f2>
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1075876
+Fixes: 83129b37ef35 ("e1000e: fix systim issues")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/mad.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c |   15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
---- a/drivers/infiniband/core/mad.c
-+++ b/drivers/infiniband/core/mad.c
-@@ -1558,7 +1558,8 @@ static int add_oui_reg_req(struct ib_mad
- 			    mad_reg_req->oui, 3)) {
- 			method = &(*vendor_table)->vendor_class[
- 						vclass]->method_table[i];
--			BUG_ON(!*method);
-+			if (!*method)
-+				goto error3;
- 			goto check_in_use;
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -3558,15 +3558,12 @@ s32 e1000e_get_base_timinca(struct e1000
  		}
- 	}
-@@ -1568,10 +1569,12 @@ static int add_oui_reg_req(struct ib_mad
- 				vclass]->oui[i])) {
- 			method = &(*vendor_table)->vendor_class[
- 				vclass]->method_table[i];
--			BUG_ON(*method);
- 			/* Allocate method table for this OUI */
--			if ((ret = allocate_method_table(method)))
--				goto error3;
-+			if (!*method) {
-+				ret = allocate_method_table(method);
-+				if (ret)
-+					goto error3;
-+			}
- 			memcpy((*vendor_table)->vendor_class[vclass]->oui[i],
- 			       mad_reg_req->oui, 3);
- 			goto check_in_use;
+ 		break;
+ 	case e1000_pch_spt:
+-		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
+-			/* Stable 24MHz frequency */
+-			incperiod = INCPERIOD_24MHZ;
+-			incvalue = INCVALUE_24MHZ;
+-			shift = INCVALUE_SHIFT_24MHZ;
+-			adapter->cc.shift = shift;
+-			break;
+-		}
+-		return -EINVAL;
++		/* Stable 24MHz frequency */
++		incperiod = INCPERIOD_24MHZ;
++		incvalue = INCVALUE_24MHZ;
++		shift = INCVALUE_SHIFT_24MHZ;
++		adapter->cc.shift = shift;
++		break;
+ 	case e1000_pch_cnp:
+ 		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
+ 			/* Stable 24MHz frequency */
 
 
