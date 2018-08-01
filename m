@@ -2,157 +2,134 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 798CAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C527C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311CE208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311CE208A4
+	by mail.kernel.org (Postfix) with ESMTP id B3D40208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 11:17:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Lyf3G7lH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D40208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388846AbeHANCJ (ORCPT
+        id S2388949AbeHANCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:02:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387576AbeHANCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:02:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E39B9ACB5;
-        Wed,  1 Aug 2018 11:16:50 +0000 (UTC)
-Date:   Wed, 1 Aug 2018 13:16:50 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Li RongQing <lirongqing@baidu.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 2/2] fs/writeback: do memory cgroup related writeback
- firstly
-Message-ID: <20180801111650.GI16767@dhcp22.suse.cz>
-References: <1533120516-18279-1-git-send-email-lirongqing@baidu.com>
- <1533120516-18279-2-git-send-email-lirongqing@baidu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533120516-18279-2-git-send-email-lirongqing@baidu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 1 Aug 2018 09:02:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50358 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387590AbeHANCi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:02:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=JMnHpi32kS0doFk1YhruoTasJXoea/bAXG8RnAHzS2s=; b=Lyf3G7lH6Xeh
+        +yO+HeqM/stR/okCgFDzj+4MHeMrahmAAcZkUNFi4Rrj5NmG7FgYELukP2ECcCFUyUVbThAju9Ryz
+        w4JEPSrRd+f+qxq533OLiLKhQg9HQ3AKtL0a53wXlgI19y9wQLMOn4D6YNz2HisJi84tyOZpgWN+9
+        nGrw0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fkp7j-0000nl-RQ; Wed, 01 Aug 2018 11:16:59 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6C39F1124241; Wed,  1 Aug 2018 12:16:59 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaya Kumar <jayakumar.alsa@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: stm32: remove redundant pointers 'priv' and 'rtd'" to the asoc tree
+In-Reply-To:  <20180801104742.4328-8-colin.king@canonical.com>
+Message-Id: <20180801111659.6C39F1124241@debutante.sirena.org.uk>
+Date:   Wed,  1 Aug 2018 12:16:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 01-08-18 18:48:36, Li RongQing wrote:
-> When a machine has hundreds of memory cgroups, and some cgroups
-> generate more or less dirty pages, but a cgroup of them has lots
-> of memory pressure and always tries to reclaim dirty page, then it
-> will trigger all cgroups to writeback, which is less efficient:
-> 
-> 1.if the used memory in a memory cgroup reaches its limit,
-> it is useless to writeback other cgroups.
-> 2.other cgroups can wait more time to merge write request
-> 
-> so replace the full flush with flushing writeback of memory cgroup
-> whose tasks tries to reclaim memory and trigger writeback, if
-> nothing is writeback, then fallback a full flush
-> 
-> After this patch, the writing performance enhance 5% in below setup:
->   $mount -t cgroup none -o memory /cgroups/memory/
->   $mkdir /cgroups/memory/x1
->   $echo $$ > /cgroups/memory/x1/tasks
->   $echo 100M > /cgroups/memory/x1/memory.limit_in_bytes
->   $cd /cgroups/memory/
->   $seq 10000|xargs  mkdir
->   $fio -filename=/home/test1 -direct=0 -iodepth 1 -thread -rw=write -ioengine=libaio -bs=16k -size=20G
-> Before:
-> WRITE: io=20480MB, aggrb=779031KB/s, minb=779031KB/s, maxb=779031KB/s, mint=26920msec, maxt=26920msec
-> After:
-> WRITE: io=20480MB, aggrb=831708KB/s, minb=831708KB/s, maxb=831708KB/s, mint=25215msec, maxt=25215msec
+The patch
 
-Have you tried v2 interface which should be much more effective when
-flushing IO?
+   ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
 
-> And this patch can reduce io util in this condition, like there
-> is two disks, one disks is used to store all kinds of logs, it
-> should be less io pressure, and other is used to store hadoop data
-> which will write lots of data to disk, but both disk io utils are
-> high in fact, since when hadoop reclaims memory, it will wake all
-> memory cgroup writeback.
+has been applied to the asoc tree at
 
-This is not my domain and that might be the reason why the above doesn't
-really explain what is going on here. But from my understanding the
-flushing behavior for v1 is inherently suboptimal because we lack any
-per memcg throttling and per cgroup writeback support. It seems that you
-are just trying to paper over this limitation with another ad-hoc
-measure.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-I might be wrong here but I completely fail to see how this can help to
-isolate flushing behavior to the memcg under the reclaim.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 18127744cf446f113ca33f07e5cea893388f781a Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 1 Aug 2018 11:47:40 +0100
+Subject: [PATCH] ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
+
+Pointer 'priv' is assigned and not used, removing this allows
+the removal of pointer 'rtd'.
+
+Cleans up clang warning:
+warning: variable 'priv' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/stm/stm32_adfsdm.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
+index 0e9373064032..706ff005234f 100644
+--- a/sound/soc/stm/stm32_adfsdm.c
++++ b/sound/soc/stm/stm32_adfsdm.c
+@@ -269,16 +269,10 @@ static int stm32_adfsdm_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ static void stm32_adfsdm_pcm_free(struct snd_pcm *pcm)
+ {
+ 	struct snd_pcm_substream *substream;
+-	struct snd_soc_pcm_runtime *rtd;
+-	struct stm32_adfsdm_priv *priv;
  
-> Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
->  fs/fs-writeback.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 471d863958bc..475cada5d1cf 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -35,6 +35,11 @@
->   */
->  #define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
->  
-> +/*
-> + * if WB cgroup dirty pages is bigger than it, not start a full flush
-> + */
-> +#define MIN_WB_DIRTY_PAGES 64
-> +
->  struct wb_completion {
->  	atomic_t		cnt;
->  };
-> @@ -2005,6 +2010,32 @@ void wakeup_flusher_threads(enum wb_reason reason)
->  	if (blk_needs_flush_plug(current))
->  		blk_schedule_flush_plug(current);
->  
-> +#ifdef CONFIG_CGROUP_WRITEBACK
-> +	if (reason == WB_REASON_VMSCAN) {
-> +		unsigned long tmp, pdirty = 0;
-> +
-> +		rcu_read_lock();
-> +		list_for_each_entry_rcu(bdi, &bdi_list, bdi_list) {
-> +			struct bdi_writeback *wb = wb_find_current(bdi);
-> +
-> +			if (wb) {
-> +				tmp = mem_cgroup_wb_dirty_stats(wb);
-> +				if (tmp) {
-> +					pdirty += tmp;
-> +					wb_start_writeback(wb, reason);
-> +
-> +					if (wb == &bdi->wb)
-> +						pdirty += MIN_WB_DIRTY_PAGES;
-> +				}
-> +			}
-> +		}
-> +		rcu_read_unlock();
-> +
-> +		if (pdirty > MIN_WB_DIRTY_PAGES)
-> +			return;
-> +	}
-> +#endif
-> +
->  	rcu_read_lock();
->  	list_for_each_entry_rcu(bdi, &bdi_list, bdi_list)
->  		__wakeup_flusher_threads_bdi(bdi, reason);
-> -- 
-> 2.16.2
-
+ 	substream = pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
+-	if (substream) {
+-		rtd = substream->private_data;
+-		priv = snd_soc_dai_get_drvdata(rtd->cpu_dai);
+-
++	if (substream)
+ 		snd_pcm_lib_preallocate_free_for_all(pcm);
+-	}
+ }
+ 
+ static struct snd_soc_component_driver stm32_adfsdm_soc_platform = {
 -- 
-Michal Hocko
-SUSE Labs
+2.18.0
+
