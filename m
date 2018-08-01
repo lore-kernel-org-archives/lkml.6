@@ -2,118 +2,130 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C80C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC58C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8F120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:20:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8F120844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 425A320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425A320844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388959AbeHALFd (ORCPT
+        id S2388822AbeHALIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:05:33 -0400
-Received: from mout.gmx.net ([212.227.17.22]:39115 "EHLO mout.gmx.net"
+        Wed, 1 Aug 2018 07:08:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:38168 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387502AbeHALFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:05:32 -0400
-Received: from homer.simpson.net ([185.191.219.92]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MDV5t-1fjMX53s69-00GsrI; Wed, 01
- Aug 2018 11:20:31 +0200
-Message-ID: <1533115229.4735.43.camel@gmx.de>
-Subject: Re: bisected - arm64 kvm unit test failures
-From:   Mike Galbraith <efault@gmx.de>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date:   Wed, 01 Aug 2018 11:20:29 +0200
-In-Reply-To: <864lgey2ja.wl-marc.zyngier@arm.com>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532768831.9882.71.camel@gmx.de> <1532847330.1618.8.camel@gmx.de>
-         <1532864867.1618.32.camel@gmx.de> <1532967899.30205.62.camel@gmx.de>
-         <1533061729.12487.26.camel@gmx.de> <867elay7he.wl-marc.zyngier@arm.com>
-         <1533103345.4735.19.camel@gmx.de> <864lgey2ja.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:gKRm10YT+Ah7qUDmt1Cf5aE/Yg07IfVFInwn2o3kHerkugHayEf
- dud/SmXYt64q1JtFfYxBqJF5vPnSj8pWO+MHxevPIBvqh27uzCx+VI0PkIVaOV+PoHaf1hf
- +BlzvnAS+6SCLmrqx7GQMpS7BPLa2UMb7JPA7lbhjgFQbnGyqKZynlZY2QYAsAjKxxcdLxg
- kuFA7w8gfx/jQSXTEM66Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6ISR+RoUPdQ=:5aJl/SlNIuWR79Pn4iHK3M
- aig5Rjpr7n7DpfSbExS97EcweOyhTFSRqfH7UQsZtA5igp3v/JPUgaK4I+DUBrJz7STamMXk2
- n8y2YsVhzZBH/AFSU+kE+WPD/vKpyXUwRubDevwSCoUWcxozxzvXyU9lfW/qMEknTyMYx1nXC
- ItmCbJXxweWuw/CKHZheE3Kpmzvzd+T+RzSMfuiJBOeECICwSXd7+t/nEvgp6W/dyj1+TNnH5
- M3xb4FHB8NFhxoBHxZU7dM40qFE+Bin1gHmKzXJH1GehWpWHHcpKtmhj5297UbPt0SuGda9bw
- 3r5yoqltTaXozSc2FLfj/0Hm8PwgSzszzAY2OOi7Qxz2Pr0pBW6xoE/HnvP5XsEVvklFCk37u
- fqd+ksg43B1ER3CoCKSyV8vM/5pXR7+jYruooxfy5fJb2vvCwVXNDarun/LAY628rOtlra9jy
- UMPux9ztF87B/MhbtVny9/2/8D97pnF0e0oJ7mm+0MY7VSZoUKMVnl/0hWN7p2s6yRPXD2WTA
- I7fACDjLdjKL7Xggag04m/xl/EBmu34FhRBytYX6gOw1aEu0m16Q59V6rtVV19O1pienSf3n3
- 7EKcgyJum+SQHPWPKdDZVLjwSE9poRNrEoqgkzfM0xwj8ETKpwQFqfFMgaxdogX3U6nToKxty
- IEYEu3R52lieS8UPPmUKfGq1uFRL9Sqjz39okZ+RdpadpatEjTJH6iNUNHOyPw8dbqzaRB2op
- 8DpMXwWXeely/AXF8ErQ6WFRvYpH+v4wfAgPgBnAv0b+Y7QZ/aE8eIFHFjROHZy2TsnjIZ4P3
- i/IFmZj
+        id S1732437AbeHALIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 07:08:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93F5918A;
+        Wed,  1 Aug 2018 02:23:40 -0700 (PDT)
+Received: from queper01-ThinkPad-T460s (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD27C3F5BA;
+        Wed,  1 Aug 2018 02:23:33 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 10:23:27 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Saravana Kannan <skannan@codeaurora.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@quicinc.com,
+        skannan@quicinc.com, Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
+ aggregation method
+Message-ID: <20180801092325.g2upcivcvdo62hub@queper01-ThinkPad-T460s>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-11-quentin.perret@arm.com>
+ <331552975e858911db66bc78c2c8e720@codeaurora.org>
+ <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
+ <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
+ <CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com>
+ <20180801082353.egym4tsbr7ppql27@queper01-lin>
+ <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-01 at 08:22 +0100, Marc Zyngier wrote:
-> On Wed, 01 Aug 2018 07:02:25 +0100,
-> Mike Galbraith <efault@gmx.de> wrote:
-> > 
-> > [1  <text/plain; ISO-8859-15 (7bit)>]
-> > On Wed, 2018-08-01 at 06:35 +0100, Marc Zyngier wrote:
-> > > 
-> > > Is it something that is reproducible with the current mainline (non-RT)?
-> > 
-> > These waters are a bit muddy, it's config dependent.  I'm trying to
-> > generate a reproducing !RT config for -rc7 as we speak.  If I build
-> > openSUSE/master-default, it does NOT reproduce.  That with the bisect
-> > config just finished building, and.... yup, it reproduced
-> > (attached).
+On Wednesday 01 Aug 2018 at 10:35:32 (+0200), Rafael J. Wysocki wrote:
+> On Wed, Aug 1, 2018 at 10:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
+> > On Wednesday 01 Aug 2018 at 09:32:49 (+0200), Rafael J. Wysocki wrote:
+> >> On Tue, Jul 31, 2018 at 9:31 PM,  <skannan@codeaurora.org> wrote:
+> >> >> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
+> >> >>> If it's going to be a different aggregation from what's done for
+> >> >>> frequency
+> >> >>> guidance, I don't see the point of having this inside schedutil. Why not
+> >> >>> keep it inside the scheduler files?
+> >> >>
+> >> >> This code basically results from a discussion we had with Peter on v4.
+> >> >> Keeping everything centralized can make sense from a maintenance
+> >> >> perspective, I think. That makes it easy to see the impact of any change
+> >> >> to utilization signals for both EAS and schedutil.
+> >> >
+> >> > In that case, I'd argue it makes more sense to keep the code centralized in
+> >> > the scheduler. The scheduler can let schedutil know about the utilization
+> >> > after it aggregates them. There's no need for a cpufreq governor to know
+> >> > that there are scheduling classes or how many there are. And the scheduler
+> >> > can then choose to aggregate one way for task packing and another way for
+> >> > frequency guidance.
+> >>
+> >> Also the aggregate utilization may be used by cpuidle governors in
+> >> principle to decide how deep they can go with idle state selection.
+> >
+> > The only issue I see with this right now is that some of the things done
+> > in this function are policy decisions which really belong to the governor,
+> > I think.
 > 
-> Thanks for that.
+> Well, the scheduler makes policy decisions too, in quite a few places. :-)
 
-Cheers.  The dependency is THP, which is disabled in RT.
+That is true ... ;-) But not so much about frequency selection yet I guess
 
---- config.save	2018-05-18 17:59:44.729165480 +0200
-+++ .config	2018-08-01 11:00:24.484148316 +0200
-@@ -632,7 +632,10 @@ CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
- CONFIG_ARCH_SUPPORTS_MEMORY_FAILURE=y
- CONFIG_MEMORY_FAILURE=y
- # CONFIG_HWPOISON_INJECT is not set
--# CONFIG_TRANSPARENT_HUGEPAGE is not set
-+CONFIG_TRANSPARENT_HUGEPAGE=y
-+CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
-+# CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
-+CONFIG_TRANSPARENT_HUGE_PAGECACHE=y
- CONFIG_CLEANCACHE=y
- CONFIG_FRONTSWAP=y
- CONFIG_CMA=y
-@@ -4306,6 +4309,7 @@ CONFIG_RAS=y
- # CONFIG_ANDROID is not set
- # CONFIG_LIBNVDIMM is not set
- CONFIG_DAX=y
-+# CONFIG_DEV_DAX is not set
- CONFIG_NVMEM=y
- # CONFIG_MTK_EFUSE is not set
- # CONFIG_QCOM_QFPROM is not set
-@@ -5175,6 +5179,7 @@ CONFIG_DECOMPRESS_XZ=y
- CONFIG_DECOMPRESS_LZO=y
- CONFIG_DECOMPRESS_LZ4=y
- CONFIG_GENERIC_ALLOCATOR=y
-+CONFIG_RADIX_TREE_MULTIORDER=y
- CONFIG_ASSOCIATIVE_ARRAY=y
- CONFIG_HAS_IOMEM=y
- CONFIG_HAS_IOPORT_MAP=y
+> The really important consideration here is whether or not there may be
+> multiple governors making different policy decisions in that respect.
+> If not, then where exactly the single policy decision is made doesn't
+> particularly matter IMO.
 
+I think some users of the aggregated utilization signal do want to make
+slightly different decisions (I'm thinking about the RT-go-to-max thing
+again which makes perfect sense in sugov, but could possibly hurt EAS).
+
+So the "hard" part of this work is to figure out what really is a
+governor-specific policy decision, and what is common between all users.
+I put "hard" between quotes because I only see the case of RT as truly
+sugov-specific for now.
+
+If we also want a special case for DL, Peter's enum should work OK, and
+enable to add more special cases for new users (cpuidle ?) if needed.
+But maybe that is something for later ?
+
+Thanks,
+Quentin
