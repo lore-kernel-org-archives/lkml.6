@@ -2,46 +2,46 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F2EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D93C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA3420894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA3420894
+	by mail.kernel.org (Postfix) with ESMTP id 76890208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:38:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76890208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389241AbeHALWv (ORCPT
+        id S2389157AbeHALWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:22:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37226 "EHLO
+        Wed, 1 Aug 2018 07:22:42 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30253 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388843AbeHALWv (ORCPT
+        by vger.kernel.org with ESMTP id S2389062AbeHALWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:22:51 -0400
+        Wed, 1 Aug 2018 07:22:41 -0400
 Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719SV9M016568;
-        Wed, 1 Aug 2018 11:37:37 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719SXdo016573;
+        Wed, 1 Aug 2018 11:37:26 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kgdxvjuxu-1
+        by mx07-00178001.pphosted.com with ESMTP id 2kgdxvjux7-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 01 Aug 2018 11:37:37 +0200
+        Wed, 01 Aug 2018 11:37:26 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1F81A31;
-        Wed,  1 Aug 2018 09:37:37 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B487A2960;
-        Wed,  1 Aug 2018 09:37:36 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:37 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F26D931;
+        Wed,  1 Aug 2018 09:37:25 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DB999288E;
+        Wed,  1 Aug 2018 09:37:24 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
+ 11:37:24 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:35 +0200
+ 11:37:24 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -51,9 +51,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mmc@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 13/14] mmc: mmci: add dma_error callback
-Date:   Wed, 1 Aug 2018 11:37:00 +0200
-Message-ID: <1533116221-380-14-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH 02/14] mmc: mmci: internalize dma map/unmap into mmci dma functions
+Date:   Wed, 1 Aug 2018 11:36:49 +0200
+Message-ID: <1533116221-380-3-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
 References: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
@@ -69,113 +69,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds dma_error callback at mmci_host_ops
-to allow to call specific variant.
+This patch internalizes the management of dma map/unmap into
+mmci dma interfaces. This allows to simplify and prepare the next dma
+callbacks for mmci host ops.
+mmci_dma_unmap was called in mmci_data_irq & mmci_cmd_irq functions
+and can be integrated in mmci_dma_data_error.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c          | 20 +++++++++++---------
- drivers/mmc/host/mmci.h          |  2 ++
- drivers/mmc/host/mmci_qcom_dml.c |  1 +
- 3 files changed, 14 insertions(+), 9 deletions(-)
+ drivers/mmc/host/mmci.c | 44 +++++++++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index b124a73..d5ca93e 100644
+index 1841d250..d8fa178 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -453,6 +453,12 @@ void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
- 		host->ops->dma_finalize(host, data);
- }
- 
-+void mmci_dma_error(struct mmci_host *host)
-+{
-+	if (host->ops && host->ops->dma_error)
-+		host->ops->dma_error(host);
-+}
-+
- static void
- mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
- {
-@@ -615,7 +621,7 @@ static void __mmci_dmae_unmap(struct mmci_host *host, struct mmc_data *data)
- 		     mmc_get_dma_dir(data));
+@@ -482,17 +482,7 @@ static inline void mmci_dma_release(struct mmci_host *host)
+ 	host->dma_rx_channel = host->dma_tx_channel = NULL;
  }
  
 -static void mmci_dma_data_error(struct mmci_host *host)
-+void mmci_dmae_error(struct mmci_host *host)
+-{
+-	dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
+-	dmaengine_terminate_all(host->dma_current);
+-	host->dma_in_progress = false;
+-	host->dma_current = NULL;
+-	host->dma_desc_current = NULL;
+-	host->data->host_cookie = 0;
+-}
+-
+-static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
++static void __mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
  {
- 	struct dmaengine_priv *dmae = host->dma_priv;
+ 	struct dma_chan *chan;
  
-@@ -656,7 +662,7 @@ void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data)
- 	 * contiguous buffers.  On TX, we'll get a FIFO underrun error.
- 	 */
- 	if (status & MCI_RXDATAAVLBLMASK) {
--		mmci_dma_data_error(host);
-+		mmci_dma_error(host);
+@@ -505,6 +495,18 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
+ 		     mmc_get_dma_dir(data));
+ }
+ 
++static void mmci_dma_data_error(struct mmci_host *host)
++{
++	dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
++	dmaengine_terminate_all(host->dma_current);
++	host->dma_in_progress = false;
++	host->dma_current = NULL;
++	host->dma_desc_current = NULL;
++	host->data->host_cookie = 0;
++
++	__mmci_dma_unmap(host, host->data);
++}
++
+ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+ {
+ 	u32 status;
+@@ -528,11 +530,10 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+ 		mmci_dma_data_error(host);
  		if (!data->error)
  			data->error = -EIO;
- 	} else if (!data->host_cookie) {
-@@ -827,13 +833,9 @@ static struct mmci_host_ops mmci_variant_ops = {
- 	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
- 	.dma_finalize = mmci_dmae_finalize,
-+	.dma_error = mmci_dmae_error,
- };
- #else
--/* Blank functions if the DMA engine is not available */
--static inline void mmci_dma_data_error(struct mmci_host *host)
++	} else if (!data->host_cookie) {
++		__mmci_dma_unmap(host, data);
+ 	}
+ 
+-	if (!data->host_cookie)
+-		mmci_dma_unmap(host, data);
+-
+ 	/*
+ 	 * Use of DMA with scatter-gather is impossible.
+ 	 * Give up with DMA and switch back to PIO mode.
+@@ -704,7 +705,7 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
+ 	if (!data || !data->host_cookie)
+ 		return;
+ 
+-	mmci_dma_unmap(host, data);
++	__mmci_dma_unmap(host, data);
+ 
+ 	if (err) {
+ 		struct mmci_host_next *next = &host->next_data;
+@@ -742,10 +743,6 @@ static inline void mmci_dma_release(struct mmci_host *host)
+ {
+ }
+ 
+-static inline void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
 -{
 -}
 -
- static struct mmci_host_ops mmci_variant_ops = {};
- #endif
- 
-@@ -1011,7 +1013,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+ static inline void mmci_dma_finalize(struct mmci_host *host,
+ 				     struct mmc_data *data)
+ {
+@@ -906,10 +903,8 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
  		u32 remain, success;
  
  		/* Terminate the DMA transfer */
--		mmci_dma_data_error(host);
-+		mmci_dma_error(host);
+-		if (dma_inprogress(host)) {
++		if (dma_inprogress(host))
+ 			mmci_dma_data_error(host);
+-			mmci_dma_unmap(host, data);
+-		}
  
  		/*
  		 * Calculate how far we are into the transfer.  Note that
-@@ -1157,7 +1159,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
+@@ -1055,10 +1050,9 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
  	if ((!sbc && !cmd->data) || cmd->error) {
  		if (host->data) {
  			/* Terminate the DMA transfer */
--			mmci_dma_data_error(host);
-+			mmci_dma_error(host);
- 
+-			if (dma_inprogress(host)) {
++			if (dma_inprogress(host))
+ 				mmci_dma_data_error(host);
+-				mmci_dma_unmap(host, host->data);
+-			}
++
  			mmci_stop_data(host);
  		}
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 3f482d5..0a4811d 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -282,6 +282,7 @@ struct mmci_host_ops {
- 	void (*dma_release)(struct mmci_host *host);
- 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
- 	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
-+	void (*dma_error)(struct mmci_host *host);
- };
- 
- struct mmci_host {
-@@ -342,3 +343,4 @@ int mmci_dmae_setup(struct mmci_host *host);
- void mmci_dmae_release(struct mmci_host *host);
- int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
- void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data);
-+void mmci_dmae_error(struct mmci_host *host);
-diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index ba7e311..80701b4 100644
---- a/drivers/mmc/host/mmci_qcom_dml.c
-+++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -189,6 +189,7 @@ static struct mmci_host_ops qcom_variant_ops = {
- 	.dma_release = mmci_dmae_release,
- 	.dma_start = mmci_dmae_start,
- 	.dma_finalize = mmci_dmae_finalize,
-+	.dma_error = mmci_dmae_error,
- };
- 
- void qcom_variant_init(struct mmci_host *host)
+ 		mmci_request_end(host, host->mrq);
 -- 
 2.7.4
 
