@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5263C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 150DBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6983320840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6983320840
+	by mail.kernel.org (Postfix) with ESMTP id C4E3520840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E3520840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbeHAUWG (ORCPT
+        id S1733105AbeHAUWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:22:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
+        Wed, 1 Aug 2018 16:22:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404100AbeHATDe (ORCPT
+        with ESMTP id S2404132AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB798F74;
-        Wed,  1 Aug 2018 16:57:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEE4B122F;
+        Wed,  1 Aug 2018 17:09:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        acme@kernel.org, eranian@google.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 080/336] perf/x86/intel/uncore: Correct fixed counter index check for NHM
-Date:   Wed,  1 Aug 2018 18:46:55 +0200
-Message-Id: <20180801165032.234056053@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 298/336] block: reset bi_iter.bi_done after splitting bio
+Date:   Wed,  1 Aug 2018 18:50:33 +0200
+Message-Id: <20180801165040.447016126@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,41 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@intel.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-[ Upstream commit d71f11c076c420c4e2fceb4faefa144e055e0935 ]
+commit 5151842b9d8732d4cbfa8400b40bff894f501b2f upstream.
 
-For Nehalem and Westmere, there is only one fixed counter for W-Box.
-There is no index which is bigger than UNCORE_PMC_IDX_FIXED.
-It is not correct to use >= to check fixed counter.
-The code quality issue will bring problem when new counter index is
-introduced.
+After the bio has been updated to represent the remaining sectors, reset
+bi_done so bio_rewind_iter() does not rewind further than it should.
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: acme@kernel.org
-Cc: eranian@google.com
-Link: http://lkml.kernel.org/r/1525371913-10597-2-git-send-email-kan.liang@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This resolves a bio_integrity_process() failure on reads where the
+original request was split.
+
+Fixes: 63573e359d05 ("bio-integrity: Restore original iterator on verify stage")
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/events/intel/uncore_nhmex.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/uncore_nhmex.c
-+++ b/arch/x86/events/intel/uncore_nhmex.c
-@@ -246,7 +246,7 @@ static void nhmex_uncore_msr_enable_even
- {
- 	struct hw_perf_event *hwc = &event->hw;
+---
+ block/bio.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1806,6 +1806,7 @@ struct bio *bio_split(struct bio *bio, i
+ 		bio_integrity_trim(split);
  
--	if (hwc->idx >= UNCORE_PMC_IDX_FIXED)
-+	if (hwc->idx == UNCORE_PMC_IDX_FIXED)
- 		wrmsrl(hwc->config_base, NHMEX_PMON_CTL_EN_BIT0);
- 	else if (box->pmu->type->event_mask & NHMEX_PMON_CTL_EN_BIT0)
- 		wrmsrl(hwc->config_base, hwc->config | NHMEX_PMON_CTL_EN_BIT22);
+ 	bio_advance(bio, split->bi_iter.bi_size);
++	bio->bi_iter.bi_done = 0;
+ 
+ 	if (bio_flagged(bio, BIO_TRACE_COMPLETION))
+ 		bio_set_flag(split, BIO_TRACE_COMPLETION);
 
 
