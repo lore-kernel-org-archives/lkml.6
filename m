@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8280CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12F3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3294E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3294E2083D
+	by mail.kernel.org (Postfix) with ESMTP id A05A320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05A320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407446AbeHATPU (ORCPT
+        id S2407458AbeHATPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52196 "EHLO
+        Wed, 1 Aug 2018 15:15:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52204 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389777AbeHATPT (ORCPT
+        with ESMTP id S2390517AbeHATPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:19 -0400
+        Wed, 1 Aug 2018 15:15:22 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 881B2C3C;
-        Wed,  1 Aug 2018 17:28:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 956C3D2F;
+        Wed,  1 Aug 2018 17:28:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 081/144] ALSA: usb-audio: Apply rate limit to warning messages in URB complete callback
-Date:   Wed,  1 Aug 2018 18:51:48 +0200
-Message-Id: <20180801164955.603176718@linuxfoundation.org>
+Subject: [PATCH 4.9 082/144] arm64: cmpwait: Clear event register before arming exclusive monitor
+Date:   Wed,  1 Aug 2018 18:51:49 +0200
+Message-Id: <20180801164955.659304901@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,32 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 377a879d9832f4ba69bd6a1fc996bb4181b1e504 ]
+[ Upstream commit 1cfc63b5ae60fe7e01773f38132f98d8b13a99a0 ]
 
-retire_capture_urb() may print warning messages when the given URB
-doesn't align, and this may flood the system log easily.
-Put the rate limit to the message for avoiding it.
+When waiting for a cacheline to change state in cmpwait, we may immediately
+wake-up the first time around the outer loop if the event register was
+already set (for example, because of the event stream).
 
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1093485
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Avoid these spurious wakeups by explicitly clearing the event register
+before loading the cacheline and setting the exclusive monitor.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/usb/pcm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/cmpxchg.h |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -1310,7 +1310,7 @@ static void retire_capture_urb(struct sn
- 		if (bytes % (runtime->sample_bits >> 3) != 0) {
- 			int oldbytes = bytes;
- 			bytes = frames * stride;
--			dev_warn(&subs->dev->dev,
-+			dev_warn_ratelimited(&subs->dev->dev,
- 				 "Corrected urb data len. %d->%d\n",
- 							oldbytes, bytes);
- 		}
+--- a/arch/arm64/include/asm/cmpxchg.h
++++ b/arch/arm64/include/asm/cmpxchg.h
+@@ -229,7 +229,9 @@ static inline void __cmpwait_case_##name
+ 	unsigned long tmp;						\
+ 									\
+ 	asm volatile(							\
+-	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"		\
++	"	sevl\n"							\
++	"	wfe\n"							\
++	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"			\
+ 	"	eor	%" #w "[tmp], %" #w "[tmp], %" #w "[val]\n"	\
+ 	"	cbnz	%" #w "[tmp], 1f\n"				\
+ 	"	wfe\n"							\
 
 
