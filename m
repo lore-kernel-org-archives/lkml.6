@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90395C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708A1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CAC20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53CAC20844
+	by mail.kernel.org (Postfix) with ESMTP id 288F22083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288F22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406725AbeHATMD (ORCPT
+        id S2406735AbeHATMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51318 "EHLO
+        Wed, 1 Aug 2018 15:12:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406712AbeHATMC (ORCPT
+        with ESMTP id S2405036AbeHATMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:02 -0400
+        Wed, 1 Aug 2018 15:12:06 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14291CC3;
-        Wed,  1 Aug 2018 17:25:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18E46CC3;
+        Wed,  1 Aug 2018 17:25:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Snild Dolkow <snild@sony.com>
-Subject: [PATCH 4.9 007/144] kthread, tracing: Dont expose half-written comm when creating kthreads
-Date:   Wed,  1 Aug 2018 18:50:34 +0200
-Message-Id: <20180801164949.458907249@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Artem Savkov <asavkov@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.9 008/144] tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure
+Date:   Wed,  1 Aug 2018 18:50:35 +0200
+Message-Id: <20180801164949.509736802@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,80 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Snild Dolkow <snild@sony.com>
+From: Artem Savkov <asavkov@redhat.com>
 
-commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
+commit 57ea2a34adf40f3a6e88409aafcf803b8945619a upstream.
 
-There is a window for racing when printing directly to task->comm,
-allowing other threads to see a non-terminated string. The vsnprintf
-function fills the buffer, counts the truncated chars, then finally
-writes the \0 at the end.
+If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+it returns an error, but does not unset the tp flags it set previously.
+This results in a probe being considered enabled and failures like being
+unable to remove the probe through kprobe_events file since probes_open()
+expects every probe to be disabled.
 
-	creator                     other
-	vsnprintf:
-	  fill (not terminated)
-	  count the rest            trace_sched_waking(p):
-	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-	  write \0
+Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
+Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
 
-The consequences depend on how 'other' uses the string. In our case,
-it was copied into the tracing system's saved cmdlines, a buffer of
-adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
-
-	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
-
-...and a strcpy out of there would cause stack corruption:
-
-	[224761.522292] Kernel panic - not syncing: stack-protector:
-	    Kernel stack is corrupted in: ffffff9bf9783c78
-
-	crash-arm64> kbt | grep 'comm\|trace_print_context'
-	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-	      comm (char [16]) =  "irq/497-pwr_even"
-
-	crash-arm64> rd 0xffffffd4d0e17d14 8
-	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-
-The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-likely needed because of this same bug.
-
-Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-This way, there won't be a window where comm is not terminated.
-
-Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
-
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Snild Dolkow <snild@sony.com>
+Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kthread.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -290,8 +290,14 @@ static struct task_struct *__kthread_cre
- 	task = create->result;
- 	if (!IS_ERR(task)) {
- 		static const struct sched_param param = { .sched_priority = 0 };
-+		char name[TASK_COMM_LEN];
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -359,11 +359,10 @@ static struct trace_kprobe *find_trace_k
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ {
++	struct event_file_link *link;
+ 	int ret = 0;
  
--		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-+		/*
-+		 * task is already visible to other tasks, so updating
-+		 * COMM must be protected.
-+		 */
-+		vsnprintf(name, sizeof(name), namefmt, args);
-+		set_task_comm(task, name);
- 		/*
- 		 * root may have changed our (kthreadd's) priority or CPU mask.
- 		 * The kernel thread should not inherit these properties.
+ 	if (file) {
+-		struct event_file_link *link;
+-
+ 		link = kmalloc(sizeof(*link), GFP_KERNEL);
+ 		if (!link) {
+ 			ret = -ENOMEM;
+@@ -383,6 +382,16 @@ enable_trace_kprobe(struct trace_kprobe
+ 		else
+ 			ret = enable_kprobe(&tk->rp.kp);
+ 	}
++
++	if (ret) {
++		if (file) {
++			list_del_rcu(&link->list);
++			kfree(link);
++			tk->tp.flags &= ~TP_FLAG_TRACE;
++		} else {
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
++		}
++	}
+  out:
+ 	return ret;
+ }
 
 
