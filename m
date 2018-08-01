@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E035EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C50C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CAC520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CAC520862
+	by mail.kernel.org (Postfix) with ESMTP id C8C2B20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C2B20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407625AbeHATYW (ORCPT
+        id S2407986AbeHATY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:24:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52906 "EHLO
+        Wed, 1 Aug 2018 15:24:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436530AbeHATSi (ORCPT
+        with ESMTP id S2436524AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C7B7ECD;
-        Wed,  1 Aug 2018 16:55:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E20BDE9A;
+        Wed,  1 Aug 2018 16:54:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@vger.kerne.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.17 008/336] tracing: Fix double free of event_trigger_data
-Date:   Wed,  1 Aug 2018 18:45:43 +0200
-Message-Id: <20180801165029.238822192@linuxfoundation.org>
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Anant Shende <anantshende@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.17 004/336] Input: elan_i2c - add another ACPI ID for Lenovo Ideapad 330-15AST
+Date:   Wed,  1 Aug 2018 18:45:39 +0200
+Message-Id: <20180801165029.094610081@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,112 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: KT Liao <kt.liao@emc.com.tw>
 
-commit 1863c387259b629e4ebfb255495f67cd06aa229b upstream.
+commit 6f88a6439da5d94de334a341503bc2c7f4a7ea7f upstream.
 
-Running the following:
+Add ELAN0622 to ACPI mapping table to support Elan touchpad found in
+Ideapad 330-15AST.
 
- # cd /sys/kernel/debug/tracing
- # echo 500000 > buffer_size_kb
-[ Or some other number that takes up most of memory ]
- # echo snapshot > events/sched/sched_switch/trigger
-
-Triggers the following bug:
-
- ------------[ cut here ]------------
- kernel BUG at mm/slub.c:296!
- invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
- CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
- Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
- RIP: 0010:kfree+0x16c/0x180
- Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
- RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
- RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
- RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
- RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
- R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
- R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
- FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
- Call Trace:
-  event_trigger_callback+0xee/0x1d0
-  event_trigger_write+0xfc/0x1a0
-  __vfs_write+0x33/0x190
-  ? handle_mm_fault+0x115/0x230
-  ? _cond_resched+0x16/0x40
-  vfs_write+0xb0/0x190
-  ksys_write+0x52/0xc0
-  do_syscall_64+0x5a/0x160
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7f363e16ab50
- Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
- RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
- RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
- RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
- RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
- R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
- R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
- Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
-86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
- ---[ end trace d301afa879ddfa25 ]---
-
-The cause is because the register_snapshot_trigger() call failed to
-allocate the snapshot buffer, and then called unregister_trigger()
-which freed the data that was passed to it. Then on return to the
-function that called register_snapshot_trigger(), as it sees it
-failed to register, it frees the trigger_data again and causes
-a double free.
-
-By calling event_trigger_init() on the trigger_data (which only ups
-the reference counter for it), and then event_trigger_free() afterward,
-the trigger_data would not get freed by the registering trigger function
-as it would only up and lower the ref count for it. If the register
-trigger function fails, then the event_trigger_free() called after it
-will free the trigger data normally.
-
-Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
-
-Cc: stable@vger.kerne.org
-Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
-Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Reported-by: Anant Shende <anantshende@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_trigger.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -681,6 +681,8 @@ event_trigger_callback(struct event_comm
- 		goto out_free;
- 
-  out_reg:
-+	/* Up the trigger_data count to make sure reg doesn't free it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
- 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
- 	/*
- 	 * The above returns on success the # of functions enabled,
-@@ -688,11 +690,13 @@ event_trigger_callback(struct event_comm
- 	 * Consider no functions a failure too.
- 	 */
- 	if (!ret) {
-+		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
- 		ret = -ENOENT;
--		goto out_free;
--	} else if (ret < 0)
--		goto out_free;
--	ret = 0;
-+	} else if (ret > 0)
-+		ret = 0;
-+
-+	/* Down the counter of trigger_data or free it if not used anymore */
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
- 
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1265,6 +1265,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0612", 0 },
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
+ };
 
 
