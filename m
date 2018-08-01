@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03466C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49B6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B08A820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08A820844
+	by mail.kernel.org (Postfix) with ESMTP id 8144020844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8144020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405339AbeHATGx (ORCPT
+        id S2404609AbeHATGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49074 "EHLO
+        Wed, 1 Aug 2018 15:06:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48940 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbeHATGw (ORCPT
+        with ESMTP id S2404595AbeHATGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:52 -0400
+        Wed, 1 Aug 2018 15:06:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0C93CC2;
-        Wed,  1 Aug 2018 17:20:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED6C6D38;
+        Wed,  1 Aug 2018 17:19:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexander Boyko <alexander.boyko@seagate.com>,
+        Alexey Lyashkov <c17817@cray.com>,
+        Doug Oucharek <dougso@me.com>,
+        "John L. Hammond" <john.hammond@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 168/246] bpf: fix references to free_bpf_prog_info() in comments
-Date:   Wed,  1 Aug 2018 18:51:18 +0200
-Message-Id: <20180801165019.775715836@linuxfoundation.org>
+Subject: [PATCH 4.14 165/246] staging: lustre: o2iblnd: fix race at kiblnd_connect_peer
+Date:   Wed,  1 Aug 2018 18:51:15 +0200
+Message-Id: <20180801165019.647438013@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,42 +54,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Doug Oucahrek <dougso@me.com>
 
-[ Upstream commit ab7f5bf0928be2f148d000a6eaa6c0a36e74750e ]
+[ Upstream commit cf04968efe341b9b1c30a527e5dd61b2af9c43d2 ]
 
-Comments in the verifier refer to free_bpf_prog_info() which
-seems to have never existed in tree.  Replace it with
-free_used_maps().
+cmid will be destroyed at OFED if kiblnd_cm_callback return error.
+if error happen before the end of kiblnd_connect_peer, it will touch
+destroyed cmid and fail as
+(o2iblnd_cb.c:1315:kiblnd_connect_peer())
+            ASSERTION( cmid->device != ((void *)0) ) failed:
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexander Boyko <alexander.boyko@seagate.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10015
+Reviewed-by: Alexey Lyashkov <c17817@cray.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Reviewed-by: John L. Hammond <john.hammond@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   18 +++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -4110,7 +4110,7 @@ static int replace_map_fd_with_map_ptr(s
- 			/* hold the map. If the program is rejected by verifier,
- 			 * the map will be released by release_maps() or it
- 			 * will be used by the valid program until it's unloaded
--			 * and all maps are released in free_bpf_prog_info()
-+			 * and all maps are released in free_used_maps()
- 			 */
- 			map = bpf_map_inc(map, false);
- 			if (IS_ERR(map)) {
-@@ -4623,7 +4623,7 @@ free_log_buf:
- 		vfree(log_buf);
- 	if (!env->prog->aux->used_maps)
- 		/* if we didn't copy map pointers into bpf_prog_info, release
--		 * them now. Otherwise free_bpf_prog_info() will release them.
-+		 * them now. Otherwise free_used_maps() will release them.
- 		 */
- 		release_maps(env);
- 	*prog = env->prog;
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1289,11 +1289,6 @@ kiblnd_connect_peer(struct kib_peer *pee
+ 		goto failed2;
+ 	}
+ 
+-	LASSERT(cmid->device);
+-	CDEBUG(D_NET, "%s: connection bound to %s:%pI4h:%s\n",
+-	       libcfs_nid2str(peer->ibp_nid), dev->ibd_ifname,
+-	       &dev->ibd_ifip, cmid->device->name);
+-
+ 	return;
+ 
+  failed2:
+@@ -2995,8 +2990,19 @@ kiblnd_cm_callback(struct rdma_cm_id *cm
+ 		} else {
+ 			rc = rdma_resolve_route(
+ 				cmid, *kiblnd_tunables.kib_timeout * 1000);
+-			if (!rc)
++			if (!rc) {
++				struct kib_net *net = peer->ibp_ni->ni_data;
++				struct kib_dev *dev = net->ibn_dev;
++
++				CDEBUG(D_NET, "%s: connection bound to "\
++				       "%s:%pI4h:%s\n",
++				       libcfs_nid2str(peer->ibp_nid),
++				       dev->ibd_ifname,
++				       &dev->ibd_ifip, cmid->device->name);
++
+ 				return 0;
++			}
++
+ 			/* Can't initiate route resolution */
+ 			CERROR("Can't resolve route for %s: %d\n",
+ 			       libcfs_nid2str(peer->ibp_nid), rc);
 
 
