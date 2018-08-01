@@ -2,92 +2,101 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47BCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDC4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D4A208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D4A208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0683E208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:59:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="Fma8w0Ux"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0683E208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389906AbeHARpK (ORCPT
+        id S2390002AbeHARp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:45:10 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:44717 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389690AbeHARpJ (ORCPT
+        Wed, 1 Aug 2018 13:45:56 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41934 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389643AbeHARp4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:45:09 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 535F93D7CED
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 10:58:47 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ktW7fcO6FkBj6ktWJfvS7H; Wed, 01 Aug 2018 10:58:47 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=60612 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fktW6-002Ahq-T7; Wed, 01 Aug 2018 10:58:26 -0500
-Date:   Wed, 1 Aug 2018 10:58:25 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: pcm: Mark expected switch fall-through
-Message-ID: <20180801155825.GA4876@embeddedor.com>
+        Wed, 1 Aug 2018 13:45:56 -0400
+Received: by mail-qt0-f194.google.com with SMTP id e19-v6so20423517qtp.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GlRInNjBkUW+U4FuIA+QH8SrANhUCARDDcxz8bcr3Rg=;
+        b=Fma8w0Uxqdu8wrbW/Vm9G3erSlDrEb0lgSgzp9WSgMTVKQzTtigTsN1F31KzOEPIcm
+         DM+5shJxz0CNOlITcJSduE5mkZQTPuQWU9N2ikIliNh8r1ureq+sk3iia3tlWsPOFBAs
+         K36pmEU35XtBPW99eXpCwIoP7cEBUborVPcYQCtl7ldJJSAUkjXPkOZ7ZUD+Ty7Vrd/6
+         XiDYt0oDWB6vHaQd+tNVeRumNYERvkS+Ju9fu8T1BW7N08m45J2DX68e4XUuAldd1w2p
+         oUTOqmGnV11kgOw5328Bg+7NIw6rib3NBoS0YNiGxZaS2/igPT+JaWtLQ3YT6ILcyz8l
+         6afQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GlRInNjBkUW+U4FuIA+QH8SrANhUCARDDcxz8bcr3Rg=;
+        b=SMNPirtQ+YXYmZRthUEIa3GR/vmI61N7BGwec4iG4Jml1Mv99UBWNtngB92L85IxYl
+         pHW9+hTw3DjUVResOYSSQBU20ak0ekt4U4dsquyRXYSbTSLTy99WUrHPcjloaRBIjy0G
+         rRHhCbwc7ddGewbmeVoIpv6z/8BGWhUdt80LnRQaOo5ODbk0l3yK8eaVWYqem62FBHum
+         XiYlHw9tFraB6qDvYaHgVJ1+gF7Co2YNcbOeNoUgA87jQ7hnkWuE9/Qz9yoCOIQ5/WwJ
+         rIoWNuguzg8+7GESyg3dFN9wpoqXC9y0eG7cOTJmWDhrcnvLyy3xQHkXWa6G+T+JY3gX
+         3/kA==
+X-Gm-Message-State: AOUpUlFLhN6gcXM0IY8g8QAkRNNFicF3TjFyECptmiFYqQq1MHeoQNeB
+        NI04rzozEMSzbr2hnIeG1nEzOA==
+X-Google-Smtp-Source: AAOMgpdcVmcT6FQ8IvfktxcqKTMaFw2ktetPCrGmxLnx5SrrqfOpm4g5WOiV7jE84DqW3lA7tx8lrg==
+X-Received: by 2002:ac8:3304:: with SMTP id t4-v6mr27086268qta.43.1533139173136;
+        Wed, 01 Aug 2018 08:59:33 -0700 (PDT)
+Received: from localhost (216.49.36.201.res-cmts.bus.ptd.net. [216.49.36.201])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm9625792qtp.53.2018.08.01.08.59.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 08:59:32 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 12:02:27 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <jbacik@fb.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] block: make iolatency avg_lat exponentially decay
+Message-ID: <20180801160227.GA8891@cmpxchg.org>
+References: <20180801002559.36261-1-dennisszhou@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.61.218
-X-Source-L: No
-X-Exim-ID: 1fktW6-002Ahq-T7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.61.218]:60612
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180801002559.36261-1-dennisszhou@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Tue, Jul 31, 2018 at 05:25:59PM -0700, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+> 
+> Currently, avg_lat is calculated by accumulating the mean of every
+> window in a long running cumulative average. As time goes on, the metric
+> becomes less and less useful due to the accumulated history.
+> 
+> This patch reuses the same calculation done in load averages to make the
+> avg_lat metric more lively. Unlike load averages, the avg only advances
+> when a window elapses (due to an io). Idle periods extend the most
+> recent window. Bucketing is used to limit the history of avg_lat by
+> binding it to the window size. So, the window range for 1/exp (decay
+> rate) is [1 min, 2.5 min) when windows elapse immediately.
+> 
+> The current sample window size is exposed in the debug info to enable
+> calculation of the window range.
+> 
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 
-Addresses-Coverity-ID: 1357375 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/core/oss/pcm_plugin.c | 1 +
- 1 file changed, 1 insertion(+)
+Looks great, thanks Dennis. Once the div build error is fixed, please
+feel free to add:
 
-diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
-index 85bab92..0391cb1a 100644
---- a/sound/core/oss/pcm_plugin.c
-+++ b/sound/core/oss/pcm_plugin.c
-@@ -353,6 +353,7 @@ snd_pcm_format_t snd_pcm_plug_slave_format(snd_pcm_format_t format,
- 				if (snd_mask_test(format_mask, (__force int)format1))
- 					return format1;
- 			}
-+			/* fall through */
- 		default:
- 			return (__force snd_pcm_format_t)-EINVAL;
- 		}
--- 
-2.7.4
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
