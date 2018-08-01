@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EA4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82F4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD172083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD172083D
+	by mail.kernel.org (Postfix) with ESMTP id A7F3E2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F3E2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732864AbeHAUHu (ORCPT
+        id S2387399AbeHAUIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
+        Wed, 1 Aug 2018 16:08:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404435AbeHATDj (ORCPT
+        with ESMTP id S2404440AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40988F7F;
-        Wed,  1 Aug 2018 16:57:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DE5DEE2;
+        Wed,  1 Aug 2018 16:57:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
+        stable@vger.kernel.org, Wang YanQing <udknight@gmail.com>,
+        Shubham Bansal <illusionist.neo@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 045/336] printk: drop in_nmi check from printk_safe_flush_on_panic()
-Date:   Wed,  1 Aug 2018 18:46:20 +0200
-Message-Id: <20180801165030.802418810@linuxfoundation.org>
+Subject: [PATCH 4.17 046/336] bpf, arm32: fix inconsistent naming about emit_a32_lsr_{r64,i64}
+Date:   Wed,  1 Aug 2018 18:46:21 +0200
+Message-Id: <20180801165030.839357457@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,46 +53,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+From: Wang YanQing <udknight@gmail.com>
 
-[ Upstream commit 554755be08fba31c74f66b82a485e5513205af84 ]
+[ Upstream commit 68565a1af9f7012e6f2fe2bdd612f67d2d830c28 ]
 
-Drop the in_nmi() check from printk_safe_flush_on_panic()
-and attempt to re-init (IOW unlock) locked logbuf spinlock
-from panic CPU regardless of its context.
+The names for BPF_ALU64 | BPF_ARSH are emit_a32_arsh_*,
+the names for BPF_ALU64 | BPF_LSH are emit_a32_lsh_*, but
+the names for BPF_ALU64 | BPF_RSH are emit_a32_lsr_*.
 
-Otherwise, theoretically, we can deadlock on logbuf trying to flush
-per-CPU buffers:
+For consistence reason, let's rename emit_a32_lsr_* to
+emit_a32_rsh_*.
 
-  a) Panic CPU is running in non-NMI context
-  b) Panic CPU sends out shutdown IPI via reboot vector
-  c) Panic CPU fails to stop all remote CPUs
-  d) Panic CPU sends out shutdown IPI via NMI vector
-     One of the CPUs that we bring down via NMI vector can hold
-     logbuf spin lock (theoretically).
+This patch also corrects a wrong comment.
 
-Link: http://lkml.kernel.org/r/20180530070350.10131-1-sergey.senozhatsky@gmail.com
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Fixes: 39c13c204bb1 ("arm: eBPF JIT compiler")
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+Cc: Shubham Bansal <illusionist.neo@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux@armlinux.org.uk
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/printk/printk_safe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/net/bpf_jit_32.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -281,7 +281,7 @@ void printk_safe_flush_on_panic(void)
- 	 * Make sure that we could access the main ring buffer.
- 	 * Do not risk a double release when more CPUs are up.
- 	 */
--	if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) {
-+	if (raw_spin_is_locked(&logbuf_lock)) {
- 		if (num_online_cpus() > 1)
- 			return;
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -708,7 +708,7 @@ static inline void emit_a32_arsh_r64(con
+ }
  
+ /* dst = dst >> src */
+-static inline void emit_a32_lsr_r64(const u8 dst[], const u8 src[], bool dstk,
++static inline void emit_a32_rsh_r64(const u8 dst[], const u8 src[], bool dstk,
+ 				     bool sstk, struct jit_ctx *ctx) {
+ 	const u8 *tmp = bpf2a32[TMP_REG_1];
+ 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
+@@ -724,7 +724,7 @@ static inline void emit_a32_lsr_r64(cons
+ 		emit(ARM_LDR_I(rm, ARM_SP, STACK_VAR(dst_hi)), ctx);
+ 	}
+ 
+-	/* Do LSH operation */
++	/* Do RSH operation */
+ 	emit(ARM_RSB_I(ARM_IP, rt, 32), ctx);
+ 	emit(ARM_SUBS_I(tmp2[0], rt, 32), ctx);
+ 	emit(ARM_MOV_SR(ARM_LR, rd, SRTYPE_LSR, rt), ctx);
+@@ -774,7 +774,7 @@ static inline void emit_a32_lsh_i64(cons
+ }
+ 
+ /* dst = dst >> val */
+-static inline void emit_a32_lsr_i64(const u8 dst[], bool dstk,
++static inline void emit_a32_rsh_i64(const u8 dst[], bool dstk,
+ 				    const u32 val, struct jit_ctx *ctx) {
+ 	const u8 *tmp = bpf2a32[TMP_REG_1];
+ 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
+@@ -1330,7 +1330,7 @@ static int build_insn(const struct bpf_i
+ 	case BPF_ALU64 | BPF_RSH | BPF_K:
+ 		if (unlikely(imm > 63))
+ 			return -EINVAL;
+-		emit_a32_lsr_i64(dst, dstk, imm, ctx);
++		emit_a32_rsh_i64(dst, dstk, imm, ctx);
+ 		break;
+ 	/* dst = dst << src */
+ 	case BPF_ALU64 | BPF_LSH | BPF_X:
+@@ -1338,7 +1338,7 @@ static int build_insn(const struct bpf_i
+ 		break;
+ 	/* dst = dst >> src */
+ 	case BPF_ALU64 | BPF_RSH | BPF_X:
+-		emit_a32_lsr_r64(dst, src, dstk, sstk, ctx);
++		emit_a32_rsh_r64(dst, src, dstk, sstk, ctx);
+ 		break;
+ 	/* dst = dst >> src (signed) */
+ 	case BPF_ALU64 | BPF_ARSH | BPF_X:
 
 
