@@ -2,132 +2,583 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED76C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EC9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79FC20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79FC20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 691C620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691C620894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389778AbeHARJS (ORCPT
+        id S2389796AbeHARKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:09:18 -0400
-Received: from nautica.notk.org ([91.121.71.147]:47528 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389627AbeHARJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:09:18 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id DDBE3C009; Wed,  1 Aug 2018 17:23:03 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 17:22:48 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Greg Kurz <groug@kaod.org>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [V9fs-developer] [PATCH 2/2] net/9p: add a per-client fcall
- kmem_cache
-Message-ID: <20180801152248.GB21463@nautica>
-References: <20180730093101.GA7894@nautica>
- <1532943263-24378-1-git-send-email-asmadeus@codewreck.org>
- <1532943263-24378-2-git-send-email-asmadeus@codewreck.org>
- <20180801162824.31fb6a30@bahia.lan>
+        Wed, 1 Aug 2018 13:10:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389690AbeHARKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:10:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FA928198B0B;
+        Wed,  1 Aug 2018 15:24:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EAAA200AC23;
+        Wed,  1 Aug 2018 15:24:01 +0000 (UTC)
+Subject: [PATCH 00/33] VFS: Introduce filesystem context [ver #11]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Eric W. Biederman" <ebiederm@redhat.com>, selinux@tycho.nsa.gov,
+        Paul Moore <paul@paul-moore.com>,
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 01 Aug 2018 16:23:56 +0100
+Message-ID: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180801162824.31fb6a30@bahia.lan>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 15:24:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 15:24:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kurz wrote on Wed, Aug 01, 2018:
-> > diff --git a/net/9p/client.c b/net/9p/client.c
-> > index ba99a94a12c9..215e3b1ed7b4 100644
-> > --- a/net/9p/client.c
-> > +++ b/net/9p/client.c
-> > @@ -231,15 +231,34 @@ static int parse_opts(char *opts, struct p9_client *clnt)
-> >  	return ret;
-> >  }
-> >  
-> > -static int p9_fcall_alloc(struct p9_fcall *fc, int alloc_msize)
-> > +static int p9_fcall_alloc(struct p9_client *c, struct p9_fcall *fc,
-> > +			  int alloc_msize)
-> >  {
-> > -	fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
-> > +	if (c->fcall_cache && alloc_msize == c->msize)
-> 
-> This is a presumably hot path for any request but the initial TVERSION,
-> you probably want likely() here...
 
-c->fcall_cache is indeed very likely, but alloc_size == c->msize not so
-much, as zc requests will be quite common for virtio and will be 4k in
-size.
-Although with that cache I'm starting to wonder if we should always use
-it... Speed-wise if there is no memory pressure the cache is likely
-going to be faster.
-If there is pressure and the items are reclaimed though that'll bring
-some heavier slow-down as it'll need to find bigger memory regions.
+Hi Al,
 
-I'm not sure which path we should favor, tbh. I'll keep these separate
-for now.
+Here are a set of patches to create a filesystem context prior to setting
+up a new mount, populating it with the parsed options/binary data, creating
+the superblock and then effecting the mount.  This is also used for remount
+since much of the parsing stuff is common in many filesystems.
 
+This allows namespaces and other information to be conveyed through the
+mount procedure.
 
-For the first part of the check, Matthew suggested trying to trick msize
-into a different value to fail this check for the initial TVERSION call,
-but even after thinking it a bit I don't really see how to do that
-cleanly. I can at least make -that- likely()...
+This also allows Miklós Szeredi's idea of doing:
 
-> 
-> > +		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
-> > +	else
-> > +		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
-> >  	if (!fc->sdata)
-> >  		return -ENOMEM;
-> >  	fc->capacity = alloc_msize;
-> >  	return 0;
-> >  }
-> >  
-> > +void p9_fcall_free(struct p9_client *c, struct p9_fcall *fc)
-> > +{
-> > +	/* sdata can be NULL for interrupted requests in trans_rdma,
-> > +	 * and kmem_cache_free does not do NULL-check for us
-> > +	 */
-> > +	if (unlikely(!fc->sdata))
-> > +		return;
-> > +
-> > +	if (c->fcall_cache && fc->capacity == c->msize)
-> 
-> ... and here as well.
+	fd = fsopen("nfs");
+	fsconfig(fd, FSCONFIG_SET_STRING, "option", "val", 0);
+	fsconfig(fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+	mfd = fsmount(fd, MS_NODEV);
+	move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
 
-For this one I'll unfortunately need to store in the fc how it has been
-allocated as slob doesn't allow to kmem_cache_free() a buffer allocated
-by kmalloc and in prevision of refs being refcounted in a hostile world
-the initial TVERSION req could be freed after fcall_cache is created :/
+that he presented at LSF-2017 to be implemented (see the relevant patches
+in the series).
 
-That's a bit of a burden but at least will reduce the checks to one here
+I didn't use netlink as that would make the core kernel depend on
+CONFIG_NET and CONFIG_NETLINK and would introduce network namespacing
+issues.
 
-> > +		kmem_cache_free(c->fcall_cache, fc->sdata);
-> > +	else
-> > +		kfree(fc->sdata);
-> > +}
-> > +EXPORT_SYMBOL(p9_fcall_free);
-> > +
-> >  static struct kmem_cache *p9_req_cache;
-> >  
-> >  /**
+I've implemented filesystem context handling for procfs, nfs, mqueue,
+cpuset, kernfs, sysfs, cgroup and afs filesystems.
+
+Unconverted filesystems are handled by a legacy filesystem wrapper.
 
 
-Anyway I've had as many comments as I could hope for, thanks everyone
-for the quick review.
-I'll send a v2 of both patches tomorrow
+====================
+WHY DO WE WANT THIS?
+====================
 
--- 
-Dominique
+Firstly, there's a bunch of problems with the mount(2) syscall:
+
+ (1) It's actually six or seven different interfaces rolled into one and
+     weird combinations of flags make it do different things beyond the
+     original specification of the syscall.
+
+ (2) It produces a particularly large and diverse set of errors, which have
+     to be mapped back to a small error code.  Yes, there's dmesg - if you
+     have it configured - but you can't necessarily see that if you're
+     doing a mount inside of a container.
+
+ (3) It copies a PAGE_SIZE block of data for each of the type, device name
+     and options.
+
+ (4) The size of the buffers is PAGE_SIZE - and this is arch dependent.
+
+ (5) You can't mount into another mount namespace.  I could, for example,
+     build a container without having to be in that container's namespace
+     if I can do it from outside.
+
+ (6) It's not really geared for the specification of multiple sources, but
+     some filesystems really want that - overlayfs, for example.
+
+and some problems in the internal kernel api:
+
+ (1) There's no defined way to supply namespace configuration for the
+     superblock - so, for instance, I can't say that I want to create a
+     superblock in a particular network namespace (on automount, say).
+
+     NFS hacks around this by creating multiple shadow file_system_types
+     with different ->mount() ops.
+
+ (2) When calling mount internally, unless you have NFS-like hacks, you
+     have to generate or otherwise provide text config data which then gets
+     parsed, when some of the time you could bypass the parsing stage
+     entirely.
+
+ (3) The amount of data in the data buffer is not known, but the data
+     buffer might be on a kernel stack somewhere, leading to the
+     possibility of tripping the stack underrun guard.
+
+and other issues too:
+
+ (1) Superblock remount in some filesystems applies options on an as-parsed
+     basis, so if there's a parse failure, a partial alteration with no
+     rollback is effected.
+
+ (2) Under some circumstances, the mount data may get copied multiple times
+     so that it can have multiple parsers applied to it or because it has
+     to be parsed multiple times - for instance, once to get the
+     preliminary info required to access the on-disk superblock and then
+     again to update the superblock record in the kernel.
+
+I want to be able to add support for a bunch of things:
+
+ (1) UID, GID and Project ID mapping/translation.  I want to be able to
+     install a translation table of some sort on the superblock to
+     translate source identifiers (which may be foreign numeric UIDs/GIDs,
+     text names, GUIDs) into system identifiers.  This needs to be done
+     before the superblock is published[*].
+
+     Note that this may, for example, involve using the context and the
+     superblock held therein to issue an RPC to a server to look up
+     translations.
+
+     [*] By "published" I mean made available through mount so that other
+     	 userspace processes can access it by path.
+
+     Maybe specifying a translation range element with something like:
+
+	fsconfig(fd, fsconfig_translate_uid, "<srcuid> <nsuid> <count>", 0, 0);
+
+     The translation information also needs to propagate over an automount
+     in some circumstances.
+
+ (2) Namespace configuration.  I want to be able to tell the superblock
+     creation process what namespaces should be applied when it created (in
+     particular the userns and netns) for containerisation purposes, e.g.:
+
+	fsconfig(fd, FSCONFIG_SET_NAMESPACE, "user", 0, userns_fd);
+	fsconfig(fd, FSCONFIG_SET_NAMESPACE, "net", 0, netns_fd);
+
+ (3) Namespace propagation.  I want to have a properly defined mechanism
+     for propagating namespace configuration over automounts within the
+     kernel.  This will be particularly useful for network filesystems.
+
+ (4) Pre-mount attribute query.  A chunk of the changes is actually the
+     fsinfo() syscall to query attributes of the filesystem beyond what's
+     available in statx() and statfs().  This will allow a created
+     superblock to be queried before it is published.
+
+ (5) Upcall for configuration.  I would like to be able to query
+     configuration that's stored in userspace when an automount is made.
+     For instance, to look up network parameters for NFS or to find a cache
+     selector for fscache.
+
+     The internal fs_context could be passed to the upcall process or the
+     kernel could read a config file directly if named appropriately for the
+     superblock, perhaps:
+
+	[/etc/fscontext.d/afs/example.com/cell.cfg]
+	realm = EXAMPLE.COM
+	translation = uid,3000,4000,100
+	fscache = tag=fred
+
+ (6) Event notifications.  I want to be able to install a watch on a
+     superblock before it is published to catch things like quota events
+     and EIO.
+
+ (7) Large and binary parameters.  There might be at some point a need to
+     pass large/binary objects like Microsoft PACs around.  If I understand
+     PACs correctly, you can obtain these from the Kerberos server and then
+     pass them to the file server when you connect.
+
+     Having it possible to pass large or binary objects as individual
+     fsconfig calls make parsing these trivial.  OTOH, some or all of this
+     can potentially be handled with the use of the keyrings interface - as
+     the afs filesystem does for passing kerberos tokens around; it's just
+     that that seems overkill for a parameter you may only need once.
+
+
+===================
+SIGNIFICANT CHANGES
+===================
+
+ ver #11:
+
+ (*) Fixed AppArmor.
+
+ (*) Capitalised all the UAPI constants.
+
+ (*) Explicitly numbered the FSCONFIG_* UAPI constants.
+
+ (*) Removed all the places ANON_INODES is selected.
+
+ (*) Fixed a bug whereby the context gets freed twice (which broke mounts of
+     procfs).
+
+ (*) Split fsinfo() off into its own patch series.
+
+ ver #10:
+
+ (*) Renamed "option" to "parameter" in a number of places.
+
+ (*) Replaced the use of write() to drive the configuration with an fsconfig()
+     syscall.  This also allows at-style paths and fds to be presented as typed
+     object.
+
+ (*) Routed the key=value parameter concept all the way through from the
+     fsconfig() system call to the LSM and filesystem.
+
+ (*) Added a parameter-description concept and helper functions to help
+     interpret a parameter and possibly convert the value.
+
+ (*) Made it possible to query the parameter description using the fsinfo()
+     syscall.  Added a test-fs-query sample to dump the parameters used by a
+     filesystem.
+
+ ver #9:
+
+ (*) Dropped the fd cookie stuff and the FMODE_*/O_* split stuff.
+
+ (*) Al added an open_tree() system call to allow a mount tree to be picked
+     referenced or cloned into an O_PATH-style fd.  This can then be used
+     with sys_move_mount().  Dropped the O_CLONE_MOUNT and O_NON_RECURSIVE
+     open() flags.
+
+ (*) Brought error logging back in, though only in the fs_context and not
+     in the task_struct.
+
+ (*) Separated MS_REMOUNT|MS_BIND handling from MS_REMOUNT handling.
+
+ (*) Used anon_inodes for the fd returned by fsopen() and fspick().  This
+     requires making it unconditional.
+
+ (*) Fixed lots of bugs.  Especial thanks to Al and Eric Biggers for
+     finding them and providing patches.
+
+ (*) Wrote manual pages, which I'll post separately.
+
+ ver #8:
+
+ (*) Changed the way fsmount() mounts into the namespace according to some
+     of Al's ideas.
+
+ (*) Put better typing on the fd cookie obtained from __fdget() & co..
+
+ (*) Stored the fd cookie in struct nameidata rather than the dfd number.
+
+ (*) Changed sys_fsmount() to return an O_PATH-style fd rather than
+     actually mounting into the mount namespace.
+
+ (*) Separated internal FMODE_* handling from O_* handling to free up
+     certain O_* flag numbers.
+
+ (*) Added two new open flags (O_CLONE_MOUNT and O_NON_RECURSIVE) for use
+     with open(O_PATH) to copy a mount or mount-subtree to an O_PATH fd.
+
+ (*) Added a new syscall, sys_move_mount(), to move a mount from an
+     dfd+path source to a dfd+path destination.
+
+ (*) Added a file->f_mode flag (FMODE_NEED_UNMOUNT) that indicates that the
+     vfsmount attached to file->f_path needs 'unmounting' if set.
+
+ (*) Made sys_move_mount() clear FMODE_NEED_UNMOUNT if successful.
+
+	[!] This doesn't work quite right.
+
+ (*) Added a new syscall, fsinfo(), to query information about a
+     filesystem.  The idea being that this will, in future, work with the
+     fd from fsopen() too and permit querying of the parameters and
+     metadata before fsmount() is called.
+
+ ver #7:
+
+ (*) Undo an incorrect MS_* -> SB_* conversion.
+
+ (*) Pass the mount data buffer size to all the mount-related functions that
+     take the data pointer.  This fixes a problem where someone (say SELinux)
+     tries to copy the mount data, assuming it to be a page in size, and
+     overruns the buffer - thereby incurring an oops by hitting a guard page.
+
+ (*) Made the AFS filesystem use them as an example.  This is a much easier to
+     deal with than with NFS or Ext4 as there are very few mount options.
+
+ ver #6:
+
+ (*) Dropped the supplementary error string facility for the moment.
+
+ (*) Dropped the NFS patches for the moment.
+
+ (*) Dropped the reserved file descriptor argument from fsopen() and
+     replaced it with three reserved pointers that must be NULL.
+
+ ver #5:
+
+ (*) Renamed sb_config -> fs_context and adjusted variable names.
+
+ (*) Differentiated the flags in sb->s_flags (now named SB_*) from those
+     passed to mount(2) (named MS_*).
+
+ (*) Renamed __vfs_new_fs_context() to vfs_new_fs_context() and made the
+     caller always provide a struct file_system_type pointer and the
+     parameters required.
+
+ (*) Got rid of vfs_submount_fc() in favour of passing
+     FS_CONTEXT_FOR_SUBMOUNT to vfs_new_fs_context().  The purpose is now
+     used more.
+
+ (*) Call ->validate() on the remount path.
+
+ (*) Got rid of the inode locking in sys_fsmount().
+
+ (*) Call security_sb_mountpoint() in the mount(2) path.
+
+ ver #4:
+
+ (*) Split the sb_config patch up somewhat.
+
+ (*) Made the supplementary error string facility something attached to the
+     task_struct rather than the sb_config so that error messages can be
+     obtained from NFS doing a mount-root-and-pathwalk inside the
+     nfs_get_tree() operation.
+
+     Further, made this managed and read by prctl rather than through the
+     mount fd so that it's more generally available.
+
+ ver #3:
+
+ (*) Rebased on 4.12-rc1.
+
+ (*) Split the NFS patch up somewhat.
+
+ ver #2:
+
+ (*) Removed the ->fill_super() from sb_config_operations and passed it in
+     directly to functions that want to call it.  NFS now calls
+     nfs_fill_super() directly rather than jumping through a pointer to it
+     since there's only the one option at the moment.
+
+ (*) Removed ->mnt_ns and ->sb from sb_config and moved ->pid_ns into
+     proc_sb_config.
+
+ (*) Renamed create_super -> get_tree.
+
+ (*) Renamed struct mount_context to struct sb_config and amended various
+     variable names.
+
+ (*) sys_fsmount() acquired AT_* flags and MS_* flags (for MNT_* flags)
+     arguments.
+
+ ver #1:
+
+ (*) Split the sb_config stuff out into its own header.
+
+ (*) Support non-context aware filesystems through a special set of
+     sb_config operations.
+
+ (*) Stored the created superblock and root dentry into the sb_config after
+     creation rather than directly into a vfsmount.  This allows some
+     arguments to be removed to various NFS functions.
+
+ (*) Added an explicit superblock-creation step.  This allows a created
+     superblock to then be mounted multiple times.
+
+ (*) Added a flag to say that the sb_config is degraded and cannot have
+     another go at having a superblock creation whilst getting rid of the
+     one that says it's already mounted.
+
+Possible further developments:
+
+ (*) Implement sb reconfiguration (for now it returns ENOANO).
+
+ (*) Implement mount context support in more filesystems, ext4 being next
+     on my list.
+
+ (*) Move the walk-from-root stuff that nfs has to generic code so that you
+     can do something akin to:
+
+	mount /dev/sda1:/foo/bar /mnt
+
+     See nfs_follow_remote_path() and mount_subtree().  This is slightly
+     tricky in NFS as we have to prevent referral loops.
+
+ (*) Work out how to get at the error message incurred by submounts
+     encountered during nfs_follow_remote_path().
+
+     Should the error message be moved to task_struct and made more
+     general, perhaps retrieved with a prctl() function?
+
+ (*) Clean up/consolidate the security functions.  Possibly add a
+     validation hook to be called at the same time as the mount context
+     validate op.
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+
+tagged as:
+
+	mount-api-20180801
+
+on branch:
+
+	mount-api
+
+David
+---
+Al Viro (2):
+      vfs: syscall: Add open_tree(2) to reference or clone a mount
+      teach move_mount(2) to work with OPEN_TREE_CLONE
+
+David Howells (31):
+      vfs: syscall: Add move_mount(2) to move mounts around
+      vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled
+      vfs: Introduce the basic header for the new mount API's filesystem context
+      vfs: Introduce logging functions
+      vfs: Add configuration parser helpers
+      vfs: Add LSM hooks for the new mount API
+      selinux: Implement the new mount API LSM hooks
+      smack: Implement filesystem context security hooks
+      apparmor: Implement security hooks for the new mount API
+      tomoyo: Implement security hooks for the new mount API
+      vfs: Separate changing mount flags full remount
+      vfs: Implement a filesystem superblock creation/configuration context
+      vfs: Remove unused code after filesystem context changes
+      procfs: Move proc_fill_super() to fs/proc/root.c
+      proc: Add fs_context support to procfs
+      ipc: Convert mqueue fs to fs_context
+      cpuset: Use fs_context
+      kernfs, sysfs, cgroup, intel_rdt: Support fs_context
+      hugetlbfs: Convert to fs_context
+      vfs: Remove kern_mount_data()
+      vfs: Provide documentation for new mount API
+      Make anon_inodes unconditional
+      vfs: syscall: Add fsopen() to prepare for superblock creation
+      vfs: Implement logging through fs_context
+      vfs: Add some logging to the core users of the fs_context log
+      vfs: syscall: Add fsconfig() for configuring and managing a context
+      vfs: syscall: Add fsmount() to create a mount for a superblock
+      vfs: syscall: Add fspick() to select a superblock for reconfiguration
+      afs: Add fs_context support
+      afs: Use fs_context to pass parameters over automount
+      vfs: Add a sample program for the new mount API
+
+
+ Documentation/filesystems/mount_api.txt  |  706 ++++++++++++++++++++++++
+ arch/arc/kernel/setup.c                  |    1 
+ arch/arm/kernel/atags_parse.c            |    1 
+ arch/arm/kvm/Kconfig                     |    1 
+ arch/arm64/kvm/Kconfig                   |    1 
+ arch/mips/kvm/Kconfig                    |    1 
+ arch/powerpc/kvm/Kconfig                 |    1 
+ arch/s390/kvm/Kconfig                    |    1 
+ arch/sh/kernel/setup.c                   |    1 
+ arch/sparc/kernel/setup_32.c             |    1 
+ arch/sparc/kernel/setup_64.c             |    1 
+ arch/x86/Kconfig                         |    1 
+ arch/x86/entry/syscalls/syscall_32.tbl   |    6 
+ arch/x86/entry/syscalls/syscall_64.tbl   |    6 
+ arch/x86/kernel/cpu/intel_rdt.h          |   15 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |  184 ++++--
+ arch/x86/kernel/setup.c                  |    1 
+ arch/x86/kvm/Kconfig                     |    1 
+ drivers/base/Kconfig                     |    1 
+ drivers/base/devtmpfs.c                  |    1 
+ drivers/char/tpm/Kconfig                 |    1 
+ drivers/dma-buf/Kconfig                  |    1 
+ drivers/gpio/Kconfig                     |    1 
+ drivers/iio/Kconfig                      |    1 
+ drivers/infiniband/Kconfig               |    1 
+ drivers/vfio/Kconfig                     |    1 
+ fs/Kconfig                               |    7 
+ fs/Makefile                              |    5 
+ fs/afs/internal.h                        |    9 
+ fs/afs/mntpt.c                           |  148 +++--
+ fs/afs/super.c                           |  470 +++++++++-------
+ fs/afs/volume.c                          |    4 
+ fs/f2fs/super.c                          |    2 
+ fs/file_table.c                          |    9 
+ fs/filesystems.c                         |    4 
+ fs/fs_context.c                          |  779 +++++++++++++++++++++++++++
+ fs/fs_parser.c                           |  476 ++++++++++++++++
+ fs/fsopen.c                              |  491 +++++++++++++++++
+ fs/hugetlbfs/inode.c                     |  392 ++++++++------
+ fs/internal.h                            |   13 
+ fs/kernfs/mount.c                        |   87 +--
+ fs/libfs.c                               |   19 +
+ fs/namei.c                               |    4 
+ fs/namespace.c                           |  867 +++++++++++++++++++++++-------
+ fs/notify/fanotify/Kconfig               |    1 
+ fs/notify/inotify/Kconfig                |    1 
+ fs/pnode.c                               |    1 
+ fs/proc/inode.c                          |   51 --
+ fs/proc/internal.h                       |    6 
+ fs/proc/root.c                           |  245 ++++++--
+ fs/super.c                               |  368 ++++++++++---
+ fs/sysfs/mount.c                         |   67 ++
+ include/linux/cgroup.h                   |    3 
+ include/linux/fs.h                       |   21 +
+ include/linux/fs_context.h               |  208 +++++++
+ include/linux/fs_parser.h                |  116 ++++
+ include/linux/kernfs.h                   |   39 +
+ include/linux/lsm_hooks.h                |   70 ++
+ include/linux/module.h                   |    6 
+ include/linux/mount.h                    |    5 
+ include/linux/security.h                 |   61 ++
+ include/linux/syscalls.h                 |    9 
+ include/uapi/linux/fcntl.h               |    2 
+ include/uapi/linux/fs.h                  |   82 +--
+ include/uapi/linux/mount.h               |   75 +++
+ init/Kconfig                             |   10 
+ init/do_mounts.c                         |    1 
+ init/do_mounts_initrd.c                  |    1 
+ ipc/mqueue.c                             |  121 +++-
+ kernel/cgroup/cgroup-internal.h          |   50 +-
+ kernel/cgroup/cgroup-v1.c                |  347 +++++++-----
+ kernel/cgroup/cgroup.c                   |  256 ++++++---
+ kernel/cgroup/cpuset.c                   |   68 ++
+ samples/Kconfig                          |    6 
+ samples/Makefile                         |    2 
+ samples/mount_api/Makefile               |    7 
+ samples/mount_api/test-fsmount.c         |  118 ++++
+ security/apparmor/include/mount.h        |   11 
+ security/apparmor/lsm.c                  |  108 ++++
+ security/apparmor/mount.c                |   47 ++
+ security/security.c                      |   51 ++
+ security/selinux/hooks.c                 |  311 ++++++++++-
+ security/smack/smack.h                   |   11 
+ security/smack/smack_lsm.c               |  370 ++++++++++++-
+ security/tomoyo/common.h                 |    3 
+ security/tomoyo/mount.c                  |   46 ++
+ security/tomoyo/tomoyo.c                 |   15 +
+ 87 files changed, 6637 insertions(+), 1484 deletions(-)
+ create mode 100644 Documentation/filesystems/mount_api.txt
+ create mode 100644 fs/fs_context.c
+ create mode 100644 fs/fs_parser.c
+ create mode 100644 fs/fsopen.c
+ create mode 100644 include/linux/fs_context.h
+ create mode 100644 include/linux/fs_parser.h
+ create mode 100644 include/uapi/linux/mount.h
+ create mode 100644 samples/mount_api/Makefile
+ create mode 100644 samples/mount_api/test-fsmount.c
+
