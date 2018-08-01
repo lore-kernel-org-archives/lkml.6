@@ -2,104 +2,108 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A9EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E3020840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E3020840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id DB66D20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:10:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CptNIIwp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB66D20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732286AbeHBA5z (ORCPT
+        id S1732205AbeHBA6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 20:57:55 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:54212 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731914AbeHBA5y (ORCPT
+        Wed, 1 Aug 2018 20:58:55 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:59160 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeHBA6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 20:57:54 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w71N9EUL062542;
-        Thu, 2 Aug 2018 07:09:14 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from andestech.com (10.0.1.85) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 2 Aug 2018
- 07:09:37 +0800
-Date:   Thu, 2 Aug 2018 07:09:38 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     Palmer Dabbelt <palmer@sifive.com>
-CC:     <albert@sifive.com>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        Andrew Waterman <andrew@sifive.com>,
-        Darius Rad <darius@bluespec.com>, <greentime@andestech.com>,
-        <zong@andestech.com>
-Subject: Re: [PATCH v2] riscv: Add support to no-FPU systems
-Message-ID: <20180801230936.GA19815@andestech.com>
-References: <1530073346-5341-1-git-send-email-alankao@andestech.com>
- <mhng-47d9ea80-a0c6-4cde-be65-75046c5d49d2@palmer-si-x1c4>
+        Wed, 1 Aug 2018 20:58:55 -0400
+Received: from mail-ua0-f177.google.com (mail-ua0-f177.google.com [209.85.217.177]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w71NAem7009166;
+        Thu, 2 Aug 2018 08:10:41 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w71NAem7009166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533165041;
+        bh=XlYhzQNfDtlLZ3X3s069FCdtFnMdyAsBO6I6OQe4Nx8=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=CptNIIwpuPKalkLQVi2ndF0i3dbkAHoM8+7kGBs6aorB4Es0lHz7Sj6aY4fJ56eCp
+         fypyjaWo/vLGDHDdviv02H6Z21dMvwEEVn4VS5OVBH7BOAkxlHEEw/GNnoyANYeoJ4
+         Dzsb6no1Epk8+S/SyN1WPOVQULejkZeJ/7+9ak0KwKWU/eyjJtaXG3BFshzXvGau2t
+         BdNkDUkAIEwCOyo9Ftkt60L9l8+WW44M5GXeTjfbunnpvkvSbAe9Cl1bR7wO1tMaNq
+         fnV7O16gxHEBY3jwACJdKLPVzppd8g4+U27APHs6AC2snfRSBa+WzzlKKgXgx2EnMd
+         8GFA5jQTqVu/w==
+X-Nifty-SrcIP: [209.85.217.177]
+Received: by mail-ua0-f177.google.com with SMTP id y10-v6so209868uao.4;
+        Wed, 01 Aug 2018 16:10:41 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGXROQiE+fo4nmp99sVAyHw9p7RwiGHExjZWVmvhEE2mBlOKEhp
+        o0/AUvIT9JxNDCOLywubgMxVTZRWXK4E+oB04/o=
+X-Google-Smtp-Source: AAOMgpcblDs6U0xtcMBddII/AgGKkOnQaF2J9AsFQbBU5BMG+1Kx1XmsDn2BWl4r3QBL+Eu2chOdDre3/rmAxfpRc9c=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr257532ual.141.1533165040441;
+ Wed, 01 Aug 2018 16:10:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <mhng-47d9ea80-a0c6-4cde-be65-75046c5d49d2@palmer-si-x1c4>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w71N9EUL062542
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 16:10:00 -0700 (PDT)
+In-Reply-To: <20180731113935.6105-1-hch@lst.de>
+References: <20180731113935.6105-1-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 2 Aug 2018 08:10:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASpOWQqNREQ_XN22QQM6Jx4F1Lrf76=_WHupPCFmOB2gA@mail.gmail.com>
+Message-ID: <CAK7LNASpOWQqNREQ_XN22QQM6Jx4F1Lrf76=_WHupPCFmOB2gA@mail.gmail.com>
+Subject: Re: include architecture Kconfig files from top-level Kconfig v4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-um@lists.infradead.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 10:55:28AM -0700, Palmer Dabbelt wrote:
-> On Tue, 26 Jun 2018 21:22:26 PDT (-0700), alankao@andestech.com wrote:
-> >This patch adds an option, CONFIG_FPU, to enable/disable floating
-> >procedures.  Also, some style issues are fixed.
-> >
-> >Signed-off-by: Alan Kao <alankao@andestech.com>
-> >Cc: Greentime Hu <greentime@andestech.com>
-> >Cc: Zong Li <zong@andestech.com>
-> >---
-> > arch/riscv/Kconfig                 |  9 ++++
-> > arch/riscv/Makefile                | 19 +++----
-> > arch/riscv/include/asm/switch_to.h |  6 +++
-> > arch/riscv/kernel/entry.S          |  3 +-
-> > arch/riscv/kernel/process.c        |  7 ++-
-> > arch/riscv/kernel/signal.c         | 82 +++++++++++++++++++++---------
-> > 6 files changed, 90 insertions(+), 36 deletions(-)
-> >
-> >diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> >index 6debcc4afc72..6069597ba73f 100644
-> >--- a/arch/riscv/Kconfig
-> >+++ b/arch/riscv/Kconfig
-> >@@ -232,6 +232,15 @@ config RISCV_BASE_PMU
-> >
-> > endmenu
-> >
-> >+config FPU
-> >+	bool "FPU support"
-> >+	default y
-> >+	help
-> >+	  Say N here if you want to disable all floating-point related procedure
-> >+	  in the kernel.
-> >+
-> >+	  If you don't know what to do here, say Y.
-> >+
-> > endmenu
-> 
-> Sorry for letting this slide for a bit.  While I'm not opposed to a solution
-> that requires a FPU Kconfig option, it'd be a bit better if we could detect
-> this at boot time.  I think this should be possible because at one point
-> this actually worked and we could boot the same kernel on FPU and no-FPU
-> systems.
-> 
-> If that's not possible then we'll have to take something like this.  There
-> were some comments on this v2 but I don't see a v3, did I miss one?
+2018-07-31 20:39 GMT+09:00 Christoph Hellwig <hch@lst.de>:
+> Hi Masahiro,
+>
+> what do you think about the series below, which moves the includes
+> of all the architecture independ Kconfig files to the top-level
+> Kconfig instead of duplicating the includes in all architectures?
+>
+> Note that this only handles the low-hanging fruite, there are a lot
+> of other bits that should probably be cleaned up to be common,
+> but those will be not entirely trivial.
+>
+> Changes since v3:
+>  - don't allow to select PREEMPT_COUNT for architectures that don't
+>    implement it
+>  - fix usage of SUBARCH=i386 and SUBARCH=x86_64 for um
+>
+> Changes since v2:
+>  - fix the missing sh conversion
+>  - handle the lack of CONFIG_SWAP support in microblaze and nios2
+>    properly
+>
+> Changes since v1:
+>  - add back a remove source statement from arch/arm/Kconfig
+>  - various fixes from Randy
+>  - various UML patches to be able to use the common Kconfig
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I have been refatoring this into a patchset containing logically
-indenpendent patches.  It will be sent soon after some sanity checks.
+
+Applied.  Thanks!
+
+-- 
+Best Regards
+Masahiro Yamada
