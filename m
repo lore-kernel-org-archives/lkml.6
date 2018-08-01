@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853DBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8EBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4748620844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4748620844
+	by mail.kernel.org (Postfix) with ESMTP id 67CD920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CD920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404978AbeHATFL (ORCPT
+        id S2404989AbeHATFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:05:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47338 "EHLO
+        Wed, 1 Aug 2018 15:05:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404582AbeHATFK (ORCPT
+        with ESMTP id S2404582AbeHATFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:05:10 -0400
+        Wed, 1 Aug 2018 15:05:13 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17173CDF;
-        Wed,  1 Aug 2018 17:18:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F074ACC3;
+        Wed,  1 Aug 2018 17:18:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 107/246] pinctrl: at91-pio4: add missing of_node_put
-Date:   Wed,  1 Aug 2018 18:50:17 +0200
-Message-Id: <20180801165016.829794503@linuxfoundation.org>
+Subject: [PATCH 4.14 134/246] arm64: cmpwait: Clear event register before arming exclusive monitor
+Date:   Wed,  1 Aug 2018 18:50:44 +0200
+Message-Id: <20180801165018.153296988@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,55 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 21816364715f508c10da1e087e352bc1e326614f ]
+[ Upstream commit 1cfc63b5ae60fe7e01773f38132f98d8b13a99a0 ]
 
-The device node iterators perform an of_node_get on each iteration, so a
-jump out of the loop requires an of_node_put.
+When waiting for a cacheline to change state in cmpwait, we may immediately
+wake-up the first time around the outer loop if the event register was
+already set (for example, because of the event stream).
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+Avoid these spurious wakeups by explicitly clearing the event register
+before loading the cacheline and setting the exclusive monitor.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c |    4 +++-
+ arch/arm64/include/asm/cmpxchg.h |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -576,8 +576,10 @@ static int atmel_pctl_dt_node_to_map(str
- 		for_each_child_of_node(np_config, np) {
- 			ret = atmel_pctl_dt_subnode_to_map(pctldev, np, map,
- 						    &reserved_maps, num_maps);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(np);
- 				break;
-+			}
- 		}
- 	}
- 
+--- a/arch/arm64/include/asm/cmpxchg.h
++++ b/arch/arm64/include/asm/cmpxchg.h
+@@ -229,7 +229,9 @@ static inline void __cmpwait_case_##name
+ 	unsigned long tmp;						\
+ 									\
+ 	asm volatile(							\
+-	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"		\
++	"	sevl\n"							\
++	"	wfe\n"							\
++	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"			\
+ 	"	eor	%" #w "[tmp], %" #w "[tmp], %" #w "[val]\n"	\
+ 	"	cbnz	%" #w "[tmp], 1f\n"				\
+ 	"	wfe\n"							\
 
 
