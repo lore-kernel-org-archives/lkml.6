@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A17C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0455DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C20E020841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C20E020841
+	by mail.kernel.org (Postfix) with ESMTP id B204D20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B204D20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbeHAUP5 (ORCPT
+        id S2387522AbeHAUQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:15:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
+        Wed, 1 Aug 2018 16:16:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404261AbeHATDg (ORCPT
+        with ESMTP id S2404239AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 916A711A8;
-        Wed,  1 Aug 2018 17:07:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE8FA12B9;
+        Wed,  1 Aug 2018 17:10:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        James Simmons <jsimmons@infradead.org>,
+        stable@vger.kernel.org,
+        Masahisa KOJIMA <masahisa.kojima@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 266/336] staging: lustre: ldlm: free resource when ldlm_lock_create() fails.
-Date:   Wed,  1 Aug 2018 18:50:01 +0200
-Message-Id: <20180801165039.226834697@linuxfoundation.org>
+Subject: [PATCH 4.17 288/336] net: socionext: reset hardware in ndo_stop
+Date:   Wed,  1 Aug 2018 18:50:23 +0200
+Message-Id: <20180801165040.046462282@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,44 +53,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Masahisa KOJIMA <masahisa.kojima@linaro.org>
 
-[ Upstream commit d8caf662b4aeeb2ac83ac0b22e40db88e9360c77 ]
+[ Upstream commit 9a00b697ce31e38c670a3042cf9f1e9cf28dabb5 ]
 
-ldlm_lock_create() gets a resource, but don't put it on
-all failure paths. It should.
+When the interface is down, head/tail of the descriptor
+ring address is set to 0 in netsec_netdev_stop().
+But netsec hardware still keeps the previous descriptor
+ring address, so there is inconsistency between driver
+and hardware after interface is up at a later time.
+To address this inconsistency, add netsec_reset_hardware()
+when the interface is down.
 
-Signed-off-by: NeilBrown <neilb@suse.com>
-Reviewed-by: James Simmons <jsimmons@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In addition, to minimize the reset process,
+add flag to decide whether driver loads the netsec microcode.
+Even if driver resets the netsec hardware, netsec microcode
+keeps resident on RAM, so it is ok we only load the microcode
+at initialization.
+
+This patch is critical for installation over network.
+
+Signed-off-by: Masahisa KOJIMA <masahisa.kojima@linaro.org>
+Fixes: 533dd11a12f6 ("net: socionext: Add Synquacer NetSec driver")
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lustre/ldlm/ldlm_lock.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/socionext/netsec.c |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-@@ -1565,8 +1565,10 @@ struct ldlm_lock *ldlm_lock_create(struc
- 		return ERR_CAST(res);
- 
- 	lock = ldlm_lock_new(res);
--	if (!lock)
-+	if (!lock) {
-+		ldlm_resource_putref(res);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	lock->l_req_mode = mode;
- 	lock->l_ast_data = data;
-@@ -1609,6 +1611,8 @@ out:
- 	return ERR_PTR(rc);
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -1057,7 +1057,8 @@ static int netsec_netdev_load_microcode(
+ 	return 0;
  }
  
+-static int netsec_reset_hardware(struct netsec_priv *priv)
++static int netsec_reset_hardware(struct netsec_priv *priv,
++				 bool load_ucode)
+ {
+ 	u32 value;
+ 	int err;
+@@ -1102,11 +1103,14 @@ static int netsec_reset_hardware(struct
+ 	netsec_write(priv, NETSEC_REG_NRM_RX_CONFIG,
+ 		     1 << NETSEC_REG_DESC_ENDIAN);
+ 
+-	err = netsec_netdev_load_microcode(priv);
+-	if (err) {
+-		netif_err(priv, probe, priv->ndev,
+-			  "%s: failed to load microcode (%d)\n", __func__, err);
+-		return err;
++	if (load_ucode) {
++		err = netsec_netdev_load_microcode(priv);
++		if (err) {
++			netif_err(priv, probe, priv->ndev,
++				  "%s: failed to load microcode (%d)\n",
++				  __func__, err);
++			return err;
++		}
+ 	}
+ 
+ 	/* start DMA engines */
+@@ -1328,6 +1332,7 @@ err1:
+ 
+ static int netsec_netdev_stop(struct net_device *ndev)
+ {
++	int ret;
+ 	struct netsec_priv *priv = netdev_priv(ndev);
+ 
+ 	netif_stop_queue(priv->ndev);
+@@ -1343,12 +1348,14 @@ static int netsec_netdev_stop(struct net
+ 	netsec_uninit_pkt_dring(priv, NETSEC_RING_TX);
+ 	netsec_uninit_pkt_dring(priv, NETSEC_RING_RX);
+ 
++	ret = netsec_reset_hardware(priv, false);
 +
-+
- /**
-  * Enqueue (request) a lock.
-  * On the client this is called from ldlm_cli_enqueue_fini
+ 	phy_stop(ndev->phydev);
+ 	phy_disconnect(ndev->phydev);
+ 
+ 	pm_runtime_put_sync(priv->dev);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int netsec_netdev_init(struct net_device *ndev)
+@@ -1364,7 +1371,7 @@ static int netsec_netdev_init(struct net
+ 	if (ret)
+ 		goto err1;
+ 
+-	ret = netsec_reset_hardware(priv);
++	ret = netsec_reset_hardware(priv, true);
+ 	if (ret)
+ 		goto err2;
+ 
 
 
