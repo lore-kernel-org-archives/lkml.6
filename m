@@ -6,73 +6,73 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACF7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC07C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A130220894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 490CA208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VEcCNjcx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A130220894
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aMgdXHSZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490CA208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388808AbeHAKlu (ORCPT
+        id S2388829AbeHAKl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:41:50 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34735 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387502AbeHAKlu (ORCPT
+        Wed, 1 Aug 2018 06:41:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50308 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387708AbeHAKl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:41:50 -0400
-Received: by mail-wm0-f68.google.com with SMTP id l2-v6so13239652wme.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 01:57:07 -0700 (PDT)
+        Wed, 1 Aug 2018 06:41:57 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s12-v6so6079209wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 01:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JbDpIApprizuDcfEpXony7ZE2rARHON8ut5DBgcNtbE=;
-        b=VEcCNjcxgsAmsjKWQv8UFby/spTo7Qnly4O4fjA9uvDbne/BsW+6L3eshel/ehCSHM
-         uzNATu13DsZ20EWvYgH3dhh+ROu5cv4hQABl4cD0XFwhRzWzB6iZmX8rfoUWvHb7eQny
-         rqpzFLqfJhCsZLUGbxeJzifIzaxrUC8Fljo+0=
+        bh=3aV3Vj0gZjmjeW6ZNcwf2EDhfaMM3/G2dZeV5z+0Z4s=;
+        b=aMgdXHSZUUsolk8dPRRgYqzdgoLvTo5jgrjsoRxwHa364jV+okA9REktdMFctMaHpE
+         KF6fCiIza0WtBcE7yyD+phDMvnagxG2savB1bQ1v9ZkNAXkTlt/4dsFV5lPMbVIbi9BH
+         CQqV9z1kA8nQOeZHr3wioZ/2RtZBfflj8eYvA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JbDpIApprizuDcfEpXony7ZE2rARHON8ut5DBgcNtbE=;
-        b=FRWB8Msi35T1q9/kZhEuiZ6d1CHhRh/koQt18N3BKEZYwMjR8r0JrX2IbzPAg3N3SG
-         hRdhT85pef7UMpe/NYgGExQg5m2I8vFkvUJZmhhx4RvPwGuoxPq9wzQO+pkB0ZwVyAF/
-         DRjpVmI0qAbbctXim4mVrc9l2C4Cc2InxnvBqbGMOPB+MofLNuS+16DO8ke6QpuAOHPW
-         n38k2YhBoQTFjhILXaIrZGKDf/+sovPj+1dCxQ5trQd/ITCenYQa3R8CbT1+J/+zLIG5
-         adzZjGiZfWMXM9ANx+Yb0J2QJ079Oh28A8eGyicD9CkoaMfhV7jqqMo1524FUm9l+/Ee
-         UNzA==
-X-Gm-Message-State: AOUpUlFYSFlOUinQ92CbTscvb6tOIGPV8h7rK68CD7Ci7FtGp3y0pY6N
-        0Kon+DMJibh8LrA4R0pu0csz4g==
-X-Google-Smtp-Source: AAOMgpc8F2Jiz+vlw39jrniTDQOhRPKUz+3sCW8iI4drOfTJglZfJ5y/JUpwW4af+omqd04ldaWNzA==
-X-Received: by 2002:a1c:6c14:: with SMTP id h20-v6mr2203514wmc.138.1533113827133;
-        Wed, 01 Aug 2018 01:57:07 -0700 (PDT)
+        bh=3aV3Vj0gZjmjeW6ZNcwf2EDhfaMM3/G2dZeV5z+0Z4s=;
+        b=KEifz1lqfiu1EO6A41EqL2c44bDEq2uGwJZeSfvnf2io8748ojEO0W4OliJ3uVlDb/
+         SuG73qbvKTChp3Zj8EXkVuvowQ5HHo9mm6RvGKV7sS23HcTrsyhOTpENtPkHQyrW/Akf
+         k/PBaKemH1TeF2+hP4ELEc77XWp22m2tgOuG76tvoflY6qTIyHYPbWYQ7r0LCLTh4twz
+         dFIPC4BjmMMEgiisA8RHculTFwgK+hCs4Aa3pa9/uahO3Cm8e4ijrH3kZpc4qF8JO1vg
+         efjBgjXGra8kHAfSoeaJfSnMzd3EMOEFRIlL/dWTRwWDwF3t5b50MpJQJg1Suvz8LgxC
+         HErw==
+X-Gm-Message-State: AOUpUlH6ijzvz0aNjNKRIKqSG4EIDOvjoX+SO/wqrlDx7AYZjLVyKSlN
+        Oe1iEmXF5Whbh2jacIkEYnKP3A==
+X-Google-Smtp-Source: AAOMgpc7Zeja3x7QXBDyrC52ik7TUh3EJqv8Yrr9oPgRAKR0FGYZR/fhs1CNBh3vJjQ5O4CmL6a8RA==
+X-Received: by 2002:a1c:8682:: with SMTP id i124-v6mr2192160wmd.77.1533113834475;
+        Wed, 01 Aug 2018 01:57:14 -0700 (PDT)
 Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id x7-v6sm30041847wrr.95.2018.08.01.01.57.06
+        by smtp.googlemail.com with ESMTPSA id c129-v6sm8290362wmh.2.2018.08.01.01.57.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 01:57:06 -0700 (PDT)
-Subject: Re: [PATCH v2 02/10] mfd: wcd9335: add support to wcd9335 core
-To:     Vinod <vkoul@kernel.org>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, tiwai@suse.com,
-        bgoswami@codeaurora.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+        Wed, 01 Aug 2018 01:57:13 -0700 (PDT)
+Subject: Re: [PATCH v2 06/10] ASoC: wcd9335: add basic controls
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org
 References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
- <20180727121806.18209-3-srinivas.kandagatla@linaro.org>
- <20180730041223.GD3661@vkoul-mobl>
+ <20180727121806.18209-7-srinivas.kandagatla@linaro.org>
+ <20180731171654.GL5719@sirena.org.uk>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <0bde4c75-b7d4-aa85-3037-79c2aa0e961c@linaro.org>
-Date:   Wed, 1 Aug 2018 09:57:05 +0100
+Message-ID: <bbee4cb6-286d-c774-9b44-267d0af25af3@linaro.org>
+Date:   Wed, 1 Aug 2018 09:57:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180730041223.GD3661@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180731171654.GL5719@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,53 +80,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for reviewing,
+Thanks for the review.
 
-On 30/07/18 05:12, Vinod wrote:
-> On 27-07-18, 13:17, Srinivas Kandagatla wrote:
->> +obj-$(CONFIG_MFD_WCD9335)	+= wcd9335.o
->> +wcd9335-objs			:= wcd9335-core.o
->> +
+On 31/07/18 18:16, Mark Brown wrote:
+> On Fri, Jul 27, 2018 at 01:18:02PM +0100, Srinivas Kandagatla wrote:
 > 
-> no slimbus objs?
+>> +static const char * const wcd9335_ear_pa_gain_text[] = {
+>> +	"G_6_DB", "G_4P5_DB", "G_3_DB", "G_1P5_DB",
+>> +	"G_0_DB", "G_M2P5_DB", "UNDEFINED", "G_M12_DB"
+>> +};
 > 
-Yep, I will try to tidy this up a bit in next version.
->> +static int wcd9335_bring_up(struct wcd9335 *wcd)
->> +{
->> +	struct regmap *rm = wcd->regmap;
->> +	int val, byte0;
->> +	int ret = 0;
->> +
->> +	regmap_read(rm, WCD9335_CHIP_TIER_CTRL_EFUSE_VAL_OUT0, &val);
->> +	regmap_read(rm, WCD9335_CHIP_TIER_CTRL_CHIP_ID_BYTE0, &byte0);
->> +
->> +	if ((val < 0) || (byte0 < 0)) {
->> +		dev_err(wcd->dev, "wcd9335 codec version detection fail!\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (byte0 == 0x1) {
->> +		dev_info(wcd->dev, "wcd9335 codec version is v2.0\n");
->> +		wcd->version = WCD9335_VERSION_2_0;
->> +		regmap_write(rm, WCD9335_CODEC_RPM_RST_CTL, 0x01);
->> +		regmap_write(rm, WCD9335_SIDO_SIDO_TEST_2, 0x00);
->> +		regmap_write(rm, WCD9335_SIDO_SIDO_CCL_8, 0x6F);
->> +		regmap_write(rm, WCD9335_BIAS_VBG_FINE_ADJ, 0x65);
->> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x5);
->> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x7);
->> +		regmap_write(rm, WCD9335_CODEC_RPM_PWR_CDC_DIG_HM_CTL, 0x3);
->> +		regmap_write(rm, WCD9335_CODEC_RPM_RST_CTL, 0x3);
->> +	} else {
->> +		dev_err(wcd->dev, "wcd9335 codec version not supported\n");
->> +		ret = -EINVAL;
->> +	}
->> +
->> +	return ret;
+> This is fairly clearly a volume control so shouldn't be an enum.  I
+> don't think we have a standard control that enables you to skip values
+> in a regular volume control (we do for enums which you should've used
+> rather than having the undefined entry) so you'd have to have custom get
+> and put operators but that's better than abusing an enum.
+I agree, this can be a TLV, I will fix any such instances in next version.
 > 
-> we can do return 0 and remove the variable as it is not used anywhere
-> else.
-Yes, it makes sense!
+>> +static const char * const rx_hph_mode_mux_text[] = {
+>> +	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI"
+>> +};
+> 
+> Use a SOC_VALUE_ENUM to hide the invalid option from users.
+Yep.
+> 
+>> +	wcd->comp_enabled[comp] = value;
+>> +	sel = value ? WCD9335_HPH_GAIN_SRC_SEL_COMPANDER :
+>> +		WCD9335_HPH_GAIN_SRC_SEL_REGISTER;
+> 
+> Just write normal if statements unless there's a reason not to, it's
+> easier to read.
+Will do that in next version.
 
-
-Thanks,
+thanks,
 srini
+> 
