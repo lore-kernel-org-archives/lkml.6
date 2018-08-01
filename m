@@ -7,95 +7,115 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FFEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1051C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0864320841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F12E20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:12:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZgK2JlJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0864320841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aY0+rE9U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F12E20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732277AbeHAU6T (ORCPT
+        id S1732355AbeHAU7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:58:19 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33813 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeHAU6T (ORCPT
+        Wed, 1 Aug 2018 16:59:51 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33521 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727684AbeHAU7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:58:19 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c13-v6so21175677wrt.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:11:05 -0700 (PDT)
+        Wed, 1 Aug 2018 16:59:51 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 6-v6so9231922plb.0;
+        Wed, 01 Aug 2018 12:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=geuYfsgy3+rfRtB7WY1+nY5Ib8dZROBnTH2tR/Ds3qo=;
-        b=dZgK2JlJNH57EN11ZVTEuDAjcNdWnETlNnCP/si/fan3Dprdv2rn7h0+ns6hD05nAT
-         1wIBgVGq/stILyX1Ee78jNN4yC8HXThm8soy4PnW6O6f0ck+d2JDz8u6B2OHWKVQTGW6
-         aTQ8iBogORMOJ1mn3wqvY1IpIHkmWMooQTpcCIfC8bgWDSkjVyWIV6NcgNBDTr9/1XDr
-         xeWpQWKq5nCkr1MHbmcTwq4xvEyGJnvk3bXHcrh4wLZl8b47tQ25r1zH8lVynicY0eRr
-         T26cX4cHEmd5ABP7rC+sarWqFSbSrrpQRqpN5NURzL5sEFE2SccByLDlnZ7Uqap4CHwa
-         a6lA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1IHcQjmXg+tga/fo51JEr/xbngVdJl7z6YZpA4lt0Rc=;
+        b=aY0+rE9UfFmwz03QFiUQUhF2Fmag4Gof4E6Bnor1FhF+/IdHUBM83h3+0x64Yahk7c
+         gXfkAxkKNDPI1o+z4/5M3FNl4WLFjTQWgESAv3TdQmKD1++RzRGu5E2mhuWHYVrAGBkG
+         YyTMZ6R+1MSxj/bnOW/aMcZBFyWCpRflFjUvQom/hu/RbPkZyNfLLR5lagc5x/j1pCki
+         bPzxx9yjuUM7TNbU+uSDf8I+KhTlFBUW98XMnKVAWOIQolb/tnf1WNQr97+dpFNDEXFw
+         E5NcfFINXfEPs1g9C9YlUkVurUG5nigRHJudxT6rKxt4Tb9MmBHt5S7+bj73ZVfbgiBp
+         UdbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=geuYfsgy3+rfRtB7WY1+nY5Ib8dZROBnTH2tR/Ds3qo=;
-        b=VtH9PClDqxvRSyU+lwuFaLKulUy2Ulxz4zi35cCcWAd9KmchCQUYD9hncY5YC2EdKw
-         HYJmSO5ScfbQw5RjgIemNT12LerIlcywg3efqfA7629aY0PjZ3fbG4dX7N+DGJELo3ie
-         g6uJm9blbdl17srMEcLWgD2Gn6dlQlDz+D8q4Sgi1xSY/xZYeiY2WS+KtNyceZ9f0GNX
-         Bx/eZ49jqfRan9falqg6/AuLe3HoBaOZV0VipFdVT8ipCVfofJE4qIoEH/6/4iZePoQJ
-         aQnwn7NL9/fm302/KwDP3gkNUm219FBb49GPJL/x8gKZy9r14a1OxqBCaL2Y3R2zzACG
-         8tdg==
-X-Gm-Message-State: AOUpUlHYznhnudcB6XHhQSpSQFZJaeJ/GOu7xmklya3R2144h6MDpnD8
-        VMtAoA1BlmgKD3K0I6vVhGU=
-X-Google-Smtp-Source: AAOMgpeX7mg5WttviMYIb/yfmV3JqV/KPeL9jyMF/+5/iUUB+CyLkFhetO3aDY7lDe1p8B4aydkYdw==
-X-Received: by 2002:a5d:55c8:: with SMTP id i8-v6mr24658332wrw.38.1533150665380;
-        Wed, 01 Aug 2018 12:11:05 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id a12-v6sm15879808wru.61.2018.08.01.12.11.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 12:11:04 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: use is_multicast_ether_addr
-Date:   Wed,  1 Aug 2018 21:10:50 +0200
-Message-Id: <20180801191050.1734-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1IHcQjmXg+tga/fo51JEr/xbngVdJl7z6YZpA4lt0Rc=;
+        b=sZ3CAtIv4ac/FcL2QUTe41nHOL6e/U30C3zrR34ypvH6rKZ5JfUPxn8i9OL71izrsN
+         etqfNjbGTlLESsqXqqriLK27hAOuxXFrxaecQIg96GELuT6s2HQpR4jPZ7a4spv9r45Y
+         g7iYtKJDqIP6jEiKKJ+glkiVTMohAHYNLNcHmM+Uq86WNthZiuoY2wb/G/XA/zeoYjer
+         ikA+C5rp7r3pSMVWFHQEb2mX2qbs4UUc95465JY4E6U+g0jMdl6zlnTvcEhZTm/CKcnu
+         hS0Bv071insgPBfQFDC2RRPice0cnwxSNqoDNgbRV9iBDDWmin5izPT3fwu7xeayVk/c
+         Mi8A==
+X-Gm-Message-State: AOUpUlH0hdRlifX/EHlbV1X45vOp3plVCC5zTBnHjGkN5zCQx0zEJjX+
+        vdNfs35YIGr4f+gx+k4GofJWvp/0
+X-Google-Smtp-Source: AAOMgpdQrETeJ+pjEpj86RqY8HYw/Z2dQiREYTIpep6s1z9gl1Fe1vAhLt/1/ShR8eKEXOkKImFJCg==
+X-Received: by 2002:a17:902:1121:: with SMTP id d30-v6mr26303365pla.247.1533150757269;
+        Wed, 01 Aug 2018 12:12:37 -0700 (PDT)
+Received: from mappy.world.mentorg.com (c-24-5-209-231.hsd1.ca.comcast.net. [24.5.209.231])
+        by smtp.googlemail.com with ESMTPSA id u42-v6sm31171336pgn.1.2018.08.01.12.12.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 01 Aug 2018 12:12:36 -0700 (PDT)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 01/14] media: videodev2.h: Add more field helper macros
+Date:   Wed,  1 Aug 2018 12:12:14 -0700
+Message-Id: <1533150747-30677-2-git-send-email-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533150747-30677-1-git-send-email-steve_longerbeam@mentor.com>
+References: <1533150747-30677-1-git-send-email-steve_longerbeam@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use is_multicast_ether_addr instead of custom IS_MCAST.
-The variable for the result of IS_MCAST was only used in the
-if conditional. So remove the extra variable and move the call
-to is_multicast_ether_addr into the conditional.
+Adds two helper macros:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+V4L2_FIELD_IS_SEQUENTIAL: returns true if the given field type is
+'sequential', that is a full frame is transmitted, or exists in
+memory, as all top field lines followed by all bottom field lines,
+or vice-versa.
+
+V4L2_FIELD_IS_INTERLACED: returns true if the given field type is
+'interlaced', that is a full frame is transmitted, or exists in
+memory, as top field lines interlaced with bottom field lines.
+
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since v2:
+- none
+Changes since v1:
+- add the complement macro V4L2_FIELD_IS_INTERLACED
+- remove V4L2_FIELD_ALTERNATE from V4L2_FIELD_IS_SEQUENTIAL macro.
+- moved new macros past end of existing V4L2_FIELD_HAS_* macros.
+---
+ include/uapi/linux/videodev2.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 80f55937e3be..eca06f05c0c4 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -2022,9 +2022,9 @@ void rtw_issue_addbareq_cmd(struct adapter *padapter, struct xmit_frame *pxmitfr
- 	struct sta_info *psta = NULL;
- 	struct ht_priv	*phtpriv;
- 	struct pkt_attrib *pattrib = &pxmitframe->attrib;
--	s32 bmcst = IS_MCAST(pattrib->ra);
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index d8b3309..d7007ba 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -130,6 +130,13 @@ enum v4l2_field {
+ 	((field) == V4L2_FIELD_BOTTOM ||\
+ 	 (field) == V4L2_FIELD_TOP ||\
+ 	 (field) == V4L2_FIELD_ALTERNATE)
++#define V4L2_FIELD_IS_INTERLACED(field) \
++	((field) == V4L2_FIELD_INTERLACED ||\
++	 (field) == V4L2_FIELD_INTERLACED_TB ||\
++	 (field) == V4L2_FIELD_INTERLACED_BT)
++#define V4L2_FIELD_IS_SEQUENTIAL(field) \
++	((field) == V4L2_FIELD_SEQ_TB ||\
++	 (field) == V4L2_FIELD_SEQ_BT)
  
--	if (bmcst || (padapter->mlmepriv.LinkDetectInfo.NumTxOkInPeriod < 100))
-+	if (is_multicast_ether_addr(pattrib->ra) ||
-+	    padapter->mlmepriv.LinkDetectInfo.NumTxOkInPeriod < 100)
- 		return;
- 
- 	priority = pattrib->priority;
+ enum v4l2_buf_type {
+ 	V4L2_BUF_TYPE_VIDEO_CAPTURE        = 1,
 -- 
-2.18.0
+2.7.4
 
