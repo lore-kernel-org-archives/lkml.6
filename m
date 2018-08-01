@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7211C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF32C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 679FE208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679FE208A2
+	by mail.kernel.org (Postfix) with ESMTP id 31D3D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D3D20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389257AbeHALsL (ORCPT
+        id S2389235AbeHALsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:48:11 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:55990 "EHLO
+        Wed, 1 Aug 2018 07:48:10 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:55962 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389214AbeHALsL (ORCPT
+        with ESMTP id S2389211AbeHALsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:48:11 -0400
+        Wed, 1 Aug 2018 07:48:10 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1fkny6-00010M-Io; Wed, 01 Aug 2018 06:02:58 -0400
+        id 1fkny6-00010M-9X; Wed, 01 Aug 2018 06:02:58 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, mingo@kernel.org, peterz@infradead.org,
         luto@kernel.org, x86@kernel.org, efault@gmx.de,
         dave.hansen@intel.com, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 10/11] x86,tlb: really leave mm on shootdown
-Date:   Wed,  1 Aug 2018 06:02:54 -0400
-Message-Id: <20180801100255.4278-11-riel@surriel.com>
+Subject: [PATCH 01/11] x86,tlb: clarify memory barrier in switch_mm_irqs_off
+Date:   Wed,  1 Aug 2018 06:02:45 -0400
+Message-Id: <20180801100255.4278-2-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180801100255.4278-1-riel@surriel.com>
 References: <20180801100255.4278-1-riel@surriel.com>
@@ -44,40 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When getting an mm shot down from under us in lazy TLB mode, don't
-just switch the TLB over to the init_mm page tables, but really drop
-our references to the lazy TLB mm.
+Clarify exactly what the memory barrier synchronizes with.
 
-This allows for faster (instant) freeing of a lazy TLB mm, which is
-a precondition to getting rid of the refcounting of mms in lazy TLB mode.
-
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Rik van Riel <riel@surriel.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/mm/tlb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/mm/tlb.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 7b1add904396..425cb9fa2640 100644
+index 752dbf4e0e50..5321e02c4e09 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -140,6 +140,8 @@ void leave_mm(void *dummy)
- 	WARN_ON(!this_cpu_read(cpu_tlbstate.is_lazy));
- 
- 	switch_mm(NULL, &init_mm, NULL);
-+	current->active_mm = &init_mm;
-+	mmdrop(loaded_mm);
- }
- EXPORT_SYMBOL_GPL(leave_mm);
- 
-@@ -483,6 +485,8 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 		 * IPIs to lazy TLB mode CPUs.
+@@ -263,8 +263,11 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		/*
+ 		 * Read the tlb_gen to check whether a flush is needed.
+ 		 * If the TLB is up to date, just use it.
+-		 * The barrier synchronizes with the tlb_gen increment in
+-		 * the TLB shootdown code.
++		 * The TLB shootdown code first increments tlb_gen, and then
++		 * sends IPIs to CPUs that have this CPU loaded and are not
++		 * in lazy TLB mode. The barrier ensures we handle
++		 * cpu_tlbstate.is_lazy before tlb_gen, keeping this code
++		 * synchronized with the TLB flush code.
  		 */
- 		switch_mm_irqs_off(NULL, &init_mm, NULL);
-+		current->active_mm = &init_mm;
-+		mmdrop(loaded_mm);
- 		return;
- 	}
- 
+ 		smp_mb();
+ 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
 -- 
 2.14.4
 
