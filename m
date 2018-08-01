@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC19C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F215C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6023820841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6023820841
+	by mail.kernel.org (Postfix) with ESMTP id D742920840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D742920840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388593AbeHAUYp (ORCPT
+        id S2387484AbeHAUYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:24:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45744 "EHLO
+        Wed, 1 Aug 2018 16:24:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403820AbeHATDc (ORCPT
+        with ESMTP id S2403829AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B854212BD;
-        Wed,  1 Aug 2018 17:10:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B28AE12E7;
+        Wed,  1 Aug 2018 17:11:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 324/336] xen-netfront: wait xenbus state change when load module manually
-Date:   Wed,  1 Aug 2018 18:50:59 +0200
-Message-Id: <20180801165041.441612191@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 336/336] ACPICA: AML Parser: ignore control method status in module-level code
+Date:   Wed,  1 Aug 2018 18:51:11 +0200
+Message-Id: <20180801165041.883886494@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,67 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiao Liang <xiliang@redhat.com>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-[ Upstream commit 822fb18a82abaf4ee7058793d95d340f5dab7bfc ]
+commit 460a53106ac39b74625d1104d9a113e0f3716c18 upstream.
 
-When loading module manually, after call xenbus_switch_state to initializes
-the state of the netfront device, the driver state did not change so fast
-that may lead no dev created in latest kernel. This patch adds wait to make
-sure xenbus knows the driver is not in closed/unknown state.
+Previous change in the AML parser code blindly set all non-successful
+dispatcher statuses to AE_OK. That approach is incorrect, though,
+because successful control method invocations from module-level
+return AE_CTRL_TRANSFER. Overwriting AE_OK to this status causes the
+AML parser to think that there was no return value from the control
+method invocation.
 
-Current state:
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe  xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-Cannot get device settings: No such device
-Cannot get wake-on-lan settings: No such device
-Cannot get message level: No such device
-Cannot get link status: No such device
-No data available
-
-With the patch installed.
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-[vm]# modprobe -r xen_netfront
-[vm]# modprobe xen_netfront
-[vm]# ethtool eth0
-Settings for eth0:
-	Link detected: yes
-
-Signed-off-by: Xiao Liang <xiliang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 92c0f4af386 (ACPICA: AML Parser: ignore dispatcher error status during table load)
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netfront.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -87,6 +87,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
- 
-+static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
- static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
- 
- struct netfront_stats {
-@@ -1330,6 +1331,11 @@ static struct net_device *xennet_create_
- 	netif_carrier_off(netdev);
- 
- 	xenbus_switch_state(dev, XenbusStateInitialising);
-+	wait_event(module_load_q,
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateClosed &&
-+			   xenbus_read_driver_state(dev->otherend) !=
-+			   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
+---
+ drivers/acpi/acpica/psloop.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+--- a/drivers/acpi/acpica/psloop.c
++++ b/drivers/acpi/acpica/psloop.c
+@@ -709,15 +709,20 @@ acpi_status acpi_ps_parse_loop(struct ac
+ 			} else
+ 			    if ((walk_state->
+ 				 parse_flags & ACPI_PARSE_MODULE_LEVEL)
++				&& status != AE_CTRL_TRANSFER
+ 				&& ACPI_FAILURE(status)) {
+ 				/*
+-				 * ACPI_PARSE_MODULE_LEVEL means that we are loading a table by
+-				 * executing it as a control method. However, if we encounter
+-				 * an error while loading the table, we need to keep trying to
+-				 * load the table rather than aborting the table load. Set the
+-				 * status to AE_OK to proceed with the table load. If we get a
+-				 * failure at this point, it means that the dispatcher got an
+-				 * error while processing Op (most likely an AML operand error.
++				 * ACPI_PARSE_MODULE_LEVEL flag means that we are currently
++				 * loading a table by executing it as a control method.
++				 * However, if we encounter an error while loading the table,
++				 * we need to keep trying to load the table rather than
++				 * aborting the table load (setting the status to AE_OK
++				 * continues the table load). If we get a failure at this
++				 * point, it means that the dispatcher got an error while
++				 * processing Op (most likely an AML operand error) or a
++				 * control method was called from module level and the
++				 * dispatcher returned AE_CTRL_TRANSFER. In the latter case,
++				 * leave the status alone, there's nothing wrong with it.
+ 				 */
+ 				status = AE_OK;
+ 			}
 
 
