@@ -6,106 +6,165 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C36C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BFDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA859208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:40:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA859208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F91820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F91820844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732447AbeHAV12 (ORCPT
+        id S1732461AbeHAV16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:27:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53508 "EHLO mail.kernel.org"
+        Wed, 1 Aug 2018 17:27:58 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46038 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732094AbeHAV12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:27:28 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE6EF20844;
-        Wed,  1 Aug 2018 19:40:07 +0000 (UTC)
-Date:   Wed, 1 Aug 2018 15:40:06 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Erica Bugden <erica.bugden@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, anna-maria@linutronix.de, bigeasy@linutronix.de
-Subject: Re: [PATCH] ftrace: Add missing check for existing hwlat thread
-Message-ID: <20180801154006.580806cc@gandalf.local.home>
-In-Reply-To: <1533120354-22923-1-git-send-email-erica.bugden@linutronix.de>
-References: <1533120354-22923-1-git-send-email-erica.bugden@linutronix.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731819AbeHAV16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 17:27:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 12:40:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,433,1526367600"; 
+   d="scan'208";a="61293784"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
+  by orsmga007.jf.intel.com with ESMTP; 01 Aug 2018 12:40:37 -0700
+Subject: Re: [RFC PATCH 1/1] device-dax: check for vma range while dax_mmap.
+To:     Zhang Yi <yi.z.zhang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, jack@suse.cz, zwisler@kernel.org,
+        yu.c.zhang@intel.com
+Cc:     yi.z.zhang@intel.com
+References: <e260d513ab831bfe1298374c87c6cca5f7dd3a6f.1533036772.git.yi.z.zhang@linux.intel.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ o6nmKbYpUAltQObU2w==
+Message-ID: <12a2ebd8-0f15-7d0a-697c-172ed7f77f92@intel.com>
+Date:   Wed, 1 Aug 2018 12:40:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <e260d513ab831bfe1298374c87c6cca5f7dd3a6f.1533036772.git.yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  1 Aug 2018 12:45:54 +0200
-Erica Bugden <erica.bugden@linutronix.de> wrote:
 
-> The hwlat tracer uses a kernel thread to measure latencies. The function
-> that creates this kernel thread, start_kthread(), can be called when the
-> tracer is initialized and when the tracer is explicitly enabled.
-> start_kthread() does not check if there is an existing hwlat kernel
-> thread and will create a new one each time it is called.
+
+On 07/31/2018 04:46 AM, Zhang Yi wrote:
+> It should be prevent user map an illegal vma range which larger than
+> dax device phiscal resourse, as we don't have swap logic while page
+> faulting in dax device.
+
+This patch prevents a user mapping an illegal vma range that is larger
+than a dax device physical resource.
+
 > 
-> This causes the reference to the previous thread to be lost. Without the
-> thread reference, the old kernel thread becomes unstoppable and
-> continues to use CPU time even after the hwlat tracer has been disabled.
-> This problem can be observed when a system is booted with tracing
-> enabled and the hwlat tracer is configured like this:
+> Applications, especailly qemu, map the /dev/dax for virtual nvdimm's
+> backend device, we defined the v-nvdimm label area at the end of mapped
+> rang. By using an illegal size that exceeds the physical resource of
+> /dev/dax, then it will triger qemu a signal fault while accessing these
+> label area.
+
+When qemu maps the dax device for virtual nvdimm's backend device, the
+v-nvdimm label area is defined at the end of mapped range. By using an
+illegal size that exceeds the range of the device dax, it will trigger a
+fault with qemu.
+
 > 
-> 	echo hwlat > current_tracer; echo 1 > tracing_on
-> 
-> Add the missing check for an existing kernel thread in start_kthread()
-> to prevent this problem. This function and the rest of the hwlat kernel
-> thread setup and teardown are already serialized because they are called
-> through the tracer core code with trace_type_lock held.
-> 
-> Signed-off-by: Erica Bugden <erica.bugden@linutronix.de>
+> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
 > ---
->  kernel/trace/trace_hwlat.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/dax/device.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
-> diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
-> index d7c8e4e..2d9d36d 100644
-> --- a/kernel/trace/trace_hwlat.c
-> +++ b/kernel/trace/trace_hwlat.c
-> @@ -354,6 +354,9 @@ static int start_kthread(struct trace_array *tr)
->  	struct task_struct *kthread;
->  	int next_cpu;
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index aff2c15..c9a50cd 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -177,6 +177,32 @@ static const struct attribute_group *dax_attribute_groups[] = {
+>  	NULL,
+>  };
 >  
-> +	if (hwlat_kthread)
-> +		return 0;
+> +static int check_vma_range(struct dev_dax *dev_dax, struct vm_area_struct *vma,
+> +		const char *func)
+> +{
+> +	struct device *dev = &dev_dax->dev;
+> +	struct resource *res;
+> +	unsigned long size;
+> +	int ret, i;
 > +
+> +	if (!dax_alive(dev_dax->dax_dev))
+> +		return -ENXIO;
+> +
+> +	size = vma->vm_end - vma->vm_start + (vma->vm_pgoff << PAGE_SHIFT);
+> +	ret = -EINVAL;
+> +	for (i = 0; i < dev_dax->num_resources; i++) {
+> +		res = &dev_dax->res[i];
+> +		if (size > resource_size(res)) {
+> +			dev_info(dev, "%s: %s: fail, vma range is overflow\n",
+> +				current->comm, func);
+> +			ret = -EINVAL;
+> +			continue;
+> +		} else
+> +			return 0;
+> +	}
+> +	return ret;
+> +}
+> +
+>  static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
+>  		const char *func)
+>  {
+> @@ -465,6 +491,8 @@ static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
+>  	 */
+>  	id = dax_read_lock();
+>  	rc = check_vma(dev_dax, vma, __func__);
+> +	if (!rc)
+> +		rc |= check_vma_range(dev_dax, vma, __func__);
 
-This looks like it is treating the symptom and not the disease.
+I think you want to augment check_vma() rather than adding another
+function? If this is added inside check_vma() then you can also skip the
+!dax_alive() check. Do you expect this function to be called anywhere else?
 
->  	/* Just pick the first CPU on first iteration */
->  	current_mask = &save_cpumask;
->  	get_online_cpus();
-
-Can you try this patch?
-
--- Steve
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 823687997b01..15862044db05 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -7628,7 +7628,9 @@ rb_simple_write(struct file *filp, const char __user *ubuf,
- 
- 	if (buffer) {
- 		mutex_lock(&trace_types_lock);
--		if (val) {
-+		if (!!val == tracer_tracing_is_on(tr)) {
-+			val = 0; /* do nothing */
-+		} else if (val) {
- 			tracer_tracing_on(tr);
- 			if (tr->current_trace->start)
- 				tr->current_trace->start(tr);
+>  	dax_read_unlock(id);
+>  	if (rc)
+>  		return rc;
+> 
