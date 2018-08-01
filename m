@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0E4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B26C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C4EE20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C4EE20844
+	by mail.kernel.org (Postfix) with ESMTP id E9AE220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AE220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405540AbeHATIA (ORCPT
+        id S2405553AbeHATID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49324 "EHLO
+        Wed, 1 Aug 2018 15:08:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49334 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405529AbeHATIA (ORCPT
+        with ESMTP id S2405022AbeHATID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:00 -0400
+        Wed, 1 Aug 2018 15:08:03 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B63CCC2;
-        Wed,  1 Aug 2018 17:21:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59F1BCC2;
+        Wed,  1 Aug 2018 17:21:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Hannes Reinecke <hare@suse.com>, Tejun Heo <tj@kernel.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 151/246] libata: Fix command retry decision
-Date:   Wed,  1 Aug 2018 18:51:01 +0200
-Message-Id: <20180801165018.968962165@linuxfoundation.org>
+Subject: [PATCH 4.14 152/246] ACPI / LPSS: Only call pwm_add_table() for Bay Trail PWM if PMIC HRV is 2
+Date:   Wed,  1 Aug 2018 18:51:02 +0200
+Message-Id: <20180801165019.017997033@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,49 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 804689ad2d9b66d0d3920b48cf05881049d44589 ]
+[ Upstream commit c975e472ec12392a0c34de1350e634310f8a1dea ]
 
-For failed commands with valid sense data (e.g. NCQ commands),
-scsi_check_sense() is used in ata_analyze_tf() to determine if the
-command can be retried. In such case, rely on this decision and ignore
-the command error mask based decision done in ata_worth_retry().
+The Point of View mobii wintab p800w Bay Trail tablet comes with a Crystal
+Cove PMIC, yet uses the LPSS PWM for backlight control, rather then the
+Crystal Cove's PWM, so we need to call pwm_add_table() to add a
+pwm_backlight mapping for the LPSS pwm despite there being an INT33FD
+ACPI device present.
 
-This fixes useless retries of commands such as unaligned writes on zoned
-disks (TYPE_ZAC).
+On all Bay Trail devices the _HRV object of the INT33FD ACPI device
+will normally return 2, to indicate the Bay Trail variant of the CRC
+PMIC is present, except on this tablet where _HRV is 0xffff. I guess this
+is a hack to make the windows Crystal Cove PWM driver not bind.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Out of the 44 DSTDs with an INT33FD device in there which I have (from
+different model devices) only the pov mobii wintab p800w uses 0xffff for
+the HRV.
+
+The byt_pwm_setup code calls acpi_dev_present to check for the presence
+of a INT33FD ACPI device which indicates that a CRC PMIC is present and
+if the INT33FD ACPI device is present then byt_pwm_setup will not add
+a pwm_backlight mapping for the LPSS pwm, so that the CRC PWM will get
+used instead.
+
+acpi_dev_present has a hrv parameter, this commit make us pass 2 instead
+of -1, so that things still match on normal tablets, but on this special
+case with its _HRV of 0xffff, the check will now fail so that the
+pwm_backlight mapping for the LPSS pwm gets added fixing backlight
+brightness control on this device.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libata-eh.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/acpi/acpi_lpss.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-eh.c
-+++ b/drivers/ata/libata-eh.c
-@@ -2217,12 +2217,16 @@ static void ata_eh_link_autopsy(struct a
- 		if (qc->err_mask & ~AC_ERR_OTHER)
- 			qc->err_mask &= ~AC_ERR_OTHER;
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -69,6 +69,10 @@ ACPI_MODULE_NAME("acpi_lpss");
+ #define LPSS_SAVE_CTX			BIT(4)
+ #define LPSS_NO_D3_DELAY		BIT(5)
  
--		/* SENSE_VALID trumps dev/unknown error and revalidation */
-+		/*
-+		 * SENSE_VALID trumps dev/unknown error and revalidation. Upper
-+		 * layers will determine whether the command is worth retrying
-+		 * based on the sense data and device class/type. Otherwise,
-+		 * determine directly if the command is worth retrying using its
-+		 * error mask and flags.
-+		 */
- 		if (qc->flags & ATA_QCFLAG_SENSE_VALID)
- 			qc->err_mask &= ~(AC_ERR_DEV | AC_ERR_OTHER);
--
--		/* determine whether the command is worth retrying */
--		if (ata_eh_worth_retry(qc))
-+		else if (ata_eh_worth_retry(qc))
- 			qc->flags |= ATA_QCFLAG_RETRY;
++/* Crystal Cove PMIC shares same ACPI ID between different platforms */
++#define BYT_CRC_HRV			2
++#define CHT_CRC_HRV			3
++
+ struct lpss_private_data;
  
- 		/* accumulate error info */
+ struct lpss_device_desc {
+@@ -162,7 +166,7 @@ static void byt_pwm_setup(struct lpss_pr
+ 	if (!adev->pnp.unique_id || strcmp(adev->pnp.unique_id, "1"))
+ 		return;
+ 
+-	if (!acpi_dev_present("INT33FD", NULL, -1))
++	if (!acpi_dev_present("INT33FD", NULL, BYT_CRC_HRV))
+ 		pwm_add_table(byt_pwm_lookup, ARRAY_SIZE(byt_pwm_lookup));
+ }
+ 
 
 
