@@ -2,149 +2,154 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668D6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B24CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E2D120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:27:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E2D120862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bell.net
+	by mail.kernel.org (Postfix) with ESMTP id 3812020841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3812020841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732394AbeHAXPO (ORCPT
+        id S1732281AbeHAXVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:15:14 -0400
-Received: from simcoe208srvr.owm.bell.net ([184.150.200.208]:46032 "EHLO
-        torfep02.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730995AbeHAXPO (ORCPT
+        Wed, 1 Aug 2018 19:21:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37484 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725881AbeHAXVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:15:14 -0400
-Received: from bell.net torfep02 184.150.200.158 by torfep02.bell.net
-          with ESMTP
-          id <20180801212729.TTZS32387.torfep02.bell.net@torspm01.bell.net>;
-          Wed, 1 Aug 2018 17:27:29 -0400
-Received: from [192.168.2.49] (really [70.53.62.189]) by torspm01.bell.net
-          with ESMTP
-          id <20180801212729.FUEW26298.torspm01.bell.net@[192.168.2.49]>;
-          Wed, 1 Aug 2018 17:27:29 -0400
-Subject: Re: [PATCH] parisc: prefer _THIS_IP_ and _RET_IP_ statement
- expressions
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     deller@gmx.de, jejb@parisc-linux.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        pravin.shedge4linux@gmail.com,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-parisc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20180801182258.17834-1-ndesaulniers@google.com>
- <78c667f9-5c8b-3835-83eb-4b59e27e4f7e@bell.net>
- <CAKwvOdmdrA+UvAWyqe8sNJt5nxHXHsSwf5Yxih9HYgVL+kovxQ@mail.gmail.com>
-From:   John David Anglin <dave.anglin@bell.net>
-Message-ID: <fe7b57d8-b586-a390-31d2-2274f69db3c0@bell.net>
-Date:   Wed, 1 Aug 2018 17:27:27 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 1 Aug 2018 19:21:39 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71LOApX040247
+        for <linux-kernel@vger.kernel.org>; Wed, 1 Aug 2018 17:33:53 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kkjjd5e89-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:33:53 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Wed, 1 Aug 2018 17:33:51 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Aug 2018 17:33:47 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w71LXkFC9568736
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Aug 2018 21:33:46 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50E32AC05F;
+        Wed,  1 Aug 2018 17:34:24 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CEDB2AC05B;
+        Wed,  1 Aug 2018 17:34:19 -0400 (EDT)
+Received: from kermit-br-ibm-com.ibmmodules.com (unknown [9.80.99.86])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Aug 2018 17:34:19 -0400 (EDT)
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Joe Perches <joe@perches.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Simon Guo <wei.guo.simon@gmail.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Subject: [PATCH v4 0/6] powerpc: Modernize unhandled signals message
+Date:   Wed,  1 Aug 2018 18:33:14 -0300
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmdrA+UvAWyqe8sNJt5nxHXHsSwf5Yxih9HYgVL+kovxQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Cloudmark-Analysis: v=2.2 cv=DZT4krlW c=1 sm=0 tr=0 a=VCUqJnZSONuD0ISaPFNHjQ==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=FBHGMhGWAAAA:8 a=vx3-_5-rBGK8EIvQcvkA:9 a=QEXdDO2ut3YA:10 a=9gvnlMMaQFpL9xblJ6ne:22
+X-TM-AS-GCONF: 00
+x-cbid: 18080121-0040-0000-0000-00000456ECA5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009468; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01068949; UDB=6.00549596; IPR=6.00847297;
+ MB=3.00022446; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-01 21:33:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080121-0041-0000-0000-0000085D28D7
+Message-Id: <20180801213320.11203-1-muriloo@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=920 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1808010217
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-01 4:52 PM, Nick Desaulniers wrote:
-> Dave, thanks for the quick review!
->
-> On Wed, Aug 1, 2018 at 1:10 PM John David Anglin <dave.anglin@bell.net> wrote:
->> On 2018-08-01 2:22 PM, Nick Desaulniers wrote:
->>> As part of the effort to reduce the code duplication between _THIS_IP_
->>> and current_text_addr(), let's consolidate callers of
->>> current_text_addr() to use _THIS_IP_.
->> Using the generic _THIS_IP_ results in significantly longer code than
->> the parisc implementation
->> of current_text_addr().
-> It might be worthwhile to file a bug with your compiler vendor.  It
-> seems like there may be a better way to generate code for this
-> construct.
->
-> Also, I'm curious how hot this code is? I assume in general that the C
-> construct may be larger than the inline assembly, but I'm curious if
-> this introduces a performance regression or just makes the code
-> larger?  Do you have stats on the size difference and performance
-> differences?  What's more important to me is whether the patch is
-> correct...
-I exaggerated the size difference.  It's two instructions versus one on 
-PA 2.0.
->
->> It also results in a local label in the text.
->> This breaks the unwind data
->> for the function with the label in 32-bit kernels.  The implementation
->> of current_text_addr()
->> doesn't add a label.
-> ... oh, I guess I'm surprised that the label ends up in the code, vs
-> there just being a constant generated.  Can you send me the
-> disassembly?  Also, I'm curious how does having the label present in
-> the text break the unwinder?  (I'm not familiar with how unwinding
-> works beyond following frame pointers).
-The generic code results in the following assembly code:
+Hi, everyone.
 
-.L2:
-         ldil LR'.L2,%r25
-         ldo RR'.L2(%r25),%r25
+This series was inspired by the need to modernize and display more
+informative messages about unhandled signals.
 
-It's the LR and RR relocations that cause the label to end up in the 
-final symbol table.
-The linker can't throw .L2 away  as its address has been taken.
+The "unhandled signal NN" is not very informative.  We thought it would
+be helpful adding a human-readable message describing what the signal
+number means, printing the VMA address, and dumping the instructions.
 
-The comparable PA 2.0 code is:
+Before this series:
 
-         mfia %r25
+  pandafault32[4724]: unhandled signal 11 at 100005e4 nip 10000444 lr 0fe31ef4 code 2
 
-I'm aware of this issue as I just changed gcc to move branch tables to 
-read-only data
-when generating non-PIC code because of this issue.
+  pandafault64[4725]: unhandled signal 11 at 0000000010000718 nip 0000000010000574 lr 00007fff7faa7a6c code 2
 
-Helge knows more about the unwind issues than I do as it's specific to 
-the linux kernel.
-Userspace uses dwarf unwind info.  I believe what happens is the 
-unwinder finds the label
-instead of the relevant function and its unwind data.
+After this series:
 
->
->> _THIS_IP_ should be defined using
->> current_text_addr() on parisc.
-> I'm trying to eliminate current_text_addr() in the kernel, as it only
-> has 4 call sites (3 are arch specific).  What are your thoughts on
-> making the current parisc current_text_addr() just a static function
-> (or statement expression that's local to) in
-> arch/parisc/kernel/unwind.c?
-I understand the desire to eliminate current_text_addr().  However, as 
-it stands, using _THIS_IP_
-introduces text  labels at many sites in the kernel.  That's why parisc 
-needs to be able to provide its
-own define for _THIS_IP_.  Currently, we have in asm/processor.h:
+  pandafault32[4753]: segfault (11) at 100005e4 nip 10000444 lr fe31ef4 code 2 in pandafault32[10000000+10000]
+  pandafault32[4753]: code: 4bffff3c 60000000 60420000 4bffff30 9421ffd0 93e1002c 7c3f0b78 3d201000
+  pandafault32[4753]: code: 392905e4 913f0008 813f0008 39400048 <99490000> 39200000 7d234b78 397f0030
 
-/*
-  * Default implementation of macro that returns current
-  * instruction pointer ("program counter").
-  */
-#ifdef CONFIG_PA20
-#define current_ia(x)   __asm__("mfia %0" : "=r"(x))
-#else /* mfia added in pa2.0 */
-#define current_ia(x)   __asm__("blr 0,%0\n\tnop" : "=r"(x))
-#endif
-#define current_text_addr() ({ void *pc; current_ia(pc); pc; })
+  pandafault64[4754]: segfault (11) at 10000718 nip 10000574 lr 7fffb0007a6c code 2 in pandafault64[10000000+10000]
+  pandafault64[4754]: code: e8010010 7c0803a6 4bfffef4 4bfffef0 fbe1fff8 f821ffb1 7c3f0b78 3d22fffe
+  pandafault64[4754]: code: 39298818 f93f0030 e93f0030 39400048 <99490000> 39200000 7d234b78 383f0050
 
-Dave
+Link to v3:
+
+  https://lore.kernel.org/lkml/20180731145020.14009-1-muriloo@linux.ibm.com/
+
+v3..v4:
+
+  - Added new show_user_instructions() based on the existing
+    show_instructions()
+  - Updated commit messages
+  - Replaced signals names table with a tiny function that returns a
+    literal string for each signal number
+
+Cheers!
+
+Murilo Opsfelder Araujo (6):
+  powerpc/traps: Print unhandled signals in a separate function
+  powerpc/traps: Use an explicit ratelimit state for show_signal_msg()
+  powerpc/traps: Use %lx format in show_signal_msg()
+  powerpc/traps: Print VMA for unhandled signals
+  powerpc: Add show_user_instructions()
+  powerpc/traps: Show instructions on exceptions
+
+ arch/powerpc/include/asm/stacktrace.h | 13 +++++++
+ arch/powerpc/kernel/process.c         | 40 +++++++++++++++++++++
+ arch/powerpc/kernel/traps.c           | 52 +++++++++++++++++++++------
+ 3 files changed, 95 insertions(+), 10 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/stacktrace.h
 
 -- 
-John David Anglin  dave.anglin@bell.net
+2.17.1
 
