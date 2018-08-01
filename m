@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F42CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91CBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F51208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F51208A4
+	by mail.kernel.org (Postfix) with ESMTP id 63491208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63491208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390630AbeHASUW (ORCPT
+        id S2403779AbeHASU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:20:22 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2920 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390113AbeHASUW (ORCPT
+        Wed, 1 Aug 2018 14:20:26 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3735 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390113AbeHASUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:20:22 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b61e0e80005>; Wed, 01 Aug 2018 09:33:44 -0700
-Received: from HQMAIL108.nvidia.com ([172.20.161.6])
+        Wed, 1 Aug 2018 14:20:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b61e0e50007>; Wed, 01 Aug 2018 09:33:41 -0700
+Received: from HQMAIL105.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 01 Aug 2018 09:33:49 -0700
+  Wed, 01 Aug 2018 09:33:52 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:33:49 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
- 2018 16:33:48 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Wed, 1 Aug 2018 16:33:49 +0000
+        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:33:52 -0700
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:33:52 +0000
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:33:52 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Wed, 1 Aug 2018 16:33:52 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b61e0ea0000>; Wed, 01 Aug 2018 09:33:49 -0700
+        id <B5b61e0ed0000>; Wed, 01 Aug 2018 09:33:52 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -46,13 +49,13 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>
+        "Stefan Agner" <stefan@agner.ch>
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 22/40] mmc: tegra: Configure default tap values
-Date:   Wed, 1 Aug 2018 19:32:12 +0300
-Message-ID: <1533141150-10511-23-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH 23/40] mmc: tegra: Configure default trim value on reset
+Date:   Wed, 1 Aug 2018 19:32:13 +0300
+Message-ID: <1533141150-10511-24-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
@@ -64,194 +67,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the default inbound timing adjustment tap value on reset and on
-non-tunable modes.
-
-The default tap value is not programmed on tunable modes because the
-tuning sequence is used instead to determine the tap value.
+Program the outbound sampling trim value in tegra_sdhci_reset(). Unlike
+the outbound tap value this does not depend on the signaling mode and
+needs to be only programmed once.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 131 ++++++++++++++++++++++++-----------------
- 1 file changed, 76 insertions(+), 55 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index bd3305e..9550d35 100644
+index 9550d35..4cef437 100644
 --- a/drivers/mmc/host/sdhci-tegra.c
 +++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -213,6 +213,57 @@ static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
- 	return true;
- }
+@@ -37,6 +37,8 @@
+ #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
+ #define SDHCI_CLOCK_CTRL_TAP_MASK			0x00ff0000
+ #define SDHCI_CLOCK_CTRL_TAP_SHIFT			16
++#define SDHCI_CLOCK_CTRL_TRIM_MASK			0x1f000000
++#define SDHCI_CLOCK_CTRL_TRIM_SHIFT			24
+ #define SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE		BIT(5)
+ #define SDHCI_CLOCK_CTRL_PADPIPE_CLKEN_OVERRIDE		BIT(3)
+ #define SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE	BIT(2)
+@@ -287,7 +289,8 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 		       SDHCI_MISC_CTRL_ENABLE_DDR50 |
+ 		       SDHCI_MISC_CTRL_ENABLE_SDR104);
  
-+static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
-+{
-+	bool orig_enabled;
-+	u32 reg;
-+
-+	reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+	orig_enabled = !!(reg & SDHCI_CLOCK_CARD_EN);
-+
-+	if (orig_enabled == enable)
-+		return orig_enabled;
-+
-+	if (enable)
-+		reg |= SDHCI_CLOCK_CARD_EN;
-+	else
-+		reg &= ~SDHCI_CLOCK_CARD_EN;
-+
-+	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
-+
-+	return orig_enabled;
-+}
-+
-+static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-+	bool card_clk_enabled = false;
-+	u32 reg;
-+
-+	/*
-+	 * Touching the tap values is a bit tricky on some SoC generations.
-+	 * The quirk enables a workaround for a glitch that sometimes occurs if
-+	 * the tap values are changed.
-+	 */
-+
-+	if (soc_data->nvquirks & NVQUIRK_DIS_CARD_CLK_CONFIG_TAP)
-+		card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
-+
-+	reg = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-+	reg &= ~SDHCI_CLOCK_CTRL_TAP_MASK;
-+	reg |= tap << SDHCI_CLOCK_CTRL_TAP_SHIFT;
-+	sdhci_writel(host, reg, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-+
-+	if (soc_data->nvquirks & NVQUIRK_DIS_CARD_CLK_CONFIG_TAP &&
-+		    card_clk_enabled) {
-+		udelay(1);
-+		sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+		tegra_sdhci_configure_card_clk(host, card_clk_enabled);
-+	}
-+}
-+
- static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -226,6 +277,8 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 	if (!(mask & SDHCI_RESET_ALL))
- 		return;
+-	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
++	clk_ctrl &= ~(SDHCI_CLOCK_CTRL_TRIM_MASK |
++		      SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE);
  
-+	tegra_sdhci_set_tap(host, tegra_host->default_tap);
-+
- 	misc_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
- 	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
- 
-@@ -286,27 +339,6 @@ static void tegra_sdhci_configure_cal_pad(struct sdhci_host *host, bool enable)
+ 	pad_and_regulators_valid = tegra_sdhci_is_pad_and_regulator_valid(host);
+ 	if (pad_and_regulators_valid) {
+@@ -305,6 +308,8 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
  	}
- }
  
--static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
--{
--	bool orig_enabled;
--	u32 reg;
--
--	reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
--	orig_enabled = !!(reg & SDHCI_CLOCK_CARD_EN);
--
--	if (orig_enabled == enable)
--		return orig_enabled;
--
--	if (enable)
--		reg |= SDHCI_CLOCK_CARD_EN;
--	else
--		reg &= ~SDHCI_CLOCK_CARD_EN;
--
--	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
--
--	return orig_enabled;
--}
--
- static void tegra_sdhci_set_pad_autocal_offset(struct sdhci_host *host,
- 					       u16 pdpu)
- {
-@@ -501,19 +533,6 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- }
++	clk_ctrl |= tegra_host->default_trim << SDHCI_CLOCK_CTRL_TRIM_SHIFT;
++
+ 	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+ 	sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
  
--static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
--					  unsigned timing)
--{
--	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
--
--	if (timing == MMC_TIMING_UHS_DDR50 ||
--	    timing == MMC_TIMING_MMC_DDR52)
--		tegra_host->ddr_signaling = true;
--
--	sdhci_set_uhs_signaling(host, timing);
--}
--
- static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -521,34 +540,36 @@ static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
- 	return clk_round_rate(pltfm_host->clk, UINT_MAX);
- }
- 
--static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
-+static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
-+					  unsigned timing)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
--	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
--	bool card_clk_enabled = false;
--	u32 reg;
-+	bool set_default_tap = false;
- 
--	/*
--	 * Touching the tap values is a bit tricky on some SoC generations.
--	 * The quirk enables a workaround for a glitch that sometimes occurs if
--	 * the tap values are changed.
--	 */
-+	switch (timing) {
-+	case MMC_TIMING_UHS_SDR50:
-+	case MMC_TIMING_UHS_SDR104:
-+	case MMC_TIMING_MMC_HS200:
-+	case MMC_TIMING_MMC_HS400:
-+		/* Don't set default tap on tunable modes. */
-+		break;
-+	case MMC_TIMING_MMC_DDR52:
-+	case MMC_TIMING_UHS_DDR50:
-+		tegra_host->ddr_signaling = true;
-+		set_default_tap = true;
-+		break;
-+	default:
-+		set_default_tap = true;
-+		break;
-+	}
- 
--	if (soc_data->nvquirks & NVQUIRK_DIS_CARD_CLK_CONFIG_TAP)
--		card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
-+	sdhci_set_uhs_signaling(host, timing);
- 
--	reg = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
--	reg &= ~SDHCI_CLOCK_CTRL_TAP_MASK;
--	reg |= tap << SDHCI_CLOCK_CTRL_TAP_SHIFT;
--	sdhci_writel(host, reg, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-+	tegra_sdhci_pad_autocalib(host);
- 
--	if (soc_data->nvquirks & NVQUIRK_DIS_CARD_CLK_CONFIG_TAP &&
--		    card_clk_enabled) {
--		udelay(1);
--		sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
--		tegra_sdhci_configure_card_clk(host, card_clk_enabled);
--	}
-+	if (set_default_tap)
-+		tegra_sdhci_set_tap(host, tegra_host->default_tap);
- }
- 
- static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
 -- 
 2.7.4
 
