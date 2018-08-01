@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D07C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 579A920844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 579A920844
+	by mail.kernel.org (Postfix) with ESMTP id 9CCB520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CCB520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbeHATsk (ORCPT
+        id S1732428AbeHATsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:48:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405875AbeHATIi (ORCPT
+        with ESMTP id S2405880AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F059E10AF;
-        Wed,  1 Aug 2018 17:03:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3E9C1080;
+        Wed,  1 Aug 2018 17:01:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrice Chotard <patrice.chotard@st.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 189/336] ARM: dts: stih407-pinctrl: Fix complain about IRQ_TYPE_NONE usage
-Date:   Wed,  1 Aug 2018 18:48:44 +0200
-Message-Id: <20180801165036.328628522@linuxfoundation.org>
+Subject: [PATCH 4.17 162/336] ALSA: emu10k1: Rate-limit error messages about page errors
+Date:   Wed,  1 Aug 2018 18:48:17 +0200
+Message-Id: <20180801165035.317973911@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,69 +50,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit e95b8e718f9bd2386a29639dd21c633b4951dc21 ]
+[ Upstream commit 11d42c81036324697d367600bfc16f6dd37636fd ]
 
-Since commit 83a86fbb5b56 ("irqchip/gic: Loudly complain about the use of IRQ_TYPE_NONE")
-kernel is complaining about the IRQ_TYPE_NONE usage which shouldn't
-be used.
+The error messages at sanity checks of memory pages tend to repeat too
+many times once when it hits, and without the rate limit, it may flood
+and become unreadable.  Replace such messages with the *_ratelimited()
+variant.
 
-Use IRQ_TYPE_LEVEL_HIGH instead.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1093027
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/stih407-pinctrl.dtsi |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/pci/emu10k1/memory.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -52,7 +52,7 @@
- 			st,syscfg = <&syscfg_sbc>;
- 			reg = <0x0961f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 188 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09610000 0x6000>;
- 
-@@ -376,7 +376,7 @@
- 			st,syscfg = <&syscfg_front>;
- 			reg = <0x0920f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 189 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09200000 0x10000>;
- 
-@@ -936,7 +936,7 @@
- 			st,syscfg = <&syscfg_front>;
- 			reg = <0x0921f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 190 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09210000 0x10000>;
- 
-@@ -969,7 +969,7 @@
- 			st,syscfg = <&syscfg_rear>;
- 			reg = <0x0922f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 191 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09220000 0x6000>;
- 
-@@ -1164,7 +1164,7 @@
- 			st,syscfg = <&syscfg_flash>;
- 			reg = <0x0923f080 0x4>;
- 			reg-names = "irqmux";
--			interrupts = <GIC_SPI 192 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "irqmux";
- 			ranges = <0 0x09230000 0x3000>;
- 
+--- a/sound/pci/emu10k1/memory.c
++++ b/sound/pci/emu10k1/memory.c
+@@ -248,13 +248,13 @@ __found_pages:
+ static int is_valid_page(struct snd_emu10k1 *emu, dma_addr_t addr)
+ {
+ 	if (addr & ~emu->dma_mask) {
+-		dev_err(emu->card->dev,
++		dev_err_ratelimited(emu->card->dev,
+ 			"max memory size is 0x%lx (addr = 0x%lx)!!\n",
+ 			emu->dma_mask, (unsigned long)addr);
+ 		return 0;
+ 	}
+ 	if (addr & (EMUPAGESIZE-1)) {
+-		dev_err(emu->card->dev, "page is not aligned\n");
++		dev_err_ratelimited(emu->card->dev, "page is not aligned\n");
+ 		return 0;
+ 	}
+ 	return 1;
+@@ -345,7 +345,7 @@ snd_emu10k1_alloc_pages(struct snd_emu10
+ 		else
+ 			addr = snd_pcm_sgbuf_get_addr(substream, ofs);
+ 		if (! is_valid_page(emu, addr)) {
+-			dev_err(emu->card->dev,
++			dev_err_ratelimited(emu->card->dev,
+ 				"emu: failure page = %d\n", idx);
+ 			mutex_unlock(&hdr->block_mutex);
+ 			return NULL;
 
 
