@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F47C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2809C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64F220841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64F220841
+	by mail.kernel.org (Postfix) with ESMTP id 386C520840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386C520840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733303AbeHAUUQ (ORCPT
+        id S1733279AbeHAUUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:20:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404170AbeHATDe (ORCPT
+        with ESMTP id S2404195AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67EA0F88;
-        Wed,  1 Aug 2018 16:57:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53F83FC7;
+        Wed,  1 Aug 2018 16:58:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 039/336] perf tools: Fix pmu events parsing rule
-Date:   Wed,  1 Aug 2018 18:46:14 +0200
-Message-Id: <20180801165030.580386234@linuxfoundation.org>
+Subject: [PATCH 4.17 084/336] selftests: intel_pstate: return Kselftest Skip code for skipped tests
+Date:   Wed,  1 Aug 2018 18:46:59 +0200
+Message-Id: <20180801165032.397734832@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -56,82 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit ceac7b79df7bd67ef9aaf464b0179a2686aff4ee ]
+[ Upstream commit 5c30a038fb8ec8cdff011e6b5d5d51eb415381d4 ]
 
-Currently all the event parsing fails end up
-in the event_pmu rule, and display misleading
-help like:
+When intel_pstate test is skipped because of unmet dependencies and/or
+unsupported configuration, it returns 0 which is treated as a pass
+by the Kselftest framework. This leads to false positive result even
+when the test could not be run.
 
-  $ perf stat -e inst kill
-  event syntax error: 'inst'
-                       \___ Cannot find PMU `inst'. Missing kernel support?
-  ...
+Change it to return kselftest skip code when a test gets skipped to
+clearly report that the test could not be run.
 
-The reason is that the event_pmu is too strong
-and match also single string. Changing it to
-force the '/' separators to be part of the rule,
-and getting the proper error now:
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
 
-  $ perf stat -e inst kill
-  event syntax error: 'inst'
-                       \___ parser error
-  Run 'perf list' for a list of valid events
-  ...
-
-Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180605121416.31645-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/parse-events.y |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ tools/testing/selftests/intel_pstate/run.sh |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -73,6 +73,7 @@ static void inc_group_count(struct list_
- %type <num> value_sym
- %type <head> event_config
- %type <head> opt_event_config
-+%type <head> opt_pmu_config
- %type <term> event_term
- %type <head> event_pmu
- %type <head> event_legacy_symbol
-@@ -224,7 +225,7 @@ event_def: event_pmu |
- 	   event_bpf_file
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -30,9 +30,12 @@
  
- event_pmu:
--PE_NAME opt_event_config
-+PE_NAME opt_pmu_config
- {
- 	struct list_head *list, *orig_terms, *terms;
+ EVALUATE_ONLY=0
  
-@@ -495,6 +496,17 @@ opt_event_config:
- {
- 	$$ = NULL;
- }
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
 +
-+opt_pmu_config:
-+'/' event_config '/'
-+{
-+	$$ = $2;
-+}
-+|
-+'/' '/'
-+{
-+	$$ = NULL;
-+}
+ if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
+ 	echo "$0 # Skipped: Test can only run on x86 architectures."
+-	exit 0
++	exit $ksft_skip
+ fi
  
- start_terms: event_config
- {
+ max_cpus=$(($(nproc)-1))
 
 
