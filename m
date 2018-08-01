@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F38C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED4BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10E7520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E7520844
+	by mail.kernel.org (Postfix) with ESMTP id 5A6C620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6C620862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407551AbeHATP4 (ORCPT
+        id S2390513AbeHATQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52314 "EHLO
+        Wed, 1 Aug 2018 15:16:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407217AbeHATPz (ORCPT
+        with ESMTP id S2390457AbeHATQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:55 -0400
+        Wed, 1 Aug 2018 15:16:00 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD1BED4A;
-        Wed,  1 Aug 2018 17:29:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E2B6D54;
+        Wed,  1 Aug 2018 17:29:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
+        stable@vger.kernel.org,
+        Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
+        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 091/144] tty: Fix data race in tty_insert_flip_string_fixed_flag
-Date:   Wed,  1 Aug 2018 18:51:58 +0200
-Message-Id: <20180801164956.152454779@linuxfoundation.org>
+Subject: [PATCH 4.9 093/144] media: rcar_jpu: Add missing clk_disable_unprepare() on error in jpu_open()
+Date:   Wed,  1 Aug 2018 18:52:00 +0200
+Message-Id: <20180801164956.253413859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,96 +55,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: DaeRyong Jeong <threeearcat@gmail.com>
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-[ Upstream commit b6da31b2c07c46f2dcad1d86caa835227a16d9ff ]
+[ Upstream commit 43d0d3c52787df0221d1c52494daabd824fe84f1 ]
 
-Unlike normal serials, in pty layer, there is no guarantee that multiple
-threads don't insert input characters at the same time. If it is happened,
-tty_insert_flip_string_fixed_flag can be executed concurrently. This can
-lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
+Add the missing clk_disable_unprepare() before return from
+jpu_open() in the software reset error handling case.
 
-Call sequences are as follows.
-CPU0                                    CPU1
-n_tty_ioctl_helper                      n_tty_ioctl_helper
-__start_tty                             tty_send_xchar
-tty_wakeup                              pty_write
-n_hdlc_tty_wakeup                       tty_insert_flip_string
-n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
-pty_write
-tty_insert_flip_string
-tty_insert_flip_string_fixed_flag
-
-To fix the race, acquire port->lock in pty_write() before it inserts input
-characters to tty buffer. It prevents multiple threads from inserting
-input characters concurrently.
-
-The crash log is as follows:
-BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
-0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
-Write of size 1792 by task syz-executor0/30017
-CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
- 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
- ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
- ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
-Call Trace:
- __dump_stack lib/dump_stack.c:15 [inline]
- dump_stack+0xb3/0x110 lib/dump_stack.c:51
- kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
- print_address_description mm/kasan/report.c:194 [inline]
- kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
- kasan_report+0x36/0x40 mm/kasan/report.c:303
- check_memory_region_inline mm/kasan/kasan.c:292 [inline]
- check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
- memcpy+0x37/0x50 mm/kasan/kasan.c:335
- tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
- tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
- pty_write+0x7f/0xc0 drivers/tty/pty.c:115
- n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
- n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
- tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
- __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
- __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
- n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
- n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
- tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
- vfs_ioctl fs/ioctl.c:43 [inline]
- do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
- SYSC_ioctl fs/ioctl.c:694 [inline]
- SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
- entry_SYSCALL_64_fastpath+0x1f/0xbd
-
-Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Acked-by: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/pty.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/rcar_jpu.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -106,16 +106,19 @@ static void pty_unthrottle(struct tty_st
- static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
- {
- 	struct tty_struct *to = tty->link;
-+	unsigned long flags;
- 
- 	if (tty->stopped)
- 		return 0;
- 
- 	if (c > 0) {
-+		spin_lock_irqsave(&to->port->lock, flags);
- 		/* Stuff the data into the input queue of the other end */
- 		c = tty_insert_flip_string(to->port, buf, c);
- 		/* And shovel */
- 		if (c)
- 			tty_flip_buffer_push(to->port);
-+		spin_unlock_irqrestore(&to->port->lock, flags);
+--- a/drivers/media/platform/rcar_jpu.c
++++ b/drivers/media/platform/rcar_jpu.c
+@@ -1280,7 +1280,7 @@ static int jpu_open(struct file *file)
+ 		/* ...issue software reset */
+ 		ret = jpu_reset(jpu);
+ 		if (ret)
+-			goto device_prepare_rollback;
++			goto jpu_reset_rollback;
  	}
- 	return c;
- }
+ 
+ 	jpu->ref_count++;
+@@ -1288,6 +1288,8 @@ static int jpu_open(struct file *file)
+ 	mutex_unlock(&jpu->mutex);
+ 	return 0;
+ 
++jpu_reset_rollback:
++	clk_disable_unprepare(jpu->clk);
+ device_prepare_rollback:
+ 	mutex_unlock(&jpu->mutex);
+ v4l_prepare_rollback:
 
 
