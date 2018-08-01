@@ -2,100 +2,99 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C44C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4555208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67733208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSBsCfE/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4555208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jbSw+7VN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67733208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389647AbeHAQiG (ORCPT
+        id S2389657AbeHAQj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:38:06 -0400
-Received: from mail-yb0-f178.google.com ([209.85.213.178]:37185 "EHLO
-        mail-yb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389498AbeHAQiG (ORCPT
+        Wed, 1 Aug 2018 12:39:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34326 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389528AbeHAQj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:38:06 -0400
-Received: by mail-yb0-f178.google.com with SMTP id r3-v6so7637151ybo.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 07:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ritjFSrfhyyLHDydrfrCpVSfVWEe6wG32VB3u/ugljo=;
-        b=kSBsCfE/gxxxIrD08fssJNwc0eDWWymu226KhF9fWKVudMM03lYB6s8C2MYX2F3JRn
-         gYkwFricLVasZPuuMJufxrXcuXmQEVk6zujAlX//FmbyfWMLOELr7IrPdMvWVl7Wi3o2
-         bj4/xvti8yC2PFflB7MS7Vfw6pVveaZBzFy9hSdS62DMrHQgyU0orNkppkRsnriMtYh0
-         bMHO8NkE5JOI/cMyzPjE7TmvS5bBxm3CLbD+58mlolD6OYbWfUdndEPNDZHLDehQ7XD/
-         GchJy9f501B3UsrFjzanZRwToxcoUYs+h9uux/Xr29ZoX7UzKMKDw8+ZofMGgBTeguuq
-         gtgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ritjFSrfhyyLHDydrfrCpVSfVWEe6wG32VB3u/ugljo=;
-        b=BWQUP/v1g/zLoYu+pUgiGjKf8Qm337yA8jD0Tc/b+WLGYnarNLaUHJCUBYGzKY3Hc/
-         ZbVvdmOR5An2Qxv+VcFPTPZuwhkKR5b3jjVOHwU+rCEjh3kyE/OSRUPF4izESPl/dtBg
-         gbWbSbcmUtoZ0PGp+WUXXH9ObV1GHgyZFaphIqjoA4pVR3gMngpFLNlS1ohKR0/J+rKw
-         l8aSQAlAEcq52Dj5UkYKQPNWnO4//INBSg4AylvsLLfyRk9BkQqWLQpRXH3KaIRrvkbT
-         A2A4ZnI2PqBX/Upi3Qu0qqZmOgQFLetOtC8HoaAL5sA4r5rK0EPCOpTZ5YB3TyoI1D0W
-         HRGA==
-X-Gm-Message-State: AOUpUlHA6yXE90DXTWSSEqQjEL7nd5y49a+F1kM95Xp0n0o7sOkX8vtU
-        XxWS4ii4dAWbmV8Y9WEORpLEDDGDJFOZhkna7K0=
-X-Google-Smtp-Source: AAOMgpfiU5VZc7n4Lp67Wh+EAk5EQxGTcAmISQHTqBuMPneQU9/f8aQS8hLWTZJBiI+P2QpblBIc5rFkaWN+rpyASBs=
-X-Received: by 2002:a25:2d44:: with SMTP id s4-v6mr13825467ybe.284.1533135120664;
- Wed, 01 Aug 2018 07:52:00 -0700 (PDT)
+        Wed, 1 Aug 2018 12:39:27 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w71Eni57178766;
+        Wed, 1 Aug 2018 14:52:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=5bTdUsB1Yukl8KK6U8ravuJd6B78txP7+GEV4RP7a+8=;
+ b=jbSw+7VNswuIp5HM6QiFtd0TgBxAhHVEGw3Wo7s7b5gAnenD4UDencXLWSTnXA5wC8Ih
+ AhNoyPQqDsK76/o6MdnGc0Yxu/AuBtrOdRMt4RkJEgIUquBwGM3StwS5Jh7lY0Tc2efT
+ 5r5vuBiKLs9Ebb8u+jrrqwZWeBUb/iwhmCLAPC4DePfLXuOMmGzWW1TUDzfZOJ0JA9Mm
+ fJT+0XD6H4F/z3GSiiyZjDQocDtKHr2+m9XsuMy+9U7ESCmR2j3zEUliCbfNcxHXxtEc
+ wnAt1cbVqMVXlQoSwqTx23FAOEAAAmkhawgm2vrnSfNwyoLyyEBHMnqOTbpNp5hVa7tN dA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2kggep629b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Aug 2018 14:52:57 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w71EqtZ6009683
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Aug 2018 14:52:56 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w71Eqsbi027229;
+        Wed, 1 Aug 2018 14:52:54 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Aug 2018 07:52:53 -0700
+Date:   Wed, 1 Aug 2018 17:52:45 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devel@driverdev.osuosl.org, ldv-project@linuxtesting.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Gaurav Pathak <gauravpathak129@gmail.com>
+Subject: Re: [PATCH v5] staging: rts5208: add error handling into rtsx_probe
+Message-ID: <20180801145245.rkuvugnxm4fofauz@mwanda>
+References: <CAHp75VfktnjL+G0vjHNHr=8mbDXu+4BDogsnxrp_2Bo4em=r2Q@mail.gmail.com>
+ <20180801115557.7086-1-vasilyev@ispras.ru>
+ <CAHp75VeSr-dDC+BvvTi1f2JBDL0UB31O=umatKE4y=0HQ4_8UQ@mail.gmail.com>
+ <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
 MIME-Version: 1.0
-Received: by 2002:a81:3007:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 07:52:00 -0700 (PDT)
-In-Reply-To: <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
-References: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
- <CACVXFVPpSJDqR8ki2PiDBbU36KsGFMYsOEf_9bmN6Cpo3w_YoQ@mail.gmail.com> <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
-From:   Jeff Chua <jeff.chua.linux@gmail.com>
-Date:   Wed, 1 Aug 2018 22:52:00 +0800
-Message-ID: <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com>
-Subject: Re: How to secure erase PCI-E NVME SSD connected via USB3?
-To:     Ming Lei <tom.leiming@gmail.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=711
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808010154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 1:02 PM, Jeff Chua <jeff.chua.linux@gmail.com> wrote:
-> On Tue, Jul 31, 2018 at 7:07 PM, Ming Lei <tom.leiming@gmail.com> wrote:
->> On Sun, Jul 29, 2018 at 5:09 PM, Jeff Chua <jeff.chua.linux@gmail.com> wrote:
->>> I'm testing the USB3-to-PCI-E NVME SSD. It's works using uas module,
->>> recognized it as /dev/sda.
->>>
->>> Since it's an USB device, the nvme-cli tools won't work, nor does
->>> hdparm, as it's a NVME SSD.
->>>
->>> So, how to secure-erase the NVME SSD connected via the JMS583 chip?
->>
->> You may try 'blkdiscard --secure' and see if you are luck.
->
-> Interesting, will try that.
+On Wed, Aug 01, 2018 at 05:08:48PM +0300, Anton Vasilyev wrote:
+> I found that staging-next already contains my patch v3, committed by Greg
+> Kroah-Hartman.
+> 
+> Do I need to send a new patch with a label renaming based on Dan Carpenter
+> comments?
 
-# blkdiscard --secure /dev/sda
-blkdiscard: /dev/sda: BLKSECDISCARD ioctl failed: Operation not supported
+I had to look to see what I had said earlier...  The naming isn't really
+a problem but we should call scsi_host_put(host); if the
+"dev->chip = kzalloc(sizeof(*dev->chip), GFP_KERNEL);" allocation fails.
 
-# hdparm --user-master u --security-erase p /dev/sda
-(returns immediately and does nothing).
+regards,
+dan capenter
 
-I've tried hdparm on an SSD connected via USB3 and it secure-erased ok.
-
-Anyone working on this?
-
-Thanks,
-Jeff
