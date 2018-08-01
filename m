@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E183EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E932C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E78D208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E78D208A5
+	by mail.kernel.org (Postfix) with ESMTP id DC29F208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC29F208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390590AbeHATi4 (ORCPT
+        id S2390632AbeHATjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:38:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+        Wed, 1 Aug 2018 15:39:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406032AbeHATIl (ORCPT
+        with ESMTP id S2406018AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7036B13B5;
-        Wed,  1 Aug 2018 17:15:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71EEE13C6;
+        Wed,  1 Aug 2018 17:15:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Filippo Muzzini <filippo.muzzini@outlook.it>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/246] block, bfq: remove wrong lock in bfq_requests_merged
-Date:   Wed,  1 Aug 2018 18:49:32 +0200
-Message-Id: <20180801165014.665650887@linuxfoundation.org>
+Subject: [PATCH 4.14 080/246] media: tw686x: Fix incorrect vb2_mem_ops GFP flags
+Date:   Wed,  1 Aug 2018 18:49:50 +0200
+Message-Id: <20180801165015.551287921@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,46 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filippo Muzzini <filippo.muzzini@outlook.it>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit a12bffebc0c9d6a5851f062aaea3aa7c4adc6042 ]
+[ Upstream commit 636757ab6c93e19e2f58d3b3af1312e34eaffbab ]
 
-In bfq_requests_merged(), there is a deadlock because the lock on
-bfqq->bfqd->lock is held by the calling function, but the code of
-this function tries to grab the lock again.
+When the driver is configured in the "memcpy" dma-mode,
+it uses vb2_vmalloc_memops, which is backed by a SLAB
+allocator and so shouldn't be using GFP_DMA32.
 
-This deadlock is currently hidden by another bug (fixed by next commit
-for this source file), which causes the body of bfq_requests_merged()
-to be never executed.
+Fix it.
 
-This commit removes the deadlock by removing the lock/unlock pair.
-
-Signed-off-by: Filippo Muzzini <filippo.muzzini@outlook.it>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/bfq-iosched.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/pci/tw686x/tw686x-video.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -1678,7 +1678,6 @@ static void bfq_requests_merged(struct r
+--- a/drivers/media/pci/tw686x/tw686x-video.c
++++ b/drivers/media/pci/tw686x/tw686x-video.c
+@@ -1228,7 +1228,8 @@ int tw686x_video_init(struct tw686x_dev
+ 		vc->vidq.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+ 		vc->vidq.min_buffers_needed = 2;
+ 		vc->vidq.lock = &vc->vb_mutex;
+-		vc->vidq.gfp_flags = GFP_DMA32;
++		vc->vidq.gfp_flags = dev->dma_mode != TW686X_DMA_MODE_MEMCPY ?
++				     GFP_DMA32 : 0;
+ 		vc->vidq.dev = &dev->pci_dev->dev;
  
- 	if (!RB_EMPTY_NODE(&rq->rb_node))
- 		goto end;
--	spin_lock_irq(&bfqq->bfqd->lock);
- 
- 	/*
- 	 * If next and rq belong to the same bfq_queue and next is older
-@@ -1702,7 +1701,6 @@ static void bfq_requests_merged(struct r
- 
- 	bfq_remove_request(q, next);
- 
--	spin_unlock_irq(&bfqq->bfqd->lock);
- end:
- 	bfqg_stats_update_io_merged(bfqq_group(bfqq), next->cmd_flags);
- }
+ 		err = vb2_queue_init(&vc->vidq);
 
 
