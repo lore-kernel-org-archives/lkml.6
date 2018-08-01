@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D871CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84780C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CAB4208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CAB4208A4
+	by mail.kernel.org (Postfix) with ESMTP id 460D9208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:53:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460D9208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390419AbeHATki (ORCPT
+        id S2405523AbeHATkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:40:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
+        Wed, 1 Aug 2018 15:40:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49886 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405989AbeHATIk (ORCPT
+        with ESMTP id S2405978AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 482FB115E;
-        Wed,  1 Aug 2018 17:05:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49D4E10CA;
+        Wed,  1 Aug 2018 17:03:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 237/336] dt-bindings: pinctrl: meson: add support for the Meson8m2 SoC
-Date:   Wed,  1 Aug 2018 18:49:32 +0200
-Message-Id: <20180801165038.128659786@linuxfoundation.org>
+Subject: [PATCH 4.17 200/336] ACPI / LPSS: Only call pwm_add_table() for Bay Trail PWM if PMIC HRV is 2
+Date:   Wed,  1 Aug 2018 18:48:55 +0200
+Message-Id: <20180801165036.746255750@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,39 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 03d9fbc39730b3e6b2e7047dc85f0f70de8fb97d ]
+[ Upstream commit c975e472ec12392a0c34de1350e634310f8a1dea ]
 
-The Meson8m2 SoC is a variant of Meson8 with some updates from Meson8b
-(such as the Gigabit capable DesignWare MAC).
-It is mostly pin compatible with Meson8, only 10 (existing) CBUS pins
-get an additional function (four of these are Ethernet RXD2, RXD3, TXD2
-and TXD3 which are required when the board uses an RGMII PHY).
-The AOBUS pins seem to be identical on Meson8 and Meson8m2.
+The Point of View mobii wintab p800w Bay Trail tablet comes with a Crystal
+Cove PMIC, yet uses the LPSS PWM for backlight control, rather then the
+Crystal Cove's PWM, so we need to call pwm_add_table() to add a
+pwm_backlight mapping for the LPSS pwm despite there being an INT33FD
+ACPI device present.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On all Bay Trail devices the _HRV object of the INT33FD ACPI device
+will normally return 2, to indicate the Bay Trail variant of the CRC
+PMIC is present, except on this tablet where _HRV is 0xffff. I guess this
+is a hack to make the windows Crystal Cove PWM driver not bind.
+
+Out of the 44 DSTDs with an INT33FD device in there which I have (from
+different model devices) only the pov mobii wintab p800w uses 0xffff for
+the HRV.
+
+The byt_pwm_setup code calls acpi_dev_present to check for the presence
+of a INT33FD ACPI device which indicates that a CRC PMIC is present and
+if the INT33FD ACPI device is present then byt_pwm_setup will not add
+a pwm_backlight mapping for the LPSS pwm, so that the CRC PWM will get
+used instead.
+
+acpi_dev_present has a hrv parameter, this commit make us pass 2 instead
+of -1, so that things still match on normal tablets, but on this special
+case with its _HRV of 0xffff, the check will now fail so that the
+pwm_backlight mapping for the LPSS pwm gets added fixing backlight
+brightness control on this device.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/acpi_lpss.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -3,8 +3,10 @@
- Required properties for the root node:
-  - compatible: one of "amlogic,meson8-cbus-pinctrl"
- 		      "amlogic,meson8b-cbus-pinctrl"
-+		      "amlogic,meson8m2-cbus-pinctrl"
- 		      "amlogic,meson8-aobus-pinctrl"
- 		      "amlogic,meson8b-aobus-pinctrl"
-+		      "amlogic,meson8m2-aobus-pinctrl"
- 		      "amlogic,meson-gxbb-periphs-pinctrl"
- 		      "amlogic,meson-gxbb-aobus-pinctrl"
- 		      "amlogic,meson-gxl-periphs-pinctrl"
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -70,6 +70,10 @@ ACPI_MODULE_NAME("acpi_lpss");
+ #define LPSS_SAVE_CTX			BIT(4)
+ #define LPSS_NO_D3_DELAY		BIT(5)
+ 
++/* Crystal Cove PMIC shares same ACPI ID between different platforms */
++#define BYT_CRC_HRV			2
++#define CHT_CRC_HRV			3
++
+ struct lpss_private_data;
+ 
+ struct lpss_device_desc {
+@@ -163,7 +167,7 @@ static void byt_pwm_setup(struct lpss_pr
+ 	if (!adev->pnp.unique_id || strcmp(adev->pnp.unique_id, "1"))
+ 		return;
+ 
+-	if (!acpi_dev_present("INT33FD", NULL, -1))
++	if (!acpi_dev_present("INT33FD", NULL, BYT_CRC_HRV))
+ 		pwm_add_table(byt_pwm_lookup, ARRAY_SIZE(byt_pwm_lookup));
+ }
+ 
 
 
