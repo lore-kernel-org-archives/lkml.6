@@ -2,110 +2,130 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E685EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E30C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A9220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A9220844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 46A4020841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A4020841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387428AbeHAH7n (ORCPT
+        id S2387460AbeHAIMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:59:43 -0400
-Received: from mail.windriver.com ([147.11.1.11]:45409 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733087AbeHAH7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:59:43 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w716FVld024776
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 31 Jul 2018 23:15:31 -0700 (PDT)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 31 Jul
- 2018 23:15:30 -0700
-Subject: Re: [PATCH] net/tipc: remove redundant variables 'tn' and 'oport'
-To:     Colin King <colin.king@canonical.com>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        "David S . Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <tipc-discussion@lists.sourceforge.net>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180731160137.5850-1-colin.king@canonical.com>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <34f9d78b-cce8-469a-3f5c-a96c1a6a4197@windriver.com>
-Date:   Wed, 1 Aug 2018 14:10:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 1 Aug 2018 04:12:35 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60915 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387419AbeHAIMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 04:12:34 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 36282B15B6AB6;
+        Wed,  1 Aug 2018 14:28:26 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
+ 14:28:18 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <trond.myklebust@hammerspace.com>,
+        <anna.schumaker@netapp.com>, <bfields@fieldses.org>,
+        <jlayton@kernel.org>, <ebiggers@google.com>,
+        <chuck.lever@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] sunrpc: remove redundant variables 'checksumlen','blocksize' and 'data'
+Date:   Wed, 1 Aug 2018 14:28:10 +0800
+Message-ID: <20180801062810.19752-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20180731160137.5850-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2018 12:01 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variables 'tn' and 'oport'  are being assigned but are never used hence
-> they are redundant and can be removed.
-> 
-> Cleans up clang warnings:
-> warning: variable 'oport' set but not used [-Wunused-but-set-variable]
-> warning: variable 'tn' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Variables 'checksumlen','blocksize' and 'data' are being assigned,
+but are never used,hence they are redundant and can be removed.
 
-Acked-by: Ying Xue <ying.xue@windriver.com>
+fix fllowing warning:
 
-> ---
->  net/tipc/socket.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/net/tipc/socket.c b/net/tipc/socket.c
-> index 3763bedecf5f..c1e93c9515bc 100644
-> --- a/net/tipc/socket.c
-> +++ b/net/tipc/socket.c
-> @@ -411,7 +411,6 @@ static int tipc_sk_sock_err(struct socket *sock, long *timeout)
->  static int tipc_sk_create(struct net *net, struct socket *sock,
->  			  int protocol, int kern)
->  {
-> -	struct tipc_net *tn;
->  	const struct proto_ops *ops;
->  	struct sock *sk;
->  	struct tipc_sock *tsk;
-> @@ -446,7 +445,6 @@ static int tipc_sk_create(struct net *net, struct socket *sock,
->  	INIT_LIST_HEAD(&tsk->publications);
->  	INIT_LIST_HEAD(&tsk->cong_links);
->  	msg = &tsk->phdr;
-> -	tn = net_generic(sock_net(sk), tipc_net_id);
->  
->  	/* Finish initializing socket data structures */
->  	sock->ops = ops;
-> @@ -1117,7 +1115,7 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
->  	u32 self = tipc_own_addr(net);
->  	u32 type, lower, upper, scope;
->  	struct sk_buff *skb, *_skb;
-> -	u32 portid, oport, onode;
-> +	u32 portid, onode;
->  	struct sk_buff_head tmpq;
->  	struct list_head dports;
->  	struct tipc_msg *hdr;
-> @@ -1133,7 +1131,6 @@ void tipc_sk_mcast_rcv(struct net *net, struct sk_buff_head *arrvq,
->  		user = msg_user(hdr);
->  		mtyp = msg_type(hdr);
->  		hlen = skb_headroom(skb) + msg_hdr_sz(hdr);
-> -		oport = msg_origport(hdr);
->  		onode = msg_orignode(hdr);
->  		type = msg_nametype(hdr);
->  
-> 
+net/sunrpc/auth_gss/gss_krb5_wrap.c:443:7: warning: variable ‘blocksize’ set but not used [-Wunused-but-set-variable]
+net/sunrpc/auth_gss/gss_krb5_crypto.c:376:15: warning: variable ‘checksumlen’ set but not used [-Wunused-but-set-variable]
+net/sunrpc/xprtrdma/svc_rdma.c:97:9: warning: variable ‘data’ set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/sunrpc/auth_gss/gss_krb5_crypto.c | 2 --
+ net/sunrpc/auth_gss/gss_krb5_wrap.c   | 2 --
+ net/sunrpc/xprtrdma/svc_rdma.c        | 2 --
+ 3 files changed, 6 deletions(-)
+
+diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+index 8654494..84a16fd 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -373,7 +373,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
+ 	struct scatterlist sg[1];
+ 	int err = -1;
+ 	u8 *checksumdata;
+-	unsigned int checksumlen;
+ 
+ 	if (kctx->gk5e->keyed_cksum == 0) {
+ 		dprintk("%s: expected keyed hash for %s\n",
+@@ -393,7 +392,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
+ 	tfm = crypto_alloc_ahash(kctx->gk5e->cksum_name, 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(tfm))
+ 		goto out_free_cksum;
+-	checksumlen = crypto_ahash_digestsize(tfm);
+ 
+ 	req = ahash_request_alloc(tfm, GFP_NOFS);
+ 	if (!req)
+diff --git a/net/sunrpc/auth_gss/gss_krb5_wrap.c b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+index a737c2d..9a1347f 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_wrap.c
++++ b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+@@ -440,7 +440,6 @@ static u32
+ gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
+ 		     struct xdr_buf *buf, struct page **pages)
+ {
+-	int		blocksize;
+ 	u8		*ptr, *plainhdr;
+ 	s32		now;
+ 	u8		flags = 0x00;
+@@ -473,7 +472,6 @@ gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
+ 	*ptr++ = 0xff;
+ 	be16ptr = (__be16 *)ptr;
+ 
+-	blocksize = crypto_skcipher_blocksize(kctx->acceptor_enc);
+ 	*be16ptr++ = 0;
+ 	/* "inner" token header always uses 0 for RRC */
+ 	*be16ptr++ = 0;
+diff --git a/net/sunrpc/xprtrdma/svc_rdma.c b/net/sunrpc/xprtrdma/svc_rdma.c
+index 357ba90..134bef6a 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma.c
++++ b/net/sunrpc/xprtrdma/svc_rdma.c
+@@ -94,7 +94,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
+ 		atomic_set(stat, 0);
+ 	else {
+ 		char str_buf[32];
+-		char *data;
+ 		int len = snprintf(str_buf, 32, "%d\n", atomic_read(stat));
+ 		if (len >= 32)
+ 			return -EFAULT;
+@@ -103,7 +102,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
+ 			*lenp = 0;
+ 			return 0;
+ 		}
+-		data = &str_buf[*ppos];
+ 		len -= *ppos;
+ 		if (len > *lenp)
+ 			len = *lenp;
+-- 
+2.7.0
+
+
