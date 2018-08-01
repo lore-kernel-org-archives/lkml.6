@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D69C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01A2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C3520841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C3520841
+	by mail.kernel.org (Postfix) with ESMTP id 9A3122083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A3122083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732799AbeHAUHm (ORCPT
+        id S1732936AbeHAUHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
+        Wed, 1 Aug 2018 16:07:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404462AbeHATDj (ORCPT
+        with ESMTP id S2404449AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D73F11A1;
-        Wed,  1 Aug 2018 17:07:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43AE11219;
+        Wed,  1 Aug 2018 17:08:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "John L. Hammond" <john.hammond@intel.com>,
-        Dmitry Eremin <dmitry.eremin@intel.com>,
-        James Simmons <uja.ornl@yahoo.com>,
-        James Simmons <jsimmons@infradead.org>,
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 265/336] staging: lustre: llite: correct removexattr detection
-Date:   Wed,  1 Aug 2018 18:50:00 +0200
-Message-Id: <20180801165039.187332397@linuxfoundation.org>
+Subject: [PATCH 4.17 294/336] drm/dp/mst: Fix off-by-one typo when dump payload table
+Date:   Wed,  1 Aug 2018 18:50:29 +0200
+Message-Id: <20180801165040.286155727@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,40 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Simmons <jsimmons@infradead.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 1b60f6dfa38403ff7c4d0b4b7ecdb810f9789a2a ]
+[ Upstream commit 7056a2bccc3b5afc51f9b35b30a46f0d9219968d ]
 
-In ll_xattr_set_common() detect the removexattr() case correctly by
-testing for a NULL value as well as XATTR_REPLACE.
+It seems there is a classical off-by-one typo from the beginning
+when commit
 
-Signed-off-by: John L. Hammond <john.hammond@intel.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10787
-Reviewed-on: https://review.whamcloud.com/
-Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
-Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Signed-off-by: James Simmons <jsimmons@infradead.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+
+introduced a new helper.
+
+Fix a typo by introducing a macro constant.
+
+Cc: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180319141932.37290-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lustre/llite/xattr.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/lustre/lustre/llite/xattr.c
-+++ b/drivers/staging/lustre/lustre/llite/xattr.c
-@@ -94,7 +94,11 @@ ll_xattr_set_common(const struct xattr_h
- 	__u64 valid;
- 	int rc;
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2941,12 +2941,14 @@ static void drm_dp_mst_dump_mstb(struct
+ 	}
+ }
  
--	if (flags == XATTR_REPLACE) {
-+	/* When setxattr() is called with a size of 0 the value is
-+	 * unconditionally replaced by "". When removexattr() is
-+	 * called we get a NULL value and XATTR_REPLACE for flags.
-+	 */
-+	if (!value && flags == XATTR_REPLACE) {
- 		ll_stats_ops_tally(ll_i2sbi(inode), LPROC_LL_REMOVEXATTR, 1);
- 		valid = OBD_MD_FLXATTRRM;
- 	} else {
++#define DP_PAYLOAD_TABLE_SIZE		64
++
+ static bool dump_dp_payload_table(struct drm_dp_mst_topology_mgr *mgr,
+ 				  char *buf)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < 64; i += 16) {
++	for (i = 0; i < DP_PAYLOAD_TABLE_SIZE; i += 16) {
+ 		if (drm_dp_dpcd_read(mgr->aux,
+ 				     DP_PAYLOAD_TABLE_UPDATE_STATUS + i,
+ 				     &buf[i], 16) != 16)
+@@ -3015,7 +3017,7 @@ void drm_dp_mst_dump_topology(struct seq
+ 
+ 	mutex_lock(&mgr->lock);
+ 	if (mgr->mst_primary) {
+-		u8 buf[64];
++		u8 buf[DP_PAYLOAD_TABLE_SIZE];
+ 		int ret;
+ 
+ 		ret = drm_dp_dpcd_read(mgr->aux, DP_DPCD_REV, buf, DP_RECEIVER_CAP_SIZE);
+@@ -3033,8 +3035,7 @@ void drm_dp_mst_dump_topology(struct seq
+ 		seq_printf(m, " revision: hw: %x.%x sw: %x.%x\n",
+ 			   buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
+ 		if (dump_dp_payload_table(mgr, buf))
+-			seq_printf(m, "payload table: %*ph\n", 63, buf);
+-
++			seq_printf(m, "payload table: %*ph\n", DP_PAYLOAD_TABLE_SIZE, buf);
+ 	}
+ 
+ 	mutex_unlock(&mgr->lock);
 
 
