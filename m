@@ -2,151 +2,122 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A6FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CF0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77573208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77573208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 98ED4208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkODkbuX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98ED4208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390475AbeHATby (ORCPT
+        id S2390534AbeHATbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:31:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51780 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389883AbeHATNh (ORCPT
+        Wed, 1 Aug 2018 15:31:55 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41778 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390457AbeHATby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:37 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49FD01077;
-        Wed,  1 Aug 2018 17:01:41 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Steve Muckle <smuckle@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 126/336] sched/cpufreq: Modify aggregate utilization to always include blocked FAIR utilization
-Date:   Wed,  1 Aug 2018 18:47:41 +0200
-Message-Id: <20180801165033.962278789@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Wed, 1 Aug 2018 15:31:54 -0400
+Received: by mail-oi0-f66.google.com with SMTP id k12-v6so36148841oiw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/hrQ/zVHKT8Nzvab5rUiOWM6k45yoYeCt80tXk2VamI=;
+        b=rkODkbuXHekZlVTk6NLgXOM6QPfcl1xTCjnW2sRz/Ug2PbvgzyXqRB7OXidvKI45XQ
+         zPWuHEWtrrsD3d9vNl8grb5SQr1B8vbaYZRdX3fxN9U/QlGYtsxvVFRFCz9F5QqVVymC
+         Il+0uwYyxq3oDvyXsXVFH3VH3Vgnb5FyOqTHoXtqk/RehhuawPkRODtjAq0QlksCubXW
+         AKtuefHW3Jde7yMPce0eA9PoqYCrt4ewieTShmAv4vTnOeInzqHnEmG4q9ftOAgCDANf
+         CGUuRyRZf4DCox3bO0RMoDE8D2JySdheWIuhsevUtGtKovPbr7ZnAELxdJeA8Wnk7/kY
+         rhsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/hrQ/zVHKT8Nzvab5rUiOWM6k45yoYeCt80tXk2VamI=;
+        b=YeVnuDh6f2pXUJcnWOHtMB5+AT0GcbLd3p+S9axTVYgXAMpbZ6NxFziji61JURMcqe
+         5s+dLSkAf7MBHCg7bssRytjeSURyXo+RK0344lb27E59R6dReo94azzELwpiAo+Iaqq3
+         jLjGS/34YAZZzqLbuyZYQLD4JipxJXyPNl16T2hk+GczZX75e4JVHmXcQy2mYoxj4PIr
+         4uN++A35nFvthEC15lyja5WALb28KbdQNGZ+yrDBEAhjHlqJRyM7eZ1T9zGSS3efHfWk
+         cJt6WMzF9vBvb5k8RNzMIQN3QCqTDqxbmYZuPWrEJJHY2ttmPAN0fPS0ZzhbBX9ib63j
+         MpJA==
+X-Gm-Message-State: AOUpUlEJOblkPzOJbg9vitS1KJMz5RlJrVbmk8y5PHZA2UmYd4ZNafur
+        bjxm9dL41+GZJM8P5zOI/9HhqcTPVioK+40jFQbtxQ==
+X-Google-Smtp-Source: AAOMgpd54c6tmQPxTskl+tIkz5hXNCXzGmEwvNidwohvsXbC7PspjYfjfsGXj7iYgu2Xz0XFRPuOtEDIQOnlpMzv2ow=
+X-Received: by 2002:aca:7c5:: with SMTP id 188-v6mr4752997oih.58.1533145505868;
+ Wed, 01 Aug 2018 10:45:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20180730211254.173686-1-pshier@google.com> <alpine.DEB.2.21.1807302342570.1725@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1807302342570.1725@nanos.tec.linutronix.de>
+From:   Peter Shier <pshier@google.com>
+Date:   Wed, 1 Aug 2018 10:44:55 -0700
+Message-ID: <CACwOFJQqqh6m2x+JXBnmeCzS7Zb-3e+5iPzp_vAZPGCqW+i_8w@mail.gmail.com>
+Subject: Re: [PATCH] proc: added ept_ad flag to /proc/cpuinfo
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org, bp@suse.de,
+        konrad.wilk@oracle.com, dwmw@amazon.co.uk,
+        Jim Mattson <jmattson@google.com>,
+        linux-kernel@vger.kernel.org, Peter Feiner <pfeiner@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Thank you Thomas. Wording issues understood and will post a new patch
+with updated subject.
 
-------------------
+Re goals: purpose is to expose feature bit with side effect of
+"ept_ad" in /proc/cpuinfo and is not necessarily related to VMX code.
+We are upstreaming some internal patches that we think would be
+generally useful and I will be careful from now on to remove any
+wording that is not publicly relevant.
 
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-
-[ Upstream commit 8ecf04e11283a28ca88b8b8049ac93c3a99fcd2c ]
-
-Since the refactoring introduced by:
-
-   commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
-
-we aggregate FAIR utilization only if this class has runnable tasks.
-
-This was mainly due to avoid the risk to stay on an high frequency just
-because of the blocked utilization of a CPU not being properly decayed
-while the CPU was idle.
-
-However, since:
-
-   commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
-
-the FAIR blocked utilization is properly decayed also for IDLE CPUs.
-
-This allows us to use the FAIR blocked utilization as a safe mechanism
-to gracefully reduce the frequency only if no FAIR tasks show up on a
-CPU for a reasonable period of time.
-
-Moreover, we also reduce the frequency drops of CPUs running periodic
-tasks which, depending on the task periodicity and the time required
-for a frequency switch, was increasing the chances to introduce some
-undesirable performance variations.
-
-Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
-Cc: Steve Muckle <smuckle@google.com>
-Link: http://lkml.kernel.org/r/20180524141023.13765-2-patrick.bellasi@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/sched/cpufreq_schedutil.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
--	unsigned long util;
- 
--	if (rq->rt.rt_nr_running) {
--		util = sg_cpu->max;
--	} else {
--		util = sg_cpu->util_dl;
--		if (rq->cfs.h_nr_running)
--			util += sg_cpu->util_cfs;
--	}
-+	if (rq->rt.rt_nr_running)
-+		return sg_cpu->max;
- 
- 	/*
-+	 * Utilization required by DEADLINE must always be granted while, for
-+	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-+	 * gracefully reduce the frequency when no tasks show up for longer
-+	 * periods of time.
-+	 *
- 	 * Ideally we would like to set util_dl as min/guaranteed freq and
- 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
- 	 * ready for such an interface. So, we only do the latter for now.
- 	 */
--	return min(util, sg_cpu->max);
-+	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
- }
- 
- static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-
-
+On Mon, Jul 30, 2018 at 3:12 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Mon, 30 Jul 2018, Peter Shier wrote:
+>
+> > Subject: [PATCH] proc: added ept_ad flag to /proc/cpuinfo
+>
+> The 'proc:' prefix is misleading here. x86/cpufeatures is the right
+> choice. The /proc/cpuinfo display is a side effect.
+>
+> Also please avoid 'added'. Changelogs should be written in imperative
+> mood. Something like this:
+>
+>  x86/cpufeatures: Add EPT_AD feature bit
+>
+> > The Intel Haswell architecture has an EPT feature whereby the access &
+> > dirty bits in EPT entries are updated without taking a guest exit.
+>
+> Why would this be Haswell specific?
+>
+> Aside of that I don't see what this has to do with exits. From the SDM:
+>
+>   " * If bit 21 is read as 1, accessed and dirty flags for EPT are
+>       supported (see Section 28.2.4)"
+>
+> And nothing in 28.2.4 says anything about exits. It's all about whether the
+> feature is supported or not. If it is supported it can be enabled in EPTP.
+>
+> > This patch adds the "ept_ad" flag to /proc/cpuinfo if this feature is
+> > available.
+>
+> See Documentation/process/submitting-patches.rst and search for 'This
+> patch'.
+>
+> The other question is why is this new feature bit not used in the VMX code?
+> It needs to be checked to enable the AD bit in EPTP ....
+>
+> Thanks,
+>
+>         tglx
