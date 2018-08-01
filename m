@@ -2,97 +2,119 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366C0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8D3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D4F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7188820862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:38:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQnwOCOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D4F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="hya25vmD";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n7SBZdF2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7188820862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389952AbeHARYC (ORCPT
+        id S2389965AbeHARYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:24:02 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43246 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389698AbeHARYC (ORCPT
+        Wed, 1 Aug 2018 13:24:20 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:41258 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389727AbeHARYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:24:02 -0400
-Received: by mail-vk0-f67.google.com with SMTP id s17-v6so9508982vke.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:37:45 -0700 (PDT)
+        Wed, 1 Aug 2018 13:24:20 -0400
+Received: by mail-yb0-f194.google.com with SMTP id s8-v6so7695677ybe.8
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PtCG9U/WhstThGMeBKuPO1IiNp0+HQaoB3lAc8Wj3KU=;
-        b=CQnwOCOpdWdQOlbxYoNjbzGxpQqvlUlHYSn6MWvQgCvKefXsfiJB5Epqeht3UeXQeJ
-         ILDmimJ2zp/Dff4sRsCUlrubB+LZak4VHFUMBCekXxXALMIiAN2u1B3SiGbMUoSXBi4p
-         kq0EuBUSBfjQbOu8FS//H3XZ5RdUVgdMYCBz3tuSYua3DBnLFxow8Bvxpikbt/F4BEO7
-         Tc652YnUfIIPUIBjkq+KzyAP4uUMTIr1BUZ2XoSJu0eqmALkAbkMn44khQNvg9JSl/Hn
-         2TjkH7W7ftNqTXrN3UlJIgJyl6Y2dmkmpC0eykgL1TtryMNYx784V9O+OKMQtK6F85AQ
-         gZRA==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RXODYIZ5sIi9NOGc6vLxhNMPVhnO9s9qRUW8Qjuiwx8=;
+        b=hya25vmDioRDp3AyiFY3ZOMU9R0ppK9Pd849bJrpN+MmF9f3qDAPuw0uSyhm/cPd7L
+         5D+avCKni8mQs/zau4+18VOQYsuQVWBp+9h7nvHFdF54DSFWCC5+wIT1PLStRnnkJZAc
+         gWZ2OSUaDI30DJvG7OsIWsK2JaSy63PZAb8KVgxqkTAkA/V4ohyobO65keQ+cpxql48a
+         qaweNSfF/ASh53IbYY/7Qv/NGVc5VjGcZiVCUhmK9k/0E7OsK1oQYY8JBqGQzwj22m/b
+         eae64bKz2tS8ZaiFxv+Xm3/5SJGYgWphNqPu6zGbfi31z911dAKcSrcFuv1UkORExpkz
+         lZwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RXODYIZ5sIi9NOGc6vLxhNMPVhnO9s9qRUW8Qjuiwx8=;
+        b=n7SBZdF2D/EDpxO0awWBQ+HYvF0uZnAcDO4JI0WdZaYzRAybFoYy/KSshOk/SSDksZ
+         nLvO2mL4S1u0uwDl1E03QjJaory80Cl748MksseqSwHuuFtTXM1aX6ScIvZrbSFhl85N
+         7AxdcnbIllvbj2gVisQcmLYRWu2o/WWI5f61E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PtCG9U/WhstThGMeBKuPO1IiNp0+HQaoB3lAc8Wj3KU=;
-        b=Hr4/AIQJlIZ+tsmWyz4m3s5wiVNFME8H2N0nUGhiATpmMp66oPFNfWalZLTirigf1r
-         8WpSV2ijUtlPevIq0iaBg0KjGaVUr9Z/ih4WBNkqefBVZaaVvVPMLdjqfqKoluZnsWXS
-         mHQIQoN/H95ELKNyXy3jonixsO3pIH+wgjnTQCMxv5z3LsOW82vxjsVy7MLRhleeICnV
-         XNSwu4iZBcxWqh23xDsj82SP8/PALPQFml+k7Fcx0J44ZmJlXtW5GKmmRjOXEBePUvfS
-         fXhLSI37gPeasc7MD9G0C7KBPBscWtKZvXD4sgBoI/0XyE6QDhrz0fBUVpH0WnnCWBu9
-         kwnQ==
-X-Gm-Message-State: AOUpUlElkg6mEcC9lzY3WVsLnQwZogUFk9lzJZuBPS0W1VLgwDNJ9oXk
-        OjAcil7c0o89ibg9GKD23l50Kauw/cbqwxdo1Kg=
-X-Google-Smtp-Source: AAOMgpcbuqLuaFgT+zAi3+wPcYAjPYdJoCXf+DbQhrdGwsvZlULUfGrHlbIL8hBB128DnvMRFbrFhoD0Z3X5tDubR8Y=
-X-Received: by 2002:a1f:844e:: with SMTP id g75-v6mr17297353vkd.16.1533137864897;
- Wed, 01 Aug 2018 08:37:44 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=RXODYIZ5sIi9NOGc6vLxhNMPVhnO9s9qRUW8Qjuiwx8=;
+        b=Rx3WnZKZ1AyZV8yodod0p+paZ8DfgKObfplbPCRK5V1N68TVd2JZ+xnMTulXE96ZNQ
+         LlyXPyGp8zqb1jJWT2Vsotb8slVHu1MJprLzgOpKR3ImA+pbPjmT1jgMsjxCFaO/pLs7
+         7CZS9eAYioGubHDAeCHu+xDeRKYJPtctl+kODLMMAZ1Q8agbQ6FxJvtncC23S9ejO37M
+         lgmffFkfB5G3JM1xtTbkiruhMdxbM18vU9BsBNB/s7IWaERv0J94n7hc6TMRkNduZECD
+         YUZ9T12t71svXQLKM+kR3fNA1glhz2g58Bw5/IEDMLzpRcPzcRDR4n8NQPYPVdz/+FyJ
+         yyrw==
+X-Gm-Message-State: AOUpUlHZ1uR1rJjHr88DY0JUdvdO7uwRDJ71OpFgTWCikBMbuymA3uzS
+        lCuK0GPkCVLupPtljFjUV14cN+HPRbGxoM5PNteuvA==
+X-Google-Smtp-Source: AAOMgpfnGA1J/HqH4egJC8IZ5MuExvoaPvKxgpVdG8qmDqfrbVgqa2yYENS0yI9pF1R5j7ogQGQFeR/Zy6l9vrp+vz0=
+X-Received: by 2002:a25:a483:: with SMTP id g3-v6mr13872219ybi.309.1533137882151;
+ Wed, 01 Aug 2018 08:38:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 08:37:44 -0700 (PDT)
-In-Reply-To: <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
-References: <CAHp75VfktnjL+G0vjHNHr=8mbDXu+4BDogsnxrp_2Bo4em=r2Q@mail.gmail.com>
- <20180801115557.7086-1-vasilyev@ispras.ru> <CAHp75VeSr-dDC+BvvTi1f2JBDL0UB31O=umatKE4y=0HQ4_8UQ@mail.gmail.com>
- <cac7e1d3-dc55-5857-5fe5-4ff5bc39f2d1@ispras.ru>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 1 Aug 2018 18:37:44 +0300
-Message-ID: <CAHp75VfxjZVCTQc_RS=x-sWCG=k=wkL8CnrcdZswA5KQOPK1+w@mail.gmail.com>
-Subject: Re: [PATCH v5] staging: rts5208: add error handling into rtsx_probe
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Gaurav Pathak <gauravpathak129@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ldv-project@linuxtesting.org
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 08:38:01 -0700 (PDT)
+In-Reply-To: <20180801080724.2vgzagooda56aypw@mwanda>
+References: <20180801000039.44314-1-keescook@chromium.org> <20180801000039.44314-2-keescook@chromium.org>
+ <20180801075744.qpppbaywp5dklxul@mwanda> <20180801080724.2vgzagooda56aypw@mwanda>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 1 Aug 2018 08:38:01 -0700
+X-Google-Sender-Auth: XgNeWUqkWDkRYewA5vGx61otk-o
+Message-ID: <CAGXu5j+=gBk=6Pva36HFj1L=Bz2O1+kzcUwUEu8eme_A4F5ktg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] overflow.h: Add arithmetic shift helper
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Doug Ledford <dledford@redhat.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 5:08 PM, Anton Vasilyev <vasilyev@ispras.ru> wrote:
-> I found that staging-next already contains my patch v3, committed by Greg
-> Kroah-Hartman.
+On Wed, Aug 1, 2018 at 1:07 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Wed, Aug 01, 2018 at 10:57:44AM +0300, Dan Carpenter wrote:
+>> The idea is nice, but I don't like the API.  The "_overflow" feels too
+>> specific because maybe we could check for other things in the future.
+>> Normally boolean macros should say they are boolean in the name and I
+>> would prefer if it returned zero on failure.
+>>
+>>       if (!checked_shift(dest, mask, shift)) {
+>>       if (!shift_ok(dest, mask, shift)) {
+>>       if (!safe_shift(dest, mask, shift)) {
 >
-> Do I need to send a new patch
+> Huh...  It turns out I put the argument order different as well.
+>
+> If we wanted to keep it returning 1 on failure then some other names
+> are:
+>
+>         if (shift_failed(dest, mask, shift)) {
+>         if (shift_error(dest, mask, shift)) {
+>         if (shift_overflow(dest, mask, shift)) {
 
-Yes. Based on staging-next.
+This is following the existing check_{add,mul}_overflow() helpers,
+which are based on the gcc helpers. I'd like to keep things
+consistent.
 
-> with a label renaming based on Dan Carpenter
-> comments?
-
-Dan is talking for himself :-)
+-Kees
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Kees Cook
+Pixel Security
