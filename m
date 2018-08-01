@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA8FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D898C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A00A20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A00A20862
+	by mail.kernel.org (Postfix) with ESMTP id 33CB920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CB920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732519AbeHAUAS (ORCPT
+        id S1732252AbeHAUAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:00:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        Wed, 1 Aug 2018 16:00:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405666AbeHATIe (ORCPT
+        with ESMTP id S2405668AbeHATIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B53F8139A;
-        Wed,  1 Aug 2018 17:14:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2B301134;
+        Wed,  1 Aug 2018 17:05:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/246] disable loading f2fs module on PAGE_SIZE > 4KB
-Date:   Wed,  1 Aug 2018 18:49:25 +0200
-Message-Id: <20180801165014.356993844@linuxfoundation.org>
+Subject: [PATCH 4.17 223/336] thermal: exynos: fix setting rising_threshold for Exynos5433
+Date:   Wed,  1 Aug 2018 18:49:18 +0200
+Message-Id: <20180801165037.611881153@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,66 +48,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Anatoly Pugachev <matorola@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-[ Upstream commit 4071e67cffcc5c2a007116a02437471351f550eb ]
+[ Upstream commit 8bfc218d0ebbabcba8ed2b8ec1831e0cf1f71629 ]
 
-The following patch disables loading of f2fs module on architectures
-which have PAGE_SIZE > 4096 , since it is impossible to mount f2fs on
-such architectures , log messages are:
+Add missing clearing of the previous value when setting rising
+temperature threshold.
 
-mount: /mnt: wrong fs type, bad option, bad superblock on
-/dev/vdiskb1, missing codepage or helper program, or other error.
-/dev/vdiskb1: F2FS filesystem,
-UUID=1d8b9ca4-2389-4910-af3b-10998969f09c, volume name ""
-
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-filesystem in 1th superblock
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-filesystem in 2th superblock
-May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-page_cache_size (8192), supports only 4KB
-
-which was introduced by git commit 5c9b469295fb6b10d98923eab5e79c4edb80ed20
-
-tested on git kernel 4.17.0-rc6-00309-gec30dcf7f425
-
-with patch applied:
-
-modprobe: ERROR: could not insert 'f2fs': Invalid argument
-May 28 01:40:28 v215 kernel: F2FS not supported on PAGE_SIZE(8192) != 4096
-
-Signed-off-by: Anatoly Pugachev <matorola@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/thermal/samsung/exynos_tmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2663,6 +2663,12 @@ static int __init init_f2fs_fs(void)
- {
- 	int err;
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -598,6 +598,7 @@ static int exynos5433_tmu_initialize(str
+ 		threshold_code = temp_to_code(data, temp);
  
-+	if (PAGE_SIZE != F2FS_BLKSIZE) {
-+		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
-+				PAGE_SIZE, F2FS_BLKSIZE);
-+		return -EINVAL;
-+	}
-+
- 	f2fs_build_trace_ios();
+ 		rising_threshold = readl(data->base + rising_reg_offset);
++		rising_threshold &= ~(0xff << j * 8);
+ 		rising_threshold |= (threshold_code << j * 8);
+ 		writel(rising_threshold, data->base + rising_reg_offset);
  
- 	err = init_inodecache();
 
 
