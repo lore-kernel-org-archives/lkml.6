@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D23C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F5AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A9F6208B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9F6208B6
+	by mail.kernel.org (Postfix) with ESMTP id 8C37F20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C37F20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbeHAT5G (ORCPT
+        id S1732681AbeHAT5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:57:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405698AbeHATIf (ORCPT
+        with ESMTP id S2405750AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3963610F7;
-        Wed,  1 Aug 2018 17:04:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D7BE1397;
+        Wed,  1 Aug 2018 17:14:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Yunlei He <heyunlei@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 203/336] media: renesas-ceu: Set mbus_fmt on subdev operations
-Date:   Wed,  1 Aug 2018 18:48:58 +0200
-Message-Id: <20180801165036.855346926@linuxfoundation.org>
+Subject: [PATCH 4.14 057/246] f2fs: fix to dont trigger writeback during recovery
+Date:   Wed,  1 Aug 2018 18:49:27 +0200
+Message-Id: <20180801165014.439877217@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,99 +48,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit d3a67f27471d4792caf84132228def2b18617932 ]
+[ Upstream commit 64c74a7ab505ea40d1b3e5d02735ecab08ae1b14 ]
 
-The renesas-ceu driver intializes the desired mbus_format at 'complete'
-time, inspecting the supported subdevice ones, and tuning some
-parameters to produce the requested memory format from what the sensor
-can produce. Although, the initially selected mbus_format was not
-provided to the subdevice during set_fmt and try_fmt operations,
-providing instead a '0' mbus format code.
+- f2fs_fill_super
+ - recover_fsync_data
+  - recover_data
+   - del_fsync_inode
+    - iput
+     - iput_final
+      - write_inode_now
+       - f2fs_write_inode
+        - f2fs_balance_fs
+         - f2fs_balance_fs_bg
+          - sync_dirty_inodes
 
-As long as the sensor defaults to a compatible mbus_format when an
-invalid code as '0' is provided, capture operations work correctly. If
-the subdevice defaults to an unsupported format (eg. some RGB
-permutations) capture does not work properly due to a mismatch on the
-expected and received image format on the wire.
+With data_flush mount option, during recovery, in order to avoid entering
+above writeback flow, let's detect recovery status and do skip in
+f2fs_balance_fs_bg.
 
-Fix that by re-using the initially selected mbus_format code during
-set_fmt and try_fmt subdevice operation calls.
-
-Tested by printing out the format selection procedure with ov7670
-sensor.
-
-Before this patch:
-[    0.866001] ov7670_try_fmt_internal -- Looking for mbus_code 0x0000
-[    0.870882] ov7670_try_fmt_internal -- Try mbus_code 0x2008
-[    0.876336] ov7670_try_fmt_internal -- Try mbus_code 0x1002
-[    0.881387] ov7670_try_fmt_internal -- Try mbus_code 0x1008
-[    0.886537] ov7670_try_fmt_internal -- Try mbus_code 0x3001
-[    0.891584] ov7670_try_fmt_internal -- mbus_code defaulted to 0x2008
-
-With this patch applied:
-[    0.867015] ov7670_try_fmt_internal -- Looking for mbus_code 0x2008
-[    0.873205] ov7670_try_fmt_internal -- Try mbus_code 0x2008: match
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/renesas-ceu.c |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -777,8 +777,15 @@ static int ceu_try_fmt(struct ceu_device
- 	const struct ceu_fmt *ceu_fmt;
- 	int ret;
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -435,6 +435,9 @@ void f2fs_balance_fs(struct f2fs_sb_info
  
-+	/*
-+	 * Set format on sensor sub device: bus format used to produce memory
-+	 * format is selected at initialization time.
-+	 */
- 	struct v4l2_subdev_format sd_format = {
--		.which = V4L2_SUBDEV_FORMAT_TRY,
-+		.which	= V4L2_SUBDEV_FORMAT_TRY,
-+		.format	= {
-+			.code = ceu_sd->mbus_fmt.mbus_code,
-+		},
- 	};
- 
- 	switch (pix->pixelformat) {
-@@ -800,10 +807,6 @@ static int ceu_try_fmt(struct ceu_device
- 	v4l_bound_align_image(&pix->width, 2, CEU_MAX_WIDTH, 4,
- 			      &pix->height, 4, CEU_MAX_HEIGHT, 4, 0);
- 
--	/*
--	 * Set format on sensor sub device: bus format used to produce memory
--	 * format is selected at initialization time.
--	 */
- 	v4l2_fill_mbus_format_mplane(&sd_format.format, pix);
- 	ret = v4l2_subdev_call(v4l2_sd, pad, set_fmt, &pad_cfg, &sd_format);
- 	if (ret)
-@@ -827,8 +830,15 @@ static int ceu_set_fmt(struct ceu_device
- 	struct v4l2_subdev *v4l2_sd = ceu_sd->v4l2_sd;
- 	int ret;
- 
-+	/*
-+	 * Set format on sensor sub device: bus format used to produce memory
-+	 * format is selected at initialization time.
-+	 */
- 	struct v4l2_subdev_format format = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.format	= {
-+			.code = ceu_sd->mbus_fmt.mbus_code,
-+		},
- 	};
- 
- 	ret = ceu_try_fmt(ceudev, v4l2_fmt);
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ {
++	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
++		return;
++
+ 	/* try to shrink extent cache when there is no enough memory */
+ 	if (!available_free_memory(sbi, EXTENT_CACHE))
+ 		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
 
 
