@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55D1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D8020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D8020844
+	by mail.kernel.org (Postfix) with ESMTP id 95FA72083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FA72083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406667AbeHATLo (ORCPT
+        id S2406679AbeHATLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51256 "EHLO
+        Wed, 1 Aug 2018 15:11:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404619AbeHATLo (ORCPT
+        with ESMTP id S2404619AbeHATLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:44 -0400
+        Wed, 1 Aug 2018 15:11:47 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 645AED27;
-        Wed,  1 Aug 2018 17:25:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 720CBCC9;
+        Wed,  1 Aug 2018 17:25:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 015/144] ALSA: fm801: add error handling for snd_ctl_add
-Date:   Wed,  1 Aug 2018 18:50:42 +0200
-Message-Id: <20180801164950.204125142@linuxfoundation.org>
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 002/144] Input: i8042 - add Lenovo LaVie Z to the i8042 reset list
+Date:   Wed,  1 Aug 2018 18:50:29 +0200
+Message-Id: <20180801164949.143313561@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,49 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit ef1ffbe7889e99f5b5cccb41c89e5c94f50f3218 ]
+commit 384cf4285b34e08917e3e66603382f2b0c4f6e1b upstream.
 
-When snd_ctl_add fails, the lack of error-handling code may
-cause unexpected results.
+The Lenovo LaVie Z laptop requires i8042 to be reset in order to
+consistently detect its Elantech touchpad. The nomux and kbdreset
+quirks are not sufficient.
 
-This patch adds error-handling code after calling snd_ctl_add.
+It's possible the other LaVie Z models from NEC require this as well.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/pci/fm801.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/sound/pci/fm801.c
-+++ b/sound/pci/fm801.c
-@@ -1068,11 +1068,19 @@ static int snd_fm801_mixer(struct fm801
- 		if ((err = snd_ac97_mixer(chip->ac97_bus, &ac97, &chip->ac97_sec)) < 0)
- 			return err;
- 	}
--	for (i = 0; i < FM801_CONTROLS; i++)
--		snd_ctl_add(chip->card, snd_ctl_new1(&snd_fm801_controls[i], chip));
-+	for (i = 0; i < FM801_CONTROLS; i++) {
-+		err = snd_ctl_add(chip->card,
-+			snd_ctl_new1(&snd_fm801_controls[i], chip));
-+		if (err < 0)
-+			return err;
-+	}
- 	if (chip->multichannel) {
--		for (i = 0; i < FM801_CONTROLS_MULTI; i++)
--			snd_ctl_add(chip->card, snd_ctl_new1(&snd_fm801_controls_multi[i], chip));
-+		for (i = 0; i < FM801_CONTROLS_MULTI; i++) {
-+			err = snd_ctl_add(chip->card,
-+				snd_ctl_new1(&snd_fm801_controls_multi[i], chip));
-+			if (err < 0)
-+				return err;
-+		}
- 	}
- 	return 0;
- }
+---
+ drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -527,6 +527,13 @@ static const struct dmi_system_id __init
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "N24_25BU"),
+ 		},
+ 	},
++	{
++		/* Lenovo LaVie Z */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo LaVie Z"),
++		},
++	},
+ 	{ }
+ };
+ 
 
 
