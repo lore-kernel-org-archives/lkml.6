@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003E0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D69C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89722083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89722083D
+	by mail.kernel.org (Postfix) with ESMTP id 97C3520841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C3520841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732732AbeHAUHf (ORCPT
+        id S1732799AbeHAUHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
+        Wed, 1 Aug 2018 16:07:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404454AbeHATDj (ORCPT
+        with ESMTP id S2404462AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49C6512A3;
-        Wed,  1 Aug 2018 17:10:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D73F11A1;
+        Wed,  1 Aug 2018 17:07:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 319/336] net: mdio-mux: bcm-iproc: fix wrong getter and setter pair
-Date:   Wed,  1 Aug 2018 18:50:54 +0200
-Message-Id: <20180801165041.243050036@linuxfoundation.org>
+        stable@vger.kernel.org, "John L. Hammond" <john.hammond@intel.com>,
+        Dmitry Eremin <dmitry.eremin@intel.com>,
+        James Simmons <uja.ornl@yahoo.com>,
+        James Simmons <jsimmons@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 265/336] staging: lustre: llite: correct removexattr detection
+Date:   Wed,  1 Aug 2018 18:50:00 +0200
+Message-Id: <20180801165039.187332397@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,35 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: James Simmons <jsimmons@infradead.org>
 
-[ Upstream commit b0753408aadf32c7ece9e6b765017881e54af833 ]
+[ Upstream commit 1b60f6dfa38403ff7c4d0b4b7ecdb810f9789a2a ]
 
-mdio_mux_iproc_probe() uses platform_set_drvdata() to store md pointer
-in device, whereas mdio_mux_iproc_remove() restores md pointer by
-dev_get_platdata(&pdev->dev). This leads to wrong resources release.
+In ll_xattr_set_common() detect the removexattr() case correctly by
+testing for a NULL value as well as XATTR_REPLACE.
 
-The patch replaces getter to platform_get_drvdata.
-
-Fixes: 98bc865a1ec8 ("net: mdio-mux: Add MDIO mux driver for iProc SoCs")
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: John L. Hammond <john.hammond@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10787
+Reviewed-on: https://review.whamcloud.com/
+Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-mux-bcm-iproc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/lustre/lustre/llite/xattr.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -218,7 +218,7 @@ out:
+--- a/drivers/staging/lustre/lustre/llite/xattr.c
++++ b/drivers/staging/lustre/lustre/llite/xattr.c
+@@ -94,7 +94,11 @@ ll_xattr_set_common(const struct xattr_h
+ 	__u64 valid;
+ 	int rc;
  
- static int mdio_mux_iproc_remove(struct platform_device *pdev)
- {
--	struct iproc_mdiomux_desc *md = dev_get_platdata(&pdev->dev);
-+	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
- 
- 	mdio_mux_uninit(md->mux_handle);
- 	mdiobus_unregister(md->mii_bus);
+-	if (flags == XATTR_REPLACE) {
++	/* When setxattr() is called with a size of 0 the value is
++	 * unconditionally replaced by "". When removexattr() is
++	 * called we get a NULL value and XATTR_REPLACE for flags.
++	 */
++	if (!value && flags == XATTR_REPLACE) {
+ 		ll_stats_ops_tally(ll_i2sbi(inode), LPROC_LL_REMOVEXATTR, 1);
+ 		valid = OBD_MD_FLXATTRRM;
+ 	} else {
 
 
