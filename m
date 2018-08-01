@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FA8C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63EBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C42D2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C42D2083D
+	by mail.kernel.org (Postfix) with ESMTP id 5DB712083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB712083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406870AbeHATMW (ORCPT
+        id S2406885AbeHATMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51382 "EHLO
+        Wed, 1 Aug 2018 15:12:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389883AbeHATMV (ORCPT
+        with ESMTP id S2406455AbeHATMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:21 -0400
+        Wed, 1 Aug 2018 15:12:24 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9564ACC9;
-        Wed,  1 Aug 2018 17:25:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8E7BCC9;
+        Wed,  1 Aug 2018 17:25:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 027/144] RDMA/mad: Convert BUG_ONs to error flows
-Date:   Wed,  1 Aug 2018 18:50:54 +0200
-Message-Id: <20180801164951.198563674@linuxfoundation.org>
+Subject: [PATCH 4.9 028/144] netfilter: nf_tables: check msg_type before nft_trans_set(trans)
+Date:   Wed,  1 Aug 2018 18:50:55 +0200
+Message-Id: <20180801164951.269917738@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,47 +52,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-[ Upstream commit 2468b82d69e3a53d024f28d79ba0fdb8bf43dfbf ]
+[ Upstream commit 9c7f96fd77b0dbe1fe7ed1f9c462c45dc48a1076 ]
 
-Let's perform checks in-place instead of BUG_ONs.
+The patch moves the "trans->msg_type == NFT_MSG_NEWSET" check before
+using nft_trans_set(trans). Otherwise we can get out of bounds read.
 
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+For example, KASAN reported the one when running 0001_cache_handling_0 nft
+test. In this case "trans->msg_type" was NFT_MSG_NEWTABLE:
+
+[75517.177808] BUG: KASAN: slab-out-of-bounds in nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75517.279094] Read of size 8 at addr ffff881bdb643fc8 by task nft/7356
+...
+[75517.375605] CPU: 26 PID: 7356 Comm: nft Tainted: G  E   4.17.0-rc7.1.x86_64 #1
+[75517.489587] Hardware name: Oracle Corporation SUN SERVER X4-2
+[75517.618129] Call Trace:
+[75517.648821]  dump_stack+0xd1/0x13b
+[75517.691040]  ? show_regs_print_info+0x5/0x5
+[75517.742519]  ? kmsg_dump_rewind_nolock+0xf5/0xf5
+[75517.799300]  ? lock_acquire+0x143/0x310
+[75517.846738]  print_address_description+0x85/0x3a0
+[75517.904547]  kasan_report+0x18d/0x4b0
+[75517.949892]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.019153]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.088420]  ? nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.157689]  nft_set_lookup_global+0x22f/0x270 [nf_tables]
+[75518.224869]  nf_tables_newsetelem+0x1a5/0x5d0 [nf_tables]
+[75518.291024]  ? nft_add_set_elem+0x2280/0x2280 [nf_tables]
+[75518.357154]  ? nla_parse+0x1a5/0x300
+[75518.401455]  ? kasan_kmalloc+0xa6/0xd0
+[75518.447842]  nfnetlink_rcv+0xc43/0x1bdf [nfnetlink]
+[75518.507743]  ? nfnetlink_rcv+0x7a5/0x1bdf [nfnetlink]
+[75518.569745]  ? nfnl_err_reset+0x3c0/0x3c0 [nfnetlink]
+[75518.631711]  ? lock_acquire+0x143/0x310
+[75518.679133]  ? netlink_deliver_tap+0x9b/0x1070
+[75518.733840]  ? kasan_unpoison_shadow+0x31/0x40
+[75518.788542]  netlink_unicast+0x45d/0x680
+[75518.837111]  ? __isolate_free_page+0x890/0x890
+[75518.891913]  ? netlink_attachskb+0x6b0/0x6b0
+[75518.944542]  netlink_sendmsg+0x6fa/0xd30
+[75518.993107]  ? netlink_unicast+0x680/0x680
+[75519.043758]  ? netlink_unicast+0x680/0x680
+[75519.094402]  sock_sendmsg+0xd9/0x160
+[75519.138810]  ___sys_sendmsg+0x64d/0x980
+[75519.186234]  ? copy_msghdr_from_user+0x350/0x350
+[75519.243118]  ? lock_downgrade+0x650/0x650
+[75519.292738]  ? do_raw_spin_unlock+0x5d/0x250
+[75519.345456]  ? _raw_spin_unlock+0x24/0x30
+[75519.395065]  ? __handle_mm_fault+0xbde/0x3410
+[75519.448830]  ? sock_setsockopt+0x3d2/0x1940
+[75519.500516]  ? __lock_acquire.isra.25+0xdc/0x19d0
+[75519.558448]  ? lock_downgrade+0x650/0x650
+[75519.608057]  ? __audit_syscall_entry+0x317/0x720
+[75519.664960]  ? __fget_light+0x58/0x250
+[75519.711325]  ? __sys_sendmsg+0xde/0x170
+[75519.758850]  __sys_sendmsg+0xde/0x170
+[75519.804193]  ? __ia32_sys_shutdown+0x90/0x90
+[75519.856725]  ? syscall_trace_enter+0x897/0x10e0
+[75519.912354]  ? trace_event_raw_event_sys_enter+0x920/0x920
+[75519.979432]  ? __audit_syscall_entry+0x720/0x720
+[75520.036118]  do_syscall_64+0xa3/0x3d0
+[75520.081248]  ? prepare_exit_to_usermode+0x47/0x1d0
+[75520.139904]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[75520.201680] RIP: 0033:0x7fc153320ba0
+[75520.245772] RSP: 002b:00007ffe294c3638 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[75520.337708] RAX: ffffffffffffffda RBX: 00007ffe294c4820 RCX: 00007fc153320ba0
+[75520.424547] RDX: 0000000000000000 RSI: 00007ffe294c46b0 RDI: 0000000000000003
+[75520.511386] RBP: 00007ffe294c47b0 R08: 0000000000000004 R09: 0000000002114090
+[75520.598225] R10: 00007ffe294c30a0 R11: 0000000000000246 R12: 00007ffe294c3660
+[75520.684961] R13: 0000000000000001 R14: 00007ffe294c3650 R15: 0000000000000001
+
+[75520.790946] Allocated by task 7356:
+[75520.833994]  kasan_kmalloc+0xa6/0xd0
+[75520.878088]  __kmalloc+0x189/0x450
+[75520.920107]  nft_trans_alloc_gfp+0x20/0x190 [nf_tables]
+[75520.983961]  nf_tables_newtable+0xcd0/0x1bd0 [nf_tables]
+[75521.048857]  nfnetlink_rcv+0xc43/0x1bdf [nfnetlink]
+[75521.108655]  netlink_unicast+0x45d/0x680
+[75521.157013]  netlink_sendmsg+0x6fa/0xd30
+[75521.205271]  sock_sendmsg+0xd9/0x160
+[75521.249365]  ___sys_sendmsg+0x64d/0x980
+[75521.296686]  __sys_sendmsg+0xde/0x170
+[75521.341822]  do_syscall_64+0xa3/0x3d0
+[75521.386957]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[75521.467867] Freed by task 23454:
+[75521.507804]  __kasan_slab_free+0x132/0x180
+[75521.558137]  kfree+0x14d/0x4d0
+[75521.596005]  free_rt_sched_group+0x153/0x280
+[75521.648410]  sched_autogroup_create_attach+0x19a/0x520
+[75521.711330]  ksys_setsid+0x2ba/0x400
+[75521.755529]  __ia32_sys_setsid+0xa/0x10
+[75521.802850]  do_syscall_64+0xa3/0x3d0
+[75521.848090]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[75521.929000] The buggy address belongs to the object at ffff881bdb643f80
+ which belongs to the cache kmalloc-96 of size 96
+[75522.079797] The buggy address is located 72 bytes inside of
+ 96-byte region [ffff881bdb643f80, ffff881bdb643fe0)
+[75522.221234] The buggy address belongs to the page:
+[75522.280100] page:ffffea006f6d90c0 count:1 mapcount:0 mapping:0000000000000000 index:0x0
+[75522.377443] flags: 0x2fffff80000100(slab)
+[75522.426956] raw: 002fffff80000100 0000000000000000 0000000000000000 0000000180200020
+[75522.521275] raw: ffffea006e6fafc0 0000000c0000000c ffff881bf180f400 0000000000000000
+[75522.615601] page dumped because: kasan: bad access detected
+
+Fixes: 37a9cc525525 ("netfilter: nf_tables: add generation mask to sets")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/mad.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ net/netfilter/nf_tables_api.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/core/mad.c
-+++ b/drivers/infiniband/core/mad.c
-@@ -1549,7 +1549,8 @@ static int add_oui_reg_req(struct ib_mad
- 			    mad_reg_req->oui, 3)) {
- 			method = &(*vendor_table)->vendor_class[
- 						vclass]->method_table[i];
--			BUG_ON(!*method);
-+			if (!*method)
-+				goto error3;
- 			goto check_in_use;
- 		}
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2476,12 +2476,13 @@ struct nft_set *nf_tables_set_lookup_byi
+ 	u32 id = ntohl(nla_get_be32(nla));
+ 
+ 	list_for_each_entry(trans, &net->nft.commit_list, list) {
+-		struct nft_set *set = nft_trans_set(trans);
++		if (trans->msg_type == NFT_MSG_NEWSET) {
++			struct nft_set *set = nft_trans_set(trans);
+ 
+-		if (trans->msg_type == NFT_MSG_NEWSET &&
+-		    id == nft_trans_set_id(trans) &&
+-		    nft_active_genmask(set, genmask))
+-			return set;
++			if (id == nft_trans_set_id(trans) &&
++			    nft_active_genmask(set, genmask))
++				return set;
++		}
  	}
-@@ -1559,10 +1560,12 @@ static int add_oui_reg_req(struct ib_mad
- 				vclass]->oui[i])) {
- 			method = &(*vendor_table)->vendor_class[
- 				vclass]->method_table[i];
--			BUG_ON(*method);
- 			/* Allocate method table for this OUI */
--			if ((ret = allocate_method_table(method)))
--				goto error3;
-+			if (!*method) {
-+				ret = allocate_method_table(method);
-+				if (ret)
-+					goto error3;
-+			}
- 			memcpy((*vendor_table)->vendor_class[vclass]->oui[i],
- 			       mad_reg_req->oui, 3);
- 			goto check_in_use;
+ 	return ERR_PTR(-ENOENT);
+ }
 
 
