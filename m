@@ -6,35 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4559CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6CDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08FDF2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08FDF2083D
+	by mail.kernel.org (Postfix) with ESMTP id 0F0C22083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0C22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405871AbeHATIi (ORCPT
+        id S1732593AbeHATu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49926 "EHLO
+        Wed, 1 Aug 2018 15:50:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405721AbeHATIf (ORCPT
+        with ESMTP id S2405704AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:35 -0400
+        Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7EAC1333;
-        Wed,  1 Aug 2018 17:12:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 105901352;
+        Wed,  1 Aug 2018 17:12:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Snild Dolkow <snild@sony.com>
-Subject: [PATCH 4.14 015/246] kthread, tracing: Dont expose half-written comm when creating kthreads
-Date:   Wed,  1 Aug 2018 18:48:45 +0200
-Message-Id: <20180801165012.438897787@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Mandeep Singh Baines <msb@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 031/246] kernel/hung_task.c: show all hung tasks before panic
+Date:   Wed,  1 Aug 2018 18:49:01 +0200
+Message-Id: <20180801165013.183330440@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,80 +60,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Snild Dolkow <snild@sony.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
+[ Upstream commit 401c636a0eeb0d51862fce222da1bf08e3a0ffd0 ]
 
-There is a window for racing when printing directly to task->comm,
-allowing other threads to see a non-terminated string. The vsnprintf
-function fills the buffer, counts the truncated chars, then finally
-writes the \0 at the end.
+When we get a hung task it can often be valuable to see _all_ the hung
+tasks on the system before calling panic().
 
-	creator                     other
-	vsnprintf:
-	  fill (not terminated)
-	  count the rest            trace_sched_waking(p):
-	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-	  write \0
+Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&id=5316056503549952
+----------------------------------------
+INFO: task syz-executor0:6540 blocked for more than 120 seconds.
+      Not tainted 4.16.0+ #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor0   D23560  6540   4521 0x80000004
+Call Trace:
+ context_switch kernel/sched/core.c:2848 [inline]
+ __schedule+0x8fb/0x1ef0 kernel/sched/core.c:3490
+ schedule+0xf5/0x430 kernel/sched/core.c:3549
+ schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3607
+ __mutex_lock_common kernel/locking/mutex.c:833 [inline]
+ __mutex_lock+0xb7f/0x1810 kernel/locking/mutex.c:893
+ mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+ lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+ __blkdev_driver_ioctl block/ioctl.c:303 [inline]
+ blkdev_ioctl+0x1759/0x1e00 block/ioctl.c:601
+ ioctl_by_bdev+0xa5/0x110 fs/block_dev.c:2060
+ isofs_get_last_session fs/isofs/inode.c:567 [inline]
+ isofs_fill_super+0x2ba9/0x3bc0 fs/isofs/inode.c:660
+ mount_bdev+0x2b7/0x370 fs/super.c:1119
+ isofs_mount+0x34/0x40 fs/isofs/inode.c:1560
+ mount_fs+0x66/0x2d0 fs/super.c:1222
+ vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+ vfs_kern_mount fs/namespace.c:2514 [inline]
+ do_new_mount fs/namespace.c:2517 [inline]
+ do_mount+0xea4/0x2b90 fs/namespace.c:2847
+ ksys_mount+0xab/0x120 fs/namespace.c:3063
+ SYSC_mount fs/namespace.c:3077 [inline]
+ SyS_mount+0x39/0x50 fs/namespace.c:3074
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+(...snipped...)
+Showing all locks held in the system:
+(...snipped...)
+2 locks held by syz-executor0/6540:
+ #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: alloc_super fs/super.c:211 [inline]
+ #0: 00000000566d4c39 (&type->s_umount_key#49/1){+.+.}, at: sget_userns+0x3b2/0xe60 fs/super.c:502 /* down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING); */
+ #1: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
+(...snipped...)
+3 locks held by syz-executor7/6541:
+ #0: 0000000043ca8836 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
+ #1: 000000007bf3d3f9 (&bdev->bd_mutex){+.+.}, at: blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
+ #2: 00000000566d4c39 (&type->s_umount_key#50){.+.+}, at: __get_super.part.10+0x1d3/0x280 fs/super.c:663 /* down_read(&sb->s_umount); */
+----------------------------------------
 
-The consequences depend on how 'other' uses the string. In our case,
-it was copied into the tracing system's saved cmdlines, a buffer of
-adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
+When reporting an AB-BA deadlock like shown above, it would be nice if
+trace of PID=6541 is printed as well as trace of PID=6540 before calling
+panic().
 
-	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
+Showing hung tasks up to /proc/sys/kernel/hung_task_warnings could delay
+calling panic() but normally there should not be so many hung tasks.
 
-...and a strcpy out of there would cause stack corruption:
+Link: http://lkml.kernel.org/r/201804050705.BHE57833.HVFOFtSOMQJFOL@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Mandeep Singh Baines <msb@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-	[224761.522292] Kernel panic - not syncing: stack-protector:
-	    Kernel stack is corrupted in: ffffff9bf9783c78
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-	crash-arm64> kbt | grep 'comm\|trace_print_context'
-	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-	      comm (char [16]) =  "irq/497-pwr_even"
-
-	crash-arm64> rd 0xffffffd4d0e17d14 8
-	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-
-The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-likely needed because of this same bug.
-
-Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-This way, there won't be a window where comm is not terminated.
-
-Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
-
-Cc: stable@vger.kernel.org
-Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Snild Dolkow <snild@sony.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/kthread.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/hung_task.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -311,8 +311,14 @@ struct task_struct *__kthread_create_on_
- 	task = create->result;
- 	if (!IS_ERR(task)) {
- 		static const struct sched_param param = { .sched_priority = 0 };
-+		char name[TASK_COMM_LEN];
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -44,6 +44,7 @@ int __read_mostly sysctl_hung_task_warni
  
--		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-+		/*
-+		 * task is already visible to other tasks, so updating
-+		 * COMM must be protected.
-+		 */
-+		vsnprintf(name, sizeof(name), namefmt, args);
-+		set_task_comm(task, name);
- 		/*
- 		 * root may have changed our (kthreadd's) priority or CPU mask.
- 		 * The kernel thread should not inherit these properties.
+ static int __read_mostly did_panic;
+ static bool hung_task_show_lock;
++static bool hung_task_call_panic;
+ 
+ static struct task_struct *watchdog_task;
+ 
+@@ -127,10 +128,8 @@ static void check_hung_task(struct task_
+ 	touch_nmi_watchdog();
+ 
+ 	if (sysctl_hung_task_panic) {
+-		if (hung_task_show_lock)
+-			debug_show_all_locks();
+-		trigger_all_cpu_backtrace();
+-		panic("hung_task: blocked tasks");
++		hung_task_show_lock = true;
++		hung_task_call_panic = true;
+ 	}
+ }
+ 
+@@ -193,6 +192,10 @@ static void check_hung_uninterruptible_t
+ 	rcu_read_unlock();
+ 	if (hung_task_show_lock)
+ 		debug_show_all_locks();
++	if (hung_task_call_panic) {
++		trigger_all_cpu_backtrace();
++		panic("hung_task: blocked tasks");
++	}
+ }
+ 
+ static long hung_timeout_jiffies(unsigned long last_checked,
 
 
