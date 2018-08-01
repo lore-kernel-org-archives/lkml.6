@@ -2,120 +2,149 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B660C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D4DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7526208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 798A4208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:07:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YuqUnLWJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7526208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Wp1pzpPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798A4208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389522AbeHAPvG (ORCPT
+        id S2389511AbeHAPxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:51:06 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34124 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389419AbeHAPvG (ORCPT
+        Wed, 1 Aug 2018 11:53:35 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55621 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389419AbeHAPxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:51:06 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w71Dwdo6098991;
-        Wed, 1 Aug 2018 14:04:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=a9zpVG17XnXJUag+LHh0QIvRYfKJI6tsgxrEl3HKypk=;
- b=YuqUnLWJTLUxA9wAc1BK3jx1EVViW0aK22oPLxeHTIgVKoP9zO2KUNQhfFfcXFOyCF9q
- 0rA5MNKzBnMoS45Wd4X4ToC3NYj+uNnkuJWlFB4JmqmiDjBa9WVgN0FMU5y/hwPSHEsx
- ll7kt3K6bJc1h87O9h97spxx6dtwJvZPJuuFOcekql0jAA88W+rDn4R1P5yiNR58yY5s
- 43dYI92fPPAA/eXs2yVQy8yI33EvN8B4OLJdr0Lk1fb9oChUVrQ8eyq/TgLbvwaLVQtf
- q3pquHxIryMMPWVwzzKoFB/gAGWC0pNeaI2lnu/VJo9zvBV0BdE+vA+d0aNpJF4ZemNA Pw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2kgh4q5r2r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Aug 2018 14:04:59 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w71E4w1h012109
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Aug 2018 14:04:58 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w71E4uWM018213;
-        Wed, 1 Aug 2018 14:04:57 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Aug 2018 07:04:56 -0700
-Date:   Wed, 1 Aug 2018 17:04:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Jheng-Jhong Wu <goodwater.wu@gmail.com>,
-        Palle Christensen <palle.christensen@microsemi.com>,
-        devel@driverdev.osuosl.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arun Nagendran <arunrasppi@gmail.com>
-Subject: Re: [PATCH] staging:mt29f_spinand: MT29F2G failing as only 16-bit
- arguments and variables used for addressing.
-Message-ID: <20180801140447.yw47ynz7bsgfbwb3@mwanda>
-References: <1533093861-9761-1-git-send-email-goodwater.wu@gmail.com>
- <20180801120551.ju6zhxhoef6w5zim@mwanda>
- <20180801155530.6e824927@xps13>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801155530.6e824927@xps13>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1808010146
+        Wed, 1 Aug 2018 11:53:35 -0400
+Received: by mail-wm0-f65.google.com with SMTP id f21-v6so7151215wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 07:07:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=7MTqWJLWu9eejFHrO16/hfN3y2jenAxvTZuLnRV7Kbw=;
+        b=Wp1pzpPPG7M//lie40/T93H0M/LJ8uVdFlFHmjTZNgvsqVDU+hQL3/ZS9hKQl6EOE2
+         nhZsvuWMl2sulogP8kX+zjBDbD0otGfIRPODjfuSfWybiw7NwzperFK6DFMAvjX7QMic
+         j+ysqJOsoSLj6AC6Fxh85xmZ9/GuosUI7FoLdJkZWm+5w490/YrsrUMiYhqrrZVJC8hY
+         YetTiWcZR1SUqixb0L796OoGYt/xXO4NjPHCMFgkCVLD54Qr5WjHEA8pIHauz6+dX/gi
+         4dd4RR5I9eATqoy4bbi2wBGaEymGG0WKwJ+Qcl4HB27oy8xcBpUjMABggbPZu2jXaUmQ
+         RS7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7MTqWJLWu9eejFHrO16/hfN3y2jenAxvTZuLnRV7Kbw=;
+        b=Wb7u965EsD3dVTyuDPLL7PxBrogqidqyYFMcWfKSOQ++mOgpalO8LMyVHcweFarzrS
+         aSKI6HT1AIABOP8URybvt/NgEpSVN2trApktShNQXnoKz0qfeydrID8sUUq6LUWQ6FGu
+         U1USXmsxCq378OsNsr3kt5dHbLFgP8VyoacJWxMSPkolU+OiA2MHq+d1IJhW9oN7xeUh
+         7hCqrirn7uMZQyspE6mazl+fNIB+N5cU0aARR/GOEaSeR3buOmNnQaYpVXjlbK8yDvxd
+         BA5YqmTQ18on981lYmgkUbX+GEwXRxcNiw2mQZyS90hcrfFmaDFJeKBbGC4+lgYeXQfP
+         hiSg==
+X-Gm-Message-State: AOUpUlEgM1iTpxLbpEyg7vDbPIjjcuUr6goeuhPkrykB2Hu+OrJGY4JB
+        68IwF6yFalf0TxaDC+SFcvZzHDH5gnQ=
+X-Google-Smtp-Source: AAOMgpdnmpTS6ueSiolnz3v+kdMHk79hymtY6t19yR9b5OMB/SJ0QPOkKOkE/i8OYYInsgQsrWHuzw==
+X-Received: by 2002:a1c:4405:: with SMTP id r5-v6mr2725162wma.4.1533132458218;
+        Wed, 01 Aug 2018 07:07:38 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id i125-v6sm9324633wmd.23.2018.08.01.07.07.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 07:07:37 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH] clk: meson: axg: round audio system master clocks down
+Date:   Wed,  1 Aug 2018 16:07:32 +0200
+Message-Id: <20180801140732.27671-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 03:55:30PM +0200, Miquel Raynal wrote:
-> Hi Dan,
-> 
-> Dan Carpenter <dan.carpenter@oracle.com> wrote on Wed, 1 Aug 2018
-> 15:05:51 +0300:
-> 
-> > On Wed, Aug 01, 2018 at 11:24:19AM +0800, Jheng-Jhong Wu wrote:
-> > > For NAND flash chips with more than 1Gbit (e.g. MT29F2G) more than 16 bits
-> > > are necessary to address the correct page. The driver sets the address for
-> > > more than 16 bits, but it uses 16-bit arguments and variables (these are
-> > > page_id, block_id, row) to do address operations. Obviously, these
-> > > arguments and variables cannot deal with more than 16-bit address.
-> > > 
-> > > Signed-off-by: Jheng-Jhong Wu <goodwater.wu@gmail.com>  
-> > 
-> > This seems reasonable...  It would be needed to make commit 6efb21d6d0e7
-> > ("staging:mt29f_spinand: MT29F2G failing as only 16 bits used for
-> > addressing.") work.  It also fixes a static checker warning.
-> > 
-> > My only concern is that the mtd/nand code seems to use -1 as a magical
-> > page_id.  For example:
-> 
-> I guess you missed Boris' comment: this driver is very likely to be
-> removed. A SPI-NAND framework has been added. It does not use the raw
-> NAND framework anymore, which was wrong anyway.
-> 
+Some of the master clocks provided by the axg audio clock controller are
+system clock (spdifin and pdm sysclk). They are used to clock an internal
+DSP of the related devices. Having them constantly rounded down instead
+of closest is preferable.
 
-We should probably revert commit 6efb21d6d0e7 ("staging:mt29f_spinand:
-MT29F2G failing as only 16 bits used for addressing.") in that case if
-all it does is add static checker warnings...
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg-audio.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
-regards,
-dan carpenter
-
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index a0ed41e73bde..5f6c860aa122 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -101,10 +101,16 @@ static const char * const mst_mux_parent_names[] = {
+ 	"axg_mst_in4", "axg_mst_in5", "axg_mst_in6", "axg_mst_in7",
+ };
+ 
+-#define AXG_MST_MCLK_MUX(_name, _reg)					\
+-	AXG_AUD_MUX(_name##_sel, _reg, 0x7, 24, CLK_MUX_ROUND_CLOSEST, \
++#define AXG_MST_MUX(_name, _reg, _flag)				\
++	AXG_AUD_MUX(_name##_sel, _reg, 0x7, 24, _flag,		\
+ 		    mst_mux_parent_names, CLK_SET_RATE_PARENT)
+ 
++#define AXG_MST_MCLK_MUX(_name, _reg)				\
++	AXG_MST_MUX(_name, _reg, CLK_MUX_ROUND_CLOSEST)
++
++#define AXG_MST_SYS_MUX(_name, _reg)				\
++	AXG_MST_MUX(_name, _reg, 0)
++
+ static AXG_MST_MCLK_MUX(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
+ static AXG_MST_MCLK_MUX(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
+ static AXG_MST_MCLK_MUX(mst_c_mclk,   AUDIO_MCLK_C_CTRL);
+@@ -112,13 +118,19 @@ static AXG_MST_MCLK_MUX(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
+ static AXG_MST_MCLK_MUX(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
+ static AXG_MST_MCLK_MUX(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
+ static AXG_MST_MCLK_MUX(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+-static AXG_MST_MCLK_MUX(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
+ static AXG_MST_MCLK_MUX(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+-static AXG_MST_MCLK_MUX(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++static AXG_MST_SYS_MUX(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_SYS_MUX(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
++
++#define AXG_MST_DIV(_name, _reg, _flag)				\
++	AXG_AUD_DIV(_name##_div, _reg, 0, 16, _flag,		\
++		    "axg_"#_name"_sel", CLK_SET_RATE_PARENT)	\
++
++#define AXG_MST_MCLK_DIV(_name, _reg)				\
++	AXG_MST_DIV(_name, _reg, CLK_DIVIDER_ROUND_CLOSEST)
+ 
+-#define AXG_MST_MCLK_DIV(_name, _reg)					\
+-	AXG_AUD_DIV(_name##_div, _reg, 0, 16, CLK_DIVIDER_ROUND_CLOSEST, \
+-		    "axg_"#_name"_sel", CLK_SET_RATE_PARENT)		\
++#define AXG_MST_SYS_DIV(_name, _reg)				\
++	AXG_MST_DIV(_name, _reg, 0)
+ 
+ static AXG_MST_MCLK_DIV(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
+ static AXG_MST_MCLK_DIV(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
+@@ -127,12 +139,12 @@ static AXG_MST_MCLK_DIV(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
+ static AXG_MST_MCLK_DIV(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
+ static AXG_MST_MCLK_DIV(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
+ static AXG_MST_MCLK_DIV(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+-static AXG_MST_MCLK_DIV(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
+ static AXG_MST_MCLK_DIV(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+-static AXG_MST_MCLK_DIV(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++static AXG_MST_SYS_DIV(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_SYS_DIV(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
+ 
+-#define AXG_MST_MCLK_GATE(_name, _reg)					\
+-	AXG_AUD_GATE(_name, _reg, 31,  "axg_"#_name"_div",		\
++#define AXG_MST_MCLK_GATE(_name, _reg)				\
++	AXG_AUD_GATE(_name, _reg, 31,  "axg_"#_name"_div",	\
+ 		     CLK_SET_RATE_PARENT)
+ 
+ static AXG_MST_MCLK_GATE(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
+-- 
+2.17.1
 
