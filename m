@@ -2,162 +2,100 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D38C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D205C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83143208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BFC620844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:06:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="Rh/EJNp7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83143208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVPVbOGd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFC620844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389089AbeHALuV (ORCPT
+        id S2389139AbeHALvf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:50:21 -0400
-Received: from mail-eopbgr710080.outbound.protection.outlook.com ([40.107.71.80]:38048
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388818AbeHALuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:50:21 -0400
+        Wed, 1 Aug 2018 07:51:35 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40835 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388896AbeHALvf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 07:51:35 -0400
+Received: by mail-oi0-f66.google.com with SMTP id w126-v6so33535340oie.7;
+        Wed, 01 Aug 2018 03:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VleLQuSC9BgsABPtvTwxhloHeMNwZHX3BvC7hNOKQjg=;
- b=Rh/EJNp7Bf3dh2i15K9FuIUaL9KKZJkMfMcuSzJUMTRyhFD8B+Vqa6axDbJgtaX8quO+oyTcLuAgSs73E/jUUd9StopP4rptDVxnJCgCImkYjcoXks9Hf6R9SjLMFmjBstVFg8Fr77iZNOgsECFuIZdjV7EsNC6m+LNTDiKmbaA=
-Received: from MWHPR07MB3471.namprd07.prod.outlook.com (10.164.192.22) by
- MWHPR07MB3085.namprd07.prod.outlook.com (10.172.97.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.995.19; Wed, 1 Aug 2018 10:05:18 +0000
-Received: from MWHPR07MB3471.namprd07.prod.outlook.com
- ([fe80::b53d:b12a:ba7c:7893]) by MWHPR07MB3471.namprd07.prod.outlook.com
- ([fe80::b53d:b12a:ba7c:7893%4]) with mapi id 15.20.1017.010; Wed, 1 Aug 2018
- 10:05:18 +0000
-From:   "Bolotin, Denis" <Denis.Bolotin@cavium.com>
-To:     YueHaibing <yuehaibing@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "Elior, Ariel" <Ariel.Elior@cavium.com>,
-        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH net-next] qed: Make some functions static
-Thread-Topic: [PATCH net-next] qed: Make some functions static
-Thread-Index: AQHUKNiTBdPDE+J77UiysFS/Lr7nxKSqq9gA
-Date:   Wed, 1 Aug 2018 10:05:18 +0000
-Message-ID: <MWHPR07MB34711F11A6E418F24A30B27B962D0@MWHPR07MB3471.namprd07.prod.outlook.com>
-References: <20180731141230.10780-1-yuehaibing@huawei.com>
-In-Reply-To: <20180731141230.10780-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Denis.Bolotin@cavium.com; 
-x-originating-ip: [31.168.140.228]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR07MB3085;6:/bJ4JuC/zkUgqytAsGiPYZ7IVfVpzMMp4dHdNa3Vr7qIfqDV5Y2SLkM2pf2DuzSWmtHbATDlQt8XtIZ8bSWuzVLg1WtkLiJponTZN5yiyIb0wAw/yQIlaHW5y63gmI4f5atDKVZxiCvi3sNpt5TjPOFbARkiigu6lWcmzYiYg++Ixzmek2xkVph8BBslQs3rUO+7ohRq7UvndKFMy9CGa4Hws00RrO1zy47qEEM44SiemZ/rdB5jF015jmfBIhYl9YEMB02jQYUvgkojuaVrl9jwal6I/iqbcfruot8vAByvYzg5iN4c+962xZMf4WlgV+Gx1itQq9VhlYo3MCC7UPGP+IRbmej7ML6gcUbD3LUbp+Sya1QN1La/0XzA1si5NvnDL3fR92Bcje7IdTbyg36iTO8ITeuvCN36lgI7lTv/E9JZPDk12ctLfd91gTGiVDuco7DdEDoH7Nd10lUFlQ==;5:LfQsAF+rD2NpZlhehzxjrH0xXXNYfr8hSWGveYTDsMZ9tnuZ7+HdX1tTD1DAISD1TohmJR1nmZrP5TIz5ggUAT92X2h9yWWsUVPfsjLW4LCgCG/KOhbQnwCDWiQVXjLlCFOP1/SBSotSlJuwccn4kIKKX6RsopbQdPTMsSV8pNY=;7:MalesXx6W80Xtx4syirKyks8eK33Rhraod+Ld8OljbecBjMPIec3GpjMGTJNzoFKHI5jnI0Wy+bg6wD9gHDscWliARPbWD0esOB21XnSKhoHnEJjA1Kl1V+CT0x8iC3aAmE5GeSoA7URED57Rs0AFY39ZOIqaQBoTFyrEY1GkCAVPzak7tc9BxfnGAspk8HHKxuG79LbWLjfhttYb+JzjFtGvO1f0b2biGvKD4sVOy16nzybEPUC4nUJQMKBUiFp
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 361d10fa-cb7a-4ad7-e5dd-08d5f79648e7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR07MB3085;
-x-ms-traffictypediagnostic: MWHPR07MB3085:
-x-microsoft-antispam-prvs: <MWHPR07MB30856A5B0E34BFB6D6823BAC962D0@MWHPR07MB3085.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(50582790962513);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR07MB3085;BCL:0;PCL:0;RULEID:;SRVR:MWHPR07MB3085;
-x-forefront-prvs: 0751474A44
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(366004)(189003)(199004)(106356001)(6116002)(3846002)(6246003)(6636002)(81166006)(110136005)(316002)(8676002)(4326008)(8936002)(229853002)(33656002)(54906003)(81156014)(2900100001)(5660300001)(478600001)(5250100002)(305945005)(99286004)(68736007)(25786009)(6436002)(53936002)(74316002)(7736002)(14454004)(66066001)(7696005)(9686003)(97736004)(55016002)(53546011)(6506007)(11346002)(256004)(14444005)(476003)(105586002)(76176011)(446003)(72206003)(486006)(86362001)(26005)(102836004)(2501003)(186003)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB3085;H:MWHPR07MB3471.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: njKiqNgpBSeLigPpTfGOnQF86EflSVcFutzevLE2wAO4AxyI3aOwXyOU2/XdvUcpll6t6DFmI82LiyG9u8VyMkSi75Qb3645BetlBcprbizJeCpEBLViDRAHK7vtZ0ZOeSiFW0qArpscP7RBDwOYAYoea69Ec/H+x4TC1pYozXU46G2aiBaBtoIDgG7f5Yf5QXWp4/kOzJxSl2Oef3luf5HVttXQ+UmU8M5XryS93n1DKljpxspT/xFD/xSvh3puNssHikpbxvPVh0lzDuL1Qazqcmx0rGLkBTs9qw7w78HC7rkL72h8TUDUoVsij0jFBfjzQdEGK2PtNjHkRz97Xhg2dpN0V0OgC8l4tMLhGZk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=JuY9QN3qr5iO9Mrn06oVTw5HM5/VXEOkuqrC5+UIYow=;
+        b=WVPVbOGdxYZ2O8ezpYVZLEloTkmbgrlp7wbB1PW8uksM/iFqsQQRCWCvv/33f/acM/
+         IbrH9kBM1ipe/AZzSqS7u4A4dbujmLNy9QQknennbxVeYyYnm8JvQFI+0Pyam6lAJAWq
+         4Nz+QT5mqr2UPH2k6mJxhOW/x4W3RZt7t0q+2cdcYRqB66BDr8kroutKIIwrXR9gyus4
+         qY30mmG+7GnpRdbQ7L2rrHwX6gfjFczxagpsI10YZLP9CNMKxLX4IC3Z2EhCo0I1OQZd
+         JaolpMBqBZ+YmHnYZwXTgEwwrfJvCx7LvatzRfgB20juhWRqhyKm7oZkuEM4IR+xU5C5
+         gd8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=JuY9QN3qr5iO9Mrn06oVTw5HM5/VXEOkuqrC5+UIYow=;
+        b=Cf4TikwYqUrIyQRjJKKtJ5m9Am5a79rOueC5NwRjjfeq4O/UvpZAe682cWavFZN+Ga
+         3N+x9zl2ygOsZkiawkMeDWAkd4Yo20/VJb/aJYQdQzB2locaIDHLbFYATngPO89HVely
+         IFW7+uX6SgRIT2WHx5h+D121nAsf7PpqSr6si/2q9JAXqzVNn9IZ4dBWseMOhp1SePkQ
+         vRPAlDsdd/D4xE4BBcKHSHUnKuJGEPH/2UQhmcKNyX/9UID5dzrtvBt/a23IDSG+ssVA
+         vmVtNnd1aKagAq11mUf7+wktImY+746z1gtgdX8Ohp7XoGc1y7fB//Utz4ODdnFtASnC
+         UopA==
+X-Gm-Message-State: AOUpUlFNIkpRSOf5Lpj4/zuidXjgeNlN7yyLOK1dBIPcl472buxIf4gx
+        YUMGAgKXG4h39Q4tRwY1odAsNzlNalFej0/AvgvBgw==
+X-Google-Smtp-Source: AAOMgpe11M/chpwPrUhRMdi0fxrh+Dvy5nZAy4TK76S4qh6dgYaJxzXv/gLjFKYtRvlfUjTSaEsJVxS1Ulynb37vA2A=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr3032452oib.116.1533117994870;
+ Wed, 01 Aug 2018 03:06:34 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 361d10fa-cb7a-4ad7-e5dd-08d5f79648e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2018 10:05:18.0733
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB3085
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 03:06:34 -0700 (PDT)
+In-Reply-To: <CAJZ5v0jHpO3werjy2f1RVuFSNCpJReSi3QzxDT1Vuz5fAGd_Ow@mail.gmail.com>
+References: <CAJZ5v0jHpO3werjy2f1RVuFSNCpJReSi3QzxDT1Vuz5fAGd_Ow@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 1 Aug 2018 12:06:34 +0200
+X-Google-Sender-Auth: ohX2TzlUWJd0hELUg7wUCgqtwts
+Message-ID: <CAJZ5v0iGA=oVV9eaF=JkmK4iY20x44qjkOKDLJa_f6CPUHK=ng@mail.gmail.com>
+Subject: Re: [GIT PULL] Urgent power management fixes for v4.18
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: YueHaibing <yuehaibing@huawei.com>
-> Sent: Tuesday, July 31, 2018 5:13 PM
-> To: davem@davemloft.net; Elior, Ariel <Ariel.Elior@cavium.com>; Dept-Eng
-> Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>
-> Cc: linux-kernel@vger.kernel.org; netdev@vger.kernel.org; YueHaibing
-> <yuehaibing@huawei.com>
-> Subject: [PATCH net-next] qed: Make some functions static
->=20
-> Fixes the following sparse warning:
->=20
-> drivers/net/ethernet/qlogic/qed/qed_cxt.c:1534:6: warning: symbol
-> 'qed_cm_init_pf' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:233:4: warning: symbol
-> 'qed_init_qm_get_num_tcs' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:238:5: warning: symbol
-> 'qed_init_qm_get_num_vfs' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:246:5: warning: symbol
-> 'qed_init_qm_get_num_pf_rls' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:264:5: warning: symbol
-> 'qed_init_qm_get_num_vports' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:276:5: warning: symbol
-> 'qed_init_qm_get_num_pqs' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_mcp.c:573:5: warning: symbol
-> 'qed_mcp_nvm_wr_cmd' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_mcp.c:3012:1: warning: symbol
-> '__qed_mcp_resc_lock' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_dcbx.c:870:6: warning: symbol
-> 'qed_dcbx_aen' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_debug.c:7841:5: warning: symbol
-> 'qed_dbg_nvm_image_length' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_debug.c:7857:5: warning: symbol
-> 'qed_dbg_nvm_image' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_sriov.c:675:6: warning: symbol
-> '_qed_iov_pf_sanity_check' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_sriov.c:690:6: warning: symbol
-> 'qed_iov_pf_sanity_check' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_sriov.c:3982:6: warning: symbol
-> 'qed_iov_pf_get_pending_events' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_vf.c:172:5: warning: symbol
-> '_qed_vf_pf_release' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_rdma.c:137:5: warning: symbol
-> 'qed_rdma_get_sb_id' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_rdma.c:709:5: warning: symbol
-> 'qed_rdma_stop' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_ll2.c:161:6: warning: symbol
-> 'qed_ll2b_complete_rx_packet' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_roce.c:160:6: warning: symbol
-> 'qed_roce_free_cid_pair' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:380:12: warning: symbol
-> 'iwarp_state_names' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:946:1: warning: symbol
-> 'qed_iwarp_parse_private_data' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:971:1: warning: symbol
-> 'qed_iwarp_mpa_reply_arrived' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:2504:1: warning: symbol
-> 'qed_iwarp_ll2_slowpath' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:2806:6: warning: symbol
-> 'qed_iwarp_qp_in_error' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:2827:6: warning: symbol
-> 'qed_iwarp_exception_received' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iwarp.c:2958:1: warning: symbol
-> 'qed_iwarp_connect_complete' was not declared. Should it be static?
-> drivers/net/ethernet/qlogic/qed/qed_iscsi.c:876:6: warning: symbol
-> 'qed_iscsi_free_connection' was not declared. Should it be static?
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Aug 1, 2018 at 12:03 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> urgent power management fixes for final 4.18.
+>
+> These fix the scope of a recent intel_pstate driver optimization
+> used incorrectly on some systems due to processor identification
+> ambiguity and fix a few issues in the turbostat utility, including
+> three recent regressions.
+>
+> Specifics:
+>
+>  - Use ACPI FADT preferred PM Profile to distinguish Skylake
+>    desktop processors from some server ones with the same model
+>    number in order to limit the scope of the recent IO-wait boost
+>    optimization to servers, as intended (Srinivas Pandruvada).
+>
+>  - Fix several issues in the turbostat utility:
+>    * Fix the -S option on 1-CPU systems (Len Brown).
+>    * Fix computations using incorrect processor core counts (Artem
+>      Bityutskiy).
+>    * Fix the x2apic debug message (Len Brown).
+>    * Fix logical node enumeration to allow for non-sequential
+>      physical nodes (Prarit Bhargava).
+>    * Fix reported family on modern AMD processors (Calvin Walton).
+>    * Clarify the RAPL column information in the man page (Len Brown).
 
-Thanks
-Acked-by: Denis Bolotin <Denis.Bolotin@cavium.com>
-
+Sorry for the broken message, I'll send the correct one shortly.
