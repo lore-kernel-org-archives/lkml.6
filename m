@@ -6,41 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D53BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C35C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46DA20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46DA20840
+	by mail.kernel.org (Postfix) with ESMTP id CA10F20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA10F20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387833AbeHAUXd (ORCPT
+        id S1733051AbeHAUXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:23:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403951AbeHATDc (ORCPT
+        with ESMTP id S2403963AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B854512C6;
-        Wed,  1 Aug 2018 17:10:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AFBFFAD;
+        Wed,  1 Aug 2018 16:58:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kirill Marinushkin <k.marinushkin@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        alsa-devel@alsa-project.org,
+        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 290/336] ASoC: topology: Add missing clock gating parameter when parsing hw_configs
-Date:   Wed,  1 Aug 2018 18:50:25 +0200
-Message-Id: <20180801165040.119336345@linuxfoundation.org>
+Subject: [PATCH 4.17 101/336] net: hns3: Fixes the init of the VALID BD info in the descriptor
+Date:   Wed,  1 Aug 2018 18:47:16 +0200
+Message-Id: <20180801165033.031760334@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -57,100 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
-[ Upstream commit 933e1c4a667103c4d10ebdc9505a0a6abd8c3fbd ]
+[ Upstream commit 7d0b130cbbfa4651cc1ab9268a2956c1b9d82ff9 ]
 
-Clock gating parameter is a part of `dai_fmt`. It is supported by
-`alsa-lib` when creating a topology binary file, but ignored by kernel
-when loading this topology file.
+RX Buffer Descriptor contains a VALID bit which indicates if the BD
+is valid and has some data. This field is set by HNS3 hardware to
+intimate the driver of some valid data present in the BD. nd should
+be reset by the driver when BD is being used again. In the existing
+code this bit was not being (re-)initialized properly and hence was
+causing problems.
 
-After applying this commit, the clock gating parameter is not ignored any
-more. This solution is backwards compatible. The existing behaviour is
-not broken, because by default the parameter value is 0 and is ignored.
-
-snd_soc_tplg_hw_config.clock_gated = 0 => no effect
-snd_soc_tplg_hw_config.clock_gated = 1 => SND_SOC_DAIFMT_GATED
-snd_soc_tplg_hw_config.clock_gated = 2 => SND_SOC_DAIFMT_CONT
-
-For example, the following config, based on
-alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
-
-~~~~
-SectionHWConfig."CodecHWConfig" {
-        id "1"
-        format "I2S"            # physical audio format.
-        pm_gate_clocks "true"   # clock can be gated
-}
-
-SectionLink."Codec" {
-
-        # used for binding to the physical link
-        id "0"
-
-        hw_configs [
-                "CodecHWConfig"
-        ]
-
-        default_hw_conf_id "1"
-}
-~~~~
-
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pan Xiuli <xiuli.pan@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/sound/asoc.h |    7 ++++++-
- sound/soc/soc-topology.c  |    7 +++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/uapi/sound/asoc.h
-+++ b/include/uapi/sound/asoc.h
-@@ -139,6 +139,11 @@
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_CHANNELS      (1 << 1)
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1836,6 +1836,7 @@ static void hns3_replace_buffer(struct h
+ 	hns3_unmap_buffer(ring, &ring->desc_cb[i]);
+ 	ring->desc_cb[i] = *res_cb;
+ 	ring->desc[i].addr = cpu_to_le64(ring->desc_cb[i].dma);
++	ring->desc[i].rx.bd_base_info = 0;
+ }
  
-+/* DAI clock gating */
-+#define SND_SOC_TPLG_DAI_CLK_GATE_UNDEFINED	0
-+#define SND_SOC_TPLG_DAI_CLK_GATE_GATED	1
-+#define SND_SOC_TPLG_DAI_CLK_GATE_CONT		2
-+
- /* DAI physical PCM data formats.
-  * Add new formats to the end of the list.
-  */
-@@ -324,7 +329,7 @@ struct snd_soc_tplg_hw_config {
- 	__le32 size;            /* in bytes of this structure */
- 	__le32 id;		/* unique ID - - used to match */
- 	__le32 fmt;		/* SND_SOC_DAI_FORMAT_ format value */
--	__u8 clock_gated;	/* 1 if clock can be gated to save power */
-+	__u8 clock_gated;	/* SND_SOC_TPLG_DAI_CLK_GATE_ value */
- 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
- 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
- 	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -2006,6 +2006,13 @@ static void set_link_hw_format(struct sn
+ static void hns3_reuse_buffer(struct hns3_enet_ring *ring, int i)
+@@ -1843,6 +1844,7 @@ static void hns3_reuse_buffer(struct hns
+ 	ring->desc_cb[i].reuse_flag = 0;
+ 	ring->desc[i].addr = cpu_to_le64(ring->desc_cb[i].dma
+ 		+ ring->desc_cb[i].page_offset);
++	ring->desc[i].rx.bd_base_info = 0;
+ }
  
- 		link->dai_fmt = hw_config->fmt & SND_SOC_DAIFMT_FORMAT_MASK;
- 
-+		/* clock gating */
-+		if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
-+			link->dai_fmt |= SND_SOC_DAIFMT_GATED;
-+		else if (hw_config->clock_gated ==
-+			 SND_SOC_TPLG_DAI_CLK_GATE_CONT)
-+			link->dai_fmt |= SND_SOC_DAIFMT_CONT;
-+
- 		/* clock signal polarity */
- 		invert_bclk = hw_config->invert_bclk;
- 		invert_fsync = hw_config->invert_fsync;
+ static void hns3_nic_reclaim_one_desc(struct hns3_enet_ring *ring, int *bytes,
 
 
