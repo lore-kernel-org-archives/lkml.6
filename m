@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11845C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376F2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C021F20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C021F20844
+	by mail.kernel.org (Postfix) with ESMTP id EECA120844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EECA120844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405520AbeHATHu (ORCPT
+        id S2405526AbeHATH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49282 "EHLO
+        Wed, 1 Aug 2018 15:07:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49312 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390320AbeHATHu (ORCPT
+        with ESMTP id S2389715AbeHATH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:50 -0400
+        Wed, 1 Aug 2018 15:07:56 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18654CE6;
-        Wed,  1 Aug 2018 17:21:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36763CF7;
+        Wed,  1 Aug 2018 17:21:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Wei Yongjun <yongjun_wei@trendmicro.com.cn>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 150/246] media: rcar_jpu: Add missing clk_disable_unprepare() on error in jpu_open()
-Date:   Wed,  1 Aug 2018 18:51:00 +0200
-Message-Id: <20180801165018.921047470@linuxfoundation.org>
+Subject: [PATCH 4.14 187/246] igb: Fix queue selection on MAC filters on i210
+Date:   Wed,  1 Aug 2018 18:51:37 +0200
+Message-Id: <20180801165020.663383255@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -55,43 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-[ Upstream commit 43d0d3c52787df0221d1c52494daabd824fe84f1 ]
+[ Upstream commit 4dc93fcf0b95dc3fda4db917effae31fbb8ad2a8 ]
 
-Add the missing clk_disable_unprepare() before return from
-jpu_open() in the software reset error handling case.
+On the RAH registers there are semantic differences on the meaning of
+the "queue" parameter for traffic steering depending on the controller
+model: there is the 82575 meaning, which "queue" means a RX Hardware
+Queue, and the i350 meaning, where it is a reception pool.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-Acked-by: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The previous behaviour was having no effect for i210 based controllers
+because the QSEL bit of the RAH register wasn't being set.
+
+This patch separates the condition in discrete cases, so the different
+handling is clearer.
+
+Fixes: 83c21335c876 ("igb: improve MAC filter handling")
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/rcar_jpu.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/igb/igb_main.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/media/platform/rcar_jpu.c
-+++ b/drivers/media/platform/rcar_jpu.c
-@@ -1280,7 +1280,7 @@ static int jpu_open(struct file *file)
- 		/* ...issue software reset */
- 		ret = jpu_reset(jpu);
- 		if (ret)
--			goto device_prepare_rollback;
-+			goto jpu_reset_rollback;
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -8376,12 +8376,17 @@ static void igb_rar_set_index(struct igb
+ 		if (is_valid_ether_addr(addr))
+ 			rar_high |= E1000_RAH_AV;
+ 
+-		if (hw->mac.type == e1000_82575)
++		switch (hw->mac.type) {
++		case e1000_82575:
++		case e1000_i210:
+ 			rar_high |= E1000_RAH_POOL_1 *
+ 				    adapter->mac_table[index].queue;
+-		else
++			break;
++		default:
+ 			rar_high |= E1000_RAH_POOL_1 <<
+ 				    adapter->mac_table[index].queue;
++			break;
++		}
  	}
  
- 	jpu->ref_count++;
-@@ -1288,6 +1288,8 @@ static int jpu_open(struct file *file)
- 	mutex_unlock(&jpu->mutex);
- 	return 0;
- 
-+jpu_reset_rollback:
-+	clk_disable_unprepare(jpu->clk);
- device_prepare_rollback:
- 	mutex_unlock(&jpu->mutex);
- v4l_prepare_rollback:
+ 	wr32(E1000_RAL(index), rar_low);
 
 
