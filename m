@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDAAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFCFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC9C208AD
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC9C208AD
+	by mail.kernel.org (Postfix) with ESMTP id 2FD55208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD55208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405446AbeHATkp (ORCPT
+        id S2405989AbeHATlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:40:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        Wed, 1 Aug 2018 15:41:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406009AbeHATIk (ORCPT
+        with ESMTP id S2405997AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AC9B13B0;
-        Wed,  1 Aug 2018 17:15:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4ED7513A4;
+        Wed,  1 Aug 2018 17:14:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eric Auger <eric.auger@redhat.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 028/246] vfio: platform: Fix reset module leak in error path
-Date:   Wed,  1 Aug 2018 18:48:58 +0200
-Message-Id: <20180801165013.046693884@linuxfoundation.org>
+Subject: [PATCH 4.14 059/246] f2fs: Fix deadlock in shutdown ioctl
+Date:   Wed,  1 Aug 2018 18:49:29 +0200
+Message-Id: <20180801165014.533785261@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -54,54 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit 28a68387888997e8a7fa57940ea5d55f2e16b594 ]
+[ Upstream commit 60b2b4ee2bc01dd052f99fa9d65da2232102ef8e ]
 
-If the IOMMU group setup fails, the reset module is not released.
+f2fs_ioc_shutdown() ioctl gets stuck in the below path
+when issued with F2FS_GOING_DOWN_FULLSYNC option.
 
-Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+__switch_to+0x90/0xc4
+percpu_down_write+0x8c/0xc0
+freeze_super+0xec/0x1e4
+freeze_bdev+0xc4/0xcc
+f2fs_ioctl+0xc0c/0x1ce0
+f2fs_compat_ioctl+0x98/0x1f0
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vfio/platform/vfio_platform_common.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -681,18 +681,23 @@ int vfio_platform_probe_common(struct vf
- 	group = vfio_iommu_group_get(dev);
- 	if (!group) {
- 		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_reset;
- 	}
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1808,9 +1808,11 @@ static int f2fs_ioc_shutdown(struct file
+ 	if (get_user(in, (__u32 __user *)arg))
+ 		return -EFAULT;
  
- 	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
--	if (ret) {
--		vfio_iommu_group_put(group, dev);
+-	ret = mnt_want_write_file(filp);
+-	if (ret)
 -		return ret;
--	}
-+	if (ret)
-+		goto put_iommu;
++	if (in != F2FS_GOING_DOWN_FULLSYNC) {
++		ret = mnt_want_write_file(filp);
++		if (ret)
++			return ret;
++	}
  
- 	mutex_init(&vdev->igate);
- 
- 	return 0;
-+
-+put_iommu:
-+	vfio_iommu_group_put(group, dev);
-+put_reset:
-+	vfio_platform_put_reset(vdev);
-+	return ret;
+ 	switch (in) {
+ 	case F2FS_GOING_DOWN_FULLSYNC:
+@@ -1838,7 +1840,8 @@ static int f2fs_ioc_shutdown(struct file
+ 	}
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+-	mnt_drop_write_file(filp);
++	if (in != F2FS_GOING_DOWN_FULLSYNC)
++		mnt_drop_write_file(filp);
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
  
 
 
