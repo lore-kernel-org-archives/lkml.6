@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D13C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CFBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F66208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F66208A4
+	by mail.kernel.org (Postfix) with ESMTP id 19641208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19641208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406097AbeHATIm (ORCPT
+        id S2406084AbeHATIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        Wed, 1 Aug 2018 15:08:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405921AbeHATIj (ORCPT
+        with ESMTP id S2405930AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00A5F115A;
-        Wed,  1 Aug 2018 17:05:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE1CE1173;
+        Wed,  1 Aug 2018 17:06:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Yao <xiaoyao@rock-chips.com>,
-        Ziyuan <xzy.xu@rock-chips.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 235/336] mmc: dw_mmc: update actual clock for mmc debugfs
-Date:   Wed,  1 Aug 2018 18:49:30 +0200
-Message-Id: <20180801165038.058434409@linuxfoundation.org>
+Subject: [PATCH 4.17 210/336] bnxt_en: Check unsupported speeds in bnxt_update_link() on PF only.
+Date:   Wed,  1 Aug 2018 18:49:05 +0200
+Message-Id: <20180801165037.114076693@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,57 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit ff178981bd5fd1667f373098740cb1c6d6efa1ba ]
+[ Upstream commit dac0490718bd17df5e3995ffca14255e5f9ed22d ]
 
-Respect the actual clock for mmc debugfs to help better debug
-the hardware.
+Only non-NPAR PFs need to actively check and manage unsupported link
+speeds.  NPAR functions and VFs do not control the link speed and
+should skip the unsupported speed detection logic, to avoid warning
+messages from firmware rejecting the unsupported firmware calls.
 
-mmc_host mmc0: Bus speed (slot 0) = 135475200Hz (slot req 150000000Hz,
-actual 135475200HZ div = 0)
-
-cat /sys/kernel/debug/mmc0/ios
-clock:          150000000 Hz
-actual clock:   135475200 Hz
-vdd:            21 (3.3 ~ 3.4 V)
-bus mode:       2 (push-pull)
-chip select:    0 (don't care)
-power mode:     2 (on)
-bus width:      3 (8 bits)
-timing spec:    9 (mmc HS200)
-signal voltage: 0 (1.80 V)
-driver type:    0 (driver type B)
-
-Cc: Xiao Yao <xiaoyao@rock-chips.com>
-Cc: Ziyuan <xzy.xu@rock-chips.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/dw_mmc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1231,6 +1231,8 @@ static void dw_mci_setup_bus(struct dw_m
- 	if (host->state == STATE_WAITING_CMD11_DONE)
- 		sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH;
- 
-+	slot->mmc->actual_clock = 0;
-+
- 	if (!clock) {
- 		mci_writel(host, CLKENA, 0);
- 		mci_send_cmd(slot, sdmmc_cmd_bits, 0);
-@@ -1289,6 +1291,8 @@ static void dw_mci_setup_bus(struct dw_m
- 
- 		/* keep the last clock value that was requested from core */
- 		slot->__clk_old = clock;
-+		slot->mmc->actual_clock = div ? ((host->bus_hz / div) >> 1) :
-+					  host->bus_hz;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -6457,6 +6457,9 @@ static int bnxt_update_link(struct bnxt
  	}
+ 	mutex_unlock(&bp->hwrm_cmd_lock);
  
- 	host->current_speed = clock;
++	if (!BNXT_SINGLE_PF(bp))
++		return 0;
++
+ 	diff = link_info->support_auto_speeds ^ link_info->advertising;
+ 	if ((link_info->support_auto_speeds | diff) !=
+ 	    link_info->support_auto_speeds) {
 
 
