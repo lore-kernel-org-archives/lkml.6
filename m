@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857A9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DFCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E3B208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E3B208A3
+	by mail.kernel.org (Postfix) with ESMTP id B97B6208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97B6208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403957AbeHASUu (ORCPT
+        id S2403973AbeHASUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:20:50 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4944 "EHLO
+        Wed, 1 Aug 2018 14:20:53 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4962 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403941AbeHASUt (ORCPT
+        with ESMTP id S2403923AbeHASUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:20:49 -0400
+        Wed, 1 Aug 2018 14:20:53 -0400
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b61e0fc0000>; Wed, 01 Aug 2018 09:34:04 -0700
+        id <B5b61e0ff0002>; Wed, 01 Aug 2018 09:34:07 -0700
 Received: from HQMAIL101.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 01 Aug 2018 09:34:17 -0700
+  Wed, 01 Aug 2018 09:34:20 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:34:17 -0700
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL101.nvidia.com
+        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:34:20 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
- 2018 16:34:16 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Wed, 1 Aug 2018 16:34:16 +0000
+ 2018 16:34:19 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:34:19 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Wed, 1 Aug 2018 16:34:19 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b61e1050000>; Wed, 01 Aug 2018 09:34:16 -0700
+        id <B5b61e1090000>; Wed, 01 Aug 2018 09:34:19 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -46,13 +49,13 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>
+        "Stefan Agner" <stefan@agner.ch>
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 31/40] arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
-Date:   Wed, 1 Aug 2018 19:32:21 +0300
-Message-ID: <1533141150-10511-32-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH 32/40] arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+Date:   Wed, 1 Aug 2018 19:32:22 +0300
+Message-ID: <1533141150-10511-33-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
@@ -64,94 +67,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pad voltage configuration nodes for sdmmc pads with configurable
-voltages on Tegra186.
+Set regulator-min-microvolt property of ldo2 to 1.8 V in
+tegra210-p2180.dtsi. ldo2 is used by the sdmmc1 SDHCI controller and its
+voltage needs to be adjusted down to 1.8 V to support faster signaling
+modes. It appears that the comment about the SDHCI driver requesting
+invalid voltages no longer applies.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 40 ++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index b762227..7669756 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/mailbox/tegra186-hsp.h>
- #include <dt-bindings/memory/tegra186-mc.h>
-+#include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
- #include <dt-bindings/power/tegra186-powergate.h>
- #include <dt-bindings/reset/tegra186-reset.h>
- #include <dt-bindings/thermal/tegra186-bpmp-thermal.h>
-@@ -236,6 +237,9 @@
- 		clock-names = "sdhci";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC1>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc1_3v3>;
-+		pinctrl-1 = <&sdmmc1_1v8>;
- 		status = "disabled";
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 212e663..8496101 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -178,16 +178,7 @@
  
-@@ -247,6 +251,9 @@
- 		clock-names = "sdhci";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC2>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc2_3v3>;
-+		pinctrl-1 = <&sdmmc2_1v8>;
- 		status = "disabled";
- 	};
- 
-@@ -258,6 +265,9 @@
- 		clock-names = "sdhci";
- 		resets = <&bpmp TEGRA186_RESET_SDMMC3>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc3_3v3>;
-+		pinctrl-1 = <&sdmmc3_1v8>;
- 		status = "disabled";
- 	};
- 
-@@ -368,6 +378,36 @@
- 		      <0 0x0c380000 0 0x10000>,
- 		      <0 0x0c390000 0 0x10000>;
- 		reg-names = "pmc", "wake", "aotag", "scratch";
-+
-+		sdmmc1_3v3: sdmmc1-3v3 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc1_1v8: sdmmc1-1v8 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		sdmmc2_3v3: sdmmc2-3v3 {
-+			pins = "sdmmc2-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc2_1v8: sdmmc2-1v8 {
-+			pins = "sdmmc2-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		sdmmc3_3v3: sdmmc3-3v3 {
-+			pins = "sdmmc3-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc3_1v8: sdmmc3-1v8 {
-+			pins = "sdmmc3-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
- 	};
- 
- 	ccplex@e000000 {
+ 				vddio_sdmmc: ldo2 {
+ 					regulator-name = "VDDIO_SDMMC";
+-					/*
+-					 * Technically this supply should have
+-					 * a supported range from 1.8 - 3.3 V.
+-					 * However, that would cause the SDHCI
+-					 * driver to request 2.7 V upon access
+-					 * and that in turn will cause traffic
+-					 * to be broken. Leave it at 3.3 V for
+-					 * now.
+-					 */
+-					regulator-min-microvolt = <3300000>;
++					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <3300000>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
 -- 
 2.7.4
 
