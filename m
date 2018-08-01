@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C50C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E901C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C2B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C2B20862
+	by mail.kernel.org (Postfix) with ESMTP id 4EC3C20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC3C20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407986AbeHATY3 (ORCPT
+        id S2407879AbeHATY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:24:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436524AbeHATSi (ORCPT
+        with ESMTP id S2436536AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E20BDE9A;
-        Wed,  1 Aug 2018 16:54:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57900DB8;
+        Wed,  1 Aug 2018 16:53:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
-        Anant Shende <anantshende@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.17 004/336] Input: elan_i2c - add another ACPI ID for Lenovo Ideapad 330-15AST
-Date:   Wed,  1 Aug 2018 18:45:39 +0200
-Message-Id: <20180801165029.094610081@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Artem Savkov <asavkov@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.17 011/336] tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure
+Date:   Wed,  1 Aug 2018 18:45:46 +0200
+Message-Id: <20180801165029.364629380@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,32 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: KT Liao <kt.liao@emc.com.tw>
+From: Artem Savkov <asavkov@redhat.com>
 
-commit 6f88a6439da5d94de334a341503bc2c7f4a7ea7f upstream.
+commit 57ea2a34adf40f3a6e88409aafcf803b8945619a upstream.
 
-Add ELAN0622 to ACPI mapping table to support Elan touchpad found in
-Ideapad 330-15AST.
+If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+it returns an error, but does not unset the tp flags it set previously.
+This results in a probe being considered enabled and failures like being
+unable to remove the probe through kprobe_events file since probes_open()
+expects every probe to be disabled.
 
-Signed-off-by: KT Liao <kt.liao@emc.com.tw>
-Reported-by: Anant Shende <anantshende@gmail.com>
+Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
+Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
+
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/trace/trace_kprobe.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1265,6 +1265,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN0612", 0 },
- 	{ "ELAN0618", 0 },
- 	{ "ELAN061D", 0 },
-+	{ "ELAN0622", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
- };
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -400,11 +400,10 @@ static struct trace_kprobe *find_trace_k
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
+ {
++	struct event_file_link *link;
+ 	int ret = 0;
+ 
+ 	if (file) {
+-		struct event_file_link *link;
+-
+ 		link = kmalloc(sizeof(*link), GFP_KERNEL);
+ 		if (!link) {
+ 			ret = -ENOMEM;
+@@ -424,6 +423,16 @@ enable_trace_kprobe(struct trace_kprobe
+ 		else
+ 			ret = enable_kprobe(&tk->rp.kp);
+ 	}
++
++	if (ret) {
++		if (file) {
++			list_del_rcu(&link->list);
++			kfree(link);
++			tk->tp.flags &= ~TP_FLAG_TRACE;
++		} else {
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
++		}
++	}
+  out:
+ 	return ret;
+ }
 
 
