@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0C4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5336C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B73D2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B73D2083D
+	by mail.kernel.org (Postfix) with ESMTP id 978F12083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978F12083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407161AbeHATNp (ORCPT
+        id S2407172AbeHATNt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51834 "EHLO
+        Wed, 1 Aug 2018 15:13:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406471AbeHATNp (ORCPT
+        with ESMTP id S2406453AbeHATNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:45 -0400
+        Wed, 1 Aug 2018 15:13:48 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75BBAC3C;
-        Wed,  1 Aug 2018 17:27:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89B63D4A;
+        Wed,  1 Aug 2018 17:27:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 050/144] btrfs: qgroup: Finish rescan when hit the last leaf of extent tree
-Date:   Wed,  1 Aug 2018 18:51:17 +0200
-Message-Id: <20180801164952.558443473@linuxfoundation.org>
+Subject: [PATCH 4.9 051/144] PCI: Prevent sysfs disable of device while driver is attached
+Date:   Wed,  1 Aug 2018 18:51:18 +0200
+Message-Id: <20180801164952.620338708@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,110 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit ff3d27a048d926b3920ccdb75d98788c567cae0d ]
+[ Upstream commit 6f5cdfa802733dcb561bf664cc89d203f2fd958f ]
 
-Under the following case, qgroup rescan can double account cowed tree
-blocks:
+Manipulating the enable_cnt behind the back of the driver will wreak
+complete havoc with the kernel state, so disallow it.
 
-In this case, extent tree only has one tree block.
-
--
-| transid=5 last committed=4
-| btrfs_qgroup_rescan_worker()
-| |- btrfs_start_transaction()
-| |  transid = 5
-| |- qgroup_rescan_leaf()
-|    |- btrfs_search_slot_for_read() on extent tree
-|       Get the only extent tree block from commit root (transid = 4).
-|       Scan it, set qgroup_rescan_progress to the last
-|       EXTENT/META_ITEM + 1
-|       now qgroup_rescan_progress = A + 1.
-|
-| fs tree get CoWed, new tree block is at A + 16K
-| transid 5 get committed
--
-| transid=6 last committed=5
-| btrfs_qgroup_rescan_worker()
-| btrfs_qgroup_rescan_worker()
-| |- btrfs_start_transaction()
-| |  transid = 5
-| |- qgroup_rescan_leaf()
-|    |- btrfs_search_slot_for_read() on extent tree
-|       Get the only extent tree block from commit root (transid = 5).
-|       scan it using qgroup_rescan_progress (A + 1).
-|       found new tree block beyong A, and it's fs tree block,
-|       account it to increase qgroup numbers.
--
-
-In above case, tree block A, and tree block A + 16K get accounted twice,
-while qgroup rescan should stop when it already reach the last leaf,
-other than continue using its qgroup_rescan_progress.
-
-Such case could happen by just looping btrfs/017 and with some
-possibility it can hit such double qgroup accounting problem.
-
-Fix it by checking the path to determine if we should finish qgroup
-rescan, other than relying on next loop to exit.
-
-Reported-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/qgroup.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/pci/pci-sysfs.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -2237,6 +2237,21 @@ void assert_qgroups_uptodate(struct btrf
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -180,13 +180,16 @@ static ssize_t enable_store(struct devic
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if (!val) {
+-		if (pci_is_enabled(pdev))
+-			pci_disable_device(pdev);
+-		else
+-			result = -EIO;
+-	} else
++	device_lock(dev);
++	if (dev->driver)
++		result = -EBUSY;
++	else if (val)
+ 		result = pci_enable_device(pdev);
++	else if (pci_is_enabled(pdev))
++		pci_disable_device(pdev);
++	else
++		result = -EIO;
++	device_unlock(dev);
+ 
+ 	return result < 0 ? result : count;
  }
- 
- /*
-+ * Check if the leaf is the last leaf. Which means all node pointers
-+ * are at their last position.
-+ */
-+static bool is_last_leaf(struct btrfs_path *path)
-+{
-+	int i;
-+
-+	for (i = 1; i < BTRFS_MAX_LEVEL && path->nodes[i]; i++) {
-+		if (path->slots[i] != btrfs_header_nritems(path->nodes[i]) - 1)
-+			return false;
-+	}
-+	return true;
-+}
-+
-+/*
-  * returns < 0 on error, 0 when more leafs are to be scanned.
-  * returns 1 when done.
-  */
-@@ -2249,6 +2264,7 @@ qgroup_rescan_leaf(struct btrfs_fs_info
- 	struct ulist *roots = NULL;
- 	struct seq_list tree_mod_seq_elem = SEQ_LIST_INIT(tree_mod_seq_elem);
- 	u64 num_bytes;
-+	bool done;
- 	int slot;
- 	int ret;
- 
-@@ -2277,6 +2293,7 @@ qgroup_rescan_leaf(struct btrfs_fs_info
- 		mutex_unlock(&fs_info->qgroup_rescan_lock);
- 		return ret;
- 	}
-+	done = is_last_leaf(path);
- 
- 	btrfs_item_key_to_cpu(path->nodes[0], &found,
- 			      btrfs_header_nritems(path->nodes[0]) - 1);
-@@ -2323,6 +2340,8 @@ out:
- 	}
- 	btrfs_put_tree_mod_seq(fs_info, &tree_mod_seq_elem);
- 
-+	if (done && !ret)
-+		ret = 1;
- 	return ret;
- }
- 
 
 
