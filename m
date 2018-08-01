@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CF1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C1820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C1820862
+	by mail.kernel.org (Postfix) with ESMTP id 23DE920844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DE920844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406386AbeHATJ5 (ORCPT
+        id S2406399AbeHATKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50882 "EHLO
+        Wed, 1 Aug 2018 15:10:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390262AbeHATJ4 (ORCPT
+        with ESMTP id S2389790AbeHATJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:56 -0400
+        Wed, 1 Aug 2018 15:09:59 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53CB9D2F;
-        Wed,  1 Aug 2018 17:23:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75F10CC3;
+        Wed,  1 Aug 2018 17:23:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 226/246] usb: gadget: udc: renesas_usb3: should remove debugfs
-Date:   Wed,  1 Aug 2018 18:52:16 +0200
-Message-Id: <20180801165022.532104111@linuxfoundation.org>
+Subject: [PATCH 4.14 227/246] RDMA/uverbs: Protect from attempts to create flows on unsupported QP
+Date:   Wed,  1 Aug 2018 18:52:17 +0200
+Message-Id: <20180801165022.586543029@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,54 +53,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 1990cf7c21ea185cec98c6d45a82c04481261e35 upstream.
+commit 940efcc8889f0d15567eb07fc9fd69b06e366aa5 upstream.
 
-This patch fixes an issue that this driver doesn't remove its debugfs.
+Flows can be created on UD and RAW_PACKET QP types. Attempts to provide
+other QP types as an input causes to various unpredictable failures.
 
-Fixes: 43ba968b00ea ("usb: gadget: udc: renesas_usb3: add debugfs to set the b-device mode")
-Cc: <stable@vger.kernel.org> # v4.14+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The reason is that in order to support all various types (e.g. XRC), we
+are supposed to use real_qp handle and not qp handle and expect to
+driver/FW to fail such (XRC) flows. The simpler and safer variant is to
+ban all QP types except UD and RAW_PACKET, instead of relying on
+driver/FW.
+
+Cc: <stable@vger.kernel.org> # 3.11
+Fixes: 436f2ad05a0b ("IB/core: Export ib_create/destroy_flow through uverbs")
+Cc: syzkaller <syzkaller@googlegroups.com>
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_cmd.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -334,6 +334,7 @@ struct renesas_usb3 {
- 	struct usb_gadget_driver *driver;
- 	struct extcon_dev *extcon;
- 	struct work_struct extcon_work;
-+	struct dentry *dentry;
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -3376,6 +3376,11 @@ int ib_uverbs_ex_create_flow(struct ib_u
+ 		goto err_uobj;
+ 	}
  
- 	struct renesas_usb3_ep *usb3_ep;
- 	int num_usb3_eps;
-@@ -2397,8 +2398,12 @@ static void renesas_usb3_debugfs_init(st
- 
- 	file = debugfs_create_file("b_device", 0644, root, usb3,
- 				   &renesas_usb3_b_device_fops);
--	if (!file)
-+	if (!file) {
- 		dev_info(dev, "%s: Can't create debugfs mode\n", __func__);
-+		debugfs_remove_recursive(root);
-+	} else {
-+		usb3->dentry = root;
++	if (qp->qp_type != IB_QPT_UD && qp->qp_type != IB_QPT_RAW_PACKET) {
++		err = -EINVAL;
++		goto err_put;
 +	}
- }
- 
- /*------- platform_driver ------------------------------------------------*/
-@@ -2406,6 +2411,7 @@ static int renesas_usb3_remove(struct pl
- {
- 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
- 
-+	debugfs_remove_recursive(usb3->dentry);
- 	device_remove_file(&pdev->dev, &dev_attr_role);
- 
- 	usb_del_gadget_udc(&usb3->gadget);
++
+ 	flow_attr = kzalloc(sizeof(*flow_attr) + cmd.flow_attr.num_of_specs *
+ 			    sizeof(union ib_flow_spec), GFP_KERNEL);
+ 	if (!flow_attr) {
 
 
