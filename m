@@ -2,508 +2,200 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56350C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114E5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 044B220841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:14:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 044B220841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 99DB4208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:14:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="e5nRTwiK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DB4208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390249AbeHASA6 (ORCPT
+        id S2390265AbeHASBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:00:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48088 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 14:01:17 -0400
+Received: from mail-eopbgr40081.outbound.protection.outlook.com ([40.107.4.81]:42320
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390108AbeHASA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:00:57 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A0C974219DB4;
-        Wed,  1 Aug 2018 16:14:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C816610EE6D0;
-        Wed,  1 Aug 2018 16:14:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 5/5] vfs: Implement parameter value retrieval with fsinfo()
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 01 Aug 2018 17:14:27 +0100
-Message-ID: <153314006732.18964.13429664337039974242.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153314002975.18964.1773855756473041897.stgit@warthog.procyon.org.uk>
-References: <153314002975.18964.1773855756473041897.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S2389854AbeHASBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 14:01:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K91I24r9ZsDA2NsT9bD2PMb8R1YVrVjcJ2uRDZcfa4Q=;
+ b=e5nRTwiK8d3TFBAcavzfsNDIDttiesZ3OybNNcEV2xeW58651pz050Y4PoqVv+lyktiDjS3h9qEUQqvQTL9Y0WcjOKtyrwT7b7HvNmIrU8Y12k0myxSYSgUMbXN8dJnFRLahdjAnEYRV/ub44YBx4wej/HbMNrJyfwRF6KN2Lrc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+Received: from mlx.ziepe.ca (174.3.196.123) by
+ AM0PR05MB4452.eurprd05.prod.outlook.com (2603:10a6:208:5a::25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.19; Wed, 1 Aug 2018 16:14:44 +0000
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@mellanox.com>)
+        id 1fktlf-00043V-RC; Wed, 01 Aug 2018 10:14:31 -0600
+Date:   Wed, 1 Aug 2018 10:14:31 -0600
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Hadar Hen Zion <hadarh@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>,
+        Michael J Ruhl <michael.j.ruhl@intel.com>,
+        Noa Osherovich <noaos@mellanox.com>,
+        Raed Salem <raeds@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        linux-netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rdma-next 08/12] overflow.h: Add arithmetic shift helper
+Message-ID: <20180801161431.GC10665@mellanox.com>
+References: <20180624082353.16138-1-leon@kernel.org>
+ <20180624082353.16138-9-leon@kernel.org>
+ <CAKwiHFhgsyWYD+q+JFb2HJEphnjiiOp=o4Airv3MW031q2jx8w@mail.gmail.com>
+ <20180625171157.GE5356@mellanox.com>
+ <CAKwiHFiRYbyiJqDYCgKXKZYRr0KjCt8q9AwKwfqoCA1sT2KFyQ@mail.gmail.com>
+ <20180626175435.GQ5356@mellanox.com>
+ <20180801093603.GI2530@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 16:14:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 16:14:28 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801093603.GI2530@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [174.3.196.123]
+X-ClientProxiedBy: CY4PR19CA0026.namprd19.prod.outlook.com
+ (2603:10b6:903:103::12) To AM0PR05MB4452.eurprd05.prod.outlook.com
+ (2603:10a6:208:5a::25)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f9d42d3d-a96a-453a-3d7d-08d5f7c9e4e7
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM0PR05MB4452;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4452;3:mOJJTq+Oi0ZiGSbyfA46At0sHGpmyRJhlpUXG+HmA8oAUV/M+0lMtBkGtJq7h9sZbIpn0gfA7sx22Px2LerPic15ANJ5EhEoM9oa42VveFzlBi6sjGoW0szllWuIvVjGeMos/VxgS6JKCOzrkcpAGc5doVscQv1cfu/jHbQTNMdFAfx+OsYk4AmhY6M//YawZ8o+L2MjwnkPAndNEy8gsVMTiXbyBeYMUGhH3hGXilMNLXDCnxIsVKEDqWwyw113;25:luyX+NqXv3z5sIuk5RYB/869RlOmB+33MBTWooqVH+BAWVmfMkok2u7aSZ/x8umtBTOHlpsusD0MCKKV51Z4q8ZZvmUku2kpMkxYVEy/vAz04R1WWClYA4LEEtJTPaolpkMtbYa3GEZCCibdkLqzGbTOEEvqv4SqbiEQYxr7dp0tstgLga4zrpT0vCp7EYkhWWt0PLKIIB4kWw/Zve8gezjdenhqZMZ7KOPCSKOlUrP5u0VT5pPBCGKl2opHqx1WWhZXz2NhEokeL8U0PpYRwSFuiU5c/0UBnpjbTxawKZSJpuk+4Mi7pPwhzSfLA/Afdml8GyzIijStyxsnppXdfg==;31:ixuLTsHWxsthbIUBCYy9vdbcK9bTIneM6pdMXFJ41FlG6F8bJpPRqhDD+UPci1V9bnAXtCl5j3W1+qRbUK2FQLq+ZKq/1mnIv5gQHGOqDAEIFOK6ZAWI7SmC730vqc3yYCiT88LxHtspcfAus0fOdD0MLGYHYfjNNmCps9tCRiQSDmpH/RpduFsVXJgswzYmPlRuJtSwWvISFiNBHTz/hrOtZWV1p/YyZ4RgCPNGFCk=
+X-MS-TrafficTypeDiagnostic: AM0PR05MB4452:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4452;20:ODDfvDmJGEOOFmscAY/sAvawH3p1JLMW2a9GxjLaqiJsG937vHuumQYmFxC6j6Jq+EtDp2vLv1pYeRmJI6zA5MIlermbUmuteYgPoYPbGrRMz+uJX5A7stx2X/nvIA8s1HjKAvFNK3zDxdu1qhY1Y1b5ICLMWqGo76juSAwWuQ4D+CO1ms7qsrPcil+kaV331mEybJdIs7uQJuTTXsnKI0OYiXLwVkSTdDXw7Jekvw3qFEfA6VmRZ5JICUz5ukEgvlcXLuHF4zM5hVWARvDwpJgb2zCEQWFv6vPjEM4bXPPqii798cJAYk/a/1nQmr3Qi1c68/bCxkyFIuC2K9VnrgRyk/CKVHkjTRyioWJk08jnplotTqJydm7P4/fCXQ3QmWF9kOCy0ASOFM3hQZ6OBT6FuMYedr3Qo+gHO9m2pHtmYAC7SOnjiN1M0eGmtohCSRaFOvaeihHwzzJinygmM6RdIquj4EoUToSYVWSfBrXTBpWA0S7COl8WjcPDzbUR;4:Im5ArBcb7mqcOREJLLCL/WO8CIMFyNIcPftJA3MNUPdEAGvpeoDf8sJMM0rv81Bd1peO+iqs3Kgpp3rJYC5IyVkK9iPiDE4whwB2tr/cnRXamJAO7r4dCQGTzVcr4MfB2eVtnzLNR5MwrEm8LwKOvy7zAJY9ltX2lzkNIP8iteI09iHR9Jg+dyLtH0vvhsqb96TjHm6U3BeCGzIIJ15SEDC11ZOy87VrOFluK5M+FAzqW4y8b9BmYVyswZFYRakEP6iMQ4awdTlUhS0yuTZbJg==
+X-Microsoft-Antispam-PRVS: <AM0PR05MB4452BDB134B23B99ED3920A5CF2D0@AM0PR05MB4452.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM0PR05MB4452;BCL:0;PCL:0;RULEID:;SRVR:AM0PR05MB4452;
+X-Forefront-PRVS: 0751474A44
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(136003)(366004)(376002)(346002)(396003)(199004)(189003)(81156014)(8676002)(7736002)(76176011)(52116002)(122856001)(23726003)(1076002)(8936002)(97736004)(33656002)(6916009)(476003)(54906003)(486006)(478600001)(16586007)(50466002)(11346002)(186003)(386003)(81166006)(305945005)(316002)(36756003)(93886005)(2616005)(58126008)(5660300001)(3846002)(4326008)(53936002)(57986006)(9746002)(69596002)(9786002)(229853002)(86362001)(2906002)(105586002)(106356001)(6246003)(446003)(26005)(46656002)(66066001)(68736007)(6116002)(83796002)(47776003)(18370500001)(24400500001)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4452;H:mlx.ziepe.ca;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR05MB4452;23:1CSHlNkpvMvQwFT8xzNZt8/ThgdF0COpQc8QYtTlQ?=
+ =?us-ascii?Q?ebdREKwFnpMz/t/0hz6zIwNFNLRZpZgmrwJs+ZdRhUimzlHw0e0Pp0Lpc9t3?=
+ =?us-ascii?Q?JSNC+iYqzW4M8VjNIHCzWvJAhCkuQ7vPm7g+ZveoIdF7GfAsSsIwXWW0XKo0?=
+ =?us-ascii?Q?HHPhIarLT/ZC0fRhaol5Yzx6pV6bLF0p2VYGNeGn3DeMVp3cjF6gCIvF6zvy?=
+ =?us-ascii?Q?1Jdhn4//k8ZT7WGIdOk1P/8eQU/5ob93ZNQXKa+oChSrOEvPxp4C7OOFVEHO?=
+ =?us-ascii?Q?wuUWbJZLEcalzSdMYuuRY5/NZkThMz0sSUywsWtRRtL/w30ce2FCEcP0M1DV?=
+ =?us-ascii?Q?rjUx326HLpGVPu4L5SPD/UDpa0Nkde0+8XHD7y7UY3QJ9Hj11o9w5TfNXKEv?=
+ =?us-ascii?Q?otHC0e3KCE/lR6/rIxlH+tClwMobzC2Pw0pvUR5FK58l33i8pxIwNV0bU1KR?=
+ =?us-ascii?Q?9XohEECYilbNnE/Hr6f1mseXWKTmbXHYcdfJBbEkFKh7XsgeEdSrS1niX5LJ?=
+ =?us-ascii?Q?rugmN4MUFjWGqmJMQrp8jxVPHfJn8CjJJVwRDMv5BmDKdqDuxOUnfS6GG1fm?=
+ =?us-ascii?Q?XXs9lSH00EBF09ImIGJRTfcM/wTVQs2IRPQRPwp53eWdAEmM1+/3kBxDhSNq?=
+ =?us-ascii?Q?3wOv8zypc8YVyJzaU5+CJVUl3hPIxVoUbZ+tuMJC056cTSaPtQBqgfQr0mqI?=
+ =?us-ascii?Q?jwHhoBRSlN0t9t4e+/uoLgjEPlJebv0F4sOFuue6dt7+zF7iG7HyCCNTrvvL?=
+ =?us-ascii?Q?pC+PN3TFEtSEH+gg+HANPpCmQ3jWMMo21IWzJZ/2twksRR7D+c4ZSCbzv/bI?=
+ =?us-ascii?Q?JJiMtoLx1CxElyIGmux5N9bxAou0EDawDrHOFiwiiQZUm7Wr3a3CX7fi3zOs?=
+ =?us-ascii?Q?EoUWI001kj4XbWMSd3mg7q1vT+Fue4cyfSVe8FmmZVg3YypwqmjO4Z6C+Ix1?=
+ =?us-ascii?Q?gpFauHoVWzRgx9LDauJZ+D9YDOyK1w0WiDL80LZumbeRcRT9VCsBttMRupBu?=
+ =?us-ascii?Q?sgN+G+z6CBhdbtqfm8h2wcv3MYTA26LCMX7SoSLBzYet7uttR/uLfJdjAj7y?=
+ =?us-ascii?Q?kcFNL34ljrgMiy70rQrMMAmiDFJIlxmU0Dq5gy3beyfZWif7EeepVrJZcvVb?=
+ =?us-ascii?Q?DNyCpqgyThZEgjIllpQ6wxrGDqKgZp3PAW3rRnCqcD5Ow6tv6nW8E+BgWt7i?=
+ =?us-ascii?Q?wt4NhGryBU9vBtZOE94rqh0v7Y2nSMVDZSGoE4UKnoF0Ako21hHoMlbImguW?=
+ =?us-ascii?Q?0xy004boXqTgMh5pMgap4gpVcJiJV8ownKL8caBephW92+jmxg00OO98e7/y?=
+ =?us-ascii?Q?l39gl5pgyW2qyrP4wp86pZixVnM4NXasVWJFCOgT0BCLjUtW2IoxkpAeSAwm?=
+ =?us-ascii?Q?z2rCUlRTrw0f6CgliVb3gxG3rDB0eod9/2YZuvnruSD6NMgnGrTxOqYQ6vJm?=
+ =?us-ascii?Q?0JnZLTTdD0cIJO4l6jTXrakVDb9wYDXW9EuOt/FOzxOcjmTMk5H?=
+X-Microsoft-Antispam-Message-Info: 65cWZHr370gBywSDBPFDuajrnFMHlV0Ufl3I8k3OQVmY+zKcsW1cD5ysVMDCTj3aPdnhjgSPA5W4ES+QLWS3lK9u/uxQM3CmFre+qftlrMm8mqIf5eCes7sM6JwEFpDyL6vOJF2fV6mU1HHY+fASEssjncw1PDnMI35OQeDnFDeZJmTsFXWShkb6p0dzNh5Q5ee3kVYoKhdwC6GP2vWX6FYAgIs6f32eMu9MWE3OznVSAYHDH+NVcTpHnOCbP01OMj3xdfcArTX5n7koD2zpvl9idvAviq4NmrsHTnfaTlJHF3aJO7r17WiwugBMBbMgtpsE9FRF6MCo0q9a12+saGMTNG7jiC3Y0Zl6nmQrRkI=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR05MB4452;6:QRcX6JsQJaFV5CJyYkQT+uO0c5WMHbUHSvA/EmgyxGBKkz8ectv4WzuCZZmcf/bn0Nb2BQWj9U1rUnE9YPEBSZ+q4vrqiC2vsbCBLS1s8vuUieabLgV/t2f9GNv8t6H06RF5Iwek5cpH8JOYtq1Zpzcc2Rxjn7uTHxozvBYsaNNQD8CltjAYkN9OIcV2uyLDJOJfKGn7+OjyF5UhOJziON7fcRCkiXPB8+1gYw6hs4Q3vb1E2YW6z7uNoCRpSzbrXShDIJlQ1ct5m0/OQjlsrpH/NQWjJO2b7sn6ooBcRbzSkwIJ25hrBD9Xd0yI6imNVLXGb3rD9G8UKDp9SI5xTqQ7/BP33F5YCwPjKB318+gbXH2Pj6klOcoo0fvOKPHIcAzeaJsF5CMqPTYySiOy1H2pPPuw+/O/49WNa90dZpq+bVST0RerEORfiivO4jMLoF4WNsVCo12yL6rSwOK3nQ==;5:x/zKTsHOFWaWEiWMIHOpYe8xudKtXQ292hJa3dHtx2w9M02G1+HKFhQeWMW6fUVzwwhbBc3PArN4hjHzPHbjt5vC89UIVCjMyVb97UDGThOvqkOIjP3TIFFCeLSBd6OVxhIeXzO9s0/iXRX/JsDirF1mueBQl1H9m3D+R4K1kU8=;7:fgGDwDoYT8XMVXTeJO6oJUEJTpUY/gtloymmNigMdP+l2QBBmDzL8k01XYGxIbZyK79s0PE9mR0KdjKbif5Q03WA7kv+tIMyNxHDEH7Vyr8uzjaUouygxrsIjA65Tz/HPNZZ8TF4nCLIl9/AwfMWh3HW+7BxUYgC0X5P0H4K3UoepLiRjln4QVm8Q58S/TJEBcYgMKddSt7Bgyxsq4/1z7VoG21OjTXFkd6DXD+t/rnuJ9yJeZotGExrRvVDh1tX
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2018 16:14:44.1678
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9d42d3d-a96a-453a-3d7d-08d5f7c9e4e7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4452
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement parameter value retrieval with fsinfo() - akin to parsing
-/proc/mounts.
+On Wed, Aug 01, 2018 at 11:36:03AM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 26, 2018 at 11:54:35AM -0600, Jason Gunthorpe wrote:
+> 
+> > What about more like this?
+> > 
+> >           check_shift_overflow(a, s, d) ({
+> 
+> Should that not be: check_shl_overflow() ? Just 'shift' lacks a
+> direction.
 
-This allows the values of each parameter to be retrieved in an order
-corresponding to the Nth index used by FSINFO_ATTR_PARAM_SPECIFICATION.  If
-a parameter isn't set, an empty string is returned.  Parameters may have
-multiple values, which can be accessed using the Mth index.  For example,
-set:
+Yes, that makes sense.
 
-	struct fsinfo_params params = {
-		.request	= FSINFO_ATTR_PARAM_SPECIFICATION,
-		.Nth		= 3,
-	};
+> > 	      // Shift is always performed on the machine's largest unsigned
+> >               u64 _a = a;
+> > 	      typeof(s) _s = s;
+> >               typeof(d) _d = d;
+> > 
+> > 	      // Make s safe against UB
+> > 	      unsigned int _to_shift = _s >= 0 && _s < 8*sizeof(*d) : _s ? 0;
+> 
+> Should we not do a gcc-plugin or something that fixes that particular
+> UB? Shift acting all retarded like that is just annoying. I feel we
+> should eliminate UBs from the language where possible, like
+> -fno-strict-overflow mandates 2s complement.
 
-this can be passed to fsinfo() to retrieve the type information for the
-parameter #3.  Value #2 of parameter #3 can then be retrieved using:
+No idea, if someone does this they can remove the above overhead..
 
-	struct fsinfo_params params = {
-		.request	= FSINFO_ATTR_PARAM_SPECIFICATION,
-		.Nth		= 3,
-		.Mth		= 2,
-	};
+> >               *_d = (_a << _to_shift);
+> > 
+> > 	       // s is malformed
+> >               (_to_shift != _s ||
+> 
+> Not strictly an overflow though, just not expected behaviour.
 
-fsinfo() returned -ENODATA if Nth is beyond the last parameter or Mth is
-beyond the last value of that parameter.
+'overflow' here means the math didn't work, ie
+   C = A << B
+has a C that does not match A << B done on infinite precision. It is
+not limited to checking overflow.
 
-Note that it is permissible for the filesystem to add extra values on the
-end beyond the number of specs returned by FSINFO_ATTR_PARAM_SPECIFICATION.
-This is used by cgroup-v1 to list the supported subsystem names after the
-standard parameters.
+> > 	       // d is a signed type and became negative
+> > 	       *_d < 0 ||
+> 
+> Only a problem if it wasn't negative to start out with.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+> > 	       // a is a signed type and was negative
+> > 	       _a < 0 ||
+>
+> Why would that be a problem? You can shift left negative values just
+> fine. The only problem is when you run out of sign bits.
 
- fs/afs/internal.h         |    1 +
- fs/afs/super.c            |   39 +++++++++++++++++++++++-
- fs/hugetlbfs/inode.c      |   65 +++++++++++++++++++++++++++++++++++++++++
- fs/kernfs/mount.c         |   16 ++++++++++
- include/linux/kernfs.h    |    2 +
- kernel/cgroup/cgroup-v1.c |   72 +++++++++++++++++++++++++++++++++++++++++++++
- kernel/cgroup/cgroup.c    |   31 +++++++++++++++++++
- samples/Kconfig           |    2 +
- 8 files changed, 225 insertions(+), 3 deletions(-)
+These are both a problem because of how the macro is setup, nobody had
+an idea how to make this work with different types and allow for
+negatives to work properly.
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index e35d59761d47..35aa4bd79145 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -195,6 +195,7 @@ struct afs_super_info {
- 	struct afs_cell		*cell;		/* The cell in which the volume resides */
- 	struct afs_volume	*volume;	/* volume record */
- 	bool			dyn_root;	/* True if dynamic root */
-+	bool			autocell;	/* True if autocell */
- };
- 
- static inline struct afs_super_info *AFS_FS_S(struct super_block *sb)
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 10b5616a7843..7c97836e7937 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -197,7 +197,7 @@ static int afs_show_options(struct seq_file *m, struct dentry *root)
- 
- 	if (as->dyn_root)
- 		seq_puts(m, ",dyn");
--	if (test_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(d_inode(root))->flags))
-+	if (as->autocell)
- 		seq_puts(m, ",autocell");
- 	return 0;
- }
-@@ -444,7 +444,7 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	if (ctx->autocell || as->dyn_root)
-+	if (as->autocell || as->dyn_root)
- 		set_bit(AFS_VNODE_AUTOCELL, &AFS_FS_I(inode)->flags);
- 
- 	ret = -ENOMEM;
-@@ -483,6 +483,8 @@ static struct afs_super_info *afs_alloc_sbi(struct fs_context *fc)
- 			as->cell = afs_get_cell(ctx->cell);
- 			as->volume = __afs_get_volume(ctx->volume);
- 		}
-+		if (ctx->autocell)
-+			as->autocell = true;
- 	}
- 	return as;
- }
-@@ -789,6 +791,7 @@ static int afs_get_fsinfo(struct dentry *dentry, struct fsinfo_kparams *params)
- 	struct afs_volume *volume = as->volume;
- 	struct afs_cell *cell = as->cell;
- 	struct afs_net *net = afs_d2net(dentry);
-+	const char *str = NULL;
- 	bool dyn_root = as->dyn_root;
- 	int ret;
- 
-@@ -893,7 +896,39 @@ static int afs_get_fsinfo(struct dentry *dentry, struct fsinfo_kparams *params)
- 		afs_put_serverlist(net, slist);
- 		return ret;
- 
-+	case FSINFO_ATTR_PARAMETER:
-+		if (params->Mth)
-+			return -ENODATA;
-+		switch (params->Nth) {
-+		case Opt_autocell:
-+			if (as->autocell)
-+				str = "autocell";
-+			goto string;
-+		case Opt_dyn:
-+			if (dyn_root)
-+				str = "dyn";
-+			goto string;
-+		case Opt_source:
-+			if (dyn_root)
-+				return 0;
-+			return sprintf(params->buffer, "source=%c%s:%s%s",
-+				       volume->type == AFSVL_RWVOL ? '%' : '#',
-+				       cell->name,
-+				       volume->name,
-+				       volume->type == AFSVL_RWVOL ? "" :
-+				       volume->type == AFSVL_ROVOL ? ".readonly" :
-+				       ".backup");
-+		default:
-+			return -ENODATA;
-+		}
-+
- 	default:
- 		return generic_fsinfo(dentry, params);
- 	}
-+
-+string:
-+	if (!str)
-+		return 0;
-+	strcpy(params->buffer, str);
-+	return strlen(params->buffer);
- }
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 28f6c28e55dc..e2378c8ce7e0 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -28,6 +28,7 @@
- #include <linux/hugetlb.h>
- #include <linux/pagevec.h>
- #include <linux/fs_parser.h>
-+#include <linux/fsinfo.h>
- #include <linux/mman.h>
- #include <linux/slab.h>
- #include <linux/dnotify.h>
-@@ -948,6 +949,69 @@ static int hugetlbfs_show_options(struct seq_file *m, struct dentry *root)
- 	return 0;
- }
- 
-+static int hugetlbfs_get_fsinfo(struct dentry *dentry, struct fsinfo_kparams *params)
-+{
-+	struct hugetlbfs_sb_info *sbinfo = HUGETLBFS_SB(dentry->d_sb);
-+	struct hugepage_subpool *spool = sbinfo->spool;
-+	unsigned long hpage_size = huge_page_size(sbinfo->hstate);
-+	unsigned hpage_shift = huge_page_shift(sbinfo->hstate);
-+	char mod;
-+
-+	switch (params->request) {
-+	case FSINFO_ATTR_PARAMETER:
-+		if (params->Mth)
-+			return -ENODATA;
-+		switch (params->Nth) {
-+		case Opt_uid:
-+			if (!uid_eq(sbinfo->uid, GLOBAL_ROOT_UID))
-+				return sprintf(params->buffer, "uid=%u",
-+					       from_kuid_munged(&init_user_ns,
-+								sbinfo->uid));
-+			return 0;
-+		case Opt_gid:
-+			if (!gid_eq(sbinfo->gid, GLOBAL_ROOT_GID))
-+				return sprintf(params->buffer, "gid=%u",
-+					       from_kgid_munged(&init_user_ns,
-+								sbinfo->gid));
-+			return 0;
-+
-+		case Opt_size:
-+			if (!spool || spool->max_hpages == -1)
-+				return 0;
-+			return sprintf(params->buffer, "size=%llu",
-+				       (unsigned long long)spool->max_hpages << hpage_shift);
-+		case Opt_min_size:
-+			if (!spool || spool->min_hpages == -1)
-+				return 0;
-+			return sprintf(params->buffer, "min_size=%llu",
-+				       (unsigned long long)spool->min_hpages << hpage_shift);
-+		case Opt_pagesize:
-+			hpage_size /= 1024;
-+			mod = 'K';
-+			if (hpage_size >= 1024) {
-+				hpage_size /= 1024;
-+				mod = 'M';
-+			}
-+			return sprintf(params->buffer, "pagesize=%lu%c",
-+				       hpage_size, mod);
-+
-+		case Opt_mode:
-+			if (sbinfo->mode == 0755)
-+				return 0;
-+			return sprintf(params->buffer, "mode=%o", sbinfo->mode);
-+		case Opt_nr_inodes:
-+			if (sbinfo->max_inodes == -1)
-+				return 0;
-+			return sprintf(params->buffer, "nr_inodes=%lu",
-+				       sbinfo->max_inodes);
-+		default:
-+			return -ENODATA;
-+		}
-+	default:
-+		return generic_fsinfo(dentry, params);
-+	}
-+}
-+
- static int hugetlbfs_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct hugetlbfs_sb_info *sbinfo = HUGETLBFS_SB(dentry->d_sb);
-@@ -1107,6 +1171,7 @@ static const struct super_operations hugetlbfs_ops = {
- 	.statfs		= hugetlbfs_statfs,
- 	.put_super	= hugetlbfs_put_super,
- 	.show_options	= hugetlbfs_show_options,
-+	.get_fsinfo	= hugetlbfs_get_fsinfo,
- };
- 
- /*
-diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index 188c683eab14..b568e6c5e063 100644
---- a/fs/kernfs/mount.c
-+++ b/fs/kernfs/mount.c
-@@ -17,6 +17,7 @@
- #include <linux/namei.h>
- #include <linux/seq_file.h>
- #include <linux/exportfs.h>
-+#include <linux/fsinfo.h>
- 
- #include "kernfs-internal.h"
- 
-@@ -55,6 +56,20 @@ static int kernfs_sop_show_path(struct seq_file *sf, struct dentry *dentry)
- 	return 0;
- }
- 
-+static int kernfs_sop_get_fsinfo(struct dentry *dentry, struct fsinfo_kparams *params)
-+{
-+	struct kernfs_root *root = kernfs_root(kernfs_dentry_node(dentry));
-+	struct kernfs_syscall_ops *scops = root->syscall_ops;
-+	int ret;
-+
-+	if (scops && scops->fsinfo) {
-+		ret = scops->fsinfo(root, params);
-+		if (ret != -EAGAIN)
-+			return ret;
-+	}
-+	return generic_fsinfo(dentry, params);
-+}
-+
- const struct super_operations kernfs_sops = {
- 	.statfs		= simple_statfs,
- 	.drop_inode	= generic_delete_inode,
-@@ -63,6 +78,7 @@ const struct super_operations kernfs_sops = {
- 	.reconfigure	= kernfs_sop_reconfigure,
- 	.show_options	= kernfs_sop_show_options,
- 	.show_path	= kernfs_sop_show_path,
-+	.get_fsinfo	= kernfs_sop_get_fsinfo,
- };
- 
- /*
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 627fa3956146..9fdcdbbb67e9 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -25,6 +25,7 @@ struct seq_file;
- struct vm_area_struct;
- struct super_block;
- struct file_system_type;
-+struct fsinfo_kparams;
- 
- struct kernfs_fs_context;
- struct kernfs_open_node;
-@@ -170,6 +171,7 @@ struct kernfs_node {
- struct kernfs_syscall_ops {
- 	int (*reconfigure)(struct kernfs_root *root, struct fs_context *fc);
- 	int (*show_options)(struct seq_file *sf, struct kernfs_root *root);
-+	int (*fsinfo)(struct kernfs_root *root, struct fsinfo_kparams *params);
- 
- 	int (*mkdir)(struct kernfs_node *parent, const char *name,
- 		     umode_t mode);
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index fb721aa20aa0..7a12a7876fb3 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -14,6 +14,7 @@
- #include <linux/pid_namespace.h>
- #include <linux/cgroupstats.h>
- #include <linux/fs_parser.h>
-+#include <linux/fsinfo.h>
- 
- #include <trace/events/cgroup.h>
- 
-@@ -950,6 +951,76 @@ const struct fs_parameter_description cgroup1_fs_parameters = {
- 	.no_source	= true,
- };
- 
-+static int cgroup1_fsinfo(struct kernfs_root *kf_root, struct fsinfo_kparams *params)
-+{
-+	struct cgroup_root *root = cgroup_root_from_kf(kf_root);
-+	struct cgroup_subsys *ss;
-+	const char *str = NULL;
-+	unsigned int Mth;
-+	int ret = 0, ssid;
-+
-+	switch (params->request) {
-+	case FSINFO_ATTR_PARAMETER:
-+		if (params->Mth && params->Nth != nr__cgroup1_params)
-+			return -ENODATA;
-+		switch (params->Nth) {
-+		case Opt_all:
-+			return 0;
-+		case Opt_clone_children:
-+			if (test_bit(CGRP_CPUSET_CLONE_CHILDREN, &root->cgrp.flags))
-+				str = "clone_children";
-+			goto string;
-+		case Opt_cpuset_v2_mode:
-+			if (root->flags & CGRP_ROOT_CPUSET_V2_MODE)
-+				str = "noprefix";
-+			goto string;
-+		case Opt_name:
-+			if (strlen(root->name))
-+				return sprintf(params->buffer, "name=%s", root->name);
-+			return 0;
-+		case Opt_none:
-+			return 0;
-+		case Opt_noprefix:
-+			if (root->flags & CGRP_ROOT_NOPREFIX)
-+				str = "noprefix";
-+			goto string;
-+		case Opt_release_agent:
-+			spin_lock(&release_agent_path_lock);
-+			if (strlen(root->release_agent_path))
-+				ret = sprintf(params->buffer, "release_agent=%s",
-+					      root->release_agent_path);
-+			spin_unlock(&release_agent_path_lock);
-+			return ret;
-+		case Opt_xattr:
-+			if (root->flags & CGRP_ROOT_XATTR)
-+				str = "noprefix";
-+			goto string;
-+		case nr__cgroup1_params:
-+			Mth = params->Mth;
-+			for_each_subsys(ss, ssid) {
-+				if (Mth == 0) {
-+					if (root->subsys_mask & (1 << ssid))
-+						str = ss->legacy_name;
-+					goto string;
-+				}
-+				Mth--;
-+			}
-+			return -ENODATA;
-+		default:
-+			return -ENODATA;
-+		}
-+
-+	default:
-+		return -EAGAIN; /* Tell kernfs to call generic_fsinfo() */
-+	}
-+
-+string:
-+	if (!str)
-+		return 0;
-+	strcpy(params->buffer, str);
-+	return strlen(params->buffer);
-+}
-+
- int cgroup1_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
-@@ -1140,6 +1211,7 @@ static int cgroup1_reconfigure(struct kernfs_root *kf_root, struct fs_context *f
- struct kernfs_syscall_ops cgroup1_kf_syscall_ops = {
- 	.rename			= cgroup1_rename,
- 	.show_options		= cgroup1_show_options,
-+	.fsinfo			= cgroup1_fsinfo,
- 	.reconfigure		= cgroup1_reconfigure,
- 	.mkdir			= cgroup_mkdir,
- 	.rmdir			= cgroup_rmdir,
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index f3238f38d152..15b976003032 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -55,6 +55,7 @@
- #include <linux/nsproxy.h>
- #include <linux/file.h>
- #include <linux/fs_parser.h>
-+#include <linux/fsinfo.h>
- #include <linux/sched/cputime.h>
- #include <net/sock.h>
- 
-@@ -1784,6 +1785,35 @@ static int cgroup_show_options(struct seq_file *seq, struct kernfs_root *kf_root
- 	return 0;
- }
- 
-+static int cgroup_fsinfo(struct kernfs_root *kf_root, struct fsinfo_kparams *params)
-+{
-+	const char *str = NULL;
-+
-+	switch (params->request) {
-+	case FSINFO_ATTR_PARAMETER:
-+		if (params->Mth)
-+			return -ENODATA;
-+		switch (params->Nth) {
-+		case Opt_nsdelegate:
-+			if (current->nsproxy->cgroup_ns == &init_cgroup_ns &&
-+			    cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
-+				str = "nsdelegate";
-+			goto string;
-+		default:
-+			return -ENODATA;
-+		}
-+
-+	default:
-+		return -EAGAIN; /* Tell kernfs to call generic_fsinfo() */
-+	}
-+
-+string:
-+	if (!str)
-+		return 0;
-+	strcpy(params->buffer, str);
-+	return strlen(params->buffer);
-+}
-+
- static void apply_cgroup_root_flags(unsigned int root_flags)
- {
- 	if (current->nsproxy->cgroup_ns == &init_cgroup_ns) {
-@@ -5248,6 +5278,7 @@ int cgroup_rmdir(struct kernfs_node *kn)
- 
- static struct kernfs_syscall_ops cgroup_kf_syscall_ops = {
- 	.show_options		= cgroup_show_options,
-+	.fsinfo			= cgroup_fsinfo,
- 	.reconfigure		= cgroup_reconfigure,
- 	.mkdir			= cgroup_mkdir,
- 	.rmdir			= cgroup_rmdir,
-diff --git a/samples/Kconfig b/samples/Kconfig
-index daa17e9f3197..82625570211a 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -148,7 +148,7 @@ config SAMPLE_VFIO_MDEV_MBOCHS
- 
- config SAMPLE_STATX
- 	bool "Build example extended-stat using code"
--	depends on BROKEN
-+	#depends on BROKEN
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
- 
+You could define this, but since there is no usecase..
 
+> > 	       // Not invertable means a was truncated during shifting
+> > 	       (*_d >> _to_shift) != a))
+> >           })
+> 
+> And I'm not exactly seeing the use case for this macro. What's the point
+> of a shift-left if you cannot truncate bits. I suppose it's in the name
+> _overflow, but still.
+
+It is basically a specialized case of check_mul_overflow where the
+multiply is known to be a power of 2.
+
+Jason
