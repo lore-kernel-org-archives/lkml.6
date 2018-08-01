@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5230C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C4AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9311020862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9311020862
+	by mail.kernel.org (Postfix) with ESMTP id 3A9CD2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9CD2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407121AbeHATNa (ORCPT
+        id S2407133AbeHATNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51644 "EHLO
+        Wed, 1 Aug 2018 15:13:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51654 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405523AbeHATN3 (ORCPT
+        with ESMTP id S2405523AbeHATNc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:29 -0400
+        Wed, 1 Aug 2018 15:13:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37E9DCC3;
-        Wed,  1 Aug 2018 17:26:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C091CC3;
+        Wed,  1 Aug 2018 17:26:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eyal Reizer <eyalr@ti.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 046/144] wlcore: sdio: check for valid platform device data before suspend
-Date:   Wed,  1 Aug 2018 18:51:13 +0200
-Message-Id: <20180801164952.312298010@linuxfoundation.org>
+Subject: [PATCH 4.9 047/144] media: tw686x: Fix incorrect vb2_mem_ops GFP flags
+Date:   Wed,  1 Aug 2018 18:51:14 +0200
+Message-Id: <20180801164952.371868583@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,39 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eyal Reizer <eyalreizer@gmail.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit 6e91d48371e79862ea2c05867aaebe4afe55a865 ]
+[ Upstream commit 636757ab6c93e19e2f58d3b3af1312e34eaffbab ]
 
-the wl pointer can be null In case only wlcore_sdio is probed while
-no WiLink module is successfully probed, as in the case of mounting a
-wl12xx module while using a device tree file configured with wl18xx
-related settings.
-In this case the system was crashing in wl1271_suspend() as platform
-device data is not set.
-Make sure wl the pointer is valid before using it.
+When the driver is configured in the "memcpy" dma-mode,
+it uses vb2_vmalloc_memops, which is backed by a SLAB
+allocator and so shouldn't be using GFP_DMA32.
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fix it.
+
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wlcore/sdio.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/pci/tw686x/tw686x-video.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ti/wlcore/sdio.c
-+++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -404,6 +404,11 @@ static int wl1271_suspend(struct device
- 	mmc_pm_flag_t sdio_flags;
- 	int ret = 0;
+--- a/drivers/media/pci/tw686x/tw686x-video.c
++++ b/drivers/media/pci/tw686x/tw686x-video.c
+@@ -1228,7 +1228,8 @@ int tw686x_video_init(struct tw686x_dev
+ 		vc->vidq.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+ 		vc->vidq.min_buffers_needed = 2;
+ 		vc->vidq.lock = &vc->vb_mutex;
+-		vc->vidq.gfp_flags = GFP_DMA32;
++		vc->vidq.gfp_flags = dev->dma_mode != TW686X_DMA_MODE_MEMCPY ?
++				     GFP_DMA32 : 0;
+ 		vc->vidq.dev = &dev->pci_dev->dev;
  
-+	if (!wl) {
-+		dev_err(dev, "no wilink module was probed\n");
-+		goto out;
-+	}
-+
- 	dev_dbg(dev, "wl1271 suspend. wow_enabled: %d\n",
- 		wl->wow_enabled);
- 
+ 		err = vb2_queue_init(&vc->vidq);
 
 
