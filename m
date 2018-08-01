@@ -2,71 +2,87 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6A1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D6CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5007208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5007208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 5CC5420841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:26:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC5420841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733289AbeHAJJf (ORCPT
+        id S2387499AbeHAJLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 05:09:35 -0400
-Received: from verein.lst.de ([213.95.11.211]:32929 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732300AbeHAJJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:09:35 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 960C79ED64; Wed,  1 Aug 2018 09:29:47 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 09:29:47 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     okaya@codeaurora.org
-Cc:     Christoph Hellwig <hch@lst.de>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-ia64@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, okaya@kernel.org
-Subject: Re: [PATCH] ia64: fix barrier placement for write* / dma mapping
-Message-ID: <20180801072947.GD20224@lst.de>
-References: <20180731172031.4447-1-hch@lst.de> <20180731172031.4447-2-hch@lst.de> <c7ecb31e9a79d26ce9edb15f58e0880f@codeaurora.org>
+        Wed, 1 Aug 2018 05:11:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10164 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733219AbeHAJLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 05:11:06 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6E5139E745CAD;
+        Wed,  1 Aug 2018 15:26:44 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Wed, 1 Aug 2018
+ 15:26:42 +0800
+Message-ID: <5B6160B0.1020403@huawei.com>
+Date:   Wed, 1 Aug 2018 15:26:40 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7ecb31e9a79d26ce9edb15f58e0880f@codeaurora.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] driver/scsi/pmcraid: Use pci_zalloc_consistent instead
+ of pci_alloc_consistent+memset
+References: <1533107309-7073-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1533107309-7073-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 11:41:23PM -0700, okaya@codeaurora.org wrote:
-> I asked this question to Tony Luck before. If I remember right,
-> his answer was:
+ignore this ,  Will repost.
+On 2018/8/1 15:08, zhong jiang wrote:
+> Pci_alloc_consistent+memset is better than pci_alloc_consistent+memset,
+> and it make the code concise
 >
-> CPU guarantees outstanding writes to be flushed when a register write
-> instruction is executed and an additional barrier instruction is not
-> needed.
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/scsi/pmcraid.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+> index 4e86994..8a6facc 100644
+> --- a/drivers/scsi/pmcraid.c
+> +++ b/drivers/scsi/pmcraid.c
+> @@ -4736,11 +4736,9 @@ static int pmcraid_allocate_host_rrqs(struct pmcraid_instance *pinstance)
+>  	buffer_size = HRRQ_ENTRY_SIZE * PMCRAID_MAX_CMD;
+>  
+>  	for (i = 0; i < pinstance->num_hrrq; i++) {
+> -		pinstance->hrrq_start[i] =
+> -			pci_alloc_consistent(
+> -					pinstance->pdev,
+> -					buffer_size,
+> -					&(pinstance->hrrq_start_bus_addr[i]));
+> +		pinstance->hrrq_start[i] = pci_zalloc_consistent(pinstance->pdev,
+> +								buffer_size,
+> +								&(pinstance->hrrq_start_bus_addr[i]));
+>  
+>  		if (!pinstance->hrrq_start[i]) {
+>  			pmcraid_err("pci_alloc failed for hrrq vector : %d\n",
+> @@ -4749,7 +4747,6 @@ static int pmcraid_allocate_host_rrqs(struct pmcraid_instance *pinstance)
+>  			return -ENOMEM;
+>  		}
+>  
+> -		memset(pinstance->hrrq_start[i], 0, buffer_size);
+>  		pinstance->hrrq_curr[i] = pinstance->hrrq_start[i];
+>  		pinstance->hrrq_end[i] =
+>  			pinstance->hrrq_start[i] + PMCRAID_MAX_CMD - 1;
 
-That would be great.  It still doesn't explain the barriers in the
-dma sync routines.  Those have been there since the following commit
-in the history tree:
 
-commit 66b99421d118a5ddd98a72913670b0fcf0a38d45
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Sat Mar 13 17:05:37 2004 -0800
-
-    [PATCH] DMA: Fill gaping hole in DMA API interfaces.
-
-    From: "David S. Miller" <davem@redhat.com>
-
-which in fact only added them for the HP zx1 platform, and doesn't
-contain any good explanation of why we need a barrier.
-
-So I guess the right answer might be to just remove these barriers
-without replacement.
