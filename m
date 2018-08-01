@@ -2,103 +2,170 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5523BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76643C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089B520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:29:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw0HjeNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089B520844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C441120844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:30:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C441120844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388737AbeHAKNg (ORCPT
+        id S2388564AbeHAKOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:13:36 -0400
-Received: from mail-pf1-f179.google.com ([209.85.210.179]:40941 "EHLO
-        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387836AbeHAKNf (ORCPT
+        Wed, 1 Aug 2018 06:14:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387666AbeHAKOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:13:35 -0400
-Received: by mail-pf1-f179.google.com with SMTP id e13-v6so7471994pff.7;
-        Wed, 01 Aug 2018 01:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u5VhfdgDn04a9GD5iPt4Mu70MTNBTOj6OhGSXRFGVK4=;
-        b=bw0HjeNQ+HdPVub/7QlqNnSyu1LVhWG5x2KjLlQvEFae8Gc3qNsT9RaIgupNXi42AB
-         YLSrgNOCyX5Hx5lLY8YdqVWHAMWsWiwYcbf+GJHOg23ktRVWZ7q6q+4MJe9Ab6WrkZiZ
-         1ZlfG1QB4obKTKeLDNUJ9OHjIf07+mtpDjg3OH29bkp/l35dSAY9TMM/EiOdxthQafZ6
-         nvb2eF80heD7lf66TAqZygyE8LGIzV5iLj5Y8TY6HemDatu+MX3oEqo9TZXw3iU7f7aU
-         y+xTyaEVupS2OrU7ygtyt1oWwAF57z1quvreBsGcc6+pipm8ZccEupYUmcsoCSv0vGTo
-         cnng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u5VhfdgDn04a9GD5iPt4Mu70MTNBTOj6OhGSXRFGVK4=;
-        b=s0jPHVsTSvS/X8luLIdsBcq8ED//t1oJ1b87etplhdObR7uVWR1mKNm24rmNNae5U/
-         AqHz94rlffucN8mXpIDvdKEx18unwprudlE5iZUf+tvjHzQ8qHLjC048Kw4bicK9lYn3
-         cYUCzBzregXQc6S9tidytLofGbIOYM9Elo5tgU9RCkbYzaqUwA81IU3Jgt2jTGd7BY4F
-         TQNbvy+FyqvOHpwfrRmmdaedBPwo6JrTEdwej0j8vNeqsPg2Gylzb+4W72aSJ3G0zqBS
-         l26TBZPN0yK/FE01BeTvxtOQBEOmSMFe5NfZ2OABGTw7hiEYXOjMmk5Wvu+gVXfnSktF
-         4oug==
-X-Gm-Message-State: AOUpUlF/6MiVmNxmjcUG+cLbrao/8v8LR6+bHSgw4KvB6kvSLYGp0zON
-        Ri/2N2Q6H9bxb57MNF+hhNg=
-X-Google-Smtp-Source: AAOMgpcjJUcXI+DDjLRnrtCJg80jXg44VTNciRc2/PRyWwp7nzxK5sK/drcoIU6rg88VY/JMuk3X3A==
-X-Received: by 2002:a63:ba43:: with SMTP id l3-v6mr22885647pgu.295.1533112141543;
-        Wed, 01 Aug 2018 01:29:01 -0700 (PDT)
-Received: from swr12sw01.cumulusnetworks.com ([216.129.126.118])
-        by smtp.googlemail.com with ESMTPSA id j22-v6sm21707658pfh.45.2018.08.01.01.28.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 01:29:00 -0700 (PDT)
-Subject: Re: KASAN: use-after-free Read in rtnetlink_put_metrics
-To:     Sabrina Dubroca <sd@queasysnail.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com,
-        christian.brauner@ubuntu.com, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        lucien xin <lucien.xin@gmail.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000004fe2be05724ac084@google.com>
- <c8ffd001-8c67-19b9-7223-34ca8d436db2@gmail.com>
- <20180731134014.GA32114@bistromath.localdomain>
- <CAM_iQpURKOMAaPfs9v7FzhqqQPzj71sQD2LS0eU8cuqTML-YoA@mail.gmail.com>
- <20180801081537.GA31982@bistromath.localdomain>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <18196855-1085-9c70-fc58-fdcbe4060d21@gmail.com>
-Date:   Wed, 1 Aug 2018 10:28:54 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 1 Aug 2018 06:14:37 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w718T8lY087497
+        for <linux-kernel@vger.kernel.org>; Wed, 1 Aug 2018 04:30:03 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kk47jty1d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 04:30:02 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <prudo@linux.ibm.com>;
+        Wed, 1 Aug 2018 09:30:00 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Aug 2018 09:29:54 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w718TrrA37879938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 1 Aug 2018 08:29:53 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C72552059;
+        Wed,  1 Aug 2018 11:30:04 +0100 (BST)
+Received: from ThinkPad (unknown [9.152.212.29])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 5931D52050;
+        Wed,  1 Aug 2018 11:30:03 +0100 (BST)
+Date:   Wed, 1 Aug 2018 10:29:51 +0200
+From:   Philipp Rudo <prudo@linux.ibm.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        ard.biesheuvel@linaro.org, james.morse@arm.com,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 03/16] s390, kexec_file: drop arch_kexec_mem_walk()
+In-Reply-To: <20180801075820.3753-4-takahiro.akashi@linaro.org>
+References: <20180801075820.3753-1-takahiro.akashi@linaro.org>
+        <20180801075820.3753-4-takahiro.akashi@linaro.org>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180801081537.GA31982@bistromath.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18080108-0020-0000-0000-000002AF39E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18080108-0021-0000-0000-000020FB5F10
+Message-Id: <20180801102951.527cfc57@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1808010092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/18 10:15 AM, Sabrina Dubroca wrote:
-> ip -net peerA route add fec0:B::/64 via fec0:A:: mtu 1300
+Hey Akashi,
 
-I am on vacation right now with limited access to internet, so not able
-to take a look.
+I kept thinking about this patch and remembered why I didn't made the change
+you are suggesting now.
 
-In submitting the fib6_info changes I did tests like this and did not
-see memleak reports (and verified the metrics refcnts with printks), so
-I am surprised to see your patch in this area. Will take a look when I
-can but that will not be for a couple more weeks.
+The problem is when you only check for kbuf->mem you are excluding address 0,
+which might be a valid address to load the kernel to. On s390 this is actually
+done when the kernel is not loaded via a boot loader. For kexec_file however,
+we cut off the first few kB of the image and jump directly to 'startup'. So
+checking for !0 does not cause a problem here.
+
+Anyway, the long term safer solution would be something like
+
+#define KEXEC_BUF_MEM_UNKNOWN (-1UL)
+
+for architectures to tell common code to search a fitting mem hole.
+
+Back then I didn't do the change because I had the other workaround, which
+didn't require a common code change. But when you are touching the code now it
+is worth thinking about it.
+
+Just wanted to let you know
+Philipp
+
+
+On Wed,  1 Aug 2018 16:58:07 +0900
+AKASHI Takahiro <takahiro.akashi@linaro.org> wrote:
+
+> Since s390 already knows where to locate buffers, calling
+> arch_kexec_mem_walk() has no sense. So we can just drop it as kbuf->mem
+> indicates this while all other architectures sets it to 0 initially.
+> 
+> This change is a preparatory work for the next patch, where all the
+> variant memory walks, either on system resource or memblock, will be
+> put in one common place so that it will satisfy all the architectures'
+> need.
+> 
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/s390/kernel/machine_kexec_file.c | 10 ----------
+>  kernel/kexec_file.c                   |  4 ++++
+>  2 files changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+> index f413f57f8d20..32023b4f9dc0 100644
+> --- a/arch/s390/kernel/machine_kexec_file.c
+> +++ b/arch/s390/kernel/machine_kexec_file.c
+> @@ -134,16 +134,6 @@ int kexec_file_add_initrd(struct kimage *image, struct s390_load_data *data,
+>  	return ret;
+>  }
+>  
+> -/*
+> - * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> - * and provide kbuf->mem by hand.
+> - */
+> -int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> -			int (*func)(struct resource *, void *))
+> -{
+> -	return 1;
+> -}
+> -
+>  int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+>  				     Elf_Shdr *section,
+>  				     const Elf_Shdr *relsec,
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 63c7ce1c0c3e..bf39df5e5bb9 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -534,6 +534,10 @@ int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+>  {
+>  	int ret;
+>  
+> +	/* Arch knows where to place */
+> +	if (kbuf->mem)
+> +		return 0;
+> +
+>  	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+>  
+>  	return ret == 1 ? 0 : -EADDRNOTAVAIL;
+
