@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD99C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D44FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48F620844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48F620844
+	by mail.kernel.org (Postfix) with ESMTP id 241D020844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241D020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406848AbeHATMP (ORCPT
+        id S2406856AbeHATMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51360 "EHLO
+        Wed, 1 Aug 2018 15:12:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405036AbeHATMO (ORCPT
+        with ESMTP id S2389883AbeHATMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:14 -0400
+        Wed, 1 Aug 2018 15:12:18 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 781B6CC9;
-        Wed,  1 Aug 2018 17:25:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85A0BD27;
+        Wed,  1 Aug 2018 17:25:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eric Auger <eric.auger@redhat.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 017/144] vfio: platform: Fix reset module leak in error path
-Date:   Wed,  1 Aug 2018 18:50:44 +0200
-Message-Id: <20180801164950.549549149@linuxfoundation.org>
+Subject: [PATCH 4.9 026/144] powerpc/64s: Fix compiler store ordering to SLB shadow area
+Date:   Wed,  1 Aug 2018 18:50:53 +0200
+Message-Id: <20180801164951.143983134@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -54,54 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 28a68387888997e8a7fa57940ea5d55f2e16b594 ]
+[ Upstream commit 926bc2f100c24d4842b3064b5af44ae964c1d81c ]
 
-If the IOMMU group setup fails, the reset module is not released.
+The stores to update the SLB shadow area must be made as they appear
+in the C code, so that the hypervisor does not see an entry with
+mismatched vsid and esid. Use WRITE_ONCE for this.
 
-Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+GCC has been observed to elide the first store to esid in the update,
+which means that if the hypervisor interrupts the guest after storing
+to vsid, it could see an entry with old esid and new vsid, which may
+possibly result in memory corruption.
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vfio/platform/vfio_platform_common.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/powerpc/mm/slb.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -696,18 +696,23 @@ int vfio_platform_probe_common(struct vf
- 	group = vfio_iommu_group_get(dev);
- 	if (!group) {
- 		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_reset;
- 	}
- 
- 	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
--	if (ret) {
--		vfio_iommu_group_put(group, dev);
--		return ret;
--	}
-+	if (ret)
-+		goto put_iommu;
- 
- 	mutex_init(&vdev->igate);
- 
- 	return 0;
-+
-+put_iommu:
-+	vfio_iommu_group_put(group, dev);
-+put_reset:
-+	vfio_platform_put_reset(vdev);
-+	return ret;
+--- a/arch/powerpc/mm/slb.c
++++ b/arch/powerpc/mm/slb.c
+@@ -68,14 +68,14 @@ static inline void slb_shadow_update(uns
+ 	 * updating it.  No write barriers are needed here, provided
+ 	 * we only update the current CPU's SLB shadow buffer.
+ 	 */
+-	p->save_area[index].esid = 0;
+-	p->save_area[index].vsid = cpu_to_be64(mk_vsid_data(ea, ssize, flags));
+-	p->save_area[index].esid = cpu_to_be64(mk_esid_data(ea, ssize, index));
++	WRITE_ONCE(p->save_area[index].esid, 0);
++	WRITE_ONCE(p->save_area[index].vsid, cpu_to_be64(mk_vsid_data(ea, ssize, flags)));
++	WRITE_ONCE(p->save_area[index].esid, cpu_to_be64(mk_esid_data(ea, ssize, index)));
  }
- EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
  
+ static inline void slb_shadow_clear(enum slb_index index)
+ {
+-	get_slb_shadow()->save_area[index].esid = 0;
++	WRITE_ONCE(get_slb_shadow()->save_area[index].esid, 0);
+ }
+ 
+ static inline void create_shadowed_slbe(unsigned long ea, int ssize,
 
 
