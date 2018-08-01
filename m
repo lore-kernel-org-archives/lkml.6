@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A4CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A607C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E632083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E632083D
+	by mail.kernel.org (Postfix) with ESMTP id 249012083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 249012083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387450AbeHATyF (ORCPT
+        id S2405823AbeHATIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:54:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49804 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405795AbeHATIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405725AbeHATIf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE7A013BD;
-        Wed,  1 Aug 2018 17:15:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4AD5116A;
+        Wed,  1 Aug 2018 17:06:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Sean Lanigan <sean@lano.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/246] ASoC: dpcm: fix BE dai not hw_free and shutdown
-Date:   Wed,  1 Aug 2018 18:49:45 +0200
-Message-Id: <20180801165015.300533333@linuxfoundation.org>
+Subject: [PATCH 4.17 206/336] brcmfmac: Add support for bcm43364 wireless chipset
+Date:   Wed,  1 Aug 2018 18:49:01 +0200
+Message-Id: <20180801165036.965994604@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,51 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+From: Sean Lanigan <sean@lano.id.au>
 
-[ Upstream commit 9c0ac70ad24d76b873c1551e27790c7f6a815d5c ]
+[ Upstream commit 9c4a121e82634aa000a702c98cd6f05b27d6e186 ]
 
-In case, one BE is used by two FE1/FE2
-FE1--->BE-->
-       |
-FE2----]
-when FE1/FE2 call dpcm_be_dai_hw_free() together
-the BE users will be 2 (> 1), hence cannot be hw_free
-the be state will leave at, ex. SND_SOC_DPCM_STATE_STOP
+Add support for the BCM43364 chipset via an SDIO interface, as used in
+e.g. the Murata 1FX module.
 
-later FE1/FE2 call dpcm_be_dai_shutdown(),
-will be skip due to wrong state.
-leaving the BE not being hw_free and shutdown.
+The BCM43364 uses the same firmware as the BCM43430 (which is already
+included), the only difference is the omission of Bluetooth.
 
-The BE dai will be hw_free later when calling
-dpcm_be_dai_shutdown() if still in invalid state.
+However, the SDIO_ID for the BCM43364 is 02D0:A9A4, giving it a MODALIAS
+of sdio:c00v02D0dA9A4, which doesn't get recognised and hence doesn't
+load the brcmfmac module. Adding the 'A9A4' ID in the appropriate place
+triggers the brcmfmac driver to load, and then correctly use the
+firmware file 'brcmfmac43430-sdio.bin'.
 
-Signed-off-by: KaiChieh Chuang <kaichieh.chuang@mediatek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sean Lanigan <sean@lano.id.au>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-pcm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c |    1 +
+ include/linux/mmc/sdio_ids.h                              |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1779,8 +1779,10 @@ int dpcm_be_dai_shutdown(struct snd_soc_
- 			continue;
- 
- 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE) &&
--		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN))
--			continue;
-+		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN)) {
-+			soc_pcm_hw_free(be_substream);
-+			be->dpcm[stream].state = SND_SOC_DPCM_STATE_HW_FREE;
-+		}
- 
- 		dev_dbg(be->dev, "ASoC: close BE %s\n",
- 			be->dai_link->name);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+@@ -963,6 +963,7 @@ static const struct sdio_device_id brcmf
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43340),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43341),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43362),
++ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43364),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4335_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_4339),
+ 	BRCMF_SDIO_DEVICE(SDIO_DEVICE_ID_BROADCOM_43430),
+--- a/include/linux/mmc/sdio_ids.h
++++ b/include/linux/mmc/sdio_ids.h
+@@ -35,6 +35,7 @@
+ #define SDIO_DEVICE_ID_BROADCOM_4335_4339	0x4335
+ #define SDIO_DEVICE_ID_BROADCOM_4339		0x4339
+ #define SDIO_DEVICE_ID_BROADCOM_43362		0xa962
++#define SDIO_DEVICE_ID_BROADCOM_43364		0xa9a4
+ #define SDIO_DEVICE_ID_BROADCOM_43430		0xa9a6
+ #define SDIO_DEVICE_ID_BROADCOM_4345		0x4345
+ #define SDIO_DEVICE_ID_BROADCOM_43455		0xa9bf
 
 
