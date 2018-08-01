@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6235C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370EEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6571D208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6571D208A4
+	by mail.kernel.org (Postfix) with ESMTP id E9224208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9224208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403797AbeHASU2 (ORCPT
+        id S2403823AbeHASUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:20:28 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2994 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403781AbeHASU1 (ORCPT
+        Wed, 1 Aug 2018 14:20:31 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4686 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403800AbeHASUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:20:27 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b61e0ee0006>; Wed, 01 Aug 2018 09:33:50 -0700
-Received: from HQMAIL108.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 01 Aug 2018 09:33:55 -0700
+        Wed, 1 Aug 2018 14:20:31 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b61e0e90007>; Wed, 01 Aug 2018 09:33:45 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 01 Aug 2018 09:33:58 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:33:55 -0700
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
- 2018 16:33:54 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Wed, 1 Aug 2018 16:33:54 +0000
+        by hqpgpgate102.nvidia.com on Wed, 01 Aug 2018 09:33:58 -0700
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:33:58 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Wed, 1 Aug 2018 16:33:57 +0000
 Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b61e0f00000>; Wed, 01 Aug 2018 09:33:55 -0700
+        id <B5b61e0f30001>; Wed, 01 Aug 2018 09:33:58 -0700
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH 24/40] mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
-Date:   Wed, 1 Aug 2018 19:32:14 +0300
-Message-ID: <1533141150-10511-25-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH 25/40] mmc: sdhci: Add a quirk to disable card clock during tuning
+Date:   Wed, 1 Aug 2018 19:32:15 +0300
+Message-ID: <1533141150-10511-26-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
 References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
@@ -64,55 +64,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new sdhci_ops struct for Tegra210 and Tegra186 which doesn't
-set the custom tuning callback used on previous SoC generations.
+Add a quirk to disable card clock when the tuning command is sent.
+
+This has to be done to prevent the SDHCI controller from hanging on
+Tegra210. Without the quirk enabled there appears to be around 10%
+chance that the tuning sequence will fail and time out due to the
+controller locking up.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci.c | 15 +++++++++++++++
+ drivers/mmc/host/sdhci.h |  2 ++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 4cef437..7e6f928 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -814,6 +814,18 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- 	.pdata = &sdhci_tegra124_pdata,
- };
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 04dc443..166b16f 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2175,6 +2175,7 @@ static void sdhci_send_tuning(struct sdhci_host *host, u32 opcode)
+ 	struct mmc_request mrq = {};
+ 	unsigned long flags;
+ 	u32 b = host->sdma_boundary;
++	u16 clk;
  
-+static const struct sdhci_ops tegra210_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
-+	.read_w     = tegra_sdhci_readw,
-+	.write_w    = tegra_sdhci_writew,
-+	.write_l    = tegra_sdhci_writel,
-+	.set_clock  = tegra_sdhci_set_clock,
-+	.set_bus_width = sdhci_set_bus_width,
-+	.reset      = tegra_sdhci_reset,
-+	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-+	.get_max_clock = tegra_sdhci_get_max_clock,
-+};
+ 	spin_lock_irqsave(&host->lock, flags);
+ 
+@@ -2183,6 +2184,13 @@ static void sdhci_send_tuning(struct sdhci_host *host, u32 opcode)
+ 	cmd.mrq = &mrq;
+ 
+ 	mrq.cmd = &cmd;
 +
- static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
- 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-@@ -822,7 +834,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
--	.ops  = &tegra114_sdhci_ops,
-+	.ops  = &tegra210_sdhci_ops,
- };
++	if (host->quirks2 & SDHCI_QUIRK2_TUNE_DIS_CARD_CLK) {
++		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++		clk &= ~SDHCI_CLOCK_CARD_EN;
++		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++	}
++
+ 	/*
+ 	 * In response to CMD19, the card sends 64 bytes of tuning
+ 	 * block to the Host Controller. So we set the block size
+@@ -2213,6 +2221,13 @@ static void sdhci_send_tuning(struct sdhci_host *host, u32 opcode)
+ 	mmiowb();
+ 	spin_unlock_irqrestore(&host->lock, flags);
  
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
-@@ -848,7 +860,7 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		    * But it is not supported as of now.
- 		    */
- 		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
--	.ops  = &tegra114_sdhci_ops,
-+	.ops  = &tegra210_sdhci_ops,
- };
++	if (host->quirks2 & SDHCI_QUIRK2_TUNE_DIS_CARD_CLK) {
++		udelay(1);
++		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++		clk |= SDHCI_CLOCK_CARD_EN;
++		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++	}
++
+ 	/* Wait for Buffer Read Ready interrupt */
+ 	wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
+ 			   msecs_to_jiffies(50));
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 0a99008..cc411b0 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -452,6 +452,8 @@ struct sdhci_host {
+ #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+ /* Don't clear the SDHCI_TRANSFER_MODE register on tuning commands */
+ #define SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG	(1<<18)
++/* Disable card clock during tuning */
++#define SDHCI_QUIRK2_TUNE_DIS_CARD_CLK			(1<<19)
  
- static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
 -- 
 2.7.4
 
