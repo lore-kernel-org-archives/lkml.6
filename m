@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D23C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C222C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC7062083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7062083D
+	by mail.kernel.org (Postfix) with ESMTP id 0E73220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E73220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407336AbeHATOl (ORCPT
+        id S2407350AbeHATOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:14:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52066 "EHLO
+        Wed, 1 Aug 2018 15:14:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389735AbeHATOl (ORCPT
+        with ESMTP id S2407104AbeHATOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:14:41 -0400
+        Wed, 1 Aug 2018 15:14:44 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2239CD4D;
-        Wed,  1 Aug 2018 17:27:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33A86D4D;
+        Wed,  1 Aug 2018 17:28:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xinming Hu <huxm@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 070/144] mwifiex: correct histogram data with appropriate index
-Date:   Wed,  1 Aug 2018 18:51:37 +0200
-Message-Id: <20180801164954.944640639@linuxfoundation.org>
+Subject: [PATCH 4.9 071/144] ima: based on policy verify firmware signatures (pre-allocated buffer)
+Date:   Wed,  1 Aug 2018 18:51:38 +0200
+Message-Id: <20180801164955.004671694@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,39 +55,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xinming Hu <huxm@marvell.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-[ Upstream commit 30bfce0b63fa68c14ae1613eb9d259fa18644074 ]
+[ Upstream commit fd90bc559bfba743ae8de87ff23b92a5e4668062 ]
 
-Correct snr/nr/rssi data index to avoid possible buffer underflow.
+Don't differentiate, for now, between kernel_read_file_id READING_FIRMWARE
+and READING_FIRMWARE_PREALLOC_BUFFER enumerations.
 
-Signed-off-by: Xinming Hu <huxm@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: a098ecd firmware: support loading into a pre-allocated buffer (since 4.8)
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/mwifiex/util.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ security/integrity/ima/ima_main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/marvell/mwifiex/util.c
-+++ b/drivers/net/wireless/marvell/mwifiex/util.c
-@@ -723,12 +723,14 @@ void mwifiex_hist_data_set(struct mwifie
- 			   s8 nflr)
- {
- 	struct mwifiex_histogram_data *phist_data = priv->hist_data;
-+	s8 nf   = -nflr;
-+	s8 rssi = snr - nflr;
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -379,6 +379,7 @@ int ima_read_file(struct file *file, enu
  
- 	atomic_inc(&phist_data->num_samples);
- 	atomic_inc(&phist_data->rx_rate[rx_rate]);
--	atomic_inc(&phist_data->snr[snr]);
--	atomic_inc(&phist_data->noise_flr[128 + nflr]);
--	atomic_inc(&phist_data->sig_str[nflr - snr]);
-+	atomic_inc(&phist_data->snr[snr + 128]);
-+	atomic_inc(&phist_data->noise_flr[nf + 128]);
-+	atomic_inc(&phist_data->sig_str[rssi + 128]);
- }
- 
- /* function to reset histogram data during init/reset */
+ static int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 
 
