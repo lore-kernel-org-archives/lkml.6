@@ -2,154 +2,76 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCD2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 662AC208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662AC208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A000208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:22:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A000208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389586AbeHAQGG (ORCPT
+        id S2389583AbeHAQH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:06:06 -0400
-Received: from fieldses.org ([173.255.197.46]:33880 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389547AbeHAQGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:06:06 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 2869A1EF5; Wed,  1 Aug 2018 10:20:07 -0400 (EDT)
-Date:   Wed, 1 Aug 2018 10:20:07 -0400
-From:   Bruce Fields <bfields@fieldses.org>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        trond.myklebust@hammerspace.com,
-        Anna Schumaker <anna.schumaker@netapp.com>, jlayton@kernel.org,
-        ebiggers@google.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH] sunrpc: remove redundant variables
- 'checksumlen','blocksize' and 'data'
-Message-ID: <20180801142007.GE16651@fieldses.org>
-References: <20180801062810.19752-1-yuehaibing@huawei.com>
- <9BA49886-5754-480E-BBB3-CC76E5A2C3B7@oracle.com>
+        Wed, 1 Aug 2018 12:07:57 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55340 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389499AbeHAQH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 12:07:57 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6082448129ADE;
+        Wed,  1 Aug 2018 22:21:54 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 1 Aug 2018 22:21:51 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <matthias.bgg@gmail.com>
+CC:     <kamalheib1@gmail.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drivers/staging/mt7621-eth: Use dma_zalloc_coherent to replace dma_alloc_coherent+memset
+Date:   Wed, 1 Aug 2018 22:10:15 +0800
+Message-ID: <1533132615-53808-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9BA49886-5754-480E-BBB3-CC76E5A2C3B7@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 10:15:29AM -0400, Chuck Lever wrote:
-> 
-> 
-> > On Aug 1, 2018, at 2:28 AM, YueHaibing <yuehaibing@huawei.com> wrote:
-> > 
-> > Variables 'checksumlen','blocksize' and 'data' are being assigned,
-> > but are never used,hence they are redundant and can be removed.
-> > 
-> > fix fllowing warning:
-> 
-> ^fllowing^following
-> 
-> For the svc_rdma.c part:
-> 
-> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+we prefer to use dma_zalloc_coherent rather than dam_alloc_coherent+memset
 
-Thanks.--b.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/staging/mt7621-eth/mtk_eth_soc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> 
-> 
-> > net/sunrpc/auth_gss/gss_krb5_wrap.c:443:7: warning: variable ‘blocksize’ set but not used [-Wunused-but-set-variable]
-> > net/sunrpc/auth_gss/gss_krb5_crypto.c:376:15: warning: variable ‘checksumlen’ set but not used [-Wunused-but-set-variable]
-> > net/sunrpc/xprtrdma/svc_rdma.c:97:9: warning: variable ‘data’ set but not used [-Wunused-but-set-variable]
-> > 
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> > net/sunrpc/auth_gss/gss_krb5_crypto.c | 2 --
-> > net/sunrpc/auth_gss/gss_krb5_wrap.c   | 2 --
-> > net/sunrpc/xprtrdma/svc_rdma.c        | 2 --
-> > 3 files changed, 6 deletions(-)
-> > 
-> > diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> > index 8654494..84a16fd 100644
-> > --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> > +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> > @@ -373,7 +373,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
-> > 	struct scatterlist sg[1];
-> > 	int err = -1;
-> > 	u8 *checksumdata;
-> > -	unsigned int checksumlen;
-> > 
-> > 	if (kctx->gk5e->keyed_cksum == 0) {
-> > 		dprintk("%s: expected keyed hash for %s\n",
-> > @@ -393,7 +392,6 @@ make_checksum_v2(struct krb5_ctx *kctx, char *header, int hdrlen,
-> > 	tfm = crypto_alloc_ahash(kctx->gk5e->cksum_name, 0, CRYPTO_ALG_ASYNC);
-> > 	if (IS_ERR(tfm))
-> > 		goto out_free_cksum;
-> > -	checksumlen = crypto_ahash_digestsize(tfm);
-> > 
-> > 	req = ahash_request_alloc(tfm, GFP_NOFS);
-> > 	if (!req)
-> > diff --git a/net/sunrpc/auth_gss/gss_krb5_wrap.c b/net/sunrpc/auth_gss/gss_krb5_wrap.c
-> > index a737c2d..9a1347f 100644
-> > --- a/net/sunrpc/auth_gss/gss_krb5_wrap.c
-> > +++ b/net/sunrpc/auth_gss/gss_krb5_wrap.c
-> > @@ -440,7 +440,6 @@ static u32
-> > gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
-> > 		     struct xdr_buf *buf, struct page **pages)
-> > {
-> > -	int		blocksize;
-> > 	u8		*ptr, *plainhdr;
-> > 	s32		now;
-> > 	u8		flags = 0x00;
-> > @@ -473,7 +472,6 @@ gss_wrap_kerberos_v2(struct krb5_ctx *kctx, u32 offset,
-> > 	*ptr++ = 0xff;
-> > 	be16ptr = (__be16 *)ptr;
-> > 
-> > -	blocksize = crypto_skcipher_blocksize(kctx->acceptor_enc);
-> > 	*be16ptr++ = 0;
-> > 	/* "inner" token header always uses 0 for RRC */
-> > 	*be16ptr++ = 0;
-> > diff --git a/net/sunrpc/xprtrdma/svc_rdma.c b/net/sunrpc/xprtrdma/svc_rdma.c
-> > index 357ba90..134bef6a 100644
-> > --- a/net/sunrpc/xprtrdma/svc_rdma.c
-> > +++ b/net/sunrpc/xprtrdma/svc_rdma.c
-> > @@ -94,7 +94,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
-> > 		atomic_set(stat, 0);
-> > 	else {
-> > 		char str_buf[32];
-> > -		char *data;
-> > 		int len = snprintf(str_buf, 32, "%d\n", atomic_read(stat));
-> > 		if (len >= 32)
-> > 			return -EFAULT;
-> > @@ -103,7 +102,6 @@ static int read_reset_stat(struct ctl_table *table, int write,
-> > 			*lenp = 0;
-> > 			return 0;
-> > 		}
-> > -		data = &str_buf[*ppos];
-> > 		len -= *ppos;
-> > 		if (len > *lenp)
-> > 			len = *lenp;
-> > -- 
-> > 2.7.0
-> > 
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> --
-> Chuck Lever
-> 
-> 
+diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+index f9b593ca..7135075 100644
+--- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
++++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
+@@ -1396,14 +1396,13 @@ static int mtk_qdma_tx_alloc_tx(struct mtk_eth *eth)
+ 	if (!ring->tx_buf)
+ 		goto no_tx_mem;
+ 
+-	ring->tx_dma = dma_alloc_coherent(eth->dev,
++	ring->tx_dma = dma_zalloc_coherent(eth->dev,
+ 					  ring->tx_ring_size * sz,
+ 					  &ring->tx_phys,
+ 					  GFP_ATOMIC | __GFP_ZERO);
+ 	if (!ring->tx_dma)
+ 		goto no_tx_mem;
+ 
+-	memset(ring->tx_dma, 0, ring->tx_ring_size * sz);
+ 	for (i = 0; i < ring->tx_ring_size; i++) {
+ 		int next = (i + 1) % ring->tx_ring_size;
+ 		u32 next_ptr = ring->tx_phys + next * sz;
+-- 
+1.7.12.4
+
