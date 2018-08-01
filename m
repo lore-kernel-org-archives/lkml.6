@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA453C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B84C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA12120840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA12120840
+	by mail.kernel.org (Postfix) with ESMTP id BF43F20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF43F20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387688AbeHAURB (ORCPT
+        id S2404226AbeHATDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:17:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404243AbeHATDg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404171AbeHATDe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A98E2F9C;
-        Wed,  1 Aug 2018 16:57:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE88D1007;
+        Wed,  1 Aug 2018 17:06:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        Mark Brown <broonie@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 096/336] ASoC: dpcm: fix BE dai not hw_free and shutdown
-Date:   Wed,  1 Aug 2018 18:47:11 +0200
-Message-Id: <20180801165032.844539739@linuxfoundation.org>
+Subject: [PATCH 4.17 256/336] qtnfmac: pearl: pcie: fix memory leak in qtnf_fw_work_handler
+Date:   Wed,  1 Aug 2018 18:49:51 +0200
+Message-Id: <20180801165038.849842344@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,47 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 9c0ac70ad24d76b873c1551e27790c7f6a815d5c ]
+[ Upstream commit 3763770044640caeb1101cdea40697cc0814403c ]
 
-In case, one BE is used by two FE1/FE2
-FE1--->BE-->
-       |
-FE2----]
-when FE1/FE2 call dpcm_be_dai_hw_free() together
-the BE users will be 2 (> 1), hence cannot be hw_free
-the be state will leave at, ex. SND_SOC_DPCM_STATE_STOP
+In case memory resources for fw were succesfully allocated, release
+them before jumping to fw_load_fail.
 
-later FE1/FE2 call dpcm_be_dai_shutdown(),
-will be skip due to wrong state.
-leaving the BE not being hw_free and shutdown.
-
-The BE dai will be hw_free later when calling
-dpcm_be_dai_shutdown() if still in invalid state.
-
-Signed-off-by: KaiChieh Chuang <kaichieh.chuang@mediatek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Addresses-Coverity-ID: 1466092 ("Resource leak")
+Fixes: c3b2f7ca4186 ("qtnfmac: implement asynchronous firmware loading")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-pcm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1965,8 +1965,10 @@ int dpcm_be_dai_shutdown(struct snd_soc_
- 			continue;
+--- a/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/pearl/pcie.c
+@@ -1185,6 +1185,10 @@ static void qtnf_fw_work_handler(struct
+ 	if (qtnf_poll_state(&priv->bda->bda_ep_state, QTN_EP_FW_LOADRDY,
+ 			    QTN_FW_DL_TIMEOUT_MS)) {
+ 		pr_err("card is not ready\n");
++
++		if (!flashboot)
++			release_firmware(fw);
++
+ 		goto fw_load_fail;
+ 	}
  
- 		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE) &&
--		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN))
--			continue;
-+		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN)) {
-+			soc_pcm_hw_free(be_substream);
-+			be->dpcm[stream].state = SND_SOC_DPCM_STATE_HW_FREE;
-+		}
- 
- 		dev_dbg(be->dev, "ASoC: close BE %s\n",
- 			be->dai_link->name);
 
 
