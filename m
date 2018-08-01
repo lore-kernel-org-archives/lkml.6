@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4D3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CA4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F62C20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F62C20844
+	by mail.kernel.org (Postfix) with ESMTP id 6796A20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6796A20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390268AbeHATHg (ORCPT
+        id S2390286AbeHATHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49228 "EHLO
+        Wed, 1 Aug 2018 15:07:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389677AbeHATHf (ORCPT
+        with ESMTP id S2389699AbeHATHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:35 -0400
+        Wed, 1 Aug 2018 15:07:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85430CE6;
-        Wed,  1 Aug 2018 17:20:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D5F1CC2;
+        Wed,  1 Aug 2018 17:20:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Balbir Singh <bsingharora@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 181/246] stop_machine: Use raw spinlocks
-Date:   Wed,  1 Aug 2018 18:51:31 +0200
-Message-Id: <20180801165020.387588667@linuxfoundation.org>
+Subject: [PATCH 4.14 182/246] delayacct: Use raw_spinlocks
+Date:   Wed,  1 Aug 2018 18:51:32 +0200
+Message-Id: <20180801165020.433413561@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,109 +53,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit de5b55c1d4e30740009864eb35ce4ed856aac01d ]
+[ Upstream commit 02acc80d19edb0d5684c997b2004ad19f9f5236e ]
 
-Use raw-locks in stop_machine() to allow locking in irq-off and
-preempt-disabled regions on -RT. This also documents the possible locking
-context in general.
+try_to_wake_up() might invoke delayacct_blkio_end() while holding the
+pi_lock (which is a raw_spinlock_t). delayacct_blkio_end() acquires
+task_delay_info.lock which is a spinlock_t. This causes a might sleep splat
+on -RT where non raw spinlocks are converted to 'sleeping' spinlocks.
 
-[bigeasy: update patch description.]
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+task_delay_info.lock is only held for a short amount of time so it's not a
+problem latency wise to make convert it to a raw spinlock.
+
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/20180423191635.6014-1-bigeasy@linutronix.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Link: https://lkml.kernel.org/r/20180423161024.6710-1-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/stop_machine.c |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ include/linux/delayacct.h |    2 +-
+ kernel/delayacct.c        |   17 +++++++++--------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -37,7 +37,7 @@ struct cpu_stop_done {
- struct cpu_stopper {
- 	struct task_struct	*thread;
+--- a/include/linux/delayacct.h
++++ b/include/linux/delayacct.h
+@@ -29,7 +29,7 @@
  
--	spinlock_t		lock;
-+	raw_spinlock_t		lock;
- 	bool			enabled;	/* is this stopper enabled? */
- 	struct list_head	works;		/* list of pending works */
+ #ifdef CONFIG_TASK_DELAY_ACCT
+ struct task_delay_info {
+-	spinlock_t	lock;
++	raw_spinlock_t	lock;
+ 	unsigned int	flags;	/* Private per-task flags */
  
-@@ -81,13 +81,13 @@ static bool cpu_stop_queue_work(unsigned
- 	unsigned long flags;
- 	bool enabled;
- 
--	spin_lock_irqsave(&stopper->lock, flags);
-+	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	enabled = stopper->enabled;
- 	if (enabled)
- 		__cpu_stop_queue_work(stopper, work, &wakeq);
- 	else if (work->done)
- 		cpu_stop_signal_done(work->done);
--	spin_unlock_irqrestore(&stopper->lock, flags);
-+	raw_spin_unlock_irqrestore(&stopper->lock, flags);
- 
- 	wake_up_q(&wakeq);
- 
-@@ -237,8 +237,8 @@ static int cpu_stop_queue_two_works(int
- 	DEFINE_WAKE_Q(wakeq);
- 	int err;
- retry:
--	spin_lock_irq(&stopper1->lock);
--	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
-+	raw_spin_lock_irq(&stopper1->lock);
-+	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
- 
- 	err = -ENOENT;
- 	if (!stopper1->enabled || !stopper2->enabled)
-@@ -261,8 +261,8 @@ retry:
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
- unlock:
--	spin_unlock(&stopper2->lock);
--	spin_unlock_irq(&stopper1->lock);
-+	raw_spin_unlock(&stopper2->lock);
-+	raw_spin_unlock_irq(&stopper1->lock);
- 
- 	if (unlikely(err == -EDEADLK)) {
- 		while (stop_cpus_in_progress)
-@@ -461,9 +461,9 @@ static int cpu_stop_should_run(unsigned
- 	unsigned long flags;
- 	int run;
- 
--	spin_lock_irqsave(&stopper->lock, flags);
-+	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	run = !list_empty(&stopper->works);
--	spin_unlock_irqrestore(&stopper->lock, flags);
-+	raw_spin_unlock_irqrestore(&stopper->lock, flags);
- 	return run;
+ 	/* For each stat XXX, add following, aligned appropriately
+--- a/kernel/delayacct.c
++++ b/kernel/delayacct.c
+@@ -44,23 +44,24 @@ void __delayacct_tsk_init(struct task_st
+ {
+ 	tsk->delays = kmem_cache_zalloc(delayacct_cache, GFP_KERNEL);
+ 	if (tsk->delays)
+-		spin_lock_init(&tsk->delays->lock);
++		raw_spin_lock_init(&tsk->delays->lock);
  }
  
-@@ -474,13 +474,13 @@ static void cpu_stopper_thread(unsigned
+ /*
+  * Finish delay accounting for a statistic using its timestamps (@start),
+  * accumalator (@total) and @count
+  */
+-static void delayacct_end(spinlock_t *lock, u64 *start, u64 *total, u32 *count)
++static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total,
++			  u32 *count)
+ {
+ 	s64 ns = ktime_get_ns() - *start;
+ 	unsigned long flags;
  
- repeat:
- 	work = NULL;
--	spin_lock_irq(&stopper->lock);
-+	raw_spin_lock_irq(&stopper->lock);
- 	if (!list_empty(&stopper->works)) {
- 		work = list_first_entry(&stopper->works,
- 					struct cpu_stop_work, list);
- 		list_del_init(&work->list);
+ 	if (ns > 0) {
+-		spin_lock_irqsave(lock, flags);
++		raw_spin_lock_irqsave(lock, flags);
+ 		*total += ns;
+ 		(*count)++;
+-		spin_unlock_irqrestore(lock, flags);
++		raw_spin_unlock_irqrestore(lock, flags);
  	}
--	spin_unlock_irq(&stopper->lock);
-+	raw_spin_unlock_irq(&stopper->lock);
+ }
  
- 	if (work) {
- 		cpu_stop_fn_t fn = work->fn;
-@@ -554,7 +554,7 @@ static int __init cpu_stop_init(void)
- 	for_each_possible_cpu(cpu) {
- 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
+@@ -127,7 +128,7 @@ int __delayacct_add_tsk(struct taskstats
  
--		spin_lock_init(&stopper->lock);
-+		raw_spin_lock_init(&stopper->lock);
- 		INIT_LIST_HEAD(&stopper->works);
- 	}
+ 	/* zero XXX_total, non-zero XXX_count implies XXX stat overflowed */
+ 
+-	spin_lock_irqsave(&tsk->delays->lock, flags);
++	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
+ 	tmp = d->blkio_delay_total + tsk->delays->blkio_delay;
+ 	d->blkio_delay_total = (tmp < d->blkio_delay_total) ? 0 : tmp;
+ 	tmp = d->swapin_delay_total + tsk->delays->swapin_delay;
+@@ -137,7 +138,7 @@ int __delayacct_add_tsk(struct taskstats
+ 	d->blkio_count += tsk->delays->blkio_count;
+ 	d->swapin_count += tsk->delays->swapin_count;
+ 	d->freepages_count += tsk->delays->freepages_count;
+-	spin_unlock_irqrestore(&tsk->delays->lock, flags);
++	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -147,10 +148,10 @@ __u64 __delayacct_blkio_ticks(struct tas
+ 	__u64 ret;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&tsk->delays->lock, flags);
++	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
+ 	ret = nsec_to_clock_t(tsk->delays->blkio_delay +
+ 				tsk->delays->swapin_delay);
+-	spin_unlock_irqrestore(&tsk->delays->lock, flags);
++	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
+ 	return ret;
+ }
  
 
 
