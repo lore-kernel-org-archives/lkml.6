@@ -2,79 +2,91 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08862C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27467C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3AC4208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3AC4208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CFC9E208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:45:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FPTqRPnD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC9E208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733235AbeHAH1F (ORCPT
+        id S1733243AbeHAH3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:27:05 -0400
-Received: from mga12.intel.com ([192.55.52.136]:33441 "EHLO mga12.intel.com"
+        Wed, 1 Aug 2018 03:29:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:40519 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733161AbeHAH1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:27:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2018 22:43:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,430,1526367600"; 
-   d="scan'208";a="61430322"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
-  by orsmga008.jf.intel.com with ESMTP; 31 Jul 2018 22:43:11 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
-        <peterz@infradead.org>, <mingo@kernel.org>,
-        <jiangshanlai@gmail.com>, <josh@joshtriplett.org>,
-        <rostedt@goodmis.org>, <mathieu.desnoyers@efficios.com>,
-        <joel@joelfernandes.org>, <len.brown@intel.com>,
-        <glider@google.com>, <peter@hurleysoftware.com>, <aik@ozlabs.ru>
-Subject: Re: [QUESTION] llist: Comment releasing 'must delete' restriction before traversing
-References: <1532998716-5037-1-git-send-email-byungchul.park@lge.com>
-        <20180731043042.GJ24813@linux.vnet.ibm.com>
-        <20180731092950.GB12241@X58A-UD3R>
-Date:   Wed, 01 Aug 2018 13:43:10 +0800
-In-Reply-To: <20180731092950.GB12241@X58A-UD3R> (Byungchul Park's message of
-        "Tue, 31 Jul 2018 18:29:50 +0900")
-Message-ID: <878t5qabgx.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1731897AbeHAH3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 03:29:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41gMj14z58z9s3Z;
+        Wed,  1 Aug 2018 15:45:25 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533102325;
+        bh=iyWg9r3yeitdV+Acq3lJXIJZOm4f/I8De2tAkDHvUT0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FPTqRPnDapVJCnZVzFNo37q3xR4lh0xu2mfX+ajMk1FSwI3auLcYmapkhdCa9YdQT
+         UimpNsb8kwL5TAYpMjyhKQwRhPHnBT5d0qMzkPphYKOktTPX7Yjd48skEWQ6hN0Bja
+         5SeWQJlHPbtzPR/i6VaOGH0DMEWaZYIafeDaszbQASpO9cOclaApXtD6P6pnCM2UFu
+         i1EE/w5gIdXgn9vqy/h24PZtne6dVXSRbTBax7v7mnCJlioUKx6X2NWuxXKSQHUfMd
+         TLcfsgcOVh7+8zoCh89dd82Hz3dhXuEo0ilr/MZVXr2zN7k7nfouS/uviz+StO5JDI
+         eNG1cTyGdQXDA==
+Date:   Wed, 1 Aug 2018 15:45:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: linux-next: please clean up the coresight tree
+Message-ID: <20180801154525.79da6372@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EbsZMwJGm/K3bCEM7ON2/IT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Byungchul Park <byungchul.park@lge.com> writes:
+--Sig_/EbsZMwJGm/K3bCEM7ON2/IT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I think rcu list also works well. But I decided to use llist because
-> llist is simpler and has one less pointer.
->
-> Just to be sure, let me explain my use case more:
->
->    1. Introduced a global list where single linked list is sufficient.
->    2. All operations I need is to add items and traverse the list.
->    3. Ensure the operations always happen within irq-disabled section.
->    4. I'm considering CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG properly.
->    5. The list can be accessed by every CPU concurrently.
->
+Hi Mathieu,
 
-Can you provide more information about where is your use case?  Is it a
-kernel driver?  Then it is better to submit the patch together with its
-user.
+All but the last 9 commits in the coresight tree have been merged into
+the char-misc tree as different commits (they were sent to Greg as a
+patch series rather than a merge request).  Can you please rebase your
+tree into commit ccff2dfaceac ("coresight: tpiu: Fix disabling timeouts")
+from the char-misc tree to avoid further conflicts (and duplication if
+you ask Greg to merge your tree rather than take a patch series).
 
-And I have the similar concern as Steven Rostedt.  That is, if you are
-the only user forever, it's not necessary to change the common code.
+--=20
+Cheers,
+Stephen Rothwell
 
-Best Regards,
-Huang, Ying
+--Sig_/EbsZMwJGm/K3bCEM7ON2/IT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlthSPUACgkQAVBC80lX
+0GzQiwf9HU/p9258yQpHmB2rfndVNekCGdBQHIuferV1rL18CPlXPCd8vAzGUcnX
+Dd3bXHdpFNnNVjticX2QA00C4nuyDTq/OLYXM/e86TdTmIHsbvKA/c91LTly4xg6
+z6stxD9q49iizvsIO1ZodSY6RDICFSE4pvEIVPjklOeBFCEs2XoJoJpXgnOgPF19
+P9X4QsKZz31zeLurcCzq5aKYy/8bRMM/ck0gmsWW8k6V1dXsJwLgKqzBASQY+hV6
+OYYr6EZ3ZxRBMdyv5jZoF/53JtJ29Gn0wgQI+ohdvxOXBlCH9C/2DUMlfT59V2CT
+Wdy7QdfunkyNV5UmEBuqnn7Mt7dyeg==
+=3+Cb
+-----END PGP SIGNATURE-----
+
+--Sig_/EbsZMwJGm/K3bCEM7ON2/IT--
