@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C25C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D863CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D4A2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D4A2083D
+	by mail.kernel.org (Postfix) with ESMTP id 8D6A62083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D6A62083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732861AbeHATyl (ORCPT
+        id S1732797AbeHATyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:54:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405771AbeHATIg (ORCPT
+        with ESMTP id S2405794AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65AD910A5;
-        Wed,  1 Aug 2018 17:02:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE2111086;
+        Wed,  1 Aug 2018 17:02:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 185/336] HID: i2c-hid: check if device is there before really probing
-Date:   Wed,  1 Aug 2018 18:48:40 +0200
-Message-Id: <20180801165036.178075948@linuxfoundation.org>
+Subject: [PATCH 4.17 173/336] net: hns3: Fix for fiber link up problem
+Date:   Wed,  1 Aug 2018 18:48:28 +0200
+Message-Id: <20180801165035.720872893@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,43 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dtor@chromium.org>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit b3a81b6c4fc6730ac49e20d789a93c0faabafc98 ]
+[ Upstream commit be8d8cdb8ebf3afd841c109dd035fd789a0c7d53 ]
 
-On many Chromebooks touch devices are multi-sourced; the components are
-electrically compatible and one can be freely swapped for another without
-changing the OS image or firmware.
+When hclge_ae_start is called, hdev->hw.mac.link may be set
+to one after up/down multi-times, which does not correspond to
+the link state of netdev when the netdev is up.
 
-To avoid bunch of scary messages when device is not actually present in the
-system let's try testing basic communication with it and if there is no
-response terminate probe early with -ENXIO.
+This fixes it by setting hdev->hw.mac.link to zero when
+hclge_ae_start is called.
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -1054,6 +1054,14 @@ static int i2c_hid_probe(struct i2c_clie
- 	pm_runtime_enable(&client->dev);
- 	device_enable_async_suspend(&client->dev);
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -3783,6 +3783,7 @@ static int hclge_ae_start(struct hnae3_h
+ 	hclge_cfg_mac_mode(hdev, true);
+ 	clear_bit(HCLGE_STATE_DOWN, &hdev->state);
+ 	mod_timer(&hdev->service_timer, jiffies + HZ);
++	hdev->hw.mac.link = 0;
  
-+	/* Make sure there is something at this address */
-+	ret = i2c_smbus_read_byte(client);
-+	if (ret < 0) {
-+		dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
-+		ret = -ENXIO;
-+		goto err_pm;
-+	}
-+
- 	ret = i2c_hid_fetch_hid_descriptor(ihid);
- 	if (ret < 0)
- 		goto err_pm;
+ 	/* reset tqp stats */
+ 	hclge_reset_tqp_stats(handle);
+@@ -3819,7 +3820,6 @@ static void hclge_ae_stop(struct hnae3_h
+ 
+ 	/* reset tqp stats */
+ 	hclge_reset_tqp_stats(handle);
+-	hclge_update_link_status(hdev);
+ }
+ 
+ static int hclge_get_mac_vlan_cmd_status(struct hclge_vport *vport,
 
 
