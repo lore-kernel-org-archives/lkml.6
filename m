@@ -5,303 +5,118 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72651C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C370C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4B320894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4B320894
+	by mail.kernel.org (Postfix) with ESMTP id 56253208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:27:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56253208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390122AbeHARNi (ORCPT
+        id S2390151AbeHARNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:13:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45328 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 13:13:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60026 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389770AbeHARNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:13:38 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S2389787AbeHARNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:13:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 778014021FC9;
-        Wed,  1 Aug 2018 15:27:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C056200AC23;
-        Wed,  1 Aug 2018 15:27:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 29/33] vfs: syscall: Add fsmount() to create a mount for a
- superblock [ver #11]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 01 Aug 2018 16:27:22 +0100
-Message-ID: <153313724215.13253.3649709803699353151.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        by mx1.redhat.com (Postfix) with ESMTPS id 9469987A76;
+        Wed,  1 Aug 2018 15:27:31 +0000 (UTC)
+Received: from [10.36.116.228] (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE30B1C5B6;
+        Wed,  1 Aug 2018 15:27:30 +0000 (UTC)
+Subject: Re: [PATCH] x86: kvm: Restrict X86_FEATURE_VMMCALL to x86_64 platform
+To:     Brian Gerst <brgerst@gmail.com>
+Cc:     whiteheadm@acm.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180730194059.5781-1-tedheadster@gmail.com>
+ <7c274466-6d93-d1ba-8721-4d69f847b40f@redhat.com>
+ <CAP8WD_aP5-bh=+NrJV8a3BCMbQK_PyJD88PGRuU8Qh_exFBy9w@mail.gmail.com>
+ <1d40dca9-c128-0390-98d2-5ca9c8791448@redhat.com>
+ <CAMzpN2jY7AC2Kmp7rr+cP2Xynx66fWnzEXs9_JhbNpsqix0_Vg@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <db964be1-623d-979a-3321-58a6d87a188e@redhat.com>
+Date:   Wed, 1 Aug 2018 17:27:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAMzpN2jY7AC2Kmp7rr+cP2Xynx66fWnzEXs9_JhbNpsqix0_Vg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 15:27:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 15:27:23 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 15:27:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a system call by which a filesystem opened with fsopen() and
-configured by a series of fsconfig() calls can have a detached mount object
-created for it.  This mount object can then be attached to the VFS mount
-hierarchy using move_mount() by passing the returned file descriptor as the
-from directory fd.
+On 01/08/2018 17:21, Brian Gerst wrote:
+> On Tue, Jul 31, 2018 at 9:00 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>
+>> On 31/07/2018 14:57, tedheadster wrote:
+>>>>
+>>>> This shouldn't be necessary; for systems that don't have virtualization
+>>>> extensions, the comment explains why setting X86_FEATURE_VMMCALL is safe.
+>>>>
+>>>> But it is also wrong, because you can run a 32-bit kernel as a guest on
+>>>> a 64-bit processor, and then it should set X86_FEATURE_VMMCALL because
+>>>> the processor has the vmmcall instruction and not Intel's vmcall.
+>>>>
+>>>
+>>> Paolo,
+>>>   I'm running this on a bare metal machine (no virtualization) with a
+>>> 32-bit AMD i486 class cpu. Should the feature be showing up in
+>>> /proc/cpuinfo under the 'flags' line? It does on my machine, and it
+>>> looked wrong to me.
+>>
+>> It's a bit silly, but it's not particularly wrong.
+> 
+> Why is there even a specific feature flag for VMMCALL?  Isn't
+> X86_FEATURE_SVM sufficient to differentiate which opcode to use?
 
-The system call looks like:
+No, X86_FEATURE_SVM is there in the host while X86_FEATURE_VMMCALL is
+used in the guest.
 
-	int mfd = fsmount(int fsfd, unsigned int flags,
-			  unsigned int ms_flags);
-
-where fsfd is the file descriptor returned by fsopen().  flags can be 0 or
-FSMOUNT_CLOEXEC.  ms_flags is a bitwise-OR of the following flags:
-
-	MS_RDONLY
-	MS_NOSUID
-	MS_NODEV
-	MS_NOEXEC
-	MS_NOATIME
-	MS_NODIRATIME
-	MS_RELATIME
-	MS_STRICTATIME
-
-	MS_UNBINDABLE
-	MS_PRIVATE
-	MS_SLAVE
-	MS_SHARED
-
-In the event that fsmount() fails, it may be possible to get an error
-message by calling read() on fsfd.  If no message is available, ENODATA
-will be reported.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
----
-
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/namespace.c                         |  141 +++++++++++++++++++++++++++++++-
- include/linux/syscalls.h               |    1 
- include/uapi/linux/fs.h                |    2 
- 5 files changed, 142 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index f9970310c126..c78b68256f8a 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -402,3 +402,4 @@
- 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
- 389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
- 390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
-+391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 4185d36e03bb..d44ead5d4368 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -347,6 +347,7 @@
- 336	common	move_mount		__x64_sys_move_mount
- 337	common	fsopen			__x64_sys_fsopen
- 338	common	fsconfig		__x64_sys_fsconfig
-+339	common	fsmount			__x64_sys_fsmount
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ea07066a2731..7e131b7fc098 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2503,7 +2503,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
- 
- 	attached = mnt_has_parent(old);
- 	/*
--	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
-+	 * We need to allow open_tree(OPEN_TREE_CLONE) or fsmount() followed by
- 	 * move_mount(), but mustn't allow "/" to be moved.
- 	 */
- 	if (old->mnt_ns && !attached)
-@@ -3348,9 +3348,142 @@ struct vfsmount *kern_mount(struct file_system_type *type)
- EXPORT_SYMBOL_GPL(kern_mount);
- 
- /*
-- * Move a mount from one place to another.
-- * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
-- * used to copy a mount subtree.
-+ * Create a kernel mount representation for a new, prepared superblock
-+ * (specified by fs_fd) and attach to an open_tree-like file descriptor.
-+ */
-+SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags, unsigned int, ms_flags)
-+{
-+	struct fs_context *fc;
-+	struct file *file;
-+	struct path newmount;
-+	struct fd f;
-+	unsigned int mnt_flags = 0;
-+	long ret;
-+
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
-+		return -EINVAL;
-+
-+	if (ms_flags & ~(MS_RDONLY | MS_NOSUID | MS_NODEV | MS_NOEXEC |
-+			 MS_NOATIME | MS_NODIRATIME | MS_RELATIME |
-+			 MS_STRICTATIME))
-+		return -EINVAL;
-+
-+	if (ms_flags & MS_RDONLY)
-+		mnt_flags |= MNT_READONLY;
-+	if (ms_flags & MS_NOSUID)
-+		mnt_flags |= MNT_NOSUID;
-+	if (ms_flags & MS_NODEV)
-+		mnt_flags |= MNT_NODEV;
-+	if (ms_flags & MS_NOEXEC)
-+		mnt_flags |= MNT_NOEXEC;
-+	if (ms_flags & MS_NODIRATIME)
-+		mnt_flags |= MNT_NODIRATIME;
-+
-+	if (ms_flags & MS_STRICTATIME) {
-+		if (ms_flags & MS_NOATIME)
-+			return -EINVAL;
-+	} else if (ms_flags & MS_NOATIME) {
-+		mnt_flags |= MNT_NOATIME;
-+	} else {
-+		mnt_flags |= MNT_RELATIME;
-+	}
-+
-+	f = fdget(fs_fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	ret = -EINVAL;
-+	if (f.file->f_op != &fscontext_fops)
-+		goto err_fsfd;
-+
-+	fc = f.file->private_data;
-+
-+	/* There must be a valid superblock or we can't mount it */
-+	ret = -EINVAL;
-+	if (!fc->root)
-+		goto err_fsfd;
-+
-+	ret = -EPERM;
-+	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
-+		pr_warn("VFS: Mount too revealing\n");
-+		goto err_fsfd;
-+	}
-+
-+	ret = mutex_lock_interruptible(&fc->uapi_mutex);
-+	if (ret < 0)
-+		goto err_fsfd;
-+
-+	ret = -EBUSY;
-+	if (fc->phase != FS_CONTEXT_AWAITING_MOUNT)
-+		goto err_unlock;
-+
-+	ret = -EPERM;
-+	if ((fc->sb_flags & SB_MANDLOCK) && !may_mandlock())
-+		goto err_unlock;
-+
-+	newmount.mnt = vfs_create_mount(fc, mnt_flags);
-+	if (IS_ERR(newmount.mnt)) {
-+		ret = PTR_ERR(newmount.mnt);
-+		goto err_unlock;
-+	}
-+	newmount.dentry = dget(fc->root);
-+
-+	/* We've done the mount bit - now move the file context into more or
-+	 * less the same state as if we'd done an fspick().  We don't want to
-+	 * do any memory allocation or anything like that at this point as we
-+	 * don't want to have to handle any errors incurred.
-+	 */
-+	if (fc->ops && fc->ops->free)
-+		fc->ops->free(fc);
-+	fc->need_free = false;
-+	fc->fs_private = NULL;
-+	fc->s_fs_info = NULL;
-+	fc->sb_flags = 0;
-+	fc->sloppy = false;
-+	fc->silent = false;
-+	security_fs_context_free(fc);
-+	fc->security = NULL;
-+	kfree(fc->subtype);
-+	fc->subtype = NULL;
-+	kfree(fc->source);
-+	fc->source = NULL;
-+
-+	fc->purpose = FS_CONTEXT_FOR_RECONFIGURE;
-+	fc->phase = FS_CONTEXT_AWAITING_RECONF;
-+
-+	/* Attach to an apparent O_PATH fd with a note that we need to unmount
-+	 * it, not just simply put it.
-+	 */
-+	file = dentry_open(&newmount, O_PATH, fc->cred);
-+	if (IS_ERR(file)) {
-+		ret = PTR_ERR(file);
-+		goto err_path;
-+	}
-+	file->f_mode |= FMODE_NEED_UNMOUNT;
-+
-+	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
-+	if (ret >= 0)
-+		fd_install(ret, file);
-+	else
-+		fput(file);
-+
-+err_path:
-+	path_put(&newmount);
-+err_unlock:
-+	mutex_unlock(&fc->uapi_mutex);
-+err_fsfd:
-+	fdput(f);
-+	return ret;
-+}
-+
-+/*
-+ * Move a mount from one place to another.  In combination with
-+ * fsopen()/fsmount() this is used to install a new mount and in combination
-+ * with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be used to copy
-+ * a mount subtree.
-  *
-  * Note the flags value is a combination of MOVE_MOUNT_* flags.
-  */
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 9628d14a7ede..65db661cc2da 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -907,6 +907,7 @@ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
- asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
- 			     const void __user *value, int aux);
-+asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index fecbae30a30d..10281d582e28 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -349,6 +349,8 @@ typedef int __bitwise __kernel_rwf_t;
-  */
- #define FSOPEN_CLOEXEC		0x00000001
- 
-+#define FSMOUNT_CLOEXEC		0x00000001
-+
- /*
-  * The type of fsconfig() call made.
-  */
-
+Paolo
