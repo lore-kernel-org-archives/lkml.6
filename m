@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0E1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72764C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2015E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2015E2083D
+	by mail.kernel.org (Postfix) with ESMTP id 2D3BC2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3BC2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbeHAUMJ (ORCPT
+        id S2387459AbeHAUMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:12:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404196AbeHATDi (ORCPT
+        with ESMTP id S2404338AbeHATDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88DB8FE0;
-        Wed,  1 Aug 2018 16:59:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 860FC11B0;
+        Wed,  1 Aug 2018 17:07:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 118/336] ath: Add regulatory mapping for ETSI8_WORLD
-Date:   Wed,  1 Aug 2018 18:47:33 +0200
-Message-Id: <20180801165033.665140622@linuxfoundation.org>
+Subject: [PATCH 4.17 269/336] soc: imx: gpcv2: Do not pass static memory as platform data
+Date:   Wed,  1 Aug 2018 18:50:04 +0200
+Message-Id: <20180801165039.336372110@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,47 +54,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-[ Upstream commit 45faf6e096da8bb80e1ddf8c08a26a9601d9469e ]
+[ Upstream commit 050f810e238f268670f14a8f8b793ba2dbf2e92f ]
 
-The regdomain code is used to select the correct the correct conformance
-test limits (CTL) for a country. If the regdomain code isn't available and
-it is still programmed in the EEPROM then it will cause an error and stop
-the initialization with:
+Platform device core assumes the ownership of dev.platform_data as
+well as that it is dynamically allocated and it will try to kfree it
+as a part of platform_device_release(). Change the code to use
+platform_device_add_data() n instead of a pointer to a static memory
+to avoid causing a BUG() when calling platform_device_put().
 
-  Invalid EEPROM contents
+The problem can be reproduced by artificially enabling the error path
+of platform_device_add() call (around line 357).
 
-The current CTL mappings for this regdomain code are:
+Note that this change also allows us to constify imx7_pgc_domains,
+since we no longer need to be able to modify it.
 
-* 2.4GHz: ETSI
-* 5GHz: ETSI
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd_common.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/imx/gpcv2.c |   22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -45,6 +45,7 @@ enum EnumRd {
- 	ETSI4_ETSIC = 0x38,
- 	ETSI5_WORLD = 0x39,
- 	ETSI6_WORLD = 0x34,
-+	ETSI8_WORLD = 0x3D,
- 	ETSI_RESERVED = 0x33,
+--- a/drivers/soc/imx/gpcv2.c
++++ b/drivers/soc/imx/gpcv2.c
+@@ -155,7 +155,7 @@ static int imx7_gpc_pu_pgc_sw_pdn_req(st
+ 	return imx7_gpc_pu_pgc_sw_pxx_req(genpd, false);
+ }
  
- 	MKK1_MKKA = 0x40,
-@@ -181,6 +182,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{ETSI4_WORLD, CTL_ETSI, CTL_ETSI},
- 	{ETSI5_WORLD, CTL_ETSI, CTL_ETSI},
- 	{ETSI6_WORLD, CTL_ETSI, CTL_ETSI},
-+	{ETSI8_WORLD, CTL_ETSI, CTL_ETSI},
+-static struct imx7_pgc_domain imx7_pgc_domains[] = {
++static const struct imx7_pgc_domain imx7_pgc_domains[] = {
+ 	[IMX7_POWER_DOMAIN_MIPI_PHY] = {
+ 		.genpd = {
+ 			.name      = "mipi-phy",
+@@ -321,11 +321,6 @@ static int imx_gpcv2_probe(struct platfo
+ 			continue;
+ 		}
  
- 	/* XXX: For ETSI3_ETSIA, Was NO_CTL meant for the 2 GHz band ? */
- 	{ETSI3_ETSIA, CTL_ETSI, CTL_ETSI},
+-		domain = &imx7_pgc_domains[domain_index];
+-		domain->regmap = regmap;
+-		domain->genpd.power_on  = imx7_gpc_pu_pgc_sw_pup_req;
+-		domain->genpd.power_off = imx7_gpc_pu_pgc_sw_pdn_req;
+-
+ 		pd_pdev = platform_device_alloc("imx7-pgc-domain",
+ 						domain_index);
+ 		if (!pd_pdev) {
+@@ -334,7 +329,20 @@ static int imx_gpcv2_probe(struct platfo
+ 			return -ENOMEM;
+ 		}
+ 
+-		pd_pdev->dev.platform_data = domain;
++		ret = platform_device_add_data(pd_pdev,
++					       &imx7_pgc_domains[domain_index],
++					       sizeof(imx7_pgc_domains[domain_index]));
++		if (ret) {
++			platform_device_put(pd_pdev);
++			of_node_put(np);
++			return ret;
++		}
++
++		domain = pd_pdev->dev.platform_data;
++		domain->regmap = regmap;
++		domain->genpd.power_on  = imx7_gpc_pu_pgc_sw_pup_req;
++		domain->genpd.power_off = imx7_gpc_pu_pgc_sw_pdn_req;
++
+ 		pd_pdev->dev.parent = dev;
+ 		pd_pdev->dev.of_node = np;
+ 
 
 
