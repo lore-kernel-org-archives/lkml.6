@@ -3,38 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535D8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BAEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16609208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16609208A5
+	by mail.kernel.org (Postfix) with ESMTP id A6CEB20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CEB20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406223AbeHATJA (ORCPT
+        id S2406236AbeHATJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50658 "EHLO
+        Wed, 1 Aug 2018 15:09:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50674 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405200AbeHATI7 (ORCPT
+        with ESMTP id S2406225AbeHATJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:59 -0400
+        Wed, 1 Aug 2018 15:09:03 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8124CCC3;
-        Wed,  1 Aug 2018 17:22:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74D5CCC3;
+        Wed,  1 Aug 2018 17:22:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kirill Marinushkin <k.marinushkin@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        alsa-devel@alsa-project.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 209/246] media: si470x: fix __be16 annotations
-Date:   Wed,  1 Aug 2018 18:51:59 +0200
-Message-Id: <20180801165021.714174068@linuxfoundation.org>
+Subject: [PATCH 4.14 210/246] ASoC: topology: Fix bclk and fsync inversion in set_link_hw_format()
+Date:   Wed,  1 Aug 2018 18:52:00 +0200
+Message-Id: <20180801165021.759713370@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,58 +57,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 
-[ Upstream commit 90db5c829692a0a7845e977e45719b4699216bd4 ]
+[ Upstream commit a941e2fab3207cb0d57dc4ec47b1b12c8ea78b84 ]
 
-The annotations there are wrong as warned:
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:107:35: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24: warning: incorrect type in assignment (different base types)
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    expected unsigned short [unsigned] [short] <noident>
-   drivers/media/radio/si470x/radio-si470x-i2c.c:129:24:    got restricted __be16 [usertype] <noident>
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
-   drivers/media/radio/si470x/radio-si470x-i2c.c:163:39: warning: cast to restricted __be16
+The values of bclk and fsync are inverted WRT the codec. But the existing
+solution already works for Broadwell, see the alsa-lib config:
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+`alsa-lib/src/conf/topology/broadwell/broadwell.conf`
+
+This commit provides the backwards-compatible solution to fix this misuse.
+
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Tested-by: Pan Xiuli <xiuli.pan@linux.intel.com>
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/radio/si470x/radio-si470x-i2c.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/uapi/sound/asoc.h |   16 ++++++++++++++--
+ sound/soc/soc-topology.c  |   12 +++++++-----
+ 2 files changed, 21 insertions(+), 7 deletions(-)
 
---- a/drivers/media/radio/si470x/radio-si470x-i2c.c
-+++ b/drivers/media/radio/si470x/radio-si470x-i2c.c
-@@ -92,7 +92,7 @@ MODULE_PARM_DESC(max_rds_errors, "RDS ma
-  */
- int si470x_get_register(struct si470x_device *radio, int regnr)
- {
--	u16 buf[READ_REG_NUM];
-+	__be16 buf[READ_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
-@@ -117,7 +117,7 @@ int si470x_get_register(struct si470x_de
- int si470x_set_register(struct si470x_device *radio, int regnr)
- {
- 	int i;
--	u16 buf[WRITE_REG_NUM];
-+	__be16 buf[WRITE_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
-@@ -147,7 +147,7 @@ int si470x_set_register(struct si470x_de
- static int si470x_get_all_registers(struct si470x_device *radio)
- {
- 	int i;
--	u16 buf[READ_REG_NUM];
-+	__be16 buf[READ_REG_NUM];
- 	struct i2c_msg msgs[1] = {
- 		{
- 			.addr = radio->client->addr,
+--- a/include/uapi/sound/asoc.h
++++ b/include/uapi/sound/asoc.h
+@@ -160,6 +160,18 @@
+ #define SND_SOC_TPLG_LNK_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+ #define SND_SOC_TPLG_LNK_FLGBIT_VOICE_WAKEUP            (1 << 3)
+ 
++/* DAI topology BCLK parameter
++ * For the backwards capability, by default codec is bclk master
++ */
++#define SND_SOC_TPLG_BCLK_CM         0 /* codec is bclk master */
++#define SND_SOC_TPLG_BCLK_CS         1 /* codec is bclk slave */
++
++/* DAI topology FSYNC parameter
++ * For the backwards capability, by default codec is fsync master
++ */
++#define SND_SOC_TPLG_FSYNC_CM         0 /* codec is fsync master */
++#define SND_SOC_TPLG_FSYNC_CS         1 /* codec is fsync slave */
++
+ /*
+  * Block Header.
+  * This header precedes all object and object arrays below.
+@@ -315,8 +327,8 @@ struct snd_soc_tplg_hw_config {
+ 	__u8 clock_gated;	/* 1 if clock can be gated to save power */
+ 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
+ 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
+-	__u8 bclk_master;	/* 1 for master of BCLK, 0 for slave */
+-	__u8 fsync_master;	/* 1 for master of FSYNC, 0 for slave */
++	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
++	__u8 fsync_master;	/* SND_SOC_TPLG_FSYNC_ value */
+ 	__u8 mclk_direction;    /* 0 for input, 1 for output */
+ 	__le16 reserved;	/* for 32bit alignment */
+ 	__le32 mclk_rate;	/* MCLK or SYSCLK freqency in Hz */
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2010,13 +2010,15 @@ static void set_link_hw_format(struct sn
+ 			link->dai_fmt |= SND_SOC_DAIFMT_IB_IF;
+ 
+ 		/* clock masters */
+-		bclk_master = hw_config->bclk_master;
+-		fsync_master = hw_config->fsync_master;
+-		if (!bclk_master && !fsync_master)
++		bclk_master = (hw_config->bclk_master ==
++			       SND_SOC_TPLG_BCLK_CM);
++		fsync_master = (hw_config->fsync_master ==
++				SND_SOC_TPLG_FSYNC_CM);
++		if (bclk_master && fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFM;
+-		else if (bclk_master && !fsync_master)
+-			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
+ 		else if (!bclk_master && fsync_master)
++			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
++		else if (bclk_master && !fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFS;
+ 		else
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFS;
 
 
