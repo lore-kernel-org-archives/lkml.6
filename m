@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A315C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7C9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395A62083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395A62083D
+	by mail.kernel.org (Postfix) with ESMTP id 965EB20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965EB20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407521AbeHATPs (ORCPT
+        id S2407534AbeHATPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52298 "EHLO
+        Wed, 1 Aug 2018 15:15:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52304 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407064AbeHATPr (ORCPT
+        with ESMTP id S2404772AbeHATPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:47 -0400
+        Wed, 1 Aug 2018 15:15:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 138D4D4D;
-        Wed,  1 Aug 2018 17:29:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 454ABD4A;
+        Wed,  1 Aug 2018 17:29:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 089/144] ARM: dts: sh73a0: Add missing interrupt-affinity to PMU node
-Date:   Wed,  1 Aug 2018 18:51:56 +0200
-Message-Id: <20180801164956.045030515@linuxfoundation.org>
+Subject: [PATCH 4.9 090/144] nvmem: properly handle returned value nvmem_reg_read
+Date:   Wed,  1 Aug 2018 18:51:57 +0200
+Message-Id: <20180801164956.100305152@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,52 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Mathieu Malaterre <malat@debian.org>
 
-[ Upstream commit 57a66497e1b7486609250a482f05935eae5035e9 ]
+[ Upstream commit 50808bfcc14b854775a9f1d0abe3dac2babcf5c3 ]
 
-The PMU node references two interrupts, but lacks the interrupt-affinity
-property, which is required in that case:
+Function nvmem_reg_read can return a non zero value indicating an error.
+This returned value must be read and error propagated to
+nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
 
-    hw perfevents: no interrupt-affinity property for /pmu, guessing.
+drivers/nvmem/core.c:1093:9: warning: variable 'rc' set but
+ not used [-Wunused-but-set-variable]
 
-Add the missing property to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/sh73a0.dtsi |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -22,7 +22,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1031,6 +1031,8 @@ static inline void *nvmem_cell_prepare_w
  
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0>;
-@@ -30,7 +30,7 @@
- 			power-domains = <&pd_a2sl>;
- 			next-level-cache = <&L2>;
- 		};
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
-@@ -89,6 +89,7 @@
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
- 	};
+ 		/* setup the first byte with lsb bits from nvmem */
+ 		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
++		if (rc)
++			goto err;
+ 		*b++ |= GENMASK(bit_offset - 1, 0) & v;
  
- 	cmt1: timer@e6138000 {
+ 		/* setup rest of the byte if any */
+@@ -1049,11 +1051,16 @@ static inline void *nvmem_cell_prepare_w
+ 		/* setup the last byte with msb bits from nvmem */
+ 		rc = nvmem_reg_read(nvmem,
+ 				    cell->offset + cell->bytes - 1, &v, 1);
++		if (rc)
++			goto err;
+ 		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
+ 
+ 	}
+ 
+ 	return buf;
++err:
++	kfree(buf);
++	return ERR_PTR(rc);
+ }
+ 
+ /**
 
 
