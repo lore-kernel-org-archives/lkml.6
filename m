@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB878C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34495C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 768432083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768432083D
+	by mail.kernel.org (Postfix) with ESMTP id D79BF20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79BF20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407781AbeHATRP (ORCPT
+        id S2436478AbeHATRT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52596 "EHLO
+        Wed, 1 Aug 2018 15:17:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52614 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407742AbeHATRM (ORCPT
+        with ESMTP id S2404830AbeHATRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:12 -0400
+        Wed, 1 Aug 2018 15:17:19 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3059FD54;
-        Wed,  1 Aug 2018 17:30:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 729BED57;
+        Wed,  1 Aug 2018 17:30:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 116/144] stop_machine: Use raw spinlocks
-Date:   Wed,  1 Aug 2018 18:52:23 +0200
-Message-Id: <20180801164957.561770682@linuxfoundation.org>
+Subject: [PATCH 4.9 118/144] memory: tegra: Apply interrupts mask per SoC
+Date:   Wed,  1 Aug 2018 18:52:25 +0200
+Message-Id: <20180801164957.665626678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,109 +51,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit de5b55c1d4e30740009864eb35ce4ed856aac01d ]
+[ Upstream commit 1c74d5c0de0c2cc29fef97a19251da2ad6f579bd ]
 
-Use raw-locks in stop_machine() to allow locking in irq-off and
-preempt-disabled regions on -RT. This also documents the possible locking
-context in general.
+Currently we are enabling handling of interrupts specific to Tegra124+
+which happen to overlap with previous generations. Let's specify
+interrupts mask per SoC generation for consistency and in a preparation
+of squashing of Tegra20 driver into the common one that will enable
+handling of GART faults which may be undesirable by newer generations.
 
-[bigeasy: update patch description.]
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/20180423191635.6014-1-bigeasy@linutronix.de
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/stop_machine.c |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/memory/tegra/mc.c       |   21 +++------------------
+ drivers/memory/tegra/mc.h       |    9 +++++++++
+ drivers/memory/tegra/tegra114.c |    2 ++
+ drivers/memory/tegra/tegra124.c |    6 ++++++
+ drivers/memory/tegra/tegra210.c |    3 +++
+ drivers/memory/tegra/tegra30.c  |    2 ++
+ include/soc/tegra/mc.h          |    2 ++
+ 7 files changed, 27 insertions(+), 18 deletions(-)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -36,7 +36,7 @@ struct cpu_stop_done {
- struct cpu_stopper {
- 	struct task_struct	*thread;
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -20,14 +20,6 @@
+ #include "mc.h"
  
--	spinlock_t		lock;
-+	raw_spinlock_t		lock;
- 	bool			enabled;	/* is this stopper enabled? */
- 	struct list_head	works;		/* list of pending works */
+ #define MC_INTSTATUS 0x000
+-#define  MC_INT_DECERR_MTS (1 << 16)
+-#define  MC_INT_SECERR_SEC (1 << 13)
+-#define  MC_INT_DECERR_VPR (1 << 12)
+-#define  MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
+-#define  MC_INT_INVALID_SMMU_PAGE (1 << 10)
+-#define  MC_INT_ARBITRATION_EMEM (1 << 9)
+-#define  MC_INT_SECURITY_VIOLATION (1 << 8)
+-#define  MC_INT_DECERR_EMEM (1 << 6)
  
-@@ -78,13 +78,13 @@ static bool cpu_stop_queue_work(unsigned
- 	unsigned long flags;
- 	bool enabled;
+ #define MC_INTMASK 0x004
  
--	spin_lock_irqsave(&stopper->lock, flags);
-+	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	enabled = stopper->enabled;
- 	if (enabled)
- 		__cpu_stop_queue_work(stopper, work);
- 	else if (work->done)
- 		cpu_stop_signal_done(work->done);
--	spin_unlock_irqrestore(&stopper->lock, flags);
-+	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+@@ -248,13 +240,11 @@ static const char *const error_names[8]
+ static irqreturn_t tegra_mc_irq(int irq, void *data)
+ {
+ 	struct tegra_mc *mc = data;
+-	unsigned long status, mask;
++	unsigned long status;
+ 	unsigned int bit;
  
- 	return enabled;
- }
-@@ -231,8 +231,8 @@ static int cpu_stop_queue_two_works(int
- 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
+ 	/* mask all interrupts to avoid flooding */
+-	mask = mc_readl(mc, MC_INTMASK);
+-	status = mc_readl(mc, MC_INTSTATUS) & mask;
+-
++	status = mc_readl(mc, MC_INTSTATUS) & mc->soc->intmask;
+ 	if (!status)
+ 		return IRQ_NONE;
+ 
+@@ -349,7 +339,6 @@ static int tegra_mc_probe(struct platfor
+ 	const struct of_device_id *match;
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+-	u32 value;
  	int err;
- retry:
--	spin_lock_irq(&stopper1->lock);
--	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
-+	raw_spin_lock_irq(&stopper1->lock);
-+	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
  
- 	err = -ENOENT;
- 	if (!stopper1->enabled || !stopper2->enabled)
-@@ -255,8 +255,8 @@ retry:
- 	__cpu_stop_queue_work(stopper1, work1);
- 	__cpu_stop_queue_work(stopper2, work2);
- unlock:
--	spin_unlock(&stopper2->lock);
--	spin_unlock_irq(&stopper1->lock);
-+	raw_spin_unlock(&stopper2->lock);
-+	raw_spin_unlock_irq(&stopper1->lock);
+ 	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
+@@ -417,11 +406,7 @@ static int tegra_mc_probe(struct platfor
  
- 	if (unlikely(err == -EDEADLK)) {
- 		while (stop_cpus_in_progress)
-@@ -448,9 +448,9 @@ static int cpu_stop_should_run(unsigned
- 	unsigned long flags;
- 	int run;
+ 	WARN(!mc->soc->client_id_mask, "Missing client ID mask for this SoC\n");
  
--	spin_lock_irqsave(&stopper->lock, flags);
-+	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	run = !list_empty(&stopper->works);
--	spin_unlock_irqrestore(&stopper->lock, flags);
-+	raw_spin_unlock_irqrestore(&stopper->lock, flags);
- 	return run;
+-	value = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
+-		MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
+-		MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM;
+-
+-	mc_writel(mc, value, MC_INTMASK);
++	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
+ 
+ 	return 0;
  }
+--- a/drivers/memory/tegra/mc.h
++++ b/drivers/memory/tegra/mc.h
+@@ -14,6 +14,15 @@
  
-@@ -461,13 +461,13 @@ static void cpu_stopper_thread(unsigned
+ #include <soc/tegra/mc.h>
  
- repeat:
- 	work = NULL;
--	spin_lock_irq(&stopper->lock);
-+	raw_spin_lock_irq(&stopper->lock);
- 	if (!list_empty(&stopper->works)) {
- 		work = list_first_entry(&stopper->works,
- 					struct cpu_stop_work, list);
- 		list_del_init(&work->list);
- 	}
--	spin_unlock_irq(&stopper->lock);
-+	raw_spin_unlock_irq(&stopper->lock);
++#define MC_INT_DECERR_MTS (1 << 16)
++#define MC_INT_SECERR_SEC (1 << 13)
++#define MC_INT_DECERR_VPR (1 << 12)
++#define MC_INT_INVALID_APB_ASID_UPDATE (1 << 11)
++#define MC_INT_INVALID_SMMU_PAGE (1 << 10)
++#define MC_INT_ARBITRATION_EMEM (1 << 9)
++#define MC_INT_SECURITY_VIOLATION (1 << 8)
++#define MC_INT_DECERR_EMEM (1 << 6)
++
+ static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+ {
+ 	return readl(mc->regs + offset);
+--- a/drivers/memory/tegra/tegra114.c
++++ b/drivers/memory/tegra/tegra114.c
+@@ -930,4 +930,6 @@ const struct tegra_mc_soc tegra114_mc_so
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra114_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+--- a/drivers/memory/tegra/tegra124.c
++++ b/drivers/memory/tegra/tegra124.c
+@@ -1020,6 +1020,9 @@ const struct tegra_mc_soc tegra124_mc_so
+ 	.smmu = &tegra124_smmu_soc,
+ 	.emem_regs = tegra124_mc_emem_regs,
+ 	.num_emem_regs = ARRAY_SIZE(tegra124_mc_emem_regs),
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_124_SOC */
  
- 	if (work) {
- 		cpu_stop_fn_t fn = work->fn;
-@@ -541,7 +541,7 @@ static int __init cpu_stop_init(void)
- 	for_each_possible_cpu(cpu) {
- 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
+@@ -1042,5 +1045,8 @@ const struct tegra_mc_soc tegra132_mc_so
+ 	.atom_size = 32,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra132_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+ #endif /* CONFIG_ARCH_TEGRA_132_SOC */
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -1077,4 +1077,7 @@ const struct tegra_mc_soc tegra210_mc_so
+ 	.atom_size = 64,
+ 	.client_id_mask = 0xff,
+ 	.smmu = &tegra210_smmu_soc,
++	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
++		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
++		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ };
+--- a/drivers/memory/tegra/tegra30.c
++++ b/drivers/memory/tegra/tegra30.c
+@@ -952,4 +952,6 @@ const struct tegra_mc_soc tegra30_mc_soc
+ 	.atom_size = 16,
+ 	.client_id_mask = 0x7f,
+ 	.smmu = &tegra30_smmu_soc,
++	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
++		   MC_INT_DECERR_EMEM,
+ };
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -99,6 +99,8 @@ struct tegra_mc_soc {
+ 	u8 client_id_mask;
  
--		spin_lock_init(&stopper->lock);
-+		raw_spin_lock_init(&stopper->lock);
- 		INIT_LIST_HEAD(&stopper->works);
- 	}
+ 	const struct tegra_smmu_soc *smmu;
++
++	u32 intmask;
+ };
  
+ struct tegra_mc {
 
 
