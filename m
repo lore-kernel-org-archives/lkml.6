@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B40C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43652C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5577120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5577120844
+	by mail.kernel.org (Postfix) with ESMTP id 0032520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0032520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbeHALsg (ORCPT
+        id S2389347AbeHALsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:48:36 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:55978 "EHLO
+        Wed, 1 Aug 2018 07:48:42 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:55930 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389213AbeHALsK (ORCPT
+        with ESMTP id S2389118AbeHALsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 07:48:10 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1fkny6-00010M-BQ; Wed, 01 Aug 2018 06:02:58 -0400
+        id 1fkny6-00010M-Hq; Wed, 01 Aug 2018 06:02:58 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, mingo@kernel.org, peterz@infradead.org,
         luto@kernel.org, x86@kernel.org, efault@gmx.de,
         dave.hansen@intel.com, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 03/11] smp,cpumask: introduce on_each_cpu_cond_mask
-Date:   Wed,  1 Aug 2018 06:02:47 -0400
-Message-Id: <20180801100255.4278-4-riel@surriel.com>
+Subject: [PATCH 09/11] mm,x86: shoot down lazy TLB references at exit_mmap time
+Date:   Wed,  1 Aug 2018 06:02:53 -0400
+Message-Id: <20180801100255.4278-10-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180801100255.4278-1-riel@surriel.com>
 References: <20180801100255.4278-1-riel@surriel.com>
@@ -44,114 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a variant of on_each_cpu_cond that iterates only over the
-CPUs in a cpumask, in order to avoid making callbacks for every single
-CPU in the system when we only need to test a subset.
+Shooting down lazy TLB references to an mm at exit_mmap time ensures
+that no users of the mm_struct will be left anywhere in the system,
+allowing it to be torn down and freed immediately.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 ---
- include/linux/smp.h |  4 ++++
- kernel/smp.c        | 17 +++++++++++++----
- kernel/up.c         | 14 +++++++++++---
- 3 files changed, 28 insertions(+), 7 deletions(-)
+ arch/x86/Kconfig                   |  1 +
+ arch/x86/include/asm/mmu_context.h |  1 +
+ arch/x86/include/asm/tlbflush.h    |  2 ++
+ arch/x86/mm/tlb.c                  | 15 +++++++++++++++
+ 4 files changed, 19 insertions(+)
 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index 9fb239e12b82..a56f08ff3097 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -53,6 +53,10 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		smp_call_func_t func, void *info, bool wait,
- 		gfp_t gfp_flags);
- 
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
-+		smp_call_func_t func, void *info, bool wait,
-+		gfp_t gfp_flags, const struct cpumask *mask);
-+
- int smp_call_function_single_async(int cpu, call_single_data_t *csd);
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 2dbc842dd385..f4cf1b0bb3b8 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -667,9 +667,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * You must not call this function with disabled interrupts or
-  * from a hardware interrupt handler or from a bottom half handler.
-  */
--void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
- 			smp_call_func_t func, void *info, bool wait,
--			gfp_t gfp_flags)
-+			gfp_t gfp_flags, const struct cpumask *mask)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6d4774f203d0..ecdfc6933203 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -75,6 +75,7 @@ config X86
+ 	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
++	select ARCH_NO_ACTIVE_MM_REFCOUNTING
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_NUMA_BALANCING	if X86_64
+ 	select ARCH_USE_BUILTIN_BSWAP
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index eeeb9289c764..529bf7bc5f75 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -238,6 +238,7 @@ static inline void arch_exit_mmap(struct mm_struct *mm)
  {
- 	cpumask_var_t cpus;
- 	int cpu, ret;
-@@ -678,7 +678,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 
- 	if (likely(zalloc_cpumask_var(&cpus, (gfp_flags|__GFP_NOWARN)))) {
- 		preempt_disable();
--		for_each_online_cpu(cpu)
-+		for_each_cpu(cpu, mask)
- 			if (cond_func(cpu, info))
- 				__cpumask_set_cpu(cpu, cpus);
- 		on_each_cpu_mask(cpus, func, info, wait);
-@@ -690,7 +690,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		 * just have to IPI them one by one.
- 		 */
- 		preempt_disable();
--		for_each_online_cpu(cpu)
-+		for_each_cpu(cpu, mask)
- 			if (cond_func(cpu, info)) {
- 				ret = smp_call_function_single(cpu, func,
- 								info, wait);
-@@ -699,6 +699,15 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		preempt_enable();
- 	}
+ 	paravirt_arch_exit_mmap(mm);
+ 	ldt_arch_exit_mmap(mm);
++	lazy_tlb_exit_mmap(mm);
  }
-+EXPORT_SYMBOL(on_each_cpu_cond_mask);
-+
-+void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+			smp_call_func_t func, void *info, bool wait,
-+			gfp_t gfp_flags)
-+{
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags,
-+				cpu_online_mask);
-+}
- EXPORT_SYMBOL(on_each_cpu_cond);
  
- static void do_nothing(void *unused)
-diff --git a/kernel/up.c b/kernel/up.c
-index 42c46bf3e0a5..ff536f9cc8a2 100644
---- a/kernel/up.c
-+++ b/kernel/up.c
-@@ -68,9 +68,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * Preemption is disabled here to make sure the cond_func is called under the
-  * same condtions in UP and SMP.
-  */
--void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
--		      smp_call_func_t func, void *info, bool wait,
--		      gfp_t gfp_flags)
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
-+			   smp_call_func_t func, void *info, bool wait,
-+			   gfp_t gfp_flags, const struct cpumask *mask)
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 511bf5fae8b8..3966a45367cd 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -538,6 +538,8 @@ extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
+ 	native_flush_tlb_others(mask, info)
+ #endif
+ 
++extern void lazy_tlb_exit_mmap(struct mm_struct *mm);
++
+ extern void tlb_flush_remove_tables(struct mm_struct *mm);
+ extern void tlb_flush_remove_tables_local(void *arg);
+ 
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index ea4ef5ceaba2..7b1add904396 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -713,6 +713,21 @@ void tlb_flush_remove_tables(struct mm_struct *mm)
+ 	put_cpu();
+ }
+ 
++/*
++ * At exit or execve time, all other threads of a process have disappeared,
++ * but other CPUs could still be referencing this mm in lazy TLB mode.
++ * Get rid of those references before releasing the mm.
++ */
++void lazy_tlb_exit_mmap(struct mm_struct *mm)
++{
++	int cpu = get_cpu();
++
++	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
++		on_each_cpu_mask(mm_cpumask(mm), leave_mm, NULL, 1);
++
++	put_cpu();
++}
++
+ static void do_flush_tlb_all(void *info)
  {
- 	unsigned long flags;
- 
-@@ -82,6 +82,14 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 	}
- 	preempt_enable();
- }
-+EXPORT_SYMBOL(on_each_cpu_cond_mask);
-+
-+void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+		      smp_call_func_t func, void *info, bool wait,
-+		      gfp_t gfp_flags)
-+{
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags, NULL);
-+}
- EXPORT_SYMBOL(on_each_cpu_cond);
- 
- int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
 -- 
 2.14.4
 
