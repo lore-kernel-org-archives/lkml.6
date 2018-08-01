@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF50BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20426C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9034A20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9034A20841
+	by mail.kernel.org (Postfix) with ESMTP id CC8992083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8992083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732695AbeHAUOc (ORCPT
+        id S1733138AbeHAUOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:14:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
+        Wed, 1 Aug 2018 16:14:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404272AbeHATDh (ORCPT
+        with ESMTP id S2404264AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FEC5126D;
-        Wed,  1 Aug 2018 17:09:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 984CF1073;
+        Wed,  1 Aug 2018 17:01:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.17 308/336] gpio: uniphier: set legitimate irq trigger type in .to_irq hook
-Date:   Wed,  1 Aug 2018 18:50:43 +0200
-Message-Id: <20180801165040.830290788@linuxfoundation.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 160/336] rtc: vr41xx: fix possible race condition
+Date:   Wed,  1 Aug 2018 18:48:15 +0200
+Message-Id: <20180801165035.239056093@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,51 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit bbfbf04c2d4ef673f657175456f6693c9225748a upstream.
+[ Upstream commit 9a99247c9c1d1c95c6e8153d013979aac6111c6e ]
 
-If a GPIO chip is a part of a hierarchy IRQ domain, there is no
-way to specify the trigger type when gpio(d)_to_irq() allocates an
-interrupt on-the-fly.
+The probe function is not allowed to fail after the RTC is registered
+because the following may happen:
 
-Currently, uniphier_gpio_to_irq() sets IRQ_TYPE_NONE, but it causes
-an error in the .alloc() hook of the parent domain.
-(drivers/irq/irq-uniphier-aidet.c)
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
 
-Even if we change irq-uniphier-aidet.c to accept the NONE type,
-GIC complains about it since commit 83a86fbb5b56 ("irqchip/gic:
-Loudly complain about the use of IRQ_TYPE_NONE").
-
-Instead, use IRQ_TYPE_LEVEL_HIGH as a temporary value when an irq
-is allocated.  irq_set_irq_type() will override it when the irq is
-really requested.
-
-Fixes: dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
-Reported-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpio-uniphier.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-vr41xx.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpio-uniphier.c
-+++ b/drivers/gpio/gpio-uniphier.c
-@@ -181,7 +181,11 @@ static int uniphier_gpio_to_irq(struct g
- 	fwspec.fwnode = of_node_to_fwnode(chip->parent->of_node);
- 	fwspec.param_count = 2;
- 	fwspec.param[0] = offset - UNIPHIER_GPIO_IRQ_OFFSET;
--	fwspec.param[1] = IRQ_TYPE_NONE;
-+	/*
-+	 * IRQ_TYPE_NONE is rejected by the parent irq domain. Set LEVEL_HIGH
-+	 * temporarily. Anyway, ->irq_set_type() will override it later.
-+	 */
-+	fwspec.param[1] = IRQ_TYPE_LEVEL_HIGH;
+--- a/drivers/rtc/rtc-vr41xx.c
++++ b/drivers/rtc/rtc-vr41xx.c
+@@ -292,13 +292,14 @@ static int rtc_probe(struct platform_dev
+ 		goto err_rtc1_iounmap;
+ 	}
  
- 	return irq_create_fwspec_mapping(&fwspec);
- }
+-	rtc = devm_rtc_device_register(&pdev->dev, rtc_name, &vr41xx_rtc_ops,
+-					THIS_MODULE);
++	rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc)) {
+ 		retval = PTR_ERR(rtc);
+ 		goto err_iounmap_all;
+ 	}
+ 
++	rtc->ops = &vr41xx_rtc_ops;
++
+ 	rtc->max_user_freq = MAX_PERIODIC_RATE;
+ 
+ 	spin_lock_irq(&rtc_lock);
+@@ -340,6 +341,10 @@ static int rtc_probe(struct platform_dev
+ 
+ 	dev_info(&pdev->dev, "Real Time Clock of NEC VR4100 series\n");
+ 
++	retval = rtc_register_device(rtc);
++	if (retval)
++		goto err_iounmap_all;
++
+ 	return 0;
+ 
+ err_iounmap_all:
 
 
