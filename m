@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27835C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9202C46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D477C20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D477C20841
+	by mail.kernel.org (Postfix) with ESMTP id 7844120840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7844120840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404282AbeHATDg (ORCPT
+        id S1732457AbeHAUPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:36 -0400
+        Wed, 1 Aug 2018 16:15:51 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:46094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404140AbeHATDe (ORCPT
+        with ESMTP id S2404245AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:34 -0400
+        Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68650FC5;
-        Wed,  1 Aug 2018 16:58:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A868512C1;
+        Wed,  1 Aug 2018 17:10:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Kirill Marinushkin <k.marinushkin@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        alsa-devel@alsa-project.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 108/336] btrfs: qgroup: Finish rescan when hit the last leaf of extent tree
-Date:   Wed,  1 Aug 2018 18:47:23 +0200
-Message-Id: <20180801165033.289878216@linuxfoundation.org>
+Subject: [PATCH 4.17 289/336] ASoC: topology: Fix bclk and fsync inversion in set_link_hw_format()
+Date:   Wed,  1 Aug 2018 18:50:24 +0200
+Message-Id: <20180801165040.083146846@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,110 +57,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
 
-[ Upstream commit ff3d27a048d926b3920ccdb75d98788c567cae0d ]
+[ Upstream commit a941e2fab3207cb0d57dc4ec47b1b12c8ea78b84 ]
 
-Under the following case, qgroup rescan can double account cowed tree
-blocks:
+The values of bclk and fsync are inverted WRT the codec. But the existing
+solution already works for Broadwell, see the alsa-lib config:
 
-In this case, extent tree only has one tree block.
+`alsa-lib/src/conf/topology/broadwell/broadwell.conf`
 
--
-| transid=5 last committed=4
-| btrfs_qgroup_rescan_worker()
-| |- btrfs_start_transaction()
-| |  transid = 5
-| |- qgroup_rescan_leaf()
-|    |- btrfs_search_slot_for_read() on extent tree
-|       Get the only extent tree block from commit root (transid = 4).
-|       Scan it, set qgroup_rescan_progress to the last
-|       EXTENT/META_ITEM + 1
-|       now qgroup_rescan_progress = A + 1.
-|
-| fs tree get CoWed, new tree block is at A + 16K
-| transid 5 get committed
--
-| transid=6 last committed=5
-| btrfs_qgroup_rescan_worker()
-| btrfs_qgroup_rescan_worker()
-| |- btrfs_start_transaction()
-| |  transid = 5
-| |- qgroup_rescan_leaf()
-|    |- btrfs_search_slot_for_read() on extent tree
-|       Get the only extent tree block from commit root (transid = 5).
-|       scan it using qgroup_rescan_progress (A + 1).
-|       found new tree block beyong A, and it's fs tree block,
-|       account it to increase qgroup numbers.
--
+This commit provides the backwards-compatible solution to fix this misuse.
 
-In above case, tree block A, and tree block A + 16K get accounted twice,
-while qgroup rescan should stop when it already reach the last leaf,
-other than continue using its qgroup_rescan_progress.
-
-Such case could happen by just looping btrfs/017 and with some
-possibility it can hit such double qgroup accounting problem.
-
-Fix it by checking the path to determine if we should finish qgroup
-rescan, other than relying on next loop to exit.
-
-Reported-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Tested-by: Pan Xiuli <xiuli.pan@linux.intel.com>
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/qgroup.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ include/uapi/sound/asoc.h |   16 ++++++++++++++--
+ sound/soc/soc-topology.c  |   12 +++++++-----
+ 2 files changed, 21 insertions(+), 7 deletions(-)
 
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -2580,6 +2580,21 @@ out:
- }
+--- a/include/uapi/sound/asoc.h
++++ b/include/uapi/sound/asoc.h
+@@ -160,6 +160,18 @@
+ #define SND_SOC_TPLG_LNK_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+ #define SND_SOC_TPLG_LNK_FLGBIT_VOICE_WAKEUP            (1 << 3)
  
- /*
-+ * Check if the leaf is the last leaf. Which means all node pointers
-+ * are at their last position.
++/* DAI topology BCLK parameter
++ * For the backwards capability, by default codec is bclk master
 + */
-+static bool is_last_leaf(struct btrfs_path *path)
-+{
-+	int i;
++#define SND_SOC_TPLG_BCLK_CM         0 /* codec is bclk master */
++#define SND_SOC_TPLG_BCLK_CS         1 /* codec is bclk slave */
 +
-+	for (i = 1; i < BTRFS_MAX_LEVEL && path->nodes[i]; i++) {
-+		if (path->slots[i] != btrfs_header_nritems(path->nodes[i]) - 1)
-+			return false;
-+	}
-+	return true;
-+}
++/* DAI topology FSYNC parameter
++ * For the backwards capability, by default codec is fsync master
++ */
++#define SND_SOC_TPLG_FSYNC_CM         0 /* codec is fsync master */
++#define SND_SOC_TPLG_FSYNC_CS         1 /* codec is fsync slave */
 +
-+/*
-  * returns < 0 on error, 0 when more leafs are to be scanned.
-  * returns 1 when done.
-  */
-@@ -2592,6 +2607,7 @@ qgroup_rescan_leaf(struct btrfs_fs_info
- 	struct ulist *roots = NULL;
- 	struct seq_list tree_mod_seq_elem = SEQ_LIST_INIT(tree_mod_seq_elem);
- 	u64 num_bytes;
-+	bool done;
- 	int slot;
- 	int ret;
+ /*
+  * Block Header.
+  * This header precedes all object and object arrays below.
+@@ -315,8 +327,8 @@ struct snd_soc_tplg_hw_config {
+ 	__u8 clock_gated;	/* 1 if clock can be gated to save power */
+ 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
+ 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
+-	__u8 bclk_master;	/* 1 for master of BCLK, 0 for slave */
+-	__u8 fsync_master;	/* 1 for master of FSYNC, 0 for slave */
++	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
++	__u8 fsync_master;	/* SND_SOC_TPLG_FSYNC_ value */
+ 	__u8 mclk_direction;    /* 0 for input, 1 for output */
+ 	__le16 reserved;	/* for 32bit alignment */
+ 	__le32 mclk_rate;	/* MCLK or SYSCLK freqency in Hz */
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2019,13 +2019,15 @@ static void set_link_hw_format(struct sn
+ 			link->dai_fmt |= SND_SOC_DAIFMT_IB_IF;
  
-@@ -2620,6 +2636,7 @@ qgroup_rescan_leaf(struct btrfs_fs_info
- 		mutex_unlock(&fs_info->qgroup_rescan_lock);
- 		return ret;
- 	}
-+	done = is_last_leaf(path);
- 
- 	btrfs_item_key_to_cpu(path->nodes[0], &found,
- 			      btrfs_header_nritems(path->nodes[0]) - 1);
-@@ -2666,6 +2683,8 @@ out:
- 	}
- 	btrfs_put_tree_mod_seq(fs_info, &tree_mod_seq_elem);
- 
-+	if (done && !ret)
-+		ret = 1;
- 	return ret;
- }
- 
+ 		/* clock masters */
+-		bclk_master = hw_config->bclk_master;
+-		fsync_master = hw_config->fsync_master;
+-		if (!bclk_master && !fsync_master)
++		bclk_master = (hw_config->bclk_master ==
++			       SND_SOC_TPLG_BCLK_CM);
++		fsync_master = (hw_config->fsync_master ==
++				SND_SOC_TPLG_FSYNC_CM);
++		if (bclk_master && fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFM;
+-		else if (bclk_master && !fsync_master)
+-			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
+ 		else if (!bclk_master && fsync_master)
++			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFM;
++		else if (bclk_master && !fsync_master)
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBM_CFS;
+ 		else
+ 			link->dai_fmt |= SND_SOC_DAIFMT_CBS_CFS;
 
 
