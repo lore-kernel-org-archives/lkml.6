@@ -3,32 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80708C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09203208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09203208A3
+	by mail.kernel.org (Postfix) with ESMTP id 46115208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:15:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46115208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732462AbeHAXDS (ORCPT
+        id S1732486AbeHAXD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:03:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56388 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 19:03:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45360 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726043AbeHAXDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:03:00 -0400
+        id S1731650AbeHAXC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 19:02:59 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C079140216E5;
-        Wed,  1 Aug 2018 21:15:18 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B73F7402243B;
+        Wed,  1 Aug 2018 21:15:17 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 71A992026D68;
-        Wed,  1 Aug 2018 21:15:18 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 667532026D68;
+        Wed,  1 Aug 2018 21:15:17 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
 Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
@@ -36,82 +37,70 @@ Cc:     stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/8] drm/nouveau: Respond to HPDs by probing one conn at a time
-Date:   Wed,  1 Aug 2018 17:14:56 -0400
-Message-Id: <20180801211459.7731-7-lyude@redhat.com>
+Subject: [PATCH v4 4/8] drm/nouveau: Fix deadlock with fb_helper using new helpers
+Date:   Wed,  1 Aug 2018 17:14:54 -0400
+Message-Id: <20180801211459.7731-5-lyude@redhat.com>
 In-Reply-To: <20180801211459.7731-1-lyude@redhat.com>
 References: <20180801211459.7731-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 01 Aug 2018 21:15:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 01 Aug 2018 21:15:18 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 01 Aug 2018 21:15:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 01 Aug 2018 21:15:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There isn't actually any reason we need to call drm_hpd_irq_event() from
-our hotplug handler, as we already know which connector the hotplug
-event was fired for. We're also going to need to avoid probing all
-connectors needlessly from hotplug handlers anyway so that we can track
-when nouveau_connector_detect() is being called from the context of it's
-connector's hotplug handler in order to fix the next deadlocking issue.
+This removes the potential of deadlocking with fb_helper entirely by
+preventing it from handling hotplugs during the runtime suspend process
+as early as possible in the suspend process. If it turns out this is not
+possible, due to some fb_helper action having been queued up before we
+got a time to disable hotplugging, we simply return -EBUSY so that the
+runtime PM core attempts autosuspending the device again once fb_helper
+isn't doing anything.
 
-This is (slightly) faster anyway!
+This fixes one of the issues causing deadlocks on runtime suspend/resume
+with nouveau on my P50.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: stable@vger.kernel.org
 Cc: Lukas Wunner <lukas@wunner.de>
 Cc: Karol Herbst <karolherbst@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 28 ++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_drm.c   | 8 ++++++++
+ drivers/gpu/drm/nouveau/nouveau_fbcon.c | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 010d6db14cba..9714e09f17db 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1114,6 +1114,32 @@ nouveau_connector_funcs_lvds = {
- 	.atomic_get_property = nouveau_conn_atomic_get_property,
- };
- 
-+static void
-+nouveau_connector_hotplug_probe(struct nouveau_connector *nv_conn)
-+{
-+	struct drm_modeset_acquire_ctx ctx;
-+	struct drm_connector *conn = &nv_conn->base;
-+	enum drm_connector_status old_status;
-+	struct drm_device *dev = conn->dev;
-+	bool changed;
-+
-+	mutex_lock(&dev->mode_config.mutex);
-+
-+	drm_modeset_acquire_init(&ctx, 0);
-+	drm_modeset_lock(&dev->mode_config.connection_mutex, &ctx);
-+
-+	old_status = conn->status;
-+	conn->status = drm_helper_probe_detect(conn, &ctx, true);
-+	changed = old_status != conn->status;
-+
-+	drm_modeset_drop_locks(&ctx);
-+	drm_modeset_acquire_fini(&ctx);
-+	mutex_unlock(&dev->mode_config.mutex);
-+
-+	if (changed)
-+		drm_kms_helper_hotplug_event(dev);
-+}
-+
- static int
- nouveau_connector_hotplug(struct nvif_notify *notify)
- {
-@@ -1138,7 +1164,7 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
- 				nv50_mstm_remove(nv_encoder->dp.mstm);
- 		}
- 
--		drm_helper_hpd_irq_event(connector->dev);
-+		nouveau_connector_hotplug_probe(nv_connector);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index ee2546db09c9..d47cb5b2af98 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -836,6 +836,14 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 		return -EBUSY;
  	}
  
- 	return NVIF_NOTIFY_KEEP;
++	/* There's no way for us to stop fb_helper work in reaction to
++	 * hotplugs later in the RPM process. First off: we don't want to,
++	 * fb_helper should be able to keep the GPU awake. Second off: it is
++	 * capable of grabbing basically any lock in existence.
++	 */
++	if (!drm_fb_helper_suspend_hotplug(drm_dev->fb_helper))
++		return -EBUSY;
++
+ 	nouveau_switcheroo_optimus_dsm();
+ 	ret = nouveau_do_suspend(drm_dev, true);
+ 	pci_save_state(pdev);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fbcon.c b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
+index 85c1f10bc2b6..963ba630fd04 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fbcon.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
+@@ -466,6 +466,7 @@ nouveau_fbcon_set_suspend_work(struct work_struct *work)
+ 	console_unlock();
+ 
+ 	if (state == FBINFO_STATE_RUNNING) {
++		drm_fb_helper_resume_hotplug(drm->dev->fb_helper);
+ 		pm_runtime_mark_last_busy(drm->dev->dev);
+ 		pm_runtime_put_sync(drm->dev->dev);
+ 	}
 -- 
 2.17.1
 
