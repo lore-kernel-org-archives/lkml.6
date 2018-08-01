@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908CBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3493CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E61820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E61820862
+	by mail.kernel.org (Postfix) with ESMTP id C5280208DB
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:59:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5280208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeHATqd (ORCPT
+        id S1732360AbeHATqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:46:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+        Wed, 1 Aug 2018 15:46:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405906AbeHATIj (ORCPT
+        with ESMTP id S2405876AbeHATIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03A1C1350;
-        Wed,  1 Aug 2018 17:12:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6C271167;
+        Wed,  1 Aug 2018 17:06:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Yandong <xuyandong2@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 030/246] vfio/type1: Fix task tracking for QEMU vCPU hotplug
-Date:   Wed,  1 Aug 2018 18:49:00 +0200
-Message-Id: <20180801165013.135820670@linuxfoundation.org>
+Subject: [PATCH 4.17 241/336] fasync: Fix deadlock between task-context and interrupt-context kill_fasync()
+Date:   Wed,  1 Aug 2018 18:49:36 +0200
+Message-Id: <20180801165038.282174163@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,245 +47,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit 48d8476b41eed63567dd2f0ad125c895b9ac648a ]
+[ Upstream commit 7a107c0f55a3b4c6f84a4323df5610360bde1684 ]
 
-MAP_DMA ioctls might be called from various threads within a process,
-for example when using QEMU, the vCPU threads are often generating
-these calls and we therefore take a reference to that vCPU task.
-However, QEMU also supports vCPU hotplug on some machines and the task
-that called MAP_DMA may have exited by the time UNMAP_DMA is called,
-resulting in the mm_struct pointer being NULL and thus a failure to
-match against the existing mapping.
+I observed the following deadlock between them:
 
-To resolve this, we instead take a reference to the thread
-group_leader, which has the same mm_struct and resource limits, but
-is less likely exit, at least in the QEMU case.  A difficulty here is
-guaranteeing that the capabilities of the group_leader match that of
-the calling thread, which we resolve by tracking CAP_IPC_LOCK at the
-time of calling rather than at an indeterminate time in the future.
-Potentially this also results in better efficiency as this is now
-recorded once per MAP_DMA ioctl.
+[task 1]                          [task 2]                         [task 3]
+kill_fasync()                     mm_update_next_owner()           copy_process()
+ spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        write_lock_irq(&tasklist_lock)
+  send_sigio()                    <IRQ>                             ...
+   read_lock(&fown->lock)         kill_fasync()                     ...
+    read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
 
-Reported-by: Xu Yandong <xuyandong2@huawei.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Task 1 can't acquire read locked tasklist_lock, since there is
+already task 3 expressed its wish to take the lock exclusive.
+Task 2 holds the read locked lock, but it can't take the spin lock.
+
+Also, there is possible another deadlock (which I haven't observed):
+
+[task 1]                            [task 2]
+f_getown()                          kill_fasync()
+ read_lock(&f_own->lock)             spin_lock_irqsave(&fa->fa_lock,)
+ <IRQ>                               send_sigio()                     write_lock_irq(&f_own->lock)
+  kill_fasync()                       read_lock(&fown->lock)
+   spin_lock_irqsave(&fa->fa_lock,)
+
+Actually, we do not need exclusive fa->fa_lock in kill_fasync_rcu(),
+as it guarantees fa->fa_file->f_owner integrity only. It may seem,
+that it used to give a task a small possibility to receive two sequential
+signals, if there are two parallel kill_fasync() callers, and task
+handles the first signal fastly, but the behaviour won't become
+different, since there is exclusive sighand lock in do_send_sig_info().
+
+The patch converts fa_lock into rwlock_t, and this fixes two above
+deadlocks, as rwlock is allowed to be taken from interrupt handler
+by qrwlock design.
+
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vfio/vfio_iommu_type1.c |   73 +++++++++++++++++++++++++---------------
- 1 file changed, 47 insertions(+), 26 deletions(-)
+ fs/fcntl.c         |   15 +++++++--------
+ include/linux/fs.h |    2 +-
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -83,6 +83,7 @@ struct vfio_dma {
- 	size_t			size;		/* Map size (bytes) */
- 	int			prot;		/* IOMMU_READ/WRITE */
- 	bool			iommu_mapped;
-+	bool			lock_cap;	/* capable(CAP_IPC_LOCK) */
- 	struct task_struct	*task;
- 	struct rb_root		pfn_list;	/* Ex-user pinned pfn list */
- };
-@@ -246,29 +247,25 @@ static int vfio_iova_put_vfio_pfn(struct
- 	return ret;
- }
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -871,9 +871,9 @@ int fasync_remove_entry(struct file *fil
+ 		if (fa->fa_file != filp)
+ 			continue;
  
--static int vfio_lock_acct(struct task_struct *task, long npage, bool *lock_cap)
-+static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+-		spin_lock_irq(&fa->fa_lock);
++		write_lock_irq(&fa->fa_lock);
+ 		fa->fa_file = NULL;
+-		spin_unlock_irq(&fa->fa_lock);
++		write_unlock_irq(&fa->fa_lock);
+ 
+ 		*fp = fa->fa_next;
+ 		call_rcu(&fa->fa_rcu, fasync_free_rcu);
+@@ -918,13 +918,13 @@ struct fasync_struct *fasync_insert_entr
+ 		if (fa->fa_file != filp)
+ 			continue;
+ 
+-		spin_lock_irq(&fa->fa_lock);
++		write_lock_irq(&fa->fa_lock);
+ 		fa->fa_fd = fd;
+-		spin_unlock_irq(&fa->fa_lock);
++		write_unlock_irq(&fa->fa_lock);
+ 		goto out;
+ 	}
+ 
+-	spin_lock_init(&new->fa_lock);
++	rwlock_init(&new->fa_lock);
+ 	new->magic = FASYNC_MAGIC;
+ 	new->fa_file = filp;
+ 	new->fa_fd = fd;
+@@ -987,14 +987,13 @@ static void kill_fasync_rcu(struct fasyn
  {
- 	struct mm_struct *mm;
--	bool is_current;
- 	int ret;
+ 	while (fa) {
+ 		struct fown_struct *fown;
+-		unsigned long flags;
  
- 	if (!npage)
- 		return 0;
- 
--	is_current = (task->mm == current->mm);
--
--	mm = is_current ? task->mm : get_task_mm(task);
-+	mm = async ? get_task_mm(dma->task) : dma->task->mm;
- 	if (!mm)
- 		return -ESRCH; /* process exited */
- 
- 	ret = down_write_killable(&mm->mmap_sem);
- 	if (!ret) {
- 		if (npage > 0) {
--			if (lock_cap ? !*lock_cap :
--			    !has_capability(task, CAP_IPC_LOCK)) {
-+			if (!dma->lock_cap) {
- 				unsigned long limit;
- 
--				limit = task_rlimit(task,
-+				limit = task_rlimit(dma->task,
- 						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 
- 				if (mm->locked_vm + npage > limit)
-@@ -282,7 +279,7 @@ static int vfio_lock_acct(struct task_st
- 		up_write(&mm->mmap_sem);
- 	}
- 
--	if (!is_current)
-+	if (async)
- 		mmput(mm);
- 
- 	return ret;
-@@ -391,7 +388,7 @@ static int vaddr_get_pfn(struct mm_struc
-  */
- static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 				  long npage, unsigned long *pfn_base,
--				  bool lock_cap, unsigned long limit)
-+				  unsigned long limit)
- {
- 	unsigned long pfn = 0;
- 	long ret, pinned = 0, lock_acct = 0;
-@@ -414,7 +411,7 @@ static long vfio_pin_pages_remote(struct
- 	 * pages are already counted against the user.
- 	 */
- 	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
-+		if (!dma->lock_cap && current->mm->locked_vm + 1 > limit) {
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
- 					limit << PAGE_SHIFT);
-@@ -440,7 +437,7 @@ static long vfio_pin_pages_remote(struct
+ 		if (fa->magic != FASYNC_MAGIC) {
+ 			printk(KERN_ERR "kill_fasync: bad magic number in "
+ 			       "fasync_struct!\n");
+ 			return;
  		}
- 
- 		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--			if (!lock_cap &&
-+			if (!dma->lock_cap &&
- 			    current->mm->locked_vm + lock_acct + 1 > limit) {
- 				put_pfn(pfn, dma->prot);
- 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
-@@ -453,7 +450,7 @@ static long vfio_pin_pages_remote(struct
- 	}
- 
- out:
--	ret = vfio_lock_acct(current, lock_acct, &lock_cap);
-+	ret = vfio_lock_acct(dma, lock_acct, false);
- 
- unpin_out:
- 	if (ret) {
-@@ -484,7 +481,7 @@ static long vfio_unpin_pages_remote(stru
- 	}
- 
- 	if (do_accounting)
--		vfio_lock_acct(dma->task, locked - unlocked, NULL);
-+		vfio_lock_acct(dma, locked - unlocked, true);
- 
- 	return unlocked;
- }
-@@ -501,7 +498,7 @@ static int vfio_pin_page_external(struct
- 
- 	ret = vaddr_get_pfn(mm, vaddr, dma->prot, pfn_base);
- 	if (!ret && do_accounting && !is_invalid_reserved_pfn(*pfn_base)) {
--		ret = vfio_lock_acct(dma->task, 1, NULL);
-+		ret = vfio_lock_acct(dma, 1, true);
- 		if (ret) {
- 			put_pfn(*pfn_base, dma->prot);
- 			if (ret == -ENOMEM)
-@@ -528,7 +525,7 @@ static int vfio_unpin_page_external(stru
- 	unlocked = vfio_iova_put_vfio_pfn(dma, vpfn);
- 
- 	if (do_accounting)
--		vfio_lock_acct(dma->task, -unlocked, NULL);
-+		vfio_lock_acct(dma, -unlocked, true);
- 
- 	return unlocked;
- }
-@@ -723,7 +720,7 @@ static long vfio_unmap_unpin(struct vfio
- 
- 	dma->iommu_mapped = false;
- 	if (do_accounting) {
--		vfio_lock_acct(dma->task, -unlocked, NULL);
-+		vfio_lock_acct(dma, -unlocked, true);
- 		return 0;
- 	}
- 	return unlocked;
-@@ -935,14 +932,12 @@ static int vfio_pin_map_dma(struct vfio_
- 	size_t size = map_size;
- 	long npage;
- 	unsigned long pfn, limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
--	bool lock_cap = capable(CAP_IPC_LOCK);
- 	int ret = 0;
- 
- 	while (size) {
- 		/* Pin a contiguous chunk of memory */
- 		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
--					      size >> PAGE_SHIFT, &pfn,
--					      lock_cap, limit);
-+					      size >> PAGE_SHIFT, &pfn, limit);
- 		if (npage <= 0) {
- 			WARN_ON(!npage);
- 			ret = (int)npage;
-@@ -1017,8 +1012,36 @@ static int vfio_dma_do_map(struct vfio_i
- 	dma->iova = iova;
- 	dma->vaddr = vaddr;
- 	dma->prot = prot;
--	get_task_struct(current);
--	dma->task = current;
-+
-+	/*
-+	 * We need to be able to both add to a task's locked memory and test
-+	 * against the locked memory limit and we need to be able to do both
-+	 * outside of this call path as pinning can be asynchronous via the
-+	 * external interfaces for mdev devices.  RLIMIT_MEMLOCK requires a
-+	 * task_struct and VM locked pages requires an mm_struct, however
-+	 * holding an indefinite mm reference is not recommended, therefore we
-+	 * only hold a reference to a task.  We could hold a reference to
-+	 * current, however QEMU uses this call path through vCPU threads,
-+	 * which can be killed resulting in a NULL mm and failure in the unmap
-+	 * path when called via a different thread.  Avoid this problem by
-+	 * using the group_leader as threads within the same group require
-+	 * both CLONE_THREAD and CLONE_VM and will therefore use the same
-+	 * mm_struct.
-+	 *
-+	 * Previously we also used the task for testing CAP_IPC_LOCK at the
-+	 * time of pinning and accounting, however has_capability() makes use
-+	 * of real_cred, a copy-on-write field, so we can't guarantee that it
-+	 * matches group_leader, or in fact that it might not change by the
-+	 * time it's evaluated.  If a process were to call MAP_DMA with
-+	 * CAP_IPC_LOCK but later drop it, it doesn't make sense that they
-+	 * possibly see different results for an iommu_mapped vfio_dma vs
-+	 * externally mapped.  Therefore track CAP_IPC_LOCK in vfio_dma at the
-+	 * time of calling MAP_DMA.
-+	 */
-+	get_task_struct(current->group_leader);
-+	dma->task = current->group_leader;
-+	dma->lock_cap = capable(CAP_IPC_LOCK);
-+
- 	dma->pfn_list = RB_ROOT;
- 
- 	/* Insert zero-sized and grow as we map chunks of it */
-@@ -1053,7 +1076,6 @@ static int vfio_iommu_replay(struct vfio
- 	struct vfio_domain *d;
- 	struct rb_node *n;
- 	unsigned long limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
--	bool lock_cap = capable(CAP_IPC_LOCK);
- 	int ret;
- 
- 	/* Arbitrarily pick the first domain in the list for lookups */
-@@ -1100,8 +1122,7 @@ static int vfio_iommu_replay(struct vfio
- 
- 				npage = vfio_pin_pages_remote(dma, vaddr,
- 							      n >> PAGE_SHIFT,
--							      &pfn, lock_cap,
--							      limit);
-+							      &pfn, limit);
- 				if (npage <= 0) {
- 					WARN_ON(!npage);
- 					ret = (int)npage;
-@@ -1378,7 +1399,7 @@ static void vfio_iommu_unmap_unpin_reacc
- 			if (!is_invalid_reserved_pfn(vpfn->pfn))
- 				locked++;
+-		spin_lock_irqsave(&fa->fa_lock, flags);
++		read_lock(&fa->fa_lock);
+ 		if (fa->fa_file) {
+ 			fown = &fa->fa_file->f_owner;
+ 			/* Don't send SIGURG to processes which have not set a
+@@ -1003,7 +1002,7 @@ static void kill_fasync_rcu(struct fasyn
+ 			if (!(sig == SIGURG && fown->signum == 0))
+ 				send_sigio(fown, fa->fa_fd, band);
  		}
--		vfio_lock_acct(dma->task, locked - unlocked, NULL);
-+		vfio_lock_acct(dma, locked - unlocked, true);
+-		spin_unlock_irqrestore(&fa->fa_lock, flags);
++		read_unlock(&fa->fa_lock);
+ 		fa = rcu_dereference(fa->fa_next);
  	}
  }
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1250,7 +1250,7 @@ static inline int locks_lock_file_wait(s
+ }
  
+ struct fasync_struct {
+-	spinlock_t		fa_lock;
++	rwlock_t		fa_lock;
+ 	int			magic;
+ 	int			fa_fd;
+ 	struct fasync_struct	*fa_next; /* singly linked list */
 
 
