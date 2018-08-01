@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653CAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF33C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EDF20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EDF20844
+	by mail.kernel.org (Postfix) with ESMTP id 57B1820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B1820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732421AbeHATrk (ORCPT
+        id S1732074AbeHATrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:47:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49926 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405883AbeHATIi (ORCPT
+        with ESMTP id S2405886AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 987AB1117;
-        Wed,  1 Aug 2018 17:05:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 966A31359;
+        Wed,  1 Aug 2018 17:13:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Connor McAdams <conmanx360@gmail.com>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 234/336] ALSA: hda/ca0132: fix build failure when a local macro is defined
-Date:   Wed,  1 Aug 2018 18:49:29 +0200
-Message-Id: <20180801165038.023241250@linuxfoundation.org>
+Subject: [PATCH 4.14 035/246] rtc: ensure rtc_set_alarm fails when alarms are not supported
+Date:   Wed,  1 Aug 2018 18:49:05 +0200
+Message-Id: <20180801165013.358210187@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,55 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 8e142e9e628975b0dddd05cf1b095331dff6e2de ]
+[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
 
-DECLARE_TLV_DB_SCALE (alias of SNDRV_CTL_TLVD_DECLARE_DB_SCALE) is used but
-tlv.h is not included. This causes build failure when local macro is
-defined by comment-out.
+When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
+rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
+subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
+case.
 
-This commit fixes the bug. At the same time, the alias macro is replaced
-with a destination macro added at a commit 46e860f76804 ("ALSA: rename
-TLV-related macros so that they're friendly to user applications")
+Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
+programs think the alarms are working for a particular RTC when they are
+not.
 
-Reported-by: Connor McAdams <conmanx360@gmail.com>
-Fixes: 44f0c9782cc6 ('ALSA: hda/ca0132: Add tuning controls')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/pci/hda/patch_ca0132.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/rtc/interface.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -39,6 +39,10 @@
- /* Enable this to see controls for tuning purpose. */
- /*#define ENABLE_TUNING_CONTROLS*/
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -359,6 +359,11 @@ int rtc_set_alarm(struct rtc_device *rtc
+ {
+ 	int err;
  
-+#ifdef ENABLE_TUNING_CONTROLS
-+#include <sound/tlv.h>
-+#endif
++	if (!rtc->ops)
++		return -ENODEV;
++	else if (!rtc->ops->set_alarm)
++		return -EINVAL;
 +
- #define FLOAT_ZERO	0x00000000
- #define FLOAT_ONE	0x3f800000
- #define FLOAT_TWO	0x40000000
-@@ -3068,8 +3072,8 @@ static int equalizer_ctl_put(struct snd_
- 	return 1;
- }
- 
--static const DECLARE_TLV_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
--static const DECLARE_TLV_DB_SCALE(eq_db_scale, -2400, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(eq_db_scale, -2400, 100, 0);
- 
- static int add_tuning_control(struct hda_codec *codec,
- 				hda_nid_t pnid, hda_nid_t nid,
+ 	err = rtc_valid_tm(&alarm->time);
+ 	if (err != 0)
+ 		return err;
 
 
