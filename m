@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84610C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05A320862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05A320862
+	by mail.kernel.org (Postfix) with ESMTP id 3226B2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3226B2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407458AbeHATPW (ORCPT
+        id S2407470AbeHATP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52204 "EHLO
+        Wed, 1 Aug 2018 15:15:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52210 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390517AbeHATPW (ORCPT
+        with ESMTP id S2404699AbeHATPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:22 -0400
+        Wed, 1 Aug 2018 15:15:25 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 956C3D2F;
-        Wed,  1 Aug 2018 17:28:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D571C3C;
+        Wed,  1 Aug 2018 17:28:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Terry Junge <terry.junge@plantronics.com>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 082/144] arm64: cmpwait: Clear event register before arming exclusive monitor
-Date:   Wed,  1 Aug 2018 18:51:49 +0200
-Message-Id: <20180801164955.659304901@linuxfoundation.org>
+Subject: [PATCH 4.9 083/144] HID: hid-plantronics: Re-resend Update to map button for PTT products
+Date:   Wed,  1 Aug 2018 18:51:50 +0200
+Message-Id: <20180801164955.706498580@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,37 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Terry Junge <terry.junge@plantronics.com>
 
-[ Upstream commit 1cfc63b5ae60fe7e01773f38132f98d8b13a99a0 ]
+[ Upstream commit 37e376df5f4993677c33968a0c19b0c5acbf1108 ]
 
-When waiting for a cacheline to change state in cmpwait, we may immediately
-wake-up the first time around the outer loop if the event register was
-already set (for example, because of the event stream).
+Add a mapping for Push-To-Talk joystick trigger button.
 
-Avoid these spurious wakeups by explicitly clearing the event register
-before loading the cacheline and setting the exclusive monitor.
+Tested on ChromeBox/ChromeBook with various Plantronics devices.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Terry Junge <terry.junge@plantronics.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cmpxchg.h |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hid/hid-plantronics.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/include/asm/cmpxchg.h
-+++ b/arch/arm64/include/asm/cmpxchg.h
-@@ -229,7 +229,9 @@ static inline void __cmpwait_case_##name
- 	unsigned long tmp;						\
- 									\
- 	asm volatile(							\
--	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"		\
-+	"	sevl\n"							\
-+	"	wfe\n"							\
-+	"	ldxr" #sz "\t%" #w "[tmp], %[v]\n"			\
- 	"	eor	%" #w "[tmp], %" #w "[tmp], %" #w "[val]\n"	\
- 	"	cbnz	%" #w "[tmp], 1f\n"				\
- 	"	wfe\n"							\
+--- a/drivers/hid/hid-plantronics.c
++++ b/drivers/hid/hid-plantronics.c
+@@ -2,7 +2,7 @@
+  *  Plantronics USB HID Driver
+  *
+  *  Copyright (c) 2014 JD Cole <jd.cole@plantronics.com>
+- *  Copyright (c) 2015 Terry Junge <terry.junge@plantronics.com>
++ *  Copyright (c) 2015-2018 Terry Junge <terry.junge@plantronics.com>
+  */
+ 
+ /*
+@@ -48,6 +48,10 @@ static int plantronics_input_mapping(str
+ 	unsigned short mapped_key;
+ 	unsigned long plt_type = (unsigned long)hid_get_drvdata(hdev);
+ 
++	/* special case for PTT products */
++	if (field->application == HID_GD_JOYSTICK)
++		goto defaulted;
++
+ 	/* handle volume up/down mapping */
+ 	/* non-standard types or multi-HID interfaces - plt_type is PID */
+ 	if (!(plt_type & HID_USAGE_PAGE)) {
 
 
