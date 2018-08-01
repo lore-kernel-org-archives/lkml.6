@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7A1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FA4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA9F208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:53:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA9F208A6
+	by mail.kernel.org (Postfix) with ESMTP id 8F24120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:54:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F24120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388122AbeHAVkp (ORCPT
+        id S2387764AbeHAVlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:40:45 -0400
-Received: from gateway36.websitewelcome.com ([50.116.127.2]:18569 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387653AbeHAVko (ORCPT
+        Wed, 1 Aug 2018 17:41:51 -0400
+Received: from gateway30.websitewelcome.com ([192.185.180.41]:44428 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387415AbeHAVlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:40:44 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id C2158400E5615
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 13:55:49 -0500 (CDT)
+        Wed, 1 Aug 2018 17:41:51 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id CB9FD1A733
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 14:54:27 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id kxBRfiZhT79N3kxBRf2C4y; Wed, 01 Aug 2018 14:53:21 -0500
+        id kxC8fu33aBcCXkxCMfVh5b; Wed, 01 Aug 2018 14:54:27 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=37664 helo=embeddedor)
+Received: from [189.250.61.218] (port=37666 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fkxBQ-004D1z-Il; Wed, 01 Aug 2018 14:53:20 -0500
-Date:   Wed, 1 Aug 2018 14:53:19 -0500
+        id 1fkxC8-004DPD-87; Wed, 01 Aug 2018 14:54:04 -0500
+Date:   Wed, 1 Aug 2018 14:54:03 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, patches@opensource.cirrus.com
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 07/11] ASoC: wm8996: Mark expected switch fall-through
-Message-ID: <845b1d02cd1f37097d485988c60bc3958faec3e3.1533151956.git.gustavo@embeddedor.com>
+Subject: [PATCH 08/11] ASoC: wm8962: Mark expected switch fall-through
+Message-ID: <fe496d04e294d9dd6b5839bbba49c706e58e4cb7.1533151956.git.gustavo@embeddedor.com>
 References: <cover.1533151956.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.61.218
 X-Source-L: No
-X-Exim-ID: 1fkxBQ-004D1z-Il
+X-Exim-ID: 1fkxC8-004DPD-87
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.61.218]:37664
+X-Source-Sender: (embeddedor) [189.250.61.218]:37666
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 58
+X-Email-Count: 65
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +74,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 146354 ("Missing break in switch")
+Addresses-Coverity-ID: 115043 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/soc/codecs/wm8996.c | 1 +
+ sound/soc/codecs/wm8962.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/wm8996.c b/sound/soc/codecs/wm8996.c
-index d9d2060..78a4082 100644
---- a/sound/soc/codecs/wm8996.c
-+++ b/sound/soc/codecs/wm8996.c
-@@ -1858,6 +1858,7 @@ static int wm8996_set_sysclk(struct snd_soc_dai *dai,
- 	case 24576000:
- 		ratediv = WM8996_SYSCLK_DIV;
- 		wm8996->sysclk /= 2;
+diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
+index a11e9d6..efd8910 100644
+--- a/sound/soc/codecs/wm8962.c
++++ b/sound/soc/codecs/wm8962.c
+@@ -2649,6 +2649,7 @@ static int wm8962_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_DSP_B:
+ 		aif0 |= WM8962_LRCLK_INV | 3;
 +		/* fall through */
- 	case 11289600:
- 	case 12288000:
- 		snd_soc_component_update_bits(component, WM8996_AIF_RATE,
+ 	case SND_SOC_DAIFMT_DSP_A:
+ 		aif0 |= 3;
+ 
 -- 
 2.7.4
 
