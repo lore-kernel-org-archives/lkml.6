@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7192EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD350C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BED92083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BED92083D
+	by mail.kernel.org (Postfix) with ESMTP id 10BD52083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BD52083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387471AbeHAUIR (ORCPT
+        id S2387441AbeHAUIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:08:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404423AbeHATDj (ORCPT
+        with ESMTP id S2404452AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 285991071;
-        Wed,  1 Aug 2018 17:01:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4882CFDD;
+        Wed,  1 Aug 2018 16:59:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven.eckelmann@openmesh.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 124/336] ath: Add regulatory mapping for Bermuda
-Date:   Wed,  1 Aug 2018 18:47:39 +0200
-Message-Id: <20180801165033.887648653@linuxfoundation.org>
+Subject: [PATCH 4.17 117/336] ath: Add regulatory mapping for FCC3_ETSIC
+Date:   Wed,  1 Aug 2018 18:47:32 +0200
+Message-Id: <20180801165033.625511039@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,18 +54,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 9c790f2d234f65697e3b0948adbfdf36dbe63dd7 ]
+[ Upstream commit 01fb2994a98dc72c8818c274f7b5983d5dd885c7 ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+The regdomain code is used to select the correct the correct conformance
+test limits (CTL) for a country. If the regdomain code isn't available and
+it is still programmed in the EEPROM then it will cause an error and stop
+the initialization with:
 
   Invalid EEPROM contents
 
-The current CTL mappings for this country are:
+The current CTL mappings for this regdomain code are:
 
-* 2.4GHz: FCC
+* 2.4GHz: ETSI
 * 5GHz: FCC
 
 Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
@@ -73,29 +73,26 @@ Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/wireless/ath/regd_common.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -74,6 +74,7 @@ enum CountryCode {
- 	CTRY_BELARUS = 112,
- 	CTRY_BELGIUM = 56,
- 	CTRY_BELIZE = 84,
-+	CTRY_BERMUDA = 60,
- 	CTRY_BOLIVIA = 68,
- 	CTRY_BOSNIA_HERZ = 70,
- 	CTRY_BRAZIL = 76,
 --- a/drivers/net/wireless/ath/regd_common.h
 +++ b/drivers/net/wireless/ath/regd_common.h
-@@ -313,6 +313,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_BELGIUM, ETSI1_WORLD, "BE"},
- 	{CTRY_BELGIUM2, ETSI4_WORLD, "BL"},
- 	{CTRY_BELIZE, APL1_ETSIC, "BZ"},
-+	{CTRY_BERMUDA, FCC3_FCCA, "BM"},
- 	{CTRY_BOLIVIA, APL1_ETSIC, "BO"},
- 	{CTRY_BOSNIA_HERZ, ETSI1_WORLD, "BA"},
- 	{CTRY_BRAZIL, FCC3_WORLD, "BR"},
+@@ -35,6 +35,7 @@ enum EnumRd {
+ 	FRANCE_RES = 0x31,
+ 	FCC3_FCCA = 0x3A,
+ 	FCC3_WORLD = 0x3B,
++	FCC3_ETSIC = 0x3F,
+ 
+ 	ETSI1_WORLD = 0x37,
+ 	ETSI3_ETSIA = 0x32,
+@@ -168,6 +169,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{FCC2_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC3_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC3_WORLD, CTL_FCC, CTL_ETSI},
++	{FCC3_ETSIC, CTL_FCC, CTL_ETSI},
+ 	{FCC4_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC5_FCCA, CTL_FCC, CTL_FCC},
+ 	{FCC6_FCCA, CTL_FCC, CTL_FCC},
 
 
