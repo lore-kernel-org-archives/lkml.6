@@ -2,87 +2,148 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A3DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7647EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025C7208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:35:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025C7208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mut-group.com
+	by mail.kernel.org (Postfix) with ESMTP id 3770B208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:36:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3770B208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387853AbeHAMVD (ORCPT
+        id S2388113AbeHAMVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:21:03 -0400
-Received: from mut-gw.mut-group.com ([213.209.114.184]:55618 "EHLO
-        mut-gw.mut-group.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387707AbeHAMVD (ORCPT
+        Wed, 1 Aug 2018 08:21:53 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:46770 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387559AbeHAMVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:21:03 -0400
-Received: from [192.168.20.11] (port=43361 helo=zcom03.mut-group.com)
-        by mut-gw.mut-group.com with esmtps (TLSv1.2:AES256-SHA:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <mhellwig@mut-group.com>)
-        id 1fkoTw-0004F5-0a; Wed, 01 Aug 2018 12:35:52 +0200
-Received: from ZCOM03.mut-group.com (192.168.20.11) by ZCOM03.mut-group.com
- (192.168.20.11) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Wed, 1 Aug
- 2018 12:35:51 +0200
-Received: from ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960]) by
- ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960%12]) with mapi id
- 15.00.1263.000; Wed, 1 Aug 2018 12:35:51 +0200
-From:   Marcel Hellwig <mhellwig@mut-group.com>
-To:     'Eric Dumazet' <eric.dumazet@gmail.com>,
-        "'davem@davemloft.net'" <davem@davemloft.net>,
-        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
-        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
-        "'andrew@lunn.ch'" <andrew@lunn.ch>
-CC:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "Matthias Wystrik" <mwystrik@mut-group.com>
-Subject: AW: AW: PROBLEM: Kernel Oops in UDP stack
-Thread-Topic: AW: PROBLEM: Kernel Oops in UDP stack
-Thread-Index: AdQo32X7ylxOxyzCQIq96qKkvZ0yzgAovJrxAAAgVdA=
-Date:   Wed, 1 Aug 2018 10:35:51 +0000
-Message-ID: <9f9d731107594b368504cbbaf698bc3d@ZCOM03.mut-group.com>
-References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
- <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
- <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
- <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
-In-Reply-To: <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.21.69]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 1 Aug 2018 08:21:53 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1fkoTh-00014g-5c; Wed, 01 Aug 2018 12:35:37 +0200
+Date:   Wed, 1 Aug 2018 12:35:37 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        David Miller <davem@davemloft.net>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        coreteam@netfilter.org,
+        Network Development <netdev@vger.kernel.org>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Dave Airlie <airlied@linux.ie>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+Message-ID: <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
+ <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
+ <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
+ <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
+ <CACT4Y+aYZumcc-Od5T1AnP4mwn8-FaWfxvfb93MnNwQPqG8TDw@mail.gmail.com>
+ <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pj4gWzxjMDIyOGFkYz5dICh1ZHBfcmVjdm1zZysweDI4NC8weDMzYykgZnJvbSBbPGMwMjMwNmUw
-Pl0gKGluZXRfcmVjdm1zZysweDM4LzB4NGMpOiBuZXQvaXB2NC91ZHAuYzoxMjM0DQo+DQo+ICAg
-ICAgICAgICAgICBzaW4tPnNpbl9hZGRyLnNfYWRkciA9IGlwX2hkcihza2IpLT5zYWRkcjsNCj4N
-Cj5VbmFsaWduZWQgYWNjZXNzIHRyYXAgKHZpcnR1YWwgYWRkcmVzcyBjMTRmZTYzYSksIHNvIGVp
-dGhlciBzaW4gb3IgaXBfaGRyKHNrYikgYXJlIG5vdCBvbiBhIDMyYml0IGFsaWdubWVudA0KPg0K
-PkNhbiB5b3UgcHJvZHVjZSB0aGUgZGlzYXNzZW1ibHkgb2YgdGhlIHRyYXBwaW5nIGluc3RydWN0
-aW9uID8NCg0KaHR0cHM6Ly9naXN0LmdpdGh1Yi5jb20vaGVsbG93NTU0LzZiMTFjNmMwODI3ZDVk
-YjgwYTdlNjZmNzFmNTYzNmZmI2ZpbGUtbmV0X3VpcHY0X3VkcC1sc3QtTDE4OTItTDE4OTUNCg0K
-CQlzaW4tPnNpbl9hZGRyLnNfYWRkciA9IGlwX2hkcihza2IpLT5zYWRkcjsNCmMwMjI4YWQ4Ogll
-NTk0MzA4MCAJbGRyCXIzLCBbcjQsICMxMjhdCTsgMHg4MA0KYzAyMjhhZGM6CWU1OTMzMDBjIAls
-ZHIJcjMsIFtyMywgIzEyXQ0KYzAyMjhhZTA6IAllNTgyMzAwNAlzdHIJcjMsIFtyMiwgIzRdDQoN
-Cg0KTWl0IGZyZXVuZGxpY2hlbiBHcsO8w59lbiAvIFdpdGgga2luZCByZWdhcmRzDQoNCk1hcmNl
-bCBIZWxsd2lnDQpCLiBTYy4gSW5mb3JtYXRpaw0KRW50d2lja2xlcg0KDQptLXUtdMKgR21iSA0K
-QW0gTWFyaWVuaG9mIDINCjIyODgwIFdlZGVsDQpHZXJtYW55DQoNClBob25lOgkrNDkgNDEwMyA5
-MzA4IC0gNDc0DQpGYXg6wqDCoAkrNDkgNDEwMyA5MzA4IC0gOTkNCm1oZWxsd2lnQG11dC1ncm91
-cC5jb20NCg0Kd3d3Lm11dC1ncm91cC5jb20NCg0KR2VzY2jDpGZ0c2bDvGhyZXLCoChNYW5hZ2lu
-ZyBEaXJlY3Rvcik6IEZhYmlhbiBQZXRlcnMNCkFtdHNnZXJpY2h0IFBpbm5lYmVyZyAoQ29tbWVy
-Y2lhbCBSZWdpc3RlciBOby4pOiBIUkLCoDEwMzA0IFBJDQpVU3QtSWROci4gKFZBVC1Oby4pOiBE
-RTIyODI3NTM5MA0KV0VFRS1SZWctTnIuOiBERSA3MjI3MTgwOA0KDQoNCg==
+Dmitry Vyukov <dvyukov@google.com> wrote:
+> Still can't grasp all details.
+> There is state that we read without taking ct->ct_general.use ref
+> first, namely ct->state and what's used by nf_ct_key_equal.
+> So let's say the entry we want to find is in the list, but
+> ____nf_conntrack_find finds a wrong entry earlier because all state it
+> looks at is random garbage, so it returns the wrong entry to
+> __nf_conntrack_find_get.
+
+If an entry can be found, it can't be random garbage.
+We never link entries into global table until state has been set up.
+
+> Now (nf_ct_is_dying(ct) || !atomic_inc_not_zero(&ct->ct_general.use))
+> check in __nf_conntrack_find_get passes, and it returns NULL to the
+> caller (which means entry is not present).
+
+So entry is going away or marked as dead which for us is same as
+'not present', we need to allocate a new entry.
+
+> While in reality the entry
+> is present, but we were just looking at the wrong one.
+
+We never add tuples that are identical to the global table.
+
+If N cores receive identical packets at same time with no prior state, all
+will allocate a new conntrack, but we notice this when we try to insert the
+nf_conn entries into the table.
+
+Only one will succeed, other cpus have to cope with this.
+(worst case: all raced packets are dropped along with their conntrack
+ object).
+
+For lookup, we have following scenarios:
+
+1. It doesn't exist -> new allocation needed
+2. It exists, not dead, has nonzero refount -> use it
+3. It exists, but marked as dying -> new allocation needed
+4. It exists but has 0 reference count -> new allocation needed
+5. It exists, we get reference, but 2nd nf_ct_key_equal check
+   fails.  We saw a matching 'old incarnation' that just got
+   re-used on other core.  -> retry lookup
+
+> Also I am not sure about order of checks in (nf_ct_is_dying(ct) ||
+> !atomic_inc_not_zero(&ct->ct_general.use)), because checking state
+> before taking the ref is only a best-effort hint, so it can actually
+> be a dying entry when we take a ref.
+
+Yes, it can also become a dying entry after we took the reference.
+ 
+> So shouldn't it read something like the following?
+> 
+>         rcu_read_lock();
+> begin:
+>         h = ____nf_conntrack_find(net, zone, tuple, hash);
+>         if (h) {
+>                 ct = nf_ct_tuplehash_to_ctrack(h);
+>                 if (!atomic_inc_not_zero(&ct->ct_general.use))
+>                         goto begin;
+>                 if (unlikely(nf_ct_is_dying(ct)) ||
+>                     unlikely(!nf_ct_key_equal(h, tuple, zone, net))) {
+>                         nf_ct_put(ct);
+
+It would be ok to make this change, but dying bit can be set
+at any time e.g. because userspace tells kernel to flush the conntrack table.
+So refcount is always > 0 when the DYING bit is set.
+
+I don't see why it would be a problem.
+
+nf_conn struct will stay valid until all cpus have dropped references.
+The check in lookup function only serves to hide the known-to-go-away entry.
