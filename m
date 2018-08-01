@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF27C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C8FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B5322083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5322083D
+	by mail.kernel.org (Postfix) with ESMTP id 396D12083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396D12083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404566AbeHATDl (ORCPT
+        id S2404553AbeHATDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:03:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404465AbeHATDk (ORCPT
+        with ESMTP id S2404460AbeHATDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F9B61005;
-        Wed,  1 Aug 2018 16:59:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4873BFA8;
+        Wed,  1 Aug 2018 16:57:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Renesas BSP team via Yoshihiro Shimoda 
-        <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Mark Brown <broonie@kernel.org>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Lijun Ou <oulijun@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 133/336] spi: sh-msiof: Fix setting SIRMDR1.SYNCAC to match SITMDR1.SYNCAC
-Date:   Wed,  1 Aug 2018 18:47:48 +0200
-Message-Id: <20180801165034.220548016@linuxfoundation.org>
+Subject: [PATCH 4.17 100/336] net: hns3: Fixes initalization of RoCE handle and makes it conditional
+Date:   Wed,  1 Aug 2018 18:47:15 +0200
+Message-Id: <20180801165032.990718565@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,49 +55,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Lijun Ou <oulijun@huawei.com>
 
-[ Upstream commit 0921e11e1e12802ae0a3c19cb02e33354ca51967 ]
+[ Upstream commit 544a7bcd5cc74734003cf7f12502b26cebfed19f ]
 
-According to section 59.2.4 MSIOF Receive Mode Register 1 (SIRMDR1) in
-the R-Car Gen3 datasheet Rev.1.00, the value of the SIRMDR1.SYNCAC bit
-must match the value of the SITMDR1.SYNCAC bit.  However,
-sh_msiof_spi_setup() changes only the latter.
+When register a RoCE client with hnae3vf device, it needs to judge
+the device whether support RoCE vf function. Otherwise, it will
+lead to calltrace when RoCE is not support vf function and remove
+roce device.
 
-Fix this by updating the SIRMDR1 register like the SITMDR1 register,
-taking into account register bits that exist in SITMDR1 only.
+The calltrace as follows:
+[   93.156614] Unable to handle kernel NULL pointer dereference at virtual address 00000015
+ <SNIP>
+[   93.278784] Call trace:
+[   93.278788]  hnae3_match_n_instantiate+0x24/0xd8 [hnae3]
+[   93.278790]  hnae3_register_client+0xcc/0x150 [hnae3]
+[   93.278801]  hns_roce_hw_v2_init+0x18/0x1000 [hns_roce_hw_v2]
+[   93.278805]  do_one_initcall+0x58/0x160
+[   93.278807]  do_init_module+0x64/0x1d8
+[   93.278809]  load_module+0x135c/0x15c8
+[   93.278811]  SyS_finit_module+0x100/0x118
+[   93.278816]  __sys_trace_return+0x0/0x4
+[   93.278827] Code: aa0003f5 12001c56 aa1e03e0 d503201f (b9402660)
 
-Reported-by: Renesas BSP team via Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Fixes: 7ff0b53c4051145d ("spi: sh-msiof: Avoid writing to registers from spi_master.setup()")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Reported-by: Xinwei Kong <kong.kongxinwei@hisilicon.com>
+Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Lijun Ou <oulijun@huawei.com>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-sh-msiof.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -564,14 +564,16 @@ static int sh_msiof_spi_setup(struct spi
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1493,10 +1493,12 @@ static int hclgevf_init_instance(struct
+ 			return ret;
+ 		break;
+ 	case HNAE3_CLIENT_ROCE:
+-		hdev->roce_client = client;
+-		hdev->roce.client = client;
++		if (hnae3_dev_roce_supported(hdev)) {
++			hdev->roce_client = client;
++			hdev->roce.client = client;
++		}
  
- 	/* Configure native chip select mode/polarity early */
- 	clr = MDR1_SYNCMD_MASK;
--	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-+	set = MDR1_SYNCMD_SPI;
- 	if (spi->mode & SPI_CS_HIGH)
- 		clr |= BIT(MDR1_SYNCAC_SHIFT);
- 	else
- 		set |= BIT(MDR1_SYNCAC_SHIFT);
- 	pm_runtime_get_sync(&p->pdev->dev);
- 	tmp = sh_msiof_read(p, TMDR1) & ~clr;
--	sh_msiof_write(p, TMDR1, tmp | set);
-+	sh_msiof_write(p, TMDR1, tmp | set | MDR1_TRMD | TMDR1_PCON);
-+	tmp = sh_msiof_read(p, RMDR1) & ~clr;
-+	sh_msiof_write(p, RMDR1, tmp | set);
- 	pm_runtime_put(&p->pdev->dev);
- 	p->native_cs_high = spi->mode & SPI_CS_HIGH;
- 	p->native_cs_inited = true;
+-		if (hdev->roce_client && hnae3_dev_roce_supported(hdev)) {
++		if (hdev->roce_client && hdev->nic_client) {
+ 			ret = hclgevf_init_roce_base_info(hdev);
+ 			if (ret)
+ 				return ret;
 
 
