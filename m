@@ -2,104 +2,197 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65F7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04724C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA312083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA312083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A63AD2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2LIq6Vx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A63AD2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbeHATuM (ORCPT
+        id S1732422AbeHATuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:50:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405837AbeHATIi (ORCPT
+        Wed, 1 Aug 2018 15:50:18 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45154 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731564AbeHATuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:38 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11F9D1175;
-        Wed,  1 Aug 2018 17:06:34 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 211/336] bnxt_en: Always forward VF MAC address to the PF.
-Date:   Wed,  1 Aug 2018 18:49:06 +0200
-Message-Id: <20180801165037.148129507@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 1 Aug 2018 15:50:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f1-v6so11180466pgq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=QAAAMOgxyXCO7QwkBY2gC//Ns++wFxhjRtCOIWuMmEs=;
+        b=D2LIq6VxxjT9iOITRp+Mu9avgdPbzAWnj3Uc0L5TtAYDEHIbMh+O90qYNozbzZe108
+         FCXA7yUzauZNri93UkPgr+Zb3+Ja84pFYgFaL+G7zmLRejYiys10hqkadiSwoYDlyKBW
+         g3zLZrX8g5sE5cdxBxQBRthf4BJjpzqLkNDWo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QAAAMOgxyXCO7QwkBY2gC//Ns++wFxhjRtCOIWuMmEs=;
+        b=W1vbBgEWeU1+JQwkJXxkqjGT26mdKeiSGHlyGdDP0NNYOUMP8rjTgVDnZ7IhDD4UZh
+         /UST7OIK837CXwhfB0J2brQxRfqFxoN+iXC+EmLBnodI0w32dR+ihzF9d0oT6EyKX42s
+         xmjF+zy8tf5dx9V956cbfn5+8Z2MuAIM/TSuekvFMVxEkgbbdeecyquvvQl5Pl9RLqEy
+         /NZuWvnE8SPoIn764a4KrEij6civiQFaDtN7gwRZGaMUl3gaxkzrX9xCSHCCQX5gz9xV
+         pbDpMf0UIUwzVY/AqbST66RwAB0sqAKpmmXN5kWTrMOpwVyomKYbWqilCmD3doAPwHo1
+         u8Hw==
+X-Gm-Message-State: AOUpUlEBWZH1I1a8oyEf7OLXf887eN+WEawASX7QUtvmpUPRpXJJScFB
+        7Br9zW8qCYZ5Jn5Lso+ijpp0
+X-Google-Smtp-Source: AAOMgpeL7WTwjWcMM5rC5tAGwB5RHB3sHVYiJ206zdbBdrgzXPm5zxMX1gtQfvY36rKVQhgjYRxPJg==
+X-Received: by 2002:a63:2647:: with SMTP id m68-v6mr164895pgm.60.1533146603864;
+        Wed, 01 Aug 2018 11:03:23 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:73c1:5a70:e532:a47d:7290:5aa6])
+        by smtp.gmail.com with ESMTPSA id x80-v6sm12961649pfe.129.2018.08.01.11.02.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 11:02:58 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v8 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date:   Wed,  1 Aug 2018 23:32:26 +0530
+Message-Id: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+This driver has been structured in a way such that there will be only
+one controller driver for the whole Owl family series (S500, S700 and
+S900 SoCs).
 
-------------------
+There are 6 I2C controllers with separate memory mapped register space.
+The I2C controller can handle atmost two messages concatenated by a
+repeated start via its internal address feature. Hence the driver
+uses this feature for messages of length greater than 1. In those cases,
+the first message of the combined message should be a `write` with maximum
+message length 6 and the second message's maximum length should be 240 bytes.
 
-From: Michael Chan <michael.chan@broadcom.com>
+As far as the bus speed is concerned, this driver only supports
+Standard (100KHz) and High speed (400KHz) for now.
 
-[ Upstream commit 707e7e96602675beb5e09bb994195663da6eb56d ]
+The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+With the mux option available only for I2C0.
 
-The current code already forwards the VF MAC address to the PF, except
-in one case.  If the VF driver gets a valid MAC address from the firmware
-during probe time, it will not forward the MAC address to the PF,
-incorrectly assuming that the PF already knows the MAC address.  This
-causes "ip link show" to show zero VF MAC addresses for this case.
+For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+are exposed on the Low speed expansion connector are enabled.
 
-This assumption is not correct.  Newer firmware remembers the VF MAC
-address last used by the VF and provides it to the VF driver during
-probe.  So we need to always forward the VF MAC address to the PF.
+This series depends on the pinctrl patch [1] is still not merged by the
+platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+Linus Walleij. For the reference, I have queued up all reviewed dts patches
+in my tree [2] from which Andreas is picking them for 4.19.
 
-The forwarded MAC address may now be the PF assigned MAC address and so we
-need to make sure we approve it for this case.
+For this series, since the dts patches will go through the ARM SoC tree,
+Andreas will pick it up once it is reviewed.
 
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c       |    2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Thanks,
+Mani
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -8617,8 +8617,8 @@ static int bnxt_init_mac_addr(struct bnx
- 			memcpy(bp->dev->dev_addr, vf->mac_addr, ETH_ALEN);
- 		} else {
- 			eth_hw_addr_random(bp->dev);
--			rc = bnxt_approve_mac(bp, bp->dev->dev_addr);
- 		}
-+		rc = bnxt_approve_mac(bp, bp->dev->dev_addr);
- #endif
- 	}
- 	return rc;
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-@@ -914,7 +914,8 @@ static int bnxt_vf_configure_mac(struct
- 	if (req->enables & cpu_to_le32(FUNC_VF_CFG_REQ_ENABLES_DFLT_MAC_ADDR)) {
- 		if (is_valid_ether_addr(req->dflt_mac_addr) &&
- 		    ((vf->flags & BNXT_VF_TRUST) ||
--		     (!is_valid_ether_addr(vf->mac_addr)))) {
-+		     !is_valid_ether_addr(vf->mac_addr) ||
-+		     ether_addr_equal(req->dflt_mac_addr, vf->mac_addr))) {
- 			ether_addr_copy(vf->vf_mac_addr, req->dflt_mac_addr);
- 			return bnxt_hwrm_exec_fwd_resp(bp, vf, msg_size);
- 		}
+[1] https://patchwork.kernel.org/patch/10322937/
+[2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
 
+Changes in v8:
+
+* Modified the NACK and Bus error handling as per Wolfram's review
+
+Changes in v7:
+
+* Fixed a multi line misalignment spotted by Peter
+
+Changes in v6:
+
+As per Peter's review:
+
+* Added missing newlines for error and debug outputs
+* Fixed further multi-line misalignments
+
+Changes in v5:
+
+* Cleaned up the multi-line codes and reordered the error paths
+  as per Peter's review
+* Added Acked-by tag from Peter for driver patch
+* Added Reviewed-by tag from Rob for bindings patch
+
+Changes in v4:
+
+As per Andy and Peter review:
+
+* Used spinlock for accessing most of the register access (only parts
+  involved sleep/long-busy-wait has been excluded)
+* Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+  message length
+* Added DIV_ROUND_UP for setting clock frequency
+* Changed one non-atomic mdelay instance to usleep_range
+* Moved pinctrl definition patch before dts patch
+* Fixed the driver to support only 100KHz and 400KHz frequencies
+
+Changes in v3:
+
+As per Peter, Andy and Andreas review:
+
+* Removed owl_i2c_reset function from interrupt handler since it
+  involves the use of delays.
+* Fixed the return path in owl_i2c_master_xfer and added a note
+* Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+  understandability
+* Ordered the includes in alphabetical order
+* Small changes to defines and added comma at the end of struct members
+* Removed rendundant 0 assignment in owl_i2c_master_xfer
+* Changed all OWL naming convention to Owl and also changed Actions Semi
+  naming to Actions Semiconductor
+
+Changes in v2:
+
+As per Andy's review:
+* Modified infinite loops to fixed number of retries
+* Used i2c_8bit_addr_from_msg for constructing the slave address
+* Removed unnecessary parenthesis around defines
+* Modified certain dev_warn to dev_dbg
+* Modified the error handling to more generic pattern
+* Fixed the return value in owl_i2c_master_xfer
+* Added MAINTAINERS patch for I2C driver and its binding
+
+Manivannan Sadhasivam (6):
+  dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+    controller
+  arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+  arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+    nodes
+  arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+  i2c: Add Actions Semiconductor Owl family S900 I2C driver
+  MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+
+ .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+ MAINTAINERS                                   |   2 +
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+ drivers/i2c/busses/Kconfig                    |   7 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-owl.c                  | 495 ++++++++++++++++++
+ 8 files changed, 632 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-owl.c
+
+-- 
+2.17.1
 
