@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FD6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A9AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EEEE20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEEE20844
+	by mail.kernel.org (Postfix) with ESMTP id 5471F20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5471F20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405632AbeHATIZ (ORCPT
+        id S2405647AbeHATI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49410 "EHLO
+        Wed, 1 Aug 2018 15:08:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49416 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404973AbeHATIZ (ORCPT
+        with ESMTP id S2405634AbeHATI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:25 -0400
+        Wed, 1 Aug 2018 15:08:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BAF7CF7;
-        Wed,  1 Aug 2018 17:21:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88CF6CE6;
+        Wed,  1 Aug 2018 17:21:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dominik Bozek <dominikx.bozek@intel.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 199/246] usb: hub: Dont wait for connect state at resume for powered-off ports
-Date:   Wed,  1 Aug 2018 18:51:49 +0200
-Message-Id: <20180801165021.240728802@linuxfoundation.org>
+Subject: [PATCH 4.14 200/246] crypto: authencesn - dont leak pointers to authenc keys
+Date:   Wed,  1 Aug 2018 18:51:50 +0200
+Message-Id: <20180801165021.295416071@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,39 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominik Bozek <dominikx.bozek@intel.com>
+From: Tudor-Dan Ambarus <tudor.ambarus@microchip.com>
 
-[ Upstream commit 5d111f5190848d6fb1c414dc57797efea3526a2f ]
+[ Upstream commit 31545df391d58a3bb60e29b1192644a6f2b5a8dd ]
 
-wait_for_connected() wait till a port change status to
-USB_PORT_STAT_CONNECTION, but this is not possible if
-the port is unpowered. The loop will only exit at timeout.
+In crypto_authenc_esn_setkey we save pointers to the authenc keys
+in a local variable of type struct crypto_authenc_keys and we don't
+zeroize it after use. Fix this and don't leak pointers to the
+authenc keys.
 
-Such case take place if an over-current incident happen
-while system is in S3. Then during resume wait_for_connected()
-will wait 2s, which may be noticeable by the user.
-
-Signed-off-by: Dominik Bozek <dominikx.bozek@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/core/hub.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/authencesn.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3361,6 +3361,10 @@ static int wait_for_connected(struct usb
- 	while (delay_ms < 2000) {
- 		if (status || *portstatus & USB_PORT_STAT_CONNECTION)
- 			break;
-+		if (!port_is_power_on(hub, *portstatus)) {
-+			status = -ENODEV;
-+			break;
-+		}
- 		msleep(20);
- 		delay_ms += 20;
- 		status = hub_port_status(hub, *port1, portstatus, portchange);
+--- a/crypto/authencesn.c
++++ b/crypto/authencesn.c
+@@ -90,6 +90,7 @@ static int crypto_authenc_esn_setkey(str
+ 					   CRYPTO_TFM_RES_MASK);
+ 
+ out:
++	memzero_explicit(&keys, sizeof(keys));
+ 	return err;
+ 
+ badkey:
 
 
