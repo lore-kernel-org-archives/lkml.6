@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B284BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7626DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7407720840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7407720840
+	by mail.kernel.org (Postfix) with ESMTP id 204DC20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204DC20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387558AbeHAUQN (ORCPT
+        id S2387685AbeHAUQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:16:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
+        Wed, 1 Aug 2018 16:16:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404240AbeHATDg (ORCPT
+        with ESMTP id S2404232AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC9EF1180;
-        Wed,  1 Aug 2018 17:06:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13B531127;
+        Wed,  1 Aug 2018 17:07:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        Thierry Escande <thierry.escande@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 255/336] igb: Fix queue selection on MAC filters on i210
-Date:   Wed,  1 Aug 2018 18:49:50 +0200
-Message-Id: <20180801165038.815724348@linuxfoundation.org>
+Subject: [PATCH 4.17 262/336] drm/rockchip: analogix_dp: Do not call Analogix code before bind
+Date:   Wed,  1 Aug 2018 18:49:57 +0200
+Message-Id: <20180801165039.074313762@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,52 +55,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: Tomasz Figa <tfiga@chromium.org>
 
-[ Upstream commit 4dc93fcf0b95dc3fda4db917effae31fbb8ad2a8 ]
+[ Upstream commit a4169609def769c66f88140678970b2be6f64ac7 ]
 
-On the RAH registers there are semantic differences on the meaning of
-the "queue" parameter for traffic steering depending on the controller
-model: there is the 82575 meaning, which "queue" means a RX Hardware
-Queue, and the i350 meaning, where it is a reception pool.
+Driver callbacks, such as system suspend or resume can be called any
+time, specifically they can be called before the component bind
+callback. Let's use dp->adp pointer as a safeguard and skip calling
+Analogix entry points if it is an ERR_PTR().
 
-The previous behaviour was having no effect for i210 based controllers
-because the QSEL bit of the RAH register wasn't being set.
-
-This patch separates the condition in discrete cases, so the different
-handling is clearer.
-
-Fixes: 83c21335c876 ("igb: improve MAC filter handling")
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180423105003.9004-24-enric.balletbo@collabora.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -8763,12 +8763,17 @@ static void igb_rar_set_index(struct igb
- 		if (is_valid_ether_addr(addr))
- 			rar_high |= E1000_RAH_AV;
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -358,6 +358,8 @@ static void rockchip_dp_unbind(struct de
+ 	analogix_dp_unbind(dp->adp);
+ 	rockchip_drm_psr_unregister(&dp->encoder);
+ 	dp->encoder.funcs->destroy(&dp->encoder);
++
++	dp->adp = ERR_PTR(-ENODEV);
+ }
  
--		if (hw->mac.type == e1000_82575)
-+		switch (hw->mac.type) {
-+		case e1000_82575:
-+		case e1000_i210:
- 			rar_high |= E1000_RAH_POOL_1 *
- 				    adapter->mac_table[index].queue;
--		else
-+			break;
-+		default:
- 			rar_high |= E1000_RAH_POOL_1 <<
- 				    adapter->mac_table[index].queue;
-+			break;
-+		}
- 	}
+ static const struct component_ops rockchip_dp_component_ops = {
+@@ -381,6 +383,7 @@ static int rockchip_dp_probe(struct plat
+ 		return -ENOMEM;
  
- 	wr32(E1000_RAL(index), rar_low);
+ 	dp->dev = dev;
++	dp->adp = ERR_PTR(-ENODEV);
+ 	dp->plat_data.panel = panel;
+ 
+ 	ret = rockchip_dp_of_probe(dp);
+@@ -404,6 +407,9 @@ static int rockchip_dp_suspend(struct de
+ {
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+ 
++	if (IS_ERR(dp->adp))
++		return 0;
++
+ 	return analogix_dp_suspend(dp->adp);
+ }
+ 
+@@ -411,6 +417,9 @@ static int rockchip_dp_resume(struct dev
+ {
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+ 
++	if (IS_ERR(dp->adp))
++		return 0;
++
+ 	return analogix_dp_resume(dp->adp);
+ }
+ #endif
 
 
