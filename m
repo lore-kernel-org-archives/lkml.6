@@ -3,42 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CF4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF5AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E1F208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E1F208A5
+	by mail.kernel.org (Postfix) with ESMTP id 666BE2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666BE2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbeHATzK (ORCPT
+        id S2387478AbeHATzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:55:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50150 "EHLO
+        Wed, 1 Aug 2018 15:55:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405275AbeHATIg (ORCPT
+        with ESMTP id S2405748AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BF5710D0;
-        Wed,  1 Aug 2018 17:03:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6108E1385;
+        Wed,  1 Aug 2018 17:14:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 166/336] ixgbevf: fix MAC address changes through ixgbevf_set_mac()
-Date:   Wed,  1 Aug 2018 18:48:21 +0200
-Message-Id: <20180801165035.465404282@linuxfoundation.org>
+Subject: [PATCH 4.14 023/246] skip LAYOUTRETURN if layout is invalid
+Date:   Wed,  1 Aug 2018 18:48:53 +0200
+Message-Id: <20180801165012.806096425@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,38 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Emil Tantilov <emil.s.tantilov@intel.com>
+From: Olga Kornievskaia <olga.kornievskaia@gmail.com>
 
-[ Upstream commit 6e7d0ba1e59b1a306761a731e67634c0f2efea2a ]
+[ Upstream commit 93b7f7ad2018d2037559b1d0892417864c78b371 ]
 
-Set hw->mac.perm_addr in ixgbevf_set_mac() in order to avoid losing the
-custom MAC on reset. This can happen in the following case:
+Currently, when IO to DS fails, client returns the layout and
+retries against the MDS. However, then on umounting (inode eviction)
+it returns the layout again.
 
->ip link set $vf address $mac
->ethtool -r $vf
+This is because pnfs_return_layout() was changed in
+commit d78471d32bb6 ("pnfs/blocklayout: set PNFS_LAYOUTRETURN_ON_ERROR")
+to always set NFS_LAYOUT_RETURN_REQUESTED so even if we returned
+the layout, it will be returned again. Instead, let's also check
+if we have already marked the layout invalid.
 
-Signed-off-by: Emil Tantilov <emil.s.tantilov@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/pnfs.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -4187,6 +4187,7 @@ static int ixgbevf_set_mac(struct net_de
- 		return -EPERM;
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1126,7 +1126,7 @@ _pnfs_return_layout(struct inode *ino)
+ 	LIST_HEAD(tmp_list);
+ 	nfs4_stateid stateid;
+ 	int status = 0;
+-	bool send;
++	bool send, valid_layout;
  
- 	ether_addr_copy(hw->mac.addr, addr->sa_data);
-+	ether_addr_copy(hw->mac.perm_addr, addr->sa_data);
- 	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+ 	dprintk("NFS: %s for inode %lu\n", __func__, ino->i_ino);
  
- 	return 0;
+@@ -1147,6 +1147,7 @@ _pnfs_return_layout(struct inode *ino)
+ 			goto out_put_layout_hdr;
+ 		spin_lock(&ino->i_lock);
+ 	}
++	valid_layout = pnfs_layout_is_valid(lo);
+ 	pnfs_clear_layoutcommit(ino, &tmp_list);
+ 	pnfs_mark_matching_lsegs_invalid(lo, &tmp_list, NULL, 0);
+ 
+@@ -1160,7 +1161,8 @@ _pnfs_return_layout(struct inode *ino)
+ 	}
+ 
+ 	/* Don't send a LAYOUTRETURN if list was initially empty */
+-	if (!test_bit(NFS_LAYOUT_RETURN_REQUESTED, &lo->plh_flags)) {
++	if (!test_bit(NFS_LAYOUT_RETURN_REQUESTED, &lo->plh_flags) ||
++			!valid_layout) {
+ 		spin_unlock(&ino->i_lock);
+ 		dprintk("NFS: %s no layout segments to return\n", __func__);
+ 		goto out_put_layout_hdr;
 
 
