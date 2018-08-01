@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05251C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD5FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0B7620841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B7620841
+	by mail.kernel.org (Postfix) with ESMTP id 4B03820840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B03820840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733295AbeHAUWf (ORCPT
+        id S2387541AbeHAUWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:22:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
+        Wed, 1 Aug 2018 16:22:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403974AbeHATDe (ORCPT
+        with ESMTP id S2404088AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C76681324;
-        Wed,  1 Aug 2018 17:11:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDDD611D1;
+        Wed,  1 Aug 2018 17:08:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 325/336] cxgb4: Added missing break in ndo_udp_tunnel_{add/del}
-Date:   Wed,  1 Aug 2018 18:51:00 +0200
-Message-Id: <20180801165041.477929116@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Suman Anna <s-anna@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 276/336] media: omap3isp: fix unbalanced dma_iommu_mapping
+Date:   Wed,  1 Aug 2018 18:50:11 +0200
+Message-Id: <20180801165039.586303450@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,40 +54,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Suman Anna <s-anna@ti.com>
 
-[ Upstream commit 942a656f1f228f06a37adad0e6c347773cfe7bd6 ]
+[ Upstream commit b7e1e6859fbf60519fd82d7120cee106a6019512 ]
 
-Break statements were missing for Geneve case in
-ndo_udp_tunnel_{add/del}, thereby raw mac matchall
-entries were not getting added.
+The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+ARM DMA backend. The current code creates a dma_iommu_mapping and
+attaches this to the ISP device, but never detaches the mapping in
+either the probe failure paths or the driver remove path resulting
+in an unbalanced mapping refcount and a memory leak. Fix this properly.
 
-Fixes: c746fc0e8b2d("cxgb4: add geneve offload support for T6")
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/omap3isp/isp.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -3066,6 +3066,7 @@ static void cxgb_del_udp_tunnel(struct n
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -1945,6 +1945,7 @@ error_csi2:
  
- 		adapter->geneve_port = 0;
- 		t4_write_reg(adapter, MPS_RX_GENEVE_TYPE_A, 0);
-+		break;
- 	default:
- 		return;
+ static void isp_detach_iommu(struct isp_device *isp)
+ {
++	arm_iommu_detach_device(isp->dev);
+ 	arm_iommu_release_mapping(isp->mapping);
+ 	isp->mapping = NULL;
+ }
+@@ -1961,8 +1962,7 @@ static int isp_attach_iommu(struct isp_d
+ 	mapping = arm_iommu_create_mapping(&platform_bus_type, SZ_1G, SZ_2G);
+ 	if (IS_ERR(mapping)) {
+ 		dev_err(isp->dev, "failed to create ARM IOMMU mapping\n");
+-		ret = PTR_ERR(mapping);
+-		goto error;
++		return PTR_ERR(mapping);
  	}
-@@ -3151,6 +3152,7 @@ static void cxgb_add_udp_tunnel(struct n
  
- 		t4_write_reg(adapter, MPS_RX_GENEVE_TYPE_A,
- 			     GENEVE_V(be16_to_cpu(ti->port)) | GENEVE_EN_F);
-+		break;
- 	default:
- 		return;
- 	}
+ 	isp->mapping = mapping;
+@@ -1977,7 +1977,8 @@ static int isp_attach_iommu(struct isp_d
+ 	return 0;
+ 
+ error:
+-	isp_detach_iommu(isp);
++	arm_iommu_release_mapping(isp->mapping);
++	isp->mapping = NULL;
+ 	return ret;
+ }
+ 
 
 
