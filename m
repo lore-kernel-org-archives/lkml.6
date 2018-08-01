@@ -2,96 +2,95 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F13C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C6BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D971D208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:29:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioc2o97o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D971D208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D863208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:29:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D863208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbeHAOOb (ORCPT
+        id S2389221AbeHAOOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:14:31 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41061 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388696AbeHAOOb (ORCPT
+        Wed, 1 Aug 2018 10:14:49 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40598 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388696AbeHAOOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:14:31 -0400
-Received: by mail-qt0-f193.google.com with SMTP id e19-v6so19572587qtp.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=uUgNRd8RW6SUWu68WCTOVudR6JWC0bHDCdFEswv3m74=;
-        b=ioc2o97oH8B3Ti/49otTUlU++IaD+xpkOyg8nhkIShv1KsFuRftSWKXJxu7UcIbLxO
-         Wij1eRSIcD5ufaEiQxWwsEHYRr0YEPNvCvkOSOB7QlHVsHEC49iaJFx9vejrhKxHACfe
-         P/sY+Dgq1Qq1CyI7Oo6ivWCSnwYOVm2NEUwYCPkx60wsyHuJ2EDV9Wc0fKCImYMDbBFv
-         86QGCXWT53hifhDxgGEeMUE+bqg2L0GZiCweFHXloeGEpCfBymrqDhXmb9dNvmrewbws
-         3Wj12PM+tLKvW8qiwAZYfiQAGPkEcpcLz2Hu3m7pVxCMPoQowjJcRK2AmdALqItCDN0F
-         dP8g==
+        Wed, 1 Aug 2018 10:14:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h15-v6so19912105wrs.7
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 05:29:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=uUgNRd8RW6SUWu68WCTOVudR6JWC0bHDCdFEswv3m74=;
-        b=ugdXbDfNmxV3VOxbCt6eoWaVCWj7KLV2s9PZ2LThSwPJhNh4ZDR5c6CWw5xH8awNgM
-         iQsXIUGnUavQvorgLSrritOzEoHAafysiBWr42r0OYzGet/0F4km6tv/uOJO2ACEDcry
-         mjBA605qDToR1G/8eXkGzH5ZwK4ZTTnswU5YsnsjhKjuIsU/lHXsGTuFG/cGg0UdNWwI
-         PqZgJhD4gsxmV30BVoLh2AE7QMbYEqh1AP0cqw/V6TeajPqyCTnEh/RIyFnVSJYmgghW
-         MZABdUWphekuc/rDb1+kc0ULFnrhoBuh59WRzbislNwSonAlE5IWc2bKMXR3KTz6xgyH
-         7sKg==
-X-Gm-Message-State: AOUpUlHW7LJHaIgyf9Xai8LMJfHw/dkwiw6zDlzmt35Lw8p8CQ+sQg1+
-        LsNtwLWbZs84s17sG63EkzJh3O35oVtMVQ+eLzk=
-X-Google-Smtp-Source: AAOMgpfZeZrH1X2rAU9ivsI7Msh8xLVknJNL/JmAcE4QZaqYjy3Q77m6EcrnWyfVEpiNv2xBq6T6lYPnA2nfqPoJ42w=
-X-Received: by 2002:ac8:1631:: with SMTP id p46-v6mr26012765qtj.72.1533126537063;
- Wed, 01 Aug 2018 05:28:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dg+g2nmubd43UqgHuAdlF22xp3hUUw9S6cXCbqKSDG8=;
+        b=GuL3uG18sfu/T3x4e9ibQliohUTSLPY+DqdwoxepNNsoUOYKhJiJmyL095GUo0psnB
+         3ZMmoZ99E5khifXZLPdgDv3gCNb6ja6pUXAwFQoRAvArAE7qrzMzo0LO9J5ia77eY2By
+         05XG9Ga7MywS5fy2MswKCIIUphdBhoY1XbFR4UoqtoHvEhqNFYV7K+9NkyiJ4xmUeBYh
+         Jc8MlC63fTaPYzAHC4ZYmtWu0OFFaWEZqNPnqedg/XN6cIp4Ids1BoB5jZUaEJ5g6cdI
+         WsNp8Tri8RRjRf97SOGt/Q4VZhmqLOpZLQXvRxjAYUsapVSlz3esq/sK0OfhoJuS9flZ
+         Cd0A==
+X-Gm-Message-State: AOUpUlFzBjFDfTgxr0DuwUKfLVjqaOCQGzhou2XgI72zVxop2C+LcQV2
+        KitRChgdywAcObsQfUwiOFY=
+X-Google-Smtp-Source: AAOMgpf9CzEdX7ailpMspskkG10wGT51h0FaBkCU27grZJuuxw0aMmZXPzMaUiX2O7QwiQiuDrni4A==
+X-Received: by 2002:adf:c08c:: with SMTP id d12-v6mr23101412wrf.268.1533126554064;
+        Wed, 01 Aug 2018 05:29:14 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id u6-v6sm217521wmc.45.2018.08.01.05.29.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 05:29:13 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id B2E4D124546; Wed,  1 Aug 2018 14:29:12 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 14:29:12 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        david@redhat.com, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v5 4/4] mm/page_alloc: Introduce
+ free_area_init_core_hotplug
+Message-ID: <20180801122912.GC473@techadventures.net>
+References: <20180730101757.28058-1-osalvador@techadventures.net>
+ <20180730101757.28058-5-osalvador@techadventures.net>
+ <20180731101752.GA473@techadventures.net>
 MIME-Version: 1.0
-Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 05:28:36 -0700 (PDT)
-In-Reply-To: <20180731025905.GS15118@mellanox.com>
-References: <20180730162431.GA13989@gmail.com> <20180731025905.GS15118@mellanox.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 1 Aug 2018 14:28:36 +0200
-Message-ID: <CANiq72mvCByCWvxpELMYr2VwWq=XzCFCkFGoXMK9bU4RGEBhCg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add .clang-format entry
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731101752.GA473@techadventures.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
-On Tue, Jul 31, 2018 at 4:59 AM, Jason Gunthorpe <jgg@mellanox.com> wrote:
-> On Mon, Jul 30, 2018 at 06:24:31PM +0200, Miguel Ojeda wrote:
->> As discussed in https://lkml.org/lkml/2018/6/25/877
->>
->> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->> ---
->>  MAINTAINERS | 5 +++++
->>  1 file changed, 5 insertions(+)
->
-> Thanks! Did you setup a tree? Can you take the patch I sent as well?
-> Do you want me to resend it?
+On Tue, Jul 31, 2018 at 12:17:52PM +0200, Oscar Salvador wrote:
+> On Mon, Jul 30, 2018 at 12:17:57PM +0200, osalvador@techadventures.net wrote:
+> > From: Oscar Salvador <osalvador@suse.de>
+> ...
+> > Also, since free_area_init_core/free_area_init_node will now only get called during early init, let us replace
+> > __paginginit with __init, so their code gets freed up.
+> > 
+> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> > Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> 
+> Andrew, could you please fold the following cleanup into this patch?
+> thanks
 
-No, I didn't, but I will pick both and put it up in a branch at
-https://github.com/ojeda/linux for a later PR assuming they are not
-picked up when the merge window opens. No need to resend! :-)
+Hi Andrew,
 
-Cheers & thanks!
-Miguel
-
->
-> Jason
+I sent v6, which already includes that cleanup-fixup plus another patch from Pavel and
+an Acked-by from Michal Hocko.
+So if it looks fine to you, feel free to replace it with the version that is sitting right now in -mm (v5)
+ 
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
