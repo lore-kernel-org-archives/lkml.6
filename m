@@ -3,134 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F42C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B70DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC6620894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB7B20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lRlOdgOv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC6620894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qWhDpFdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB7B20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733292AbeHAHxu (ORCPT
+        id S1733305AbeHAH7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:53:50 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45217 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733194AbeHAHxt (ORCPT
+        Wed, 1 Aug 2018 03:59:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42494 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733098AbeHAH7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:53:49 -0400
-Received: by mail-pl0-f68.google.com with SMTP id j8-v6so8266209pll.12
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 23:09:53 -0700 (PDT)
+        Wed, 1 Aug 2018 03:59:16 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so7295680pff.9;
+        Tue, 31 Jul 2018 23:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=I/bSHgCgLfsKi5nn/mcCzY507EwWlFvKmT6sX7YW6BM=;
-        b=lRlOdgOvYtfW4Ixe2fC290TJNndKz0k6abDY61HVuhINVVpGAugFlKTTwdTNQx8+Mr
-         IQ1SoN7H/GpgYKmIxFZNTuWBOKic8/w6wSM4MXoQ6zZFz7vxnkRLJ7r2aUjbiCdYGgFe
-         MBOUdz0ianMIp+Bm4H1gV8YMDK8DdGk3l8igA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UUVbcO95REXMlMMZsw5AQ4d//86tDf9ZVPLq/FunlaQ=;
+        b=qWhDpFdwRd18qpkX1qjIdeIzhWLvDOJ9sRWlE6MEUMcj+T6IZ9O/hutDNvBjjzDkmc
+         d/WVb6AY1rFlH+jHwGPfer7/xJf91GFrwOiQOCOTd5VeVyeW0ZzWOTQ8cLw7E0RSgPoO
+         TPwtHekVy7igHh4heQyvNk3wWYsUviIlpzFzayRgnzrh9QokXp5KQJTl2PR8spLvcHMu
+         4ZXKTtGbKg/WQjAF6pCHGASvShc5CPGVLeX6NxPGBin0HzRujk1R9sAc4hZs76cH13tC
+         6Y4gGlzn7lPmFjlvpYj8+XwU+jCKSBuhN1s9WD2tFI0/vAu0Y7veu8U8kkuahEU0UirV
+         FOZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=I/bSHgCgLfsKi5nn/mcCzY507EwWlFvKmT6sX7YW6BM=;
-        b=qzJaY1oPtSPDrjbtSaiz8uY93kEHqE3ZcZ6x2mg/aMlA/AN91X7Mw2ANCf2s5VhoDo
-         yB1KsNGxri/6163Rp4/auUF8JXe2RWlXhrpxYDdKSLl3gbRawltsduZQE1p5QPkuYfki
-         EHFXSs+Iwi8I8kkDWTTbGAaPZ6MgN7tnLeEMIN5ZR2KVyVEQ5u0A3S/AHk/NFSnO4CqQ
-         d0n0J8Wfd29H4Pb96WblzIOZZotojIyWvj1vGf4SS9EHOeNyQk+0UMZrSxW8tS+/ecwk
-         qr2prDdSgAA6eztKQYle2NoBSYOjereOE6jNOCXvG8NEoiFcx6lf890etG1KuD2m9CIV
-         XjyA==
-X-Gm-Message-State: AOUpUlFNr4X8C6bPPtbMcYy91//MifeIKgPPztthliJpay8P2VcZkMnc
-        kj32aOqK+fFIlu6mmKI8iIWrgw==
-X-Google-Smtp-Source: AAOMgpfmUImdbXZBeszOToW3/mDD9Nrp2R7jJY9uiADxozoHu8vmMvZT8Z1mPvc9A8d3TS5hu137VA==
-X-Received: by 2002:a17:902:6f02:: with SMTP id w2-v6mr22742023plk.216.1533103792732;
-        Tue, 31 Jul 2018 23:09:52 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm49036946pfj.169.2018.07.31.23.09.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UUVbcO95REXMlMMZsw5AQ4d//86tDf9ZVPLq/FunlaQ=;
+        b=NizUhyUHgKZXc6pjKUCIKJimurA/lk07LXRljqgc3PPxeYXVNin2jBxtKsgo4qcIu7
+         S3LCWAeHEy3G3E+5IVcgqMTXVhFjE0hlKz6t+vauKHt4Zj0fcM9CNcbp9p4iLDSBfXuX
+         naM5cVQ/xxpgZV3XUo+/FnooupLUou0ic4r6Jhjo4QtulYDeLx+uydj8/Hztuvcmgth3
+         QxsqS7UtXQy/tO6IaOIfzS2rpFoD4Jm6+J16vLSCOEGhRlnEa9ZgqOKavvSNMv2/wUkm
+         xLh7euktAO+SFz4KmKghTWkxQZCxvmUMguF98LqzkWXPZhlftMbYeAZ3PPntjmF7E+TU
+         W/Cw==
+X-Gm-Message-State: AOUpUlHzoAyvrhc7kfFqsfVTg1IDFi55HgT+LnYBbuZWRFJkUrg8J0/9
+        Bz5h9QYsc6hNHv5qa2DBlypfyjO+
+X-Google-Smtp-Source: AAOMgpfKk8p/ME4HAAozikRVrhOEAcI8UUd7LEeF/ZnEKkjVt4MqGww65HJ3hlP/yky3kKhfd4IRYw==
+X-Received: by 2002:a62:411a:: with SMTP id o26-v6mr15329703pfa.111.1533104118166;
+        Tue, 31 Jul 2018 23:15:18 -0700 (PDT)
+Received: from localhost (c-24-4-233-174.hsd1.ca.comcast.net. [24.4.233.174])
+        by smtp.gmail.com with ESMTPSA id i20-v6sm26076598pfj.82.2018.07.31.23.15.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Jul 2018 23:09:49 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] overflow.h: Add arithmetic shift helper
-Date:   Tue, 31 Jul 2018 23:09:45 -0700
-Message-Id: <20180801060947.16670-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180801060947.16670-1-keescook@chromium.org>
-References: <20180801060947.16670-1-keescook@chromium.org>
+        Tue, 31 Jul 2018 23:15:17 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 23:15:15 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     "Y.b. Lu" <yangbo.lu@nxp.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ptp_qoriq: convert to use module parameters for
+ initialization
+Message-ID: <20180801061515.krn52iaq2kqdi3wo@localhost>
+References: <20180730100154.27906-1-yangbo.lu@nxp.com>
+ <20180730100154.27906-3-yangbo.lu@nxp.com>
+ <20180730143043.qu66ttzwyjbw6si7@localhost>
+ <DB6PR0401MB253643010802739AD55820F3F82D0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB6PR0401MB253643010802739AD55820F3F82D0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+On Wed, Aug 01, 2018 at 04:36:40AM +0000, Y.b. Lu wrote:
 
-Add shift_overflow() helper to assist driver authors in ensuring that
-shift operations don't cause overflows or other odd conditions.
+> Could I add a function to calculate a set of default register values
+> to initialize ptp timer when dts method failed to get required
+> properties in driver?
 
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-[kees: tweaked comments and commit log, dropped unneeded assignment]
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/overflow.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Yes, it would be ideal if the driver can pick correct values
+automatically.
 
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index 8712ff70995f..69fc366ce865 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -202,6 +202,37 @@
- 
- #endif /* COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW */
- 
-+/** check_shift_overflow() - Calculate a left-shifted value and check overflow
-+ *
-+ * @a: Value to be shifted
-+ * @b: How many bits left to shift
-+ * @d: Pointer to where to store the result
-+ *
-+ * Computes *@d = (@a << @s)
-+ *
-+ * Returns true if '*d' cannot hold the result or when 'a << s' doesn't
-+ * make sense. Example conditions:
-+ * - 'a << s' causes bits to be lost when stored in *d.
-+ * - 's' is garbage (e.g. negative) or so large that the result of
-+ *   'a << s' is guaranteed to be 0.
-+ * - 'a' is negative.
-+ * - 'a << s' sets the sign bit, if any, in '*d'.
-+ *
-+ * '*d' will hold the results of the attempted shift, but is not
-+ * considered "safe for use" if false is returned.
-+ */
-+#define check_shift_overflow(a, s, d) ({				\
-+	typeof(a) _a = a;						\
-+	typeof(s) _s = s;						\
-+	typeof(d) _d = d;						\
-+	u64 _a_full = _a;						\
-+	unsigned int _to_shift =					\
-+		_s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;		\
-+	*_d = (_a_full << _to_shift);					\
-+	(_to_shift != _s || *_d < 0 || _a < 0 ||			\
-+		(*_d >> _to_shift) != _a);				\
-+})
-+
- /**
-  * array_size() - Calculate size of 2-dimensional array.
-  *
--- 
-2.17.1
+However, the frequency on the FIPER outputs can't be configured
+automatically, and we don't have an API for the user to choose this.
 
+> I think this will be useful. The ptp timer on new platforms (you may
+> see two dts patches in this patchset. Many platforms will be
+> affected.) will work without these dts properties. If user want
+> specific setting, they can set dts properties.
+
+Sure.
+
+Thanks,
+Richard
