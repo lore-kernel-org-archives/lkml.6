@@ -3,93 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42F2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CECC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE1820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:03:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE1820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id DA50920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:05:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA50920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389112AbeHANsm (ORCPT
+        id S2389073AbeHANvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:48:42 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33854 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387575AbeHANsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:48:41 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=[10.100.61.72])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <anna-maria@linutronix.de>)
-        id 1fkpqR-0005Tv-Gx; Wed, 01 Aug 2018 14:03:11 +0200
-Date:   Wed, 1 Aug 2018 14:03:11 +0200 (CEST)
-From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
-To:     Frederic Weisbecker <frederic@kernel.org>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
- timer softirq
-In-Reply-To: <1533077570-9169-1-git-send-email-frederic@kernel.org>
-Message-ID: <alpine.DEB.2.21.1808011401540.1475@somnus>
-References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 1 Aug 2018 09:51:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59756 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387575AbeHANvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:51:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AF3E40241C5;
+        Wed,  1 Aug 2018 12:05:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 43713215670D;
+        Wed,  1 Aug 2018 12:05:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180801094651.7136-1-yuehaibing@huawei.com>
+References: <20180801094651.7136-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     dhowells@redhat.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: [PATCH] rxrpc: Fix user ID check in rxrpc_service_prealloc_one
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8150.1533125151.1@warthog.procyon.org.uk>
+Date:   Wed, 01 Aug 2018 13:05:51 +0100
+Message-ID: <8151.1533125151@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 12:05:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 01 Aug 2018 12:05:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018, Frederic Weisbecker wrote:
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-> Before updating the full nohz tick or the idle time on IRQ exit, we
-> check first if we are not in a nesting interrupt, whether the inner
-> interrupt is a hard or a soft IRQ.
-> 
-> There is a historical reason for that: the dyntick idle mode used to
-> reprogram the tick on IRQ exit, after softirq processing, and there was
-> no point in doing that job in the outer nesting interrupt because the
-> tick update will be performed through the end of the inner interrupt
-> eventually, with even potential new timer updates.
-> 
-> One corner case could show up though: if an idle tick interrupts a softirq
-> executing inline in the idle loop (through a call to local_bh_enable())
-> after we entered in dynticks mode, the IRQ won't reprogram the tick
-> because it assumes the softirq executes on an inner IRQ-tail. As a
-> result we might put the CPU in sleep mode with the tick completely
-> stopped whereas a timer can still be enqueued. Indeed there is no tick
-> reprogramming in local_bh_enable(). We probably asssumed there was no bh
-> disabled section in idle, although there didn't seem to be debug code
-> ensuring that.
-> 
-> Nowadays the nesting interrupt optimization still stands but only concern
-> full dynticks. The tick is stopped on IRQ exit in full dynticks mode
-> and we want to wait for the end of the inner IRQ to reprogramm the tick.
-> But in_interrupt() doesn't make a difference between softirqs executing
-> on IRQ tail and those executing inline. What was to be considered a
-> corner case in dynticks-idle mode now becomes a serious opportunity for
-> a bug in full dynticks mode: if a tick interrupts a task executing
-> softirq inline, the tick reprogramming will be ignored and we may exit
-> to userspace after local_bh_enable() with an enqueued timer that will
-> never fire.
-> 
-> To fix this, simply keep reprogramming the tick if we are in a hardirq
-> interrupting softirq. We can still figure out a way later to restore
-> this optimization while excluding inline softirq processing.
-> 
-> Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
+> There just check the user ID isn't already in use, hence should 
+> compare user_call_ID with xcall->user_call_ID, which is current
+> node's user_call_ID.
 
-Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+I've changed "user ID" to "user call ID" to avoid confusion.
 
-Thanks,
-
-	Anna-Maria
+David
