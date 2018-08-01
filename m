@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE285C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412D4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB80208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB80208A3
+	by mail.kernel.org (Postfix) with ESMTP id 046B120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046B120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407853AbeHATUv (ORCPT
+        id S2407997AbeHATSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:20:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52928 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436604AbeHATSk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52918 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436570AbeHATSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40299D0E;
-        Wed,  1 Aug 2018 16:53:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98753E9C;
+        Wed,  1 Aug 2018 16:54:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Snild Dolkow <snild@sony.com>
-Subject: [PATCH 4.17 010/336] kthread, tracing: Dont expose half-written comm when creating kthreads
-Date:   Wed,  1 Aug 2018 18:45:45 +0200
-Message-Id: <20180801165029.322366867@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 037/336] rxrpc: Fix terminal retransmission connection ID to include the channel
+Date:   Wed,  1 Aug 2018 18:46:12 +0200
+Message-Id: <20180801165030.503060011@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,80 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Snild Dolkow <snild@sony.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
+[ Upstream commit fb1967a69f756073362b8f19347f863f227320ad ]
 
-There is a window for racing when printing directly to task->comm,
-allowing other threads to see a non-terminated string. The vsnprintf
-function fills the buffer, counts the truncated chars, then finally
-writes the \0 at the end.
+When retransmitting the final ACK or ABORT packet for a call, the cid field
+in the packet header is set to the connection's cid, but this is incorrect
+as it also needs to include the channel number on that connection that the
+call was made on.
 
-	creator                     other
-	vsnprintf:
-	  fill (not terminated)
-	  count the rest            trace_sched_waking(p):
-	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-	  write \0
+Fix this by OR'ing in the channel number.
 
-The consequences depend on how 'other' uses the string. In our case,
-it was copied into the tracing system's saved cmdlines, a buffer of
-adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
+Note that this fixes the bug that:
 
-	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
+	commit 1a025028d400b23477341aa7ec2ce55f8b39b554
+	rxrpc: Fix handling of call quietly cancelled out on server
 
-...and a strcpy out of there would cause stack corruption:
+works around.  I'm not intending to revert that as it will help protect
+against problems that might occur on the server.
 
-	[224761.522292] Kernel panic - not syncing: stack-protector:
-	    Kernel stack is corrupted in: ffffff9bf9783c78
-
-	crash-arm64> kbt | grep 'comm\|trace_print_context'
-	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-	      comm (char [16]) =  "irq/497-pwr_even"
-
-	crash-arm64> rd 0xffffffd4d0e17d14 8
-	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-
-The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-likely needed because of this same bug.
-
-Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-This way, there won't be a window where comm is not terminated.
-
-Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
-
-Cc: stable@vger.kernel.org
-Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Snild Dolkow <snild@sony.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 3136ef49a14c ("rxrpc: Delay terminal ACK transmission on a client call")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/kthread.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/rxrpc/conn_event.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -319,8 +319,14 @@ struct task_struct *__kthread_create_on_
- 	task = create->result;
- 	if (!IS_ERR(task)) {
- 		static const struct sched_param param = { .sched_priority = 0 };
-+		char name[TASK_COMM_LEN];
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -70,7 +70,7 @@ static void rxrpc_conn_retransmit_call(s
+ 	iov[2].iov_len	= sizeof(ack_info);
  
--		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-+		/*
-+		 * task is already visible to other tasks, so updating
-+		 * COMM must be protected.
-+		 */
-+		vsnprintf(name, sizeof(name), namefmt, args);
-+		set_task_comm(task, name);
- 		/*
- 		 * root may have changed our (kthreadd's) priority or CPU mask.
- 		 * The kernel thread should not inherit these properties.
+ 	pkt.whdr.epoch		= htonl(conn->proto.epoch);
+-	pkt.whdr.cid		= htonl(conn->proto.cid);
++	pkt.whdr.cid		= htonl(conn->proto.cid | channel);
+ 	pkt.whdr.callNumber	= htonl(call_id);
+ 	pkt.whdr.seq		= 0;
+ 	pkt.whdr.type		= chan->last_type;
 
 
