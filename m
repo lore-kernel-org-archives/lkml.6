@@ -3,44 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40927C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DD8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0488420844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0488420844
+	by mail.kernel.org (Postfix) with ESMTP id 0429B20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0429B20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbeHATtA (ORCPT
+        id S1732712AbeHATs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:49:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
+        Wed, 1 Aug 2018 15:48:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405866AbeHATIi (ORCPT
+        with ESMTP id S2405850AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A996B1370;
-        Wed,  1 Aug 2018 17:13:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17947117E;
+        Wed,  1 Aug 2018 17:06:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Achim Mildenberger <admin@fph.physik.uni-karlsruhe.de>,
-        Benjamin Poirier <bpoirier@suse.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/246] e1000e: Ignore TSYNCRXCTL when getting I219 clock attributes
-Date:   Wed,  1 Aug 2018 18:49:14 +0200
-Message-Id: <20180801165013.826708233@linuxfoundation.org>
+Subject: [PATCH 4.17 254/336] ASoC: compress: Only call free for components which have been opened
+Date:   Wed,  1 Aug 2018 18:49:49 +0200
+Message-Id: <20180801165038.779824740@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -50,79 +48,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit fff200caf6f9179dd9a7fc67acd659e614c3f72f ]
+[ Upstream commit 572e6c8dd174bc6fc7ba5d9b6935e9ec8d2660f5 ]
 
-There have been multiple reports of crashes that look like
-kernel: RIP: 0010:[<ffffffff8110303f>] timecounter_read+0xf/0x50
-[...]
-kernel: Call Trace:
-kernel:  [<ffffffffa0806b0f>] e1000e_phc_gettime+0x2f/0x60 [e1000e]
-kernel:  [<ffffffffa0806c5d>] e1000e_systim_overflow_work+0x1d/0x80 [e1000e]
-kernel:  [<ffffffff810992c5>] process_one_work+0x155/0x440
-kernel:  [<ffffffff81099e16>] worker_thread+0x116/0x4b0
-kernel:  [<ffffffff8109f422>] kthread+0xd2/0xf0
-kernel:  [<ffffffff8163184f>] ret_from_fork+0x3f/0x70
+The core should only call free on a component if said component has
+already had open called on it. This is not presently the case and most
+compressed drivers in the kernel assume it will be. This causes null
+pointer dereferences in the drivers as they attempt clean up for stuff
+that was never put in place.
 
-These can be traced back to the fact that e1000e_systim_reset() skips the
-timecounter_init() call if e1000e_get_base_timinca() returns -EINVAL, which
-leads to a null deref in timecounter_read().
+This is fixed by aborting calling open callbacks once a failure is
+encountered and then during clean up only iterating through the
+component list to that point.
 
-Commit 83129b37ef35 ("e1000e: fix systim issues", v4.2-rc1) reworked
-e1000e_get_base_timinca() in such a way that it can return -EINVAL for
-e1000_pch_spt if the SYSCFI bit is not set in TSYNCRXCTL.
+This is a fairly quick fix to the issue, to allow backporting. There
+is more refactoring to follow to tidy the code up a little.
 
-Some experimentation has shown that on I219 (e1000_pch_spt, "MAC: 12")
-adapters, the E1000_TSYNCRXCTL_SYSCFI flag is unstable; TSYNCRXCTL reads
-sometimes don't have the SYSCFI bit set. Retrying the read shortly after
-finds the bit to be set. This was observed at boot (probe) but also link up
-and link down.
-
-Moreover, the phc (PTP Hardware Clock) seems to operate normally even after
-reads where SYSCFI=0. Therefore, remove this register read and
-unconditionally set the clock parameters.
-
-Reported-by: Achim Mildenberger <admin@fph.physik.uni-karlsruhe.de>
-Message-Id: <20180425065243.g5mqewg5irkwgwgv@f2>
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1075876
-Fixes: 83129b37ef35 ("e1000e: fix systim issues")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9e7e3738ab0e ("ASoC: snd_soc_component_driver has snd_compr_ops")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |   15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ sound/soc/soc-compress.c |   52 +++++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -3558,15 +3558,12 @@ s32 e1000e_get_base_timinca(struct e1000
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -33,7 +33,7 @@ static int soc_compr_open(struct snd_com
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	int ret = 0, __ret;
++	int ret;
+ 
+ 	mutex_lock_nested(&rtd->pcm_mutex, rtd->pcm_subclass);
+ 
+@@ -68,16 +68,15 @@ static int soc_compr_open(struct snd_com
+ 		    !component->driver->compr_ops->open)
+ 			continue;
+ 
+-		__ret = component->driver->compr_ops->open(cstream);
+-		if (__ret < 0) {
++		ret = component->driver->compr_ops->open(cstream);
++		if (ret < 0) {
+ 			dev_err(component->dev,
+ 				"Compress ASoC: can't open platform %s: %d\n",
+-				component->name, __ret);
+-			ret = __ret;
++				component->name, ret);
++			goto machine_err;
  		}
- 		break;
- 	case e1000_pch_spt:
--		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
--			/* Stable 24MHz frequency */
--			incperiod = INCPERIOD_24MHZ;
--			incvalue = INCVALUE_24MHZ;
--			shift = INCVALUE_SHIFT_24MHZ;
--			adapter->cc.shift = shift;
--			break;
--		}
--		return -EINVAL;
-+		/* Stable 24MHz frequency */
-+		incperiod = INCPERIOD_24MHZ;
-+		incvalue = INCVALUE_24MHZ;
-+		shift = INCVALUE_SHIFT_24MHZ;
-+		adapter->cc.shift = shift;
-+		break;
- 	case e1000_pch_cnp:
- 		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
- 			/* Stable 24MHz frequency */
+ 	}
+-	if (ret < 0)
+-		goto machine_err;
++	component = NULL;
+ 
+ 	if (rtd->dai_link->compr_ops && rtd->dai_link->compr_ops->startup) {
+ 		ret = rtd->dai_link->compr_ops->startup(cstream);
+@@ -97,17 +96,20 @@ static int soc_compr_open(struct snd_com
+ 
+ machine_err:
+ 	for_each_rtdcom(rtd, rtdcom) {
+-		component = rtdcom->component;
++		struct snd_soc_component *err_comp = rtdcom->component;
++
++		if (err_comp == component)
++			break;
+ 
+ 		/* ignore duplication for now */
+-		if (platform && (component == &platform->component))
++		if (platform && (err_comp == &platform->component))
+ 			continue;
+ 
+-		if (!component->driver->compr_ops ||
+-		    !component->driver->compr_ops->free)
++		if (!err_comp->driver->compr_ops ||
++		    !err_comp->driver->compr_ops->free)
+ 			continue;
+ 
+-		component->driver->compr_ops->free(cstream);
++		err_comp->driver->compr_ops->free(cstream);
+ 	}
+ 
+ 	if (platform && platform->driver->compr_ops && platform->driver->compr_ops->free)
+@@ -132,7 +134,7 @@ static int soc_compr_open_fe(struct snd_
+ 	struct snd_soc_dpcm *dpcm;
+ 	struct snd_soc_dapm_widget_list *list;
+ 	int stream;
+-	int ret = 0, __ret;
++	int ret;
+ 
+ 	if (cstream->direction == SND_COMPRESS_PLAYBACK)
+ 		stream = SNDRV_PCM_STREAM_PLAYBACK;
+@@ -172,16 +174,15 @@ static int soc_compr_open_fe(struct snd_
+ 		    !component->driver->compr_ops->open)
+ 			continue;
+ 
+-		__ret = component->driver->compr_ops->open(cstream);
+-		if (__ret < 0) {
++		ret = component->driver->compr_ops->open(cstream);
++		if (ret < 0) {
+ 			dev_err(component->dev,
+ 				"Compress ASoC: can't open platform %s: %d\n",
+-				component->name, __ret);
+-			ret = __ret;
++				component->name, ret);
++			goto machine_err;
+ 		}
+ 	}
+-	if (ret < 0)
+-		goto machine_err;
++	component = NULL;
+ 
+ 	if (fe->dai_link->compr_ops && fe->dai_link->compr_ops->startup) {
+ 		ret = fe->dai_link->compr_ops->startup(cstream);
+@@ -236,17 +237,20 @@ fe_err:
+ 		fe->dai_link->compr_ops->shutdown(cstream);
+ machine_err:
+ 	for_each_rtdcom(fe, rtdcom) {
+-		component = rtdcom->component;
++		struct snd_soc_component *err_comp = rtdcom->component;
++
++		if (err_comp == component)
++			break;
+ 
+ 		/* ignore duplication for now */
+-		if (platform && (component == &platform->component))
++		if (platform && (err_comp == &platform->component))
+ 			continue;
+ 
+-		if (!component->driver->compr_ops ||
+-		    !component->driver->compr_ops->free)
++		if (!err_comp->driver->compr_ops ||
++		    !err_comp->driver->compr_ops->free)
+ 			continue;
+ 
+-		component->driver->compr_ops->free(cstream);
++		err_comp->driver->compr_ops->free(cstream);
+ 	}
+ 
+ 	if (platform && platform->driver->compr_ops && platform->driver->compr_ops->free)
 
 
