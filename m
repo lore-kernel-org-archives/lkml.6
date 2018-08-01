@@ -2,80 +2,100 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DB7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D72C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9784E20841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fs5oMPYL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9784E20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C936120840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C936120840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388459AbeHAUXj (ORCPT
+        id S2388268AbeHAUXd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:23:39 -0400
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:33383 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732878AbeHAUXj (ORCPT
+        Wed, 1 Aug 2018 16:23:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403968AbeHATDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:23:39 -0400
-Received: by mail-pg1-f182.google.com with SMTP id r5-v6so11242560pgv.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:36:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=xizb0a9z96+agddiSCaFJC89kOdfUDqfSyHP/B0nzLI=;
-        b=fs5oMPYL/y5gby8cMvCPDYvKe+afJ6iNhQ9KQ3T50BMnGERbgY4pvXejJFQwHYFXxG
-         yr5gZiWrgcOEbS9qmK5pKpWmnRki0MHFLhyyLc9KP5fSUlu3uWdsBfKSibgHiDzBr4SU
-         QC+UehepUqD+CCtBIlAhHVbDFGeg9P6WmzuqDEF7Y/WBU0gaOIu7YBkj4Nbprl7X5O1K
-         ou0mGAU9OJ+M7d86T8BORKz7jP8+W3XEneYC2dMLOVIwOw78FNPEcZbrJUAVGT3F8Gjw
-         Q5PO/fs3t2mM3xUWNCLX7r+3G+0fIDxfq31wp4CD6MoObhHkikjLpAZBvjogIkldXp67
-         4AmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=xizb0a9z96+agddiSCaFJC89kOdfUDqfSyHP/B0nzLI=;
-        b=TumrQ+TQM1I4wu1jrKu6UuAy7ag/kNI82+5y3TjrFCVUlUFbJYLDyMhSS6aIHrw0t0
-         lNzEQQbcyRXIOunFmsUfLIUdvK+fYrmv5nfjIcJVlFOsE0DNpRyIyOaDvoMsTi2PyQVl
-         +yEv1jME11ssxW+HM3AWP5PBMZYuF4nvJeIvwjZVr27pklkIdU+9h3q4lEOO7RH94+dk
-         EWEx4k1BP0PAl3uc5yAAZrjDy6ItUlEEzVyIbAGJ3NtfZId5sCBsibrdELnOq1werXNB
-         vGgj5xBohBraJk9QFXctioROgSN3FobutfWyJKdAay8YH46eTZ/GpwkBQYkmSOhYCU9e
-         VQ+g==
-X-Gm-Message-State: AOUpUlFnAoKksqkk1L55B0UrwaG6FE/75CgmA47qHBnro3q9ZS1qQsVj
-        uX/gupdv79XfOaJhvvWh12ObL/ej09UTwIadEpv71LVkP6w=
-X-Google-Smtp-Source: AAOMgpdPvRPwSlMUcSOUG+Y8wKthx+KZio2ztegN2xnFJaoUP4pnhBdttqdp5qt8xBfoQxs1SvjigodbhbXjceQyAuw=
-X-Received: by 2002:a63:9619:: with SMTP id c25-v6mr25350922pge.75.1533148594971;
- Wed, 01 Aug 2018 11:36:34 -0700 (PDT)
+        Wed, 1 Aug 2018 15:03:32 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 308361056;
+        Wed,  1 Aug 2018 17:00:53 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 123/336] ath: Add regulatory mapping for Serbia
+Date:   Wed,  1 Aug 2018 18:47:38 +0200
+Message-Id: <20180801165033.852516730@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 1 Aug 2018 11:36:23 -0700
-Message-ID: <CAKwvOdmuXvM0qF0zy15Q9yfCUNr+Kd4jDTcERWg1R-R2zDNuTA@mail.gmail.com>
-Subject: get_maintainer.pl and change of email
-To:     joe@perches.com
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that get_maintainer.pl will make recommendations based on
-commit history to a file, but over time, people change emails that
-they commit from, then get_maintainer.pl recommends the possibly now
-invalid email address.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-I feel like we should have a look up table / file like MAINTAINERS
-that tracks previous and new email addresses, which get_maintainer.pl
-would parse, that way we have a record of movement between committer
-email addresses allowing get_maintainer.pl to make more accurate
-recommendations.  Thoughts?
--- 
-Thanks,
-~Nick Desaulniers
+------------------
+
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+
+[ Upstream commit 2a3169a54bb53717928392a04fb84deb765b51f1 ]
+
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
+
+  Invalid EEPROM contents
+
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: ETSI
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -159,6 +159,7 @@ enum CountryCode {
+ 	CTRY_ROMANIA = 642,
+ 	CTRY_RUSSIA = 643,
+ 	CTRY_SAUDI_ARABIA = 682,
++	CTRY_SERBIA = 688,
+ 	CTRY_SERBIA_MONTENEGRO = 891,
+ 	CTRY_SINGAPORE = 702,
+ 	CTRY_SLOVAKIA = 703,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -452,6 +452,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_ROMANIA, NULL1_WORLD, "RO"},
+ 	{CTRY_RUSSIA, NULL1_WORLD, "RU"},
+ 	{CTRY_SAUDI_ARABIA, NULL1_WORLD, "SA"},
++	{CTRY_SERBIA, ETSI1_WORLD, "RS"},
+ 	{CTRY_SERBIA_MONTENEGRO, ETSI1_WORLD, "CS"},
+ 	{CTRY_SINGAPORE, APL6_WORLD, "SG"},
+ 	{CTRY_SLOVAKIA, ETSI1_WORLD, "SK"},
+
+
