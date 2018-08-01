@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DA5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03552C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B3220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B3220844
+	by mail.kernel.org (Postfix) with ESMTP id AD6A420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6A420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404742AbeHATEU (ORCPT
+        id S2404756AbeHATEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46488 "EHLO
+        Wed, 1 Aug 2018 15:04:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46498 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404028AbeHATET (ORCPT
+        with ESMTP id S2403985AbeHATEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:19 -0400
+        Wed, 1 Aug 2018 15:04:22 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA7EAC96;
-        Wed,  1 Aug 2018 17:17:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9195C96;
+        Wed,  1 Aug 2018 17:17:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Subhash Jadavani <subhashj@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        Can Guo <cang@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 118/246] scsi: ufs: fix exception event handling
-Date:   Wed,  1 Aug 2018 18:50:28 +0200
-Message-Id: <20180801165017.364818946@linuxfoundation.org>
+Subject: [PATCH 4.14 119/246] scsi: zfcp: assert that the ERP lock is held when tracing a recovery trigger
+Date:   Wed,  1 Aug 2018 18:50:29 +0200
+Message-Id: <20180801165017.425512008@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -54,51 +53,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maya Erez <merez@codeaurora.org>
+From: Jens Remus <jremus@linux.ibm.com>
 
-[ Upstream commit 2e3611e9546c2ed4def152a51dfd34e8dddae7a5 ]
+[ Upstream commit 9e156c54ace310ce7fb1cd960e62416947f3d47c ]
 
-The device can set the exception event bit in one of the response UPIU,
-for example to notify the need for urgent BKOPs operation.  In such a
-case, the host driver calls ufshcd_exception_event_handler to handle
-this notification.  When trying to check the exception event status (for
-finding the cause for the exception event), the device may be busy with
-additional SCSI commands handling and may not respond within the 100ms
-timeout.
+Otherwise iterating with list_for_each() over the adapter->erp_ready_head
+and adapter->erp_running_head lists can lead to an infinite loop. See commit
+"zfcp: fix infinite iteration on erp_ready_head list".
 
-To prevent that, we need to block SCSI commands during handling of
-exception events and allow retransmissions of the query requests, in
-case of timeout.
+The run-time check is only performed for debug kernels which have the kernel
+lock validator enabled. Following is an example of the warning that is
+reported, if the ERP lock is not held when calling zfcp_dbf_rec_trig():
 
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+WARNING: CPU: 0 PID: 604 at drivers/s390/scsi/zfcp_dbf.c:288 zfcp_dbf_rec_trig+0x172/0x188
+Modules linked in: ...
+CPU: 0 PID: 604 Comm: kworker/u128:3 Not tainted 4.16.0-... #1
+Hardware name: IBM 2964 N96 702 (z/VM 6.4.0)
+Workqueue: zfcp_q_0.0.1906 zfcp_scsi_rport_work
+Krnl PSW : 00000000330fdbf9 00000000367e9728 (zfcp_dbf_rec_trig+0x172/0x188)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:3 PM:0 RI:0 EA:3
+Krnl GPRS: 00000000c57a5d99 3288200000000000 0000000000000000 000000006cc82740
+           00000000009d09d6 0000000000000000 00000000000000ff 0000000000000000
+           0000000000000000 0000000000e1b5fe 000000006de01d38 0000000076130958
+           000000006cc82548 000000006de01a98 00000000009d09d6 000000006a6d3c80
+Krnl Code: 00000000009d0ad2: eb7ff0b80004        lmg        %r7,%r15,184(%r15)
+           00000000009d0ad8: c0f4000d7dd0        brcl       15,b80678
+          #00000000009d0ade: a7f40001            brc        15,9d0ae0
+          >00000000009d0ae2: a7f4ff7d            brc        15,9d09dc
+           00000000009d0ae6: e340f0f00004        lg         %r4,240(%r15)
+           00000000009d0aec: eb7ff0b80004        lmg        %r7,%r15,184(%r15)
+           00000000009d0af2: 07f4                bcr        15,%r4
+           00000000009d0af4: 0707                bcr        0,%r7
+Call Trace:
+([<00000000009d09d6>] zfcp_dbf_rec_trig+0x66/0x188)
+ [<00000000009dd740>] zfcp_scsi_rport_work+0x98/0x190
+ [<0000000000169b34>] process_one_work+0x3d4/0x6f8
+ [<000000000016a08a>] worker_thread+0x232/0x418
+ [<000000000017219e>] kthread+0x166/0x178
+ [<0000000000b815ea>] kernel_thread_starter+0x6/0xc
+ [<0000000000b815e4>] kernel_thread_starter+0x0/0xc
+2 locks held by kworker/u128:3/604:
+ #0:  ((wq_completion)name){+.+.}, at: [<0000000082af1024>] process_one_work+0x1dc/0x6f8
+ #1:  ((work_completion)(&port->rport_work)){+.+.}, at: [<0000000082af1024>] process_one_work+0x1dc/0x6f8
+Last Breaking-Event-Address:
+ [<00000000009d0ade>] zfcp_dbf_rec_trig+0x16e/0x188
+---[ end trace b2f4020572e2c124 ]---
+
+Suggested-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Jens Remus <jremus@linux.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Reviewed-by: Steffen Maier <maier@linux.ibm.com>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/ufs/ufshcd.c |    2 ++
+ drivers/s390/scsi/zfcp_dbf.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4947,6 +4947,7 @@ static void ufshcd_exception_event_handl
- 	hba = container_of(work, struct ufs_hba, eeh_work);
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -285,6 +285,8 @@ void zfcp_dbf_rec_trig(char *tag, struct
+ 	struct list_head *entry;
+ 	unsigned long flags;
  
- 	pm_runtime_get_sync(hba->dev);
-+	scsi_block_requests(hba->host);
- 	err = ufshcd_get_ee_status(hba, &status);
- 	if (err) {
- 		dev_err(hba->dev, "%s: failed to get exception status %d\n",
-@@ -4960,6 +4961,7 @@ static void ufshcd_exception_event_handl
- 		ufshcd_bkops_exception_event_handler(hba);
++	lockdep_assert_held(&adapter->erp_lock);
++
+ 	if (unlikely(!debug_level_enabled(dbf->rec, level)))
+ 		return;
  
- out:
-+	scsi_unblock_requests(hba->host);
- 	pm_runtime_put_sync(hba->dev);
- 	return;
- }
 
 
