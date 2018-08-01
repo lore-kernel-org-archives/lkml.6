@@ -3,48 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0148C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A46C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A378A20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:01:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A378A20862
+	by mail.kernel.org (Postfix) with ESMTP id D959820862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:03:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D959820862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389193AbeHANrR (ORCPT
+        id S2389044AbeHANsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 09:47:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49680 "EHLO mx1.suse.de"
+        Wed, 1 Aug 2018 09:48:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50054 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389021AbeHANrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 09:47:17 -0400
+        id S2387575AbeHANsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 09:48:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0DCCDADA7;
-        Wed,  1 Aug 2018 12:01:49 +0000 (UTC)
-Date:   Wed, 01 Aug 2018 14:01:48 +0200
-Message-ID: <s5ha7q6nvmb.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 75E79ADA7;
+        Wed,  1 Aug 2018 12:03:07 +0000 (UTC)
+Date:   Wed, 01 Aug 2018 14:03:06 +0200
+Message-ID: <s5h8t5qnvk5.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Colin King" <colin.king@canonical.com>
-Cc:     <alsa-devel@alsa-project.org>,
-        "Jaya Kumar" <jayakumar.alsa@gmail.com>,
-        "Liam Girdwood" <lgirdwood@gmail.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+To:     "Akshu Agrawal" <akshu.agrawal@amd.com>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, <Alexander.Deucher@amd.com>,
+        <djkurtz@chromium.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
         "Mark Brown" <broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
         "Jaroslav Kysela" <perex@perex.cz>,
-        "Alexandre Torgue" <alexandre.torgue@st.com>,
-        "Arnaud Pouliquen" <arnaud.pouliquen@st.com>,
-        "Olivier Moysan" <olivier.moysan@st.com>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 8/9] ALSA: usb-audio: remove redundant pointer 'urb'
-In-Reply-To: <20180801104742.4328-9-colin.king@canonical.com>
-References: <20180801104742.4328-1-colin.king@canonical.com>
-        <20180801104742.4328-9-colin.king@canonical.com>
+        "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ASoC: soc-pcm: Use delay set in component pointer function
+In-Reply-To: <1533118054-14509-1-git-send-email-akshu.agrawal@amd.com>
+References: <1533118054-14509-1-git-send-email-akshu.agrawal@amd.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -55,20 +48,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 01 Aug 2018 12:47:41 +0200,
-Colin King wrote:
+On Wed, 01 Aug 2018 12:07:33 +0200,
+Akshu Agrawal wrote:
 > 
-> From: Colin Ian King <colin.king@canonical.com>
+> Take into account the base delay set in pointer callback.
 > 
-> Pointer 'urb' is being assigned but is never used hence it is
-> redundant and can be removed.
+> There are cases where a pointer function populates
+> runtime->delay, such as:
+> ./sound/pci/hda/hda_controller.c
+> ./sound/soc/intel/atom/sst-mfld-platform-pcm.c
 > 
-> Cleans up clang warning:
-> warning: variable 'urb' set but not used [-Wunused-but-set-variable]
+> This delay was getting lost and was overwritten by delays
+> from codec or cpu dai delay function if exposed.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Now,
+> Total delay = base delay + cpu_dai delay + codec_dai delay
+> 
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 
-Applied, thanks.
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
+
+thanks,
 
 Takashi
+
+
+> ---
+>  sound/soc/soc-pcm.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> index 98be04b..e8b98bfd 100644
+> --- a/sound/soc/soc-pcm.c
+> +++ b/sound/soc/soc-pcm.c
+> @@ -1179,6 +1179,9 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
+>  	snd_pcm_sframes_t codec_delay = 0;
+>  	int i;
+>  
+> +	/* clearing the previous total delay */
+> +	runtime->delay = 0;
+> +
+>  	for_each_rtdcom(rtd, rtdcom) {
+>  		component = rtdcom->component;
+>  
+> @@ -1190,6 +1193,8 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
+>  		offset = component->driver->ops->pointer(substream);
+>  		break;
+>  	}
+> +	/* base delay if assigned in pointer callback */
+> +	delay = runtime->delay;
+>  
+>  	if (cpu_dai->driver->ops->delay)
+>  		delay += cpu_dai->driver->ops->delay(substream, cpu_dai);
+> -- 
+> 1.9.1
+> 
+> 
