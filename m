@@ -2,139 +2,168 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5E1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1796CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DE020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:31:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Gb4w+Wxj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DE020844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CD0DD20894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0DD20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbeHAPRd (ORCPT
+        id S2389412AbeHAPSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:17:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49936 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389217AbeHAPRd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:17:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Bzso0yPFRXB0hjxnhCVX1tjkvI+kPGpWymFWfLLFVKY=; b=Gb4w+WxjRmkh
-        shVuje3CYRHA9IPULLqEktcz8mIT0sufif0DUauhoeP/U+PwEcTuLHt6+QsiiuqZeYqvAxAUh4sMF
-        /6tzdcyn56Ruz2QR96K1BFWnK3L03WzUvsfBcRksbgc+CIECE+8EWxh1ttqc5XXuHJxqNzICRGQQ0
-        e9ZfU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkrE0-0000zC-KT; Wed, 01 Aug 2018 13:31:36 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 25CCB1124241; Wed,  1 Aug 2018 14:31:36 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, djkurtz@chromium.org,
-        Mark Brown <broonie@kernel.org>, Alexander.Deucher@amd.com,
-        akshu.agrawal@amd.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: soc-pcm: Use delay set in component pointer function" to the asoc tree
-In-Reply-To:  <1533118054-14509-1-git-send-email-akshu.agrawal@amd.com>
-Message-Id: <20180801133136.25CCB1124241@debutante.sirena.org.uk>
-Date:   Wed,  1 Aug 2018 14:31:36 +0100 (BST)
+        Wed, 1 Aug 2018 11:18:24 -0400
+Received: from mga12.intel.com ([192.55.52.136]:42817 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389329AbeHAPSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 11:18:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 06:32:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
+   d="scan'208";a="58865025"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Aug 2018 06:32:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 3CFBEF7; Wed,  1 Aug 2018 16:32:31 +0300 (EEST)
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Malkin <d.malkin@real-time-systems.com>,
+        youling 257 <youling257@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/boot/compressed/64: Validate trampoline placement against e820
+Date:   Wed,  1 Aug 2018 16:32:25 +0300
+Message-Id: <20180801133225.38121-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+There were two report of boot failure cased by trampoline placed into
+a reserved memory region. It can happen on machines that don't report
+EBDA correctly.
 
-   ASoC: soc-pcm: Use delay set in component pointer function
+Fix the problem by re-validating the found address against e820 table.
+If the address is in a reserved area, find the next usable region below
+the initial address.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 9fb4c2bf130b922c77c16a8368732699799c40de Mon Sep 17 00:00:00 2001
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Date: Wed, 1 Aug 2018 15:37:33 +0530
-Subject: [PATCH] ASoC: soc-pcm: Use delay set in component pointer function
-
-Take into account the base delay set in pointer callback.
-
-There are cases where a pointer function populates
-runtime->delay, such as:
-./sound/pci/hda/hda_controller.c
-./sound/soc/intel/atom/sst-mfld-platform-pcm.c
-
-This delay was getting lost and was overwritten by delays
-from codec or cpu dai delay function if exposed.
-
-Now,
-Total delay = base delay + cpu_dai delay + codec_dai delay
-
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Dmitry Malkin <d.malkin@real-time-systems.com>
+Reported-by: youling 257 <youling257@gmail.com>
+Fixes: 3548e131ec6a ("x86/boot/compressed/64: Find a place for 32-bit trampoline")
 ---
- sound/soc/soc-pcm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/boot/compressed/pgtable_64.c | 73 ++++++++++++++++++++-------
+ 1 file changed, 55 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 4019bc10897c..9833e53754cb 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1179,6 +1179,9 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
- 	snd_pcm_sframes_t codec_delay = 0;
- 	int i;
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 8c5107545251..9e2157371491 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -1,3 +1,4 @@
++#include <asm/e820/types.h>
+ #include <asm/processor.h>
+ #include "pgtable.h"
+ #include "../string.h"
+@@ -34,10 +35,62 @@ unsigned long *trampoline_32bit __section(.data);
+ extern struct boot_params *boot_params;
+ int cmdline_find_option_bool(const char *option);
  
-+	/* clearing the previous total delay */
-+	runtime->delay = 0;
++static unsigned long find_trampoline_placement(void)
++{
++	unsigned long bios_start, ebda_start;
++	unsigned long trampoline_start;
++	struct boot_e820_entry *entry;
++	int i;
 +
- 	for_each_rtdcom(rtd, rtdcom) {
- 		component = rtdcom->component;
++	/*
++	 * Find a suitable spot for the trampoline.
++	 * This code is based on reserve_bios_regions().
++	 */
++
++	ebda_start = *(unsigned short *)0x40e << 4;
++	bios_start = *(unsigned short *)0x413 << 10;
++
++	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
++		bios_start = BIOS_START_MAX;
++
++	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
++		bios_start = ebda_start;
++
++	bios_start = round_down(bios_start, PAGE_SIZE);
++
++	/* Find the first usable memory region under bios_start. */
++	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
++		entry = &boot_params->e820_table[i];
++
++		/* Skip all entries above bios_start. */
++		if (bios_start <= entry->addr)
++			continue;
++
++		/* Skip non-RAM entries. */
++		if (entry->type != E820_TYPE_RAM)
++			continue;
++
++		/* Adjust bios_start to the end of the entry if needed. */
++		if (bios_start > entry->addr + entry->size)
++			bios_start = entry->addr + entry->size;
++
++		/* Keep bios_start page-aligned. */
++		bios_start = round_down(bios_start, PAGE_SIZE);
++
++		/* Skip the entry if it's too small. */
++		if (bios_start - TRAMPOLINE_32BIT_SIZE < entry->addr)
++			continue;
++
++		break;
++	}
++
++	/* Place the trampoline just below the end of low memory */
++	return bios_start - TRAMPOLINE_32BIT_SIZE;
++}
++
+ struct paging_config paging_prepare(void *rmode)
+ {
+ 	struct paging_config paging_config = {};
+-	unsigned long bios_start, ebda_start;
  
-@@ -1190,6 +1193,8 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
- 		offset = component->driver->ops->pointer(substream);
- 		break;
+ 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
+ 	boot_params = rmode;
+@@ -61,23 +114,7 @@ struct paging_config paging_prepare(void *rmode)
+ 		paging_config.l5_required = 1;
  	}
-+	/* base delay if assigned in pointer callback */
-+	delay = runtime->delay;
  
- 	if (cpu_dai->driver->ops->delay)
- 		delay += cpu_dai->driver->ops->delay(substream, cpu_dai);
+-	/*
+-	 * Find a suitable spot for the trampoline.
+-	 * This code is based on reserve_bios_regions().
+-	 */
+-
+-	ebda_start = *(unsigned short *)0x40e << 4;
+-	bios_start = *(unsigned short *)0x413 << 10;
+-
+-	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
+-		bios_start = BIOS_START_MAX;
+-
+-	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
+-		bios_start = ebda_start;
+-
+-	/* Place the trampoline just below the end of low memory, aligned to 4k */
+-	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
+-	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
++	paging_config.trampoline_start = find_trampoline_placement();
+ 
+ 	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
+ 
 -- 
 2.18.0
 
