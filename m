@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D180EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE653C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942D4208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942D4208A6
+	by mail.kernel.org (Postfix) with ESMTP id 9C8DC208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C8DC208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390645AbeHATjY (ORCPT
+        id S2390651AbeHATjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:39:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:39:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406017AbeHATIl (ORCPT
+        with ESMTP id S2405987AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40A8C1357;
-        Wed,  1 Aug 2018 17:13:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49FBC137F;
+        Wed,  1 Aug 2018 17:14:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/246] xen/netfront: raise max number of slots in xennet_get_responses()
-Date:   Wed,  1 Aug 2018 18:48:51 +0200
-Message-Id: <20180801165012.715542128@linuxfoundation.org>
+Subject: [PATCH 4.14 050/246] powerpc/64s: Fix compiler store ordering to SLB shadow area
+Date:   Wed,  1 Aug 2018 18:49:20 +0200
+Message-Id: <20180801165014.122635321@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,55 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 57f230ab04d2910a06d17d988f1c4d7586a59113 ]
+[ Upstream commit 926bc2f100c24d4842b3064b5af44ae964c1d81c ]
 
-The max number of slots used in xennet_get_responses() is set to
-MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
+The stores to update the SLB shadow area must be made as they appear
+in the C code, so that the hypervisor does not see an entry with
+mismatched vsid and esid. Use WRITE_ONCE for this.
 
-In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
-difference is resulting in frequent messages "too many slots" and a
-reduced network throughput for some workloads (factor 10 below that of
-a kernel-xen based guest).
+GCC has been observed to elide the first store to esid in the update,
+which means that if the hypervisor interrupts the guest after storing
+to vsid, it could see an entry with old esid and new vsid, which may
+possibly result in memory corruption.
 
-Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
-the max number of slots to use solves that problem (tests showed no
-more messages "too many slots" and throughput was as high as with the
-kernel-xen based guest system).
-
-Replace MAX_SKB_FRAGS-2 by XEN_NETIF_NR_SLOTS_MIN-1 in
-netfront_tx_slot_available() for making it clearer what is really being
-tested without actually modifying the tested value.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/slb.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -239,7 +239,7 @@ static void rx_refill_timeout(unsigned l
- static int netfront_tx_slot_available(struct netfront_queue *queue)
- {
- 	return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
--		(NET_TX_RING_SIZE - MAX_SKB_FRAGS - 2);
-+		(NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
+--- a/arch/powerpc/mm/slb.c
++++ b/arch/powerpc/mm/slb.c
+@@ -62,14 +62,14 @@ static inline void slb_shadow_update(uns
+ 	 * updating it.  No write barriers are needed here, provided
+ 	 * we only update the current CPU's SLB shadow buffer.
+ 	 */
+-	p->save_area[index].esid = 0;
+-	p->save_area[index].vsid = cpu_to_be64(mk_vsid_data(ea, ssize, flags));
+-	p->save_area[index].esid = cpu_to_be64(mk_esid_data(ea, ssize, index));
++	WRITE_ONCE(p->save_area[index].esid, 0);
++	WRITE_ONCE(p->save_area[index].vsid, cpu_to_be64(mk_vsid_data(ea, ssize, flags)));
++	WRITE_ONCE(p->save_area[index].esid, cpu_to_be64(mk_esid_data(ea, ssize, index)));
  }
  
- static void xennet_maybe_wake_tx(struct netfront_queue *queue)
-@@ -790,7 +790,7 @@ static int xennet_get_responses(struct n
- 	RING_IDX cons = queue->rx.rsp_cons;
- 	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
- 	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
--	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
-+	int max = XEN_NETIF_NR_SLOTS_MIN + (rx->status <= RX_COPY_THRESHOLD);
- 	int slots = 1;
- 	int err = 0;
- 	unsigned long ret;
+ static inline void slb_shadow_clear(enum slb_index index)
+ {
+-	get_slb_shadow()->save_area[index].esid = 0;
++	WRITE_ONCE(get_slb_shadow()->save_area[index].esid, 0);
+ }
+ 
+ static inline void create_shadowed_slbe(unsigned long ea, int ssize,
 
 
