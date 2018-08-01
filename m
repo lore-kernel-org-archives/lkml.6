@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46607C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74454C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E2D20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E2D20844
+	by mail.kernel.org (Postfix) with ESMTP id 30AF520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30AF520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404871AbeHATEq (ORCPT
+        id S2404887AbeHATEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46582 "EHLO
+        Wed, 1 Aug 2018 15:04:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403902AbeHATEq (ORCPT
+        with ESMTP id S2404873AbeHATEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:46 -0400
+        Wed, 1 Aug 2018 15:04:49 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38BAFC9D;
-        Wed,  1 Aug 2018 17:18:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 172BCCC3;
+        Wed,  1 Aug 2018 17:18:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Jack Wang <jinpu.wang@profitbricks.com>,
+        Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 126/246] regulator: pfuze100: add .is_enable() for pfuze100_swb_regulator_ops
-Date:   Wed,  1 Aug 2018 18:50:36 +0200
-Message-Id: <20180801165017.757360773@linuxfoundation.org>
+Subject: [PATCH 4.14 127/246] md/raid1: add error handling of read error from FailFast device
+Date:   Wed,  1 Aug 2018 18:50:37 +0200
+Message-Id: <20180801165017.808784896@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,33 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Gioh Kim <gi-oh.kim@profitbricks.com>
 
-[ Upstream commit 0b01fd3d40fe6402e5fa3b491ef23109feb1aaa5 ]
+[ Upstream commit b33d10624fdc15cdf1495f3f00481afccec76783 ]
 
-If is_enabled() is not defined, regulator core will assume
-this regulator is already enabled, then it can NOT be really
-enabled after disabled.
+Current handle_read_error() function calls fix_read_error()
+only if md device is RW and rdev does not include FailFast flag.
+It does not handle a read error from a RW device including
+FailFast flag.
 
-Based on Li Jun's patch from the NXP kernel tree.
+I am not sure it is intended. But I found that write IO error
+sets rdev faulty. The md module should handle the read IO error and
+write IO error equally. So I think read IO error should set rdev faulty.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+Reviewed-by: Jack Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/regulator/pfuze100-regulator.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/raid1.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -158,6 +158,7 @@ static const struct regulator_ops pfuze1
- static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
- 	.list_voltage = regulator_list_voltage_table,
- 	.map_voltage = regulator_map_voltage_ascend,
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2462,6 +2462,8 @@ static void handle_read_error(struct r1c
+ 		fix_read_error(conf, r1_bio->read_disk,
+ 			       r1_bio->sector, r1_bio->sectors);
+ 		unfreeze_array(conf);
++	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
++		md_error(mddev, rdev);
+ 	} else {
+ 		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+ 	}
 
 
