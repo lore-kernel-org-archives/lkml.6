@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35E4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BF3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F0820685
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4918620685
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:24:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKgjwb7P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F0820685
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ryhQdEbh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4918620685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388487AbeHAMJl (ORCPT
+        id S2388546AbeHAMJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:09:41 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:42525 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387716AbeHAMJl (ORCPT
+        Wed, 1 Aug 2018 08:09:49 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34898 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733104AbeHAMJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:09:41 -0400
-Received: by mail-qk0-f193.google.com with SMTP id 26-v6so12260676qks.9;
-        Wed, 01 Aug 2018 03:24:35 -0700 (PDT)
+        Wed, 1 Aug 2018 08:09:48 -0400
+Received: by mail-qt0-f196.google.com with SMTP id a5-v6so19240092qtp.2;
+        Wed, 01 Aug 2018 03:24:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ICAfOydFjJ32nrQj8RbSgec/SolcBuCX/lZOmZY+a+Q=;
-        b=aKgjwb7PnSpAzlDjv/HZUF7sAMd0CFpthwQrSdDQGZKZefAp/Bvx/E8Qeu0qDUtVeJ
-         kzVRS5RZj6cgIeVqp6XMh7RoMYqSEkKHQhhTslozCRBbUBE/G8CRRt/83PLAolKFFj1q
-         9qpe6yMZpsRqxw63JLaXh8QN3tq/ckB7GJQbjJfeS1UxiNX5t6f8hj5r0bQ/ATZNDH7C
-         PaBORfl42HauMllCFoFV4Pmv3VYx/qcHRpQAcSGKtCKHQa6gAT8mxCIvLzupljynlW1z
-         CZbpP/Mu2HdhJHotPjAocUojupNzWKlbCk5YrrJNI4D87H5A4T2xFwNMP0iUZzqUslWh
-         xkRg==
+        bh=piwRiBrlXnGjrvilcFSkQAwmzN80l4dk6ZkRgbRdEXE=;
+        b=ryhQdEbhn3OBX1bGc1+A7FEP4jobhcI4GqStUvd2POmPR49xBpRhXu0DGmCz1hT1JX
+         1A9RISpbNRWFLoj8HS1ac1aS5/UTqjbKN7qdgGdZ6WoNnlfAt9MWx2ARZ6NEybX7B8j1
+         VJ3ylqNVvnVRNrytoHiZO+AIj3Q3PvLpMAlflGNTM6+eK+rEmC2wD8zjIcr6BFrOx6xS
+         RdB5burYwgKAQdstIY2ctrY3X14MBpY0eNkYibwVRHUoe4iV3juhSZ+ema8vRxjJ9ENZ
+         PLF9fcf+Ua2aSKycT8OvvwriEucSu8LkbgyCSDyVf+XNyfIEo/JJxitq8jX2dzvgx/IO
+         Sc0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ICAfOydFjJ32nrQj8RbSgec/SolcBuCX/lZOmZY+a+Q=;
-        b=WBTyUWxiy6Hz2SS4c36GwVuRAoZ7iA0hLNAG2APtL9sjKXkNS7tbHBgIMQsUPM9YP4
-         J/PWs/dkymbXtMROFRlU+GmvKJGwlsHfHuSnoimzJ9YFxthQ8EnU+swO5EpIY8SjyyNq
-         gpwh14bxE6DU8KEZPjKeLD7t9dxh527DumfWYj+UR53UeCsApSMNAkN9JsS7hqSuKOFk
-         uQILiCW2b1aQWYT8knjgcxXMcGa62XwknYlPmd44OuRhSCl11m+Ri22+iLcX4+pPsztw
-         G0jDYFfpN2G6Y28fg+qph+Q0bapCQOp5pEcidZK3H2kh5wPve0wW6YZSPMDr3Vp/QlvA
-         eZdA==
-X-Gm-Message-State: AOUpUlEnbRm+xAxMSIrvjfaVLw+AJSB5AnbNMR09hAEnunOnQHP1YdLY
-        +go7vFvrRj8tvA9jHjYw5FY=
-X-Google-Smtp-Source: AAOMgpephKLARbwTqxeG5GK1MokP/zgrnBJYXBYheIgAmnjq4sADw1agmFww4l5n4QxxiOroRTq8sA==
-X-Received: by 2002:a37:408d:: with SMTP id n135-v6mr23280588qka.294.1533119074447;
-        Wed, 01 Aug 2018 03:24:34 -0700 (PDT)
+        bh=piwRiBrlXnGjrvilcFSkQAwmzN80l4dk6ZkRgbRdEXE=;
+        b=E6XAu+PtKDjR3EYkz3kZfMthCRPBRs9tBBKWuBBFn2C6ekLpzrnUP0suTmcBteGmux
+         ygLTnCAaY5dLSR0+zRdJgV4BJ7GDQhTIhbTE8yFHNndMmwyvquYN98N0MVL0f/jhq0c5
+         JZf8sZncIoTGsWqsQtOznjWp/xZo77lZEvsEAYi0gzp9cIHPR8Oz1mH29bHjN8nek+Nj
+         P50YXb5pgU/Ceo+yUmRVIp0t8zXjVmZjpOPPD73fXHSOn7dJX/LjRzg/aApMq5Eo8bbr
+         EVMGmru9gCR6FQCZHMiRMN5EbU1XzLVKE/cJTCJF7qO17RmH2LgHdTV581U7YhudA0Wh
+         1CPw==
+X-Gm-Message-State: AOUpUlGrm8+IdFhdR7jjjdMzBUNtNlMIfmkIsbdJQSQ3CE2M0Q/JIwHW
+        3N54PtDuw3mB0bfQw3iKeOg=
+X-Google-Smtp-Source: AAOMgpceEejsnzlsfUmGPpAYmLweVr65M1gm95cFjmnrx/8OV3rU1COTG7fisighCmMb7wNnZCQQMw==
+X-Received: by 2002:a0c:81ae:: with SMTP id 43-v6mr22885424qvd.129.1533119082140;
+        Wed, 01 Aug 2018 03:24:42 -0700 (PDT)
 Received: from localhost.localdomain ([104.237.86.144])
-        by smtp.gmail.com with ESMTPSA id s19-v6sm11176890qtj.61.2018.08.01.03.24.25
+        by smtp.gmail.com with ESMTPSA id s19-v6sm11176890qtj.61.2018.08.01.03.24.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 03:24:33 -0700 (PDT)
+        Wed, 01 Aug 2018 03:24:41 -0700 (PDT)
 From:   Kenneth Lee <nek.in.cn@gmail.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -77,9 +77,9 @@ To:     Jonathan Corbet <corbet@lwn.net>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Sanjay Kumar <sanjay.k.kumar@intel.com>
 Cc:     linuxarm@huawei.com
-Subject: [RFC PATCH 5/7] crypto: Add Hisilicon Zip driver
-Date:   Wed,  1 Aug 2018 18:22:19 +0800
-Message-Id: <20180801102221.5308-6-nek.in.cn@gmail.com>
+Subject: [RFC PATCH 6/7] crypto: add spimdev support to Hisilicon QM
+Date:   Wed,  1 Aug 2018 18:22:20 +0800
+Message-Id: <20180801102221.5308-7-nek.in.cn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180801102221.5308-1-nek.in.cn@gmail.com>
 References: <20180801102221.5308-1-nek.in.cn@gmail.com>
@@ -90,698 +90,230 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kenneth Lee <liguozhu@hisilicon.com>
 
-The Hisilicon ZIP accelerator implements zlib and gzip algorithm support
-for the software. It uses Hisilicon QM as the interface to the CPU, so it
-is shown up as a PCIE device to the CPU with a group of queues.
-
-This commit provides PCIE driver to the accelerator and register it to
-the crypto subsystem.
+The commit add spimdev support to the Hislicon QM driver, any
+accelerator that use QM can share its queues to the user space.
 
 Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
 Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
 Signed-off-by: Hao Fang <fanghao11@huawei.com>
+Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
 ---
- drivers/crypto/hisilicon/Kconfig          |   7 +
- drivers/crypto/hisilicon/Makefile         |   1 +
- drivers/crypto/hisilicon/zip/Makefile     |   2 +
- drivers/crypto/hisilicon/zip/zip.h        |  55 ++++
- drivers/crypto/hisilicon/zip/zip_crypto.c | 358 ++++++++++++++++++++++
- drivers/crypto/hisilicon/zip/zip_crypto.h |  18 ++
- drivers/crypto/hisilicon/zip/zip_main.c   | 182 +++++++++++
- 7 files changed, 623 insertions(+)
- create mode 100644 drivers/crypto/hisilicon/zip/Makefile
- create mode 100644 drivers/crypto/hisilicon/zip/zip.h
- create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
- create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.h
- create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
+ drivers/crypto/hisilicon/qm.c | 150 ++++++++++++++++++++++++++++++++++
+ drivers/crypto/hisilicon/qm.h |  12 +++
+ 2 files changed, 162 insertions(+)
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index 0dd30f84b90e..48ad682e0a52 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -6,3 +6,10 @@ config CRYPTO_DEV_HISILICON
- config CRYPTO_DEV_HISI_QM
- 	tristate
- 	depends on ARM64 && PCI
-+
-+config CRYPTO_DEV_HISI_ZIP
-+	tristate "Support for HISI ZIP Driver"
-+	depends on ARM64 && CRYPTO_DEV_HISILICON
-+	select CRYPTO_DEV_HISI_QM
-+	help
-+	  Support for HiSilicon HIP08 ZIP Driver
-diff --git a/drivers/crypto/hisilicon/Makefile b/drivers/crypto/hisilicon/Makefile
-index 3378afc11703..62e40b093c49 100644
---- a/drivers/crypto/hisilicon/Makefile
-+++ b/drivers/crypto/hisilicon/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_CRYPTO_DEV_HISI_QM) += qm.o
-+obj-$(CONFIG_CRYPTO_DEV_HISI_ZIP) += zip/
-diff --git a/drivers/crypto/hisilicon/zip/Makefile b/drivers/crypto/hisilicon/zip/Makefile
-new file mode 100644
-index 000000000000..a936f099ee22
---- /dev/null
-+++ b/drivers/crypto/hisilicon/zip/Makefile
-@@ -0,0 +1,2 @@
-+obj-$(CONFIG_CRYPTO_DEV_HISI_ZIP) += hisi_zip.o
-+hisi_zip-objs = zip_main.o zip_crypto.o
-diff --git a/drivers/crypto/hisilicon/zip/zip.h b/drivers/crypto/hisilicon/zip/zip.h
-new file mode 100644
-index 000000000000..a0c56e4aeb51
---- /dev/null
-+++ b/drivers/crypto/hisilicon/zip/zip.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef HISI_ZIP_H
-+#define HISI_ZIP_H
-+
-+#include <linux/list.h>
-+#include "../qm.h"
-+
-+#define HZIP_SQE_SIZE			128
-+#define HZIP_SQ_SIZE			(HZIP_SQE_SIZE * QM_Q_DEPTH)
-+#define QM_CQ_SIZE			(QM_CQE_SIZE * QM_Q_DEPTH)
-+#define HZIP_PF_DEF_Q_NUM		64
-+#define HZIP_PF_DEF_Q_BASE		0
-+
-+struct hisi_zip {
-+	struct qm_info qm;
-+	struct list_head list;
-+
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index e779bc661500..06da8387dc58 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -667,6 +667,146 @@ int hisi_qp_send(struct hisi_qp *qp, void *msg)
+ }
+ EXPORT_SYMBOL_GPL(hisi_qp_send);
+ 
 +#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
-+	struct vfio_spimdev *spimdev;
-+#endif
++/* mdev->supported_type_groups */
++static struct attribute *hisi_qm_type_attrs[] = {
++	VFIO_SPIMDEV_DEFAULT_MDEV_TYPE_ATTRS,
++	NULL,
++};
++static struct attribute_group hisi_qm_type_group = {
++	.attrs = hisi_qm_type_attrs,
++};
++static struct attribute_group *mdev_type_groups[] = {
++	&hisi_qm_type_group,
++	NULL,
 +};
 +
-+struct hisi_zip_sqe {
-+	__u32 consumed;
-+	__u32 produced;
-+	__u32 comp_data_length;
-+	__u32 dw3;
-+	__u32 input_data_length;
-+	__u32 lba_l;
-+	__u32 lba_h;
-+	__u32 dw7;
-+	__u32 dw8;
-+	__u32 dw9;
-+	__u32 dw10;
-+	__u32 priv_info;
-+	__u32 dw12;
-+	__u32 tag;
-+	__u32 dest_avail_out;
-+	__u32 rsvd0;
-+	__u32 comp_head_addr_l;
-+	__u32 comp_head_addr_h;
-+	__u32 source_addr_l;
-+	__u32 source_addr_h;
-+	__u32 dest_addr_l;
-+	__u32 dest_addr_h;
-+	__u32 stream_ctx_addr_l;
-+	__u32 stream_ctx_addr_h;
-+	__u32 cipher_key1_addr_l;
-+	__u32 cipher_key1_addr_h;
-+	__u32 cipher_key2_addr_l;
-+	__u32 cipher_key2_addr_h;
-+	__u32 rsvd1[4];
-+};
-+
-+#endif
-diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
-new file mode 100644
-index 000000000000..a3a5a6a6554d
---- /dev/null
-+++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
-@@ -0,0 +1,358 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright 2018 (c) HiSilicon Limited.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/crypto.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/pci.h>
-+#include <linux/topology.h>
-+#include "../qm.h"
-+#include "zip.h"
-+
-+#define INPUT_BUFFER_SIZE	(64 * 1024)
-+#define OUTPUT_BUFFER_SIZE	(64 * 1024)
-+
-+extern struct list_head hisi_zip_list;
-+
-+#define COMP_NAME_TO_TYPE(alg_name)			\
-+	(!strcmp((alg_name), "zlib-deflate") ? 0x02 :	\
-+	 !strcmp((alg_name), "gzip") ? 0x03 : 0)	\
-+
-+struct hisi_zip_buffer {
-+	u8 *input;
-+	dma_addr_t input_dma;
-+	u8 *output;
-+	dma_addr_t output_dma;
-+};
-+
-+struct hisi_zip_qp_ctx {
-+	struct hisi_zip_buffer buffer;
-+	struct hisi_qp *qp;
-+	struct hisi_zip_sqe zip_sqe;
-+};
-+
-+struct hisi_zip_ctx {
-+#define QPC_COMP	0
-+#define QPC_DECOMP	1
-+	struct hisi_zip_qp_ctx qp_ctx[2];
-+};
-+
-+static struct hisi_zip *find_zip_device(int node)
++static void qm_qp_event_notifier(struct hisi_qp *qp)
 +{
-+	struct hisi_zip *hisi_zip, *ret = NULL;
-+	struct device *dev;
-+	int min_distance = 100;
-+
-+	list_for_each_entry(hisi_zip, &hisi_zip_list, list) {
-+		dev = &hisi_zip->qm.pdev->dev;
-+		if (node_distance(dev->numa_node, node) < min_distance) {
-+			ret = hisi_zip;
-+			min_distance = node_distance(dev->numa_node, node);
-+		}
-+	}
-+
-+	return ret;
++	vfio_spimdev_wake_up(qp->spimdev_q);
 +}
 +
-+static void hisi_zip_qp_event_notifier(struct hisi_qp *qp)
++static int hisi_qm_get_queue(struct vfio_spimdev *spimdev, unsigned long arg,
++			  struct vfio_spimdev_queue **q)
 +{
-+	complete(&qp->completion);
-+}
-+
-+static int hisi_zip_fill_sqe_v1(void *sqe, void *q_parm, u32 len)
-+{
-+	struct hisi_zip_sqe *zip_sqe = (struct hisi_zip_sqe *)sqe;
-+	struct hisi_zip_qp_ctx *qp_ctx = (struct hisi_zip_qp_ctx *)q_parm;
-+	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
-+
-+	memset(zip_sqe, 0, sizeof(struct hisi_zip_sqe));
-+
-+	zip_sqe->input_data_length = len;
-+	zip_sqe->dw9 = qp_ctx->qp->req_type;
-+	zip_sqe->dest_avail_out = OUTPUT_BUFFER_SIZE;
-+	zip_sqe->source_addr_l = lower_32_bits(buffer->input_dma);
-+	zip_sqe->source_addr_h = upper_32_bits(buffer->input_dma);
-+	zip_sqe->dest_addr_l = lower_32_bits(buffer->output_dma);
-+	zip_sqe->dest_addr_h = upper_32_bits(buffer->output_dma);
-+
-+	return 0;
-+}
-+
-+/* let's allocate one buffer now, may have problem in async case */
-+static int hisi_zip_alloc_qp_buffer(struct hisi_zip_qp_ctx *hisi_zip_qp_ctx)
-+{
-+	struct hisi_zip_buffer *buffer = &hisi_zip_qp_ctx->buffer;
-+	struct hisi_qp *qp = hisi_zip_qp_ctx->qp;
-+	struct device *dev = &qp->qm->pdev->dev;
++	struct qm_info *qm = spimdev->priv;
++	struct hisi_qp *qp = NULL;
++	struct vfio_spimdev_queue *wd_q;
++	u8 alg_type = 0; /* fix me here */
 +	int ret;
-+
-+	buffer->input = dma_alloc_coherent(dev, INPUT_BUFFER_SIZE,
-+					   &buffer->input_dma, GFP_KERNEL);
-+	if (!buffer->input)
-+		return -ENOMEM;
-+
-+	buffer->output = dma_alloc_coherent(dev, OUTPUT_BUFFER_SIZE,
-+					    &buffer->output_dma, GFP_KERNEL);
-+	if (!buffer->output) {
-+		ret = -ENOMEM;
-+		goto err_alloc_output_buffer;
-+	}
-+
-+	return 0;
-+
-+err_alloc_output_buffer:
-+	dma_free_coherent(dev, INPUT_BUFFER_SIZE, buffer->input,
-+			  buffer->input_dma);
-+	return ret;
-+}
-+
-+static void hisi_zip_free_qp_buffer(struct hisi_zip_qp_ctx *hisi_zip_qp_ctx)
-+{
-+	struct hisi_zip_buffer *buffer = &hisi_zip_qp_ctx->buffer;
-+	struct hisi_qp *qp = hisi_zip_qp_ctx->qp;
-+	struct device *dev = &qp->qm->pdev->dev;
-+
-+	dma_free_coherent(dev, INPUT_BUFFER_SIZE, buffer->input,
-+			  buffer->input_dma);
-+	dma_free_coherent(dev, OUTPUT_BUFFER_SIZE, buffer->output,
-+			  buffer->output_dma);
-+}
-+
-+static int hisi_zip_create_qp(struct qm_info *qm, struct hisi_zip_qp_ctx *ctx,
-+			      int alg_type, int req_type)
-+{
-+	struct hisi_qp *qp;
-+	int ret;
++	int pasid = arg;
 +
 +	qp = hisi_qm_create_qp(qm, alg_type);
-+
 +	if (IS_ERR(qp))
 +		return PTR_ERR(qp);
 +
-+	qp->event_cb = hisi_zip_qp_event_notifier;
-+	qp->req_type = req_type;
-+
-+	qp->qp_ctx = ctx;
-+	ctx->qp = qp;
-+
-+	ret = hisi_zip_alloc_qp_buffer(ctx);
-+	if (ret)
++	wd_q = kzalloc(sizeof(struct vfio_spimdev_queue), GFP_KERNEL);
++	if (!wd_q) {
++		ret = -ENOMEM;
 +		goto err_with_qp;
++	}
 +
-+	ret = hisi_qm_start_qp(qp, 0);
++	wd_q->priv = qp;
++	wd_q->spimdev = spimdev;
++	wd_q->qid = (u16)ret;
++	*q = wd_q;
++	qp->spimdev_q = wd_q;
++	qp->event_cb = qm_qp_event_notifier;
++
++	ret = hisi_qm_start_qp(qp, arg);
 +	if (ret < 0)
-+		goto err_with_qp_buffer;
++		goto err_with_wd_q;
 +
-+	return 0;
-+err_with_qp_buffer:
-+	hisi_zip_free_qp_buffer(ctx);
++	return ret;
++
++err_with_wd_q:
++	kfree(wd_q);
 +err_with_qp:
 +	hisi_qm_release_qp(qp);
 +	return ret;
 +}
 +
-+static void hisi_zip_release_qp(struct hisi_zip_qp_ctx *ctx)
++static int hisi_qm_put_queue(struct vfio_spimdev_queue *q)
 +{
-+	hisi_qm_release_qp(ctx->qp);
-+	hisi_zip_free_qp_buffer(ctx);
-+}
++	struct hisi_qp *qp = q->priv;
 +
-+static int hisi_zip_alloc_comp_ctx(struct crypto_tfm *tfm)
-+{
-+	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
-+	const char *alg_name = crypto_tfm_alg_name(tfm);
-+	struct hisi_zip *hisi_zip;
-+	struct qm_info *qm;
-+	int ret, i, j;
-+
-+	u8 req_type = COMP_NAME_TO_TYPE(alg_name);
-+
-+	/* find the proper zip device */
-+	hisi_zip = find_zip_device(cpu_to_node(smp_processor_id()));
-+	if (!hisi_zip) {
-+		pr_err("Can not find proper ZIP device!\n");
-+		return -1;
-+	}
-+	qm = &hisi_zip->qm;
-+
-+	for (i = 0; i < 2; i++) {
-+	/* it is just happen that 0 is compress, 1 is decompress on alg_type */
-+		ret = hisi_zip_create_qp(qm, &hisi_zip_ctx->qp_ctx[i], i,
-+					 req_type);
-+		if (ret)
-+			goto err;
-+	}
-+
++	/* need to stop hardware, but can not support in v1 */
++	hisi_qm_release_qp(qp);
++	kfree(q);
 +	return 0;
-+err:
-+	for (j = i-1; j >= 0; j--)
-+		hisi_zip_release_qp(&hisi_zip_ctx->qp_ctx[j]);
-+
-+	return ret;
 +}
 +
-+static void hisi_zip_free_comp_ctx(struct crypto_tfm *tfm)
++/* map sq/cq/doorbell to user space */
++static int hisi_qm_mmap(struct vfio_spimdev_queue *q,
++			struct vm_area_struct *vma)
 +{
-+	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
-+	int i;
++	struct hisi_qp *qp = (struct hisi_qp *)q->priv;
++	struct qm_info *qm = qp->qm;
++	struct device *dev = &qm->pdev->dev;
++	size_t sz = vma->vm_end - vma->vm_start;
++	u8 region;
 +
-+	/* release the qp */
-+	for (i = 1; i >= 0; i--)
-+		hisi_zip_release_qp(&hisi_zip_ctx->qp_ctx[i]);
-+}
++	vma->vm_flags |= (VM_IO | VM_LOCKED | VM_DONTEXPAND | VM_DONTDUMP);
++	region = _VFIO_SPIMDEV_REGION(vma->vm_pgoff);
 +
-+static int hisi_zip_copy_data_to_buffer(struct hisi_zip_qp_ctx *qp_ctx,
-+					const u8 *src, unsigned int slen)
-+{
-+	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
++	switch (region) {
++	case 0:
++		if (sz > PAGE_SIZE)
++			return -EINVAL;
++		/*
++		 * Warning: This is not safe as multiple queues use the same
++		 * doorbell, v1 hardware interface problem. v2 will fix it
++		 */
++		return remap_pfn_range(vma, vma->vm_start,
++				       qm->phys_base >> PAGE_SHIFT,
++				       sz, pgprot_noncached(vma->vm_page_prot));
++	case 1:
++		vma->vm_pgoff = 0;
++		if (sz > qp->scqe.size)
++			return -EINVAL;
 +
-+	if (slen > INPUT_BUFFER_SIZE)
++		return dma_mmap_coherent(dev, vma, qp->scqe.addr, qp->scqe.dma,
++				sz);
++
++	default:
 +		return -EINVAL;
-+
-+	memcpy(buffer->input, src, slen);
-+
-+	return 0;
-+}
-+
-+static struct hisi_zip_sqe *hisi_zip_get_writeback_sqe(struct hisi_qp *qp)
-+{
-+	struct hisi_acc_qp_status *qp_status = &qp->qp_status;
-+	struct hisi_zip_sqe *sq_base = QP_SQE_ADDR(qp);
-+	u16 sq_head = qp_status->sq_head;
-+
-+	return sq_base + sq_head;
-+}
-+
-+static int hisi_zip_copy_data_from_buffer(struct hisi_zip_qp_ctx *qp_ctx,
-+					   u8 *dst, unsigned int *dlen)
-+{
-+	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
-+	struct hisi_qp *qp = qp_ctx->qp;
-+	struct hisi_zip_sqe *zip_sqe = hisi_zip_get_writeback_sqe(qp);
-+	u32 status = zip_sqe->dw3 & 0xff;
-+
-+	if (status != 0) {
-+		pr_err("hisi zip: %s fail!\n", (qp->alg_type == 0) ?
-+		       "compression" : "decompression");
-+		return status;
 +	}
-+
-+	if (zip_sqe->produced > OUTPUT_BUFFER_SIZE)
-+		return -ENOMEM;
-+
-+	memcpy(dst, buffer->output, zip_sqe->produced);
-+	*dlen = zip_sqe->produced;
-+	qp->qp_status.sq_head++;
-+
-+	return 0;
 +}
 +
-+static int hisi_zip_compress(struct crypto_tfm *tfm, const u8 *src,
-+			     unsigned int slen, u8 *dst, unsigned int *dlen)
-+{
-+	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
-+	struct hisi_zip_qp_ctx *qp_ctx = &hisi_zip_ctx->qp_ctx[QPC_COMP];
-+	struct hisi_qp *qp = qp_ctx->qp;
-+	struct hisi_zip_sqe *zip_sqe = &qp_ctx->zip_sqe;
-+	int ret;
-+
-+	ret = hisi_zip_copy_data_to_buffer(qp_ctx, src, slen);
-+	if (ret < 0)
-+		return ret;
-+
-+	hisi_zip_fill_sqe_v1(zip_sqe, qp_ctx, slen);
-+
-+	/* send command to start the compress job */
-+	hisi_qp_send(qp, zip_sqe);
-+
-+	return hisi_zip_copy_data_from_buffer(qp_ctx, dst, dlen);
-+}
-+
-+static int hisi_zip_decompress(struct crypto_tfm *tfm, const u8 *src,
-+			       unsigned int slen, u8 *dst, unsigned int *dlen)
-+{
-+	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
-+	struct hisi_zip_qp_ctx *qp_ctx = &hisi_zip_ctx->qp_ctx[QPC_DECOMP];
-+	struct hisi_qp *qp = qp_ctx->qp;
-+	struct hisi_zip_sqe *zip_sqe = &qp_ctx->zip_sqe;
-+	int ret;
-+
-+	ret = hisi_zip_copy_data_to_buffer(qp_ctx, src, slen);
-+	if (ret < 0)
-+		return ret;
-+
-+	hisi_zip_fill_sqe_v1(zip_sqe, qp_ctx, slen);
-+
-+	/* send command to start the compress job */
-+	hisi_qp_send(qp, zip_sqe);
-+
-+	return hisi_zip_copy_data_from_buffer(qp_ctx, dst, dlen);
-+}
-+
-+static struct crypto_alg hisi_zip_zlib = {
-+	.cra_name		= "zlib-deflate",
-+	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
-+	.cra_ctxsize		= sizeof(struct hisi_zip_ctx),
-+	.cra_priority           = 300,
-+	.cra_module		= THIS_MODULE,
-+	.cra_init		= hisi_zip_alloc_comp_ctx,
-+	.cra_exit		= hisi_zip_free_comp_ctx,
-+	.cra_u			= {
-+		.compress = {
-+			.coa_compress	= hisi_zip_compress,
-+			.coa_decompress	= hisi_zip_decompress
-+		}
-+	}
++static const struct vfio_spimdev_ops qm_ops = {
++	.get_queue = hisi_qm_get_queue,
++	.put_queue = hisi_qm_put_queue,
++	.mmap = hisi_qm_mmap,
 +};
 +
-+static struct crypto_alg hisi_zip_gzip = {
-+	.cra_name		= "gzip",
-+	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
-+	.cra_ctxsize		= sizeof(struct hisi_zip_ctx),
-+	.cra_priority           = 300,
-+	.cra_module		= THIS_MODULE,
-+	.cra_init		= hisi_zip_alloc_comp_ctx,
-+	.cra_exit		= hisi_zip_free_comp_ctx,
-+	.cra_u			= {
-+		.compress = {
-+			.coa_compress	= hisi_zip_compress,
-+			.coa_decompress	= hisi_zip_decompress
-+		}
-+	}
-+};
-+
-+int hisi_zip_register_to_crypto(void)
++static int qm_register_spimdev(struct qm_info *qm)
 +{
-+	int ret;
++	struct pci_dev *pdev = qm->pdev;
++	struct vfio_spimdev *spimdev = &qm->spimdev;
 +
-+	ret = crypto_register_alg(&hisi_zip_zlib);
-+	if (ret < 0) {
-+		pr_err("Zlib algorithm registration failed\n");
-+		return ret;
-+	}
-+
-+	ret = crypto_register_alg(&hisi_zip_gzip);
-+	if (ret < 0) {
-+		pr_err("Gzip algorithm registration failed\n");
-+		goto err_unregister_zlib;
-+	}
-+
-+	return 0;
-+
-+err_unregister_zlib:
-+	crypto_unregister_alg(&hisi_zip_zlib);
-+
-+	return ret;
-+}
-+
-+void hisi_zip_unregister_from_crypto(void)
-+{
-+	crypto_unregister_alg(&hisi_zip_zlib);
-+	crypto_unregister_alg(&hisi_zip_gzip);
-+}
-diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.h b/drivers/crypto/hisilicon/zip/zip_crypto.h
-new file mode 100644
-index 000000000000..6fae34b4df3a
---- /dev/null
-+++ b/drivers/crypto/hisilicon/zip/zip_crypto.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (c) 2018 HiSilicon Limited.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ */
-+
-+#ifndef HISI_ZIP_CRYPTO_H
-+#define HISI_ZIP_CRYPTO_H
-+
-+int hisi_zip_register_to_crypto(void);
-+void hisi_zip_unregister_from_crypto(void);
-+
++	spimdev->iommu_type = VFIO_TYPE1_IOMMU;
++#ifdef CONFIG_IOMMU_SVA
++	spimdev->dma_flag = VFIO_SPIMDEV_DMA_MULTI_PROC_MAP;
++#else
++	spimdev->dma_flag = VFIO_SPIMDEV_DMA_SINGLE_PROC_MAP;
 +#endif
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-new file mode 100644
-index 000000000000..2478cf6c5350
---- /dev/null
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#include <linux/io.h>
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
++	spimdev->owner = THIS_MODULE;
++	spimdev->name = qm->dev_name;
++	spimdev->dev = &pdev->dev;
++	spimdev->is_vf = pdev->is_virtfn;
++	spimdev->priv = qm;
++	spimdev->api_ver = "hisi_qm_v1";
++	spimdev->flags = 0;
++
++	spimdev->mdev_fops.mdev_attr_groups = qm->mdev_dev_groups;
++	hisi_qm_type_group.name = qm->dev_name;
++	spimdev->mdev_fops.supported_type_groups = mdev_type_groups;
++	spimdev->ops = &qm_ops;
++
++	return vfio_spimdev_register(spimdev);
++}
++#endif
++
+ int hisi_qm_init(const char *dev_name, struct qm_info *qm)
+ {
+ 	int ret;
+@@ -804,6 +944,12 @@ int hisi_qm_start(struct qm_info *qm)
+ 	if (ret)
+ 		goto err_with_cqc;
+ 
++#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
++	ret = qm_register_spimdev(qm);
++	if (ret)
++		goto err_with_irq;
++#endif
++
+ 	writel(0x0, QM_ADDR(qm, QM_VF_EQ_INT_MASK));
+ 
+ 	return 0;
+@@ -830,6 +976,10 @@ void hisi_qm_stop(struct qm_info *qm)
+ 	struct pci_dev *pdev = qm->pdev;
+ 	struct device *dev = &pdev->dev;
+ 
++#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
++	vfio_spimdev_unregister(&qm->spimdev);
++#endif
++
+ 	free_irq(pci_irq_vector(pdev, 0), qm);
+ 	qm_uninit_q_buffer(dev, &qm->cqc);
+ 	kfree(qm->qp_array);
+diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
+index b3c5c34a0d13..f73c08098b82 100644
+--- a/drivers/crypto/hisilicon/qm.h
++++ b/drivers/crypto/hisilicon/qm.h
+@@ -8,6 +8,10 @@
+ #include <linux/pci.h>
+ #include <linux/slab.h>
+ 
++#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
 +#include <linux/vfio_spimdev.h>
-+#include "zip.h"
-+#include "zip_crypto.h"
++#endif
 +
-+#define HZIP_VF_NUM			63
-+#define HZIP_QUEUE_NUM_V1		4096
-+#define HZIP_QUEUE_NUM_V2		1024
+ #define QM_CQE_SIZE			16
+ /* default queue depth for sq/cq/eq */
+ #define QM_Q_DEPTH			1024
+@@ -59,6 +63,10 @@ struct qm_info {
+ 
+ 	struct hisi_acc_qm_hw_ops *ops;
+ 
++#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
++	struct vfio_spimdev spimdev;
++	const struct attribute_group **mdev_dev_groups;
++#endif
+ };
+ #define QM_ADDR(qm, off) ((qm)->io_base + off)
+ 
+@@ -90,6 +98,10 @@ struct hisi_qp {
+ 
+ 	struct qm_info *qm;
+ 
++#ifdef CONFIG_CRYPTO_DEV_HISI_SPIMDEV
++	struct vfio_spimdev_queue *spimdev_q;
++#endif
 +
-+#define HZIP_FSM_MAX_CNT		0x301008
-+
-+#define HZIP_PORT_ARCA_CHE_0		0x301040
-+#define HZIP_PORT_ARCA_CHE_1		0x301044
-+#define HZIP_PORT_AWCA_CHE_0		0x301060
-+#define HZIP_PORT_AWCA_CHE_1		0x301064
-+
-+#define HZIP_BD_RUSER_32_63		0x301110
-+#define HZIP_SGL_RUSER_32_63		0x30111c
-+#define HZIP_DATA_RUSER_32_63		0x301128
-+#define HZIP_DATA_WUSER_32_63		0x301134
-+#define HZIP_BD_WUSER_32_63		0x301140
-+
-+LIST_HEAD(hisi_zip_list);
-+DEFINE_MUTEX(hisi_zip_list_lock);
-+
-+static const char hisi_zip_name[] = "hisi_zip";
-+
-+static const struct pci_device_id hisi_zip_dev_ids[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, 0xa250) },
-+	{ 0, }
-+};
-+
-+static inline void hisi_zip_add_to_list(struct hisi_zip *hisi_zip)
-+{
-+	mutex_lock(&hisi_zip_list_lock);
-+	list_add_tail(&hisi_zip->list, &hisi_zip_list);
-+	mutex_unlock(&hisi_zip_list_lock);
-+}
-+
-+static void hisi_zip_set_user_domain_and_cache(struct hisi_zip *hisi_zip)
-+{
-+	u32 val;
-+
-+	/* qm user domain */
-+	writel(0x40001070, hisi_zip->qm.io_base + QM_ARUSER_M_CFG_1);
-+	writel(0xfffffffe, hisi_zip->qm.io_base + QM_ARUSER_M_CFG_ENABLE);
-+	writel(0x40001070, hisi_zip->qm.io_base + QM_AWUSER_M_CFG_1);
-+	writel(0xfffffffe, hisi_zip->qm.io_base + QM_AWUSER_M_CFG_ENABLE);
-+	writel(0xffffffff, hisi_zip->qm.io_base + QM_WUSER_M_CFG_ENABLE);
-+	writel(0x4893,     hisi_zip->qm.io_base + QM_CACHE_CTL);
-+
-+	val = readl(hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG);
-+	val |= (1 << 11);
-+	writel(val, hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG);
-+
-+	/* qm cache */
-+	writel(0xffff,     hisi_zip->qm.io_base + QM_AXI_M_CFG);
-+	writel(0xffffffff, hisi_zip->qm.io_base + QM_AXI_M_CFG_ENABLE);
-+	writel(0xffffffff, hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG_ENABLE);
-+
-+	/* cache */
-+	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_ARCA_CHE_0);
-+	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_ARCA_CHE_1);
-+	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_AWCA_CHE_0);
-+	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_AWCA_CHE_1);
-+	/* user domain configurations */
-+	writel(0x40001070, hisi_zip->qm.io_base + HZIP_BD_RUSER_32_63);
-+	writel(0x40001070, hisi_zip->qm.io_base + HZIP_SGL_RUSER_32_63);
-+	writel(0x40001071, hisi_zip->qm.io_base + HZIP_DATA_RUSER_32_63);
-+	writel(0x40001071, hisi_zip->qm.io_base + HZIP_DATA_WUSER_32_63);
-+	writel(0x40001070, hisi_zip->qm.io_base + HZIP_BD_WUSER_32_63);
-+
-+	/* fsm count */
-+	writel(0xfffffff, hisi_zip->qm.io_base + HZIP_FSM_MAX_CNT);
-+
-+	/* clock gating, core, decompress verify enable */
-+	writel(0x10005, hisi_zip->qm.io_base + 0x301004);
-+}
-+
-+static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-+{
-+	struct hisi_zip *hisi_zip;
-+	struct qm_info *qm;
-+	int ret;
-+	u8 rev_id;
-+
-+	hisi_zip = devm_kzalloc(&pdev->dev, sizeof(*hisi_zip), GFP_KERNEL);
-+	if (!hisi_zip)
-+		return -ENOMEM;
-+	hisi_zip_add_to_list(hisi_zip);
-+
-+	qm = &hisi_zip->qm;
-+	qm->pdev = pdev;
-+
-+	pci_read_config_byte(pdev, PCI_REVISION_ID, &rev_id);
-+	if (rev_id == 0x20)
-+		qm->ver = 1;
-+	qm->sqe_size = HZIP_SQE_SIZE;
-+	ret = hisi_qm_init(hisi_zip_name, qm);
-+	if (ret)
-+		goto err_with_hisi_zip;
-+
-+	if (pdev->is_physfn) {
-+		ret = hisi_qm_mem_start(qm);
-+		if (ret)
-+			goto err_with_qm_init;
-+
-+		hisi_zip_set_user_domain_and_cache(hisi_zip);
-+
-+		qm->qp_base = HZIP_PF_DEF_Q_BASE;
-+		qm->qp_num = HZIP_PF_DEF_Q_NUM;
-+	}
-+
-+	ret = hisi_qm_start(qm);
-+	if (ret)
-+		goto err_with_qm_init;
-+
-+	return 0;
-+
-+err_with_qm_init:
-+	hisi_qm_uninit(qm);
-+err_with_hisi_zip:
-+	kfree(hisi_zip);
-+	return ret;
-+}
-+
-+static void hisi_zip_remove(struct pci_dev *pdev)
-+{
-+	struct hisi_zip *hisi_zip = pci_get_drvdata(pdev);
-+	struct qm_info *qm = &hisi_zip->qm;
-+
-+	hisi_qm_stop(qm);
-+	hisi_qm_uninit(qm);
-+	kfree(hisi_zip);
-+}
-+
-+static struct pci_driver hisi_zip_pci_driver = {
-+	.name		= "hisi_zip",
-+	.id_table	= hisi_zip_dev_ids,
-+	.probe		= hisi_zip_probe,
-+	.remove		= hisi_zip_remove,
-+};
-+
-+static int __init hisi_zip_init(void)
-+{
-+	int ret;
-+
-+	ret = pci_register_driver(&hisi_zip_pci_driver);
-+	if (ret < 0) {
-+		pr_err("zip: can't register hisi zip driver.\n");
-+		return ret;
-+	}
-+
-+	ret = hisi_zip_register_to_crypto();
-+	if (ret < 0) {
-+		pr_err("zip: can't register hisi zip to crypto.\n");
-+		pci_unregister_driver(&hisi_zip_pci_driver);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit hisi_zip_exit(void)
-+{
-+	hisi_zip_unregister_from_crypto();
-+	pci_unregister_driver(&hisi_zip_pci_driver);
-+}
-+
-+module_init(hisi_zip_init);
-+module_exit(hisi_zip_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Zhou Wang <wangzhou1@hisilicon.com>");
-+MODULE_DESCRIPTION("Driver for HiSilicon ZIP accelerator");
-+MODULE_DEVICE_TABLE(pci, hisi_zip_dev_ids);
+ 	/* for crypto sync API */
+ 	struct completion completion;
+ 
 -- 
 2.17.1
 
