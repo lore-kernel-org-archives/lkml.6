@@ -3,38 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDE7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD2EC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A9F20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A9F20844
+	by mail.kernel.org (Postfix) with ESMTP id 1D41820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D41820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405302AbeHATGh (ORCPT
+        id S2405323AbeHATGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48858 "EHLO
+        Wed, 1 Aug 2018 15:06:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49042 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404595AbeHATGg (ORCPT
+        with ESMTP id S2403967AbeHATGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:36 -0400
+        Wed, 1 Aug 2018 15:06:47 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE033D40;
-        Wed,  1 Aug 2018 17:19:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C77FED38;
+        Wed,  1 Aug 2018 17:20:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Dupuis <chad.dupuis@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Doug Oucharek <doug.s.oucharek@intel.com>,
+        Andrew Perepechko <andrew.perepechko@seagate.com>,
+        Dmitry Eremin <dmitry.eremin@intel.com>,
+        James Simmons <uja.ornl@yahoo.com>,
+        Oleg Drokin <oleg.drokin@intel.com>,
+        Doug Oucharek <dougso@me.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 164/246] scsi: qedf: Set the UNLOADING flag when removing a vport
-Date:   Wed,  1 Aug 2018 18:51:14 +0200
-Message-Id: <20180801165019.594804994@linuxfoundation.org>
+Subject: [PATCH 4.14 166/246] staging: lustre: o2iblnd: Fix FastReg map/unmap for MLX5
+Date:   Wed,  1 Aug 2018 18:51:16 +0200
+Message-Id: <20180801165019.688313360@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,70 +55,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chad Dupuis <chad.dupuis@cavium.com>
+From: Doug Oucharek <dougso@me.com>
 
-[ Upstream commit 4f4616ceebaf045c59e8a6aa01f08826d18d5c63 ]
+[ Upstream commit 24d4b7c8de007cff9c7d83c06ae76099fdcce008 ]
 
-Similar to what we do when we remove a PCI function, set the
-QEDF_UNLOADING flag to prevent any requests from being queued while a
-vport is being deleted.  This prevents any requests from getting stuck
-in limbo when the vport is unloaded or deleted.
+The FastReg support in ko2iblnd was not unmapping pool items
+causing the items to leak.  In addition, the mapping code
+is not growing the pool like we do with FMR.
 
-Fixes the crash:
+This patch makes sure we are unmapping FastReg pool elements
+when we are done with them.  It also makes sure the pool
+will grow when we depleat the pool.
 
-PID: 106676  TASK: ffff9a436aa90000  CPU: 12  COMMAND: "multipathd"
- #0 [ffff9a43567d3550] machine_kexec+522 at ffffffffaca60b2a
- #1 [ffff9a43567d35b0] __crash_kexec+114 at ffffffffacb13512
- #2 [ffff9a43567d3680] crash_kexec+48 at ffffffffacb13600
- #3 [ffff9a43567d3698] oops_end+168 at ffffffffad117768
- #4 [ffff9a43567d36c0] no_context+645 at ffffffffad106f52
- #5 [ffff9a43567d3710] __bad_area_nosemaphore+116 at ffffffffad106fe9
- #6 [ffff9a43567d3760] bad_area+70 at ffffffffad107379
- #7 [ffff9a43567d3788] __do_page_fault+1247 at ffffffffad11a8cf
- #8 [ffff9a43567d37f0] do_page_fault+53 at ffffffffad11a915
- #9 [ffff9a43567d3820] page_fault+40 at ffffffffad116768
-    [exception RIP: qedf_init_task+61]
-    RIP: ffffffffc0e13c2d  RSP: ffff9a43567d38d0  RFLAGS: 00010046
-    RAX: 0000000000000000  RBX: ffffbe920472c738  RCX: ffff9a434fa0e3e8
-    RDX: ffff9a434f695280  RSI: ffffbe920472c738  RDI: ffff9a43aa359c80
-    RBP: ffff9a43567d3950   R8: 0000000000000c15   R9: ffff9a3fb09b9880
-    R10: ffff9a434fa0e3e8  R11: ffff9a43567d35ce  R12: 0000000000000000
-    R13: ffff9a434f695280  R14: ffff9a43aa359c80  R15: ffff9a3fb9e005c0
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-
-Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Doug Oucharek <doug.s.oucharek@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9472
+Reviewed-on: https://review.whamcloud.com/27015
+Reviewed-by: Andrew Perepechko <andrew.perepechko@seagate.com>
+Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/qedf/qedf_main.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c    |    2 +-
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   12 ++++--------
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -1649,6 +1649,15 @@ static int qedf_vport_destroy(struct fc_
- 	struct Scsi_Host *shost = vport_to_shost(vport);
- 	struct fc_lport *n_port = shost_priv(shost);
- 	struct fc_lport *vn_port = vport->dd_data;
-+	struct qedf_ctx *qedf = lport_priv(vn_port);
-+
-+	if (!qedf) {
-+		QEDF_ERR(NULL, "qedf is NULL.\n");
-+		goto out;
-+	}
-+
-+	/* Set unloading bit on vport qedf_ctx to prevent more I/O */
-+	set_bit(QEDF_UNLOADING, &qedf->flags);
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
+@@ -1710,7 +1710,7 @@ int kiblnd_fmr_pool_map(struct kib_fmr_p
+ 				return 0;
+ 			}
+ 			spin_unlock(&fps->fps_lock);
+-			rc = -EBUSY;
++			rc = -EAGAIN;
+ 		}
  
- 	mutex_lock(&n_port->lp_mutex);
- 	list_del(&vn_port->list);
-@@ -1675,6 +1684,7 @@ static int qedf_vport_destroy(struct fc_
- 	if (vn_port->host)
- 		scsi_host_put(vn_port->host);
+ 		spin_lock(&fps->fps_lock);
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -47,7 +47,7 @@ static int kiblnd_init_rdma(struct kib_c
+ 			    __u64 dstcookie);
+ static void kiblnd_queue_tx_locked(struct kib_tx *tx, struct kib_conn *conn);
+ static void kiblnd_queue_tx(struct kib_tx *tx, struct kib_conn *conn);
+-static void kiblnd_unmap_tx(struct lnet_ni *ni, struct kib_tx *tx);
++static void kiblnd_unmap_tx(struct kib_tx *tx);
+ static void kiblnd_check_sends_locked(struct kib_conn *conn);
  
-+out:
+ static void
+@@ -65,7 +65,7 @@ kiblnd_tx_done(struct lnet_ni *ni, struc
+ 	LASSERT(!tx->tx_waiting);	      /* mustn't be awaiting peer response */
+ 	LASSERT(tx->tx_pool);
+ 
+-	kiblnd_unmap_tx(ni, tx);
++	kiblnd_unmap_tx(tx);
+ 
+ 	/* tx may have up to 2 lnet msgs to finalise */
+ 	lntmsg[0] = tx->tx_lntmsg[0]; tx->tx_lntmsg[0] = NULL;
+@@ -590,13 +590,9 @@ kiblnd_fmr_map_tx(struct kib_net *net, s
  	return 0;
  }
  
+-static void kiblnd_unmap_tx(struct lnet_ni *ni, struct kib_tx *tx)
++static void kiblnd_unmap_tx(struct kib_tx *tx)
+ {
+-	struct kib_net *net = ni->ni_data;
+-
+-	LASSERT(net);
+-
+-	if (net->ibn_fmr_ps)
++	if (tx->fmr.fmr_pfmr || tx->fmr.fmr_frd)
+ 		kiblnd_fmr_pool_unmap(&tx->fmr, tx->tx_status);
+ 
+ 	if (tx->tx_nfrags) {
 
 
