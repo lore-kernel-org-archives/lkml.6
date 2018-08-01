@@ -3,52 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41736C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8BAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A21208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF90D208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:31:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUrZI4IS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A21208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5GeGDZZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF90D208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731899AbeHBBSE (ORCPT
+        id S1732136AbeHBBT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 21:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53872 "EHLO mail.kernel.org"
+        Wed, 1 Aug 2018 21:19:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbeHBBSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 21:18:04 -0400
+        id S1729616AbeHBBT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 21:19:59 -0400
 Received: from [192.168.0.101] (unknown [121.229.118.135])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF77B20862;
-        Wed,  1 Aug 2018 23:29:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39C3F20862;
+        Wed,  1 Aug 2018 23:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533166190;
-        bh=sKbMmXeJqdPLRzujNT3f/wfr6U9rruzDcuppTxF1zPw=;
+        s=default; t=1533166304;
+        bh=wy8ExMPH6fo70ckwt5b+DMS5wNCbHlakE9z/wAwYNp4=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QUrZI4ISJCRsa1gDWoadQiOCah5CI59/lsExK2bUzJ3npD+v70BiilgGxlta2l8m4
-         L414a2SdOhiCXOLGvU11cggP9vA1QdeYvo0mxpUI5muq0E4mfY5P7ICcd1TR2zzpgy
-         h7sRfI4Xorx+/hJ9jVjdwPPHddblyfWsA5R1wnB4=
-Subject: Re: [PATCH] f2fs: fix invalid memory access
+        b=R5GeGDZZFg4LMzMeffUo7u7uBQcE4iK01QY1cAleY56rYldnX0RWd6jrWCHjRyMim
+         /E8tUX+fNJloFjetym8Z5JjvkREMPMNkYfEd8Iv3+tBVIQB87401M1yczM71C/EtDV
+         qYCesE82HEfP5kZzxWRaORDqK5asEvOx5FGpkt1k=
+Subject: Re: [PATCH v6 1/2] f2fs: fix to avoid broken of dnode block list
 To:     Jaegeuk Kim <jaegeuk@kernel.org>
 Cc:     linux-f2fs-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-References: <20180801151642.2963-1-chao@kernel.org>
- <20180801185811.GA57086@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180729055840.21566-1-chao@kernel.org>
+ <20180801203405.GA68836@jaegeuk-macbookpro.roam.corp.google.com>
 From:   Chao Yu <chao@kernel.org>
-Message-ID: <48493318-c2e2-ee09-35e6-1b758ccdf3e5@kernel.org>
-Date:   Thu, 2 Aug 2018 07:29:45 +0800
+Message-ID: <50cc5e7c-70a1-65b0-fd3e-08b71e773694@kernel.org>
+Date:   Thu, 2 Aug 2018 07:31:40 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180801185811.GA57086@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180801203405.GA68836@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,170 +57,495 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/2 2:58, Jaegeuk Kim wrote:
-> On 08/01, Chao Yu wrote:
+On 2018/8/2 4:34, Jaegeuk Kim wrote:
+> On 07/29, Chao Yu wrote:
 >> From: Chao Yu <yuchao0@huawei.com>
 >>
->> syzbot found the following crash on:
+>> f2fs recovery flow is relying on dnode block link list, it means fsynced
+>> file recovery depends on previous dnode's persistence in the list, so
+>> during fsync() we should wait on all regular inode's dnode writebacked
+>> before issuing flush.
 >>
->> HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>> By this way, we can avoid dnode block list being broken by out-of-order
+>> IO submission due to IO scheduler or driver.
 >>
->> Unfortunately, I don't have any reproducer for this crash yet.
+>> Sheng Yong helps to do the test with this patch:
 >>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
+>> Target:/data (f2fs, -)
+>> 64MB / 32768KB / 4KB / 8
 >>
->> loop7: rw=12288, want=8200, limit=20
->> netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
->> openvswitch: netlink: Message has 8 unknown bytes.
->> kasan: CONFIG_KASAN_INLINE enabled
->> kasan: GPF could be caused by NULL-ptr deref or user memory access
->> general protection fault: 0000 [#1] SMP KASAN
->> CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
->> RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
->> RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
->> RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
->> RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
->> Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
->> RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
->> RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
->> RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
->> RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
->> R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
->> R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
->> FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
->>  f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
->>  mount_bdev+0x314/0x3e0 fs/super.c:1344
->>  f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
->>  legacy_get_tree+0x131/0x460 fs/fs_context.c:729
->>  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
->>  do_new_mount fs/namespace.c:2603 [inline]
->>  do_mount+0x6f2/0x1e20 fs/namespace.c:2927
->>  ksys_mount+0x12d/0x140 fs/namespace.c:3143
->>  __do_sys_mount fs/namespace.c:3157 [inline]
->>  __se_sys_mount fs/namespace.c:3154 [inline]
->>  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x45943a
->> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
->> RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
->> RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
->> RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
->> RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
->> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
->> R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
->> Modules linked in:
->> Dumping ftrace buffer:
->>    (ftrace buffer empty)
->> ---[ end trace bd8550c129352286 ]---
->> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
->> RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
->> RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
->> RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
->> RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
->> Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
->> RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
->> RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
->> RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
->> netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
->> RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
->> openvswitch: netlink: Message has 8 unknown bytes.
->> R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
->> R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
->> FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> 1 / PERSIST / Index
 >>
->> In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
->> will pass returned invalid page pointer into f2fs_put_page, cause accessing
->> invalid memory, this patch tries to handle error path correctly to fix this
->> issue.
+>> Base:
+>> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+>> 1	867.82		204.15		41440.03	41370.54	680.8		1025.94		1031.08
+>> 2	871.87		205.87		41370.3		40275.2		791.14		1065.84		1101.7
+>> 3	866.52		205.69		41795.67	40596.16	694.69		1037.16		1031.48
+>> Avg	868.7366667	205.2366667	41535.33333	40747.3		722.21		1042.98		1054.753333
+>>
+>> After:
+>> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+>> 1	798.81		202.5		41143		40613.87	602.71		838.08		913.83
+>> 2	805.79		206.47		40297.2		41291.46	604.44		840.75		924.27
+>> 3	814.83		206.17		41209.57	40453.62	602.85		834.66		927.91
+>> Avg	806.4766667	205.0466667	40883.25667	40786.31667	603.3333333	837.83		922.0033333
+>>
+>> Patched/Original:
+>> 	0.928332713	0.999074239	0.984300676	1.000957528	0.835398753	0.803303994	0.874141189
+>>
+>> It looks like atomic write will suffer performance regression.
+>>
+>> I suspect that the criminal is that we forcing to wait all dnode being in
+>> storage cache before we issue PREFLUSH+FUA.
+>>
+>> BTW, will commit ("f2fs: don't need to wait for node writes for atomic write")
+>> cause the problem: we will lose data of last transaction after SPO, even if
+>> atomic write return no error:
+>>
+>> - atomic_open();
+>> - write() P1, P2, P3;
+>> - atomic_commit();
+>>  - writeback data: P1, P2, P3;
+>>  - writeback node: N1, N2, N3;  <--- If N1, N2 is not writebacked, N3 with fsync_mark is
+>> writebacked, In SPOR, we won't find N3 since node chain is broken, turns out that losing
+>> last transaction.
+>>  - preflush + fua;
+>> - power-cut
+>>
+>> If we don't wait dnode writeback for atomic_write:
+>>
+>> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+>> 1	779.91		206.03		41621.5		40333.16	716.9		1038.21		1034.85
+>> 2	848.51		204.35		40082.44	39486.17	791.83		1119.96		1083.77
+>> 3	772.12		206.27		41335.25	41599.65	723.29		1055.07		971.92
+>> Avg	800.18		205.55		41013.06333	40472.99333	744.0066667	1071.08		1030.18
+>>
+>> Patched/Original:
+>> 	0.92108464	1.001526693	0.987425886	0.993268102	1.030180511	1.026942031	0.976702294
+>>
+>> SQLite's performance recovers.
+>>
+>> Jaegeuk:
+>> "Practically, I don't see db corruption becase of this. We can excuse to lose
+>> the last transaction."
+>>
+>> Finally, we decide to keep original implementation of atomic write interface
+>> sematics that we don't wait all dnode writeback before preflush+fua submission.
 >>
 >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 >> ---
->>  fs/f2fs/checkpoint.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
+>> v6:
+>> - fix to wait all writeback pages in put_super() for cp_error case.
+>>  fs/f2fs/checkpoint.c |   2 +
+>>  fs/f2fs/data.c       |   2 +
+>>  fs/f2fs/f2fs.h       |  21 ++++++-
+>>  fs/f2fs/file.c       |   5 +-
+>>  fs/f2fs/node.c       | 144 +++++++++++++++++++++++++++++++++++--------
+>>  fs/f2fs/super.c      |   6 ++
+>>  6 files changed, 152 insertions(+), 28 deletions(-)
 >>
 >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 2cffc37e6c5b..861e61e08aa6 100644
+>> index 3587aa53dc90..896dc8c9702c 100644
 >> --- a/fs/f2fs/checkpoint.c
 >> +++ b/fs/f2fs/checkpoint.c
->> @@ -780,6 +780,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>> @@ -1418,6 +1418,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 >>  
->>  	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
->>  	if (crc_offset > (blk_size - sizeof(__le32))) {
->> +		f2fs_put_page(*cp_page, 1);
->>  		f2fs_msg(sbi->sb, KERN_WARNING,
->>  			"invalid crc_offset: %zu", crc_offset);
->>  		return -EINVAL;
->> @@ -787,6 +788,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>>  	f2fs_release_ino_entry(sbi, false);
 >>  
->>  	crc = cur_cp_crc(*cp_block);
->>  	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
->> +		f2fs_put_page(*cp_page, 1);
->>  		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
->>  		return -EINVAL;
+>> +	f2fs_reset_fsync_node_info(sbi);
+>> +
+>>  	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+>>  	clear_sbi_flag(sbi, SBI_NEED_CP);
+>>  	__set_cp_next_pack(sbi);
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index eb994c66fe66..69bc00d90aae 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -177,6 +177,8 @@ static void f2fs_write_end_io(struct bio *bio)
+>>  					page->index != nid_of_node(page));
+>>  
+>>  		dec_page_count(sbi, type);
+>> +		if (f2fs_in_warm_node_list(sbi, page))
+>> +			f2fs_del_fsync_node_entry(sbi, page);
+>>  		clear_cold_data(page);
+>>  		end_page_writeback(page);
 >>  	}
->> @@ -806,14 +808,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
->>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
->>  					&cp_page_1, version);
->>  	if (err)
->> -		goto invalid_cp1;
->> +		return NULL;
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index a9447c7d6570..18dd13dd8782 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -228,6 +228,12 @@ struct inode_entry {
+>>  	struct inode *inode;	/* vfs inode pointer */
+>>  };
 >>  
->>  	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
->>  					sbi->log_blocks_per_seg) {
->>  		f2fs_msg(sbi->sb, KERN_WARNING,
->>  			"invalid cp_pack_total_block_count:%u",
->>  			le32_to_cpu(cp_block->cp_pack_total_block_count));
->> -		goto invalid_cp1;
->> +		goto invalid_cp;
+>> +struct fsync_node_entry {
+>> +	struct list_head list;	/* list head */
+>> +	struct page *page;	/* warm node page pointer */
+>> +	unsigned int seq_id;	/* sequence id */
+>> +};
+>> +
+>>  /* for the bitmap indicate blocks to be discarded */
+>>  struct discard_entry {
+>>  	struct list_head list;	/* list head */
+>> @@ -1156,6 +1162,11 @@ struct f2fs_sb_info {
+>>  
+>>  	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
+>>  
+>> +	spinlock_t fsync_node_lock;		/* for node entry lock */
+>> +	struct list_head fsync_node_list;	/* node list head */
+>> +	unsigned int fsync_seg_id;		/* sequence id */
+>> +	unsigned int fsync_node_num;		/* number of node entries */
+>> +
+>>  	/* for orphan inode, use 0'th array */
+>>  	unsigned int max_orphans;		/* max orphan inodes */
+>>  
+>> @@ -2827,6 +2838,10 @@ struct node_info;
+>>  
+>>  int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+>>  bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
+>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page);
+>> +void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
+>> +void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page);
+>> +void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
+>>  int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
+>>  bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
+>>  bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
+>> @@ -2836,7 +2851,8 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
+>>  int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
+>>  int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+>>  int f2fs_truncate_xattr_node(struct inode *inode);
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
+>> +					unsigned int seq_id);
+>>  int f2fs_remove_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+>> @@ -2845,7 +2861,8 @@ struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
+>>  struct page *f2fs_get_node_page_ra(struct page *parent, int start);
+>>  void f2fs_move_node_page(struct page *node_page, int gc_type);
+>>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>> -			struct writeback_control *wbc, bool atomic);
+>> +			struct writeback_control *wbc, bool atomic,
+>> +			unsigned int *seq_id);
+>>  int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>  			struct writeback_control *wbc,
+>>  			bool do_balance, enum iostat_type io_type);
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index bfe265d30da0..3f2c5863fab0 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -213,6 +213,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>  		.nr_to_write = LONG_MAX,
+>>  		.for_reclaim = 0,
+>>  	};
+>> +	unsigned int seq_id = 0;
+>>  
+>>  	if (unlikely(f2fs_readonly(inode->i_sb)))
+>>  		return 0;
+>> @@ -275,7 +276,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
 >>  	}
->>  	pre_version = *version;
->>  
->> @@ -821,7 +823,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
->>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
->>  					&cp_page_2, version);
->>  	if (err)
->> -		goto invalid_cp2;
->> +		goto invalid_cp;
->>  	cur_version = *version;
->>  
->>  	if (cur_version == pre_version) {
->> @@ -829,9 +831,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
->>  		f2fs_put_page(cp_page_2, 1);
->>  		return cp_page_1;
+>>  sync_nodes:
+>>  	atomic_inc(&sbi->wb_sync_req[NODE]);
+>> -	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
+>> +	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic, &seq_id);
+>>  	atomic_dec(&sbi->wb_sync_req[NODE]);
+>>  	if (ret)
+>>  		goto out;
+>> @@ -301,7 +302,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>  	 * given fsync mark.
+>>  	 */
+>>  	if (!atomic) {
+>> -		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
+>> +		ret = f2fs_wait_on_node_pages_writeback(sbi, seq_id);
+>>  		if (ret)
+>>  			goto out;
 >>  	}
->> -invalid_cp2:
->> -	f2fs_put_page(cp_page_2, 1);
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 6055d2d12640..78673736e453 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -28,6 +28,7 @@
+>>  static struct kmem_cache *nat_entry_slab;
+>>  static struct kmem_cache *free_nid_slab;
+>>  static struct kmem_cache *nat_entry_set_slab;
+>> +static struct kmem_cache *fsync_node_entry_slab;
+>>  
+>>  /*
+>>   * Check whether the given nid is within node id range.
+>> @@ -264,6 +265,72 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+>>  							start, nr);
+>>  }
+>>  
+>> +bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page)
+>> +{
+>> +	return NODE_MAPPING(sbi) == page->mapping &&
+>> +			IS_DNODE(page) && is_cold_node(page);
+>> +}
+>> +
+>> +void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi)
+>> +{
+>> +	spin_lock_init(&sbi->fsync_node_lock);
+>> +	INIT_LIST_HEAD(&sbi->fsync_node_list);
+>> +	sbi->fsync_seg_id = 0;
+>> +	sbi->fsync_node_num = 0;
+>> +}
+>> +
+>> +static unsigned int f2fs_add_fsync_node_entry(struct f2fs_sb_info *sbi,
+>> +							struct page *page)
+>> +{
+>> +	struct fsync_node_entry *fn;
+>> +	unsigned long flags;
+>> +	unsigned int seq_id;
+>> +
+>> +	fn = f2fs_kmem_cache_alloc(fsync_node_entry_slab, GFP_NOFS);
+>> +
+>> +	get_page(page);
+>> +	fn->page = page;
+>> +	INIT_LIST_HEAD(&fn->list);
+>> +
+>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>> +	list_add_tail(&fn->list, &sbi->fsync_node_list);
+>> +	fn->seq_id = sbi->fsync_seg_id++;
+>> +	seq_id = fn->seq_id;
+>> +	sbi->fsync_node_num++;
+>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +
+>> +	return seq_id;
+>> +}
+>> +
+>> +void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page)
+>> +{
+>> +	struct fsync_node_entry *fn;
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>> +	list_for_each_entry(fn, &sbi->fsync_node_list, list) {
+>> +		if (fn->page == page) {
+>> +			list_del(&fn->list);
+>> +			sbi->fsync_node_num--;
+>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +			kmem_cache_free(fsync_node_entry_slab, fn);
+>> +			put_page(page);
+>> +			return;
+>> +		}
+>> +	}
+>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +	f2fs_bug_on(sbi, 1);
+>> +}
+>> +
+>> +void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>> +	sbi->fsync_seg_id = 0;
+>> +	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +}
+>> +
+>>  int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+>>  {
+>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>> @@ -1384,7 +1451,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+>>  
+>>  static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>  				struct writeback_control *wbc, bool do_balance,
+>> -				enum iostat_type io_type)
+>> +				enum iostat_type io_type, unsigned int *seq_id)
+>>  {
+>>  	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+>>  	nid_t nid;
+>> @@ -1401,6 +1468,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>  		.io_type = io_type,
+>>  		.io_wbc = wbc,
+>>  	};
+>> +	unsigned int seq;
+>>  
+>>  	trace_f2fs_writepage(page, NODE);
+>>  
+>> @@ -1446,6 +1514,13 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>  
+>>  	set_page_writeback(page);
+>>  	ClearPageError(page);
+>> +
+>> +	if (f2fs_in_warm_node_list(sbi, page)) {
+>> +		seq = f2fs_add_fsync_node_entry(sbi, page);
+>> +		if (seq_id)
+>> +			*seq_id = seq;
+>> +	}
+>> +
+>>  	fio.old_blkaddr = ni.blk_addr;
+>>  	f2fs_do_write_node_page(nid, &fio);
+>>  	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+>> @@ -1493,7 +1568,7 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+>>  			goto out_page;
+>>  
+>>  		if (__write_node_page(node_page, false, NULL,
+>> -					&wbc, false, FS_GC_NODE_IO))
+>> +					&wbc, false, FS_GC_NODE_IO, NULL))
+>>  			unlock_page(node_page);
+>>  		goto release_page;
+>>  	} else {
+>> @@ -1510,11 +1585,13 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+>>  static int f2fs_write_node_page(struct page *page,
+>>  				struct writeback_control *wbc)
+>>  {
+>> -	return __write_node_page(page, false, NULL, wbc, false, FS_NODE_IO);
+>> +	return __write_node_page(page, false, NULL, wbc, false,
+>> +						FS_NODE_IO, NULL);
+>>  }
+>>  
+>>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>> -			struct writeback_control *wbc, bool atomic)
+>> +			struct writeback_control *wbc, bool atomic,
+>> +			unsigned int *seq_id)
+>>  {
+>>  	pgoff_t index;
+>>  	pgoff_t last_idx = ULONG_MAX;
+>> @@ -1595,7 +1672,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>  			ret = __write_node_page(page, atomic &&
+>>  						page == last_page,
+>>  						&submitted, wbc, true,
+>> -						FS_NODE_IO);
+>> +						FS_NODE_IO, seq_id);
+>>  			if (ret) {
+>>  				unlock_page(page);
+>>  				f2fs_put_page(last_page, 0);
+>> @@ -1712,7 +1789,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>  			set_dentry_mark(page, 0);
+>>  
+>>  			ret = __write_node_page(page, false, &submitted,
+>> -						wbc, do_balance, io_type);
+>> +						wbc, do_balance, io_type, NULL);
+>>  			if (ret)
+>>  				unlock_page(page);
+>>  			else if (submitted)
+>> @@ -1745,35 +1822,46 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>  	return ret;
+>>  }
+>>  
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
+>> +						unsigned int seq_id)
+>>  {
+>> -	pgoff_t index = 0;
+>> -	struct pagevec pvec;
+>> +	struct fsync_node_entry *fn;
+>> +	struct page *page;
+>> +	struct list_head *head = &sbi->fsync_node_list;
+>> +	unsigned long flags;
+>> +	unsigned int cur_seq_id = 0;
+>>  	int ret2, ret = 0;
+>> -	int nr_pages;
+>>  
+>> -	pagevec_init(&pvec);
+>> +	while (seq_id && cur_seq_id < seq_id) {
+>> +		spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>> +		if (list_empty(head)) {
+>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +			break;
+>> +		}
+>> +		fn = list_first_entry(head, struct fsync_node_entry, list);
+>> +		if (fn->seq_id > seq_id) {
+>> +			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>> +			break;
+>> +		}
+>> +		cur_seq_id = fn->seq_id;
+>> +		page = fn->page;
+>> +		get_page(page);
+>> +		spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+>>  
+>> -	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+>> -				PAGECACHE_TAG_WRITEBACK))) {
+>> -		int i;
+>> +		f2fs_wait_on_page_writeback(page, NODE, true);
+>> +		if (TestClearPageError(page))
+>> +			ret = -EIO;
+>>  
+>> -		for (i = 0; i < nr_pages; i++) {
+>> -			struct page *page = pvec.pages[i];
+>> +		put_page(page);
+>>  
+>> -			if (ino && ino_of_node(page) == ino) {
+>> -				f2fs_wait_on_page_writeback(page, NODE, true);
+>> -				if (TestClearPageError(page))
+>> -					ret = -EIO;
+>> -			}
+>> -		}
+>> -		pagevec_release(&pvec);
+>> -		cond_resched();
+>> +		if (ret)
+>> +			break;
+>>  	}
+>>  
+>>  	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
+>>  	if (!ret)
+>>  		ret = ret2;
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> @@ -2988,8 +3076,15 @@ int __init f2fs_create_node_manager_caches(void)
+>>  			sizeof(struct nat_entry_set));
+>>  	if (!nat_entry_set_slab)
+>>  		goto destroy_free_nid;
+>> +
+>> +	fsync_node_entry_slab = f2fs_kmem_cache_create("fsync_node_entry",
+>> +			sizeof(struct fsync_node_entry));
+>> +	if (!fsync_node_entry_slab)
+>> +		goto destroy_nat_entry_set;
+>>  	return 0;
+>>  
+>> +destroy_nat_entry_set:
+>> +	kmem_cache_destroy(nat_entry_set_slab);
+>>  destroy_free_nid:
+>>  	kmem_cache_destroy(free_nid_slab);
+>>  destroy_nat_entry:
+>> @@ -3000,6 +3095,7 @@ int __init f2fs_create_node_manager_caches(void)
+>>  
+>>  void f2fs_destroy_node_manager_caches(void)
+>>  {
+>> +	kmem_cache_destroy(fsync_node_entry_slab);
+>>  	kmem_cache_destroy(nat_entry_set_slab);
+>>  	kmem_cache_destroy(free_nid_slab);
+>>  	kmem_cache_destroy(nat_entry_slab);
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 5899d0cf1ab0..ee45a93a6ffd 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1036,6 +1036,10 @@ static void f2fs_put_super(struct super_block *sb)
+>>  	/* our cp_error case, we can wait for any writeback page */
+>>  	f2fs_flush_merged_writes(sbi);
+>>  
+>> +	wait_on_all_pages_writeback(sbi);
 > 
-> 	we need to put cp_page_2 above.
+> It's static function in checkpoint.c, resulting in a compilation error.
+> I'll fix it and try fault injection test.
 
-Yes, let me update it in v2.
+I've check in my private tree, it's already fixed, I guess I sent the wrong patch...
+
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=20387f1c42ead234a795057a8201e16324b6231c
+
+Anyway, let me send v7.
 
 Thanks,
 
 > 
->> -invalid_cp1:
->> +invalid_cp:
->>  	f2fs_put_page(cp_page_1, 1);
->>  	return NULL;
->>  }
+> Thanks,
+> 
+>> +
+>> +	f2fs_bug_on(sbi, sbi->fsync_node_num);
+>> +
+>>  	iput(sbi->node_inode);
+>>  	iput(sbi->meta_inode);
+>>  
+>> @@ -2923,6 +2927,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  
+>>  	f2fs_init_ino_entry_info(sbi);
+>>  
+>> +	f2fs_init_fsync_node_info(sbi);
+>> +
+>>  	/* setup f2fs internal modules */
+>>  	err = f2fs_build_segment_manager(sbi);
+>>  	if (err) {
 >> -- 
 >> 2.18.0
