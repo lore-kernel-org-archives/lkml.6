@@ -2,133 +2,136 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCFC43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC4BC43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002CD20851
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 01:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E330208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JbFEwak9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002CD20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbT14Eci";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbT14Eci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E330208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732995AbeHADm4 (ORCPT
+        id S1733011AbeHADnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 23:42:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35262 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732964AbeHADm4 (ORCPT
+        Tue, 31 Jul 2018 23:43:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55158 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732968AbeHADne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 23:42:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=277Iy+4sPJfeRzYPhWfAd6nAGH5xjEwOq/0TOhFii7k=; b=JbFEwak9xs7Pu758Kbu95KDPcd
-        6rh1ablVjTP/cxM5Ncmo460Rl1Begj0C1frf9lfCdbtckW94lSFsWYw8t826EHn6iCry+cNo7CHt0
-        kx+oSKHjISufvlqB/ZkyyQ7SZ0mw5f+c8n/qrdAGe3SlSVDCUER0aZjpMIzMZFjnt4EwZcyLzo9WY
-        WsDp61qQT5iY3mSDf+kaRCxyqUze67XGPuqhqRdUXtBub7u6+03vQSsQpnNgN3cr5WnhyZjwNPWL/
-        VX+RoY6jLQcD/T4H/smobsJaf0zUzWOhhx2N7hfKvGPld95sBlI+a0Qz+dfJqaOGPLA6vAZNXtn4c
-        HBdAUmmg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkgQS-0001OB-5z; Wed, 01 Aug 2018 01:59:44 +0000
-Subject: Re: [PATCH v2 1/3] overflow.h: Add arithmetic shift helper
-To:     Kees Cook <keescook@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180801000039.44314-1-keescook@chromium.org>
- <20180801000039.44314-2-keescook@chromium.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6ce83c62-ef7a-7548-b61f-825a28bffb95@infradead.org>
-Date:   Tue, 31 Jul 2018 18:59:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180801000039.44314-2-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 31 Jul 2018 23:43:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C6083606CF; Wed,  1 Aug 2018 02:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533088826;
+        bh=Hx/Gz15SoitSsQF5LAKXlle+0pJwMaQ8+xWLsuMiBLA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XbT14Ecig9mY4um6QfbqQsa14XW4pA6TrJ5cP/G9fqxdVbk20L2q50/MYatAu2+OH
+         AjIG+NL4f/UVA1jG32BwIW3M0IEY440wd3jzzSq0QstVuFd60dnHNBFHdPDX+8bfSH
+         i9waAbM5AosxcAShRhgphlVjOM6g7W4jQptFKlGw=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 250C060585;
+        Wed,  1 Aug 2018 02:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533088826;
+        bh=Hx/Gz15SoitSsQF5LAKXlle+0pJwMaQ8+xWLsuMiBLA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XbT14Ecig9mY4um6QfbqQsa14XW4pA6TrJ5cP/G9fqxdVbk20L2q50/MYatAu2+OH
+         AjIG+NL4f/UVA1jG32BwIW3M0IEY440wd3jzzSq0QstVuFd60dnHNBFHdPDX+8bfSH
+         i9waAbM5AosxcAShRhgphlVjOM6g7W4jQptFKlGw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 250C060585
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     marc.zyngier@arm.com, swboyd@chromium.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, bjorn.andersson@linaro.org
+Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RESEND RFC 0/4] Wakeup GPIO support for SDM845 SoC
+Date:   Tue, 31 Jul 2018 20:00:17 -0600
+Message-Id: <20180801020021.9782-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/31/2018 05:00 PM, Kees Cook wrote:
-> From: Jason Gunthorpe <jgg@mellanox.com>
-> 
-> Add shift_overflow() helper to assist driver authors in ensuring that
-> shift operations don't cause overflows or other odd conditions.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-> Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-> [kees: tweaked comments and commit log, dropped unneeded assignment]
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  include/linux/overflow.h | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-> index 8712ff70995f..69fc366ce865 100644
-> --- a/include/linux/overflow.h
-> +++ b/include/linux/overflow.h
-> @@ -202,6 +202,37 @@
->  
->  #endif /* COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW */
->  
-> +/** check_shift_overflow() - Calculate a left-shifted value and check overflow
-> + *
-> + * @a: Value to be shifted
-> + * @b: How many bits left to shift
-> + * @d: Pointer to where to store the result
-> + *
-> + * Computes *@d = (@a << @s)
+Hi,
 
-                            @b)
+This is an attempt at a solution to enable wake up from suspend and deep idle
+using GPIO as a wakeup source. The 845 uses a new interrupt controller (PDC)
+that lies in the always-on domain and can sense interrupts that are routed to
+it, when the GIC is powered off. It would then wakeup the GIC and replay the
+interrupt which would then be relayed to the AP. The PDC interrupt controller
+driver is merged upstream [1],[2]. The following set of patches extends the
+wakeup capability to GPIOs using the PDC. The TLMM pinctrl driver for the SoC
+available at [3].
 
-> + *
-> + * Returns true if '*d' cannot hold the result or when 'a << s' doesn't
-> + * make sense. Example conditions:
-> + * - 'a << s' causes bits to be lost when stored in *d.
-> + * - 's' is garbage (e.g. negative) or so large that the result of
-> + *   'a << s' is guaranteed to be 0.
-> + * - 'a' is negative.
-> + * - 'a << s' sets the sign bit, if any, in '*d'.
-> + *
-> + * '*d' will hold the results of the attempted shift, but is not
-> + * considered "safe for use" if false is returned.
-> + */
-> +#define check_shift_overflow(a, s, d) ({				\
-> +	typeof(a) _a = a;						\
-> +	typeof(s) _s = s;						\
-> +	typeof(d) _d = d;						\
-> +	u64 _a_full = _a;						\
-> +	unsigned int _to_shift =					\
-> +		_s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;		\
-> +	*_d = (_a_full << _to_shift);					\
-> +	(_to_shift != _s || *_d < 0 || _a < 0 ||			\
-> +		(*_d >> _to_shift) != _a);				\
-> +})
-> +
->  /**
->   * array_size() - Calculate size of 2-dimensional array.
->   *
-> 
+The complexity with the solution stems from the fact that only a selected few
+GPIO lines are routed to the PDC in addition the TLMMs. They are also from
+different banks on the pinctrl and the TLMM summary line is not routed to the
+PDC. Hence the PDC cannot be considered as parent of the TLMM irqchip (or can
+we ?). This is what it looks like -
 
+   [ PIN ] -----[ TLMM ]---------------> [ GIC ] ---> [ CPU ]
+      |  		 <summary IRQ>       ^
+      |                                      |
+      ----------------------------------> [ PDC ]
+		<wakeup IRQs>
 
--- 
-~Randy
+I had a brief discussion with Linus on this and the idea implemented is based
+on his suggestion.
+
+When an IRQ (let's call this latent IRQ) for a GPIO is requested, the
+->irq_request_resources() is used by the TLMM driver to request a PDC pin. The
+PDC pin associated with the GPIO is read from a  static map available in the
+pinctrl-sdm845.c. (I think there should be a better location than a static map,
+more on that later). Knowing the PDC pin from the map, we could look up the DT
+bindings and request the PDC interrupt with the same trigger mask as the
+interrupt requested. The ->set_type and ->set_wake are also trapped to set the
+PDC IRQ's polarity and enable it when the latent IRQ is requested. When the PDC
+detects the interrupt at suspend, it wakes up the GIC and replays the wakeup
+IRQ. The GPIO handler function for the latent IRQ is invoked in turn.
+
+Please review these patches and your inputs would be greatly appreciated and
+(kindly) let me know if I have committed any blunders with this approach. There
+is definitely opportunity to improve the location of the static GPIO-PDC pin
+map. We could possibly put it as an data argument in the interrupts definition
+of the PDC or with interrupt names. Also, I am still sorting out some issues
+with the IRQ handling part of these patches. And I am unsure of how to set the
+polarity of the PDC pin without locking, since we are not in hierarchy with the
+PDC interrupt controller. Again, your inputs on these would be greatly helpful.
+
+Thanks,
+Lina
+
+[1]. drivers/irqchip/qcom-pdc.c
+[2]. Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
+[3]. drivers/pinctrl/qcom/pinctrl-msm.c
+
+Lina Iyer (4):
+  drivers: pinctrl: qcom: add wakeup capability to GPIO
+  drivers: pinctrl: qcom: add wakeup gpio map for sdm845
+  arm64: dts: msm: add PDC device bindings for sdm845
+  arm64: dts: qcom: add wake up interrupts for GPIOs
+
+ arch/arm64/boot/dts/qcom/sdm845.dtsi  |  78 ++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.c    | 163 ++++++++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.h    |  14 +++
+ drivers/pinctrl/qcom/pinctrl-sdm845.c |  76 ++++++++++++
+ 4 files changed, 331 insertions(+)
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
