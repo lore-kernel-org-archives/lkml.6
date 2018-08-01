@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF0CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01B5C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CC520840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CC520840
+	by mail.kernel.org (Postfix) with ESMTP id 9499920840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9499920840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404147AbeHATDd (ORCPT
+        id S2387695AbeHAUXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+        Wed, 1 Aug 2018 16:23:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403979AbeHATDc (ORCPT
+        with ESMTP id S2404123AbeHATDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:32 -0400
+        Wed, 1 Aug 2018 15:03:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 340691026;
-        Wed,  1 Aug 2018 17:00:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60E55106A;
+        Wed,  1 Aug 2018 17:01:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 139/336] PCI: pciehp: Request control of native hotplug only if supported
-Date:   Wed,  1 Aug 2018 18:47:54 +0200
-Message-Id: <20180801165034.453312653@linuxfoundation.org>
+Subject: [PATCH 4.17 157/336] drm/nouveau/fifo/gk104-: poll for runlist update completion
+Date:   Wed,  1 Aug 2018 18:48:12 +0200
+Message-Id: <20180801165035.132944210@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,41 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Ben Skeggs <bskeggs@redhat.com>
 
-[ Upstream commit 408fec36a1ab3d14273c2116b449ef1e9be3cb8b ]
+[ Upstream commit 4f2fc25c0f8bcc8db1b8a7b21e88c3d7f35c5acb ]
 
-Currently we request control of native PCIe hotplug unconditionally.
-Native PCIe hotplug events are handled by the pciehp driver, and if it is
-not enabled those events will be lost.
+Newer HW doesn't appear to send this event, which will cause long delays
+in runlist updates if they don't complete immediately.
 
-Request control of native PCIe hotplug only if the pciehp driver is
-enabled, so we will actually handle native PCIe hotplug events.
+RM doesn't use these events anywhere, and an NVGPU commit message notes
+that polling is the preferred method even on HW that supports the event.
 
-Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pci_root.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -472,9 +472,11 @@ static void negotiate_os_control(struct
- 	}
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/gk104.c
+@@ -155,10 +155,10 @@ gk104_fifo_runlist_commit(struct gk104_f
+ 				    (target << 28));
+ 	nvkm_wr32(device, 0x002274, (runl << 20) | nr);
  
- 	control = OSC_PCI_EXPRESS_CAPABILITY_CONTROL
--		| OSC_PCI_EXPRESS_NATIVE_HP_CONTROL
- 		| OSC_PCI_EXPRESS_PME_CONTROL;
- 
-+	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE))
-+		control |= OSC_PCI_EXPRESS_NATIVE_HP_CONTROL;
-+
- 	if (pci_aer_available()) {
- 		if (aer_acpi_firmware_first())
- 			dev_info(&device->dev,
+-	if (wait_event_timeout(fifo->runlist[runl].wait,
+-			       !(nvkm_rd32(device, 0x002284 + (runl * 0x08))
+-				       & 0x00100000),
+-			       msecs_to_jiffies(2000)) == 0)
++	if (nvkm_msec(device, 2000,
++		if (!(nvkm_rd32(device, 0x002284 + (runl * 0x08)) & 0x00100000))
++			break;
++	) < 0)
+ 		nvkm_error(subdev, "runlist %d update timeout\n", runl);
+ unlock:
+ 	mutex_unlock(&subdev->mutex);
 
 
