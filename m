@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF029C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6068CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7255D20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7255D20844
+	by mail.kernel.org (Postfix) with ESMTP id 19CD5208B4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19CD5208B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405279AbeHATGa (ORCPT
+        id S2405288AbeHATGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48644 "EHLO
+        Wed, 1 Aug 2018 15:06:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403884AbeHATGa (ORCPT
+        with ESMTP id S2404595AbeHATGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:30 -0400
+        Wed, 1 Aug 2018 15:06:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25E40CC3;
-        Wed,  1 Aug 2018 17:19:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CF38CC3;
+        Wed,  1 Aug 2018 17:19:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 162/246] scsi: megaraid: silence a static checker bug
-Date:   Wed,  1 Aug 2018 18:51:12 +0200
-Message-Id: <20180801165019.495172941@linuxfoundation.org>
+Subject: [PATCH 4.14 163/246] scsi: hisi_sas: config ATA de-reset as an constrained command for v3 hw
+Date:   Wed,  1 Aug 2018 18:51:13 +0200
+Message-Id: <20180801165019.550563110@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,33 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-[ Upstream commit 27e833dabab74ee665e487e291c9afc6d71effba ]
+[ Upstream commit 9413532788df7470297dd0475995c5dc5b07f362 ]
 
-If we had more than 32 megaraid cards then it would cause memory
-corruption.  That's not likely, of course, but it's handy to enforce it
-and make the static checker happy.
+As a unconstrained command, a command can be sent to SATA disk even if
+SATA disk status is BUSY, ERR or DRQ.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If an ATA reset assert is successful but ATA reset de-assert fails, then
+it will retry the reset de-assert. If reset de- assert retry is
+successful, we think it is okay to probe the device but actually it
+still has Err status.
+
+Apparently we need to retry the ATA reset assertion and de- assertion
+instead for this mentioned scenario.
+
+As such, we config ATA reset assert as a constrained command, if ATA
+reset de-assert fails, then ATA reset de-assert retry will also
+fail. Then we will retry the proper process of ATA reset assert and
+de-assert again.
+
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -4199,6 +4199,9 @@ megaraid_probe_one(struct pci_dev *pdev,
- 	int irq, i, j;
- 	int error = -ENODEV;
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -328,10 +328,11 @@ enum {
+ #define DIR_TO_DEVICE 2
+ #define DIR_RESERVED 3
  
-+	if (hba_count >= MAX_CONTROLLERS)
-+		goto out;
-+
- 	if (pci_enable_device(pdev))
- 		goto out;
- 	pci_set_master(pdev);
+-#define CMD_IS_UNCONSTRAINT(cmd) \
+-	((cmd == ATA_CMD_READ_LOG_EXT) || \
+-	(cmd == ATA_CMD_READ_LOG_DMA_EXT) || \
+-	(cmd == ATA_CMD_DEV_RESET))
++#define FIS_CMD_IS_UNCONSTRAINED(fis) \
++	((fis.command == ATA_CMD_READ_LOG_EXT) || \
++	(fis.command == ATA_CMD_READ_LOG_DMA_EXT) || \
++	((fis.command == ATA_CMD_DEV_RESET) && \
++	((fis.control & ATA_SRST) != 0)))
+ 
+ static u32 hisi_sas_read32(struct hisi_hba *hisi_hba, u32 off)
+ {
+@@ -1044,7 +1045,7 @@ static int prep_ata_v3_hw(struct hisi_hb
+ 		<< CMD_HDR_FRAME_TYPE_OFF;
+ 	dw1 |= sas_dev->device_id << CMD_HDR_DEV_ID_OFF;
+ 
+-	if (CMD_IS_UNCONSTRAINT(task->ata_task.fis.command))
++	if (FIS_CMD_IS_UNCONSTRAINED(task->ata_task.fis))
+ 		dw1 |= 1 << CMD_HDR_UNCON_CMD_OFF;
+ 
+ 	hdr->dw1 = cpu_to_le32(dw1);
 
 
