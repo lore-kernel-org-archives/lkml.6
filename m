@@ -2,336 +2,122 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD367C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1BCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7756F208AD
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7756F208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 32894208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LB6BudRi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32894208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeHATmO (ORCPT
+        id S1727829AbeHATmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:42:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405949AbeHATIk (ORCPT
+        Wed, 1 Aug 2018 15:42:22 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46810 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeHATmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:40 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 868BA134E;
-        Wed,  1 Aug 2018 17:12:52 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirti Wankhede <kwankhede@nvidia.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 029/246] vfio/mdev: Check globally for duplicate devices
-Date:   Wed,  1 Aug 2018 18:48:59 +0200
-Message-Id: <20180801165013.094004261@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Wed, 1 Aug 2018 15:42:21 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t17-v6so9138599ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1yGFDMsUI2gv7DWp5GQJyeQoj4wOz5H0w37F7ELpQmE=;
+        b=LB6BudRi71q2u/uOq2WTr3McJsTimaatgZEtIqEd+E8U0u4qRzSVWetZ7L32oxehb+
+         wMWkGU9xRsyp6pfR8TlHyBQsJQzXEC9sOvQ7opKF+H3+10H6lk0xxbTpYYrU4rFhi2oG
+         LnvUEXWK2sbmG/MsHRJ6h61UxYTYsg5rfPskyENm7VpU8mE5wPS3k6ezEVIaos/e9zrH
+         L/o9O7vBlCKeQxGk0Z3omaqVllpMEr0UFhzymPIb43ldhevp9OD4MyocNY6rUe3b4JeY
+         TaqUmp64T49uE3IP6LIalAaeJsLnSCajYQ2HEmmd2VY2V4a0ZbaJlKJKqGm6ol/+W23m
+         ND0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=1yGFDMsUI2gv7DWp5GQJyeQoj4wOz5H0w37F7ELpQmE=;
+        b=pxS/xdXgBtTwZPm4JeLujkwVtPG1PaaKuaK9or+KpPic0VGiWTP4fv4BRFFZpcJZds
+         SAorp0P1NHpakvyfEsXS5Ju7+svVpmLocio1b37FM6dnH3dxJQIZodyy9Td+girEMfmz
+         VD4rAdaEjbQeTE6JotXyW6sM6NDTk/B8cXdybr4giecyySSjQk/Y9oYPmPrwqJMaXiOu
+         eBH5aWen9RGM4NXgYYbpknOuq8N+U8IKmnOV4f44HsjUfTfLDMh84UXMKSueY2NFDRtJ
+         ccXAB4SosRwVCihpJcykqLUq1oxTnALrhOd8v7RV7eBwl9l2l6Gk4JaThyh4lZ6wWtMv
+         49uA==
+X-Gm-Message-State: AOUpUlElB2GcfYAg8a9hTkGTjb71ss8dbW0nXYyQCwO+f7ot5jTB44YB
+        IzlJhGnWJTcrndtBgwp64CizMw==
+X-Google-Smtp-Source: AAOMgpdWOU/9UQkh/7PwVwXCyQrgK1GLiS2LluOh4rfWg/jswLYfqi1d9HPkX1lqspR5ivcf50+BeA==
+X-Received: by 2002:a17:902:1682:: with SMTP id h2-v6mr25607984plh.327.1533146129529;
+        Wed, 01 Aug 2018 10:55:29 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id c12-v6sm46047267pfl.20.2018.08.01.10.55.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 10:55:28 -0700 (PDT)
+Date:   Wed, 01 Aug 2018 10:55:28 -0700 (PDT)
+X-Google-Original-Date: Wed, 01 Aug 2018 10:55:24 PDT (-0700)
+Subject:     Re: [PATCH v2] riscv: Add support to no-FPU systems
+In-Reply-To: <1530073346-5341-1-git-send-email-alankao@andestech.com>
+CC:     albert@sifive.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Waterman <andrew@sifive.com>,
+        Darius Rad <darius@bluespec.com>, greentime@andestech.com,
+        zong@andestech.com, alankao@andestech.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     alankao@andestech.com
+Message-ID: <mhng-47d9ea80-a0c6-4cde-be65-75046c5d49d2@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 26 Jun 2018 21:22:26 PDT (-0700), alankao@andestech.com wrote:
+> This patch adds an option, CONFIG_FPU, to enable/disable floating
+> procedures.  Also, some style issues are fixed.
+>
+> Signed-off-by: Alan Kao <alankao@andestech.com>
+> Cc: Greentime Hu <greentime@andestech.com>
+> Cc: Zong Li <zong@andestech.com>
+> ---
+>  arch/riscv/Kconfig                 |  9 ++++
+>  arch/riscv/Makefile                | 19 +++----
+>  arch/riscv/include/asm/switch_to.h |  6 +++
+>  arch/riscv/kernel/entry.S          |  3 +-
+>  arch/riscv/kernel/process.c        |  7 ++-
+>  arch/riscv/kernel/signal.c         | 82 +++++++++++++++++++++---------
+>  6 files changed, 90 insertions(+), 36 deletions(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 6debcc4afc72..6069597ba73f 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -232,6 +232,15 @@ config RISCV_BASE_PMU
+>
+>  endmenu
+>
+> +config FPU
+> +	bool "FPU support"
+> +	default y
+> +	help
+> +	  Say N here if you want to disable all floating-point related procedure
+> +	  in the kernel.
+> +
+> +	  If you don't know what to do here, say Y.
+> +
+>  endmenu
 
-------------------
+Sorry for letting this slide for a bit.  While I'm not opposed to a solution 
+that requires a FPU Kconfig option, it'd be a bit better if we could detect 
+this at boot time.  I think this should be possible because at one point this 
+actually worked and we could boot the same kernel on FPU and no-FPU systems.
 
-From: Alex Williamson <alex.williamson@redhat.com>
-
-[ Upstream commit 002fe996f67f4f46d8917b14cfb6e4313c20685a ]
-
-When we create an mdev device, we check for duplicates against the
-parent device and return -EEXIST if found, but the mdev device
-namespace is global since we'll link all devices from the bus.  We do
-catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
-with it comes a kernel warning and stack trace for trying to create
-duplicate sysfs links, which makes it an undesirable response.
-
-Therefore we should really be looking for duplicates across all mdev
-parent devices, or as implemented here, against our mdev device list.
-Using mdev_list to prevent duplicates means that we can remove
-mdev_parent.lock, but in order not to serialize mdev device creation
-and removal globally, we add mdev_device.active which allows UUIDs to
-be reserved such that we can drop the mdev_list_lock before the mdev
-device is fully in place.
-
-Two behavioral notes; first, mdev_parent.lock had the side-effect of
-serializing mdev create and remove ops per parent device.  This was
-an implementation detail, not an intentional guarantee provided to
-the mdev vendor drivers.  Vendor drivers can trivially provide this
-serialization internally if necessary.  Second, review comments note
-the new -EAGAIN behavior when the device, and in particular the remove
-attribute, becomes visible in sysfs.  If a remove is triggered prior
-to completion of mdev_device_create() the user will see a -EAGAIN
-error.  While the errno is different, receiving an error during this
-period is not, the previous implementation returned -ENODEV for the
-same condition.  Furthermore, the consistency to the user is improved
-in the case where mdev_device_remove_ops() returns error.  Previously
-concurrent calls to mdev_device_remove() could see the device
-disappear with -ENODEV and return in the case of error.  Now a user
-would see -EAGAIN while the device is in this transitory state.
-
-Reviewed-by: Kirti Wankhede <kwankhede@nvidia.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/vfio-mediated-device.txt |    5 +
- drivers/vfio/mdev/mdev_core.c          |  102 +++++++++++----------------------
- drivers/vfio/mdev/mdev_private.h       |    2 
- 3 files changed, 42 insertions(+), 67 deletions(-)
-
---- a/Documentation/vfio-mediated-device.txt
-+++ b/Documentation/vfio-mediated-device.txt
-@@ -145,6 +145,11 @@ The functions in the mdev_parent_ops str
- * create: allocate basic resources in a driver for a mediated device
- * remove: free resources in a driver when a mediated device is destroyed
- 
-+(Note that mdev-core provides no implicit serialization of create/remove
-+callbacks per mdev parent device, per mdev type, or any other categorization.
-+Vendor drivers are expected to be fully asynchronous in this respect or
-+provide their own internal resource protection.)
-+
- The callbacks in the mdev_parent_ops structure are as follows:
- 
- * open: open callback of mediated device
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *md
- }
- EXPORT_SYMBOL(mdev_uuid);
- 
--static int _find_mdev_device(struct device *dev, void *data)
--{
--	struct mdev_device *mdev;
--
--	if (!dev_is_mdev(dev))
--		return 0;
--
--	mdev = to_mdev_device(dev);
--
--	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
--		return 1;
--
--	return 0;
--}
--
--static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
--{
--	struct device *dev;
--
--	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
--	if (dev) {
--		put_device(dev);
--		return true;
--	}
--
--	return false;
--}
--
- /* Should be called holding parent_list_lock */
- static struct mdev_parent *__find_parent_device(struct device *dev)
- {
-@@ -221,7 +193,6 @@ int mdev_register_device(struct device *
- 	}
- 
- 	kref_init(&parent->ref);
--	mutex_init(&parent->lock);
- 
- 	parent->dev = dev;
- 	parent->ops = ops;
-@@ -297,6 +268,10 @@ static void mdev_device_release(struct d
- {
- 	struct mdev_device *mdev = to_mdev_device(dev);
- 
-+	mutex_lock(&mdev_list_lock);
-+	list_del(&mdev->next);
-+	mutex_unlock(&mdev_list_lock);
-+
- 	dev_dbg(&mdev->dev, "MDEV: destroying\n");
- 	kfree(mdev);
- }
-@@ -304,7 +279,7 @@ static void mdev_device_release(struct d
- int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
- {
- 	int ret;
--	struct mdev_device *mdev;
-+	struct mdev_device *mdev, *tmp;
- 	struct mdev_parent *parent;
- 	struct mdev_type *type = to_mdev_type(kobj);
- 
-@@ -312,21 +287,28 @@ int mdev_device_create(struct kobject *k
- 	if (!parent)
- 		return -EINVAL;
- 
--	mutex_lock(&parent->lock);
-+	mutex_lock(&mdev_list_lock);
- 
- 	/* Check for duplicate */
--	if (mdev_device_exist(parent, uuid)) {
--		ret = -EEXIST;
--		goto create_err;
-+	list_for_each_entry(tmp, &mdev_list, next) {
-+		if (!uuid_le_cmp(tmp->uuid, uuid)) {
-+			mutex_unlock(&mdev_list_lock);
-+			ret = -EEXIST;
-+			goto mdev_fail;
-+		}
- 	}
- 
- 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
- 	if (!mdev) {
-+		mutex_unlock(&mdev_list_lock);
- 		ret = -ENOMEM;
--		goto create_err;
-+		goto mdev_fail;
- 	}
- 
- 	memcpy(&mdev->uuid, &uuid, sizeof(uuid_le));
-+	list_add(&mdev->next, &mdev_list);
-+	mutex_unlock(&mdev_list_lock);
-+
- 	mdev->parent = parent;
- 	kref_init(&mdev->ref);
- 
-@@ -338,35 +320,28 @@ int mdev_device_create(struct kobject *k
- 	ret = device_register(&mdev->dev);
- 	if (ret) {
- 		put_device(&mdev->dev);
--		goto create_err;
-+		goto mdev_fail;
- 	}
- 
- 	ret = mdev_device_create_ops(kobj, mdev);
- 	if (ret)
--		goto create_failed;
-+		goto create_fail;
- 
- 	ret = mdev_create_sysfs_files(&mdev->dev, type);
- 	if (ret) {
- 		mdev_device_remove_ops(mdev, true);
--		goto create_failed;
-+		goto create_fail;
- 	}
- 
- 	mdev->type_kobj = kobj;
-+	mdev->active = true;
- 	dev_dbg(&mdev->dev, "MDEV: created\n");
- 
--	mutex_unlock(&parent->lock);
--
--	mutex_lock(&mdev_list_lock);
--	list_add(&mdev->next, &mdev_list);
--	mutex_unlock(&mdev_list_lock);
--
--	return ret;
-+	return 0;
- 
--create_failed:
-+create_fail:
- 	device_unregister(&mdev->dev);
--
--create_err:
--	mutex_unlock(&parent->lock);
-+mdev_fail:
- 	mdev_put_parent(parent);
- 	return ret;
- }
-@@ -377,44 +352,39 @@ int mdev_device_remove(struct device *de
- 	struct mdev_parent *parent;
- 	struct mdev_type *type;
- 	int ret;
--	bool found = false;
- 
- 	mdev = to_mdev_device(dev);
- 
- 	mutex_lock(&mdev_list_lock);
- 	list_for_each_entry(tmp, &mdev_list, next) {
--		if (tmp == mdev) {
--			found = true;
-+		if (tmp == mdev)
- 			break;
--		}
- 	}
- 
--	if (found)
--		list_del(&mdev->next);
-+	if (tmp != mdev) {
-+		mutex_unlock(&mdev_list_lock);
-+		return -ENODEV;
-+	}
- 
--	mutex_unlock(&mdev_list_lock);
-+	if (!mdev->active) {
-+		mutex_unlock(&mdev_list_lock);
-+		return -EAGAIN;
-+	}
- 
--	if (!found)
--		return -ENODEV;
-+	mdev->active = false;
-+	mutex_unlock(&mdev_list_lock);
- 
- 	type = to_mdev_type(mdev->type_kobj);
- 	parent = mdev->parent;
--	mutex_lock(&parent->lock);
- 
- 	ret = mdev_device_remove_ops(mdev, force_remove);
- 	if (ret) {
--		mutex_unlock(&parent->lock);
--
--		mutex_lock(&mdev_list_lock);
--		list_add(&mdev->next, &mdev_list);
--		mutex_unlock(&mdev_list_lock);
--
-+		mdev->active = true;
- 		return ret;
- 	}
- 
- 	mdev_remove_sysfs_files(dev, type);
- 	device_unregister(dev);
--	mutex_unlock(&parent->lock);
- 	mdev_put_parent(parent);
- 
- 	return 0;
---- a/drivers/vfio/mdev/mdev_private.h
-+++ b/drivers/vfio/mdev/mdev_private.h
-@@ -20,7 +20,6 @@ struct mdev_parent {
- 	struct device *dev;
- 	const struct mdev_parent_ops *ops;
- 	struct kref ref;
--	struct mutex lock;
- 	struct list_head next;
- 	struct kset *mdev_types_kset;
- 	struct list_head type_list;
-@@ -34,6 +33,7 @@ struct mdev_device {
- 	struct kref ref;
- 	struct list_head next;
- 	struct kobject *type_kobj;
-+	bool active;
- };
- 
- #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
-
-
+If that's not possible then we'll have to take something like this.  There were 
+some comments on this v2 but I don't see a v3, did I miss one?
