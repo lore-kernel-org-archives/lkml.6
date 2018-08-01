@@ -2,369 +2,330 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE611C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A07C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127B520851
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 127B520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id AE74620851
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 03:34:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iiSWCsWg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE74620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeHAFMq (ORCPT
+        id S1731609AbeHAFR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 01:12:46 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:55506 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726839AbeHAFMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 01:12:46 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 7336AE789105E71BF2FD;
-        Wed,  1 Aug 2018 11:29:04 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w713SxwW060402;
-        Wed, 1 Aug 2018 11:28:59 +0800 (GMT-8)
-        (envelope-from liu.song11@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018080111290448-2795477 ;
-          Wed, 1 Aug 2018 11:29:04 +0800 
-From:   Liu Song <liu.song11@zte.com.cn>
-To:     dwmw2@infradead.org
-Cc:     linux-mtd@lists.infradead.org, liu.song11@zte.com.cn,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/jffs2 : prevent gc to pick block which includes inode with I_NEW state
-Date:   Wed, 1 Aug 2018 11:27:26 +0800
-Message-Id: <1533094046-132789-1-git-send-email-liu.song11@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-08-01 11:29:04,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-08-01 11:28:52,
-        Serialize complete at 2018-08-01 11:28:52
-X-MAIL: mse01.zte.com.cn w713SxwW060402
+        Wed, 1 Aug 2018 01:17:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33069 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeHAFR4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 01:17:56 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so10098681pgv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 20:34:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NiLJIOejr1FeSHP+QOHuAgF4C59c+gE0vXauyzxAcpM=;
+        b=iiSWCsWgQflDJPMMDA/ZEQ0LDX5joy5Zjz5Z3qkoYLN9EsAOxX6Yi716gvRc++GVtp
+         ZQkVIZLL/ltNNsep+VZIcFCZP9L+BQgh5OliV3dYarfJFo3DaWTKMi+dJX9gDDRZrglL
+         W/gQGwvB67uU8ldiURb6b6YsFgT/qflJCnVJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NiLJIOejr1FeSHP+QOHuAgF4C59c+gE0vXauyzxAcpM=;
+        b=ttjh5yqArJXUBlpAA1ID//NqF3++ocxOQJJ8DpCsgOvKZdX3/bOUU+inZiEyxzGwtF
+         qupEbwViS5j5KYOPyNWGtvbPvzD5vfro5/V4PQtX+csGraIBpe3jRN2joL7IV305hVuL
+         uSTfrYJlG2hQsDMMGPnUCxZsiHW7ikO80BtPrp82HnCeU2z0BUnZFY6SYSn3JCYNdOp5
+         3IML0gvKTQWLLyVhegns3qcfTCP4Z2IhwA7ZQuBPayTuyXNpSRasRb5nB9/z+l4NLUzP
+         +UwQ/jyabgur8zlErXIo2HsqC9MzQVNanoUshyZCK34ybLYVbxgAmj8FVDp3ovr28XpO
+         PZ/w==
+X-Gm-Message-State: AOUpUlFjAvVJhao4JaIQBlzOdtWdahARQfXPgyXrB5mFqfe0ogi86riu
+        Wl/5NZVBwSMSq+5y6zMbIyGY
+X-Google-Smtp-Source: AAOMgpdA3tBvHEdMalgYUQ127EQ82iR0UnCF7BusIDB4VJ0mRj1t8oBKxVblubnHI8ibDdmwXcHzDQ==
+X-Received: by 2002:a65:5205:: with SMTP id o5-v6mr22889468pgp.108.1533094469578;
+        Tue, 31 Jul 2018 20:34:29 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2405:204:730e:f0ae:ac4e:9cdd:28a2:4bf9])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm16701951pgp.13.2018.07.31.20.34.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Jul 2018 20:34:28 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 09:04:16 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
+        sravanhome@gmail.com
+Subject: Re: [PATCH 7/9] clk: actions: Add Actions Semi Owl SoCs Reset
+ Management Unit support
+Message-ID: <20180801033416.GA15529@Mani-XPS-13-9360>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <20180727184527.13287-8-manivannan.sadhasivam@linaro.org>
+ <1532946112.3471.2.camel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532946112.3471.2.camel@pengutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In JFFS2, the process of creating a new file is split into two parts.
-First, create the inode, name it "Part A", then create the dirent,
-named it "Part B", both need reserve space. In Part A, a inode with
-I_NEW state has been written in the block, we name it "block_a".
-The inode I_NEW state will be cleared after Part B finished.
+Hi Philipp,
 
-After "Part A" finished, alloc_sem lock is released. Other waiting
-process able to run and write data in "block_a" until no more space
-in the block. Next, if reserve space trigger gc, then "block_a" is
-possible been picked by gc to collect.
+On Mon, Jul 30, 2018 at 12:21:52PM +0200, Philipp Zabel wrote:
+> Hi Manivannan,
+> 
+> Thank you for the patch, a few small comments below:
+> 
+> On Sat, 2018-07-28 at 00:15 +0530, Manivannan Sadhasivam wrote:
+> > Add Reset Management Unit (RMU) support for Actions Semi Owl SoCs.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/clk/actions/Kconfig      |  1 +
+> >  drivers/clk/actions/Makefile     |  1 +
+> >  drivers/clk/actions/owl-common.h |  2 +
+> >  drivers/clk/actions/owl-reset.c  | 72 ++++++++++++++++++++++++++++++++
+> >  drivers/clk/actions/owl-reset.h  | 32 ++++++++++++++
+> >  5 files changed, 108 insertions(+)
+> >  create mode 100644 drivers/clk/actions/owl-reset.c
+> >  create mode 100644 drivers/clk/actions/owl-reset.h
+> > 
+> > diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+> > index dc38c85a4833..04f0a6355726 100644
+> > --- a/drivers/clk/actions/Kconfig
+> > +++ b/drivers/clk/actions/Kconfig
+> > @@ -2,6 +2,7 @@ config CLK_ACTIONS
+> >  	bool "Clock driver for Actions Semi SoCs"
+> >  	depends on ARCH_ACTIONS || COMPILE_TEST
+> >  	select REGMAP_MMIO
+> > +	select RESET_CONTROLLER
+> >  	default ARCH_ACTIONS
+> >  
+> >  if CLK_ACTIONS
+> > diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+> > index 78c17d56f991..ccfdf9781cef 100644
+> > --- a/drivers/clk/actions/Makefile
+> > +++ b/drivers/clk/actions/Makefile
+> > @@ -7,6 +7,7 @@ clk-owl-y			+= owl-divider.o
+> >  clk-owl-y			+= owl-factor.o
+> >  clk-owl-y			+= owl-composite.o
+> >  clk-owl-y			+= owl-pll.o
+> > +clk-owl-y			+= owl-reset.o
+> >  
+> >  # SoC support
+> >  obj-$(CONFIG_CLK_OWL_S700)	+= owl-s700.o
+> > diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+> > index 56f01f7774aa..4dc7f286831f 100644
+> > --- a/drivers/clk/actions/owl-common.h
+> > +++ b/drivers/clk/actions/owl-common.h
+> > @@ -26,6 +26,8 @@ struct owl_clk_desc {
+> >  	struct owl_clk_common		**clks;
+> >  	unsigned long			num_clks;
+> >  	struct clk_hw_onecell_data	*hw_clks;
+> > +	struct owl_reset_map		*resets;
+> 
+> Could this be:
+> 	const struct owl_reset_map	*resets;
+> ?
+> 
 
-Then, there is an inode with state I_NEW in "block_a", and gc collect
-will find that inode and wait on I_NEW clear. Because gc holds alloc_sem
-lock, so Part B waiting alloc_sem forever. System enter a deadlock state.
+Ack.
 
-The call trace is as follows:
------------------------------
-[43850.832264] Call trace:
-[43850.834700] [<ffff0000080853fc>] __switch_to+0xcc/0xd8
-[43850.839834] [<ffff000008875d28>] __schedule+0x180/0x468
-[43850.845048] [<ffff000008876048>] schedule+0x38/0xb8
-[43850.849920] [<ffff0000088767d4>] bit_wait+0x14/0x68
-[43850.854787] [<ffff0000088764bc>] __wait_on_bit+0xa4/0xe0
-[43850.860093] [<ffff000008876558>] out_of_line_wait_on_bit+0x60/0x68
-[43850.866263] [<ffff0000081cb9f8>] iget_locked+0xd8/0x1a8
-[43850.871483] [<ffff0000082f2c24>] jffs2_iget+0x14/0x330
-[43850.876610] [<ffff0000082f348c>] jffs2_gc_fetch_inode+0x5c/0x148
-[43850.882611] [<ffff0000082f0f50>] jffs2_garbage_collect_pass+0x678/0x810
-[43850.889219] [<ffff0000082ec240>] jffs2_reserve_space+0x170/0x338
-[43850.895215] [<ffff0000082eeea4>] jffs2_do_unlink+0x5c/0x240
-[43850.900782] [<ffff0000082e8878>] jffs2_rename+0x108/0x298
-[43850.906169] [<ffff0000081bd228>] vfs_rename+0x840/0x858
-[43850.911389] [<ffff0000081c2308>] SyS_renameat2+0x430/0x4a0
-[43850.916863] [<ffff0000081c2388>] SyS_renameat+0x10/0x18
-[43850.922083] [<ffff000008082e8c>] __sys_trace_return+0x0/0x4
+> > +	unsigned long			num_resets;
+> >  	struct regmap			*regmap;
+> >  };
+> >  
+> > diff --git a/drivers/clk/actions/owl-reset.c b/drivers/clk/actions/owl-reset.c
+> > new file mode 100644
+> > index 000000000000..91b161cc68de
+> > --- /dev/null
+> > +++ b/drivers/clk/actions/owl-reset.c
+> > @@ -0,0 +1,72 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +//
+> > +// Actions Semi Owl SoCs Reset Management Unit driver
+> > +//
+> > +// Copyright (c) 2018 Linaro Ltd.
+> > +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +
+> > +#include <linux/delay.h>
+> > +#include <linux/io.h>
+> 
+> This seems unnecessary, since register access is done via regmap.
+> 
 
-This patch add "block_a" into a prevent list, which prevent gc to pick
-for collecting. After testing, it can effectively solve the deadlock
-bug.
+Will remove this header.
 
-Reported-by: Yang Yi <yang.yi@zte.com.cn>
-Signed-off-by: Liu Song <liu.song11@zte.com.cn>
-Tested-by: Yang Yi <yang.yi@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
- fs/jffs2/build.c       |  1 +
- fs/jffs2/dir.c         | 22 +++++++++++++++++++++-
- fs/jffs2/gc.c          |  4 ++++
- fs/jffs2/jffs2_fs_sb.h |  1 +
- fs/jffs2/nodelist.h    | 46 +++++++++++++++++++++++++++++++++++++++++++++-
- fs/jffs2/write.c       |  5 ++++-
- 6 files changed, 76 insertions(+), 3 deletions(-)
+> > +#include <linux/regmap.h>
+> > +#include <linux/reset-controller.h>
+> > +
+> > +#include "owl-reset.h"
+> > +
+> > +static int owl_reset_assert(struct reset_controller_dev *rcdev,
+> > +			    unsigned long id)
+> > +{
+> > +	struct owl_reset *reset = to_owl_reset(rcdev);
+> > +	const struct owl_reset_map *map = &reset->reset_map[id];
+> > +	u32 reg;
+> > +
+> > +	regmap_read(reset->regmap, map->reg, &reg);
+> > +	regmap_write(reset->regmap, map->reg, reg & ~map->bit);
+> 
+> This read-modify-write sequence needs locking against concurrent
+> register access. Better use regmap_update_bits():
+> 
+> 	return regmap_update_bits(reset->regmap, map->reg, map->bit, 0);
+> 
 
-diff --git a/fs/jffs2/build.c b/fs/jffs2/build.c
-index b288c8a..bee6521 100644
---- a/fs/jffs2/build.c
-+++ b/fs/jffs2/build.c
-@@ -403,6 +403,7 @@ int jffs2_do_mount_fs(struct jffs2_sb_info *c)
- 	INIT_LIST_HEAD(&c->free_list);
- 	INIT_LIST_HEAD(&c->bad_list);
- 	INIT_LIST_HEAD(&c->bad_used_list);
-+	INIT_LIST_HEAD(&c->prevent_gc_list);
- 	c->highest_ino = 1;
- 	c->summary = NULL;
- 
-diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
-index b2944f9..b6782f1 100644
---- a/fs/jffs2/dir.c
-+++ b/fs/jffs2/dir.c
-@@ -164,6 +164,7 @@ static int jffs2_create(struct inode *dir_i, struct dentry *dentry,
- 	struct jffs2_inode_info *f, *dir_f;
- 	struct jffs2_sb_info *c;
- 	struct inode *inode;
-+	struct prevent_block pb;
- 	int ret;
- 
- 	ri = jffs2_alloc_raw_inode();
-@@ -197,7 +198,7 @@ static int jffs2_create(struct inode *dir_i, struct dentry *dentry,
- 	   no chance of AB-BA deadlock involving its f->sem). */
- 	mutex_unlock(&f->sem);
- 
--	ret = jffs2_do_create(c, dir_f, f, ri, &dentry->d_name);
-+	ret = jffs2_do_create(c, dir_f, f, ri, &dentry->d_name, &pb);
- 	if (ret)
- 		goto fail;
- 
-@@ -210,10 +211,12 @@ static int jffs2_create(struct inode *dir_i, struct dentry *dentry,
- 		  f->inocache->pino_nlink, inode->i_mapping->nrpages);
- 
- 	d_instantiate_new(dentry, inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return 0;
- 
-  fail:
- 	iget_failed(inode);
-+	remove_prevent_gc_list(c, &pb);
- 	jffs2_free_raw_inode(ri);
- 	return ret;
- }
-@@ -285,6 +288,7 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
- 	struct jffs2_raw_dirent *rd;
- 	struct jffs2_full_dnode *fn;
- 	struct jffs2_full_dirent *fd;
-+	struct prevent_block pb;
- 	int namelen;
- 	uint32_t alloclen;
- 	int ret, targetlen = strlen(target);
-@@ -346,6 +350,8 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
- 		goto fail;
- 	}
- 
-+	add_prevent_gc_list(c, &pb);
-+
- 	/* We use f->target field to store the target path. */
- 	f->target = kmemdup(target, targetlen + 1, GFP_KERNEL);
- 	if (!f->target) {
-@@ -430,10 +436,12 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
- 	jffs2_complete_reservation(c);
- 
- 	d_instantiate_new(dentry, inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return 0;
- 
-  fail:
- 	iget_failed(inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return ret;
- }
- 
-@@ -447,6 +455,7 @@ static int jffs2_mkdir (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 	struct jffs2_raw_dirent *rd;
- 	struct jffs2_full_dnode *fn;
- 	struct jffs2_full_dirent *fd;
-+	struct prevent_block pb;
- 	int namelen;
- 	uint32_t alloclen;
- 	int ret;
-@@ -503,6 +512,9 @@ static int jffs2_mkdir (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 		ret = PTR_ERR(fn);
- 		goto fail;
- 	}
-+
-+	add_prevent_gc_list(c, &pb);
-+
- 	/* No data here. Only a metadata node, which will be
- 	   obsoleted by the first data write
- 	*/
-@@ -574,10 +586,12 @@ static int jffs2_mkdir (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 	jffs2_complete_reservation(c);
- 
- 	d_instantiate_new(dentry, inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return 0;
- 
-  fail:
- 	iget_failed(inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return ret;
- }
- 
-@@ -614,6 +628,7 @@ static int jffs2_mknod (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 	struct jffs2_raw_dirent *rd;
- 	struct jffs2_full_dnode *fn;
- 	struct jffs2_full_dirent *fd;
-+	struct prevent_block pb;
- 	int namelen;
- 	union jffs2_device_node dev;
- 	int devlen = 0;
-@@ -672,6 +687,9 @@ static int jffs2_mknod (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 		ret = PTR_ERR(fn);
- 		goto fail;
- 	}
-+
-+	add_prevent_gc_list(c, &pb);
-+
- 	/* No data here. Only a metadata node, which will be
- 	   obsoleted by the first data write
- 	*/
-@@ -745,10 +763,12 @@ static int jffs2_mknod (struct inode *dir_i, struct dentry *dentry, umode_t mode
- 	jffs2_complete_reservation(c);
- 
- 	d_instantiate_new(dentry, inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return 0;
- 
-  fail:
- 	iget_failed(inode);
-+	remove_prevent_gc_list(c, &pb);
- 	return ret;
- }
- 
-diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
-index 9ed0f26..1fe4b11 100644
---- a/fs/jffs2/gc.c
-+++ b/fs/jffs2/gc.c
-@@ -95,6 +95,10 @@ static struct jffs2_eraseblock *jffs2_find_gc_block(struct jffs2_sb_info *c)
- 	}
- 
- 	ret = list_entry(nextlist->next, struct jffs2_eraseblock, list);
-+	if (is_prevented_block(c, ret)) {
-+		n = jiffies % 128;
-+		goto again;
-+	}
- 	list_del(&ret->list);
- 	c->gcblock = ret;
- 	ret->gc_node = ret->first_node;
-diff --git a/fs/jffs2/jffs2_fs_sb.h b/fs/jffs2/jffs2_fs_sb.h
-index 778275f..a018fbf 100644
---- a/fs/jffs2/jffs2_fs_sb.h
-+++ b/fs/jffs2/jffs2_fs_sb.h
-@@ -106,6 +106,7 @@ struct jffs2_sb_info {
- 	struct list_head free_list;		/* Blocks which are free and ready to be used */
- 	struct list_head bad_list;		/* Bad blocks. */
- 	struct list_head bad_used_list;		/* Bad blocks with valid data in. */
-+	struct list_head prevent_gc_list;	/* Prevent blocks picked for gc. */
- 
- 	spinlock_t erase_completion_lock;	/* Protect free_list and erasing_list
- 						   against erase completion handler */
-diff --git a/fs/jffs2/nodelist.h b/fs/jffs2/nodelist.h
-index 0637271..d54b634 100644
---- a/fs/jffs2/nodelist.h
-+++ b/fs/jffs2/nodelist.h
-@@ -98,6 +98,12 @@ struct jffs2_raw_node_ref
- /* Use blocks of about 256 bytes */
- #define REFS_PER_BLOCK ((255/sizeof(struct jffs2_raw_node_ref))-1)
- 
-+struct prevent_block {
-+	struct list_head list;
-+	struct jffs2_eraseblock *jeb;
-+	int in_use;
-+};
-+
- static inline struct jffs2_raw_node_ref *ref_next(struct jffs2_raw_node_ref *ref)
- {
- 	ref++;
-@@ -405,7 +411,7 @@ int jffs2_write_inode_range(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
- 			    struct jffs2_raw_inode *ri, unsigned char *buf,
- 			    uint32_t offset, uint32_t writelen, uint32_t *retlen);
- int jffs2_do_create(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f, struct jffs2_inode_info *f,
--		    struct jffs2_raw_inode *ri, const struct qstr *qstr);
-+		    struct jffs2_raw_inode *ri, const struct qstr *qstr, struct prevent_block *pb);
- int jffs2_do_unlink(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f, const char *name,
- 		    int namelen, struct jffs2_inode_info *dead_f, uint32_t time);
- int jffs2_do_link(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f, uint32_t ino,
-@@ -479,6 +485,44 @@ int jffs2_check_nand_cleanmarker(struct jffs2_sb_info *c, struct jffs2_erasebloc
- int jffs2_write_nand_cleanmarker(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb);
- #endif
- 
-+static inline void add_prevent_gc_list(struct jffs2_sb_info *c, struct prevent_block *pb)
-+{
-+	BUG_ON(!mutex_is_locked(&c->alloc_sem));
-+	pb->jeb = c->nextblock;
-+	pb->in_use = 1;
-+	list_add(&pb->list, &c->prevent_gc_list);
-+}
-+
-+static inline void remove_prevent_gc_list(struct jffs2_sb_info *c, struct prevent_block *pb)
-+{
-+	if (pb->in_use == 1) {
-+		mutex_lock(&c->alloc_sem);
-+		list_del(&pb->list);
-+		mutex_unlock(&c->alloc_sem);
-+	}
-+	pb->in_use = 0;
-+}
-+
-+static inline int is_prevented_block(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb)
-+{
-+	int ret = 0;
-+	struct list_head *this = NULL;
-+	struct prevent_block *pb = NULL;
-+
-+	BUG_ON(!mutex_is_locked(&c->alloc_sem));
-+	if (list_empty(&c->prevent_gc_list))
-+		goto out;
-+
-+	list_for_each(this, &c->prevent_gc_list) {
-+		pb = list_entry(this, struct prevent_block, list);
-+		if (pb->jeb != NULL && pb->jeb->offset == jeb->offset) {
-+			ret = 1;
-+			break;
-+		}
-+	}
-+out:
-+	return ret;
-+}
- #include "debug.h"
- 
- #endif /* __JFFS2_NODELIST_H__ */
-diff --git a/fs/jffs2/write.c b/fs/jffs2/write.c
-index cda9a36..bd95d3b 100644
---- a/fs/jffs2/write.c
-+++ b/fs/jffs2/write.c
-@@ -440,7 +440,7 @@ int jffs2_write_inode_range(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
- 
- int jffs2_do_create(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
- 		    struct jffs2_inode_info *f, struct jffs2_raw_inode *ri,
--		    const struct qstr *qstr)
-+		    const struct qstr *qstr, struct prevent_block *pb)
- {
- 	struct jffs2_raw_dirent *rd;
- 	struct jffs2_full_dnode *fn;
-@@ -474,6 +474,9 @@ int jffs2_do_create(struct jffs2_sb_info *c, struct jffs2_inode_info *dir_f,
- 		jffs2_complete_reservation(c);
- 		return PTR_ERR(fn);
- 	}
-+
-+	add_prevent_gc_list(c, pb);
-+
- 	/* No data here. Only a metadata node, which will be
- 	   obsoleted by the first data write
- 	*/
--- 
-2.1.0.GIT
+Ack.
 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int owl_reset_deassert(struct reset_controller_dev *rcdev,
+> > +			      unsigned long id)
+> > +{
+> > +	struct owl_reset *reset = to_owl_reset(rcdev);
+> > +	const struct owl_reset_map *map = &reset->reset_map[id];
+> > +	u32 reg;
+> > +
+> > +	regmap_read(reset->regmap, map->reg, &reg);
+> > +	regmap_write(reset->regmap, map->reg, reg | map->bit);
+> 
+> Better:
+> 
+> 	return regmap_update_bits(reset->regmap, map->reg, map->bit, map->bit);
+> 
+
+Ack.
+
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int owl_reset_reset(struct reset_controller_dev *rcdev,
+> > +			   unsigned long id)
+> > +{
+> > +	owl_reset_assert(rcdev, id);
+> > +	udelay(1);
+> 
+> Is the delay valid for all IP cores on all SoCs variants?
+> 
+
+It is valid for S900 and S700 for now but I'm not sure about S500. Will
+make sure while adding S500 support.
+
+> > +	owl_reset_deassert(rcdev, id);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int owl_reset_status(struct reset_controller_dev *rcdev,
+> > +			    unsigned long id)
+> > +{
+> > +	struct owl_reset *reset = to_owl_reset(rcdev);
+> > +	const struct owl_reset_map *map = &reset->reset_map[id];
+> > +	u32 reg;
+> > +
+> > +	regmap_read(reset->regmap, map->reg, &reg);
+> 
+> If this could return an error, better report it.
+> 
+
+Ack.
+
+> > +
+> > +	/*
+> > +	 * The reset control API expects 0 if reset is not asserted,
+> > +	 * which is the opposite of what our hardware uses.
+> > +	 */
+> > +	return !(map->bit & reg);
+> > +}
+> > +
+> > +const struct reset_control_ops owl_reset_ops = {
+> > +	.assert		= owl_reset_assert,
+> > +	.deassert	= owl_reset_deassert,
+> > +	.reset		= owl_reset_reset,
+> > +	.status		= owl_reset_status,
+> > +};
+> > diff --git a/drivers/clk/actions/owl-reset.h b/drivers/clk/actions/owl-reset.h
+> > new file mode 100644
+> > index 000000000000..1a5e987ba99b
+> > --- /dev/null
+> > +++ b/drivers/clk/actions/owl-reset.h
+> > @@ -0,0 +1,32 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +//
+> > +// Actions Semi Owl SoCs Reset Management Unit driver
+> > +//
+> > +// Copyright (c) 2018 Linaro Ltd.
+> > +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +
+> > +#ifndef _OWL_RESET_H_
+> > +#define _OWL_RESET_H_
+> > +
+> > +#include <linux/reset-controller.h>
+> > +#include <linux/spinlock.h>
+> 
+> spinlock?
+> 
+
+Oops. Not needed, will remove that.
+
+> > +
+> > +struct owl_reset_map {
+> > +	u16	reg;
+> 
+> Note that this will be aligned to 32-bits. If the intention was to save
+> space, consider storing an u8 bit index instead of the mask.
+> 
+
+Better to change it to u32, no need of memory saving here :)
+
+> > +	u32	bit;
+> > +};
+> > +
+> > +struct owl_reset {
+> > +	struct reset_controller_dev	rcdev;
+> > +	struct owl_reset_map		*reset_map;
+> 
+> Could this be
+> 	const struct owl_reset_map	*reset_map;
+> ?
+> 
+
+Ack.
+
+Thanks,
+Mani
+
+> > +	struct regmap			*regmap;
+> > +};
+> > +
+> > +static inline struct owl_reset *to_owl_reset(struct reset_controller_dev *rcdev)
+> > +{
+> > +	return container_of(rcdev, struct owl_reset, rcdev);
+> > +}
+> > +
+> > +extern const struct reset_control_ops owl_reset_ops;
+> > +
+> > +#endif /* _OWL_RESET_H_ */
+> 
+> regards
+> Philipp
