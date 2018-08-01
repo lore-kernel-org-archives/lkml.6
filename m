@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D6FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17343C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1752083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BADCA2083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:23:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YjSvKIkm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1752083E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oj4LLWeC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADCA2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbeHAKHV (ORCPT
+        id S2388501AbeHAKIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:07:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50764 "EHLO
+        Wed, 1 Aug 2018 06:08:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50810 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387633AbeHAKHV (ORCPT
+        with ESMTP id S2387633AbeHAKIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:07:21 -0400
+        Wed, 1 Aug 2018 06:08:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0aFC+ZzYQIpCZrjB90LN8FiAICGN3HzxTxaymKzg6Fw=; b=YjSvKIkmb55/uAuexQPzViq8H
-        LkNKm5kSZ5q7+AKBAAYhZ7naGi3gsdUpydPBBJams8F5N1jh4YJg0oRrGx+oCvjj+DweEXxcqIjqV
-        Z3PV/ExbnLozG9OfuBjPukWFfilXdUojVuXy+WB9dXNfUEzTUYOJsslNeFqiUR7wabsNw/dBpfnb6
-        I3tx6KwPYc3USGfbNP0KnCzgW67WL+fLLJSC6yYOg9OU4LxKCDsn/fs5pi6JEWCXKactevTztDlDF
-        64CTBaBVr1PV9rB3pLZulM6NoYFGAXThFs07KzM7HXGw96MBpwuZYvp8PeaNpZqCJg5xBxD7MDPRP
-        oy6BF7zGw==;
+         bh=+2ha2DqzjmWThBtVOxY8QkIqZM+flvhbzzcCq1k2uzU=; b=Oj4LLWeCFQXEWOqfnx4GQKEga
+        +x1IJOCRoZML6h96S7omXtcQevB09ec84gkNEuwJgT63FmSwY4iUx4JI2YuR3xqmyphgYbq6yFmLp
+        3LNKWnoQHWih42mQcXUZdDVIWDEVaR2t1uR3ocXWRQ69Gx3iazHa4xIwPJYd1WF2xcba4nDfwJh71
+        VhgRTjEtVw2m+C1DjNV5i6Q7X1sWDjER0qgtuwHRjszp01xxWm9MJ0iJxIR3c2HonYDbI9NnhjdAq
+        212cnFCbBG+0o+Gel88vetBpn35dztb4TmKjgnv5D0ayqoyJsd9fqbFQE7bIdY1K4WPMqBDB2lds2
+        KvfHm6mhw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fkmOi-0000fq-Nu; Wed, 01 Aug 2018 08:22:20 +0000
-Date:   Wed, 1 Aug 2018 01:22:20 -0700
+        id 1fkmPq-0000jE-NQ; Wed, 01 Aug 2018 08:23:30 +0000
+Date:   Wed, 1 Aug 2018 01:23:30 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Jens Axboe <axboe@kernel.dk>,
@@ -67,15 +67,14 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] block: Switch struct packet_command to use struct
- scsi_sense_hdr
-Message-ID: <20180801082220.GA26378@infradead.org>
+Subject: Re: [PATCH v2 6/9] ide-cd: Remove redundant sense buffer
+Message-ID: <20180801082330.GB26378@infradead.org>
 References: <20180731195155.46664-1-keescook@chromium.org>
- <20180731195155.46664-6-keescook@chromium.org>
+ <20180731195155.46664-7-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180731195155.46664-6-keescook@chromium.org>
+In-Reply-To: <20180731195155.46664-7-keescook@chromium.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,13 +82,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 12:51:50PM -0700, Kees Cook wrote:
-> There is a lot of needless struct request_sense usage in the CDROM
-> code. These can all be struct scsi_sense_hdr instead, to avoid any
-> confusion over their respective structure sizes. This patch is a lot
-> of noise changing "sense" to "sshdr", but the final code is more
-> readable to distinguish between "sense" meaning "struct request_sense"
-> and "sshdr" meaning "struct scsi_sense_hdr".
+On Tue, Jul 31, 2018 at 12:51:51PM -0700, Kees Cook wrote:
+> This is already able to process the sense buffer, so remove the redundant
+> parsing during the failure path. This also fixes any possible stale values
+> since the prior code did not check the sense length.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
 Looks good,
 
