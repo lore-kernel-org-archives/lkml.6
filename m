@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89155C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBD8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC622083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC622083D
+	by mail.kernel.org (Postfix) with ESMTP id D1BE520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BE520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406631AbeHATLg (ORCPT
+        id S2406644AbeHATLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51216 "EHLO
+        Wed, 1 Aug 2018 15:11:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404619AbeHATLe (ORCPT
+        with ESMTP id S2404619AbeHATLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:34 -0400
+        Wed, 1 Aug 2018 15:11:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D824FCC3;
-        Wed,  1 Aug 2018 17:24:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AF5ECC9;
+        Wed,  1 Aug 2018 17:24:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 012/144] kcov: ensure irq code sees a valid area
-Date:   Wed,  1 Aug 2018 18:50:39 +0200
-Message-Id: <20180801164949.807218634@linuxfoundation.org>
+Subject: [PATCH 4.9 013/144] xen/netfront: raise max number of slots in xennet_get_responses()
+Date:   Wed,  1 Aug 2018 18:50:40 +0200
+Message-Id: <20180801164949.884772004@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -56,77 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit c9484b986ef03492357fddd50afbdd02929cfa72 ]
+[ Upstream commit 57f230ab04d2910a06d17d988f1c4d7586a59113 ]
 
-Patch series "kcov: fix unexpected faults".
+The max number of slots used in xennet_get_responses() is set to
+MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
 
-These patches fix a few issues where KCOV code could trigger recursive
-faults, discovered while debugging a patch enabling KCOV for arch/arm:
+In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
+difference is resulting in frequent messages "too many slots" and a
+reduced network throughput for some workloads (factor 10 below that of
+a kernel-xen based guest).
 
-* On CONFIG_PREEMPT kernels, there's a small race window where
-  __sanitizer_cov_trace_pc() can see a bogus kcov_area.
+Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
+the max number of slots to use solves that problem (tests showed no
+more messages "too many slots" and throughput was as high as with the
+kernel-xen based guest system).
 
-* Lazy faulting of the vmalloc area can cause mutual recursion between
-  fault handling code and __sanitizer_cov_trace_pc().
+Replace MAX_SKB_FRAGS-2 by XEN_NETIF_NR_SLOTS_MIN-1 in
+netfront_tx_slot_available() for making it clearer what is really being
+tested without actually modifying the tested value.
 
-* During the context switch, switching the mm can cause the kcov_area to
-  be transiently unmapped.
-
-These are prerequisites for enabling KCOV on arm, but the issues
-themsevles are generic -- we just happen to avoid them by chance rather
-than design on x86-64 and arm64.
-
-This patch (of 3):
-
-For kernels built with CONFIG_PREEMPT, some C code may execute before or
-after the interrupt handler, while the hardirq count is zero.  In these
-cases, in_task() can return true.
-
-A task can be interrupted in the middle of a KCOV_DISABLE ioctl while it
-resets the task's kcov data via kcov_task_init().  Instrumented code
-executed during this period will call __sanitizer_cov_trace_pc(), and as
-in_task() returns true, will inspect t->kcov_mode before trying to write
-to t->kcov_area.
-
-In kcov_init_task() we update t->kcov_{mode,area,size} with plain stores,
-which may be re-ordered, torn, etc.  Thus __sanitizer_cov_trace_pc() may
-see bogus values for any of these fields, and may attempt to write to
-memory which is not mapped.
-
-Let's avoid this by using WRITE_ONCE() to set t->kcov_mode, with a
-barrier() to ensure this is ordered before we clear t->kov_{area,size}.
-This ensures that any code execute while kcov_init_task() is preempted
-will either see valid values for t->kcov_{area,size}, or will see that
-t->kcov_mode is KCOV_MODE_DISABLED, and bail out without touching
-t->kcov_area.
-
-Link: http://lkml.kernel.org/r/20180504135535.53744-2-mark.rutland@arm.com
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kcov.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/xen-netfront.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -103,7 +103,8 @@ static void kcov_put(struct kcov *kcov)
- 
- void kcov_task_init(struct task_struct *t)
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -238,7 +238,7 @@ static void rx_refill_timeout(unsigned l
+ static int netfront_tx_slot_available(struct netfront_queue *queue)
  {
--	t->kcov_mode = KCOV_MODE_DISABLED;
-+	WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
-+	barrier();
- 	t->kcov_size = 0;
- 	t->kcov_area = NULL;
- 	t->kcov = NULL;
+ 	return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
+-		(NET_TX_RING_SIZE - MAX_SKB_FRAGS - 2);
++		(NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
+ }
+ 
+ static void xennet_maybe_wake_tx(struct netfront_queue *queue)
+@@ -789,7 +789,7 @@ static int xennet_get_responses(struct n
+ 	RING_IDX cons = queue->rx.rsp_cons;
+ 	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
+ 	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
+-	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
++	int max = XEN_NETIF_NR_SLOTS_MIN + (rx->status <= RX_COPY_THRESHOLD);
+ 	int slots = 1;
+ 	int err = 0;
+ 	unsigned long ret;
 
 
