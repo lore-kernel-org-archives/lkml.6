@@ -2,171 +2,348 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94ADC43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 963BBC43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5649020851
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 385FF20851
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 00:39:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Th0Eo70v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5649020851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y/R/18PQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385FF20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbeHACU4 (ORCPT
+        id S1732902AbeHACVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 31 Jul 2018 22:20:56 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:14911 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732804AbeHACU4 (ORCPT
+        Tue, 31 Jul 2018 22:21:50 -0400
+Received: from mail-io0-f201.google.com ([209.85.223.201]:48455 "EHLO
+        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732804AbeHACVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Jul 2018 22:20:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533083884; x=1564619884;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=cRwpb806eoN2V/XRQZyPOZ4jDvSx1zVOCyJyfbKm+nk=;
-  b=Th0Eo70v4dofObt1bX/fIoS6/yynbwhimB8o7ktpjNLEt+MKj6XdQBoy
-   9j0L4N05ocKGk0FYnUU9NVXNluJs8m034uPlGu0ORT3DBjobT+acAaxl7
-   CGwsopNAk0qvR1gLgot9+O//0SP5NJQPK7sjZpzz5dbEXHtyh/Ztkfzah
-   aoVfvXVhY9uOx8gvukfIOcOzvp20XqoHv5q1Kd9qiTMGVBL3hCVfPAmPt
-   MHUqvv2CACMrGUZcG0reNjXcsR2IH2M6X/ieb5HvDD1EdB7NJOItZD35N
-   NzF+XHMiVuE2z6f8/2NKVQmfcUPuwfrzf458EJ2sGWPdyevLlOf0JJdi3
-   A==;
-X-IronPort-AV: E=Sophos;i="5.51,429,1526313600"; 
-   d="scan'208";a="189491081"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Aug 2018 08:38:01 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 31 Jul 2018 17:25:52 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 31 Jul 2018 17:38:01 -0700
-Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <20180726143723.16585-1-hch@lst.de>
- <20180726143723.16585-8-hch@lst.de>
- <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com>
- <dc69d688-f765-74cc-3234-563fecff6002@wdc.com> <20180731165712.GA2521@lst.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <dcb17e67-9f83-0ff5-a2c6-a6dd1b4d9c0d@wdc.com>
-Date:   Tue, 31 Jul 2018 17:38:01 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180731165712.GA2521@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 31 Jul 2018 22:21:50 -0400
+Received: by mail-io0-f201.google.com with SMTP id t11-v6so12576852iog.15
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 17:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=ZzOnaBTkwDj+NGTEeEMrQCVnhrUfq9KmDdHQenlOi3o=;
+        b=Y/R/18PQ6qbX80IjUPmi9In8TwpgwhaOpM8WXaE5MUDDv31xVdo/5YNYsadoS6Y6yN
+         Nbly/Da/SA5Kxshnk2jCQ6Rtum5GzfhiMratjWZEFH3fIRKprVNKEWp/BBLdlV9hZSu3
+         Mk1xLSqCs6Fces+4BCuIYf/erucO5g84WZzIFG1PqjIGsTVsI/0uZIRB3YE4QglnGF50
+         38NxA0an566MX9nL0VgNs3IXMlaBVpPMIRqQj2VPqCf9pvWNznOJx9C8lwvxItqkBkOM
+         2i9wcANC5DeUOE/V7dgZnY3vUKkwxpybUfcF8kdaPwK53BLyli9mtsddOMTsF9YwSksn
+         GiIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=ZzOnaBTkwDj+NGTEeEMrQCVnhrUfq9KmDdHQenlOi3o=;
+        b=iwQD/JYfjLSWCHm2yjN+02FRu6AY/Rrv6W4B7D6hdPwuyDpmy99OmbBHCPSTx+NbGM
+         1FW3iwEI8HydQ0dLEt+4FfL6fxutB2Q6WAVcR6vpQ/gTi4n5IOuFXef1lErxOtul/+z7
+         JPje9RWWVzr99QrmtH0/mjJqia1Ei+6Vo49E8tkSPmotNCSE3bx3orJ6LPgKIWzsfW+/
+         wL6zpQUTTsBGVDB4NYH9aHfVEpSHWhC9DtXu4T17eGfpEERPfVNcmNXMJOMzXOvArgN3
+         A8JDGhLvvMKXH3GW0/pm3kSEDyK0Y1T67ZxSDr8S5PPH7DMvFTaIHGFF9NyQij4iOfYB
+         YQqA==
+X-Gm-Message-State: AOUpUlF20EFgb0bwky3a0YyezBOSAuBdHHFoup9yoyXP7zcy8agXg+Y2
+        NqVxJRqMoF/OFdavaLVkaDl0CgpW
+X-Google-Smtp-Source: AAOMgpfZIxdijdscZEIVCftFQ6jGRo4bb4dw4MvhZIxbYhGpON9SLUvvAotoy4X6tE6uAshpyr/C47mQ
+X-Received: by 2002:a24:56ce:: with SMTP id o197-v6mr2606823itb.32.1533083937027;
+ Tue, 31 Jul 2018 17:38:57 -0700 (PDT)
+Date:   Tue, 31 Jul 2018 17:38:50 -0700
+Message-Id: <20180801003850.181947-1-rkir@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.18.0.345.g5c9ce644c3-goog
+Subject: [PATCH] platform: goldfish: Retire pdev_bus
+From:   rkir@google.com
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
+        Roman Kiryanov <rkir@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/31/18 9:52 AM, Christoph Hellwig wrote:
-> On Mon, Jul 30, 2018 at 08:21:33PM -0700, Atish Patra wrote:
->> I found the issue. As per PLIC documentation, a hart context is a given
->> privilege mode on a given hart. Thus, cpu context ID & cpu numbers are not
->> same. Here is the PLIC register Maps in U54 core:
->>
->> Ref: https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf
->>
->> Memory address for Interrupt enable
->> Address
->> 0x0C00-2080   Hart 1 M-mode enables
->> 0x0C00 2094   End of Hart 1 M-mode enables
->>
->> 0x0C00-2100   Hart 1 S-mode enables
->> 0x0C00-2114   End of Hart 1 S-mode enables
->>
->> Memory map Claim/Threshold
->> Address
->> 0x0C20-1000 4B 	 M-mode priority threshold
->> 0x0C20-1004 4B   M-mode claim/complete
->> 0x0C20-2000 4B   S-mode priority threshold
->> 0x0C20-2004 4B   S-mode claim/complete
->>
->> The original PLIC patch was calculating based on handle->contextid which
->> will assume numbers on a HighFive Unleashed board as 2 4 6 8.
->>
->> In this patch, context id is assigned as cpu numbers which will be 1 2 3 4.
->> Thus it will lead to incorrect plic address access as shown below.
-> 
-> Indeed.  Can you try this branch, which puts back the OF contextid
-> parsing from the original code:
-> 
->     git://git.infradead.org/users/hch/riscv.git riscv-irq-simple.2
-> 
-> Gitweb:
-> 
->     http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple.2
-> 
-> 
+From: Roman Kiryanov <rkir@google.com>
 
-Some typos in the above repo in the PLIC driver patch. The following 
-changes are required. Inline patch below
+Not used by goldfish.
 
-diff --git a/drivers/irqchip/irq-riscv-plic.c 
-b/drivers/irqchip/irq-riscv-plic.c
-index 0e524e3e..9dbaca47 100644
---- a/drivers/irqchip/irq-riscv-plic.c
-+++ b/drivers/irqchip/irq-riscv-plic.c
-@@ -79,7 +79,7 @@ static DEFINE_SPINLOCK(plic_toggle_lock);
-  static inline void plic_toggle(int ctxid, int hwirq, int enable)
-  {
-         u32 __iomem *reg = plic_regs + ENABLE_BASE +
--               ctxid * ENABLE_PER_HART + (hwirq / 32);
-+               ctxid * ENABLE_PER_HART + (hwirq / 32) * 4;
-         u32 hwirq_mask = 1 << (hwirq % 32);
+Signed-off-by: Roman Kiryanov <rkir@google.com>
+---
+ drivers/platform/goldfish/Kconfig    |   5 -
+ drivers/platform/goldfish/Makefile   |   1 -
+ drivers/platform/goldfish/pdev_bus.c | 232 ---------------------------
+ 3 files changed, 238 deletions(-)
+ delete mode 100644 drivers/platform/goldfish/pdev_bus.c
 
-         spin_lock(&plic_toggle_lock);
-@@ -166,7 +166,7 @@ static void plic_handle_irq(struct pt_regs *regs)
-  static int __init plic_init(struct device_node *node,
-                 struct device_node *parent)
-  {
--       int error = 0, nr_mapped = 0, cpu, i;
-+       int error = 0, nr_mapped = 0, i;
-         u32 nr_irqs;
-
-         if (plic_regs) {
-@@ -211,8 +211,7 @@ static int __init plic_init(struct device_node *node,
-                         pr_err("invalid OF parent, skipping context 
-%d.\n", i);
-                         continue;
-                 }
+diff --git a/drivers/platform/goldfish/Kconfig b/drivers/platform/goldfish/Kconfig
+index fefbb8370da0..479031aa4f88 100644
+--- a/drivers/platform/goldfish/Kconfig
++++ b/drivers/platform/goldfish/Kconfig
+@@ -10,11 +10,6 @@ menuconfig GOLDFISH
+ 
+ if GOLDFISH
+ 
+-config GOLDFISH_BUS
+-	bool "Goldfish platform bus"
+-	---help---
+-	  This is a virtual bus to host Goldfish Android Virtual Devices.
 -
--               if (riscv_of_processor_hart(parent.np->parent < 0))
-+               if (riscv_of_processor_hart(parent.np->parent) < 0)
-                         continue;
+ config GOLDFISH_PIPE
+ 	tristate "Goldfish virtual device for QEMU pipes"
+ 	---help---
+diff --git a/drivers/platform/goldfish/Makefile b/drivers/platform/goldfish/Makefile
+index d3487125838c..e0c202df9674 100644
+--- a/drivers/platform/goldfish/Makefile
++++ b/drivers/platform/goldfish/Makefile
+@@ -1,5 +1,4 @@
+ #
+ # Makefile for Goldfish platform specific drivers
+ #
+-obj-$(CONFIG_GOLDFISH_BUS)	+= pdev_bus.o
+ obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe.o
+diff --git a/drivers/platform/goldfish/pdev_bus.c b/drivers/platform/goldfish/pdev_bus.c
+deleted file mode 100644
+index dd9ea463c2a4..000000000000
+--- a/drivers/platform/goldfish/pdev_bus.c
++++ /dev/null
+@@ -1,232 +0,0 @@
+-/*
+- * Copyright (C) 2007 Google, Inc.
+- * Copyright (C) 2011 Intel, Inc.
+- * Copyright (C) 2013 Intel, Inc.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/interrupt.h>
+-#include <linux/irq.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-#include <linux/io.h>
+-
+-#define PDEV_BUS_OP_DONE        (0x00)
+-#define PDEV_BUS_OP_REMOVE_DEV  (0x04)
+-#define PDEV_BUS_OP_ADD_DEV     (0x08)
+-
+-#define PDEV_BUS_OP_INIT        (0x00)
+-
+-#define PDEV_BUS_OP             (0x00)
+-#define PDEV_BUS_GET_NAME       (0x04)
+-#define PDEV_BUS_NAME_LEN       (0x08)
+-#define PDEV_BUS_ID             (0x0c)
+-#define PDEV_BUS_IO_BASE        (0x10)
+-#define PDEV_BUS_IO_SIZE        (0x14)
+-#define PDEV_BUS_IRQ            (0x18)
+-#define PDEV_BUS_IRQ_COUNT      (0x1c)
+-#define PDEV_BUS_GET_NAME_HIGH  (0x20)
+-
+-struct pdev_bus_dev {
+-	struct list_head list;
+-	struct platform_device pdev;
+-	struct resource resources[0];
+-};
+-
+-static void goldfish_pdev_worker(struct work_struct *work);
+-
+-static void __iomem *pdev_bus_base;
+-static unsigned long pdev_bus_addr;
+-static unsigned long pdev_bus_len;
+-static u32 pdev_bus_irq;
+-static LIST_HEAD(pdev_bus_new_devices);
+-static LIST_HEAD(pdev_bus_registered_devices);
+-static LIST_HEAD(pdev_bus_removed_devices);
+-static DECLARE_WORK(pdev_bus_worker, goldfish_pdev_worker);
+-
+-
+-static void goldfish_pdev_worker(struct work_struct *work)
+-{
+-	int ret;
+-	struct pdev_bus_dev *pos, *n;
+-
+-	list_for_each_entry_safe(pos, n, &pdev_bus_removed_devices, list) {
+-		list_del(&pos->list);
+-		platform_device_unregister(&pos->pdev);
+-		kfree(pos);
+-	}
+-	list_for_each_entry_safe(pos, n, &pdev_bus_new_devices, list) {
+-		list_del(&pos->list);
+-		ret = platform_device_register(&pos->pdev);
+-		if (ret)
+-			pr_err("goldfish_pdev_worker failed to register device, %s\n",
+-								pos->pdev.name);
+-		list_add_tail(&pos->list, &pdev_bus_registered_devices);
+-	}
+-}
+-
+-static void goldfish_pdev_remove(void)
+-{
+-	struct pdev_bus_dev *pos, *n;
+-	u32 base;
+-
+-	base = readl(pdev_bus_base + PDEV_BUS_IO_BASE);
+-
+-	list_for_each_entry_safe(pos, n, &pdev_bus_new_devices, list) {
+-		if (pos->resources[0].start == base) {
+-			list_del(&pos->list);
+-			kfree(pos);
+-			return;
+-		}
+-	}
+-	list_for_each_entry_safe(pos, n, &pdev_bus_registered_devices, list) {
+-		if (pos->resources[0].start == base) {
+-			list_del(&pos->list);
+-			list_add_tail(&pos->list, &pdev_bus_removed_devices);
+-			schedule_work(&pdev_bus_worker);
+-			return;
+-		}
+-	};
+-	pr_err("goldfish_pdev_remove could not find device at %x\n", base);
+-}
+-
+-static int goldfish_new_pdev(void)
+-{
+-	struct pdev_bus_dev *dev;
+-	u32 name_len;
+-	u32 irq = -1, irq_count;
+-	int resource_count = 2;
+-	u32 base;
+-	char *name;
+-
+-	base = readl(pdev_bus_base + PDEV_BUS_IO_BASE);
+-
+-	irq_count = readl(pdev_bus_base + PDEV_BUS_IRQ_COUNT);
+-	name_len = readl(pdev_bus_base + PDEV_BUS_NAME_LEN);
+-	if (irq_count)
+-		resource_count++;
+-
+-	dev = kzalloc(sizeof(*dev) +
+-		sizeof(struct resource) * resource_count +
+-		name_len + 1 + sizeof(*dev->pdev.dev.dma_mask), GFP_ATOMIC);
+-	if (dev == NULL)
+-		return -ENOMEM;
+-
+-	dev->pdev.num_resources = resource_count;
+-	dev->pdev.resource = (struct resource *)(dev + 1);
+-	dev->pdev.name = name = (char *)(dev->pdev.resource + resource_count);
+-	dev->pdev.dev.coherent_dma_mask = ~0;
+-	dev->pdev.dev.dma_mask = (void *)(dev->pdev.name + name_len + 1);
+-	*dev->pdev.dev.dma_mask = ~0;
+-
+-#ifdef CONFIG_64BIT
+-	writel((u32)((u64)name>>32), pdev_bus_base + PDEV_BUS_GET_NAME_HIGH);
+-#endif
+-	writel((u32)(unsigned long)name, pdev_bus_base + PDEV_BUS_GET_NAME);
+-	name[name_len] = '\0';
+-	dev->pdev.id = readl(pdev_bus_base + PDEV_BUS_ID);
+-	dev->pdev.resource[0].start = base;
+-	dev->pdev.resource[0].end = base +
+-				readl(pdev_bus_base + PDEV_BUS_IO_SIZE) - 1;
+-	dev->pdev.resource[0].flags = IORESOURCE_MEM;
+-	if (irq_count) {
+-		irq = readl(pdev_bus_base + PDEV_BUS_IRQ);
+-		dev->pdev.resource[1].start = irq;
+-		dev->pdev.resource[1].end = irq + irq_count - 1;
+-		dev->pdev.resource[1].flags = IORESOURCE_IRQ;
+-	}
+-
+-	pr_debug("goldfish_new_pdev %s at %x irq %d\n", name, base, irq);
+-	list_add_tail(&dev->list, &pdev_bus_new_devices);
+-	schedule_work(&pdev_bus_worker);
+-
+-	return 0;
+-}
+-
+-static irqreturn_t goldfish_pdev_bus_interrupt(int irq, void *dev_id)
+-{
+-	irqreturn_t ret = IRQ_NONE;
+-
+-	while (1) {
+-		u32 op = readl(pdev_bus_base + PDEV_BUS_OP);
+-
+-		switch (op) {
+-		case PDEV_BUS_OP_REMOVE_DEV:
+-			goldfish_pdev_remove();
+-			ret = IRQ_HANDLED;
+-			break;
+-
+-		case PDEV_BUS_OP_ADD_DEV:
+-			goldfish_new_pdev();
+-			ret = IRQ_HANDLED;
+-			break;
+-
+-		case PDEV_BUS_OP_DONE:
+-		default:
+-			return ret;
+-		}
+-	}
+-}
+-
+-static int goldfish_pdev_bus_probe(struct platform_device *pdev)
+-{
+-	int ret;
+-	struct resource *r;
+-
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (r == NULL)
+-		return -EINVAL;
+-
+-	pdev_bus_addr = r->start;
+-	pdev_bus_len = resource_size(r);
+-
+-	pdev_bus_base = ioremap(pdev_bus_addr, pdev_bus_len);
+-	if (pdev_bus_base == NULL) {
+-		ret = -ENOMEM;
+-		dev_err(&pdev->dev, "unable to map Goldfish MMIO.\n");
+-		goto free_resources;
+-	}
+-
+-	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (r == NULL) {
+-		ret = -ENOENT;
+-		goto free_map;
+-	}
+-
+-	pdev_bus_irq = r->start;
+-
+-	ret = request_irq(pdev_bus_irq, goldfish_pdev_bus_interrupt,
+-				IRQF_SHARED, "goldfish_pdev_bus", pdev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to request Goldfish IRQ\n");
+-		goto free_map;
+-	}
+-
+-	writel(PDEV_BUS_OP_INIT, pdev_bus_base + PDEV_BUS_OP);
+-	return 0;
+-
+-free_map:
+-	iounmap(pdev_bus_base);
+-free_resources:
+-	release_mem_region(pdev_bus_addr, pdev_bus_len);
+-	return ret;
+-}
+-
+-static struct platform_driver goldfish_pdev_bus_driver = {
+-	.probe = goldfish_pdev_bus_probe,
+-	.driver = {
+-		.name = "goldfish_pdev_bus"
+-	}
+-};
+-builtin_platform_driver(goldfish_pdev_bus_driver);
+-- 
+2.18.0.345.g5c9ce644c3-goog
 
-                 plic_handler_present[i] = true;
-
-
-With the above changes, I am able to boot quite far. But it still 
-crashes which may be a driver issue. I might have missed something while 
-merging all the out-of-tree drivers from riscv-all branch.
-
-Here is my git repo.
-https://github.com/atishp04/riscv-linux/tree/master_chris_cleanup_v4
-
-crash details are at
-https://paste.debian.net/1036078/
-
-Regards,
-Atish
