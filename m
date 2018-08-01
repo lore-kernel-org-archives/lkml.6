@@ -6,71 +6,256 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F332C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABEFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA660208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA660208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id B46B220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46B220844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406274AbeHATJ0 (ORCPT
+        id S2406283AbeHATJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:26 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46542 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405286AbeHATJZ (ORCPT
+        Wed, 1 Aug 2018 15:09:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50782 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405186AbeHATJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:25 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fkupe-0002aL-06; Wed, 01 Aug 2018 17:22:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Vasyl Gomonovych <gomonovych@gmail.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: net: lmc: fix case value for target abort error
-Date:   Wed,  1 Aug 2018 18:22:41 +0100
-Message-Id: <20180801172241.1974-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Aug 2018 15:09:28 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8115D27;
+        Wed,  1 Aug 2018 17:22:45 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 191/246] rsi: fix nommu_map_sg overflow kernel panic
+Date:   Wed,  1 Aug 2018 18:51:41 +0200
+Message-Id: <20180801165020.855298986@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Current value for a target abort error is 0x010, however, this value
-should in fact be 0x002.  As it stands, the range of error is 0..7 so
-it is currently never being detected.  This bug has been in the driver
-since the early 2.6.12 days (or before).
+------------------
 
-Detected by CoverityScan, CID#744290 ("Logically dead code")
+From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+[ Upstream commit f700546682a62a87a9615121a37ee7452dab4b76 ]
+
+Following overflow kernel panic is observed on some platforms while
+loading the driver. It is fixed if dynamically allocated memory is
+passed to SDIO instead of static one
+
+[  927.513963] nommu_map_sg: overflow 17d54064ba7c+20 of device mask ffffffff
+[  927.517712] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x mac80211 cfg80211
+	       btrsi rfcomm bluetooth ecdh_generic snd_soc_sst_bytcr_rt5660
+[  927.517861] CPU: 0 PID: 1624 Comm: insmod Tainted: G W 4.15.0-1000 #1
+[  927.517870] RIP: 0010:sdhci_send_command+0x5f0/0xa90 [sdhci]
+[  927.517873] RSP: 0000:ffffac3fc064b6d8 EFLAGS: 00010086
+[  927.517895] Call Trace:
+[  927.517908]  ? __schedule+0x3cd/0x890
+[  927.517915]  ? mod_timer+0x17b/0x3c0
+[  927.517922]  sdhci_request+0x7c/0xf0 [sdhci]
+[  927.517928]  __mmc_start_request+0x5a/0x170
+[  927.517932]  mmc_start_request+0x74/0x90
+[  927.517936]  mmc_wait_for_req+0x87/0xe0
+[  927.517940]  mmc_io_rw_extended+0x2fd/0x330
+[  927.517946]  ? mmc_wait_data_done+0x30/0x30
+[  927.517951]  sdio_io_rw_ext_helper+0x160/0x210
+[  927.517956]  sdio_writesb+0x1d/0x20
+[  927.517966]	rsi_sdio_write_register_multiple+0x68/0x110 [rsi_sdio]
+[  927.517976]  rsi_hal_device_init+0x357/0x910 [rsi_91x]
+[  927.517983]  ? rsi_hal_device_init+0x357/0x910 [rsi_91x]
+[  927.517990]  rsi_probe+0x2c6/0x450 [rsi_sdio]
+[  927.517995]  sdio_bus_probe+0xfc/0x110
+[  927.518000]  driver_probe_device+0x2b3/0x490
+[  927.518005]  __driver_attach+0xdf/0xf0
+[  927.518008]  ? driver_probe_device+0x490/0x490
+[  927.518014]  bus_for_each_dev+0x6c/0xc0
+[  927.518018]  driver_attach+0x1e/0x20
+[  927.518021]  bus_add_driver+0x1f4/0x270
+[  927.518028]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.518031]  driver_register+0x60/0xe0
+[  927.518038]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.518041]  sdio_register_driver+0x20/0x30
+[  927.518047]  rsi_module_init+0x16/0x40 [rsi_sdio]
+
+Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/lmc/lmc_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_hal.c  |   35 +++++++++++++++++++-------------
+ drivers/net/wireless/rsi/rsi_91x_sdio.c |   21 ++++++++++++-------
+ drivers/net/wireless/rsi/rsi_sdio.h     |    2 -
+ 3 files changed, 36 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
-index 093bd21f574d..4907453f17f5 100644
---- a/drivers/net/wan/lmc/lmc_main.c
-+++ b/drivers/net/wan/lmc/lmc_main.c
-@@ -1362,7 +1362,7 @@ static irqreturn_t lmc_interrupt (int irq, void *dev_instance) /*fold00*/
-             case 0x001:
-                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
-                 break;
--            case 0x010:
-+            case 0x002:
-                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
-                 break;
-             default:
--- 
-2.17.1
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -557,28 +557,32 @@ static int bl_write_header(struct rsi_hw
+ 			   u32 content_size)
+ {
+ 	struct rsi_host_intf_ops *hif_ops = adapter->host_intf_ops;
+-	struct bl_header bl_hdr;
++	struct bl_header *bl_hdr;
+ 	u32 write_addr, write_len;
+ 	int status;
+ 
+-	bl_hdr.flags = 0;
+-	bl_hdr.image_no = cpu_to_le32(adapter->priv->coex_mode);
+-	bl_hdr.check_sum = cpu_to_le32(
+-				*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
+-	bl_hdr.flash_start_address = cpu_to_le32(
+-					*(u32 *)&flash_content[ADDR_OFFSET]);
+-	bl_hdr.flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
++	bl_hdr = kzalloc(sizeof(*bl_hdr), GFP_KERNEL);
++	if (!bl_hdr)
++		return -ENOMEM;
++
++	bl_hdr->flags = 0;
++	bl_hdr->image_no = cpu_to_le32(adapter->priv->coex_mode);
++	bl_hdr->check_sum =
++		cpu_to_le32(*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
++	bl_hdr->flash_start_address =
++		cpu_to_le32(*(u32 *)&flash_content[ADDR_OFFSET]);
++	bl_hdr->flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
+ 	write_len = sizeof(struct bl_header);
+ 
+ 	if (adapter->rsi_host_intf == RSI_HOST_INTF_USB) {
+ 		write_addr = PING_BUFFER_ADDRESS;
+ 		status = hif_ops->write_reg_multiple(adapter, write_addr,
+-						 (u8 *)&bl_hdr, write_len);
++						 (u8 *)bl_hdr, write_len);
+ 		if (status < 0) {
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Failed to load Version/CRC structure\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 	} else {
+ 		write_addr = PING_BUFFER_ADDRESS >> 16;
+@@ -587,20 +591,23 @@ static int bl_write_header(struct rsi_hw
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Unable to set ms word to common reg\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 		write_addr = RSI_SD_REQUEST_MASTER |
+ 			     (PING_BUFFER_ADDRESS & 0xFFFF);
+ 		status = hif_ops->write_reg_multiple(adapter, write_addr,
+-						 (u8 *)&bl_hdr, write_len);
++						 (u8 *)bl_hdr, write_len);
+ 		if (status < 0) {
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Failed to load Version/CRC structure\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 	}
+-	return 0;
++	status = 0;
++fail:
++	kfree(bl_hdr);
++	return status;
+ }
+ 
+ static u32 read_flash_capacity(struct rsi_hw *adapter)
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+@@ -968,17 +968,21 @@ static void ulp_read_write(struct rsi_hw
+ /*This function resets and re-initializes the chip.*/
+ static void rsi_reset_chip(struct rsi_hw *adapter)
+ {
+-	__le32 data;
++	u8 *data;
+ 	u8 sdio_interrupt_status = 0;
+ 	u8 request = 1;
+ 	int ret;
+ 
++	data = kzalloc(sizeof(u32), GFP_KERNEL);
++	if (!data)
++		return;
++
+ 	rsi_dbg(INFO_ZONE, "Writing disable to wakeup register\n");
+ 	ret =  rsi_sdio_write_register(adapter, 0, SDIO_WAKEUP_REG, &request);
+ 	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Failed to write SDIO wakeup register\n", __func__);
+-		return;
++		goto err;
+ 	}
+ 	msleep(20);
+ 	ret =  rsi_sdio_read_register(adapter, RSI_FN1_INT_REGISTER,
+@@ -986,7 +990,7 @@ static void rsi_reset_chip(struct rsi_hw
+ 	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed to Read Intr Status Register\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 	rsi_dbg(INFO_ZONE, "%s: Intr Status Register value = %d\n",
+ 		__func__, sdio_interrupt_status);
+@@ -996,17 +1000,17 @@ static void rsi_reset_chip(struct rsi_hw
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Unable to set ms word to common reg\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 
+-	data = TA_HOLD_THREAD_VALUE;
++	put_unaligned_le32(TA_HOLD_THREAD_VALUE, data);
+ 	if (rsi_sdio_write_register_multiple(adapter, TA_HOLD_THREAD_REG |
+ 					     RSI_SD_REQUEST_MASTER,
+-					     (u8 *)&data, 4)) {
++					     data, 4)) {
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Unable to hold Thread-Arch processor threads\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 
+ 	/* This msleep will ensure Thread-Arch processor to go to hold
+@@ -1027,6 +1031,9 @@ static void rsi_reset_chip(struct rsi_hw
+ 	 * read write operations to complete for chip reset.
+ 	 */
+ 	msleep(500);
++err:
++	kfree(data);
++	return;
+ }
+ 
+ /**
+--- a/drivers/net/wireless/rsi/rsi_sdio.h
++++ b/drivers/net/wireless/rsi/rsi_sdio.h
+@@ -85,7 +85,7 @@ enum sdio_interrupt_type {
+ #define TA_SOFT_RST_CLR              0
+ #define TA_SOFT_RST_SET              BIT(0)
+ #define TA_PC_ZERO                   0
+-#define TA_HOLD_THREAD_VALUE         cpu_to_le32(0xF)
++#define TA_HOLD_THREAD_VALUE         0xF
+ #define TA_RELEASE_THREAD_VALUE      cpu_to_le32(0xF)
+ #define TA_BASE_ADDR                 0x2200
+ #define MISC_CFG_BASE_ADDR           0x4105
+
 
