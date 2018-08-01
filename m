@@ -3,136 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7505BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C44C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A84208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4555208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 14:52:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjXBo6e7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A84208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSBsCfE/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4555208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389631AbeHAQge (ORCPT
+        id S2389647AbeHAQiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 12:36:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389498AbeHAQgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 12:36:33 -0400
-Received: from mail-yb0-f173.google.com (mail-yb0-f173.google.com [209.85.213.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BD30208A5;
-        Wed,  1 Aug 2018 14:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533135028;
-        bh=F8A3mXzw6Hazsmx6c7yhvyUF4eG99B9aRheu1fE+UrI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LjXBo6e7jkxLoGAR08ZNsSeC/qIvGgbdhGMZ7NdDQgtmQpstZsQtNdVTeAqiEglpv
-         PKC4oWNxETKMbpTPKmz1ZPzMje3WJnbcvI/AkY2pR+thcwzLYnsEGAwTXZiwgx764T
-         3RyhBpt1l/4fYDrI4twJNZDDYASFu+viTxs7Oywc=
-Received: by mail-yb0-f173.google.com with SMTP id l16-v6so7630607ybk.11;
-        Wed, 01 Aug 2018 07:50:28 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEzEPdRlGOVp74/+W4Um+vDRdfyi5utpxrenlPySrZFSdWNlkFh
-        gIzRgLkW7t7vApnf/IF4SEl1r+OLT1A8/Pm7JK8=
-X-Google-Smtp-Source: AAOMgpelf0EAmKnt5eZhGIcxuveKHFu5XuM6fqkGaX6vuvOgAWEmmIy1l+g6gF0SvXs341kdtdOchgyMogvEwdI9CJ4=
-X-Received: by 2002:a25:d687:: with SMTP id n129-v6mr13724847ybg.113.1533135027473;
- Wed, 01 Aug 2018 07:50:27 -0700 (PDT)
+        Wed, 1 Aug 2018 12:38:06 -0400
+Received: from mail-yb0-f178.google.com ([209.85.213.178]:37185 "EHLO
+        mail-yb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389498AbeHAQiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 12:38:06 -0400
+Received: by mail-yb0-f178.google.com with SMTP id r3-v6so7637151ybo.4
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 07:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ritjFSrfhyyLHDydrfrCpVSfVWEe6wG32VB3u/ugljo=;
+        b=kSBsCfE/gxxxIrD08fssJNwc0eDWWymu226KhF9fWKVudMM03lYB6s8C2MYX2F3JRn
+         gYkwFricLVasZPuuMJufxrXcuXmQEVk6zujAlX//FmbyfWMLOELr7IrPdMvWVl7Wi3o2
+         bj4/xvti8yC2PFflB7MS7Vfw6pVveaZBzFy9hSdS62DMrHQgyU0orNkppkRsnriMtYh0
+         bMHO8NkE5JOI/cMyzPjE7TmvS5bBxm3CLbD+58mlolD6OYbWfUdndEPNDZHLDehQ7XD/
+         GchJy9f501B3UsrFjzanZRwToxcoUYs+h9uux/Xr29ZoX7UzKMKDw8+ZofMGgBTeguuq
+         gtgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ritjFSrfhyyLHDydrfrCpVSfVWEe6wG32VB3u/ugljo=;
+        b=BWQUP/v1g/zLoYu+pUgiGjKf8Qm337yA8jD0Tc/b+WLGYnarNLaUHJCUBYGzKY3Hc/
+         ZbVvdmOR5An2Qxv+VcFPTPZuwhkKR5b3jjVOHwU+rCEjh3kyE/OSRUPF4izESPl/dtBg
+         gbWbSbcmUtoZ0PGp+WUXXH9ObV1GHgyZFaphIqjoA4pVR3gMngpFLNlS1ohKR0/J+rKw
+         l8aSQAlAEcq52Dj5UkYKQPNWnO4//INBSg4AylvsLLfyRk9BkQqWLQpRXH3KaIRrvkbT
+         A2A4ZnI2PqBX/Upi3Qu0qqZmOgQFLetOtC8HoaAL5sA4r5rK0EPCOpTZ5YB3TyoI1D0W
+         HRGA==
+X-Gm-Message-State: AOUpUlHA6yXE90DXTWSSEqQjEL7nd5y49a+F1kM95Xp0n0o7sOkX8vtU
+        XxWS4ii4dAWbmV8Y9WEORpLEDDGDJFOZhkna7K0=
+X-Google-Smtp-Source: AAOMgpfiU5VZc7n4Lp67Wh+EAk5EQxGTcAmISQHTqBuMPneQU9/f8aQS8hLWTZJBiI+P2QpblBIc5rFkaWN+rpyASBs=
+X-Received: by 2002:a25:2d44:: with SMTP id s4-v6mr13825467ybe.284.1533135120664;
+ Wed, 01 Aug 2018 07:52:00 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:81c5:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 07:49:46 -0700 (PDT)
-In-Reply-To: <MWHPR0201MB3481D2A338A004B2FB17CA61C22D0@MWHPR0201MB3481.namprd02.prod.outlook.com>
-References: <20180801100457.25614-1-nava.manne@xilinx.com> <20180801100457.25614-2-nava.manne@xilinx.com>
- <MWHPR0201MB34811402926886136673CE68C22E0@MWHPR0201MB3481.namprd02.prod.outlook.com>
- <CANk1AXQ-qrEKAm9zEs8sVaFNGGFkjCr+npTKUNDXz_bnpL=DQw@mail.gmail.com> <MWHPR0201MB3481D2A338A004B2FB17CA61C22D0@MWHPR0201MB3481.namprd02.prod.outlook.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Wed, 1 Aug 2018 09:49:46 -0500
-X-Gmail-Original-Message-ID: <CANk1AXQci08TOVq7TeXXGfMWi8C8o4AGYDJK2Dr-mVgZPqU8bQ@mail.gmail.com>
-Message-ID: <CANk1AXQci08TOVq7TeXXGfMWi8C8o4AGYDJK2Dr-mVgZPqU8bQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] fpga manager: Adding FPGA Manager support for
- Xilinx zynqmp
-To:     Nava kishore Manne <navam@xilinx.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Michal Simek <michals@xilinx.com>,
-        Soren Brinkmann <sorenb@xilinx.com>,
-        "atull@opensource.altera.com" <atull@opensource.altera.com>,
-        "moritz.fischer@ettus.com" <moritz.fischer@ettus.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "chinnikishore369@gmail.com" <chinnikishore369@gmail.com>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>
+Received: by 2002:a81:3007:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 07:52:00 -0700 (PDT)
+In-Reply-To: <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
+References: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
+ <CACVXFVPpSJDqR8ki2PiDBbU36KsGFMYsOEf_9bmN6Cpo3w_YoQ@mail.gmail.com> <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
+From:   Jeff Chua <jeff.chua.linux@gmail.com>
+Date:   Wed, 1 Aug 2018 22:52:00 +0800
+Message-ID: <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com>
+Subject: Re: How to secure erase PCI-E NVME SSD connected via USB3?
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 12:49 AM, Nava kishore Manne <navam@xilinx.com> wrote:
-> Hi Alan Tull,
+On Wed, Aug 1, 2018 at 1:02 PM, Jeff Chua <jeff.chua.linux@gmail.com> wrote:
+> On Tue, Jul 31, 2018 at 7:07 PM, Ming Lei <tom.leiming@gmail.com> wrote:
+>> On Sun, Jul 29, 2018 at 5:09 PM, Jeff Chua <jeff.chua.linux@gmail.com> wrote:
+>>> I'm testing the USB3-to-PCI-E NVME SSD. It's works using uas module,
+>>> recognized it as /dev/sda.
+>>>
+>>> Since it's an USB device, the nvme-cli tools won't work, nor does
+>>> hdparm, as it's a NVME SSD.
+>>>
+>>> So, how to secure-erase the NVME SSD connected via the JMS583 chip?
+>>
+>> You may try 'blkdiscard --secure' and see if you are luck.
 >
-> Thanks for the quick response.
-> Please find my Comments inline...
->
->> -----Original Message-----
->> From: Alan Tull [mailto:atull@kernel.org]
->> Sent: Tuesday, July 31, 2018 8:52 PM
->> To: Nava kishore Manne <navam@xilinx.com>
->> Cc: robh+dt@kernel.org; mark.rutland@arm.com; Michal Simek
->> <michals@xilinx.com>; Soren Brinkmann <sorenb@xilinx.com>;
->> atull@opensource.altera.com; moritz.fischer@ettus.com;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> kernel@vger.kernel.org; Appana Durga Kedareswara Rao
->> <appanad@xilinx.com>; chinnikishore369@gmail.com; linux-
->> fpga@vger.kernel.org
->> Subject: Re: [RFC PATCH 2/2] fpga manager: Adding FPGA Manager support for
->> Xilinx zynqmp
->>
->> On Tue, Jul 31, 2018 at 8:08 AM, Nava kishore Manne <navam@xilinx.com>
->> wrote:
->> >
->> > +Alan Tull,
->>
->> + linux-fpga mailing list
->>
->> Hi Nava,
->>
->> Thanks for submitting.
->>
->> This should be on the linux-fpga mailing list.  The
->> linux/scripts/get_maintainer.pl script would tell you that.
->>
-> I have Created this Patch On Master Branch there get_maintainer.pl Doesn't have linux-fpga mailing list.
+> Interesting, will try that.
 
-The linux-fpga mailing list has been in MAINTAINERS since v4.9.
+# blkdiscard --secure /dev/sda
+blkdiscard: /dev/sda: BLKSECDISCARD ioctl failed: Operation not supported
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/atull/linux-fpga.git/
-> Please suggest a branch So will create a patch on top of it.
+# hdparm --user-master u --security-erase p /dev/sda
+(returns immediately and does nothing).
 
-I understand now.  linux-fpga/master is v4.9ish.  I haven't updated
-the master branch it since I cloned the repo, it doesn't have any
-special FPGA development patches, it's just what Linus's master branch
-was when I cloned.  I don't think you can count on any kernel.org's
-master branch to be up to date with Linus other than Linus.  Probably
-because it would be a waste of traffic on kernel.org and you can have
-multiple remotes on your local git repo with Linus being the one that
-contains the one true master branch.
+I've tried hdparm on an SSD connected via USB3 and it secure-erased ok.
 
-Right now, Linus's master branch has the latest FPGA API, so it would
-be a good one to develop on.
+Anyone working on this?
 
-Generally speaking, sometimes there will be some API changes for FPGA
-that are only on linux-next/master.  I spend most of my time
-developing on linux-next/master.  Occasionally that's broken but most
-of the time that works for me.  Or you could use a Linus release tag
-from linus' repo.  Or Linus' master branch.  When submitting, if your
-patches apply cleanly on linux-next/master, that is helpful and good.
-
-Alan
+Thanks,
+Jeff
