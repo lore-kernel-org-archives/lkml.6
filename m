@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFA5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AC6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 701202083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701202083D
+	by mail.kernel.org (Postfix) with ESMTP id 11C712083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:23:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C712083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732587AbeHAUJa (ORCPT
+        id S1733006AbeHAUKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:09:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
+        Wed, 1 Aug 2018 16:10:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404383AbeHATDj (ORCPT
+        with ESMTP id S2404311AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26BBA105E;
-        Wed,  1 Aug 2018 17:06:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20EFC1297;
+        Wed,  1 Aug 2018 17:10:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 257/336] drm/gma500: fix psb_intel_lvds_mode_valid()s return type
-Date:   Wed,  1 Aug 2018 18:49:52 +0200
-Message-Id: <20180801165038.887366699@linuxfoundation.org>
+        stable@vger.kernel.org, tangpengpeng <tangpengpeng@higon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 317/336] net: fix amd-xgbe flow-control issue
+Date:   Wed,  1 Aug 2018 18:50:52 +0200
+Message-Id: <20180801165041.173315842@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,47 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: tangpengpeng <tangpengpeng@higon.com>
 
-[ Upstream commit 2ea009095c6e7396915a1d0dd480c41f02985f79 ]
+[ Upstream commit 7f3fc7ddf719cd6faaf787722c511f6918ac6aab ]
 
-The method struct drm_connector_helper_funcs::mode_valid is defined
-as returning an 'enum drm_mode_status' but the driver implementation
-for this method, psb_intel_lvds_mode_valid(), uses an 'int' for it.
+If we enable or disable xgbe flow-control by ethtool ,
+it does't work.Because the parameter is not properly
+assigned,so we need to adjust the assignment order
+of the parameters.
 
-Fix this by using 'enum drm_mode_status' for psb_intel_lvds_mode_valid().
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180424131458.2060-1-luc.vanoostenryck@gmail.com
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: c1ce2f77366b ("amd-xgbe: Fix flow control setting logic")
+Signed-off-by: tangpengpeng <tangpengpeng@higon.com>
+Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/gma500/psb_intel_drv.h  |    2 +-
- drivers/gpu/drm/gma500/psb_intel_lvds.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/gma500/psb_intel_drv.h
-+++ b/drivers/gpu/drm/gma500/psb_intel_drv.h
-@@ -255,7 +255,7 @@ extern int intelfb_remove(struct drm_dev
- extern bool psb_intel_lvds_mode_fixup(struct drm_encoder *encoder,
- 				      const struct drm_display_mode *mode,
- 				      struct drm_display_mode *adjusted_mode);
--extern int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+extern enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				     struct drm_display_mode *mode);
- extern int psb_intel_lvds_set_property(struct drm_connector *connector,
- 					struct drm_property *property,
---- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-@@ -343,7 +343,7 @@ static void psb_intel_lvds_restore(struc
- 	}
- }
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
+@@ -1128,14 +1128,14 @@ static void xgbe_phy_adjust_link(struct
  
--int psb_intel_lvds_mode_valid(struct drm_connector *connector,
-+enum drm_mode_status psb_intel_lvds_mode_valid(struct drm_connector *connector,
- 				 struct drm_display_mode *mode)
- {
- 	struct drm_psb_private *dev_priv = connector->dev->dev_private;
+ 		if (pdata->tx_pause != pdata->phy.tx_pause) {
+ 			new_state = 1;
+-			pdata->hw_if.config_tx_flow_control(pdata);
+ 			pdata->tx_pause = pdata->phy.tx_pause;
++			pdata->hw_if.config_tx_flow_control(pdata);
+ 		}
+ 
+ 		if (pdata->rx_pause != pdata->phy.rx_pause) {
+ 			new_state = 1;
+-			pdata->hw_if.config_rx_flow_control(pdata);
+ 			pdata->rx_pause = pdata->phy.rx_pause;
++			pdata->hw_if.config_rx_flow_control(pdata);
+ 		}
+ 
+ 		/* Speed support */
 
 
