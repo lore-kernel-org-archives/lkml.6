@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF33C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6B1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B1820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B1820844
+	by mail.kernel.org (Postfix) with ESMTP id CBB5D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB5D20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732074AbeHATrk (ORCPT
+        id S1732110AbeHATry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:47:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        Wed, 1 Aug 2018 15:47:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405886AbeHATIi (ORCPT
+        with ESMTP id S2405853AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 966A31359;
-        Wed,  1 Aug 2018 17:13:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8FF910A8;
+        Wed,  1 Aug 2018 17:02:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 035/246] rtc: ensure rtc_set_alarm fails when alarms are not supported
-Date:   Wed,  1 Aug 2018 18:49:05 +0200
-Message-Id: <20180801165013.358210187@linuxfoundation.org>
+Subject: [PATCH 4.17 186/336] EDAC, altera: Fix ARM64 build warning
+Date:   Wed,  1 Aug 2018 18:48:41 +0200
+Message-Id: <20180801165036.217950148@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,43 +50,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
+[ Upstream commit 9ef20753e044f7468c4113e5aecd785419b0b3cc ]
 
-When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
-rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
-subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
-case.
+The kbuild test robot reported the following warning:
 
-Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
-programs think the alarms are working for a particular RTC when they are
-not.
+  drivers/edac/altera_edac.c: In function 'ocram_free_mem':
+  drivers/edac/altera_edac.c:1410:42: warning: cast from pointer to integer
+	of different size [-Wpointer-to-int-cast]
+    gen_pool_free((struct gen_pool *)other, (u32)p, size);
+                                             ^
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+After adding support for ARM64 architectures, the unsigned long
+parameter is 64 bits and causes a build warning on 64-bit configs. Fix
+by casting to the correct size (unsigned long) instead of u32.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: c3eea1942a16 ("EDAC, altera: Add Altera L2 cache and OCRAM support")
+Link: http://lkml.kernel.org/r/1526317441-4996-1-git-send-email-thor.thayer@linux.intel.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/interface.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/edac/altera_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -359,6 +359,11 @@ int rtc_set_alarm(struct rtc_device *rtc
- {
- 	int err;
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1106,7 +1106,7 @@ static void *ocram_alloc_mem(size_t size
  
-+	if (!rtc->ops)
-+		return -ENODEV;
-+	else if (!rtc->ops->set_alarm)
-+		return -EINVAL;
-+
- 	err = rtc_valid_tm(&alarm->time);
- 	if (err != 0)
- 		return err;
+ static void ocram_free_mem(void *p, size_t size, void *other)
+ {
+-	gen_pool_free((struct gen_pool *)other, (u32)p, size);
++	gen_pool_free((struct gen_pool *)other, (unsigned long)p, size);
+ }
+ 
+ static const struct edac_device_prv_data ocramecc_data = {
 
 
