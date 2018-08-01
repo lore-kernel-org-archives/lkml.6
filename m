@@ -2,126 +2,97 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADD2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8DCC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B25B208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B25B208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 739E3208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739E3208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389346AbeHAO4F (ORCPT
+        id S2389369AbeHAO4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:56:05 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:17418 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389266AbeHAO4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:56:04 -0400
-X-IronPort-AV: E=Sophos;i="5.51,432,1526322600"; 
-   d="scan'208";a="119713"
-Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 01 Aug 2018 18:40:20 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,8971"; a="713655"
-Received: from gkohli-linux.qualcomm.com ([10.204.78.26])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 01 Aug 2018 18:40:19 +0530
-Received: by gkohli-linux.qualcomm.com (Postfix, from userid 427023)
-        id 2F02B30CD; Wed,  1 Aug 2018 18:40:18 +0530 (IST)
-From:   Gaurav Kohli <gkohli@codeaurora.org>
-To:     tglx@linutronix.de, john.stultz@linaro.org, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>
-Subject: [PATCH v1] timers: Clear must_forward_clk inside base lock
-Date:   Wed,  1 Aug 2018 18:40:16 +0530
-Message-Id: <1533129016-28050-1-git-send-email-gkohli@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 1 Aug 2018 10:56:21 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:33910 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389258AbeHAO4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 10:56:21 -0400
+Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fkqtZ-0005GU-P4; Wed, 01 Aug 2018 15:10:29 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     hjc@rock-chips.com, airlied@linux.ie,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: Convert drm_atomic_helper_suspend/resume()
+Date:   Wed, 01 Aug 2018 15:10:29 +0200
+Message-ID: <1843623.lUM99VBV1x@phil>
+In-Reply-To: <CAFqt6zZfLXuMUT75a3dWKeiCCmKZOfi=FdTeFRjcdFDZdfcRVQ@mail.gmail.com>
+References: <20180731203430.GA30136@jordon-HP-15-Notebook-PC> <16141309.kTfAWOe8rM@phil> <CAFqt6zZfLXuMUT75a3dWKeiCCmKZOfi=FdTeFRjcdFDZdfcRVQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Timer wheel base->must_forward_clock is indicating that
-the base clock might be stale due to a long idle sleep.
-The forwarding of base clock takes place in softirq of timer
-or when a timer is enqueued to base which is idle. While migrate
-timer from remote CPU to the new base which is idle, then
-following race can happen:
+Am Mittwoch, 1. August 2018, 14:43:47 CEST schrieb Souptick Joarder:
+> On Wed, Aug 1, 2018 at 6:03 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> > Hi Souptick,
+> >
+> > Am Dienstag, 31. Juli 2018, 22:34:30 CEST schrieb Souptick Joarder:
+> >> convert drm_atomic_helper_suspend/resume() to use
+> >> drm_mode_config_helper_suspend/resume().
+> >>
+> >> With this conversion, rockchip_drm_fb_resume() and
+> >> rockchip_drm_fb_suspend() will not be used anymore.
+> >> Both of these functions can be removed.
+> >>
+> >> Also, in struct rockchip_drm_private state will not be
+> >> used anymore. So this can be removed forever.
+> >>
+> >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> >
+> > the patch itself looks great, just a simple bookkeeping question.
+> >
+> > What role did Ajit play in creating the patch? If I remember correctly
+> > it is meant to be
+> > - 1st Signed-off: Patch-Author
+> > - 2nd Signed-off: E-Mail sender + patch possibly patch changes
+> > (optional of course if the same)
+> >
+> > So was this meant to be a Reviewed-by from Ajit?
+> 
+> We both are working together for these patches to
+> convert drm_atomic_helper_suspend/resume().
+> That's the reason to add his name in 2nd Signed-off
+> in all similar patches.
+> 
+> Is it a incorrect way to put 2nd Signed-off here ?
 
-  CPU0                                  CPU1
-  run_timer_softirq                     timers_dead_cpu
+Thanks for the clarification and the interesting question :-)
 
-					base = lock_timer_base(timer);
-  base->must_forward_clk = false
-					if (base->must_forward_clk)
-				         forward(base); >>skip
+I've just read through Documentation/process/submitting-patches.rst
+and it seems there is an "official" way to show that relationship, via a
+tag named "Co-Developed-by:" described under number 12.
 
-					migrate_timer_list
-					enqueue_timer(base, timer, idx);
-					>> idx is calculated high due to
-					>> stale base
-					unlock_timer_base(timer);
-  base = lock_timer_base(timer);
-  forward(base);
+So I guess we could just adapt the patch accordingly, if that is ok with
+both of you (i.e. I can change this when applying, so no need to resend).
 
-The root cause is that base->must_forward_clk is cleared outside the
-base->lock held region, so the remote queuing CPU observes it as
-cleared, but the base clock is still stale. This can cause large
-granularity values for timers, i.e. the accuracy of the expiry time
-suffers.
 
-Prevent this by clearing the flag with base->lock held, so that the
-forwarding takes place before the cleared flag is observable by a remote
-CPU.
-Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
----
-Changes since v0:
- - Updated commit text and comment suggested by Thomas.
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index cc2d23e..70aa1c6 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1657,6 +1657,17 @@ static inline void __run_timers(struct timer_base *base)
- 
- 	raw_spin_lock_irq(&base->lock);
- 
-+	/*
-+	 * The must_forward_clk flag is cleared unconditionally also for
-+	 * the deferrable base. The deferrable base is not affected by idle
-+	 * tracking and never forwarded, so clearing the flag is a NOOP.
-+	 *
-+	 * The fact that the deferrable base is never forwarded can cause
-+	 * large variations in granularity for deferrable timers, but they
-+	 * can be deferred for long periods due to idle anyway.
-+	 */
-+	base->must_forward_clk = false;
-+
- 	while (time_after_eq(jiffies, base->clk)) {
- 
- 		levels = collect_expired_timers(base, heads);
-@@ -1676,19 +1687,6 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
- {
- 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
- 
--	/*
--	 * must_forward_clk must be cleared before running timers so that any
--	 * timer functions that call mod_timer will not try to forward the
--	 * base. idle trcking / clock forwarding logic is only used with
--	 * BASE_STD timers.
--	 *
--	 * The deferrable base does not do idle tracking at all, so we do
--	 * not forward it. This can result in very large variations in
--	 * granularity for deferrable timers, but they can be deferred for
--	 * long periods due to idle.
--	 */
--	base->must_forward_clk = false;
--
- 	__run_timers(base);
- 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
- 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
--- 
-1.9.1
+Heiko
+
 
