@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F254C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66087C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E72F220840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E72F220840
+	by mail.kernel.org (Postfix) with ESMTP id 24FFD20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:32:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FFD20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbeHAUSi (ORCPT
+        id S1733039AbeHAUTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:18:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
+        Wed, 1 Aug 2018 16:19:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404198AbeHATDf (ORCPT
+        with ESMTP id S2404200AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D850118E;
-        Wed,  1 Aug 2018 17:07:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5AA301016;
+        Wed,  1 Aug 2018 17:00:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 245/336] backlight: pwm_bl: Dont use GPIOF_* with gpiod_get_direction
-Date:   Wed,  1 Aug 2018 18:49:40 +0200
-Message-Id: <20180801165038.435490902@linuxfoundation.org>
+Subject: [PATCH 4.17 137/336] bpf: fix multi-function JITed dump obtained via syscall
+Date:   Wed,  1 Aug 2018 18:47:52 +0200
+Message-Id: <20180801165034.371476003@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,44 +51,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
 
-[ Upstream commit bb084c0f61d659f0e6d371b096e0e57998f191d6 ]
+[ Upstream commit 4d56a76ead2fcd856e677cdc9445ad331a409b8c ]
 
-The documentation was wrong, gpiod_get_direction() returns 0/1 instead
-of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
-("gpio: correct docs about return value of gpiod_get_direction"). Now,
-fix this user (until a better, system-wide solution is in place).
+Currently, for multi-function programs, we cannot get the JITed
+instructions using the bpf system call's BPF_OBJ_GET_INFO_BY_FD
+command. Because of this, userspace tools such as bpftool fail
+to identify a multi-function program as being JITed or not.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+With the JIT enabled and the test program running, this can be
+verified as follows:
+
+  # cat /proc/sys/net/core/bpf_jit_enable
+  1
+
+Before applying this patch:
+
+  # bpftool prog list
+  1: kprobe  name foo  tag b811aab41a39ad3d  gpl
+          loaded_at 2018-05-16T11:43:38+0530  uid 0
+          xlated 216B  not jited  memlock 65536B
+  ...
+
+  # bpftool prog dump jited id 1
+  no instructions returned
+
+After applying this patch:
+
+  # bpftool prog list
+  1: kprobe  name foo  tag b811aab41a39ad3d  gpl
+          loaded_at 2018-05-16T12:13:01+0530  uid 0
+          xlated 216B  jited 308B  memlock 65536B
+  ...
+
+  # bpftool prog dump jited id 1
+     0:   nop
+     4:   nop
+     8:   mflr    r0
+     c:   std     r0,16(r1)
+    10:   stdu    r1,-112(r1)
+    14:   std     r31,104(r1)
+    18:   addi    r31,r1,48
+    1c:   li      r3,10
+  ...
+
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/backlight/pwm_bl.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/bpf/syscall.c |   37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct pl
- 
- 	/*
- 	 * If the GPIO is not known to be already configured as output, that
--	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
--	 * change the direction to output and set the GPIO as active.
-+	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
-+	 * direction to output and set the GPIO as active.
- 	 * Do not force the GPIO to active when it was already output as it
- 	 * could cause backlight flickering or we would enable the backlight too
- 	 * early. Leave the decision of the initial backlight state for later.
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1946,13 +1946,44 @@ static int bpf_prog_get_info_by_fd(struc
+ 	 * for offload.
  	 */
- 	if (pb->enable_gpio &&
--	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
-+	    gpiod_get_direction(pb->enable_gpio) != 0)
- 		gpiod_direction_output(pb->enable_gpio, 1);
- 
- 	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+ 	ulen = info.jited_prog_len;
+-	info.jited_prog_len = prog->jited_len;
++	if (prog->aux->func_cnt) {
++		u32 i;
++
++		info.jited_prog_len = 0;
++		for (i = 0; i < prog->aux->func_cnt; i++)
++			info.jited_prog_len += prog->aux->func[i]->jited_len;
++	} else {
++		info.jited_prog_len = prog->jited_len;
++	}
++
+ 	if (info.jited_prog_len && ulen) {
+ 		if (bpf_dump_raw_ok()) {
+ 			uinsns = u64_to_user_ptr(info.jited_prog_insns);
+ 			ulen = min_t(u32, info.jited_prog_len, ulen);
+-			if (copy_to_user(uinsns, prog->bpf_func, ulen))
+-				return -EFAULT;
++
++			/* for multi-function programs, copy the JITed
++			 * instructions for all the functions
++			 */
++			if (prog->aux->func_cnt) {
++				u32 len, free, i;
++				u8 *img;
++
++				free = ulen;
++				for (i = 0; i < prog->aux->func_cnt; i++) {
++					len = prog->aux->func[i]->jited_len;
++					len = min_t(u32, len, free);
++					img = (u8 *) prog->aux->func[i]->bpf_func;
++					if (copy_to_user(uinsns, img, len))
++						return -EFAULT;
++					uinsns += len;
++					free -= len;
++					if (!free)
++						break;
++				}
++			} else {
++				if (copy_to_user(uinsns, prog->bpf_func, ulen))
++					return -EFAULT;
++			}
+ 		} else {
+ 			info.jited_prog_insns = 0;
+ 		}
 
 
