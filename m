@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532FBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC61C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADFE208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADFE208A4
+	by mail.kernel.org (Postfix) with ESMTP id E4B96208AD
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B96208AD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbeHATmr (ORCPT
+        id S1731192AbeHATmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:42:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
+        Wed, 1 Aug 2018 15:42:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405970AbeHATIk (ORCPT
+        with ESMTP id S2405947AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2251913EB;
-        Wed,  1 Aug 2018 17:16:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 887091377;
+        Wed,  1 Aug 2018 17:13:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 097/246] ath: Add regulatory mapping for Serbia
-Date:   Wed,  1 Aug 2018 18:50:07 +0200
-Message-Id: <20180801165016.365276995@linuxfoundation.org>
+Subject: [PATCH 4.14 047/246] powerpc/64s: Add barrier_nospec
+Date:   Wed,  1 Aug 2018 18:49:17 +0200
+Message-Id: <20180801165013.964277932@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,50 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Michal Suchanek <msuchanek@suse.de>
 
-[ Upstream commit 2a3169a54bb53717928392a04fb84deb765b51f1 ]
+[ Upstream commit a6b3964ad71a61bb7c61d80a60bea7d42187b2eb ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+A no-op form of ori (or immediate of 0 into r31 and the result stored
+in r31) has been re-tasked as a speculation barrier. The instruction
+only acts as a barrier on newer machines with appropriate firmware
+support. On older CPUs it remains a harmless no-op.
 
-  Invalid EEPROM contents
+Implement barrier_nospec using this instruction.
 
-The current CTL mappings for this country are:
+mpe: The semantics of the instruction are believed to be that it
+prevents execution of subsequent instructions until preceding branches
+have been fully resolved and are no longer executing speculatively.
+There is no further documentation available at this time.
 
-* 2.4GHz: ETSI
-* 5GHz: ETSI
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ arch/powerpc/include/asm/barrier.h |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -159,6 +159,7 @@ enum CountryCode {
- 	CTRY_ROMANIA = 642,
- 	CTRY_RUSSIA = 643,
- 	CTRY_SAUDI_ARABIA = 682,
-+	CTRY_SERBIA = 688,
- 	CTRY_SERBIA_MONTENEGRO = 891,
- 	CTRY_SINGAPORE = 702,
- 	CTRY_SLOVAKIA = 703,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -452,6 +452,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_ROMANIA, NULL1_WORLD, "RO"},
- 	{CTRY_RUSSIA, NULL1_WORLD, "RU"},
- 	{CTRY_SAUDI_ARABIA, NULL1_WORLD, "SA"},
-+	{CTRY_SERBIA, ETSI1_WORLD, "RS"},
- 	{CTRY_SERBIA_MONTENEGRO, ETSI1_WORLD, "CS"},
- 	{CTRY_SINGAPORE, APL6_WORLD, "SG"},
- 	{CTRY_SLOVAKIA, ETSI1_WORLD, "SK"},
+--- a/arch/powerpc/include/asm/barrier.h
++++ b/arch/powerpc/include/asm/barrier.h
+@@ -76,6 +76,21 @@ do {									\
+ 	___p1;								\
+ })
+ 
++#ifdef CONFIG_PPC_BOOK3S_64
++/*
++ * Prevent execution of subsequent instructions until preceding branches have
++ * been fully resolved and are no longer executing speculatively.
++ */
++#define barrier_nospec_asm ori 31,31,0
++
++// This also acts as a compiler barrier due to the memory clobber.
++#define barrier_nospec() asm (stringify_in_c(barrier_nospec_asm) ::: "memory")
++
++#else /* !CONFIG_PPC_BOOK3S_64 */
++#define barrier_nospec_asm
++#define barrier_nospec()
++#endif
++
+ #include <asm-generic/barrier.h>
+ 
+ #endif /* _ASM_POWERPC_BARRIER_H */
 
 
