@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4534DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 053BEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07896208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07896208A4
+	by mail.kernel.org (Postfix) with ESMTP id AFAFB20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAFB20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408009AbeHATVr (ORCPT
+        id S2408021AbeHATVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:21:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52946 "EHLO
+        Wed, 1 Aug 2018 15:21:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436592AbeHATSj (ORCPT
+        with ESMTP id S2436603AbeHATSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8292EF4B;
-        Wed,  1 Aug 2018 16:56:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29EF8E48;
+        Wed,  1 Aug 2018 16:53:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 077/336] usbip: usbip_detach: Fix memory, udev context and udev leak
-Date:   Wed,  1 Aug 2018 18:46:52 +0200
-Message-Id: <20180801165032.079295607@linuxfoundation.org>
+Subject: [PATCH 4.17 025/336] NFSv4.1: Fix the client behaviour on NFS4ERR_SEQ_FALSE_RETRY
+Date:   Wed,  1 Aug 2018 18:46:00 +0200
+Message-Id: <20180801165030.007050594@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,48 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit d179f99a651685b19333360e6558110da2fe9bd7 ]
+[ Upstream commit f9312a541050007ec59eb0106273a0a10718cd83 ]
 
-detach_port() fails to call usbip_vhci_driver_close() from its error
-path after usbip_vhci_detach_device() returns failure, leaking memory
-allocated in usbip_vhci_driver_open() and holding udev_context and udev
-references. Fix it to call usbip_vhci_driver_close().
+If the server returns NFS4ERR_SEQ_FALSE_RETRY or NFS4ERR_RETRY_UNCACHED_REP,
+then it thinks we're trying to replay an existing request. If so, then
+let's just bump the sequence ID and retry the operation.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/usb/usbip/src/usbip_detach.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/nfs/nfs4proc.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -43,7 +43,7 @@ void usbip_detach_usage(void)
- 
- static int detach_port(char *port)
- {
--	int ret;
-+	int ret = 0;
- 	uint8_t portnum;
- 	char path[PATH_MAX+1];
- 
-@@ -73,9 +73,12 @@ static int detach_port(char *port)
- 	}
- 
- 	ret = usbip_vhci_detach_device(portnum);
--	if (ret < 0)
--		return -1;
-+	if (ret < 0) {
-+		ret = -1;
-+		goto call_driver_close;
-+	}
- 
-+call_driver_close:
- 	usbip_vhci_driver_close();
- 
- 	return ret;
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -746,6 +746,13 @@ static int nfs41_sequence_process(struct
+ 			slot->slot_nr,
+ 			slot->seq_nr);
+ 		goto out_retry;
++	case -NFS4ERR_RETRY_UNCACHED_REP:
++	case -NFS4ERR_SEQ_FALSE_RETRY:
++		/*
++		 * The server thinks we tried to replay a request.
++		 * Retry the call after bumping the sequence ID.
++		 */
++		goto retry_new_seq;
+ 	case -NFS4ERR_BADSLOT:
+ 		/*
+ 		 * The slot id we used was probably retired. Try again
+@@ -770,10 +777,6 @@ static int nfs41_sequence_process(struct
+ 			goto retry_nowait;
+ 		}
+ 		goto session_recover;
+-	case -NFS4ERR_SEQ_FALSE_RETRY:
+-		if (interrupted)
+-			goto retry_new_seq;
+-		goto session_recover;
+ 	default:
+ 		/* Just update the slot sequence no. */
+ 		slot->seq_done = 1;
 
 
