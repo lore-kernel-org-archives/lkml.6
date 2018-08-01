@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18516C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD69C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA88220840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA88220840
+	by mail.kernel.org (Postfix) with ESMTP id A8D3520840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D3520840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388473AbeHAUSH (ORCPT
+        id S2388425AbeHAUSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:18:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404225AbeHATDf (ORCPT
+        with ESMTP id S2404204AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1250EF7D;
-        Wed,  1 Aug 2018 16:57:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5343CFE5;
+        Wed,  1 Aug 2018 16:59:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 044/336] media: arch: sh: migor: Fix TW9910 PDN gpio
-Date:   Wed,  1 Aug 2018 18:46:19 +0200
-Message-Id: <20180801165030.767818051@linuxfoundation.org>
+Subject: [PATCH 4.17 086/336] selftests/filesystems: devpts_pts included wrong header
+Date:   Wed,  1 Aug 2018 18:47:01 +0200
+Message-Id: <20180801165032.467945837@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,41 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 2b787b66bcb03ec3bd97e950464e0452f459e2ca ]
+[ Upstream commit dd4b16b4f9b1b7d9f4a185cb8222e42f3a5daf00 ]
 
-The TW9910 PDN gpio (power down) is listed as active high in the chip
-manual. It turns out it is actually active low as when set to physical
-level 0 it actually turns the video decoder power off.
+We were picking up the wrong header should use asm/ioctls.h form the kernel
+and not the header from the system (sys/ioctl.h). In the current code we
+added the correct include and we added the kernel headers path to the CFLAGS.
 
-Without this patch applied:
-tw9910 0-0045: Product ID error 1f:2
-
-With this patch applied:
-tw9910 0-0045: tw9910 Product ID b:0
-
-Fixes: commit "186c446f4b840bd77b79d3dc951ca436cb8abe79"
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: ce290a19609d ("selftests: add devpts selftests")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sh/boards/mach-migor/setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/filesystems/Makefile     |    1 +
+ tools/testing/selftests/filesystems/devpts_pts.c |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/sh/boards/mach-migor/setup.c
-+++ b/arch/sh/boards/mach-migor/setup.c
-@@ -359,7 +359,7 @@ static struct gpiod_lookup_table ov7725_
- static struct gpiod_lookup_table tw9910_gpios = {
- 	.dev_id		= "0-0045",
- 	.table		= {
--		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT2, "pdn", GPIO_ACTIVE_LOW),
- 		GPIO_LOOKUP("sh7722_pfc", GPIO_PTT3, "rstb", GPIO_ACTIVE_LOW),
- 	},
- };
+--- a/tools/testing/selftests/filesystems/Makefile
++++ b/tools/testing/selftests/filesystems/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++CFLAGS += -I../../../../usr/include/
+ TEST_GEN_PROGS := devpts_pts
+ TEST_GEN_PROGS_EXTENDED := dnotify_test
+ 
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -8,7 +8,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+-#include <sys/ioctl.h>
++#include <asm/ioctls.h>
+ #include <sys/mount.h>
+ #include <sys/wait.h>
+ #include "../kselftest.h"
 
 
