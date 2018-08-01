@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9B8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EA4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879B02083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879B02083D
+	by mail.kernel.org (Postfix) with ESMTP id ADD172083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:21:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD172083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732908AbeHAUHu (ORCPT
+        id S1732864AbeHAUHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:07:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46150 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404451AbeHATDj (ORCPT
+        with ESMTP id S2404435AbeHATDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41C551064;
-        Wed,  1 Aug 2018 17:01:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40988F7F;
+        Wed,  1 Aug 2018 16:57:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 155/336] drm/nouveau: remove fence wait code from deferred client work handler
-Date:   Wed,  1 Aug 2018 18:48:10 +0200
-Message-Id: <20180801165035.053908707@linuxfoundation.org>
+Subject: [PATCH 4.17 045/336] printk: drop in_nmi check from printk_safe_flush_on_panic()
+Date:   Wed,  1 Aug 2018 18:46:20 +0200
+Message-Id: <20180801165030.802418810@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,82 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Skeggs <bskeggs@redhat.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-[ Upstream commit 11e451e74050d9e9030581ce40337838acfcea5b ]
+[ Upstream commit 554755be08fba31c74f66b82a485e5513205af84 ]
 
-Fences attached to deferred client work items now originate from channels
-belonging to the client, meaning we can be certain they've been signalled
-before we destroy a client.
+Drop the in_nmi() check from printk_safe_flush_on_panic()
+and attempt to re-init (IOW unlock) locked logbuf spinlock
+from panic CPU regardless of its context.
 
-This closes a race that could happen if the dma_fence_wait_timeout() call
-didn't succeed.  When the fence was later signalled, a use-after-free was
-possible.
+Otherwise, theoretically, we can deadlock on logbuf trying to flush
+per-CPU buffers:
 
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+  a) Panic CPU is running in non-NMI context
+  b) Panic CPU sends out shutdown IPI via reboot vector
+  c) Panic CPU fails to stop all remote CPUs
+  d) Panic CPU sends out shutdown IPI via NMI vector
+     One of the CPUs that we bring down via NMI vector can hold
+     logbuf spin lock (theoretically).
+
+Link: http://lkml.kernel.org/r/20180530070350.10131-1-sergey.senozhatsky@gmail.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c |   30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ kernel/printk/printk_safe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -116,24 +116,22 @@ nouveau_name(struct drm_device *dev)
- }
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -281,7 +281,7 @@ void printk_safe_flush_on_panic(void)
+ 	 * Make sure that we could access the main ring buffer.
+ 	 * Do not risk a double release when more CPUs are up.
+ 	 */
+-	if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) {
++	if (raw_spin_is_locked(&logbuf_lock)) {
+ 		if (num_online_cpus() > 1)
+ 			return;
  
- static inline bool
--nouveau_cli_work_ready(struct dma_fence *fence, bool wait)
-+nouveau_cli_work_ready(struct dma_fence *fence)
- {
--	if (!dma_fence_is_signaled(fence)) {
--		if (!wait)
--			return false;
--		WARN_ON(dma_fence_wait_timeout(fence, false, 2 * HZ) <= 0);
--	}
-+	if (!dma_fence_is_signaled(fence))
-+		return false;
- 	dma_fence_put(fence);
- 	return true;
- }
- 
- static void
--nouveau_cli_work_flush(struct nouveau_cli *cli, bool wait)
-+nouveau_cli_work(struct work_struct *w)
- {
-+	struct nouveau_cli *cli = container_of(w, typeof(*cli), work);
- 	struct nouveau_cli_work *work, *wtmp;
- 	mutex_lock(&cli->lock);
- 	list_for_each_entry_safe(work, wtmp, &cli->worker, head) {
--		if (!work->fence || nouveau_cli_work_ready(work->fence, wait)) {
-+		if (!work->fence || nouveau_cli_work_ready(work->fence)) {
- 			list_del(&work->head);
- 			work->func(work);
- 		}
-@@ -162,16 +160,16 @@ nouveau_cli_work_queue(struct nouveau_cl
- }
- 
- static void
--nouveau_cli_work(struct work_struct *w)
--{
--	struct nouveau_cli *cli = container_of(w, typeof(*cli), work);
--	nouveau_cli_work_flush(cli, false);
--}
--
--static void
- nouveau_cli_fini(struct nouveau_cli *cli)
- {
--	nouveau_cli_work_flush(cli, true);
-+	/* All our channels are dead now, which means all the fences they
-+	 * own are signalled, and all callback functions have been called.
-+	 *
-+	 * So, after flushing the workqueue, there should be nothing left.
-+	 */
-+	flush_work(&cli->work);
-+	WARN_ON(!list_empty(&cli->worker));
-+
- 	usif_client_fini(cli);
- 	nouveau_vmm_fini(&cli->vmm);
- 	nvif_mmu_fini(&cli->mmu);
 
 
