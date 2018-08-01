@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB91C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA81C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960D020862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960D020862
+	by mail.kernel.org (Postfix) with ESMTP id BB94E208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB94E208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732395AbeHAT6U (ORCPT
+        id S1732647AbeHAT6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:58:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
+        Wed, 1 Aug 2018 15:58:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405686AbeHATIf (ORCPT
+        with ESMTP id S2405691AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 31463115C;
-        Wed,  1 Aug 2018 17:05:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CADE13E9;
+        Wed,  1 Aug 2018 17:16:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 236/336] mmc: pwrseq: Use kmalloc_array instead of stack VLA
-Date:   Wed,  1 Aug 2018 18:49:31 +0200
-Message-Id: <20180801165038.094289617@linuxfoundation.org>
+Subject: [PATCH 4.14 096/246] ath: Add regulatory mapping for Tanzania
+Date:   Wed,  1 Aug 2018 18:50:06 +0200
+Message-Id: <20180801165016.313288974@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,69 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: "Tobin C. Harding" <me@tobin.cc>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 486e6661367b40f927aadbed73237693396cbf94 ]
+[ Upstream commit 667ddac5745fb9fddfe8f7fd2523070f50bd4442 ]
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-(kernel Oops) or a security flaw (overwriting memory beyond the
-stack). Also, in general, as code evolves it is easy to lose track of
-how big a VLA can get. Thus, we can end up having runtime failures
-that are hard to debug. As part of the directive[1] to remove all VLAs
-from the kernel, and build with -Wvla.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Currently driver is using a VLA declared using the number of descriptors.  This
-array is used to store integer values and is later used as an argument to
-`gpiod_set_array_value_cansleep()` This can be avoided by using
-`kmalloc_array()` to allocate memory for the array of integer values.  Memory is
-free'd before return from function.
+  Invalid EEPROM contents
 
->From the code it appears that it is safe to sleep so we can use GFP_KERNEL
-(based _cansleep() suffix of function `gpiod_set_array_value_cansleep()`.
+The current CTL mappings for this country are:
 
-It can be expected that this patch will result in a small increase in overhead
-due to the use of `kmalloc_array()`
+* 2.4GHz: ETSI
+* 5GHz: FCC
 
-[1] https://lkml.org/lkml/2018/3/7/621
-
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/pwrseq_simple.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -40,14 +40,18 @@ static void mmc_pwrseq_simple_set_gpios_
- 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
- 
- 	if (!IS_ERR(reset_gpios)) {
--		int i;
--		int values[reset_gpios->ndescs];
-+		int i, *values;
-+		int nvalues = reset_gpios->ndescs;
- 
--		for (i = 0; i < reset_gpios->ndescs; i++)
-+		values = kmalloc_array(nvalues, sizeof(int), GFP_KERNEL);
-+		if (!values)
-+			return;
-+
-+		for (i = 0; i < nvalues; i++)
- 			values[i] = value;
- 
--		gpiod_set_array_value_cansleep(
--			reset_gpios->ndescs, reset_gpios->desc, values);
-+		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc, values);
-+		kfree(values);
- 	}
- }
- 
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -170,6 +170,7 @@ enum CountryCode {
+ 	CTRY_SWITZERLAND = 756,
+ 	CTRY_SYRIA = 760,
+ 	CTRY_TAIWAN = 158,
++	CTRY_TANZANIA = 834,
+ 	CTRY_THAILAND = 764,
+ 	CTRY_TRINIDAD_Y_TOBAGO = 780,
+ 	CTRY_TUNISIA = 788,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -463,6 +463,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_SWITZERLAND, ETSI1_WORLD, "CH"},
+ 	{CTRY_SYRIA, NULL1_WORLD, "SY"},
+ 	{CTRY_TAIWAN, APL3_FCCA, "TW"},
++	{CTRY_TANZANIA, APL1_WORLD, "TZ"},
+ 	{CTRY_THAILAND, FCC3_WORLD, "TH"},
+ 	{CTRY_TRINIDAD_Y_TOBAGO, FCC3_WORLD, "TT"},
+ 	{CTRY_TUNISIA, ETSI3_WORLD, "TN"},
 
 
