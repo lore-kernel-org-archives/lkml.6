@@ -3,39 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD29C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A647C4646A
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6B520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6B520844
+	by mail.kernel.org (Postfix) with ESMTP id 0703D20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0703D20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405364AbeHATG6 (ORCPT
+        id S2405377AbeHATHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49094 "EHLO
+        Wed, 1 Aug 2018 15:07:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49100 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbeHATG6 (ORCPT
+        with ESMTP id S2403967AbeHATHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:58 -0400
+        Wed, 1 Aug 2018 15:07:01 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 999EED38;
-        Wed,  1 Aug 2018 17:20:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8308BD1F;
+        Wed,  1 Aug 2018 17:20:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        Madhur Verma <madhur.verma@samsung.com>,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 170/246] media: siano: get rid of __le32/__le16 cast warnings
-Date:   Wed,  1 Aug 2018 18:51:20 +0200
-Message-Id: <20180801165019.871884834@linuxfoundation.org>
+Subject: [PATCH 4.14 171/246] drm/atomic: Handling the case when setting old crtc for plane
+Date:   Wed,  1 Aug 2018 18:51:21 +0200
+Message-Id: <20180801165019.913757375@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,108 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Satendra Singh Thakur <satendra.t@samsung.com>
 
-[ Upstream commit e1b7f11b37def5f3021c06e8c2b4953e099357aa ]
+[ Upstream commit fc2a69f3903dfd97cd47f593e642b47918c949df ]
 
-Those are all false-positives that appear with smatch when building for
-arm:
+In the func drm_atomic_set_crtc_for_plane, with the current code,
+if crtc of the plane_state and crtc passed as argument to the func
+are same, entire func will executed in vein.
+It will get state of crtc and clear and set the bits in plane_mask.
+All these steps are not required for same old crtc.
+Ideally, we should do nothing in this case, this patch handles the same,
+and causes the program to return without doing anything in such scenario.
 
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
-
-Get rid of them by adding explicit forced casts.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: Madhur Verma <madhur.verma@samsung.com>
+Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1525326572-25854-1-git-send-email-satendra.t@samsung.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/common/siano/smsendian.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/drm_atomic.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/media/common/siano/smsendian.c
-+++ b/drivers/media/common/siano/smsendian.c
-@@ -35,7 +35,7 @@ void smsendian_handle_tx_message(void *b
- 	switch (msg->x_msg_header.msg_type) {
- 	case MSG_SMS_DATA_DOWNLOAD_REQ:
- 	{
--		msg->msg_data[0] = le32_to_cpu(msg->msg_data[0]);
-+		msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
- 		break;
- 	}
- 
-@@ -44,7 +44,7 @@ void smsendian_handle_tx_message(void *b
- 				sizeof(struct sms_msg_hdr))/4;
- 
- 		for (i = 0; i < msg_words; i++)
--			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
-+			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
- 
- 		break;
- 	}
-@@ -64,7 +64,7 @@ void smsendian_handle_rx_message(void *b
- 	{
- 		struct sms_version_res *ver =
- 			(struct sms_version_res *) msg;
--		ver->chip_model = le16_to_cpu(ver->chip_model);
-+		ver->chip_model = le16_to_cpu((__force __le16)ver->chip_model);
- 		break;
- 	}
- 
-@@ -81,7 +81,7 @@ void smsendian_handle_rx_message(void *b
- 				sizeof(struct sms_msg_hdr))/4;
- 
- 		for (i = 0; i < msg_words; i++)
--			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
-+			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
- 
- 		break;
- 	}
-@@ -95,9 +95,9 @@ void smsendian_handle_message_header(voi
- #ifdef __BIG_ENDIAN
- 	struct sms_msg_hdr *phdr = (struct sms_msg_hdr *)msg;
- 
--	phdr->msg_type = le16_to_cpu(phdr->msg_type);
--	phdr->msg_length = le16_to_cpu(phdr->msg_length);
--	phdr->msg_flags = le16_to_cpu(phdr->msg_flags);
-+	phdr->msg_type = le16_to_cpu((__force __le16)phdr->msg_type);
-+	phdr->msg_length = le16_to_cpu((__force __le16)phdr->msg_length);
-+	phdr->msg_flags = le16_to_cpu((__force __le16)phdr->msg_flags);
- #endif /* __BIG_ENDIAN */
- }
- EXPORT_SYMBOL_GPL(smsendian_handle_message_header);
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1355,7 +1355,9 @@ drm_atomic_set_crtc_for_plane(struct drm
+ {
+ 	struct drm_plane *plane = plane_state->plane;
+ 	struct drm_crtc_state *crtc_state;
+-
++	/* Nothing to do for same crtc*/
++	if (plane_state->crtc == crtc)
++		return 0;
+ 	if (plane_state->crtc) {
+ 		crtc_state = drm_atomic_get_crtc_state(plane_state->state,
+ 						       plane_state->crtc);
 
 
