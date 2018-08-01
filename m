@@ -5,45 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B9DC46462
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46342C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1246208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1246208A2
+	by mail.kernel.org (Postfix) with ESMTP id 02DBB208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DBB208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbeHAHIw (ORCPT
+        id S2387483AbeHAHJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:08:52 -0400
-Received: from ozlabs.org ([203.11.71.1]:34173 "EHLO ozlabs.org"
+        Wed, 1 Aug 2018 03:09:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:59419 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733125AbeHAHHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:07:49 -0400
+        id S1733085AbeHAHHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 03:07:47 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41gMDL00GFz9s0R; Wed,  1 Aug 2018 15:24:01 +1000 (AEST)
+        id 41gMDH3hWCz9s3x; Wed,  1 Aug 2018 15:23:59 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 36a7eeaff7d06cef253c8df6dfe363bfc4a553f8
-In-Reply-To: <a22c869eab31ae38320f2e803833b0708b147d7c.1530807556.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+X-powerpc-patch-commit: 9c7b185ab2fe313b4426bf55da3624bef71f342b
+In-Reply-To: <20180705114022.19285-2-akshay.adiga@linux.vnet.ibm.com>
+To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3,03/16] powerpc/405: move PPC405_ERR77 in asm-405.h
-Message-Id: <41gMDL00GFz9s0R@ozlabs.org>
-Date:   Wed,  1 Aug 2018 15:24:01 +1000 (AEST)
+Cc:     stewart@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
+        rjw@rjwysocki.net, npiggin@gmail.com,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: Re: [v4, 1/2] powernv/cpuidle: Parse dt idle properties into global structure
+Message-Id: <41gMDH3hWCz9s3x@ozlabs.org>
+Date:   Wed,  1 Aug 2018 15:23:59 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-05 at 16:24:55 UTC, Christophe Leroy wrote:
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+On Thu, 2018-07-05 at 11:40:21 UTC, Akshay Adiga wrote:
+> Device-tree parsing happens twice, once while deciding idle state to be
+> used for hotplug and once during cpuidle init. Hence, parsing the device
+> tree and caching it will reduce code duplication. Parsing code has been
+> moved to pnv_parse_cpuidle_dt() from pnv_probe_idle_states(). In addition
+> to the properties in the device tree the number of available states is
+> also required.
+> 
+> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+> Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/36a7eeaff7d06cef253c8df6dfe363
+https://git.kernel.org/powerpc/c/9c7b185ab2fe313b4426bf55da3624
 
 cheers
