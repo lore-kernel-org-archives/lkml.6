@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CA4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EAAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6796A20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6796A20862
+	by mail.kernel.org (Postfix) with ESMTP id 5C76820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C76820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390286AbeHATHj (ORCPT
+        id S2405516AbeHATHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49234 "EHLO
+        Wed, 1 Aug 2018 15:07:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389699AbeHATHi (ORCPT
+        with ESMTP id S2389699AbeHATHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:38 -0400
+        Wed, 1 Aug 2018 15:07:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D5F1CC2;
-        Wed,  1 Aug 2018 17:20:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB84DCF7;
+        Wed,  1 Aug 2018 17:20:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Balbir Singh <bsingharora@gmail.com>,
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 182/246] delayacct: Use raw_spinlocks
-Date:   Wed,  1 Aug 2018 18:51:32 +0200
-Message-Id: <20180801165020.433413561@linuxfoundation.org>
+Subject: [PATCH 4.14 183/246] memory: tegra: Do not handle spurious interrupts
+Date:   Wed,  1 Aug 2018 18:51:33 +0200
+Message-Id: <20180801165020.479349086@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,101 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 02acc80d19edb0d5684c997b2004ad19f9f5236e ]
+[ Upstream commit bf3fbdfbec947cdd04b2f2c4bce11534c8786eee ]
 
-try_to_wake_up() might invoke delayacct_blkio_end() while holding the
-pi_lock (which is a raw_spinlock_t). delayacct_blkio_end() acquires
-task_delay_info.lock which is a spinlock_t. This causes a might sleep splat
-on -RT where non raw spinlocks are converted to 'sleeping' spinlocks.
+The ISR reads interrupts-enable mask, but doesn't utilize it. Apply the
+mask to the interrupt status and don't handle interrupts that MC driver
+haven't asked for. Kernel would disable spurious MC IRQ and report the
+error. This would happen only in a case of a very severe bug.
 
-task_delay_info.lock is only held for a short amount of time so it's not a
-problem latency wise to make convert it to a raw spinlock.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Link: https://lkml.kernel.org/r/20180423161024.6710-1-bigeasy@linutronix.de
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/delayacct.h |    2 +-
- kernel/delayacct.c        |   17 +++++++++--------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/memory/tegra/mc.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -29,7 +29,7 @@
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -252,8 +252,11 @@ static irqreturn_t tegra_mc_irq(int irq,
+ 	unsigned int bit;
  
- #ifdef CONFIG_TASK_DELAY_ACCT
- struct task_delay_info {
--	spinlock_t	lock;
-+	raw_spinlock_t	lock;
- 	unsigned int	flags;	/* Private per-task flags */
+ 	/* mask all interrupts to avoid flooding */
+-	status = mc_readl(mc, MC_INTSTATUS);
+ 	mask = mc_readl(mc, MC_INTMASK);
++	status = mc_readl(mc, MC_INTSTATUS) & mask;
++
++	if (!status)
++		return IRQ_NONE;
  
- 	/* For each stat XXX, add following, aligned appropriately
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -44,23 +44,24 @@ void __delayacct_tsk_init(struct task_st
- {
- 	tsk->delays = kmem_cache_zalloc(delayacct_cache, GFP_KERNEL);
- 	if (tsk->delays)
--		spin_lock_init(&tsk->delays->lock);
-+		raw_spin_lock_init(&tsk->delays->lock);
- }
- 
- /*
-  * Finish delay accounting for a statistic using its timestamps (@start),
-  * accumalator (@total) and @count
-  */
--static void delayacct_end(spinlock_t *lock, u64 *start, u64 *total, u32 *count)
-+static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total,
-+			  u32 *count)
- {
- 	s64 ns = ktime_get_ns() - *start;
- 	unsigned long flags;
- 
- 	if (ns > 0) {
--		spin_lock_irqsave(lock, flags);
-+		raw_spin_lock_irqsave(lock, flags);
- 		*total += ns;
- 		(*count)++;
--		spin_unlock_irqrestore(lock, flags);
-+		raw_spin_unlock_irqrestore(lock, flags);
- 	}
- }
- 
-@@ -127,7 +128,7 @@ int __delayacct_add_tsk(struct taskstats
- 
- 	/* zero XXX_total, non-zero XXX_count implies XXX stat overflowed */
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	tmp = d->blkio_delay_total + tsk->delays->blkio_delay;
- 	d->blkio_delay_total = (tmp < d->blkio_delay_total) ? 0 : tmp;
- 	tmp = d->swapin_delay_total + tsk->delays->swapin_delay;
-@@ -137,7 +138,7 @@ int __delayacct_add_tsk(struct taskstats
- 	d->blkio_count += tsk->delays->blkio_count;
- 	d->swapin_count += tsk->delays->swapin_count;
- 	d->freepages_count += tsk->delays->freepages_count;
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 
- 	return 0;
- }
-@@ -147,10 +148,10 @@ __u64 __delayacct_blkio_ticks(struct tas
- 	__u64 ret;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	ret = nsec_to_clock_t(tsk->delays->blkio_delay +
- 				tsk->delays->swapin_delay);
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 	return ret;
- }
- 
+ 	for_each_set_bit(bit, &status, 32) {
+ 		const char *error = status_names[bit] ?: "unknown";
 
 
