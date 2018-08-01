@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A0BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE5CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34AD20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34AD20844
+	by mail.kernel.org (Postfix) with ESMTP id 67145208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67145208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388723AbeHAMdR (ORCPT
+        id S2388797AbeHAMdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:33:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39188 "EHLO
+        Wed, 1 Aug 2018 08:33:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39204 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387716AbeHAMdC (ORCPT
+        with ESMTP id S2387716AbeHAMdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:33:02 -0400
+        Wed, 1 Aug 2018 08:33:18 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1fkofT-0006Wj-12; Wed, 01 Aug 2018 10:47:47 +0000
+        id 1fkofT-0006Ws-IL; Wed, 01 Aug 2018 10:47:47 +0000
 From:   Colin King <colin.king@canonical.com>
 To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Jaya Kumar <jayakumar.alsa@gmail.com>,
@@ -39,9 +39,9 @@ To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] ALSA: usb-audio: remove redundant pointer 'urb'
-Date:   Wed,  1 Aug 2018 11:47:41 +0100
-Message-Id: <20180801104742.4328-9-colin.king@canonical.com>
+Subject: [PATCH 9/9] ALSA: intel_hdmi: remove redundant variable cfg_val
+Date:   Wed,  1 Aug 2018 11:47:42 +0100
+Message-Id: <20180801104742.4328-10-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
 References: <20180801104742.4328-1-colin.king@canonical.com>
@@ -55,37 +55,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'urb' is being assigned but is never used hence it is
+Variable cfg_val is being assigned but is never used hence it is
 redundant and can be removed.
 
 Cleans up clang warning:
-warning: variable 'urb' set but not used [-Wunused-but-set-variable]
+warning: variable 'cfg_val' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/usb/endpoint.c | 2 --
+ sound/x86/intel_hdmi_audio.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-index c90607ebe155..d86be8bfe412 100644
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -325,7 +325,6 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
- 		unsigned long flags;
- 		struct snd_usb_packet_info *uninitialized_var(packet);
- 		struct snd_urb_ctx *ctx = NULL;
--		struct urb *urb;
- 		int err, i;
+diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
+index edc9f5a34eff..fa7dca5a68c8 100644
+--- a/sound/x86/intel_hdmi_audio.c
++++ b/sound/x86/intel_hdmi_audio.c
+@@ -290,7 +290,6 @@ static void had_reset_audio(struct snd_intelhad *intelhaddata)
+ static int had_prog_status_reg(struct snd_pcm_substream *substream,
+ 			struct snd_intelhad *intelhaddata)
+ {
+-	union aud_cfg cfg_val = {.regval = 0};
+ 	union aud_ch_status_0 ch_stat0 = {.regval = 0};
+ 	union aud_ch_status_1 ch_stat1 = {.regval = 0};
  
- 		spin_lock_irqsave(&ep->lock, flags);
-@@ -345,7 +344,6 @@ static void queue_pending_output_urbs(struct snd_usb_endpoint *ep)
- 			return;
+@@ -298,7 +297,6 @@ static int had_prog_status_reg(struct snd_pcm_substream *substream,
+ 					  IEC958_AES0_NONAUDIO) >> 1;
+ 	ch_stat0.regx.clk_acc = (intelhaddata->aes_bits &
+ 					  IEC958_AES3_CON_CLOCK) >> 4;
+-	cfg_val.regx.val_bit = ch_stat0.regx.lpcm_id;
  
- 		list_del_init(&ctx->ready_list);
--		urb = ctx->urb;
- 
- 		/* copy over the length information */
- 		for (i = 0; i < packet->packets; i++)
+ 	switch (substream->runtime->rate) {
+ 	case AUD_SAMPLE_RATE_32:
 -- 
 2.17.1
 
