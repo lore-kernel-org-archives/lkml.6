@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C4AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E046C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A9CD2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9CD2083D
+	by mail.kernel.org (Postfix) with ESMTP id 32DCD2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DCD2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407133AbeHATNc (ORCPT
+        id S2407137AbeHATNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51654 "EHLO
+        Wed, 1 Aug 2018 15:13:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51808 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405523AbeHATNc (ORCPT
+        with ESMTP id S2389930AbeHATNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:32 -0400
+        Wed, 1 Aug 2018 15:13:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C091CC3;
-        Wed,  1 Aug 2018 17:26:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0F79C3C;
+        Wed,  1 Aug 2018 17:26:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 047/144] media: tw686x: Fix incorrect vb2_mem_ops GFP flags
-Date:   Wed,  1 Aug 2018 18:51:14 +0200
-Message-Id: <20180801164952.371868583@linuxfoundation.org>
+Subject: [PATCH 4.9 048/144] media: videobuf2-core: dont call memop finish when queueing
+Date:   Wed,  1 Aug 2018 18:51:15 +0200
+Message-Id: <20180801164952.440428106@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,36 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-[ Upstream commit 636757ab6c93e19e2f58d3b3af1312e34eaffbab ]
+[ Upstream commit 90b2da89a083e1395cb322521a42397c49ae4500 ]
 
-When the driver is configured in the "memcpy" dma-mode,
-it uses vb2_vmalloc_memops, which is backed by a SLAB
-allocator and so shouldn't be using GFP_DMA32.
+When a buffer is queued or requeued in vb2_buffer_done, then don't
+call the finish memop. In this case the buffer is only returned to vb2,
+not to userspace.
 
-Fix it.
+Calling 'finish' here will cause an unbalance when the queue is
+canceled, since the core will call the same memop again.
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/tw686x/tw686x-video.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/videobuf2-core.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -1228,7 +1228,8 @@ int tw686x_video_init(struct tw686x_dev
- 		vc->vidq.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
- 		vc->vidq.min_buffers_needed = 2;
- 		vc->vidq.lock = &vc->vb_mutex;
--		vc->vidq.gfp_flags = GFP_DMA32;
-+		vc->vidq.gfp_flags = dev->dma_mode != TW686X_DMA_MODE_MEMCPY ?
-+				     GFP_DMA32 : 0;
- 		vc->vidq.dev = &dev->pci_dev->dev;
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -914,9 +914,12 @@ void vb2_buffer_done(struct vb2_buffer *
+ 	dprintk(4, "done processing on buffer %d, state: %d\n",
+ 			vb->index, state);
  
- 		err = vb2_queue_init(&vc->vidq);
+-	/* sync buffers */
+-	for (plane = 0; plane < vb->num_planes; ++plane)
+-		call_void_memop(vb, finish, vb->planes[plane].mem_priv);
++	if (state != VB2_BUF_STATE_QUEUED &&
++	    state != VB2_BUF_STATE_REQUEUEING) {
++		/* sync buffers */
++		for (plane = 0; plane < vb->num_planes; ++plane)
++			call_void_memop(vb, finish, vb->planes[plane].mem_priv);
++	}
+ 
+ 	spin_lock_irqsave(&q->done_lock, flags);
+ 	if (state == VB2_BUF_STATE_QUEUED ||
 
 
