@@ -6,43 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C0AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1409EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 776E320862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776E320862
+	by mail.kernel.org (Postfix) with ESMTP id C51D020862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51D020862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeHAT6G (ORCPT
+        id S1732390AbeHAT6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:58:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50152 "EHLO
+        Wed, 1 Aug 2018 15:58:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405707AbeHATIf (ORCPT
+        with ESMTP id S2405727AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ACB5135A;
-        Wed,  1 Aug 2018 17:13:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C31EC10CD;
+        Wed,  1 Aug 2018 17:04:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 034/246] mm/slub.c: add __printf verification to slab_err()
-Date:   Wed,  1 Aug 2018 18:49:04 +0200
-Message-Id: <20180801165013.314124724@linuxfoundation.org>
+Subject: [PATCH 4.17 220/336] dma-direct: try reallocation with GFP_DMA32 if possible
+Date:   Wed,  1 Aug 2018 18:49:15 +0200
+Message-Id: <20180801165037.492644640@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -52,44 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mathieu Malaterre <malat@debian.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit a38965bf941b7c2af50de09c96bc5f03e136caef ]
+[ Upstream commit de7eab301de78869322104ea13e124c936ad3e1f ]
 
-__printf is useful to verify format and arguments.  Remove the following
-warning (with W=1):
+As the recent swiotlb bug revealed, we seem to have given up the direct
+DMA allocation too early and felt back to swiotlb allocation.  The reason
+is that swiotlb allocator expected that dma_direct_alloc() would try
+harder to get pages even below 64bit DMA mask with GFP_DMA32, but the
+function doesn't do that but only deals with GFP_DMA case.
 
-  mm/slub.c:721:2: warning: function might be possible candidate for `gnu_printf' format attribute [-Wsuggest-attribute=format]
+This patch adds a similar fallback reallocation with GFP_DMA32 as we've
+done with GFP_DMA.  The condition is that the coherent mask is smaller
+than 64bit (i.e. some address limitation), and neither GFP_DMA nor
+GFP_DMA32 is set beforehand.
 
-Link: http://lkml.kernel.org/r/20180505200706.19986-1-malat@debian.org
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/slub.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/dma-direct.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -708,7 +708,7 @@ void object_err(struct kmem_cache *s, st
- 	print_trailer(s, page, object);
- }
+--- a/lib/dma-direct.c
++++ b/lib/dma-direct.c
+@@ -84,6 +84,13 @@ again:
+ 		__free_pages(page, page_order);
+ 		page = NULL;
  
--static void slab_err(struct kmem_cache *s, struct page *page,
-+static __printf(3, 4) void slab_err(struct kmem_cache *s, struct page *page,
- 			const char *fmt, ...)
- {
- 	va_list args;
++		if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
++		    dev->coherent_dma_mask < DMA_BIT_MASK(64) &&
++		    !(gfp & (GFP_DMA32 | GFP_DMA))) {
++			gfp |= GFP_DMA32;
++			goto again;
++		}
++
+ 		if (IS_ENABLED(CONFIG_ZONE_DMA) &&
+ 		    dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
+ 		    !(gfp & GFP_DMA)) {
 
 
