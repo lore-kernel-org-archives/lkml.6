@@ -2,134 +2,127 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DB2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375C820862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C219920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:23:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHon4cov"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375C820862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="EBb//U20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C219920862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390194AbeHASJJ (ORCPT
+        id S2390213AbeHASJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:09:09 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38232 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390005AbeHASJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:09:08 -0400
-Received: by mail-lf1-f65.google.com with SMTP id a4-v6so13732024lff.5;
-        Wed, 01 Aug 2018 09:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=93x5y2Dc/rNkiXHdRkllzhsmzl11TBcLrZdlz8BmOfQ=;
-        b=jHon4covejtcXQIL+Rz/NKzNGofkC0fXLXQEZ1hkeSCFg/qSztBC7s2BBwatTV4wo0
-         R3uTxNQuq6ZuSnKZLMHCqYeqBl+jzWsBPsKsRm1ZqA0fgt1ILcBkbIcnioGNCp82aoc4
-         SkYAs9ZIjA3PWEUK1cdlCyaFmb0REcUSaPJDdKd1P4aIr/90QGv5Hf09VxJzga12IOs2
-         soxOt1MwaByi9Ka+doroH6K9bMJPyjHue7Dtb1ip39QJ0ndnsfLx23N4+Jj4VcYJ9+Ql
-         IzkmNv3Q6V6x6veXO025iAgXnOBH+r1m9TkMkc2aR8uDXskn+YYxGAgewnX3JKgxpG04
-         Xh/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=93x5y2Dc/rNkiXHdRkllzhsmzl11TBcLrZdlz8BmOfQ=;
-        b=KuSFTWd/6m4fDdNrwZtJyFgc4FnAz96/FNgML9gvb47H9XwgxziaBDzROjD3QKI4Q2
-         XYXJXKcZmn8aQKPLgyXZxXnNRRSBYS3tExTxLCi3JiqkV43ZIliNru4ODYQJS2gL+2m3
-         NJRtiV7/qfuf9K4TmLIF8Bw1gBftpQeA8Zha6/pYAVpPMx/K/yPyufVeZ3E8oBGvVHez
-         o0LWMGTwhuk6CKAIvn+5aYavoBFm+/T3LlV4inLWcaa/jPMYXFAI9MgzcQUmOU3xolhQ
-         QukDyF6nz9++T+85I/5YIjIRK6jKGoZK+Jc1KLkENa2yaFTo+j/6QWkl3B/iCvkgje/Y
-         JpUg==
-X-Gm-Message-State: AOUpUlELbVV0HSosMmxGw++w1OQUsYL3scOvDIovWcsMI9XUq0cWvxZo
-        nfaAwJatK4DT6Y371Bb/Um0=
-X-Google-Smtp-Source: AAOMgpciH86XmquICRiQMCcRz6r8FxIm6d452fZaIfpHGrvPgmCa2I2IeggwmYL6jj2AlpT6ibgknQ==
-X-Received: by 2002:a19:dd81:: with SMTP id w1-v6mr15889239lfi.114.1533140558026;
-        Wed, 01 Aug 2018 09:22:38 -0700 (PDT)
-Received: from esperanza ([185.6.245.156])
-        by smtp.gmail.com with ESMTPSA id q85-v6sm2487185lfg.20.2018.08.01.09.22.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 09:22:37 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 19:22:35 +0300
-From:   Vladimir Davydov <vdavydov.dev@gmail.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
- mem_cgroup_css_alloc() failure
-Message-ID: <20180801162235.j3v7xipyw5afnj4x@esperanza>
-References: <20180413115454.GL17484@dhcp22.suse.cz>
- <abfd4903-c455-fac2-7ed6-73707cda64d1@virtuozzo.com>
- <20180413121433.GM17484@dhcp22.suse.cz>
- <20180413125101.GO17484@dhcp22.suse.cz>
- <20180726162512.6056b5d7c1d2a5fbff6ce214@linux-foundation.org>
- <20180727193134.GA10996@cmpxchg.org>
- <20180729192621.py4znecoinw5mqcp@esperanza>
- <20180730153113.GB4567@cmpxchg.org>
- <20180731163908.603d7a27c6534341e1afa724@linux-foundation.org>
- <20180801155552.GA8600@cmpxchg.org>
+        Wed, 1 Aug 2018 14:09:40 -0400
+Received: from imap.thunk.org ([74.207.234.97]:53024 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389907AbeHASJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 14:09:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=z/Jx42RNanAvB7nTZNqa7xcx6Pj16FbmSIKW5ftTkvo=; b=EBb//U206xLsCk01LTnRSW4ZPy
+        t2Ri3jRxA75jMH6vck7GuHD8s8yJp+Jf12B1plsKN8ue7JhkWxXwkY/iM/0n9Oy9EbG2HB7GuG6E5
+        z+UH3lhdguCIJey8/rGEwuRcz++jEn+QkdSwZOA9gcEp2r+HW4oQJAgpnq+teTOXQq+4=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fkttt-0004Oi-09; Wed, 01 Aug 2018 16:23:01 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0E3277A614D; Wed,  1 Aug 2018 12:23:00 -0400 (EDT)
+Date:   Wed, 1 Aug 2018 12:22:59 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Convert int to vm_fault_t type
+Message-ID: <20180801162259.GF10761@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180728085000.GA9136@jordon-HP-15-Notebook-PC>
+ <20180801125512.GA10761@thunk.org>
+ <CAFqt6zbxpj5DS=ONUGTJ9zaeH5k=qZpQYy-J+08tr9y0gOsCAg@mail.gmail.com>
+ <20180801131330.GA4734@bombadil.infradead.org>
+ <CAFqt6zYJv7SdkntY7KOBvNyfk-9MRaXBMmkbsc4J7P-tq616DA@mail.gmail.com>
+ <20180801143830.GB10761@thunk.org>
+ <20180801160618.GE10761@thunk.org>
+ <20180801161319.GC4039@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180801155552.GA8600@cmpxchg.org>
+In-Reply-To: <20180801161319.GC4039@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 11:55:52AM -0400, Johannes Weiner wrote:
-> On Tue, Jul 31, 2018 at 04:39:08PM -0700, Andrew Morton wrote:
-> > On Mon, 30 Jul 2018 11:31:13 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+On Wed, Aug 01, 2018 at 09:13:19AM -0700, Matthew Wilcox wrote:
+> On Wed, Aug 01, 2018 at 12:06:18PM -0400, Theodore Y. Ts'o wrote:
+> > On Wed, Aug 01, 2018 at 10:38:30AM -0400, Theodore Y. Ts'o wrote:
+> > > I'm going to drop the whole ext4 changes for vm_fault_t for this
+> > > cycle, and I'll let you try to fix it up properly for the next cycle.
 > > 
-> > > Subject: [PATCH] mm: memcontrol: simplify memcg idr allocation and error
-> > >  unwinding
-> > > 
-> > > The memcg ID is allocated early in the multi-step memcg creation
-> > > process, which needs 2-step ID allocation and IDR publishing, as well
-> > > as two separate IDR cleanup/unwind sites on error.
-> > > 
-> > > Defer the IDR allocation until the last second during onlining to
-> > > eliminate all this complexity. There is no requirement to have the ID
-> > > and IDR entry earlier than that. And the root reference to the ID is
-> > > put in the offline path, so this matches nicely.
-> > 
-> > This patch isn't aware of Kirill's later "mm, memcg: assign memcg-aware
-> > shrinkers bitmap to memcg", which altered mem_cgroup_css_online():
-> > 
-> > @@ -4356,6 +4470,11 @@ static int mem_cgroup_css_online(struct
-> >  {
-> >  	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-> >  
-> > +	if (memcg_alloc_shrinker_maps(memcg)) {
-> > +		mem_cgroup_id_remove(memcg);
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> >  	/* Online state pins memcg ID, memcg ID pins CSS */
-> >  	atomic_set(&memcg->id.ref, 1);
-> >  	css_get(css);
-> > 
+> > Here's the fixed up commit that I'm going to drop since you plan to be
+> > making changes in block_page_mkwrite(), and I don't want us to get out
+> > of sync.
 > 
-> Hm, that looks out of place too. The bitmaps are allocated for the
-> entire lifetime of the css, not just while it's online.
-> 
-> Any objections to the following fixup to that patch?
+> This looks sane to me.
 
-That would be incorrect. Memory cgroups that haven't been put online
-are invisible to for_each_mem_cgroup(), which is used for expanding
-shrinker maps of all cgroups - see memcg_expand_shrinker_maps(). So if
-memcg_expand_shrinker_maps() is called between css_alloc and css_online,
-it will miss this cgroup and its shrinker_map won't be reallocated to
-fit the new id. Allocating the shrinker map in css_online guarantees
-that it won't happen. Looks like this code lacks a comment...
+Yeah, it's fine except for the cognitive load to the file system
+programmer where block_page_mkwrite() returns an int, and not a
+vm_fault_t, and you have use block_page_mkwrite_return() in order to
+convert from the negative error code convention to a vm_fault_t.
+
+Souptick has a separate patch out which changes block_page_mkpage() to
+return a vm_fault_t.  It's broken in that it clobbers the error return
+and doesn't provide a way for the caller to get the error return.  So
+Souptick, please consider that other patch to have received a NACK
+from me, as it *will* break ext4.
+
+Souptick, perhaps you could change block_page_mkwrite() so that its
+function signature looks like this instead:
+
+vm_fault_t block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+	   		      get_block_t get_block, int *err)
+
+...that's sane.  Or you can maybe simply change the *name* of the
+function so it's clear it's differnt from all other xxx_page_mkwrite()
+functions in that it returns an int.
+
+I'll let you decide what you want to do --- since part of your
+development to be a sophisticated programmer is to get experience
+making these sorts of decisions that involve having good programming
+"taste".
+
+Regards,
+
+						- Ted
