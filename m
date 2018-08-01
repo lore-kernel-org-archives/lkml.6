@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF7EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CD0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23AB420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23AB420862
+	by mail.kernel.org (Postfix) with ESMTP id 593AD20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593AD20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408204AbeHAT0D (ORCPT
+        id S2436578AbeHAT0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:26:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52916 "EHLO
+        Wed, 1 Aug 2018 15:26:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436510AbeHATSh (ORCPT
+        with ESMTP id S2390540AbeHATSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:37 -0400
+        Wed, 1 Aug 2018 15:18:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C734FE84;
-        Wed,  1 Aug 2018 16:54:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C28C8E9E;
+        Wed,  1 Aug 2018 16:54:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>,
-        kernel test robot <xiaolong.ye@intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Xi Wang <wangxi11@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 032/336] mem_cgroup: make sure moving_account, move_lock_task and stat_cpu in the same cacheline
-Date:   Wed,  1 Aug 2018 18:46:07 +0200
-Message-Id: <20180801165030.308579987@linuxfoundation.org>
+Subject: [PATCH 4.17 038/336] net: hns3: Fix for VF mailbox cannot receiving PF response
+Date:   Wed,  1 Aug 2018 18:46:13 +0200
+Message-Id: <20180801165030.541265459@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,136 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Lu <aaron.lu@intel.com>
+From: Xi Wang <wangxi11@huawei.com>
 
-[ Upstream commit e81bf9793b1861d74953ef041b4f6c7faecc2dbd ]
+[ Upstream commit 1819e40908ee76c7219287224c22c772556c927e ]
 
-The LKP robot found a 27% will-it-scale/page_fault3 performance
-regression regarding commit e27be240df53("mm: memcg: make sure
-memory.events is uptodate when waking pollers").
+When the VF frequently switches the CMDQ interrupt, if the CMDQ_SRC is not
+cleared, the VF will not receive the new PF response after the interrupt
+is re-enabled, the corresponding log is as follows:
 
-What the test does is:
- 1 mkstemp() a 128M file on a tmpfs;
- 2 start $nr_cpu processes, each to loop the following:
-   2.1 mmap() this file in shared write mode;
-   2.2 write 0 to this file in a PAGE_SIZE step till the end of the file;
-   2.3 unmap() this file and repeat this process.
- 3 After 5 minutes, check how many loops they managed to complete, the
-   higher the better.
+[  317.482222] hns3 0000:00:03.0: VF could not get mbx resp(=0) from PF
+in 500 tries
+[  317.483137] hns3 0000:00:03.0: VF request to get tqp info from PF
+failed -5
 
-The commit itself looks innocent enough as it merely changed some event
-counting mechanism and this test didn't trigger those events at all.
-Perf shows increased cycles spent on accessing root_mem_cgroup->stat_cpu
-in count_memcg_event_mm()(called by handle_mm_fault()) and in
-__mod_memcg_state() called by page_add_file_rmap().  So it's likely due
-to the changed layout of 'struct mem_cgroup' that either make stat_cpu
-falling into a constantly modifying cacheline or some hot fields stop
-being in the same cacheline.
+This patch fixes this problem by clearing CMDQ_SRC before enabling
+interrupt and syncing pending IRQ handlers after disabling interrupt.
 
-I verified this by moving memory_events[] back to where it was:
-
-: --- a/include/linux/memcontrol.h
-: +++ b/include/linux/memcontrol.h
-: @@ -205,7 +205,6 @@ struct mem_cgroup {
-:  	int		oom_kill_disable;
-:
-:  	/* memory.events */
-: -	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
-:  	struct cgroup_file events_file;
-:
-:  	/* protect arrays of thresholds */
-: @@ -238,6 +237,7 @@ struct mem_cgroup {
-:  	struct mem_cgroup_stat_cpu __percpu *stat_cpu;
-:  	atomic_long_t		stat[MEMCG_NR_STAT];
-:  	atomic_long_t		events[NR_VM_EVENT_ITEMS];
-: +	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
-:
-:  	unsigned long		socket_pressure;
-
-And performance restored.
-
-Later investigation found that as long as the following 3 fields
-moving_account, move_lock_task and stat_cpu are in the same cacheline,
-performance will be good.  To avoid future performance surprise by other
-commits changing the layout of 'struct mem_cgroup', this patch makes
-sure the 3 fields stay in the same cacheline.
-
-One concern of this approach is, moving_account and move_lock_task could
-be modified when a process changes memory cgroup while stat_cpu is a
-always read field, it might hurt to place them in the same cacheline.  I
-assume it is rare for a process to change memory cgroup so this should
-be OK.
-
-Link: https://lkml.kernel.org/r/20180528114019.GF9904@yexl-desktop
-Link: http://lkml.kernel.org/r/20180601071115.GA27302@intel.com
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-Reported-by: kernel test robot <xiaolong.ye@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/memcontrol.h |   23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -158,6 +158,15 @@ enum memcg_kmem_state {
- 	KMEM_ONLINE,
- };
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1441,6 +1441,8 @@ static int hclgevf_misc_irq_init(struct
+ 		return ret;
+ 	}
  
-+#if defined(CONFIG_SMP)
-+struct memcg_padding {
-+	char x[0];
-+} ____cacheline_internodealigned_in_smp;
-+#define MEMCG_PADDING(name)      struct memcg_padding name;
-+#else
-+#define MEMCG_PADDING(name)
-+#endif
++	hclgevf_clear_event_cause(hdev, 0);
 +
- /*
-  * The memory controller data structure. The memory controller controls both
-  * page cache and RSS per cgroup. We would eventually like to provide
-@@ -205,7 +214,6 @@ struct mem_cgroup {
- 	int		oom_kill_disable;
+ 	/* enable misc. vector(vector 0) */
+ 	hclgevf_enable_vector(&hdev->misc_vector, true);
  
- 	/* memory.events */
--	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
- 	struct cgroup_file events_file;
- 
- 	/* protect arrays of thresholds */
-@@ -225,19 +233,26 @@ struct mem_cgroup {
- 	 * mem_cgroup ? And what type of charges should we move ?
- 	 */
- 	unsigned long move_charge_at_immigrate;
-+	/* taken only while moving_account > 0 */
-+	spinlock_t		move_lock;
-+	unsigned long		move_lock_flags;
-+
-+	MEMCG_PADDING(_pad1_);
-+
- 	/*
- 	 * set > 0 if pages under this cgroup are moving to other cgroup.
- 	 */
- 	atomic_t		moving_account;
--	/* taken only while moving_account > 0 */
--	spinlock_t		move_lock;
- 	struct task_struct	*move_lock_task;
--	unsigned long		move_lock_flags;
- 
- 	/* memory.stat */
- 	struct mem_cgroup_stat_cpu __percpu *stat_cpu;
-+
-+	MEMCG_PADDING(_pad2_);
-+
- 	atomic_long_t		stat[MEMCG_NR_STAT];
- 	atomic_long_t		events[NR_VM_EVENT_ITEMS];
-+	atomic_long_t memory_events[MEMCG_NR_MEMORY_EVENTS];
- 
- 	unsigned long		socket_pressure;
- 
+@@ -1451,6 +1453,7 @@ static void hclgevf_misc_irq_uninit(stru
+ {
+ 	/* disable misc vector(vector 0) */
+ 	hclgevf_enable_vector(&hdev->misc_vector, false);
++	synchronize_irq(hdev->misc_vector.vector_irq);
+ 	free_irq(hdev->misc_vector.vector_irq, hdev);
+ 	hclgevf_free_vector(hdev, 0);
+ }
 
 
