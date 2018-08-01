@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12183C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C08C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C889A208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C889A208A5
+	by mail.kernel.org (Postfix) with ESMTP id C9E5E20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:21:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E5E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405597AbeHATIQ (ORCPT
+        id S2405608AbeHATIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49380 "EHLO
+        Wed, 1 Aug 2018 15:08:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389715AbeHATIP (ORCPT
+        with ESMTP id S2389715AbeHATIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:15 -0400
+        Wed, 1 Aug 2018 15:08:18 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30758CF7;
-        Wed,  1 Aug 2018 17:21:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41B1BCE6;
+        Wed,  1 Aug 2018 17:21:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Chris Novakovic <chris@chrisn.me.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 146/246] i40e: free the skb after clearing the bitlock
-Date:   Wed,  1 Aug 2018 18:50:56 +0200
-Message-Id: <20180801165018.713618880@linuxfoundation.org>
+Subject: [PATCH 4.14 189/246] ipconfig: Correctly initialise ic_nameservers
+Date:   Wed,  1 Aug 2018 18:51:39 +0200
+Message-Id: <20180801165020.764958727@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,55 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Chris Novakovic <chris@chrisn.me.uk>
 
-[ Upstream commit c79756cb5f084736b138da9319a02f7c72644548 ]
+[ Upstream commit 300eec7c0a2495f771709c7642aa15f7cc148b83 ]
 
-In commit bbc4e7d273b5 ("i40e: fix race condition with PTP_TX_IN_PROGRESS
-bits") we modified the code which handles Tx timestamps so that we would
-clear the progress bit as soon as possible.
+ic_nameservers, which stores the list of name servers discovered by
+ipconfig, is initialised (i.e. has all of its elements set to NONE, or
+0xffffffff) by ic_nameservers_predef() in the following scenarios:
 
-A later commit 0bc0706b46cd ("i40e: check for Tx timestamp timeouts during
-watchdog") introduced similar code for detecting and handling cleanup of
-a blocked Tx timestamp. This code did not use the same pattern for cleaning
-up the skb.
+ - before the "ip=" and "nfsaddrs=" kernel command line parameters are
+   parsed (in ip_auto_config_setup());
+ - before autoconfiguring via DHCP or BOOTP (in ic_bootp_init()), in
+   order to clear any values that may have been set after parsing "ip="
+   or "nfsaddrs=" and are no longer needed.
 
-Update this code to wait to free the skb until after the bit lock is
-free, by first setting the ptp_tx_skb to NULL and clearing the lock.
+This means that ic_nameservers_predef() is not called when neither "ip="
+nor "nfsaddrs=" is specified on the kernel command line. In this
+scenario, every element in ic_nameservers remains set to 0x00000000,
+which is indistinguishable from ANY and causes pnp_seq_show() to write
+the following (bogus) information to /proc/net/pnp:
 
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+  #MANUAL
+  nameserver 0.0.0.0
+  nameserver 0.0.0.0
+  nameserver 0.0.0.0
+
+This is potentially problematic for systems that blindly link
+/etc/resolv.conf to /proc/net/pnp.
+
+Ensure that ic_nameservers is also initialised when neither "ip=" nor
+"nfsaddrs=" are specified by calling ic_nameservers_predef() in
+ip_auto_config(), but only when ip_auto_config_setup() was not called
+earlier. This causes the following to be written to /proc/net/pnp, and
+is consistent with what gets written when ipconfig is configured
+manually but no name servers are specified on the kernel command line:
+
+  #MANUAL
+
+Signed-off-by: Chris Novakovic <chris@chrisn.me.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_ptp.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/ipv4/ipconfig.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-@@ -337,6 +337,8 @@ void i40e_ptp_rx_hang(struct i40e_pf *pf
-  **/
- void i40e_ptp_tx_hang(struct i40e_pf *pf)
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -781,6 +781,11 @@ static void __init ic_bootp_init_ext(u8
+  */
+ static inline void __init ic_bootp_init(void)
  {
-+	struct sk_buff *skb;
-+
- 	if (!(pf->flags & I40E_FLAG_PTP) || !pf->ptp_tx)
- 		return;
++	/* Re-initialise all name servers to NONE, in case any were set via the
++	 * "ip=" or "nfsaddrs=" kernel command line parameters: any IP addresses
++	 * specified there will already have been decoded but are no longer
++	 * needed
++	 */
+ 	ic_nameservers_predef();
  
-@@ -349,9 +351,12 @@ void i40e_ptp_tx_hang(struct i40e_pf *pf
- 	 * within a second it is reasonable to assume that we never will.
- 	 */
- 	if (time_is_before_jiffies(pf->ptp_tx_start + HZ)) {
--		dev_kfree_skb_any(pf->ptp_tx_skb);
-+		skb = pf->ptp_tx_skb;
- 		pf->ptp_tx_skb = NULL;
- 		clear_bit_unlock(__I40E_PTP_TX_IN_PROGRESS, pf->state);
+ 	dev_add_pack(&bootp_packet_type);
+@@ -1402,6 +1407,13 @@ static int __init ip_auto_config(void)
+ 	int err;
+ 	unsigned int i;
+ 
++	/* Initialise all name servers to NONE (but only if the "ip=" or
++	 * "nfsaddrs=" kernel command line parameters weren't decoded, otherwise
++	 * we'll overwrite the IP addresses specified there)
++	 */
++	if (ic_set_manually == 0)
++		ic_nameservers_predef();
 +
-+		/* Free the skb after we clear the bitlock */
-+		dev_kfree_skb_any(skb);
- 		pf->tx_hwtstamp_timeouts++;
+ #ifdef CONFIG_PROC_FS
+ 	proc_create("pnp", S_IRUGO, init_net.proc_net, &pnp_seq_fops);
+ #endif /* CONFIG_PROC_FS */
+@@ -1622,6 +1634,7 @@ static int __init ip_auto_config_setup(c
+ 		return 1;
  	}
- }
+ 
++	/* Initialise all name servers to NONE */
+ 	ic_nameservers_predef();
+ 
+ 	/* Parse string for static IP assignment.  */
 
 
