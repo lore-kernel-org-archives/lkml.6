@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD991C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D23C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD6B2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD6B2083D
+	by mail.kernel.org (Postfix) with ESMTP id EC7062083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7062083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406942AbeHATOg (ORCPT
+        id S2407336AbeHATOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:14:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52020 "EHLO
+        Wed, 1 Aug 2018 15:14:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404714AbeHATOf (ORCPT
+        with ESMTP id S2389735AbeHATOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:14:35 -0400
+        Wed, 1 Aug 2018 15:14:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE2C7D4A;
-        Wed,  1 Aug 2018 17:27:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2239CD4D;
+        Wed,  1 Aug 2018 17:27:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        stable@vger.kernel.org, Xinming Hu <huxm@marvell.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 060/144] ath: Add regulatory mapping for Bahamas
-Date:   Wed,  1 Aug 2018 18:51:27 +0200
-Message-Id: <20180801164953.624220232@linuxfoundation.org>
+Subject: [PATCH 4.9 070/144] mwifiex: correct histogram data with appropriate index
+Date:   Wed,  1 Aug 2018 18:51:37 +0200
+Message-Id: <20180801164954.944640639@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,50 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Xinming Hu <huxm@marvell.com>
 
-[ Upstream commit 699e2302c286a14afe7b7394151ce6c4e1790cc1 ]
+[ Upstream commit 30bfce0b63fa68c14ae1613eb9d259fa18644074 ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+Correct snr/nr/rssi data index to avoid possible buffer underflow.
 
-  Invalid EEPROM contents
-
-The current CTL mappings for this country are:
-
-* 2.4GHz: ETSI
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Xinming Hu <huxm@marvell.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/wireless/marvell/mwifiex/util.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -68,6 +68,7 @@ enum CountryCode {
- 	CTRY_AUSTRALIA = 36,
- 	CTRY_AUSTRIA = 40,
- 	CTRY_AZERBAIJAN = 31,
-+	CTRY_BAHAMAS = 44,
- 	CTRY_BAHRAIN = 48,
- 	CTRY_BANGLADESH = 50,
- 	CTRY_BARBADOS = 52,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -306,6 +306,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_AUSTRALIA2, FCC6_WORLD, "AU"},
- 	{CTRY_AUSTRIA, ETSI1_WORLD, "AT"},
- 	{CTRY_AZERBAIJAN, ETSI4_WORLD, "AZ"},
-+	{CTRY_BAHAMAS, FCC3_WORLD, "BS"},
- 	{CTRY_BAHRAIN, APL6_WORLD, "BH"},
- 	{CTRY_BANGLADESH, NULL1_WORLD, "BD"},
- 	{CTRY_BARBADOS, FCC2_WORLD, "BB"},
+--- a/drivers/net/wireless/marvell/mwifiex/util.c
++++ b/drivers/net/wireless/marvell/mwifiex/util.c
+@@ -723,12 +723,14 @@ void mwifiex_hist_data_set(struct mwifie
+ 			   s8 nflr)
+ {
+ 	struct mwifiex_histogram_data *phist_data = priv->hist_data;
++	s8 nf   = -nflr;
++	s8 rssi = snr - nflr;
+ 
+ 	atomic_inc(&phist_data->num_samples);
+ 	atomic_inc(&phist_data->rx_rate[rx_rate]);
+-	atomic_inc(&phist_data->snr[snr]);
+-	atomic_inc(&phist_data->noise_flr[128 + nflr]);
+-	atomic_inc(&phist_data->sig_str[nflr - snr]);
++	atomic_inc(&phist_data->snr[snr + 128]);
++	atomic_inc(&phist_data->noise_flr[nf + 128]);
++	atomic_inc(&phist_data->sig_str[rssi + 128]);
+ }
+ 
+ /* function to reset histogram data during init/reset */
 
 
