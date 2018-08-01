@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150DBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F819C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4E3520840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E3520840
+	by mail.kernel.org (Postfix) with ESMTP id 2A37E20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A37E20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733105AbeHAUWN (ORCPT
+        id S1733165AbeHAUWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:22:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
+        Wed, 1 Aug 2018 16:22:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404132AbeHATDe (ORCPT
+        with ESMTP id S2403983AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEE4B122F;
-        Wed,  1 Aug 2018 17:09:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C69651047;
+        Wed,  1 Aug 2018 17:00:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 298/336] block: reset bi_iter.bi_done after splitting bio
-Date:   Wed,  1 Aug 2018 18:50:33 +0200
-Message-Id: <20180801165040.447016126@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 145/336] drivers/perf: arm-ccn: dont log to dmesg in event_init
+Date:   Wed,  1 Aug 2018 18:48:00 +0200
+Message-Id: <20180801165034.688612682@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,34 +52,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Edwards <gedwards@ddn.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 5151842b9d8732d4cbfa8400b40bff894f501b2f upstream.
+[ Upstream commit 1898eb61fbc9703efee886d3abec27a388cf28c3 ]
 
-After the bio has been updated to represent the remaining sectors, reset
-bi_done so bio_rewind_iter() does not rewind further than it should.
+The ARM CCN PMU driver uses dev_warn() to complain about parameters in
+the user-provided perf_event_attr. This means that under normal
+operation (e.g. a single invocation of the perf tool), a number of
+messages warnings may be logged to dmesg.
 
-This resolves a bio_integrity_process() failure on reads where the
-original request was split.
+Tools may issue multiple syscalls to probe for feature support, and
+multiple applications (from multiple users) can attempt to open events
+simultaneously, so this is not very helpful, even if a user happens to
+have access to dmesg. Worse, this can push important information out of
+the dmesg ring buffer, and can significantly slow down syscall fuzzers,
+vastly increasing the time it takes to find critical bugs.
 
-Fixes: 63573e359d05 ("bio-integrity: Restore original iterator on verify stage")
-Signed-off-by: Greg Edwards <gedwards@ddn.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Demote the dev_warn() instances to dev_dbg(), as is the case for all
+other PMU drivers under drivers/perf/. Users who wish to debug PMU event
+initialisation can enable dynamic debug to receive these messages.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/bio.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/perf/arm-ccn.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1806,6 +1806,7 @@ struct bio *bio_split(struct bio *bio, i
- 		bio_integrity_trim(split);
+--- a/drivers/perf/arm-ccn.c
++++ b/drivers/perf/arm-ccn.c
+@@ -736,7 +736,7 @@ static int arm_ccn_pmu_event_init(struct
+ 	ccn = pmu_to_arm_ccn(event->pmu);
  
- 	bio_advance(bio, split->bi_iter.bi_size);
-+	bio->bi_iter.bi_done = 0;
+ 	if (hw->sample_period) {
+-		dev_warn(ccn->dev, "Sampling not supported!\n");
++		dev_dbg(ccn->dev, "Sampling not supported!\n");
+ 		return -EOPNOTSUPP;
+ 	}
  
- 	if (bio_flagged(bio, BIO_TRACE_COMPLETION))
- 		bio_set_flag(split, BIO_TRACE_COMPLETION);
+@@ -744,12 +744,12 @@ static int arm_ccn_pmu_event_init(struct
+ 			event->attr.exclude_kernel || event->attr.exclude_hv ||
+ 			event->attr.exclude_idle || event->attr.exclude_host ||
+ 			event->attr.exclude_guest) {
+-		dev_warn(ccn->dev, "Can't exclude execution levels!\n");
++		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (event->cpu < 0) {
+-		dev_warn(ccn->dev, "Can't provide per-task data!\n");
++		dev_dbg(ccn->dev, "Can't provide per-task data!\n");
+ 		return -EOPNOTSUPP;
+ 	}
+ 	/*
+@@ -771,13 +771,13 @@ static int arm_ccn_pmu_event_init(struct
+ 	switch (type) {
+ 	case CCN_TYPE_MN:
+ 		if (node_xp != ccn->mn_id) {
+-			dev_warn(ccn->dev, "Invalid MN ID %d!\n", node_xp);
++			dev_dbg(ccn->dev, "Invalid MN ID %d!\n", node_xp);
+ 			return -EINVAL;
+ 		}
+ 		break;
+ 	case CCN_TYPE_XP:
+ 		if (node_xp >= ccn->num_xps) {
+-			dev_warn(ccn->dev, "Invalid XP ID %d!\n", node_xp);
++			dev_dbg(ccn->dev, "Invalid XP ID %d!\n", node_xp);
+ 			return -EINVAL;
+ 		}
+ 		break;
+@@ -785,11 +785,11 @@ static int arm_ccn_pmu_event_init(struct
+ 		break;
+ 	default:
+ 		if (node_xp >= ccn->num_nodes) {
+-			dev_warn(ccn->dev, "Invalid node ID %d!\n", node_xp);
++			dev_dbg(ccn->dev, "Invalid node ID %d!\n", node_xp);
+ 			return -EINVAL;
+ 		}
+ 		if (!arm_ccn_pmu_type_eq(type, ccn->node[node_xp].type)) {
+-			dev_warn(ccn->dev, "Invalid type 0x%x for node %d!\n",
++			dev_dbg(ccn->dev, "Invalid type 0x%x for node %d!\n",
+ 					type, node_xp);
+ 			return -EINVAL;
+ 		}
+@@ -808,19 +808,19 @@ static int arm_ccn_pmu_event_init(struct
+ 		if (event_id != e->event)
+ 			continue;
+ 		if (e->num_ports && port >= e->num_ports) {
+-			dev_warn(ccn->dev, "Invalid port %d for node/XP %d!\n",
++			dev_dbg(ccn->dev, "Invalid port %d for node/XP %d!\n",
+ 					port, node_xp);
+ 			return -EINVAL;
+ 		}
+ 		if (e->num_vcs && vc >= e->num_vcs) {
+-			dev_warn(ccn->dev, "Invalid vc %d for node/XP %d!\n",
++			dev_dbg(ccn->dev, "Invalid vc %d for node/XP %d!\n",
+ 					vc, node_xp);
+ 			return -EINVAL;
+ 		}
+ 		valid = 1;
+ 	}
+ 	if (!valid) {
+-		dev_warn(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
++		dev_dbg(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
+ 				event_id, node_xp);
+ 		return -EINVAL;
+ 	}
 
 
