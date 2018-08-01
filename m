@@ -6,39 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8DDC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EE6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436192083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:26:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436192083D
+	by mail.kernel.org (Postfix) with ESMTP id B7FAF2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7FAF2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbeHAUNw (ORCPT
+        id S1733068AbeHAUOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:13:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46084 "EHLO
+        Wed, 1 Aug 2018 16:14:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403891AbeHATDh (ORCPT
+        with ESMTP id S2404271AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E24AFA0;
-        Wed,  1 Aug 2018 16:57:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D0471322;
+        Wed,  1 Aug 2018 17:11:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 097/336] mfd: cros_ec: Fail early if we cannot identify the EC
-Date:   Wed,  1 Aug 2018 18:47:12 +0200
-Message-Id: <20180801165032.881385621@linuxfoundation.org>
+        stable@vger.kernel.org, Lawrence Brakmo <brakmo@fb.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.17 334/336] tcp: ack immediately when a cwr packet arrives
+Date:   Wed,  1 Aug 2018 18:51:09 +0200
+Message-Id: <20180801165041.808784551@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,41 +53,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Palatin <vpalatin@chromium.org>
+From: Lawrence Brakmo <brakmo@fb.com>
 
-[ Upstream commit 0dbbf25561b29ffab5ba6277429760abdf49ceff ]
+[ Upstream commit 9aee40006190a3cda9a4d2dbae71e92617c8c362 ]
 
-If we cannot communicate with the EC chip to detect the protocol version
-and its features, it's very likely useless to continue. Else we will
-commit all kind of uninformed mistakes (using the wrong protocol, the
-wrong buffer size, mixing the EC with other chips).
+We observed high 99 and 99.9% latencies when doing RPCs with DCTCP. The
+problem is triggered when the last packet of a request arrives CE
+marked. The reply will carry the ECE mark causing TCP to shrink its cwnd
+to 1 (because there are no packets in flight). When the 1st packet of
+the next request arrives, the ACK was sometimes delayed even though it
+is CWR marked, adding up to 40ms to the RPC latency.
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Acked-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+This patch insures that CWR marked data packets arriving will be acked
+immediately.
+
+Packetdrill script to reproduce the problem:
+
+0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+0.000 setsockopt(3, SOL_TCP, TCP_CONGESTION, "dctcp", 5) = 0
+0.000 bind(3, ..., ...) = 0
+0.000 listen(3, 1) = 0
+
+0.100 < [ect0] SEW 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
+0.100 > SE. 0:0(0) ack 1 <mss 1460,nop,nop,sackOK,nop,wscale 8>
+0.110 < [ect0] . 1:1(0) ack 1 win 257
+0.200 accept(3, ..., ...) = 4
+
+0.200 < [ect0] . 1:1001(1000) ack 1 win 257
+0.200 > [ect01] . 1:1(0) ack 1001
+
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 1:2(1) ack 1001
+
+0.200 < [ect0] . 1001:2001(1000) ack 2 win 257
+0.200 write(4, ..., 1) = 1
+0.200 > [ect01] P. 2:3(1) ack 2001
+
+0.200 < [ect0] . 2001:3001(1000) ack 3 win 257
+0.200 < [ect0] . 3001:4001(1000) ack 3 win 257
+0.200 > [ect01] . 3:3(0) ack 4001
+
+0.210 < [ce] P. 4001:4501(500) ack 3 win 257
+
++0.001 read(4, ..., 4500) = 4500
++0 write(4, ..., 1) = 1
++0 > [ect01] PE. 3:4(1) ack 4501
+
++0.010 < [ect0] W. 4501:5501(1000) ack 4 win 257
+// Previously the ACK sequence below would be 4501, causing a long RTO
++0.040~+0.045 > [ect01] . 4:4(0) ack 5501   // delayed ack
+
++0.311 < [ect0] . 5501:6501(1000) ack 4 win 257  // More data
++0 > [ect01] . 4:4(0) ack 6501     // now acks everything
+
++0.500 < F. 9501:9501(0) ack 4 win 257
+
+Modified based on comments by Neal Cardwell <ncardwell@google.com>
+
+Signed-off-by: Lawrence Brakmo <brakmo@fb.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mfd/cros_ec.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -112,7 +112,11 @@ int cros_ec_register(struct cros_ec_devi
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -227,8 +227,15 @@ static void tcp_ecn_queue_cwr(struct tcp
  
- 	mutex_init(&ec_dev->lock);
- 
--	cros_ec_query_all(ec_dev);
-+	err = cros_ec_query_all(ec_dev);
-+	if (err) {
-+		dev_err(dev, "Cannot identify the EC: error %d\n", err);
-+		return err;
+ static void tcp_ecn_accept_cwr(struct tcp_sock *tp, const struct sk_buff *skb)
+ {
+-	if (tcp_hdr(skb)->cwr)
++	if (tcp_hdr(skb)->cwr) {
+ 		tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
++
++		/* If the sender is telling us it has entered CWR, then its
++		 * cwnd may be very low (even just 1 packet), so we should ACK
++		 * immediately.
++		 */
++		tcp_enter_quickack_mode((struct sock *)tp, 2);
 +	}
+ }
  
- 	if (ec_dev->irq) {
- 		err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+ static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
 
 
