@@ -2,152 +2,273 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC172C43142
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E8FC43142
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972B320894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:17:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CJkbndeE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972B320894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 638F020894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 02:18:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638F020894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbeHAEAr (ORCPT
+        id S1726043AbeHAEB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 00:00:47 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37846 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725741AbeHAEAr (ORCPT
+        Wed, 1 Aug 2018 00:01:59 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.24]:27630 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725932AbeHAEB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 00:00:47 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w712E94M012935;
-        Wed, 1 Aug 2018 02:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ZUoP2wAB7EnfwZubhaVMr3U3AWDwooqrrf6XVae3gog=;
- b=CJkbndeEQ9gxV3jL+i7oOpUrwbjmlBZnr/+7LaEWGdJNiKTTeZeswQFpxx5lcPO8KYnL
- I3/VukGCXhmFL95BD0KWg3X8TrBtkjGlkIUB/XYfPNC5iacmbNQgfYiEE/1Trp1LUU4r
- ltjpw17vUuesLm4qaclpWCI7LxU+bzrU6T2pwOS5OFciIqERTkEbahNZf2I38RCsn1Rc
- nTu0JTmok/NBKjRGf+cqKdrEgsFjx4ZxVSntPEfVrbQsm7r7XLkn59HCf8wATuZUziHy
- yHAV8uHww6jvA4pBJBRaQm95pKKTqudKf5M2BSfUrIRWYEjsXCJRE+ZWoA07lbzhvnpt OA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2kggep3gnj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Aug 2018 02:17:32 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w712HUDF006216
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Aug 2018 02:17:31 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w712HTUI029207;
-        Wed, 1 Aug 2018 02:17:30 GMT
-Received: from [10.182.70.180] (/10.182.70.180)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 31 Jul 2018 19:17:29 -0700
-Subject: Re: [RFC] blk-mq: clean up the hctx restart
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, bart.vanassche@wdc.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533009735-2221-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180731045805.GE15701@ming.t460p>
- <8a3383e6-2926-6858-d8f2-671f3cb9e460@oracle.com>
- <20180731061616.GF15701@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <42371198-2a4b-1062-3564-411645ffba98@oracle.com>
-Date:   Wed, 1 Aug 2018 10:17:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 1 Aug 2018 00:01:58 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 2FD5B9FBF3
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Jul 2018 21:18:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id kgisf9yKWRPojkgisffMme; Tue, 31 Jul 2018 21:18:46 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.131.79] (port=55024 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fkgir-003wm1-JI; Tue, 31 Jul 2018 21:18:45 -0500
+Date:   Tue, 31 Jul 2018 21:18:44 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] NFS: Mark expected switch fall-throughs
+Message-ID: <20180801021844.GA17795@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180731061616.GF15701@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1808010022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.131.79
+X-Source-L: No
+X-Exim-ID: 1fkgir-003wm1-JI
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.131.79]:55024
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Thanks for your kindly response.
+Warning level 2 was used: -Wimplicit-fallthrough=2
 
-On 07/31/2018 02:16 PM, Ming Lei wrote:
-> On Tue, Jul 31, 2018 at 01:19:42PM +0800, jianchao.wang wrote:
->> Hi Ming
->>
->> On 07/31/2018 12:58 PM, Ming Lei wrote:
->>> On Tue, Jul 31, 2018 at 12:02:15PM +0800, Jianchao Wang wrote:
->>>> Currently, we will always set SCHED_RESTART whenever there are
->>>> requests in hctx->dispatch, then when request is completed and
->>>> freed the hctx queues will be restarted to avoid IO hang. This
->>>> is unnecessary most of time. Especially when there are lots of
->>>> LUNs attached to one host, the RR restart loop could be very
->>>> expensive.
->>>
->>> The big RR restart loop has been killed in the following commit:
->>>
->>> commit 97889f9ac24f8d2fc8e703ea7f80c162bab10d4d
->>> Author: Ming Lei <ming.lei@redhat.com>
->>> Date:   Mon Jun 25 19:31:48 2018 +0800
->>>
->>>     blk-mq: remove synchronize_rcu() from blk_mq_del_queue_tag_set()
->>>
->>>
->>
->> Oh, sorry, I didn't look into this patch due to its title when iterated the mail list,
->> therefore I didn't realize the RR restart loop has already been killed. :)
->>
->> The RR restart loop could ensure the fairness of sharing some LLDD resource,
->> not just avoid IO hung. Is it OK to kill it totally ?
-> 
-> Yeah, it is, also the fairness might be improved a bit by the way in
-> commit 97889f9ac24f8d2fc, especially inside driver tag allocation
-> algorithem.
-> 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/nfs/blocklayout/blocklayout.c | 1 +
+ fs/nfs/nfs3acl.c                 | 2 ++
+ fs/nfs/nfs4file.c                | 1 +
+ fs/nfs/nfs4idmap.c               | 2 ++
+ fs/nfs/nfs4proc.c                | 8 ++++++++
+ fs/nfs/nfs4state.c               | 6 ++++++
+ fs/nfs/pagelist.c                | 1 +
+ 7 files changed, 21 insertions(+)
 
-Would you mind to detail more here ?
-
-Regarding the driver tag case:
-For example:
-
-q_a         q_b        q_c       q_d
-hctx0       hctx0      hctx0     hctx0
-
-                 tags
-
-Total number of tags is 32
-All of these 4 q are active.
-
-So every q has 8 tags.
-
-If all of these 4 q have used up their 8 tags, they have to wait.
-
-When part of the in-flight requests q_a are completed, tags are freed.
-but the __sbq_wake_up doesn't wake up the q_a, it may wake up q_b.
-However, due to the limits in hctx_may_queue, q_b still cannot get the
-tags. The RR restart also will not wake up q_a.
-This is unfair for q_a.
-
-When we remove RR restart fashion, at least, the q_a will be waked up by
-the hctx restart.
-Is this the improvement of fairness you said in driver tag allocation ?
-
-Think further, it seems that it only works for case with io scheduler.
-w/o io scheduler, tasks will wait in blk_mq_get_request. restart hctx will
-not work there.
-
-Thanks
-Jianchao
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 9619016..a981733 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -753,6 +753,7 @@ bl_alloc_lseg(struct pnfs_layout_hdr *lo, struct nfs4_layoutget_res *lgr,
+ 	case -ENODEV:
+ 		/* Our extent block devices are unavailable */
+ 		set_bit(NFS_LSEG_UNAVAILABLE, &lseg->pls_flags);
++		/* Fall through */
+ 	case 0:
+ 		return lseg;
+ 	default:
+diff --git a/fs/nfs/nfs3acl.c b/fs/nfs/nfs3acl.c
+index 7173a4e..9fce185 100644
+--- a/fs/nfs/nfs3acl.c
++++ b/fs/nfs/nfs3acl.c
+@@ -108,6 +108,7 @@ struct posix_acl *nfs3_get_acl(struct inode *inode, int type)
+ 		case -EPROTONOSUPPORT:
+ 			dprintk("NFS_V3_ACL extension not supported; disabling\n");
+ 			server->caps &= ~NFS_CAP_ACLS;
++			/* fall through */
+ 		case -ENOTSUPP:
+ 			status = -EOPNOTSUPP;
+ 		default:
+@@ -229,6 +230,7 @@ static int __nfs3_proc_setacls(struct inode *inode, struct posix_acl *acl,
+ 			dprintk("NFS_V3_ACL SETACL RPC not supported"
+ 					"(will not retry)\n");
+ 			server->caps &= ~NFS_CAP_ACLS;
++			/* fall through */
+ 		case -ENOTSUPP:
+ 			status = -EOPNOTSUPP;
+ 	}
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 6b3b372..6c03d6b 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -149,6 +149,7 @@ static loff_t nfs4_file_llseek(struct file *filep, loff_t offset, int whence)
+ 		ret = nfs42_proc_llseek(filep, offset, whence);
+ 		if (ret != -ENOTSUPP)
+ 			return ret;
++		/* Fall through */
+ 	default:
+ 		return nfs_file_llseek(filep, offset, whence);
+ 	}
+diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
+index cf72169..3f23b68 100644
+--- a/fs/nfs/nfs4idmap.c
++++ b/fs/nfs/nfs4idmap.c
+@@ -506,6 +506,7 @@ static int nfs_idmap_prepare_message(char *desc, struct idmap *idmap,
+ 	switch (token) {
+ 	case Opt_find_uid:
+ 		im->im_type = IDMAP_TYPE_USER;
++		/* Fall through */
+ 	case Opt_find_gid:
+ 		im->im_conv = IDMAP_CONV_NAMETOID;
+ 		ret = match_strlcpy(im->im_name, &substr, IDMAP_NAMESZ);
+@@ -513,6 +514,7 @@ static int nfs_idmap_prepare_message(char *desc, struct idmap *idmap,
+ 
+ 	case Opt_find_user:
+ 		im->im_type = IDMAP_TYPE_USER;
++		/* Fall through */
+ 	case Opt_find_group:
+ 		im->im_conv = IDMAP_CONV_IDTONAME;
+ 		ret = match_int(&substr, &im->im_id);
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 981c1cb..bed38b9 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -449,6 +449,7 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
+ 						stateid);
+ 				goto wait_on_recovery;
+ 			}
++			/* Fall through */
+ 		case -NFS4ERR_OPENMODE:
+ 			if (inode) {
+ 				int err;
+@@ -501,8 +502,10 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
+ 				ret = -EBUSY;
+ 				break;
+ 			}
++			/* Fall through */
+ 		case -NFS4ERR_DELAY:
+ 			nfs_inc_server_stats(server, NFSIOS_DELAY);
++			/* Fall through */
+ 		case -NFS4ERR_GRACE:
+ 		case -NFS4ERR_LAYOUTTRYLATER:
+ 		case -NFS4ERR_RECALLCONFLICT:
+@@ -1361,6 +1364,7 @@ static int can_open_delegated(struct nfs_delegation *delegation, fmode_t fmode,
+ 	case NFS4_OPEN_CLAIM_PREVIOUS:
+ 		if (!test_bit(NFS_DELEGATION_NEED_RECLAIM, &delegation->flags))
+ 			break;
++		/* Fall through */
+ 	default:
+ 		return 0;
+ 	}
+@@ -2130,6 +2134,7 @@ int nfs4_open_delegation_recall(struct nfs_open_context *ctx,
+ 		err = nfs4_open_recover_helper(opendata, FMODE_WRITE);
+ 		if (err)
+ 			break;
++		/* Fall through */
+ 	case FMODE_READ:
+ 		err = nfs4_open_recover_helper(opendata, FMODE_READ);
+ 	}
+@@ -2259,6 +2264,7 @@ static void nfs4_open_prepare(struct rpc_task *task, void *calldata)
+ 	case NFS4_OPEN_CLAIM_DELEG_CUR_FH:
+ 	case NFS4_OPEN_CLAIM_DELEG_PREV_FH:
+ 		data->o_arg.open_bitmap = &nfs4_open_noattr_bitmap[0];
++		/* Fall through */
+ 	case NFS4_OPEN_CLAIM_FH:
+ 		task->tk_msg.rpc_proc = &nfs4_procedures[NFSPROC4_CLNT_OPEN_NOATTR];
+ 	}
+@@ -6221,11 +6227,13 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
+ 			if (nfs4_update_lock_stateid(calldata->lsp,
+ 					&calldata->res.stateid))
+ 				break;
++			/* Fall through */
+ 		case -NFS4ERR_ADMIN_REVOKED:
+ 		case -NFS4ERR_EXPIRED:
+ 			nfs4_free_revoked_stateid(calldata->server,
+ 					&calldata->arg.stateid,
+ 					task->tk_msg.rpc_cred);
++			/* Fall through */
+ 		case -NFS4ERR_BAD_STATEID:
+ 		case -NFS4ERR_OLD_STATEID:
+ 		case -NFS4ERR_STALE_STATEID:
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 2bf2eaa..f1b27e8 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1525,6 +1525,7 @@ static int nfs4_reclaim_locks(struct nfs4_state *state, const struct nfs4_state_
+ 		default:
+ 			pr_err("NFS: %s: unhandled error %d\n",
+ 					__func__, status);
++			/* Fall through */
+ 		case -ENOMEM:
+ 		case -NFS4ERR_DENIED:
+ 		case -NFS4ERR_RECLAIM_BAD:
+@@ -1597,6 +1598,7 @@ static int nfs4_reclaim_open_state(struct nfs4_state_owner *sp, const struct nfs
+ 			default:
+ 				printk(KERN_ERR "NFS: %s: unhandled error %d\n",
+ 					__func__, status);
++				/* Fall through */
+ 			case -ENOENT:
+ 			case -ENOMEM:
+ 			case -EACCES:
+@@ -1608,6 +1610,7 @@ static int nfs4_reclaim_open_state(struct nfs4_state_owner *sp, const struct nfs
+ 				break;
+ 			case -EAGAIN:
+ 				ssleep(1);
++				/* Fall through */
+ 			case -NFS4ERR_ADMIN_REVOKED:
+ 			case -NFS4ERR_STALE_STATEID:
+ 			case -NFS4ERR_OLD_STATEID:
+@@ -2190,9 +2193,11 @@ int nfs4_discover_server_trunking(struct nfs_client *clp,
+ 	case -ETIMEDOUT:
+ 		if (clnt->cl_softrtry)
+ 			break;
++		/* Fall through */
+ 	case -NFS4ERR_DELAY:
+ 	case -EAGAIN:
+ 		ssleep(1);
++		/* Fall through */
+ 	case -NFS4ERR_STALE_CLIENTID:
+ 		dprintk("NFS: %s after status %d, retrying\n",
+ 			__func__, status);
+@@ -2204,6 +2209,7 @@ int nfs4_discover_server_trunking(struct nfs_client *clp,
+ 		}
+ 		if (clnt->cl_auth->au_flavor == RPC_AUTH_UNIX)
+ 			break;
++		/* Fall through */
+ 	case -NFS4ERR_CLID_INUSE:
+ 	case -NFS4ERR_WRONGSEC:
+ 		/* No point in retrying if we already used RPC_AUTH_UNIX */
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index 67d19cd..bb5476a 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -561,6 +561,7 @@ static void nfs_pgio_rpcsetup(struct nfs_pgio_header *hdr,
+ 	case FLUSH_COND_STABLE:
+ 		if (nfs_reqs_to_commit(cinfo))
+ 			break;
++		/* fall through */
+ 	default:
+ 		hdr->args.stable = NFS_FILE_SYNC;
+ 	}
+-- 
+2.7.4
 
