@@ -2,126 +2,164 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5EDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0818BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D65F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92BB620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:26:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="St+SRIWI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D65F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kBfzqiHc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N6wCX0Xj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BB620862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeHBBKx (ORCPT
+        id S1732068AbeHBBOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 21:10:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45414 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbeHBBKx (ORCPT
+        Wed, 1 Aug 2018 21:14:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42960 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbeHBBOb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 21:10:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f1-v6so141407pgq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 16:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to;
-        bh=4t2T8LeEMUOdj6LCpH9g0l+vBl3lfGEwJz3iSuGgrOM=;
-        b=St+SRIWIyDb7dck3pMR/i3+JnSUYXwzBEXt3lmckPQQAVsJ2fPCIvJeQtMzEWVPLr3
-         nJdlJlXRysxkWsaxubUI4WHvUAO4Vifp1L8nY57lHLYhee8RYe+sEzhKcXeEp5gEShgC
-         AXk5kA9lm2E2llq3yy2QA2LJV9osCWEaphgfHfC6SmThIIGQ/muOaLgx2olpswhK0VFN
-         bQA1FSZi2UdEOek9b55Vf8zKK9Uxhtj1RpQCU/Mb4caPA+dj3Q1Io3kk5r7/qZkxHUJJ
-         ccUb1Wd3ErNlOstSlb4RB9fV15Xd6uz2yiOLHGOaCGjmCFF0Q5G6oGuqG9GvS8KRcYXO
-         QVKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4t2T8LeEMUOdj6LCpH9g0l+vBl3lfGEwJz3iSuGgrOM=;
-        b=JTmiwhoD3eNNhT8e6SMRkEPtE1ZRyBQ/NXr2A7YH5uTI3YrO45Wbq/reqTs1Z/oZ2X
-         RX16/vSjHyJj8J+EBe2lEPIgfjr5SFzaZpfu3I5VIKjRmZA8BW9KDqCS0FbmBkBxfgmt
-         msqiqbv3UOHJtH3E4YfNvctbYGOevpOJi3P6ObTX2I0Xvujb0LvlLIx3ytNOWMjZF9kl
-         WyYbI1narKwvI4E4rwrkaUYMqU/q8Xt18bLJul4Zm0odBUiAM2Mp+3wLuFdozI/mGQkW
-         y+T8tlfudaRwUyPrFdrEyhkOqignkfWVQeZIpxFXg8TKxIx+wiXRhD+mpmEgC3hVKbvl
-         AALg==
-X-Gm-Message-State: AOUpUlFLxSp9x5VEABoLZeKxhRjQQuzG61Nt1OZQZi3jP0C9cFaalKnN
-        VmaKDrmlxQ7Tof+54fJGyNM=
-X-Google-Smtp-Source: AAOMgpcKgWWv0Y2qIxSmnuR5saqZOZ0uTI2GFgYPlc/v7mRpwkgKqDLow9vF6ZAWUMzALz8hkyFuWQ==
-X-Received: by 2002:a65:4304:: with SMTP id j4-v6mr340160pgq.109.1533165761310;
-        Wed, 01 Aug 2018 16:22:41 -0700 (PDT)
-Received: from mhkkerneltest.corp.microsoft.com ([131.107.160.207])
-        by smtp.gmail.com with ESMTPSA id p17-v6sm138211pgv.26.2018.08.01.16.22.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 16:22:40 -0700 (PDT)
-From:   mhkelley58@gmail.com
-X-Google-Original-From: mikelley@microsoft.com
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        vkuznets@redhat.com, jasowang@redhat.com,
-        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
-        kys@microsoft.com
-Cc:     mikelley@microsoft.com
-Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Cleanup synic memory free path
-Date:   Wed,  1 Aug 2018 15:45:13 -0700
-Message-Id: <1533163513-10764-1-git-send-email-mikelley@microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-Reply-To: mikelley@microsoft.com
+        Wed, 1 Aug 2018 21:14:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 65D1660B12; Wed,  1 Aug 2018 23:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533165978;
+        bh=IFzIpJaQXyh52j439zH3CI5kKeUjehtlJShbGsAyjvM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kBfzqiHcQGdPNwfe6cQ/ofwyIgMYy/tCnEWsKOiE180pxv3ZSebVGqzXR6q6SZqVx
+         pdFTLiTABKnh7qxN2ZGqX0C7puo5vo5D1a729Le+RUTU7BhH2bMpOWi398efchx5qz
+         VDssP1aK8d5yLYX3l0jhQdSoJrHSUHz0chVZG+Ms=
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D8CC4606DD;
+        Wed,  1 Aug 2018 23:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533165977;
+        bh=IFzIpJaQXyh52j439zH3CI5kKeUjehtlJShbGsAyjvM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N6wCX0XjPROsAk1DmmzwDek+ia13Xq5jYcif/9xzdzof1NGD4mwkP6MoLZXWF6ezh
+         9lhXcsEQABoDyYxtM2VNsvFuyX+8KLk0KwF84FwP/bsFIP8uHFbGuaXmxzmOZTs2kf
+         HZ673sLOKc1CZi4l/IPgHlhCzIPkM3VzSkn2+ybM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D8CC4606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     mcgrof@kernel.org, zohar@linux.vnet.ibm.com,
+        bjorn.andersson@linaro.org, ard.biesheuvel@linaro.org,
+        vbabka@suse.cz, riel@surriel.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     ckadabi@codeaurora.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>
+Subject: [PATCH] firmware: Fix security issue with request_firmware_into_buf()
+Date:   Wed,  1 Aug 2018 16:25:56 -0700
+Message-Id: <1533165956-23727-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Kelley <mikelley@microsoft.com>
+When calling request_firmware_into_buf() with the FW_OPT_NOCACHE flag
+it is expected that firmware is loaded into buffer from memory.
+But inside alloc_lookup_fw_priv every new firmware that is loaded is
+added to the firmware cache (fwc) list head. So if any driver requests
+a firmware that is already loaded the code iterates over the above
+mentioned list and it can end up giving a pointer to other device driver's
+firmware buffer.
+Also the existing copy may either be modified by drivers, remote processors
+or even freed. This causes a potential security issue with batched requests
+when using request_firmware_into_buf.
 
-clk_evt memory is not being freed when the synic is shutdown
-or when there is an allocation error.  Add the appropriate
-kfree() call, along with a comment to clarify how the memory
-gets freed after an allocation error.  Make the free path
-consistent by removing checks for NULL since kfree() and
-free_page() already do the check.
+Fix alloc_lookup_fw_priv to not add to the fwc head list if FW_OPT_NOCACHE
+is set, and also don't do the lookup in the list.
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 0e742e9275 ("firmware: provide infrastructure to make fw caching optional")
+
+Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 ---
- drivers/hv/hv.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/base/firmware_loader/main.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index 8d4fe0e..1fb9a6b 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -240,6 +240,10 @@ int hv_synic_alloc(void)
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 0943e70..b3c0498 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -209,21 +209,24 @@ static struct fw_priv *__lookup_fw_priv(const char *fw_name)
+ static int alloc_lookup_fw_priv(const char *fw_name,
+ 				struct firmware_cache *fwc,
+ 				struct fw_priv **fw_priv, void *dbuf,
+-				size_t size)
++				size_t size, enum fw_opt opt_flags)
+ {
+ 	struct fw_priv *tmp;
  
- 	return 0;
- err:
-+	/*
-+	 * Any memory allocations that succeeded will be freed when
-+	 * the caller cleans up by calling hv_synic_free()
-+	 */
- 	return -ENOMEM;
- }
+ 	spin_lock(&fwc->lock);
+-	tmp = __lookup_fw_priv(fw_name);
+-	if (tmp) {
+-		kref_get(&tmp->ref);
+-		spin_unlock(&fwc->lock);
+-		*fw_priv = tmp;
+-		pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
+-		return 1;
++	if (!(opt_flags & FW_OPT_NOCACHE)) {
++		tmp = __lookup_fw_priv(fw_name);
++		if (tmp) {
++			kref_get(&tmp->ref);
++			spin_unlock(&fwc->lock);
++			*fw_priv = tmp;
++			pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
++			return 1;
++		}
+ 	}
++
+ 	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size);
+-	if (tmp)
++	if (tmp && !(opt_flags & FW_OPT_NOCACHE))
+ 		list_add(&tmp->list, &fwc->head);
+ 	spin_unlock(&fwc->lock);
  
-@@ -252,12 +256,10 @@ void hv_synic_free(void)
- 		struct hv_per_cpu_context *hv_cpu
- 			= per_cpu_ptr(hv_context.cpu_context, cpu);
- 
--		if (hv_cpu->synic_event_page)
--			free_page((unsigned long)hv_cpu->synic_event_page);
--		if (hv_cpu->synic_message_page)
--			free_page((unsigned long)hv_cpu->synic_message_page);
--		if (hv_cpu->post_msg_page)
--			free_page((unsigned long)hv_cpu->post_msg_page);
-+		kfree(hv_cpu->clk_evt);
-+		free_page((unsigned long)hv_cpu->synic_event_page);
-+		free_page((unsigned long)hv_cpu->synic_message_page);
-+		free_page((unsigned long)hv_cpu->post_msg_page);
+@@ -493,7 +496,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+  */
+ static int
+ _request_firmware_prepare(struct firmware **firmware_p, const char *name,
+-			  struct device *device, void *dbuf, size_t size)
++			  struct device *device, void *dbuf, size_t size,
++			  enum fw_opt opt_flags)
+ {
+ 	struct firmware *firmware;
+ 	struct fw_priv *fw_priv;
+@@ -511,7 +515,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+ 		return 0; /* assigned */
  	}
  
- 	kfree(hv_context.hv_numa_map);
+-	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size);
++	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size,
++				  opt_flags);
+ 
+ 	/*
+ 	 * bind with 'priv' now to avoid warning in failure path
+@@ -571,7 +576,8 @@ static void fw_abort_batch_reqs(struct firmware *fw)
+ 		goto out;
+ 	}
+ 
+-	ret = _request_firmware_prepare(&fw, name, device, buf, size);
++	ret = _request_firmware_prepare(&fw, name, device, buf, size,
++					opt_flags);
+ 	if (ret <= 0) /* error or already assigned */
+ 		goto out;
+ 
 -- 
-1.8.3.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
