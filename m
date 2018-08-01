@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8FBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA8FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1F2720862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F2720862
+	by mail.kernel.org (Postfix) with ESMTP id 3A00A20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A00A20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732915AbeHAUAS (ORCPT
+        id S1732519AbeHAUAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:00:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405669AbeHATIe (ORCPT
+        with ESMTP id S2405666AbeHATIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B979C10A0;
-        Wed,  1 Aug 2018 17:02:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B53F8139A;
+        Wed,  1 Aug 2018 17:14:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 183/336] IB: Fix RDMA_RXE and INFINIBAND_RDMAVT dependencies for DMA_VIRT_OPS
-Date:   Wed,  1 Aug 2018 18:48:38 +0200
-Message-Id: <20180801165036.101717088@linuxfoundation.org>
+Subject: [PATCH 4.14 055/246] disable loading f2fs module on PAGE_SIZE > 4KB
+Date:   Wed,  1 Aug 2018 18:49:25 +0200
+Message-Id: <20180801165014.356993844@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,57 +47,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Anatoly Pugachev <matorola@gmail.com>
 
-[ Upstream commit e02637e97d68a54b1527bc654bf8377eda310226 ]
+[ Upstream commit 4071e67cffcc5c2a007116a02437471351f550eb ]
 
-DMA_VIRT_OPS requires that dma_addr_t is at least as wide as a
-pointer, which is expressed as a dependency on !64BIT ||
-ARCH_DMA_ADDR_T_64BIT.
+The following patch disables loading of f2fs module on architectures
+which have PAGE_SIZE > 4096 , since it is impossible to mount f2fs on
+such architectures , log messages are:
 
-For parisc64 this is not true, and if these IB modules are enabled,
-kconfig warns:
+mount: /mnt: wrong fs type, bad option, bad superblock on
+/dev/vdiskb1, missing codepage or helper program, or other error.
+/dev/vdiskb1: F2FS filesystem,
+UUID=1d8b9ca4-2389-4910-af3b-10998969f09c, volume name ""
 
-WARNING: unmet direct dependencies detected for DMA_VIRT_OPS
-  Depends on [n]: HAS_DMA [=y] && (!64BIT [=y] || ARCH_DMA_ADDR_T_64BIT)
-  Selected by [m]:
-  - INFINIBAND_RDMAVT [=m] && INFINIBAND [=m] && 64BIT [=y] && PCI [=y]
-  - RDMA_RXE [=m] && INET [=y] && PCI [=y] && INFINIBAND [=m]
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
+filesystem in 1th superblock
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
+filesystem in 2th superblock
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
 
-Add dependencies to fix this.
+which was introduced by git commit 5c9b469295fb6b10d98923eab5e79c4edb80ed20
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+tested on git kernel 4.17.0-rc6-00309-gec30dcf7f425
+
+with patch applied:
+
+modprobe: ERROR: could not insert 'f2fs': Invalid argument
+May 28 01:40:28 v215 kernel: F2FS not supported on PAGE_SIZE(8192) != 4096
+
+Signed-off-by: Anatoly Pugachev <matorola@gmail.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rdmavt/Kconfig |    2 +-
- drivers/infiniband/sw/rxe/Kconfig    |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/infiniband/sw/rdmavt/Kconfig
-+++ b/drivers/infiniband/sw/rdmavt/Kconfig
-@@ -1,6 +1,6 @@
- config INFINIBAND_RDMAVT
- 	tristate "RDMA verbs transport library"
--	depends on 64BIT
-+	depends on 64BIT && ARCH_DMA_ADDR_T_64BIT
- 	depends on PCI
- 	select DMA_VIRT_OPS
- 	---help---
---- a/drivers/infiniband/sw/rxe/Kconfig
-+++ b/drivers/infiniband/sw/rxe/Kconfig
-@@ -1,6 +1,7 @@
- config RDMA_RXE
- 	tristate "Software RDMA over Ethernet (RoCE) driver"
- 	depends on INET && PCI && INFINIBAND
-+	depends on !64BIT || ARCH_DMA_ADDR_T_64BIT
- 	select NET_UDP_TUNNEL
- 	select CRYPTO_CRC32
- 	select DMA_VIRT_OPS
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2663,6 +2663,12 @@ static int __init init_f2fs_fs(void)
+ {
+ 	int err;
+ 
++	if (PAGE_SIZE != F2FS_BLKSIZE) {
++		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
++				PAGE_SIZE, F2FS_BLKSIZE);
++		return -EINVAL;
++	}
++
+ 	f2fs_build_trace_ios();
+ 
+ 	err = init_inodecache();
 
 
