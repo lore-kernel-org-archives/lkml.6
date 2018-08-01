@@ -2,78 +2,90 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394A8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F579C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB58208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB58208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id DA00D208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:34:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA00D208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403907AbeHASUm (ORCPT
+        id S2403921AbeHASUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 14:20:42 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:55084 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403845AbeHASUm (ORCPT
+        Wed, 1 Aug 2018 14:20:45 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3093 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403846AbeHASUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 14:20:42 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fku4f-0002RB-0L; Wed, 01 Aug 2018 16:34:09 +0000
-Date:   Wed, 1 Aug 2018 17:34:08 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Commit "new primitive: discard_new_inode()" introduces a problem
-Message-ID: <20180801163408.GR30522@ZenIV.linux.org.uk>
-References: <64a0f022-a32d-d4ee-7464-5c5ce0ebd222@virtuozzo.com>
- <20180801151937.GN30522@ZenIV.linux.org.uk>
- <96e3c195-aaca-9214-0dcd-5c2b970a72ae@virtuozzo.com>
- <20180801161151.GO30522@ZenIV.linux.org.uk>
- <20180801161648.GP30522@ZenIV.linux.org.uk>
- <31fa5f9e-6378-2345-777c-7deb6f9a2d19@virtuozzo.com>
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b61e0fd0002>; Wed, 01 Aug 2018 09:34:05 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 01 Aug 2018 09:34:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:34:10 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:34:10 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Wed, 1 Aug 2018 16:34:10 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b61e0ff0000>; Wed, 01 Aug 2018 09:34:09 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH 29/40] mmc: tegra: Enable UHS and HS200 modes for Tegra186
+Date:   Wed, 1 Aug 2018 19:32:19 +0300
+Message-ID: <1533141150-10511-30-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31fa5f9e-6378-2345-777c-7deb6f9a2d19@virtuozzo.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 07:19:35PM +0300, Kirill Tkhai wrote:
-> On 01.08.2018 19:16, Al Viro wrote:
-> > On Wed, Aug 01, 2018 at 05:11:51PM +0100, Al Viro wrote:
-> >> On Wed, Aug 01, 2018 at 06:43:56PM +0300, Kirill Tkhai wrote:
-> >>> #git status
-> >>> HEAD detached at 22dc9a168272
-> >>
-> >> Wait a sec - just that commit?  With discard_new_inode() not even
-> >> used anywhere?  Then any of those -ENOMEM is disguised ERR_PTR(-ESTALE)
-> >> from find_inode()/find_inode_fast(), i.e. an inode found by
-> >> iget5_locked() (your /etc is on ext4) with I_CREATING still set.
-> > 
-> > iget_locked(), that is.
+Set nvquirks to enable higher speed modes.
 
-OK, I see what's going on there.  See if this fixes the problem:
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 0e8e5de3c48a..b11f566bcd66 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1892,7 +1892,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode->i_state & I_NEW));
--	inode->i_state &= ~I_NEW;
-+	inode->i_state &= ~I_NEW & ~I_CREATING;
- 	smp_mb();
- 	wake_up_bit(&inode->i_state, __I_NEW);
- 	spin_unlock(&inode->i_lock);
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 03a6bf7..7f1ac4a 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -872,7 +872,9 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+ 	.pdata = &sdhci_tegra186_pdata,
+ 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
+ 		    NVQUIRK_HAS_PADCALIB |
+-		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP,
++		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
++		    NVQUIRK_ENABLE_SDR50 |
++		    NVQUIRK_ENABLE_SDR104,
+ };
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
+-- 
+2.7.4
+
