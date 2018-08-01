@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CA3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2978C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 313F120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313F120862
+	by mail.kernel.org (Postfix) with ESMTP id 7AF8120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF8120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732899AbeHATzv (ORCPT
+        id S1732932AbeHAT4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:55:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+        Wed, 1 Aug 2018 15:56:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50270 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405776AbeHATIg (ORCPT
+        with ESMTP id S2405745AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 610391162;
-        Wed,  1 Aug 2018 17:06:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C36C1114A;
+        Wed,  1 Aug 2018 17:05:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 239/336] net: hns3: Fixes the out of bounds access in hclge_map_tqp
-Date:   Wed,  1 Aug 2018 18:49:34 +0200
-Message-Id: <20180801165038.203153507@linuxfoundation.org>
+Subject: [PATCH 4.17 227/336] media: em28xx: fix a regression with HVR-950
+Date:   Wed,  1 Aug 2018 18:49:22 +0200
+Message-Id: <20180801165037.757950162@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,40 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit 38e62046d4c95272e2fb001d2d72baf48fa090e9 ]
+[ Upstream commit 509f89652f83e834b3ef7a083e2eeac812b055f0 ]
 
-This patch fixes the handling of the check when number of vports
-are detected to be more than available TPQs. Current handling causes
-an out of bounds access in hclge_map_tqp().
+Commit be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner
+functionality") removed the logic with sets the alternate for the DVB
+device. Without setting the right alternate, the device won't be
+able to submit URBs, and userspace fails with -EMSGSIZE:
 
-Fixes: 7df7dad633e2 ("net: hns3: Refactor the mapping of tqp to vport")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	ERROR     DMX_SET_PES_FILTER failed (PID = 0x2000): 90 Message too long
+
+Tested with Hauppauge HVR-950 model A1C0.
+
+Fixes: be7fd3c3a8c5 ("media: em28xx: Hauppauge DualHD second tuner functionality")
+
+Cc: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/usb/em28xx/em28xx-dvb.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -1459,8 +1459,11 @@ static int hclge_alloc_vport(struct hclg
- 	/* We need to alloc a vport for main NIC of PF */
- 	num_vport = hdev->num_vmdq_vport + hdev->num_req_vfs + 1;
+--- a/drivers/media/usb/em28xx/em28xx-dvb.c
++++ b/drivers/media/usb/em28xx/em28xx-dvb.c
+@@ -199,6 +199,7 @@ static int em28xx_start_streaming(struct
+ 	int rc;
+ 	struct em28xx_i2c_bus *i2c_bus = dvb->adapter.priv;
+ 	struct em28xx *dev = i2c_bus->dev;
++	struct usb_device *udev = interface_to_usbdev(dev->intf);
+ 	int dvb_max_packet_size, packet_multiplier, dvb_alt;
  
--	if (hdev->num_tqps < num_vport)
--		num_vport = hdev->num_tqps;
-+	if (hdev->num_tqps < num_vport) {
-+		dev_err(&hdev->pdev->dev, "tqps(%d) is less than vports(%d)",
-+			hdev->num_tqps, num_vport);
-+		return -EINVAL;
-+	}
+ 	if (dev->dvb_xfer_bulk) {
+@@ -217,6 +218,7 @@ static int em28xx_start_streaming(struct
+ 		dvb_alt = dev->dvb_alt_isoc;
+ 	}
  
- 	/* Alloc the same number of TQPs for every vport */
- 	tqp_per_vport = hdev->num_tqps / num_vport;
++	usb_set_interface(udev, dev->ifnum, dvb_alt);
+ 	rc = em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
+ 	if (rc < 0)
+ 		return rc;
 
 
