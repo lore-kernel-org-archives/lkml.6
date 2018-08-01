@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7500FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D32C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37EF72083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EF72083D
+	by mail.kernel.org (Postfix) with ESMTP id 1ABA920844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ABA920844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406898AbeHATM3 (ORCPT
+        id S2406910AbeHATMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51402 "EHLO
+        Wed, 1 Aug 2018 15:12:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405142AbeHATM1 (ORCPT
+        with ESMTP id S2405142AbeHATMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:27 -0400
+        Wed, 1 Aug 2018 15:12:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C292DCC3;
-        Wed,  1 Aug 2018 17:25:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F8DACC3;
+        Wed,  1 Aug 2018 17:25:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 029/144] pnfs: Dont release the sequence slot until weve processed layoutget on open
-Date:   Wed,  1 Aug 2018 18:50:56 +0200
-Message-Id: <20180801164951.323556822@linuxfoundation.org>
+Subject: [PATCH 4.9 030/144] disable loading f2fs module on PAGE_SIZE > 4KB
+Date:   Wed,  1 Aug 2018 18:50:57 +0200
+Message-Id: <20180801164951.389961152@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,40 +51,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Anatoly Pugachev <matorola@gmail.com>
 
-[ Upstream commit ae55e59da0e401893b3c52b575fc18a00623d0a1 ]
+[ Upstream commit 4071e67cffcc5c2a007116a02437471351f550eb ]
 
-If the server recalls the layout that was just handed out, we risk hitting
-a race as described in RFC5661 Section 2.10.6.3 unless we ensure that we
-release the sequence slot after processing the LAYOUTGET operation that
-was sent as part of the OPEN compound.
+The following patch disables loading of f2fs module on architectures
+which have PAGE_SIZE > 4096 , since it is impossible to mount f2fs on
+such architectures , log messages are:
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+mount: /mnt: wrong fs type, bad option, bad superblock on
+/dev/vdiskb1, missing codepage or helper program, or other error.
+/dev/vdiskb1: F2FS filesystem,
+UUID=1d8b9ca4-2389-4910-af3b-10998969f09c, volume name ""
+
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
+filesystem in 1th superblock
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
+filesystem in 2th superblock
+May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
+page_cache_size (8192), supports only 4KB
+
+which was introduced by git commit 5c9b469295fb6b10d98923eab5e79c4edb80ed20
+
+tested on git kernel 4.17.0-rc6-00309-gec30dcf7f425
+
+with patch applied:
+
+modprobe: ERROR: could not insert 'f2fs': Invalid argument
+May 28 01:40:28 v215 kernel: F2FS not supported on PAGE_SIZE(8192) != 4096
+
+Signed-off-by: Anatoly Pugachev <matorola@gmail.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4proc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2701,7 +2701,7 @@ static int _nfs4_open_and_get_state(stru
- 	if (ret != 0)
- 		goto out;
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1980,6 +1980,12 @@ static int __init init_f2fs_fs(void)
+ {
+ 	int err;
  
--	state = nfs4_opendata_to_nfs4_state(opendata);
-+	state = _nfs4_opendata_to_nfs4_state(opendata);
- 	ret = PTR_ERR(state);
- 	if (IS_ERR(state))
- 		goto out;
-@@ -2737,6 +2737,7 @@ static int _nfs4_open_and_get_state(stru
- 			nfs4_schedule_stateid_recovery(server, state);
- 	}
- out:
-+	nfs4_sequence_free_slot(&opendata->o_res.seq_res);
- 	return ret;
- }
++	if (PAGE_SIZE != F2FS_BLKSIZE) {
++		printk("F2FS not supported on PAGE_SIZE(%lu) != %d\n",
++				PAGE_SIZE, F2FS_BLKSIZE);
++		return -EINVAL;
++	}
++
+ 	f2fs_build_trace_ios();
  
+ 	err = init_inodecache();
 
 
