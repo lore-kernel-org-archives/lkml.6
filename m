@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16606C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99340C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBBE1208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBE1208A4
+	by mail.kernel.org (Postfix) with ESMTP id 5E22F208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E22F208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731051AbeHAToh (ORCPT
+        id S2405973AbeHATIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:44:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405944AbeHATIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405920AbeHATIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 820F2135E;
-        Wed,  1 Aug 2018 17:13:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C76E13ED;
+        Wed,  1 Aug 2018 17:16:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 036/246] perf tools: Fix pmu events parsing rule
-Date:   Wed,  1 Aug 2018 18:49:06 +0200
-Message-Id: <20180801165013.410163673@linuxfoundation.org>
+Subject: [PATCH 4.14 098/246] ath: Add regulatory mapping for Bermuda
+Date:   Wed,  1 Aug 2018 18:50:08 +0200
+Message-Id: <20180801165016.410513002@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -56,82 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit ceac7b79df7bd67ef9aaf464b0179a2686aff4ee ]
+[ Upstream commit 9c790f2d234f65697e3b0948adbfdf36dbe63dd7 ]
 
-Currently all the event parsing fails end up
-in the event_pmu rule, and display misleading
-help like:
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-  $ perf stat -e inst kill
-  event syntax error: 'inst'
-                       \___ Cannot find PMU `inst'. Missing kernel support?
-  ...
+  Invalid EEPROM contents
 
-The reason is that the event_pmu is too strong
-and match also single string. Changing it to
-force the '/' separators to be part of the rule,
-and getting the proper error now:
+The current CTL mappings for this country are:
 
-  $ perf stat -e inst kill
-  event syntax error: 'inst'
-                       \___ parser error
-  Run 'perf list' for a list of valid events
-  ...
+* 2.4GHz: FCC
+* 5GHz: FCC
 
-Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180605121416.31645-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/parse-events.y |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -72,6 +72,7 @@ static void inc_group_count(struct list_
- %type <num> value_sym
- %type <head> event_config
- %type <head> opt_event_config
-+%type <head> opt_pmu_config
- %type <term> event_term
- %type <head> event_pmu
- %type <head> event_legacy_symbol
-@@ -223,7 +224,7 @@ event_def: event_pmu |
- 	   event_bpf_file
- 
- event_pmu:
--PE_NAME opt_event_config
-+PE_NAME opt_pmu_config
- {
- 	struct list_head *list, *orig_terms, *terms;
- 
-@@ -485,6 +486,17 @@ opt_event_config:
- {
- 	$$ = NULL;
- }
-+
-+opt_pmu_config:
-+'/' event_config '/'
-+{
-+	$$ = $2;
-+}
-+|
-+'/' '/'
-+{
-+	$$ = NULL;
-+}
- 
- start_terms: event_config
- {
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -74,6 +74,7 @@ enum CountryCode {
+ 	CTRY_BELARUS = 112,
+ 	CTRY_BELGIUM = 56,
+ 	CTRY_BELIZE = 84,
++	CTRY_BERMUDA = 60,
+ 	CTRY_BOLIVIA = 68,
+ 	CTRY_BOSNIA_HERZ = 70,
+ 	CTRY_BRAZIL = 76,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -313,6 +313,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_BELGIUM, ETSI1_WORLD, "BE"},
+ 	{CTRY_BELGIUM2, ETSI4_WORLD, "BL"},
+ 	{CTRY_BELIZE, APL1_ETSIC, "BZ"},
++	{CTRY_BERMUDA, FCC3_FCCA, "BM"},
+ 	{CTRY_BOLIVIA, APL1_ETSIC, "BO"},
+ 	{CTRY_BOSNIA_HERZ, ETSI1_WORLD, "BA"},
+ 	{CTRY_BRAZIL, FCC3_WORLD, "BR"},
 
 
