@@ -6,41 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81E4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0903CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C8320862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C8320862
+	by mail.kernel.org (Postfix) with ESMTP id A857C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A857C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406248AbeHATJH (ORCPT
+        id S2390352AbeHATJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50692 "EHLO
+        Wed, 1 Aug 2018 15:09:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406225AbeHATJG (ORCPT
+        with ESMTP id S2389759AbeHATJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:06 -0400
+        Wed, 1 Aug 2018 15:09:15 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9734ACC9;
-        Wed,  1 Aug 2018 17:22:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71700D2F;
+        Wed,  1 Aug 2018 17:22:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kirill Marinushkin <k.marinushkin@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        alsa-devel@alsa-project.org,
+        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 211/246] ASoC: topology: Add missing clock gating parameter when parsing hw_configs
-Date:   Wed,  1 Aug 2018 18:52:01 +0200
-Message-Id: <20180801165021.801227747@linuxfoundation.org>
+Subject: [PATCH 4.14 214/246] drm/dp/mst: Fix off-by-one typo when dump payload table
+Date:   Wed,  1 Aug 2018 18:52:04 +0200
+Message-Id: <20180801165021.950806129@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -57,100 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 933e1c4a667103c4d10ebdc9505a0a6abd8c3fbd ]
+[ Upstream commit 7056a2bccc3b5afc51f9b35b30a46f0d9219968d ]
 
-Clock gating parameter is a part of `dai_fmt`. It is supported by
-`alsa-lib` when creating a topology binary file, but ignored by kernel
-when loading this topology file.
+It seems there is a classical off-by-one typo from the beginning
+when commit
 
-After applying this commit, the clock gating parameter is not ignored any
-more. This solution is backwards compatible. The existing behaviour is
-not broken, because by default the parameter value is 0 and is ignored.
+  ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
 
-snd_soc_tplg_hw_config.clock_gated = 0 => no effect
-snd_soc_tplg_hw_config.clock_gated = 1 => SND_SOC_DAIFMT_GATED
-snd_soc_tplg_hw_config.clock_gated = 2 => SND_SOC_DAIFMT_CONT
+introduced a new helper.
 
-For example, the following config, based on
-alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
+Fix a typo by introducing a macro constant.
 
-~~~~
-SectionHWConfig."CodecHWConfig" {
-        id "1"
-        format "I2S"            # physical audio format.
-        pm_gate_clocks "true"   # clock can be gated
-}
-
-SectionLink."Codec" {
-
-        # used for binding to the physical link
-        id "0"
-
-        hw_configs [
-                "CodecHWConfig"
-        ]
-
-        default_hw_conf_id "1"
-}
-~~~~
-
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pan Xiuli <xiuli.pan@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180319141932.37290-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/sound/asoc.h |    7 ++++++-
- sound/soc/soc-topology.c  |    7 +++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/include/uapi/sound/asoc.h
-+++ b/include/uapi/sound/asoc.h
-@@ -139,6 +139,11 @@
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_CHANNELS      (1 << 1)
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2862,12 +2862,14 @@ static void drm_dp_mst_dump_mstb(struct
+ 	}
+ }
  
-+/* DAI clock gating */
-+#define SND_SOC_TPLG_DAI_CLK_GATE_UNDEFINED	0
-+#define SND_SOC_TPLG_DAI_CLK_GATE_GATED	1
-+#define SND_SOC_TPLG_DAI_CLK_GATE_CONT		2
++#define DP_PAYLOAD_TABLE_SIZE		64
 +
- /* DAI physical PCM data formats.
-  * Add new formats to the end of the list.
-  */
-@@ -324,7 +329,7 @@ struct snd_soc_tplg_hw_config {
- 	__le32 size;            /* in bytes of this structure */
- 	__le32 id;		/* unique ID - - used to match */
- 	__le32 fmt;		/* SND_SOC_DAI_FORMAT_ format value */
--	__u8 clock_gated;	/* 1 if clock can be gated to save power */
-+	__u8 clock_gated;	/* SND_SOC_TPLG_DAI_CLK_GATE_ value */
- 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
- 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
- 	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1997,6 +1997,13 @@ static void set_link_hw_format(struct sn
+ static bool dump_dp_payload_table(struct drm_dp_mst_topology_mgr *mgr,
+ 				  char *buf)
+ {
+ 	int i;
  
- 		link->dai_fmt = hw_config->fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+-	for (i = 0; i < 64; i += 16) {
++	for (i = 0; i < DP_PAYLOAD_TABLE_SIZE; i += 16) {
+ 		if (drm_dp_dpcd_read(mgr->aux,
+ 				     DP_PAYLOAD_TABLE_UPDATE_STATUS + i,
+ 				     &buf[i], 16) != 16)
+@@ -2936,7 +2938,7 @@ void drm_dp_mst_dump_topology(struct seq
  
-+		/* clock gating */
-+		if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
-+			link->dai_fmt |= SND_SOC_DAIFMT_GATED;
-+		else if (hw_config->clock_gated ==
-+			 SND_SOC_TPLG_DAI_CLK_GATE_CONT)
-+			link->dai_fmt |= SND_SOC_DAIFMT_CONT;
-+
- 		/* clock signal polarity */
- 		invert_bclk = hw_config->invert_bclk;
- 		invert_fsync = hw_config->invert_fsync;
+ 	mutex_lock(&mgr->lock);
+ 	if (mgr->mst_primary) {
+-		u8 buf[64];
++		u8 buf[DP_PAYLOAD_TABLE_SIZE];
+ 		int ret;
+ 
+ 		ret = drm_dp_dpcd_read(mgr->aux, DP_DPCD_REV, buf, DP_RECEIVER_CAP_SIZE);
+@@ -2954,8 +2956,7 @@ void drm_dp_mst_dump_topology(struct seq
+ 		seq_printf(m, " revision: hw: %x.%x sw: %x.%x\n",
+ 			   buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
+ 		if (dump_dp_payload_table(mgr, buf))
+-			seq_printf(m, "payload table: %*ph\n", 63, buf);
+-
++			seq_printf(m, "payload table: %*ph\n", DP_PAYLOAD_TABLE_SIZE, buf);
+ 	}
+ 
+ 	mutex_unlock(&mgr->lock);
 
 
