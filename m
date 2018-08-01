@@ -2,286 +2,187 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB445C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CA0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33AAA208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FF52208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IXcBuGW2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AAA208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vn6qB8CP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF52208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387659AbeHAMYP (ORCPT
+        id S2387707AbeHAM0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:24:15 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:38030 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387537AbeHAMYO (ORCPT
+        Wed, 1 Aug 2018 08:26:40 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42966 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387520AbeHAM0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:24:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0YB9BThmTaCFlel0HY9fVRZLeFRXFWo0RKnRV1XJ12g=; b=IXcBuGW2Wilj0MECm8kSoR1mn
-        uzC42SCeqGdwP4ws+cNy0LnCmXESwULNj42toPDWBYFrKsbI9X8mec4JgkaTmOU+7rR6Pbbd7+KSE
-        EEXm4jcrCkUSr6QrM6wwJGi1S1NM8UzMWdAIY7E/aix/uW0jPMd47iY1cGDZ87FM7+QN4=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:59574)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fkoWx-00036r-QG; Wed, 01 Aug 2018 11:38:59 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fkoWu-0002ZE-MI; Wed, 01 Aug 2018 11:38:56 +0100
-Date:   Wed, 1 Aug 2018 11:38:55 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Alex Bounine <alex.bou9@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, John Paul Walters <jwalters@isi.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Colin <acolin@isi.edu>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-Message-ID: <20180801103855.GD30658@n2100.armlinux.org.uk>
-References: <20180730225035.28365-1-acolin@isi.edu>
- <20180730225035.28365-7-acolin@isi.edu>
- <20180731084143.GA4680@arm.com>
- <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
- <20180731155228.GN17271@n2100.armlinux.org.uk>
- <044af717-3883-a7a6-c346-18fa8cebce76@gmail.com>
- <20180731181834.GA30658@n2100.armlinux.org.uk>
- <570ad147-3c58-8911-0111-29e21087ca7a@gmail.com>
+        Wed, 1 Aug 2018 08:26:39 -0400
+Received: by mail-pl0-f68.google.com with SMTP id z7-v6so8599901plo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 03:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3M4sBadFEFJG2NUCcJ+Pg/X6EyZYgx2cEKus78QOmEM=;
+        b=vn6qB8CPlDWlEJujQzfRSc9tAr4OECHhLP/inJcZ3JaWJq1N6CPnf1gipODZlGJV86
+         Xq3188y+M9MkF2R1ITmLLdSrpMda1KvKTC0nCU2wIYJXsXI5Nkx7er6b0SI9GO5/gd5l
+         AZwsK5Y8SM2VVvUCXHxdEG+X4rYsx2GD5ds6eEVYVYWJ1hHz4FOHBGKz32fEE6HGbaP+
+         KN+AosNmLS8fKq33MZS7zm0fT1IENriGUIqsLhD3b5xjys/x9N9YHfDEjWsqqUVBQaL/
+         VAdJG5THH5EgiA2+T2D2xPyBOfNXBjSl0NZyND0DtTqMsr69y+fK4jiWetEg1sIq1XV3
+         mOCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3M4sBadFEFJG2NUCcJ+Pg/X6EyZYgx2cEKus78QOmEM=;
+        b=klTCZMf8pOuURrPrZzOFONRMwJyHWX1WjKW0QVAc9WLEmqruW5DeFJ8HpcHSKpFt2U
+         0EY7yOgWD/BXgXJMopMGLoFcrx7vMRXYQ1V3nYaXh5SaDYSWyvtnIaqmeG7xWF+IOX46
+         DZt2BjSXiT6lSa2PO2FUPDFi04z9ZN47ncPuI/m73sMY53Z7yYHuoKfnvEIkSOYbT06a
+         D7t88k5wiKZEjIxmZTUaIvfZpirRUfVO190hE9tr9IR8nNtNOeMOD0TNL8+uAp24G0uC
+         sw2dSUG+D5Atfm9Sjwxhi7AatZMpMsqUN7h9m0CPNAhWXZrcN4lex6wasW40Wwfkrez0
+         mk/g==
+X-Gm-Message-State: AOUpUlHz8AVyHeyvmeZiKhoa0m5DnodtwU4cA6Lx6WGlWQUA+FY3SEQF
+        dY/lPfZ6HaRPi0jcrV2vaseAL0867kzAE0kbSzHKQA==
+X-Google-Smtp-Source: AAOMgpfsDynppIxaUY8E2167HXKa4hYqjp0H3PM3GOda035d/tUEsf+4olnpK8zm1fP3avq8dPk0Sk6EuBUEsJtsTDw=
+X-Received: by 2002:a17:902:4401:: with SMTP id k1-v6mr22012929pld.97.1533120090255;
+ Wed, 01 Aug 2018 03:41:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <570ad147-3c58-8911-0111-29e21087ca7a@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 1 Aug 2018 03:41:09
+ -0700 (PDT)
+In-Reply-To: <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
+ <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
+ <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
+ <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
+ <CACT4Y+aYZumcc-Od5T1AnP4mwn8-FaWfxvfb93MnNwQPqG8TDw@mail.gmail.com>
+ <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com> <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 1 Aug 2018 12:41:09 +0200
+Message-ID: <CACT4Y+aHWpgDZygXv=smWwdVMWfjpedyajuVvvLDGMK-wFD5Lw@mail.gmail.com>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        David Miller <davem@davemloft.net>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        coreteam@netfilter.org,
+        Network Development <netdev@vger.kernel.org>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Dave Airlie <airlied@linux.ie>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 04:01:27PM -0400, Alex Bounine wrote:
-> On 2018-07-31 02:18 PM, Russell King - ARM Linux wrote:
-> >On Tue, Jul 31, 2018 at 01:59:27PM -0400, Alex Bounine wrote:
-> >>On 2018-07-31 11:52 AM, Russell King - ARM Linux wrote:
-> >>>On Tue, Jul 31, 2018 at 08:54:14AM -0400, Alex Bounine wrote:
-> >>>>On 2018-07-31 04:41 AM, Will Deacon wrote:
-> >>>>>On Mon, Jul 30, 2018 at 06:50:34PM -0400, Alexei Colin wrote:
-> >>>>>>Platforms with a PCI bus will be offered the RapidIO menu since they may
-> >>>>>>be want support for a RapidIO PCI device. Platforms without a PCI bus
-> >>>>>>that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
-> >>>>>>in the platform-/machine-specific "config ARCH_*" Kconfig entry.
-> >>>>>>
-> >>>>>>Tested that kernel builds for arm64 with RapidIO subsystem and
-> >>>>>>switch drivers enabled, also that the modules load successfully
-> >>>>>>on a custom Aarch64 Qemu model.
-> >>>>>>
-> >>>>>>Cc: Andrew Morton <akpm@linux-foundation.org>
-> >>>>>>Cc: Russell King <linux@armlinux.org.uk>
-> >>>>>>Cc: John Paul Walters <jwalters@isi.edu>
-> >>>>>>Cc: linux-arm-kernel@lists.infradead.org
-> >>>>>>Cc: linux-kernel@vger.kernel.org,
-> >>>>>>Signed-off-by: Alexei Colin <acolin@isi.edu>
-> >>>>>>---
-> >>>>>>  arch/arm64/Kconfig | 2 ++
-> >>>>>>  1 file changed, 2 insertions(+)
-> >>>>>
-> >>>>>Thanks, this looks much cleaner than before:
-> >>>>>
-> >>>>>Acked-by: Will Deacon <will.deacon@arm.com>
-> >>>>>
-> >>>>>The only thing I'm not sure about is why we don't just select HAS_RAPIDIO
-> >>>>>unconditionally in the arm64 Kconfig. Does selecting only that option
-> >>>>>actually pull in new code to the build?
-> >>>>>
-> >>>>HAS_RAPIDIO option is intended for SOCs that have built in SRIO controllers,
-> >>>>like TI KeyStoneII or FPGAs. Because RapidIO subsystem core is required
-> >>>>during RapidIO port driver initialization, having separate option allows us
-> >>>>to control available build options for RapidIO core and port driver (bool
-> >>>>vs. tristate) and disable module option if port driver is configured as
-> >>>>built-in.
-> >>>
-> >>>Your explanation doesn't make much sense to me.
-> >>>
-> >>>RAPIDIO is the bus-level support, right?  So drivers that depend on
-> >>>the bus-level support should depend on RAPIDIO, and so, if RAPIDIO
-> >>>is configured as a module, they will also be allowed to be disabled
-> >>>or a module, but not built-in if tristate.  If it is boolean, and
-> >>>causes the driver to be built-in to the kernel, then you need to use
-> >>>"RAPIDIO=y" so that it's dependency is only satisfied when the core
-> >>>is built-in.
-> >>>
-> >>
-> >>RapidIO host controllers (on local bus like SoC internal or PCIe) are
-> >>serviced by MPORT device drivers that are subsystem specific and communicate
-> >>with RapidIO core using set of callbacks. Depending on HW architecture these
-> >>drivers may be defined as built-in or module.
-> >
-> >Why does hardware architecture define whether something has to be built
-> >in or can be modular?
-> >
-> >It is the case today that (eg) on-SoC hardware _can_ be built as a module
-> >if desired - just because it's on the SoC does not mean it has to be
-> >built in to the kernel.  Why is RapidIO any different?
-> >
-> 
-> Not HW architecture - legacy can be blamed as well. Freescale's FSL_RIO
-> driver still exist as built-in so far. Intent of this patch set is to allow
-> RapidIO support in more architectures without reworking old stuff.
-> I do not think that anyone will be updating FSL_RIO driver soon.
+On Wed, Aug 1, 2018 at 12:35 PM, Florian Westphal <fw@strlen.de> wrote:
+> Dmitry Vyukov <dvyukov@google.com> wrote:
+>> Still can't grasp all details.
+>> There is state that we read without taking ct->ct_general.use ref
+>> first, namely ct->state and what's used by nf_ct_key_equal.
+>> So let's say the entry we want to find is in the list, but
+>> ____nf_conntrack_find finds a wrong entry earlier because all state it
+>> looks at is random garbage, so it returns the wrong entry to
+>> __nf_conntrack_find_get.
+>
+> If an entry can be found, it can't be random garbage.
+> We never link entries into global table until state has been set up.
 
-Sorry, but I'm even more confused.  If it's not hardware architecture,
-then why did you say previously "Depending on HW architecture these
-drivers may be defined as built-in or module." ?
 
-If it's that the driver isn't written to be a module, then that is not
-"HW architecture".  Are you just trying to muddy the water?
+But... we don't hold a reference to the entry. So say it's in the
+table with valid state, now ____nf_conntrack_find discovers it, now
+the entry is removed and reused a dozen of times will all associated
+state reinitialization. And nf_ct_key_equal looks at it concurrently
+and decides if it's the entry we are looking for or now. I think
+unless we hold a ref to the entry, it's state needs to be considered
+random garbage for correctness reasoning.
 
-> Also we cannot dictate to developers of future drivers which method to use -
-> they may have built-in option only for the first release.
 
-How is that any different from all the other drivers that we have?
-
-If a driver can only be built-in, then we do this in the Kconfig:
-
-config DRIVERFOO
-	bool "Support driverfoo"
-	depends on SUBSYSTEM=y
-
-which ensures that the driver can only be built when it's dependent
-subsystem is also built-in.
-
-There is another alternative way, which is:
-
-config SUBSYSTEM
-	tristate
-
-config DRIVERFOO
-	bool "Support driverfoo"
-	select SUBSYSTEM
-
-config DRIVERBAR
-	tristate "Support driverbar"
-	select SUBSYSTEM
-
-and "SUBSYSTEM" will automatically adopt either 'm' or 'y' correctly
-depending on whether any drivers are built-in or not.
-
-> Unfortunately we have on hands dependency between mport driver build mode
-> and  RapidIO core which we need to respect.
-
-How is that any different from (eg) hundreds of network drivers and the
-networking core code that we already have?  That doesn't have such a
-convoluted configuration system, and what you have is much simpler.
-
-> >For example, can you point out why my idea I present below would not
-> >work?
-> 
-> See below.
-> 
-> >
-> >>For peripheral devices attached to the RapidIO fabric such dependency on
-> >>local mport implementation does not exist and therefore they all can be
-> >>treated as tristate.
-> >>
-> >>>HAS_RAPIDIO gives the impression that it defines whether or not
-> >>>the rapidio core code is allowable or not - it doesn't suggest that
-> >>>it has anything to do with drivers. However, reading the PowerPC
-> >>>Kconfig files, it seems to be used that way.  That's confusing, and
-> >>>ought to be fixed.  From what I can tell, it's only used for FSL_RIO,
-> >>>so I suggest that gets converted to:
-> >>>
-> >>>config HAS_RAPIDIO
-> >>>	bool PCI
-> 
-> PCI and RAPIDIO can be mutually exclusive.
-
-Please explain this in light of your patches which contain:
-
-config RAPIDIO
-	tristate "RapidIO support"
-	depends on HAS_RAPIDIO || PCI
-
-This allows RAPIDIO can be selected when PCI is enabled.  Therefore,
-PCI and RAPIDIO *are not* mutually exclusive as your comment above
-states, therefore, I have to assume that your comment is wrong.
-
-> >>>
-> >>>config RAPIDIO
-> >>>	tristate "RapidIO support"
-> >>>	depends on HAS_RAPIDIO
-> >>>
-> >>>config HAS_FSL_RIO
-> >>>	bool
-> >>>	select HAS_RAPIDIO
-> 
-> Introducing new variable HAS_FSL_RIO here. Do you suggest having one for
-> each ARM-based board that has on-chip RIO?
-
-No, I'm suggesting a solution for what I see in the kernel tree today,
-which is frankly a mess for the reasons I've already outlined.
-
-HAS_FSL_RIO is based on the _only_ SoC driver apparently in the tree
-based on what I could find in the arch/*/Kconfig files.  If you don't
-think having individual HAS_* options in this way is appropriate,
-then maybe instead having per-SoC hidden HAS_* config options are
-more appropriate.
-
-> >>>
-> >>>config FSL_RIO
-> >>>	bool "Freescale Embedded SRIO Controller support"
-> >>>	depends on RAPIDIO = y && HAS_FSL_RIO
-> >>>
-> >>>This frees up HAS_RAPIDIO to operate as one would expect - to define
-> >>>whether or not RAPIDIO should be offered.  This also allows:
-> >>>
-> >>>config ARM
-> >>>	select HAS_RAPIDIO if PCI
-> 
-> Some SOCs can be configured without PCI. We have confusing action here - we
-> have to enable PCI on platform that does not have it.
-
-Again, you said above "PCI and RAPIDIO can be mutually exclusive."  This
-comment self-conflicts with your previous comment.
-
-What you now seem to be saying goes against the patches and the current
-Kconfig.  You seem to be saying that RAPIDIO _requires_ PCI.
-
-So, we now have three completely different statements from you:
-- "we have to enable PCI on platform that does not have it."
-- "PCI and RAPIDIO can be mutually exclusive."
-- RAPIDIO does not require PCI (since HAS_RAPIDIO=y RAPIDIO=y PCI=n is
-  a permissible configuration as things stand with PowerPC.)
-
-Which is it?
-
-It seems to be that your replies are just muddying the water - I can
-only assume that this is to make us give up.  Please don't do that,
-it's not in your interest.
-
-> Why we cannot use "select HAS_RAPIDIO" HW-specific Kconfig file
-> (mach-*/Kconfig)? And have on-chip port selection in the same board-specific
-> place.
-
-As I've already explained, HAS_RAPIDIO has the expectation that it
-controls the availability of the RAPIDIO option, not of drivers.
-It is HAS_*RAPIDIO*, the clue is in the name.  Using it as you are
-(basically, to mean that on-SoC rapidio hardware is present) and
-allowing such configurations as HAS_RAPIDIO=n RAPIDIO=y PCI=y is
-completely counter-intuitive.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+>> Now (nf_ct_is_dying(ct) || !atomic_inc_not_zero(&ct->ct_general.use))
+>> check in __nf_conntrack_find_get passes, and it returns NULL to the
+>> caller (which means entry is not present).
+>
+> So entry is going away or marked as dead which for us is same as
+> 'not present', we need to allocate a new entry.
+>
+>> While in reality the entry
+>> is present, but we were just looking at the wrong one.
+>
+> We never add tuples that are identical to the global table.
+>
+> If N cores receive identical packets at same time with no prior state, all
+> will allocate a new conntrack, but we notice this when we try to insert the
+> nf_conn entries into the table.
+>
+> Only one will succeed, other cpus have to cope with this.
+> (worst case: all raced packets are dropped along with their conntrack
+>  object).
+>
+> For lookup, we have following scenarios:
+>
+> 1. It doesn't exist -> new allocation needed
+> 2. It exists, not dead, has nonzero refount -> use it
+> 3. It exists, but marked as dying -> new allocation needed
+> 4. It exists but has 0 reference count -> new allocation needed
+> 5. It exists, we get reference, but 2nd nf_ct_key_equal check
+>    fails.  We saw a matching 'old incarnation' that just got
+>    re-used on other core.  -> retry lookup
+>
+>> Also I am not sure about order of checks in (nf_ct_is_dying(ct) ||
+>> !atomic_inc_not_zero(&ct->ct_general.use)), because checking state
+>> before taking the ref is only a best-effort hint, so it can actually
+>> be a dying entry when we take a ref.
+>
+> Yes, it can also become a dying entry after we took the reference.
+>
+>> So shouldn't it read something like the following?
+>>
+>>         rcu_read_lock();
+>> begin:
+>>         h = ____nf_conntrack_find(net, zone, tuple, hash);
+>>         if (h) {
+>>                 ct = nf_ct_tuplehash_to_ctrack(h);
+>>                 if (!atomic_inc_not_zero(&ct->ct_general.use))
+>>                         goto begin;
+>>                 if (unlikely(nf_ct_is_dying(ct)) ||
+>>                     unlikely(!nf_ct_key_equal(h, tuple, zone, net))) {
+>>                         nf_ct_put(ct);
+>
+> It would be ok to make this change, but dying bit can be set
+> at any time e.g. because userspace tells kernel to flush the conntrack table.
+> So refcount is always > 0 when the DYING bit is set.
+>
+> I don't see why it would be a problem.
+>
+> nf_conn struct will stay valid until all cpus have dropped references.
+> The check in lookup function only serves to hide the known-to-go-away entry.
