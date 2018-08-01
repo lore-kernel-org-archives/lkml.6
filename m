@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 061F7C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03466C46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B913320862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B913320862
+	by mail.kernel.org (Postfix) with ESMTP id B08A820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08A820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405335AbeHATGu (ORCPT
+        id S2405339AbeHATGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49058 "EHLO
+        Wed, 1 Aug 2018 15:06:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49074 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbeHATGt (ORCPT
+        with ESMTP id S2403967AbeHATGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:49 -0400
+        Wed, 1 Aug 2018 15:06:52 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0E96D6A;
-        Wed,  1 Aug 2018 17:20:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0C93CC2;
+        Wed,  1 Aug 2018 17:20:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 167/246] thermal: exynos: fix setting rising_threshold for Exynos5433
-Date:   Wed,  1 Aug 2018 18:51:17 +0200
-Message-Id: <20180801165019.733979912@linuxfoundation.org>
+Subject: [PATCH 4.14 168/246] bpf: fix references to free_bpf_prog_info() in comments
+Date:   Wed,  1 Aug 2018 18:51:18 +0200
+Message-Id: <20180801165019.775715836@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,30 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 8bfc218d0ebbabcba8ed2b8ec1831e0cf1f71629 ]
+[ Upstream commit ab7f5bf0928be2f148d000a6eaa6c0a36e74750e ]
 
-Add missing clearing of the previous value when setting rising
-temperature threshold.
+Comments in the verifier refer to free_bpf_prog_info() which
+seems to have never existed in tree.  Replace it with
+free_used_maps().
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/samsung/exynos_tmu.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/bpf/verifier.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -598,6 +598,7 @@ static int exynos5433_tmu_initialize(str
- 		threshold_code = temp_to_code(data, temp);
- 
- 		rising_threshold = readl(data->base + rising_reg_offset);
-+		rising_threshold &= ~(0xff << j * 8);
- 		rising_threshold |= (threshold_code << j * 8);
- 		writel(rising_threshold, data->base + rising_reg_offset);
- 
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -4110,7 +4110,7 @@ static int replace_map_fd_with_map_ptr(s
+ 			/* hold the map. If the program is rejected by verifier,
+ 			 * the map will be released by release_maps() or it
+ 			 * will be used by the valid program until it's unloaded
+-			 * and all maps are released in free_bpf_prog_info()
++			 * and all maps are released in free_used_maps()
+ 			 */
+ 			map = bpf_map_inc(map, false);
+ 			if (IS_ERR(map)) {
+@@ -4623,7 +4623,7 @@ free_log_buf:
+ 		vfree(log_buf);
+ 	if (!env->prog->aux->used_maps)
+ 		/* if we didn't copy map pointers into bpf_prog_info, release
+-		 * them now. Otherwise free_bpf_prog_info() will release them.
++		 * them now. Otherwise free_used_maps() will release them.
+ 		 */
+ 		release_maps(env);
+ 	*prog = env->prog;
 
 
