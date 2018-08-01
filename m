@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F2EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD6EC46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD4520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD4520862
+	by mail.kernel.org (Postfix) with ESMTP id 4801B208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4801B208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405769AbeHATIf (ORCPT
+        id S1731946AbeHAT5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49438 "EHLO
+        Wed, 1 Aug 2018 15:57:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405275AbeHATId (ORCPT
+        with ESMTP id S2405663AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:33 -0400
+        Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B196D1104;
-        Wed,  1 Aug 2018 17:04:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAC7F10B9;
+        Wed,  1 Aug 2018 17:03:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 216/336] scsi: megaraid: silence a static checker bug
-Date:   Wed,  1 Aug 2018 18:49:11 +0200
-Message-Id: <20180801165037.336436717@linuxfoundation.org>
+Subject: [PATCH 4.17 193/336] ARM: dts: imx53: Fix LDB OF graph warning
+Date:   Wed,  1 Aug 2018 18:48:48 +0200
+Message-Id: <20180801165036.484021502@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,33 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 27e833dabab74ee665e487e291c9afc6d71effba ]
+[ Upstream commit 77dd4bd0c0db8e4856e7abc2192f126e226e14c5 ]
 
-If we had more than 32 megaraid cards then it would cause memory
-corruption.  That's not likely, of course, but it's handy to enforce it
-and make the static checker happy.
+Single child nodes in OF graph don't need an address and now dtc will
+warn about this:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Warning (graph_child_address): /soc/aips@50000000/ldb@53fa8008/lvds-channel@0: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+
+Since the LDB should always have an output port, fix the warning by
+adding the output port, 2, to the DT.
+
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/imx53-ppd.dts |    2 --
+ arch/arm/boot/dts/imx53.dtsi    |    8 ++++++++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -4199,6 +4199,9 @@ megaraid_probe_one(struct pci_dev *pdev,
- 	int irq, i, j;
- 	int error = -ENODEV;
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -559,8 +559,6 @@
+ 		status = "okay";
  
-+	if (hba_count >= MAX_CONTROLLERS)
-+		goto out;
+ 		port@2 {
+-			reg = <2>;
+-
+ 			lvds0_out: endpoint {
+ 				remote-endpoint = <&panel_in_lvds0>;
+ 			};
+--- a/arch/arm/boot/dts/imx53.dtsi
++++ b/arch/arm/boot/dts/imx53.dtsi
+@@ -488,6 +488,10 @@
+ 							remote-endpoint = <&ipu_di0_lvds0>;
+ 						};
+ 					};
 +
- 	if (pci_enable_device(pdev))
- 		goto out;
- 	pci_set_master(pdev);
++					port@2 {
++						reg = <2>;
++					};
+ 				};
+ 
+ 				lvds-channel@1 {
+@@ -503,6 +507,10 @@
+ 							remote-endpoint = <&ipu_di1_lvds1>;
+ 						};
+ 					};
++
++					port@2 {
++						reg = <2>;
++					};
+ 				};
+ 			};
+ 
 
 
