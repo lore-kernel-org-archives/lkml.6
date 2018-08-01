@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ABAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7C8208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7C8208A4
+	by mail.kernel.org (Postfix) with ESMTP id 0320F208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:54:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0320F208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390427AbeHATlF (ORCPT
+        id S2406015AbeHATIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:41:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405959AbeHATIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50216 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405916AbeHATIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 205921113;
-        Wed,  1 Aug 2018 17:04:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FD881084;
+        Wed,  1 Aug 2018 17:02:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Boyko <alexander.boyko@seagate.com>,
-        Alexey Lyashkov <c17817@cray.com>,
-        Doug Oucharek <dougso@me.com>,
-        "John L. Hammond" <john.hammond@intel.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 221/336] staging: lustre: o2iblnd: fix race at kiblnd_connect_peer
-Date:   Wed,  1 Aug 2018 18:49:16 +0200
-Message-Id: <20180801165037.533587582@linuxfoundation.org>
+Subject: [PATCH 4.17 172/336] ALSA: usb-audio: Apply rate limit to warning messages in URB complete callback
+Date:   Wed,  1 Aug 2018 18:48:27 +0200
+Message-Id: <20180801165035.685913851@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -54,63 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Oucahrek <dougso@me.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit cf04968efe341b9b1c30a527e5dd61b2af9c43d2 ]
+[ Upstream commit 377a879d9832f4ba69bd6a1fc996bb4181b1e504 ]
 
-cmid will be destroyed at OFED if kiblnd_cm_callback return error.
-if error happen before the end of kiblnd_connect_peer, it will touch
-destroyed cmid and fail as
-(o2iblnd_cb.c:1315:kiblnd_connect_peer())
-            ASSERTION( cmid->device != ((void *)0) ) failed:
+retire_capture_urb() may print warning messages when the given URB
+doesn't align, and this may flood the system log easily.
+Put the rate limit to the message for avoiding it.
 
-Signed-off-by: Alexander Boyko <alexander.boyko@seagate.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10015
-Reviewed-by: Alexey Lyashkov <c17817@cray.com>
-Reviewed-by: Doug Oucharek <dougso@me.com>
-Reviewed-by: John L. Hammond <john.hammond@intel.com>
-Signed-off-by: Doug Oucharek <dougso@me.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1093485
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   18 +++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ sound/usb/pcm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-@@ -1290,11 +1290,6 @@ kiblnd_connect_peer(struct kib_peer *pee
- 		goto failed2;
- 	}
- 
--	LASSERT(cmid->device);
--	CDEBUG(D_NET, "%s: connection bound to %s:%pI4h:%s\n",
--	       libcfs_nid2str(peer->ibp_nid), dev->ibd_ifname,
--	       &dev->ibd_ifip, cmid->device->name);
--
- 	return;
- 
-  failed2:
-@@ -2996,8 +2991,19 @@ kiblnd_cm_callback(struct rdma_cm_id *cm
- 		} else {
- 			rc = rdma_resolve_route(
- 				cmid, *kiblnd_tunables.kib_timeout * 1000);
--			if (!rc)
-+			if (!rc) {
-+				struct kib_net *net = peer->ibp_ni->ni_data;
-+				struct kib_dev *dev = net->ibn_dev;
-+
-+				CDEBUG(D_NET, "%s: connection bound to "\
-+				       "%s:%pI4h:%s\n",
-+				       libcfs_nid2str(peer->ibp_nid),
-+				       dev->ibd_ifname,
-+				       &dev->ibd_ifip, cmid->device->name);
-+
- 				return 0;
-+			}
-+
- 			/* Can't initiate route resolution */
- 			CERROR("Can't resolve route for %s: %d\n",
- 			       libcfs_nid2str(peer->ibp_nid), rc);
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -1311,7 +1311,7 @@ static void retire_capture_urb(struct sn
+ 		if (bytes % (runtime->sample_bits >> 3) != 0) {
+ 			int oldbytes = bytes;
+ 			bytes = frames * stride;
+-			dev_warn(&subs->dev->dev,
++			dev_warn_ratelimited(&subs->dev->dev,
+ 				 "Corrected urb data len. %d->%d\n",
+ 							oldbytes, bytes);
+ 		}
 
 
