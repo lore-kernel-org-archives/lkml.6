@@ -2,105 +2,73 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF5AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D83C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666BE2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666BE2083D
+	by mail.kernel.org (Postfix) with ESMTP id ED2572083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2572083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387478AbeHATzQ (ORCPT
+        id S1732284AbeHATzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:55:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
+        Wed, 1 Aug 2018 15:55:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58994 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405748AbeHATIg (ORCPT
+        with ESMTP id S1731429AbeHATzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:36 -0400
+        Wed, 1 Aug 2018 15:55:18 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6108E1385;
-        Wed,  1 Aug 2018 17:14:50 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 023/246] skip LAYOUTRETURN if layout is invalid
-Date:   Wed,  1 Aug 2018 18:48:53 +0200
-Message-Id: <20180801165012.806096425@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B2BFCBA;
+        Wed,  1 Aug 2018 18:08:22 +0000 (UTC)
+Date:   Wed, 1 Aug 2018 20:08:07 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Ivan Bornyakov <brnkv.i1@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        benchan@chromium.org, jnjoseph@google.com, rspringer@google.com
+Subject: Re: [PATCH] staging: gasket: sysfs: fix potential null dereference
+Message-ID: <20180801180807.GA31510@kroah.com>
+References: <20180731152320.11575-1-brnkv.i1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731152320.11575-1-brnkv.i1@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jul 31, 2018 at 06:23:20PM +0300, Ivan Bornyakov wrote:
+> Add handling of possible allocation failure.
+> 
+> Reported by smatch:
+> 
+>   drivers/staging/gasket/gasket_sysfs.c:105 put_mapping() error: potential null dereference 'files_to_remove'. (kcalloc returns null)
+> 
+> Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+> ---
+>  drivers/staging/gasket/gasket_sysfs.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
+> index ef4eca02afa6..682e5c21f203 100644
+> --- a/drivers/staging/gasket/gasket_sysfs.c
+> +++ b/drivers/staging/gasket/gasket_sysfs.c
+> @@ -101,6 +101,12 @@ static void put_mapping(struct gasket_sysfs_mapping *mapping)
+>  		files_to_remove = kcalloc(num_files_to_remove,
+>  					  sizeof(*files_to_remove),
+>  					  GFP_KERNEL);
+> +		if (!files_to_remove) {
+> +			pr_err("%s: can't allocate memory\n", __func__);
 
-------------------
+kcalloc failing will print something, no need to do it again here.
 
-From: Olga Kornievskaia <olga.kornievskaia@gmail.com>
+thanks,
 
-[ Upstream commit 93b7f7ad2018d2037559b1d0892417864c78b371 ]
-
-Currently, when IO to DS fails, client returns the layout and
-retries against the MDS. However, then on umounting (inode eviction)
-it returns the layout again.
-
-This is because pnfs_return_layout() was changed in
-commit d78471d32bb6 ("pnfs/blocklayout: set PNFS_LAYOUTRETURN_ON_ERROR")
-to always set NFS_LAYOUT_RETURN_REQUESTED so even if we returned
-the layout, it will be returned again. Instead, let's also check
-if we have already marked the layout invalid.
-
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/nfs/pnfs.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -1126,7 +1126,7 @@ _pnfs_return_layout(struct inode *ino)
- 	LIST_HEAD(tmp_list);
- 	nfs4_stateid stateid;
- 	int status = 0;
--	bool send;
-+	bool send, valid_layout;
- 
- 	dprintk("NFS: %s for inode %lu\n", __func__, ino->i_ino);
- 
-@@ -1147,6 +1147,7 @@ _pnfs_return_layout(struct inode *ino)
- 			goto out_put_layout_hdr;
- 		spin_lock(&ino->i_lock);
- 	}
-+	valid_layout = pnfs_layout_is_valid(lo);
- 	pnfs_clear_layoutcommit(ino, &tmp_list);
- 	pnfs_mark_matching_lsegs_invalid(lo, &tmp_list, NULL, 0);
- 
-@@ -1160,7 +1161,8 @@ _pnfs_return_layout(struct inode *ino)
- 	}
- 
- 	/* Don't send a LAYOUTRETURN if list was initially empty */
--	if (!test_bit(NFS_LAYOUT_RETURN_REQUESTED, &lo->plh_flags)) {
-+	if (!test_bit(NFS_LAYOUT_RETURN_REQUESTED, &lo->plh_flags) ||
-+			!valid_layout) {
- 		spin_unlock(&ino->i_lock);
- 		dprintk("NFS: %s no layout segments to return\n", __func__);
- 		goto out_put_layout_hdr;
-
-
+greg k-h
