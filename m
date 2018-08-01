@@ -2,118 +2,87 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE3AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1882BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815A420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:33:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+ISeTxS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815A420862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 99B9E208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:33:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B9E208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389935AbeHARTe (ORCPT
+        id S2389945AbeHARUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:19:34 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:46134 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389815AbeHARTe (ORCPT
+        Wed, 1 Aug 2018 13:20:05 -0400
+Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:58190 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389455AbeHARUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:19:34 -0400
-Received: by mail-ua0-f194.google.com with SMTP id u11-v6so8243250uan.13;
-        Wed, 01 Aug 2018 08:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UZtZ2qGqyehFyxakQCwWXdAxCe1/DN+of3r9oqj7guE=;
-        b=U+ISeTxSf7M7Xh/8TqFQDxDZES5Q0UVhQnXbbckDO0kCbiRE9DKjH4Na66h4iozST9
-         rPTWD7SiLZZvKcRb5mBF/gKlPyF/JUivUgNQvSjbmGOph93//rV/niLAbrkW6sl+8s5P
-         mRsB3scsYF8P5MjFPOt/ZMfNwLIUroYmhJiHyUP8KLHhFwQIN90NeN+dESin9W/XGmOJ
-         EOzk4r7QQ6PDg+Ir/DfPSnTGBhXGxgwmtFczsC3TJBYQcJ7eQvhDKUaW5BCVMr4vgrhf
-         GjJiWkXeOAA5fcQSPVl1f/+0FqrrSebX3Xpib4f/+kkXNRpK8WvA9I5WeoEWnun65DnT
-         fA+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UZtZ2qGqyehFyxakQCwWXdAxCe1/DN+of3r9oqj7guE=;
-        b=d99BlYcXoXGr8Qjb9J8DEg4J9GPoBzEhAzmnnlsa5kMYzIx4DzRYpE/J5bO11rkodK
-         H0UObqSOJcZXnB66BgZ0+TWpxjM5X3351nbujRxIfuVm1TRZadzAZ5p8p57I9bJKzymh
-         K8lWNHnFWEzCN4aHvfTmYD1CEr9dXI5J3U6ZSYbvEZyudrfnI394Jpnsy+FT/5GAl2ld
-         i3PnMluBLfMZEK/x2RL3Gyt9oJ+wrI8G7NocJXcaP1RzAKY50KMExd9iqo7N36oyugGH
-         zOxO89mdaejVe3b4tyQkumsNMfvnItRNOPH73tSyZ5OxvjzozYxqu/To9TnUPQCNRvF8
-         PCog==
-X-Gm-Message-State: AOUpUlE4je/alkeANV7GBsDFyqR6gbz0304e3iFnTYE91aG4UVG3hPH5
-        zrFUU9hf1ixY/YUy4UZyDWNWd4gGtyvmyGG9vIQ=
-X-Google-Smtp-Source: AAOMgpcKPAhDsDQKt19+392Nw1wx09BotfMMvX6/xLrFe0PQlQfScZCTQ5wCz4XbHenTUpgskqfCXcni6ur8SWCOfUA=
-X-Received: by 2002:ab0:1b93:: with SMTP id k19-v6mr18942840uai.122.1533137597783;
- Wed, 01 Aug 2018 08:33:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 08:33:17 -0700 (PDT)
-In-Reply-To: <1533129976-51930-4-git-send-email-zhongjiang@huawei.com>
-References: <1533129976-51930-1-git-send-email-zhongjiang@huawei.com> <1533129976-51930-4-git-send-email-zhongjiang@huawei.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 1 Aug 2018 18:33:17 +0300
-Message-ID: <CAHp75Vd1=Tw+=JMSe3XTGx0jsXCW7qi+dMCo1i6RTWc-kMYH2A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] drivers/scsi/snic/snic_trc: Use vzalloc instead of vmalloc+memset
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     John Garry <john.garry@huawei.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        aacraid@microsemi.com, linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Aug 2018 13:20:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 42CC887CE;
+        Wed,  1 Aug 2018 15:33:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: arm92_5b3ce4c43a755
+X-Filterd-Recvd-Size: 2093
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  1 Aug 2018 15:33:46 +0000 (UTC)
+Message-ID: <d21f238a0aaa9f5f8323c1e3087612ebf12a86bd.camel@perches.com>
+Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
+ lines
+From:   Joe Perches <joe@perches.com>
+To:     Julien Thierry <julien.thierry@arm.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, marc.zyngier@arm.com, mingo@kernel.org
+Date:   Wed, 01 Aug 2018 08:33:45 -0700
+In-Reply-To: <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
+References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
+         <1532430427-57151-2-git-send-email-julien.thierry@arm.com>
+         <20180801030723.GA31383@voyager>
+         <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 4:26 PM, zhong jiang <zhongjiang@huawei.com> wrote:
-> The vzmalloc is better than vmalloc+memset, so replace them.
->
+On Wed, 2018-08-01 at 16:09 +0100, Julien Thierry wrote:
+> On 01/08/18 04:07, Ricardo Neri wrote:
+> > On Tue, Jul 24, 2018 at 12:07:04PM +0100, Julien Thierry wrote:
+> > > +	    || WARN_ON(irq_settings_is_per_cpu_devid(desc))
+> > > +	    || !irq_supports_nmi(desc))
+> > 
+> > Shouldn't the logical operators in a multi-line statement go at the end of
+> > the line?
+> 
+> I couldn't find anything about this in the kernel coding style and 
+> checkpatch didn't complain.
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+coding-style is a set of suggestions not dicta.
 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/scsi/snic/snic_trc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
-> index fc60c93..876c490 100644
-> --- a/drivers/scsi/snic/snic_trc.c
-> +++ b/drivers/scsi/snic/snic_trc.c
-> @@ -126,7 +126,7 @@ struct snic_trc_data *
->         int tbuf_sz = 0, ret;
->
->         tbuf_sz = (snic_trace_max_pages * PAGE_SIZE);
-> -       tbuf = vmalloc(tbuf_sz);
-> +       tbuf = vzmalloc(tbuf_sz);
->         if (!tbuf) {
->                 SNIC_ERR("Failed to Allocate Trace Buffer Size. %d\n", tbuf_sz);
->                 SNIC_ERR("Trace Facility not enabled.\n");
-> @@ -135,7 +135,6 @@ struct snic_trc_data *
->                 return ret;
->         }
->
-> -       memset(tbuf, 0, tbuf_sz);
->         trc->buf = (struct snic_trc_data *) tbuf;
->         spin_lock_init(&trc->lock);
->
-> --
-> 1.7.12.4
->
+Many of the tests in checkpatch are not written out in
+coding-style.
 
+checkpatch does emit a message when used with --strict here:
 
+The checkpatch test is:
 
--- 
-With Best Regards,
-Andy Shevchenko
+# check for && or || at the start of a line
+		if ($rawline =~ /^\+\s*(&&|\|\|)/) {
+			CHK("LOGICAL_CONTINUATIONS",
+			    "Logical continuations should be on the previous line\n" . $hereprev);
+		}
+
+This message is not always emitted because code outside of
+net, drivers/net, and drivers/staging does not use --strict
+by default.
+
