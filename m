@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBBAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EDCC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CEC22083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEC22083D
+	by mail.kernel.org (Postfix) with ESMTP id 5257220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5257220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406612AbeHATL0 (ORCPT
+        id S2406625AbeHATL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51180 "EHLO
+        Wed, 1 Aug 2018 15:11:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404068AbeHATLY (ORCPT
+        with ESMTP id S2404068AbeHATL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:24 -0400
+        Wed, 1 Aug 2018 15:11:28 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75C50D27;
-        Wed,  1 Aug 2018 17:24:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8AB81D2F;
+        Wed,  1 Aug 2018 17:24:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Donald Shanty III <dshanty@protonmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 001/144] Input: elan_i2c - add ACPI ID for lenovo ideapad 330
-Date:   Wed,  1 Aug 2018 18:50:28 +0200
-Message-Id: <20180801164949.095248809@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 010/144] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
+Date:   Wed,  1 Aug 2018 18:50:37 +0200
+Message-Id: <20180801164949.617655067@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,31 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Donald Shanty III <dshanty@protonmail.com>
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-commit 938f45008d8bc391593c97508bc798cc95a52b9b upstream.
+commit 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee upstream.
 
-This allows Elan driver to bind to the touchpad found in Lenovo Ideapad 330
-series laptops.
+Arnd reports the following arm64 randconfig build error with the PSI
+patches that add another page flag:
 
-Signed-off-by: Donald Shanty III <dshanty@protonmail.com>
+  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
+  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
+  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
+  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
+
+The additional page flag causes other information stored in
+page->flags to get bumped into their own struct page member:
+
+  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
+  BITS_PER_LONG - NR_PAGEFLAGS
+  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+  #else
+  #define LAST_CPUPID_WIDTH 0
+  #endif
+
+  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
+  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+  #endif
+
+which in turn causes the struct page size to exceed the size set in
+STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
+VMEMMAP page array according to address space and struct page size.
+
+However, the check is performed - and triggers here - on a !VMEMMAP
+config, which consumes an additional 22 page bits for the sparse
+section id. When VMEMMAP is enabled, those bits are returned, cpupid
+doesn't need its own member, and the page passes the VMEMMAP check.
+
+Restrict that check to the situation it was meant to check: that we
+are sizing the VMEMMAP page array correctly.
+
+Says Arnd:
+
+    Further experiments show that the build error already existed before,
+    but was only triggered with larger values of CONFIG_NR_CPU and/or
+    CONFIG_NODES_SHIFT that might be used in actual configurations but
+    not in randconfig builds.
+
+    With longer CPU and node masks, I could recreate the problem with
+    kernels as old as linux-4.7 when arm64 NUMA support got added.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 1a2db300348b ("arm64, numa: Add NUMA support for arm64 platforms.")
+Fixes: 3e1907d5bf5a ("arm64: mm: move vmemmap region right below the linear region")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/mm/init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1251,6 +1251,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN0611", 0 },
- 	{ "ELAN0612", 0 },
- 	{ "ELAN0618", 0 },
-+	{ "ELAN061D", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
- };
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -468,11 +468,13 @@ void __init mem_init(void)
+ 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
+ #endif
+ 
++#ifdef CONFIG_SPARSEMEM_VMEMMAP
+ 	/*
+ 	 * Make sure we chose the upper bound of sizeof(struct page)
+-	 * correctly.
++	 * correctly when sizing the VMEMMAP array.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
++#endif
+ 
+ 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
+ 		extern int sysctl_overcommit_memory;
 
 
