@@ -2,99 +2,107 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA5AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B3FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55A520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:53:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EqxMONlR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55A520844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 73C1320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C1320844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387660AbeHAJhs (ORCPT
+        id S2387676AbeHAJiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 05:37:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37590 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733177AbeHAJhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:37:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2C2UJNS6WnwgwTaRtJU/8pBAOObVjcFNdgI/rLA1WLs=; b=EqxMONlRa2V482aibu3BKWs/F
-        GaGmLaaJJDd3p6qRzStZL6s7HX/9nprV5+jWRFl0+Q1f6EheDixFnJDHl/O+DOkYKzMH7UY14mtdY
-        oo5Cd+o36NK1m5QRSVW4JInjGl90mxKbw99KglkjvL5D9Kv1AG7Bs+CXQLlCFGF/Ui64sbdhXWqT1
-        tlZY+4D8YuQCpXwHySk3Xv4/yB5grUDk8lLZVQA/ydIFADVD1Pvu4mnOWhgA9DtIAKmmqFVQKG1ln
-        RioGSetB9As3gl8WSf5MBl+4GWanUR4+MZ4OhWYJHstHhL9tz8zMKntpD5MQbXhk9KQw5HV/5Kg4m
-        eV720tM6g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fklwe-0002My-6l; Wed, 01 Aug 2018 07:53:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B3C992027585B; Wed,  1 Aug 2018 09:53:17 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 09:53:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        lkml <linux-kernel@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>
-Subject: Re: ARC show_regs() triggers preempt debug splat, lockdep
-Message-ID: <20180801075317.GZ2494@hirez.programming.kicks-ass.net>
-References: <5c3cfd4d-46d2-d817-a29a-1890d84c1fbb@synopsys.com>
+        Wed, 1 Aug 2018 05:38:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60628 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729769AbeHAJiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 05:38:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 034C420740; Wed,  1 Aug 2018 09:54:20 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1657E207BD;
+        Wed,  1 Aug 2018 09:54:00 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 09:54:00 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
+        f.fainelli@gmail.com, linux-mips@linux-mips.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 00/10] mscc: ocelot: add support for SerDes muxing
+ configuration
+Message-ID: <20180801075400.cvvasvi2g2m56xp4@qschulz>
+References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
+ <20180730132441.GC13198@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u35ohko4nfagn3ww"
 Content-Disposition: inline
-In-Reply-To: <5c3cfd4d-46d2-d817-a29a-1890d84c1fbb@synopsys.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180730132441.GC13198@lunn.ch>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 02:26:32PM -0700, Vineet Gupta wrote:
-> Hi Peter, Al,
-> 
-> Reaching out about a problem I understand, but not quite sure how to fix it.
-> Its the weird feeling of how was this working all along, if at all.
-> 
-> With print-fatal-signals enabled, there's CONFIG_DEBUG_PREEMPT splat all over,
-> even with a simple single threaded segv inducing program (console log below). This
-> originally came to light with a glibc test suite tst-tls3-malloc which is a
-> multi-threaded monster.
-> 
-> ARC show_regs() is a bit more fancy as it tries to print the executable path,
-> faulting vma name (in case it was a shared lib etc). This involves taking a bunch
-> of customary locks which seems to be tripping the debug infra.
 
-Right, so I think that that is a fairly dodgy thing to do. As shown in
-your subsequent email, if a pagefault generates a signal we might
-already be holding the mmap_sem.
+--u35ohko4nfagn3ww
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The thing you could do is maybe use down_read_trylock() there.
+Hi Andrew,
 
-diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-index 783b20354f8b..bb7bde11d2c8 100644
---- a/arch/arc/kernel/troubleshoot.c
-+++ b/arch/arc/kernel/troubleshoot.c
-@@ -92,7 +92,10 @@ static void show_faulting_vma(unsigned long address, char *buf)
- 	/* can't use print_vma_addr() yet as it doesn't check for
- 	 * non-inclusive vma
- 	 */
--	down_read(&active_mm->mmap_sem);
-+	if (!down_read_trylock(&active_mm->mmap_sem)) {
-+		pr_info("    @Trylock failed\n");
-+		return;
-+	}
- 	vma = find_vma(active_mm, address);
- 
- 	/* check against the find_vma( ) behaviour which returns the next VMA
+On Mon, Jul 30, 2018 at 03:24:41PM +0200, Andrew Lunn wrote:
+> > The SerDes configuration is in the middle of an address space (HSIO) th=
+at
+> > is used to configure some parts in the MAC controller driver, that is w=
+hy
+> > we need to use a syscon so that we can write to the same address space =
+=66rom
+> > different drivers safely using regmap.
+>=20
+> Hi Quentin
+>=20
+> I assume breaking backwards compatibility is not an issue here, since
+> there currently is only one board using the DT binding. But it would
+> be good to give a warning in the cover notes. git bisect will also
+> break for this one particular board. And since these changes are going
+> through different trees, it could be quite a big break.
+>=20
+
+Yes sorry, I should have mentioned it in the cover letter, will do
+if/when there is a v2.
+
+Thanks,
+Quentin
+
+--u35ohko4nfagn3ww
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlthZxcACgkQhLiadT7g
+8aPTNw/+IVukDr3iYoXQ4ry2nF4nPhV12+CSQJn1pKAQFUYs3p4DGzfQPXKgXLPR
+27hCz+QoYZSJwvyYwCLeh7/DC39p9jKwWZJymUPunuhsExrloLxUwH7XuT386p9O
+Ym8bHhtsF2hyicESpNsTc+yQZpslNM0fN6iW87NN3Me5zRXGKr4aUjS4SN73EPyB
+JiVT8lF31Whph0mWcCv94sR02u0gU8fqm+EtguJpPj3o6USceNvGo/plgrm6IKam
+u2b1qd97AKw3jlFdPIimOJ9fu0vy/L5aj/6/dQqXSwE+Qd4o8lsh5rgOqsJTg322
+JBN78zFlng0RcHbWoEoAF/SpYZb5kyMIPU0b5y7xHkPaIiu19AtHMhqfuN85tNt9
+kt+77KdcVuDj73HWw3FnhT1f3V8DKtKWWN0bJW5OKO4TdP5RtA9/bU0vcMkcY2mJ
+TgXqZCHijh5i0DltePNDqR+RIXeBJ358Dwi5QBdJmnWvsZMV8ZJOHQFJMqCaFHw0
+LFo9q1H+u20AhC3jt7iFKDvkddadFcDHQfjT8S7Vh6bnYhVepIuorNVkJRdqp0pI
+qzoWbXIRZuuUjBBagA8RwEpxboIwwJ7teAI8YDWUSnM3WTbGtYclVSGSyEdOA7WX
+an+3naqXa4/g0/n1XcGs8ksgtskb6ciL/BX8jdYTz9XkHu69aKo=
+=LSYK
+-----END PGP SIGNATURE-----
+
+--u35ohko4nfagn3ww--
