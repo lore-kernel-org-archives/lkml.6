@@ -2,244 +2,166 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7B6C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81212C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3032A20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24FCD20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:14:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IoLgwres"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3032A20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="r96k/1Pv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FCD20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403992AbeHATAv (ORCPT
+        id S2404016AbeHATBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:00:51 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34942 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390055AbeHATAu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:00:50 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so11129628pgv.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:14:11 -0700 (PDT)
+        Wed, 1 Aug 2018 15:01:09 -0400
+Received: from mail-eopbgr700054.outbound.protection.outlook.com ([40.107.70.54]:48566
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390055AbeHATBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:01:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MVPd0R7IW+cQRn2pe9327ND5REdLgQmjLfFHc8fIKcU=;
-        b=IoLgwresQEXljNhRavkA2mBlFppoVdYL2+iyv/rc6M20FkvgWscoygNxCGI7sg3+6C
-         EZpzMBMcY5Vz0Oi8wbGXUJ62oPdyTKe5FheO+uWabuCmVDA5/dJy+QbNB3iS+K8tHIFd
-         lZD6g6KMRx4AkHTD2+LzzFricrYRBm+mZpRQ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MVPd0R7IW+cQRn2pe9327ND5REdLgQmjLfFHc8fIKcU=;
-        b=nq/Y+jlXhgL2DuvsuQoeRbtahriK9kbZ9YKHN32PzrNqig7rkBmzDRgKqXByUDPptc
-         nowmhuctCPE5sxDVGUi2vaWx8Oj7TG+y260kYT1zMKRW7DxKtk0hYg2lxnrxdf5h3Kdc
-         vzutrJ6AlMmpK2j0Jg76Wx84Thz13YR3uoDILS5Nv9Pz6Z9lAiX7j0md1L1Ocys0xcNc
-         189goxqrwtEpnA2q3WbUFNk/PJbiyFdiCBweYe2X5175eF3NIp3XuOtF+cT1SCoilJCD
-         18uyw1QABHhgLTzOnm4cEnPggLmVkpSZjmn/aR/jgcPOYOtjyw2XOVqKGZKImpuC7w+d
-         6Nww==
-X-Gm-Message-State: AOUpUlEnEQLcYLImvtMa0OxIf/DZuYaZkt/+jePS43r/9Dnye5lsxz9D
-        k1KvkHXtVCxD4eFLAqTc1PXlvw==
-X-Google-Smtp-Source: AAOMgpfX+KAv/LC7fV7RsyqwQBF9u6cJu6ZmDU0g9Qotj+CBDeOxlwD6ml7G5pp58MHUCVnPdUL7EQ==
-X-Received: by 2002:a63:314f:: with SMTP id x76-v6mr24871605pgx.373.1533143306326;
-        Wed, 01 Aug 2018 10:08:26 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id b18-v6sm21163845pgk.15.2018.08.01.10.08.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 10:08:25 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 10:08:24 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
-Message-ID: <20180801170824.GJ68975@google.com>
-References: <20180703234705.227473-1-mka@chromium.org>
- <CGME20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36@epcas1p1.samsung.com>
- <20180703234705.227473-6-mka@chromium.org>
- <5B3C6C2A.1070205@samsung.com>
- <20180706175301.GG129942@google.com>
- <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
- <20180716175050.GZ129942@google.com>
- <20180731193953.GH68975@google.com>
- <5B610B48.4030802@samsung.com>
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=24nzfMdNwRVkjQ+gIcRdply1bMWPaXvgWBFCsDHhLKw=;
+ b=r96k/1PvjfB6DiUj+/9NQbDcmy2HsBU7fPLNbvNbQEKoswmrheOi3kX5BVGtKPP8D18mGq7+zdC6gZF7HUz32xepOG90XSReNtT+aPGOxbPMx4zRNQXgDaASbqGX8P35dtn7xS9rf4zF+yr9EQI5PxkuYaNKGbEiyXBTGFbRLQc=
+Received: from SN4PR0201CA0062.namprd02.prod.outlook.com
+ (2603:10b6:803:20::24) by BL0PR02MB4449.namprd02.prod.outlook.com
+ (2603:10b6:208:45::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Wed, 1 Aug
+ 2018 16:50:05 +0000
+Received: from BL2NAM02FT030.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::204) by SN4PR0201CA0062.outlook.office365.com
+ (2603:10b6:803:20::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1017.15 via Frontend
+ Transport; Wed, 1 Aug 2018 16:50:04 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT030.mail.protection.outlook.com (10.152.77.172) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1038.3
+ via Frontend Transport; Wed, 1 Aug 2018 16:50:03 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1fkuK1-0002LE-V4; Wed, 01 Aug 2018 09:50:01 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1fkuJw-0004uj-RL; Wed, 01 Aug 2018 09:49:56 -0700
+Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w71GnpIM001636;
+        Wed, 1 Aug 2018 09:49:51 -0700
+Received: from [172.23.37.224] (helo=xhdbharatku40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <bharat.kumar.gogada@xilinx.com>)
+        id 1fkuJq-0004rx-MG; Wed, 01 Aug 2018 09:49:51 -0700
+From:   Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+To:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bhelgaas@google.com>, <rgummal@xilinx.com>,
+        Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+Subject: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx controller irq with AER
+Date:   Wed, 1 Aug 2018 22:14:49 +0530
+Message-ID: <1533141889-19962-4-git-send-email-bharat.kumar.gogada@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+References: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(2980300002)(438002)(199004)(189003)(106466001)(8676002)(81166006)(50226002)(5660300001)(476003)(305945005)(36756003)(126002)(478600001)(11346002)(63266004)(486006)(356003)(2616005)(2906002)(81156014)(76176011)(51416003)(4326008)(107886003)(48376002)(106002)(186003)(54906003)(7696005)(77096007)(110136005)(16586007)(446003)(9786002)(336012)(8936002)(36386004)(47776003)(316002)(26005)(50466002)(426003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4449;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT030;1:71d6wl3DXobYy4kuCBcXsRx7RWrdMQl1TSMzo0mZRU+ZW1GbEUOH7e5OYKipWbL0jzfRRlP5GWvfAVqC58SU+yIA116v5ZQsEwZC6ELRfnmKutvgUiRDVl1hPNSk9zL1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5B610B48.4030802@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b532f728-c342-468f-e1a9-08d5f7ced4b8
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BL0PR02MB4449;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4449;3:BUtZIitqc3EpM6TAVn48VHDNvjDdxkF22UnXodjd6jU2UPy+5ynVFsodT4bjOUzRX9ApKzyoW92qK6QLZLmv2tBuN7+inv1TRorz/yHZ17OeAdv3LyO+ZY4mwAVkip8xya21YVgRki/ebzcg8I2hQywpuqilqMyzU9iAWJ6J6d1gXtuuaFhQfixats63qXBoIm+dNEG+HBePGMjJNcC6ZpDvKT+r8b+R4NVBb2fPbQza8cW6Rhy3t6ehEcUCsBOnGXfHOhdavQrNLFTIzjEa20cqVahkknD+R2YuNfePXLLv9iLSGgENRM3cDifds+XGsSKX8X1ltQTXx4vzQyN4h6n+CjLFP8el7gvsKnYKfR0=;25:9FBXreKS7AZ8W+BHJtc7uV5hyHxqJoFwC6qvAExHntkczL12CjK9lpl32WLhn/9EO7gqXgDjT+vtGeixZLx8rBOu9xGb+I04w0zGkWgAC+2/zkhZ4FXp0StaM/dP/MTv9NQNVUww7ZJEBsD3ikzzESpLpXCebO2xRiEQ3sHn4XpA2kroMUYNYPeKoGU2hVcZHeDbfemMQzug6LbVrC3hW9homCqE95mvVzWwaykLRXOcelUEbFxtDfjfU3YRYOPKxtMc/WvB/5TAMNW6KLHlfBH7LXR1+DC2xXJE3LfaXwvXTSE/e3qsPOiVHhLaGP0UH2TuWvw1cRcIF3W9ZujbPg==
+X-MS-TrafficTypeDiagnostic: BL0PR02MB4449:
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4449;31:i50rATyzMQq64P9XobKQYGvgWiU7k7lIlJZeWYeKl6dN5oHfpfWgreHOvH2L4jgIDZxvPuanF9oL6LmC+vsTTDqvw880NpezlqoK8/291K788MdGLifz1VMMCYJveHluOR38DR5WCwryuxE5+PeKwbXqgfAG3oUJ0q5+Cg+GVpBCxPnB4aKXgildheY44no8S1l7+qeAWLdwMtIJNJTX07c63ua+91vQKE/p0tZDd0A=;20:LLmpsudSULbYhvBCgBMEkD4YI1fsYO/50pu0G7YZ8d0FHXr2W0KrWe1XaeSwnFihQ+pTMuc2Xx4PcWy5PjxdyRinC5jtllJVx+KTGFryKxHmgNIKEJt8CZ8wtreUNubyJNSzZjfcqyK4rz9FXRG94xs0tbG0WlIgFARcOgI9gmXTE1Vyxu1PJ4jJ20iWEoL+cX8Tcgx8CiZyvW5nCRXBlTb2lngLqzHBXRsn4iabjxroi5IKJCZnR4Mll/9F3istLeqMPBoSmqBSErEwmu3w627naSsxKMC0K4dxtz+NrvokYGaUSizNn371XQtakMUl9rsEid62NqAKd/YjFZ328f821y/RGx+FOwo8jIMqj5cyWGrwPF2820uiWrGLMLHuXcKIWCdngTnGymwpUYGp+xsdFaxauYjcWTeYHKoNTlA44TJaKSvuJRKmiSEayTBBRjcdEvLuR/rsATSd9lZ0O5n87iJCJii51qKI/ka3X5oLKt9j0Wh1YRKzpTekJo3n
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BL0PR02MB44497F196EF239DDDE66ED62A52D0@BL0PR02MB4449.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(211171220733660);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(93006095)(93004095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BL0PR02MB4449;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4449;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4449;4:hXH+bOFsVoYCqhM1tnH/iZJLni8d4OrZJP32poehq2ug5yL1z5Nt0MAv2cfDTQo6rr+6DOlTAkT10n9A3jZpD3OvS+iRFrA5BUeXnY8O7ZkY249KztXNeRB3hZuQPofORuZSdX/g+/yGluN+JHAR9iv35QGs43FkXs07Xzo1sw19ic5U9Zc0AgPFdnmVA6IBGaT3tLn3Oarc6KwLV91tkV/7mZiIOtxZWch75SGMVdToOYyCC83YyDxP4TmET//SK6FCDKI1SdKYF57QM3ELrnNcYBfPHa73rBC77+n3N239otU0rajql+g4zjogioF3Y8kYvhRgqKmz81tBJBL7Ys0ZgRFA8btj+y0xtTeNGhY=
+X-Forefront-PRVS: 0751474A44
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR02MB4449;23:YY0LtyXHG2gKBTsSv8Agn//4AdO23/9cOhfPKkdBR?=
+ =?us-ascii?Q?1JOuYOgF2r08IF/wmTlvmCGbrfpmWSU47lRl/y5q+VQK0S3rRClgamrnZq0/?=
+ =?us-ascii?Q?nax+tKRCUb/Vx9MD2+APjGQnriLFjF+520Ck1zPEJBPxsExoYsiUe1g4A1bE?=
+ =?us-ascii?Q?eNXWTofes/Jd3tLSVkEB1R69wEkRLl7ePsA8bRIeFMRiEriCFNjm8ofGo6L0?=
+ =?us-ascii?Q?kHdWsCuKfSQsGMFOBfKJI4/q7Edw0USLst77i6ZautrAiC+HM7QIbbA1XBxl?=
+ =?us-ascii?Q?IOQ+Ms6CoLencRtNyUFYl4N+Sti90ZVZHjinDPPjumjr8efl54e7aef/iW4x?=
+ =?us-ascii?Q?dx1KtR6Qz4u3ddZ2wW/xjT3yKaF3thcq3I3T/Uf1sqflER4KztmQKCHUXshc?=
+ =?us-ascii?Q?SYNhrI0Q2IIEWgDSAu8K8NepxHZ/n132TjAz2z/v8zRG9kMacpiHdtKH13LB?=
+ =?us-ascii?Q?5wcszSZZvV9egb1++EK1Chegw6eHRmshPsXEU3q8iqZBl4G8V8rzf2VxoVzr?=
+ =?us-ascii?Q?XebDWRomBnDn/rHG3+0SPfCbesbarKfFsfP2IrwD+7EpvGrM6HdR17BSr3Yw?=
+ =?us-ascii?Q?igLT0meFXKM4W8nPkZ4zmOi61/6NiFEMkKFWu6LY9Vr+dFFPrhy+MBPsOO7k?=
+ =?us-ascii?Q?KQHCMB03R4FEnhVD3KghXo/RV7XNY1iCIXvvZJ7MJy+oXC+Ob36zMUgOCsDM?=
+ =?us-ascii?Q?LmiLLKtGzN6TNSltuDhaievITJJ3/fRgm3pl/ck347acqKHMXetVX+YoNYNl?=
+ =?us-ascii?Q?7TrCX+BITXw1OwpvNpGKEmd4fDWjRaPuA8x82rMTdLhzwtj8wpTZjgJ7lrjL?=
+ =?us-ascii?Q?It1qJr+G6z5Vh6f9TSfVjVcsHoFOjRLi7lmw+SEr/jg6xcPbwF/bhISH2Trj?=
+ =?us-ascii?Q?clterKkN6e68ZWTxPqXOsoisZOwVb8tQb+74MWkBEWfXIwsO4TB9XrzE+DG2?=
+ =?us-ascii?Q?dkNxl+Vw60Is4YYFKQKUKHyD0npuzwp22ECRpsz4c2kf0vFtCi+GRxFsro+9?=
+ =?us-ascii?Q?V+RgdlMQNDXWa+0nm5C/JgGZp0FQnh4rOHY8hKrsIN8vP+YchrJIVq6xo9Xg?=
+ =?us-ascii?Q?9EQHg09weNOL5iJ4q/0U8Dbi5MT?=
+X-Microsoft-Antispam-Message-Info: MEzTbWbCdEh7KyM7AL8wTXA60K+YEjuHCUBIAn7twEebAY6huW1HK4N+/b51i//xkFIX/ia9wJfbUrZyPK9fl1H2Zt6Ha145KN/v270a9voYnhptMYlebmZ8q6bwOZ1hpyz7T6Hq2jq8xsq4gs5+HzTaYYSxVC/LqRadZYaI372/xxQ4euYzIMuYj1ck9+aPOntf5BX9gTIABtL914HruScjfI+5ubReeKzbhk1SvqYzqbydhsyTqNXEBFqiTdkd/vO8Wq4P4M2V+MzdRIS4PsIRStB0YwqX3Sytr6pfi2CmtodtJ4TYhFmOit4TmdLuUYmlNcNdSti07DrsJpp5YU4+jLqDWlsoiHK2KRD6qRM=
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4449;6:WNIH1eXtl5cL6d2RYypuZTUOY/ltXKEpd8OcuA3mI3z0b+sUOPR71CZm17wB6vd3RA3ytAEnlgyJETm55GtPwoO1+WVnmJyPq4ISaP8LuTSSK8/cYtNm9WRDXll8RtZUbQJZvgb62EvKPQ6ETVSdr1XF3XZUROJvWCa3iZ8zih9kcWN6jC0vCd4NJohKW3/MiWdPHeM+JzwGl7wIV6GaueTRzQclVDs1B+CsgM91tN9vDSycic/ayaBkSzJfR8vl8HH4ZYeV3aQt4HEjwarIFLkjw973I5AGJXK/l2bO3zSuxe+Dt5scSYQXe2A3QqvrRL51uORX6fn3Ip5ywA+5jyA7nJjTC+7qYxYst9XGP+2BYk56ZSxpGwEMNWp2PVUHyuiaoHT+tixFzo2zYyt7wFDYD9GWvRhuBJmOGULeGylgY8alAakMZAmekZCyNO1zQPSG4ECFWz7X0dSUY0htvg==;5:pxjSUXtkfeoPziINIEKfTuMcEq8vFhS/BwKqBxPicc3uy6VGXPL3DAsGVTRc6mrdoOXCsZCQgq69LGrypxQA2wUYS2s3BQa7SiSeexmquyVxcgN3Xv2AsZL6R3weCWQZlPrK4uqYNfjPs9IeytFuPZK0j9ri6uptJgGJ963t6NM=;7:jS8xcgKitLN/QNn2I35hyhN1M9qtgA2tPYewI6mKPEjo44a7eSsMVrItVKXSQE9vIGcu5NlQh/OMw7M/iJSBRq/YAEqlGglDC6ajmkpt29nJxRYfNwOFfRT5oHBORzJpST1ok5h+VjJDQRM4r5effx97Xv/+06zqXNAb9n51yxeypiZFfBPgbskmB0Y1JNhFoyfn2tGslrnftvzYifIj2W35yJL/FSnX59xait0TYfyA/8i+Zj6lwLOuvIJ+n3dJ
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2018 16:50:03.4814
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b532f728-c342-468f-e1a9-08d5f7ced4b8
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4449
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
+Error Interrupt Message Number. The controller has dedicated interrupt line
+for reporting PCIe errors along with AER.
 
-On Wed, Aug 01, 2018 at 10:22:16AM +0900, Chanwoo Choi wrote:
-> On 2018년 08월 01일 04:39, Matthias Kaehlcke wrote:
-> > On Mon, Jul 16, 2018 at 10:50:50AM -0700, Matthias Kaehlcke wrote:
-> >> On Thu, Jul 12, 2018 at 05:44:33PM +0900, Chanwoo Choi wrote:
-> >>> Hi Matthias,
-> >>>
-> >>> On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
-> >>>> Hi Chanwoo,
-> >>>>
-> >>>> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
-> >>>>
-> >>>>> Firstly,
-> >>>>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
-> >>>>>
-> >>>>> devfreq already used the OPP interface as default. It means that
-> >>>>> the outside of 'drivers/devfreq' can disable/enable the frequency
-> >>>>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
-> >>>>> drivers disable/enable the specific frequency, the devfreq core
-> >>>>> consider them.
-> >>>>>
-> >>>>> So, devfreq doesn't need to devfreq_verify_within_limits() because
-> >>>>> already support some interface to change the minimum/maximum frequency
-> >>>>> of devfreq device. 
-> >>>>>
-> >>>>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
-> >>>>> to change the minimum/maximum frequency of cpu. some device driver cannot
-> >>>>> change the minimum/maximum frequency through OPP interface.
-> >>>>>
-> >>>>> But, in case of devfreq subsystem, as I explained already, devfreq support
-> >>>>> the OPP interface as default way. devfreq subsystem doesn't need to add
-> >>>>> other way to change the minimum/maximum frequency.
-> >>>>
-> >>>> Using the OPP interface exclusively works as long as a
-> >>>> enabling/disabling of OPPs is limited to a single driver
-> >>>> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
-> >>>> involved you need a way to resolve conflicts, that's the purpose of
-> >>>> devfreq_verify_within_limits(). Please let me know if there are
-> >>>> existing mechanisms for conflict resolution that I overlooked.
-> >>>>
-> >>>> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
-> >>>> devfreq_verify_within_limits() instead of the OPP interface if
-> >>>> desired, however this seems beyond the scope of this series.
-> >>>
-> >>> Actually, if we uses this approach, it doesn't support the multiple drivers too.
-> >>> If non throttler drivers uses devfreq_verify_within_limits(), the conflict
-> >>> happen.
-> >>
-> >> As long as drivers limit the max freq there is no conflict, the lowest
-> >> max freq wins. I expect this to be the usual case, apparently it
-> >> worked for cpufreq for 10+ years.
-> >>
-> >> However it is correct that there would be a conflict if a driver
-> >> requests a min freq that is higher than the max freq requested by
-> >> another. In this case devfreq_verify_within_limits() resolves the
-> >> conflict by raising p->max to the min freq. Not sure if this is
-> >> something that would ever occur in practice though.
-> >>
-> >> If we are really concerned about this case it would also be an option
-> >> to limit the adjustment to the max frequency.
-> >>
-> >>> To resolve the conflict for multiple device driver, maybe OPP interface
-> >>> have to support 'usage_count' such as clk_enable/disable().
-> >>
-> >> This would require supporting negative usage count values, since a OPP
-> >> should not be enabled if e.g. thermal enables it but the throttler
-> >> disabled it or viceversa.
-> >>
-> >> Theoretically there could also be conflicts, like one driver disabling
-> >> the higher OPPs and another the lower ones, with the outcome of all
-> >> OPPs being disabled, which would be a more drastic conflict resolution
-> >> than that of devfreq_verify_within_limits().
-> >>
-> >> Viresh, what do you think about an OPP usage count?
-> > 
-> > Ping, can we try to reach a conclusion on this or at least keep the
-> > discussion going?
-> > 
-> > Not that it matters, but my preferred solution continues to be
-> > devfreq_verify_within_limits(). It solves conflicts in some way (which
-> > could be adjusted if needed) and has proven to work in practice for
-> > 10+ years in a very similar sub-system.
-> 
-> It is not true. Current cpufreq subsystem doesn't support external OPP
-> control to enable/disable the OPP entry. If some device driver
-> controls the OPP entry of cpufreq driver with opp_disable/enable(),
-> the operation is not working. Because cpufreq considers the limit
-> through 'cpufreq_verify_with_limits()' only.
+Using dedicated controller irq number for AER which is shared with misc
+interrupt handler in pcie-xilinx-nwl. This irq number is set
+using PCI quirk.
 
-Ok, we can probably agree that using cpufreq_verify_with_limits()
-exclusively seems to have worked well for cpufreq, and that in their
-overall purpose cpufreq and devfreq are similar subsystems.
+Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+---
+ drivers/pci/pcie/portdrv_core.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-The current throttler series with devfreq_verify_within_limits() takes
-the enabled OPPs into account, the lowest and highest OPP are used as
-a starting point for the frequency adjustment and (in theory) the
-frequency range should only be narrowed by
-devfreq_verify_within_limits().
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index e0261ad..fa9150e 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -264,6 +264,10 @@ static int pcie_device_init(struct pci_dev *pdev, int service, int irq)
+ 	int retval;
+ 	struct pcie_device *pcie;
+ 	struct device *device;
++#if defined(CONFIG_ARCH_ZYNQMP) && defined(CONFIG_PCIE_XILINX_NWL)
++	if (service == PCIE_PORT_SERVICE_AER && pdev->sysdata)
++		irq = *(int *)pdev->sysdata;
++#endif
+ 
+ 	pcie = kzalloc(sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+-- 
+1.7.1
 
-> As I already commented[1], there is different between cpufreq and devfreq.
-> [1] https://lkml.org/lkml/2018/7/4/80
-> 
-> Already, subsystem already used OPP interface in order to control
-> specific OPP entry. I don't want to provide two outside method
-> to control the frequency of devfreq driver. It might make the confusion.
-
-I understand your point, it would indeed be preferable to have a
-single method. However I'm not convinced that the OPP interface is
-a suitable solution, as I exposed earlier in this thread (quoted
-below).
-
-I would like you to at least consider the possibility of changing
-drivers/thermal/devfreq_cooling.c to devfreq_verify_within_limits().
-Besides that it's not what is currently used, do you see any technical
-concerns that would make devfreq_verify_within_limits() an unsuitable
-or inferior solution?
-
-> I want to use only OPP interface to enable/disable frequency
-> even if we have to modify the OPP interface.
-
-These are the concerns I raised earlier about a solution with OPP
-usage counts:
-
-"This would require supporting negative usage count values, since a OPP
-should not be enabled if e.g. thermal enables it but the throttler
-disabled it or viceversa.
-
-Theoretically there could also be conflicts, like one driver disabling
-the higher OPPs and another the lower ones, with the outcome of all
-OPPs being disabled, which would be a more drastic conflict resolution
-than that of devfreq_verify_within_limits()."
-
-What do you think about these points?
-
-The negative usage counts aren't necessarily a dealbreaker in a
-technical sense, though I'm not a friend of quirky interfaces that
-don't behave like a typical user would expect (e.g. an OPP isn't
-necessarily enabled after dev_pm_opp_enable()).
-
-I can sent an RFC with OPP usage counts, though due to the above
-concerns I have doubts it will be well received.
-
-Thanks
-
-Matthias
