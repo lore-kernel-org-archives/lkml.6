@@ -2,115 +2,137 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7168CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E93CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C808320894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:57:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Sjb9rlcI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C808320894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id DF0E620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0E620894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baidu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387762AbeHAMmi (ORCPT
+        id S2388294AbeHAMne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:42:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36623 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387581AbeHAMmh (ORCPT
+        Wed, 1 Aug 2018 08:43:34 -0400
+Received: from mx56.baidu.com ([61.135.168.56]:11933 "EHLO
+        tc-sys-mailedm01.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387575AbeHAMnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:42:37 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so19667860wro.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 03:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=BN37pvmmWbVTpksW6gMLiYsUHWEhBJrmBHOOgcKUudk=;
-        b=Sjb9rlcIQxvuL6/1CeU+lySdkSLQtmhI3ThZ+wcNKruBwZczT2w/Xg5yN7ww2OIoQo
-         x6kr3M/k+48vV+dH22qf24xbgVnZl0EoVrc/iPjNaNV6vvj2gGeG22Mxh4hHFNfFicEb
-         3KZr/IVt761alTmY/pP/Bz2G5mPVMQe49WMlkDl/deKooKAB7+TXJLUMEwdAmzKnYRIS
-         40CSczSQLkJrmmBI+SkoTHesUJoVW8A3v4gayF1ouiWKbgJ18/LCOwBPx7TALK1xRvRn
-         B2cl5v6QVvuolIKW0z6SjNdft9QWM00LZhHO4AaKLPjfTH3a5Gj2ZHhJA9WKo3hajIoC
-         NOoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BN37pvmmWbVTpksW6gMLiYsUHWEhBJrmBHOOgcKUudk=;
-        b=EeH2UBedSGDhPo6rMobQdmqJNWlOoUw82+Ex+xdTZCEHl7GsOuQnBJKQAenLQkdaxm
-         tUqd2tyK4pmEZrBij6Z6Yqm8eENXu7H6aCzE4BxPftlDU6NwzZ9iUzs2EUA4EFqlg/i0
-         4X5nThQRFl+v3III5v6Ym6KtTRQ697h+TM712LRYwRNAmyEOkg3HBNq9XEi310LN4CzI
-         32sqIjERH2AvF4E4nDgqySuT5NzRxbxX8vqKR3cHRurG9R2oi8pCp/pTBn8cvK2Ae7am
-         jm//yDxS0VpjulJJm3fvwjXE2l+leun/AZ9K4XXLP9unHMJwVR1OCYcuT667mNGYMvfM
-         Zx6Q==
-X-Gm-Message-State: AOUpUlGzdIlZLB/+/oFrW5ubzuSsjFZDIgHPETCgQjpk5G6Sd0pP6Fp8
-        O5edKaxhKdYhScFGXCC0r41x7Q==
-X-Google-Smtp-Source: AAOMgpeY/CxUFN6u+NxQmNMD0Z5s1oidxKIp8ZF4SNgeik9qDWL/xR37mkaXgrlT3MQ5s50UFieaow==
-X-Received: by 2002:adf:dc4c:: with SMTP id m12-v6mr24870340wrj.84.1533121043956;
-        Wed, 01 Aug 2018 03:57:23 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id b202-v6sm7528939wme.22.2018.08.01.03.57.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 03:57:23 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-pwm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: meson: fix mux clock names
-Date:   Wed,  1 Aug 2018 12:57:20 +0200
-Message-Id: <20180801105720.23999-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Aug 2018 08:43:33 -0400
+X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Aug 2018 08:43:31 EDT
+Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
+        by tc-sys-mailedm01.tc.baidu.com (Postfix) with ESMTP id 2521E2040053;
+        Wed,  1 Aug 2018 18:48:36 +0800 (CST)
+From:   Li RongQing <lirongqing@baidu.com>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: [PATCH 2/2] fs/writeback: do memory cgroup related writeback firstly
+Date:   Wed,  1 Aug 2018 18:48:36 +0800
+Message-Id: <1533120516-18279-2-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.10.1
+In-Reply-To: <1533120516-18279-1-git-send-email-lirongqing@baidu.com>
+References: <1533120516-18279-1-git-send-email-lirongqing@baidu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current clock name looks like this:
-/soc/bus@ffd00000/pwm@1b000#mux0
+When a machine has hundreds of memory cgroups, and some cgroups
+generate more or less dirty pages, but a cgroup of them has lots
+of memory pressure and always tries to reclaim dirty page, then it
+will trigger all cgroups to writeback, which is less efficient:
 
-This is bad because CCF uses the clock to create a directory in clk debugfs.
-With such name, the directory creation (silently) fails and the debugfs
-entry end up being created at the debugfs root.
+1.if the used memory in a memory cgroup reaches its limit,
+it is useless to writeback other cgroups.
+2.other cgroups can wait more time to merge write request
 
-With this change, the clock name will now be:
-ffd1b000.pwm#mux0
+so replace the full flush with flushing writeback of memory cgroup
+whose tasks tries to reclaim memory and trigger writeback, if
+nothing is writeback, then fallback a full flush
 
-This matches the clock naming scheme used in the ethernet and mmc driver.
-It also fixes the problem with debugfs.
+After this patch, the writing performance enhance 5% in below setup:
+  $mount -t cgroup none -o memory /cgroups/memory/
+  $mkdir /cgroups/memory/x1
+  $echo $$ > /cgroups/memory/x1/tasks
+  $echo 100M > /cgroups/memory/x1/memory.limit_in_bytes
+  $cd /cgroups/memory/
+  $seq 10000|xargs  mkdir
+  $fio -filename=/home/test1 -direct=0 -iodepth 1 -thread -rw=write -ioengine=libaio -bs=16k -size=20G
+Before:
+WRITE: io=20480MB, aggrb=779031KB/s, minb=779031KB/s, maxb=779031KB/s, mint=26920msec, maxt=26920msec
+After:
+WRITE: io=20480MB, aggrb=831708KB/s, minb=831708KB/s, maxb=831708KB/s, mint=25215msec, maxt=25215msec
 
-Fixes: 36af66a79056 ("pwm: Convert to using %pOF instead of full_name")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+And this patch can reduce io util in this condition, like there
+is two disks, one disks is used to store all kinds of logs, it
+should be less io pressure, and other is used to store hadoop data
+which will write lots of data to disk, but both disk io utils are
+high in fact, since when hadoop reclaims memory, it will wake all
+memory cgroup writeback.
+
+Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- drivers/pwm/pwm-meson.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/fs-writeback.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-index 822860b4801a..c1ed641b3e26 100644
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -458,7 +458,6 @@ static int meson_pwm_init_channels(struct meson_pwm *meson,
- 				   struct meson_pwm_channel *channels)
- {
- 	struct device *dev = meson->chip.dev;
--	struct device_node *np = dev->of_node;
- 	struct clk_init_data init;
- 	unsigned int i;
- 	char name[255];
-@@ -467,7 +466,7 @@ static int meson_pwm_init_channels(struct meson_pwm *meson,
- 	for (i = 0; i < meson->chip.npwm; i++) {
- 		struct meson_pwm_channel *channel = &channels[i];
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 471d863958bc..475cada5d1cf 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -35,6 +35,11 @@
+  */
+ #define MIN_WRITEBACK_PAGES	(4096UL >> (PAGE_SHIFT - 10))
  
--		snprintf(name, sizeof(name), "%pOF#mux%u", np, i);
-+		snprintf(name, sizeof(name), "%s#mux%u", dev_name(dev), i);
++/*
++ * if WB cgroup dirty pages is bigger than it, not start a full flush
++ */
++#define MIN_WB_DIRTY_PAGES 64
++
+ struct wb_completion {
+ 	atomic_t		cnt;
+ };
+@@ -2005,6 +2010,32 @@ void wakeup_flusher_threads(enum wb_reason reason)
+ 	if (blk_needs_flush_plug(current))
+ 		blk_schedule_flush_plug(current);
  
- 		init.name = name;
- 		init.ops = &clk_mux_ops;
++#ifdef CONFIG_CGROUP_WRITEBACK
++	if (reason == WB_REASON_VMSCAN) {
++		unsigned long tmp, pdirty = 0;
++
++		rcu_read_lock();
++		list_for_each_entry_rcu(bdi, &bdi_list, bdi_list) {
++			struct bdi_writeback *wb = wb_find_current(bdi);
++
++			if (wb) {
++				tmp = mem_cgroup_wb_dirty_stats(wb);
++				if (tmp) {
++					pdirty += tmp;
++					wb_start_writeback(wb, reason);
++
++					if (wb == &bdi->wb)
++						pdirty += MIN_WB_DIRTY_PAGES;
++				}
++			}
++		}
++		rcu_read_unlock();
++
++		if (pdirty > MIN_WB_DIRTY_PAGES)
++			return;
++	}
++#endif
++
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(bdi, &bdi_list, bdi_list)
+ 		__wakeup_flusher_threads_bdi(bdi, reason);
 -- 
-2.17.1
+2.16.2
 
