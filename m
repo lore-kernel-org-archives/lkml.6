@@ -3,42 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483B9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687EEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2CEC20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2CEC20844
+	by mail.kernel.org (Postfix) with ESMTP id 142A420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:17:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142A420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404618AbeHATDr (ORCPT
+        id S2404627AbeHATDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46256 "EHLO
+        Wed, 1 Aug 2018 15:03:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404023AbeHATDq (ORCPT
+        with ESMTP id S2403980AbeHATDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:46 -0400
+        Wed, 1 Aug 2018 15:03:52 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E194CB4;
-        Wed,  1 Aug 2018 17:17:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 826FFC96;
+        Wed,  1 Aug 2018 17:17:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        acme@kernel.org, eranian@google.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/246] perf/x86/intel/uncore: Correct fixed counter index check for NHM
-Date:   Wed,  1 Aug 2018 18:49:36 +0200
-Message-Id: <20180801165014.852577363@linuxfoundation.org>
+Subject: [PATCH 4.14 068/246] selftests: memfd: return Kselftest Skip code for skipped tests
+Date:   Wed,  1 Aug 2018 18:49:38 +0200
+Message-Id: <20180801165014.964774490@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -55,41 +52,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@intel.com>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit d71f11c076c420c4e2fceb4faefa144e055e0935 ]
+[ Upstream commit b27f0259e8cea74c627327c063742a83613dd460 ]
 
-For Nehalem and Westmere, there is only one fixed counter for W-Box.
-There is no index which is bigger than UNCORE_PMC_IDX_FIXED.
-It is not correct to use >= to check fixed counter.
-The code quality issue will bring problem when new counter index is
-introduced.
+When memfd test is skipped because of unmet dependencies and/or unsupported
+configuration, it returns non-zero value which is treated as a fail by the
+Kselftest framework. This leads to false negative result even when the test
+could not be run.
 
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: acme@kernel.org
-Cc: eranian@google.com
-Link: http://lkml.kernel.org/r/1525371913-10597-2-git-send-email-kan.liang@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Change it to return kselftest skip code when a test gets skipped to clearly
+report that the test could not be run.
+
+Added an explicit check for root user at the start of memfd hugetlbfs test
+and return skip code if a non-root user attempts to run it.
+
+In addition, return skip code when not enough huge pages are available to
+run the test.
+
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/uncore_nhmex.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/memfd/run_tests.sh |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/arch/x86/events/intel/uncore_nhmex.c
-+++ b/arch/x86/events/intel/uncore_nhmex.c
-@@ -246,7 +246,7 @@ static void nhmex_uncore_msr_enable_even
- {
- 	struct hw_perf_event *hwc = &event->hw;
+--- a/tools/testing/selftests/memfd/run_tests.sh
++++ b/tools/testing/selftests/memfd/run_tests.sh
+@@ -1,6 +1,9 @@
+ #!/bin/bash
+ # please run as root
  
--	if (hwc->idx >= UNCORE_PMC_IDX_FIXED)
-+	if (hwc->idx == UNCORE_PMC_IDX_FIXED)
- 		wrmsrl(hwc->config_base, NHMEX_PMON_CTL_EN_BIT0);
- 	else if (box->pmu->type->event_mask & NHMEX_PMON_CTL_EN_BIT0)
- 		wrmsrl(hwc->config_base, hwc->config | NHMEX_PMON_CTL_EN_BIT22);
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
+ #
+ # Normal tests requiring no special resources
+ #
+@@ -29,12 +32,13 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $
+ 	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
+ 	hpages_needed=`expr $hpages_test - $freepgs`
+ 
++	if [ $UID != 0 ]; then
++		echo "Please run memfd with hugetlbfs test as root"
++		exit $ksft_skip
++	fi
++
+ 	echo 3 > /proc/sys/vm/drop_caches
+ 	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+-	if [ $? -ne 0 ]; then
+-		echo "Please run this test as root"
+-		exit 1
+-	fi
+ 	while read name size unit; do
+ 		if [ "$name" = "HugePages_Free:" ]; then
+ 			freepgs=$size
+@@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
+ 	fi
+ 	printf "Not enough huge pages available (%d < %d)\n" \
+ 		$freepgs $needpgs
+-	exit 1
++	exit $ksft_skip
+ fi
+ 
+ #
 
 
