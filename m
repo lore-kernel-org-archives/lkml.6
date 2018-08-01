@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E834C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C142C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E445C2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E445C2083D
+	by mail.kernel.org (Postfix) with ESMTP id C6C9E2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C9E2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406533AbeHATLB (ORCPT
+        id S2406542AbeHATLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51104 "EHLO
+        Wed, 1 Aug 2018 15:11:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406520AbeHATLA (ORCPT
+        with ESMTP id S2406206AbeHATLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:00 -0400
+        Wed, 1 Aug 2018 15:11:03 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB2FACC3;
-        Wed,  1 Aug 2018 17:24:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8168CC3;
+        Wed,  1 Aug 2018 17:24:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <pressmangal@gmail.com>,
+        stable@vger.kernel.org, tangpengpeng <tangpengpeng@higon.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 233/246] net: ena: Fix use of uninitialized DMA address bits field
-Date:   Wed,  1 Aug 2018 18:52:23 +0200
-Message-Id: <20180801165022.878181550@linuxfoundation.org>
+Subject: [PATCH 4.14 234/246] net: fix amd-xgbe flow-control issue
+Date:   Wed,  1 Aug 2018 18:52:24 +0200
+Message-Id: <20180801165022.926478238@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,44 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gal Pressman <pressmangal@gmail.com>
+From: tangpengpeng <tangpengpeng@higon.com>
 
-[ Upstream commit 101f0cd4f2216d32f1b8a75a2154cf3997484ee2 ]
+[ Upstream commit 7f3fc7ddf719cd6faaf787722c511f6918ac6aab ]
 
-UBSAN triggers the following undefined behaviour warnings:
-[...]
-[   13.236124] UBSAN: Undefined behaviour in drivers/net/ethernet/amazon/ena/ena_eth_com.c:468:22
-[   13.240043] shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
-[   13.744769] UBSAN: Undefined behaviour in drivers/net/ethernet/amazon/ena/ena_eth_com.c:373:4
-[   13.748694] shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
+If we enable or disable xgbe flow-control by ethtool ,
+it does't work.Because the parameter is not properly
+assigned,so we need to adjust the assignment order
+of the parameters.
 
-When splitting the address to high and low, GENMASK_ULL is used to generate
-a bitmask with dma_addr_bits field from io_sq (in ena_com_prepare_tx and
-ena_com_add_single_rx_desc).
-The problem is that dma_addr_bits is not initialized with a proper value
-(besides being cleared in ena_com_create_io_queue).
-Assign dma_addr_bits the correct value that is stored in ena_dev when
-initializing the SQ.
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Gal Pressman <pressmangal@gmail.com>
+Fixes: c1ce2f77366b ("amd-xgbe: Fix flow control setting logic")
+Signed-off-by: tangpengpeng <tangpengpeng@higon.com>
+Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -331,6 +331,7 @@ static int ena_com_init_io_sq(struct ena
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
+@@ -1128,14 +1128,14 @@ static void xgbe_phy_adjust_link(struct
  
- 	memset(&io_sq->desc_addr, 0x0, sizeof(io_sq->desc_addr));
+ 		if (pdata->tx_pause != pdata->phy.tx_pause) {
+ 			new_state = 1;
+-			pdata->hw_if.config_tx_flow_control(pdata);
+ 			pdata->tx_pause = pdata->phy.tx_pause;
++			pdata->hw_if.config_tx_flow_control(pdata);
+ 		}
  
-+	io_sq->dma_addr_bits = ena_dev->dma_addr_bits;
- 	io_sq->desc_entry_size =
- 		(io_sq->direction == ENA_COM_IO_QUEUE_DIRECTION_TX) ?
- 		sizeof(struct ena_eth_io_tx_desc) :
+ 		if (pdata->rx_pause != pdata->phy.rx_pause) {
+ 			new_state = 1;
+-			pdata->hw_if.config_rx_flow_control(pdata);
+ 			pdata->rx_pause = pdata->phy.rx_pause;
++			pdata->hw_if.config_rx_flow_control(pdata);
+ 		}
+ 
+ 		/* Speed support */
 
 
