@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8C7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43354C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F8020840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F8020840
+	by mail.kernel.org (Postfix) with ESMTP id F220920840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F220920840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387589AbeHAUUp (ORCPT
+        id S2387525AbeHAUUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:20:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
+        Wed, 1 Aug 2018 16:20:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404172AbeHATDe (ORCPT
+        with ESMTP id S2404163AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E439D11BA;
-        Wed,  1 Aug 2018 17:07:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 617261181;
+        Wed,  1 Aug 2018 17:07:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dominik Bozek <dominikx.bozek@intel.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        stable@vger.kernel.org,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 271/336] usb: hub: Dont wait for connect state at resume for powered-off ports
-Date:   Wed,  1 Aug 2018 18:50:06 +0200
-Message-Id: <20180801165039.408172071@linuxfoundation.org>
+Subject: [PATCH 4.17 259/336] rsi: Fix invalid vdd warning in mmc
+Date:   Wed,  1 Aug 2018 18:49:54 +0200
+Message-Id: <20180801165038.960923531@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,39 +53,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominik Bozek <dominikx.bozek@intel.com>
+From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
 
-[ Upstream commit 5d111f5190848d6fb1c414dc57797efea3526a2f ]
+[ Upstream commit 78e450719c702784e42af6da912d3692fd3da0cb ]
 
-wait_for_connected() wait till a port change status to
-USB_PORT_STAT_CONNECTION, but this is not possible if
-the port is unpowered. The loop will only exit at timeout.
+While performing cleanup, driver is messing with card->ocr
+value by not masking rocr against ocr_avail. Below panic
+is observed with some of the SDIO host controllers due to
+this. Issue is resolved by reverting incorrect modifications
+to vdd.
 
-Such case take place if an over-current incident happen
-while system is in S3. Then during resume wait_for_connected()
-will wait 2s, which may be noticeable by the user.
+[  927.423821] mmc1: Invalid vdd 0x1f
+[  927.423925] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x
+	       mac80211 cfg80211 btrsi rfcomm bluetooth ecdh_generic
+[  927.424073] CPU: 0 PID: 1624 Comm: insmod Tainted: G		W        4.15.0-1000-caracalla #1
+[  927.424075] Hardware name: Dell Inc. Edge Gateway	3003/      , BIOS 01.00.06 01/22/2018
+[  927.424082] RIP: 0010:sdhci_set_power_noreg+0xdd/0x190[sdhci]
+[  927.424085] RSP: 0018:ffffac3fc064b930 EFLAGS:  00010282
+[  927.424107] Call Trace:
+[  927.424118]  sdhci_set_power+0x5a/0x60 [sdhci]
+[  927.424125]  sdhci_set_ios+0x360/0x3b0 [sdhci]
+[  927.424133]  mmc_set_initial_state+0x92/0x120
+[  927.424137]  mmc_power_up.part.34+0x33/0x1d0
+[  927.424141]  mmc_power_up+0x17/0x20
+[  927.424147]  mmc_sdio_runtime_resume+0x2d/0x50
+[  927.424151]  mmc_runtime_resume+0x17/0x20
+[  927.424156]  __rpm_callback+0xc4/0x200
+[  927.424161]  ? idr_alloc_cyclic+0x57/0xd0
+[  927.424165]  ? mmc_runtime_suspend+0x20/0x20
+[  927.424169]  rpm_callback+0x24/0x80
+[  927.424172]  ? mmc_runtime_suspend+0x20/0x20
+[  927.424176]  rpm_resume+0x4b3/0x6c0
+[  927.424181]  __pm_runtime_resume+0x4e/0x80
+[  927.424188]  driver_probe_device+0x41/0x490
+[  927.424192]  __driver_attach+0xdf/0xf0
+[  927.424196]  ? driver_probe_device+0x490/0x490
+[  927.424201]  bus_for_each_dev+0x6c/0xc0
+[  927.424205]  driver_attach+0x1e/0x20
+[  927.424209]  bus_add_driver+0x1f4/0x270
+[  927.424217]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.424221]  driver_register+0x60/0xe0
+[  927.424227]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.424231]  sdio_register_driver+0x20/0x30
+[  927.424237]  rsi_module_init+0x16/0x40 [rsi_sdio]
 
-Signed-off-by: Dominik Bozek <dominikx.bozek@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/core/hub.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/rsi/rsi_91x_sdio.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3380,6 +3380,10 @@ static int wait_for_connected(struct usb
- 	while (delay_ms < 2000) {
- 		if (status || *portstatus & USB_PORT_STAT_CONNECTION)
- 			break;
-+		if (!port_is_power_on(hub, *portstatus)) {
-+			status = -ENODEV;
-+			break;
-+		}
- 		msleep(20);
- 		delay_ms += 20;
- 		status = hub_port_status(hub, *port1, portstatus, portchange);
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+@@ -170,7 +170,6 @@ static void rsi_reset_card(struct sdio_f
+ 	int err;
+ 	struct mmc_card *card = pfunction->card;
+ 	struct mmc_host *host = card->host;
+-	s32 bit = (fls(host->ocr_avail) - 1);
+ 	u8 cmd52_resp;
+ 	u32 clock, resp, i;
+ 	u16 rca;
+@@ -190,7 +189,6 @@ static void rsi_reset_card(struct sdio_f
+ 	msleep(20);
+ 
+ 	/* Initialize the SDIO card */
+-	host->ios.vdd = bit;
+ 	host->ios.chip_select = MMC_CS_DONTCARE;
+ 	host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
+ 	host->ios.power_mode = MMC_POWER_UP;
 
 
