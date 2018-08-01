@@ -2,46 +2,46 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B8AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A22C46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1386D20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1386D20894
+	by mail.kernel.org (Postfix) with ESMTP id 38F9420894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F9420894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389141AbeHALWl (ORCPT
+        id S2389174AbeHALWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:22:41 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4370 "EHLO
+        Wed, 1 Aug 2018 07:22:42 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46487 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389066AbeHALWk (ORCPT
+        by vger.kernel.org with ESMTP id S2389061AbeHALWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:22:40 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719Saka016581;
-        Wed, 1 Aug 2018 11:37:35 +0200
+        Wed, 1 Aug 2018 07:22:41 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w719TSGk009408;
+        Wed, 1 Aug 2018 11:37:36 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2kgdxvjuxr-1
+        by mx07-00178001.pphosted.com with ESMTP id 2kjnaddbdj-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 01 Aug 2018 11:37:35 +0200
+        Wed, 01 Aug 2018 11:37:36 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1070B38;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AB9BE34;
         Wed,  1 Aug 2018 09:37:35 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 538DE288E;
-        Wed,  1 Aug 2018 09:37:34 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:34 +0200
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 697A828FD;
+        Wed,  1 Aug 2018 09:37:35 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
+ 11:37:35 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 1 Aug 2018
- 11:37:33 +0200
+ 11:37:34 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -51,9 +51,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-mmc@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH 11/14] mmc: mmci: add dma_start callback
-Date:   Wed, 1 Aug 2018 11:36:58 +0200
-Message-ID: <1533116221-380-12-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH 12/14] mmc: mmci: add dma_finalize callback
+Date:   Wed, 1 Aug 2018 11:36:59 +0200
+Message-ID: <1533116221-380-13-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
 References: <1533116221-380-1-git-send-email-ludovic.Barre@st.com>
@@ -69,157 +69,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds dma_start callback to mmci_host_ops.
-Create a generic mmci_dma_start function which regroup
-common action between variant.
+This patch adds dma_finalize callback at mmci_host_ops
+to allow to call specific variant.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c          | 63 +++++++++++++++++++++++-----------------
+ drivers/mmc/host/mmci.c          | 14 ++++++++------
  drivers/mmc/host/mmci.h          |  2 ++
  drivers/mmc/host/mmci_qcom_dml.c |  1 +
- 3 files changed, 39 insertions(+), 27 deletions(-)
+ 3 files changed, 11 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 177e2e8..642ef19 100644
+index 642ef19..b124a73 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -415,6 +415,38 @@ void mmci_dma_release(struct mmci_host *host)
- 		host->ops->dma_release(host);
+@@ -447,6 +447,12 @@ int mmci_dma_start(struct mmci_host *host, unsigned int datactrl)
+ 	return 0;
  }
  
-+int mmci_dma_start(struct mmci_host *host, unsigned int datactrl)
++void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
 +{
-+	struct mmc_data *data = host->data;
-+	int ret;
-+
-+	ret = mmci_prepare_data(host, data, false);
-+	if (ret)
-+		return ret;
-+
-+	if (!host->ops || !host->ops->dma_start)
-+		return -EINVAL;
-+
-+	/* Okay, go for it. */
-+	dev_vdbg(mmc_dev(host->mmc),
-+		 "Submit MMCI DMA job, sglen %d blksz %04x blks %04x flags %08x\n",
-+		 data->sg_len, data->blksz, data->blocks, data->flags);
-+
-+	host->ops->dma_start(host, &datactrl);
-+
-+	/* Trigger the DMA transfer */
-+	mmci_write_datactrlreg(host, datactrl);
-+
-+	/*
-+	 * Let the MMCI say when the data is ended and it's time
-+	 * to fire next DMA request. When that happens, MMCI will
-+	 * call mmci_data_end()
-+	 */
-+	writel(readl(host->base + MMCIMASK0) | MCI_DATAENDMASK,
-+	       host->base + MMCIMASK0);
-+	return 0;
++	if (host->ops && host->ops->dma_finalize)
++		host->ops->dma_finalize(host, data);
 +}
 +
  static void
  mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
  {
-@@ -721,20 +753,11 @@ int mmci_dmae_prepare_data(struct mmci_host *host,
- 				    &dmae->dma_desc_current);
+@@ -626,7 +632,7 @@ static void mmci_dma_data_error(struct mmci_host *host)
+ 	__mmci_dmae_unmap(host, host->data);
  }
  
--static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
-+int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl)
+-static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
++void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data)
  {
  	struct dmaengine_priv *dmae = host->dma_priv;
- 	struct mmc_data *data = host->data;
--	int ret;
--
--	ret = mmci_prepare_data(host, host->data, false);
--	if (ret)
--		return ret;
- 
--	/* Okay, go for it. */
--	dev_vdbg(mmc_dev(host->mmc),
--		 "Submit MMCI DMA job, sglen %d blksz %04x blks %04x flags %08x\n",
--		 data->sg_len, data->blksz, data->blocks, data->flags);
- 	dmae->dma_in_progress = true;
- 	dmaengine_submit(dmae->dma_desc_current);
- 	dma_async_issue_pending(dmae->dma_current);
-@@ -742,18 +765,8 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
- 	if (host->variant->qcom_dml)
- 		dml_start_xfer(host, data);
- 
--	datactrl |= MCI_DPSM_DMAENABLE;
--
--	/* Trigger the DMA transfer */
--	mmci_write_datactrlreg(host, datactrl);
-+	*datactrl |= MCI_DPSM_DMAENABLE;
- 
--	/*
--	 * Let the MMCI say when the data is ended and it's time
--	 * to fire next DMA request. When that happens, MMCI will
--	 * call mmci_data_end()
--	 */
--	writel(readl(host->base + MMCIMASK0) | MCI_DATAENDMASK,
--	       host->base + MMCIMASK0);
- 	return 0;
- }
- 
-@@ -806,6 +819,7 @@ static struct mmci_host_ops mmci_variant_ops = {
- 	.get_next_data = mmci_dmae_get_next_data,
+ 	u32 status;
+@@ -820,14 +826,10 @@ static struct mmci_host_ops mmci_variant_ops = {
  	.dma_setup = mmci_dmae_setup,
  	.dma_release = mmci_dmae_release,
-+	.dma_start = mmci_dmae_start,
+ 	.dma_start = mmci_dmae_start,
++	.dma_finalize = mmci_dmae_finalize,
  };
  #else
  /* Blank functions if the DMA engine is not available */
-@@ -818,11 +832,6 @@ static inline void mmci_dma_data_error(struct mmci_host *host)
- {
- }
- 
--static inline int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
+-static inline void mmci_dma_finalize(struct mmci_host *host,
+-				     struct mmc_data *data)
 -{
--	return -ENOSYS;
 -}
 -
- static struct mmci_host_ops mmci_variant_ops = {};
- #endif
- 
-@@ -925,7 +934,7 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
- 	 * Attempt to use DMA operation mode, if this
- 	 * should fail, fall back to PIO mode
- 	 */
--	if (!mmci_dma_start_data(host, datactrl))
-+	if (!mmci_dma_start(host, datactrl))
- 		return;
- 
- 	/* IRQ mode, map the SG list for CPU reading/writing */
+ static inline void mmci_dma_data_error(struct mmci_host *host)
+ {
+ }
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index f961f90..3a200a9 100644
+index 3a200a9..3f482d5 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -280,6 +280,7 @@ struct mmci_host_ops {
- 	void (*get_next_data)(struct mmci_host *host, struct mmc_data *data);
+@@ -281,6 +281,7 @@ struct mmci_host_ops {
  	int (*dma_setup)(struct mmci_host *host);
  	void (*dma_release)(struct mmci_host *host);
-+	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
+ 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
++	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
  };
  
  struct mmci_host {
-@@ -338,3 +339,4 @@ void mmci_dmae_unprepare_data(struct mmci_host *host,
- void mmci_dmae_get_next_data(struct mmci_host *host, struct mmc_data *data);
+@@ -340,3 +341,4 @@ void mmci_dmae_get_next_data(struct mmci_host *host, struct mmc_data *data);
  int mmci_dmae_setup(struct mmci_host *host);
  void mmci_dmae_release(struct mmci_host *host);
-+int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
+ int mmci_dmae_start(struct mmci_host *host, unsigned int *datactrl);
++void mmci_dmae_finalize(struct mmci_host *host, struct mmc_data *data);
 diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index 3c9d32e..e6267ad 100644
+index e6267ad..ba7e311 100644
 --- a/drivers/mmc/host/mmci_qcom_dml.c
 +++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -187,6 +187,7 @@ static struct mmci_host_ops qcom_variant_ops = {
- 	.get_next_data = mmci_dmae_get_next_data,
+@@ -188,6 +188,7 @@ static struct mmci_host_ops qcom_variant_ops = {
  	.dma_setup = qcom_dma_setup,
  	.dma_release = mmci_dmae_release,
-+	.dma_start = mmci_dmae_start,
+ 	.dma_start = mmci_dmae_start,
++	.dma_finalize = mmci_dmae_finalize,
  };
  
  void qcom_variant_init(struct mmci_host *host)
