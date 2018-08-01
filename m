@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0B5C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47190C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BD9208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BD9208A4
+	by mail.kernel.org (Postfix) with ESMTP id 075C9208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:35:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075C9208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389421AbeHAPVV (ORCPT
+        id S2389442AbeHAPVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:21:21 -0400
+        Wed, 1 Aug 2018 11:21:24 -0400
 Received: from esa5.microchip.iphmx.com ([216.71.150.166]:59737 "EHLO
         esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389338AbeHAPVV (ORCPT
+        with ESMTP id S2389338AbeHAPVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:21:21 -0400
+        Wed, 1 Aug 2018 11:21:23 -0400
 X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
-   d="scan'208";a="15042262"
+   d="scan'208";a="15042264"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 01 Aug 2018 06:35:32 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 01 Aug 2018 06:35:35 -0700
 Received: from localhost.localdomain.com (10.10.76.4) by
  chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 1 Aug 2018 06:35:31 -0700
+ 14.3.352.0; Wed, 1 Aug 2018 06:35:33 -0700
 From:   Tudor Ambarus <tudor.ambarus@microchip.com>
 To:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
         <ludovic.desroches@microchip.com>, <nicolas.ferre@microchip.com>,
@@ -37,10 +37,12 @@ To:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
 CC:     <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linus.walleij@linaro.org>,
         Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH 0/2] i2c: enable buses to save their clock frequency in adapter
-Date:   Wed, 1 Aug 2018 16:35:10 +0300
-Message-ID: <20180801133512.12276-1-tudor.ambarus@microchip.com>
+Subject: [PATCH 1/2] i2c: enable buses to save their clock frequency in adapter
+Date:   Wed, 1 Aug 2018 16:35:11 +0300
+Message-ID: <20180801133512.12276-2-tudor.ambarus@microchip.com>
 X-Mailer: git-send-email 2.9.4
+In-Reply-To: <20180801133512.12276-1-tudor.ambarus@microchip.com>
+References: <20180801133512.12276-1-tudor.ambarus@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,17 +65,23 @@ will have to make their own assumption of the clock frequency.
 Spare the i2c clients of making wrong assumptions of the i2c bus clock
 frequency and enable the buses to save their clock frequency in adapter.
 
-since rfc:
-- reword commit messages
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+ include/linux/i2c.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tudor Ambarus (2):
-  i2c: enable buses to save their clock frequency in adapter
-  i2c: at91: Save the bus clock frequency in adapter
-
- drivers/i2c/busses/i2c-at91.c | 1 +
- include/linux/i2c.h           | 1 +
- 2 files changed, 2 insertions(+)
-
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index bc8d42f..fe65768 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -677,6 +677,7 @@ struct i2c_adapter {
+ 	struct rt_mutex bus_lock;
+ 	struct rt_mutex mux_lock;
+ 
++	u32 bus_freq_hz;
+ 	int timeout;			/* in jiffies */
+ 	int retries;
+ 	struct device dev;		/* the adapter device */
 -- 
 2.9.4
 
