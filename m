@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861C3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBED6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385C020841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:34:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385C020841
+	by mail.kernel.org (Postfix) with ESMTP id A064720844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:34:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A064720844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732393AbeHAXVr (ORCPT
+        id S1732440AbeHAXVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:21:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42186 "EHLO
+        Wed, 1 Aug 2018 19:21:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53402 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725881AbeHAXVq (ORCPT
+        by vger.kernel.org with ESMTP id S1725881AbeHAXVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:21:46 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71LOAsY086863
-        for <linux-kernel@vger.kernel.org>; Wed, 1 Aug 2018 17:33:59 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kkjfm5q2y-1
+        Wed, 1 Aug 2018 19:21:51 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71LRU2n129708
+        for <linux-kernel@vger.kernel.org>; Wed, 1 Aug 2018 17:34:05 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2kkmsp8787-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:33:59 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:34:04 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Wed, 1 Aug 2018 17:33:58 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 1 Aug 2018 17:34:04 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 Aug 2018 17:33:52 -0400
+        Wed, 1 Aug 2018 17:33:59 -0400
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w71LXqKb10420718
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w71LXwg810748264
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 1 Aug 2018 21:33:52 GMT
+        Wed, 1 Aug 2018 21:33:58 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B53AAC05F;
-        Wed,  1 Aug 2018 17:34:30 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 34B39AC05B;
+        Wed,  1 Aug 2018 17:34:36 -0400 (EDT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0119AC059;
-        Wed,  1 Aug 2018 17:34:25 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id B1382AC059;
+        Wed,  1 Aug 2018 17:34:31 -0400 (EDT)
 Received: from kermit-br-ibm-com.ibmmodules.com (unknown [9.80.99.86])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  1 Aug 2018 17:34:25 -0400 (EDT)
+        Wed,  1 Aug 2018 17:34:31 -0400 (EDT)
 From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
@@ -70,8 +70,8 @@ Cc:     "Alastair D'Silva" <alastair@d-silva.org>,
         Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
         "Tobin C . Harding" <me@tobin.cc>, linuxppc-dev@lists.ozlabs.org,
         Segher Boessenkool <segher@kernel.crashing.org>
-Subject: [PATCH v4 1/6] powerpc/traps: Print unhandled signals in a separate function
-Date:   Wed,  1 Aug 2018 18:33:15 -0300
+Subject: [PATCH v4 2/6] powerpc/traps: Use an explicit ratelimit state for show_signal_msg()
+Date:   Wed,  1 Aug 2018 18:33:16 -0300
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180801213320.11203-1-muriloo@linux.ibm.com>
 References: <20180801213320.11203-1-muriloo@linux.ibm.com>
@@ -79,14 +79,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18080121-2213-0000-0000-000002D313CA
+x-cbid: 18080121-0064-0000-0000-00000332C540
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009468; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01068949; UDB=6.00549596; IPR=6.00847297;
- MB=3.00022446; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-01 21:33:56
+ MB=3.00022446; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-01 21:34:03
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080121-2214-0000-0000-00005B0BE884
-Message-Id: <20180801213320.11203-2-muriloo@linux.ibm.com>
+x-cbparentid: 18080121-0065-0000-0000-00003A2613FC
+Message-Id: <20180801213320.11203-3-muriloo@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -99,61 +99,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Isolate the logic of printing unhandled signals out of _exception_pkey().
-No functional change, only code rearrangement.
+Replace printk_ratelimited() by printk() and a default rate limit
+burst to limit displaying unhandled signals messages.
+
+This will allow us to call print_vma_addr() in a future patch, which
+does not work with printk_ratelimited().
 
 Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 ---
- arch/powerpc/kernel/traps.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ arch/powerpc/kernel/traps.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index 0e17dcb48720..cbd3dc365193 100644
+index cbd3dc365193..367534b41617 100644
 --- a/arch/powerpc/kernel/traps.c
 +++ b/arch/powerpc/kernel/traps.c
-@@ -301,26 +301,32 @@ void user_single_step_siginfo(struct task_struct *tsk,
+@@ -301,6 +301,13 @@ void user_single_step_siginfo(struct task_struct *tsk,
  	info->si_addr = (void __user *)regs->nip;
  }
  
-+static void show_signal_msg(int signr, struct pt_regs *regs, int code,
-+			    unsigned long addr)
++static bool show_unhandled_signals_ratelimited(void)
 +{
-+	const char fmt32[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-+		"at %08lx nip %08lx lr %08lx code %x\n";
-+	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
-+		"at %016lx nip %016lx lr %016lx code %x\n";
-+
-+	if (show_unhandled_signals && unhandled_signal(current, signr)) {
-+		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
-+				   current->comm, current->pid, signr,
-+				   addr, regs->nip, regs->link, code);
-+	}
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
++				      DEFAULT_RATELIMIT_BURST);
++	return show_unhandled_signals && __ratelimit(&rs);
 +}
- 
- void _exception_pkey(int signr, struct pt_regs *regs, int code,
--		unsigned long addr, int key)
-+		     unsigned long addr, int key)
++
+ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+ 			    unsigned long addr)
  {
- 	siginfo_t info;
--	const char fmt32[] = KERN_INFO "%s[%d]: unhandled signal %d " \
--			"at %08lx nip %08lx lr %08lx code %x\n";
--	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
--			"at %016lx nip %016lx lr %016lx code %x\n";
- 
- 	if (!user_mode(regs)) {
- 		die("Exception in kernel mode", regs, signr);
- 		return;
- 	}
+@@ -309,11 +316,15 @@ static void show_signal_msg(int signr, struct pt_regs *regs, int code,
+ 	const char fmt64[] = KERN_INFO "%s[%d]: unhandled signal %d " \
+ 		"at %016lx nip %016lx lr %016lx code %x\n";
  
 -	if (show_unhandled_signals && unhandled_signal(current, signr)) {
 -		printk_ratelimited(regs->msr & MSR_64BIT ? fmt64 : fmt32,
 -				   current->comm, current->pid, signr,
 -				   addr, regs->nip, regs->link, code);
 -	}
-+	show_signal_msg(signr, regs, code, addr);
++	if (!unhandled_signal(current, signr))
++		return;
++
++	if (!show_unhandled_signals_ratelimited())
++		return;
++
++	printk(regs->msr & MSR_64BIT ? fmt64 : fmt32,
++	       current->comm, current->pid, signr,
++	       addr, regs->nip, regs->link, code);
+ }
  
- 	if (arch_irqs_disabled() && !arch_irq_disabled_regs(regs))
- 		local_irq_enable();
+ void _exception_pkey(int signr, struct pt_regs *regs, int code,
 -- 
 2.17.1
 
