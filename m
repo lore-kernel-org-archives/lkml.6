@@ -2,136 +2,91 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E861C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5B2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E5620862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0dFUJ0g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E5620862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6234920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:50:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6234920862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbeHAVhy (ORCPT
+        id S2388517AbeHAViC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:37:54 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42502 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387683AbeHAVhx (ORCPT
+        Wed, 1 Aug 2018 17:38:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34828 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387403AbeHAViC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:37:53 -0400
-Received: by mail-qt0-f195.google.com with SMTP id z8-v6so21283940qto.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AQjhE/Y3KIXu/PHI4jD3V6mM1aJCngK9CXZI+6Xl0bA=;
-        b=i0dFUJ0gvxvk0NoCa7PzFITHJXzd7t2RtnSW/+ETbJpVhvegq21KZ1T7qVMPDK6Umb
-         vmWN4zhatHUd9QqdAtFZzP6moi6phB/PID5BvOT7uGoLEdlPki4jfPsVQA9NMWnP0kJv
-         ILYgal2PB5IZBUgRcyhAfINl5700vpXM2bRPpL2hZ2q3cy5hvM0KWRHm7unwNoNqL49T
-         XfyEVEBNw27gi1uZWJROI+fx7Gu/vIFw2rohpXwMbe+mjgt4U66P9paJhes+vG9eLTX6
-         Gnwg7H7ZhuC9sg3xB4FmkKeCr+lqeJLax0ixxHTNkC6mHI2pk6zsAYyzerX1dD0XtPv4
-         YP5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AQjhE/Y3KIXu/PHI4jD3V6mM1aJCngK9CXZI+6Xl0bA=;
-        b=XTsRRl8urx1w6m2W8kQU+HZPy8vE98Rd8t9rjMuuCkFdyT/6j/UVXppkUT2iiWx6xG
-         Belsh8i6WLc/BTU7RVe/1XZPPrcCg4CHYCcFI8oYPaMZfNpVJKkn49NkwrGwEYCB9PCT
-         WWPNrNV4PDodr8+gIDNxdQPW9Au01SdRA78EitAsFVZtQ+5MGH7lvPf1iJkp7KQycdJz
-         PQndWFdbeTD8f1KhzMgffhbV88fu19EEsaGyJsFgNgtDQBgR4GCgnXlE48unV/ZuXaVN
-         90kcjaumqkEtX8Y0uTwGA+aCIUtbXFZ12OleNqX22nbgeixSPub7wBzwGdCQsImCwgO+
-         VyPg==
-X-Gm-Message-State: AOUpUlFRePbM0lUGec9qH1hHHGkvU5qtiAqeWnc84wmHVt9O8rT/R6ag
-        WS1zexclqttyAZQSg5DsUZT9eZWS5DeA1Ju/AOE=
-X-Google-Smtp-Source: AAOMgpdNLzkUhMTgmHfI2B5Way2XfNyr/ZFEzznRgmbsv1lyYuobVIl8IZtg6wkPxhNIfdVoUzyfQSPNVOIRytpIhos=
-X-Received: by 2002:ac8:1acd:: with SMTP id h13-v6mr26443776qtk.206.1533153029518;
- Wed, 01 Aug 2018 12:50:29 -0700 (PDT)
+        Wed, 1 Aug 2018 17:38:02 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fkx8h-0001GL-0b; Wed, 01 Aug 2018 21:50:31 +0200
+Date:   Wed, 1 Aug 2018 21:50:29 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Aashish Lakhwara <aashish.l@samsung.com>
+cc:     linux-kernel@vger.kernel.org, himanshu.sh@samssung.com,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com,
+        Himanshu Shukla <himanshu.sh@samsung.com>
+Subject: Re: [PATCH] posix-timers: Remove the stack variable clockid_t
+ introduced as part of Protect posix clock array access against speculation
+In-Reply-To: <20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6~GrS4x1NZj0970809708epcas5p3l@epcas5p3.samsung.com>
+Message-ID: <alpine.DEB.2.21.1808012140160.1835@nanos.tec.linutronix.de>
+References: <CGME20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6@epcas5p3.samsung.com> <20180801055857epcas5p35ac85b8c9c9339eb3080e6d89b1a0ce6~GrS4x1NZj0970809708epcas5p3l@epcas5p3.samsung.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 12:50:09 -0700 (PDT)
-In-Reply-To: <CAGXu5jJUa36N+Q0K9dbc9xX_LoN=4AZ+CxrDiem==8LEXrdF=w@mail.gmail.com>
-References: <20180801175815.GA25489@gmail.com> <CAGXu5jJUa36N+Q0K9dbc9xX_LoN=4AZ+CxrDiem==8LEXrdF=w@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 1 Aug 2018 21:50:09 +0200
-Message-ID: <CANiq72=sKO_QxujKSY7ZJSaVfT0-4atk+4U8fJFsmLJLxrjhzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] auxdisplay: panel: avoid gcc 8's
- Wstringop-truncation warning
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Martin Sebor <msebor@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 8:47 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Aug 1, 2018 at 10:58 AM, Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
->> Let gcc know it is not meant to be NUL-terminated by annotating with
->> the new __nonstring variable attribute; and remove the comment since it
->> conveys the same information.
->>
->> Cc: Willy Tarreau <w@1wt.eu>
->> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->> Cc: Martin Sebor <msebor@gmail.com>
->> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->> ---
->>  drivers/auxdisplay/panel.c | 7 +++----
->>  1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
->> index 3b25a643058c..21b9b2f2470a 100644
->> --- a/drivers/auxdisplay/panel.c
->> +++ b/drivers/auxdisplay/panel.c
->> @@ -155,10 +155,9 @@ struct logical_input {
->>                         int release_data;
->>                 } std;
->>                 struct {        /* valid when type == INPUT_TYPE_KBD */
->> -                       /* strings can be non null-terminated */
->> -                       char press_str[sizeof(void *) + sizeof(int)];
->> -                       char repeat_str[sizeof(void *) + sizeof(int)];
->> -                       char release_str[sizeof(void *) + sizeof(int)];
->> +                       char press_str[sizeof(void *) + sizeof(int)] __nonstring;
->> +                       char repeat_str[sizeof(void *) + sizeof(int)] __nonstring;
->> +                       char release_str[sizeof(void *) + sizeof(int)] __nonstring;
->>                 } kbd;
->>         } u;
->>  };
->
-> If it's not a string, why not use "u8" instead of "char"? Does the
-> warning persist?
+On Wed, 1 Aug 2018, Aashish Lakhwara wrote:
 
-Yes, it persists (on purpose). Originally it didn't, but see the discussion at:
+> Subject: [PATCH] posix-timers: Remove the stack variable clockid_t introduced as part of
+    Protect posix clock array access against speculation
 
-  https://www.spinics.net/lists/kernel/msg2737596.html
+Documentation/process/submitting-patches.rst:
 
-And:
+  For these reasons, the ``summary`` must be no more than 70-75
+  characters, and it must describe both what the patch changes, as well
+  as why the patch might be necessary.  It is challenging to be both
+  succinct and descriptive, but that is what a well-written summary
+  should do.
 
-  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84725
+The above $subject violates all of these rules.
 
-Cheers,
-Miguel
+> The "array_index_mask_nospec" code has been updated to allow index
+> argument to have const-qualified type.
 
->
-> -Kees
->
-> --
-> Kees Cook
-> Pixel Security
+> Now the stack variable "idx" is no longer required and can be removed.
+> We should directly pass the const variable "id" to array_index_mask_nospec
+
+We should? Changelogs are about facts. So having:
+
+  The "array_index_mask_nospec" code has been updated to allow index
+  argument to have const-qualified type.
+
+  So the stack variable "idx" which was introduced in commit 19b558db12f9
+  ("posix-timers: Protect posix clock array access against speculation") to
+  cast the const argument 'id' is not longer required.
+
+is factual and precise. Hmm?
+
+> Signed-off-by: Aashish Lakhwara <aashish.l@samsung.com>
+> Signed-off-by: Himanshu Shukla <himanshu.sh@samsung.com>
+
+This SOB chain is wrong. Please read and follow the Docuentation.
+
+Thanks,
+
+	tglx
