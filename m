@@ -2,118 +2,100 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D680C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404DAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF352083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E4I8d3wN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF352083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E174B2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E174B2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbeHATwS (ORCPT
+        id S1732663AbeHATw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:52:18 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39248 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729784AbeHATwS (ORCPT
+        Wed, 1 Aug 2018 15:52:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405824AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:52:18 -0400
-Received: by mail-pg1-f196.google.com with SMTP id a11-v6so11200921pgw.6
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wL0fWQKe6YDVk5gZXK2gEuAVrBvPcSCEQHWulUbgBug=;
-        b=E4I8d3wNONArDWRcwggM9crw+nnQTuugbXliRmPzEbNtiOVGiIXks9gXsGxdipwUGh
-         zzGTlk1brCXeo2Ma3WR5QH13Z3UdSp0jcnUXrCM32mZYY/Sf/VrgB3H0ffbV5qPvQnAn
-         2q7wwFyEruApCbJJOQdQdYSFy82iCczBeXzxA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wL0fWQKe6YDVk5gZXK2gEuAVrBvPcSCEQHWulUbgBug=;
-        b=QwdYCmc/iT+zovCHql45yeBXjL4OTQcBbUNmj8PYMppXw65wsSQfSkLYkiYSJqKyez
-         C9lppGs5j4aOkIq1bf4iSgOrO0Z2XHlUJjatM6bIdGJlME+L93iyuJvNb2fc0Gt3Rpwo
-         ocDapfA8Aj9WQk4u4/18PVKJnJtfmscX7jOcmu8TSq51lup3JRfRRGYPYZFoxz5fzR5a
-         /7ABJ6cx76AeK+OMD/q1OIETIv91nvkwM5aXSa3VjhVB4NrJOv5+1p01/FRoLGaGZJyB
-         kewvof5pzYYNyzR8c9qVercVIWpcnuEB2h/kfrnqSeHFNEsaokJyQyGahFer0g8G7ZFd
-         3Vyg==
-X-Gm-Message-State: AOUpUlFudySxwSI7Al6H0DflgCJmCyHgyGPzXCJvivLhbqaR/sOReP1s
-        dSZYRs09gbqP4rTzQn4d2ZLu
-X-Google-Smtp-Source: AAOMgpfbnbgyS+EQSDwM+IxhO6D+Q7Oynt5LdmjoSAIwAXlzdtwYtkxSeSPaUduv0GgM/mXHjbMNlg==
-X-Received: by 2002:a62:f0d:: with SMTP id x13-v6mr27548991pfi.123.1533146723601;
-        Wed, 01 Aug 2018 11:05:23 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:73c1:5a70:e532:a47d:7290:5aa6])
-        by smtp.gmail.com with ESMTPSA id x80-v6sm12961649pfe.129.2018.08.01.11.05.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 11:05:15 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v8 4/6] arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
-Date:   Wed,  1 Aug 2018 23:32:30 +0530
-Message-Id: <20180801180232.23680-5-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
-References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+        Wed, 1 Aug 2018 15:08:37 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FD9710B1;
+        Wed,  1 Aug 2018 17:03:11 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 190/336] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
+Date:   Wed,  1 Aug 2018 18:48:45 +0200
+Message-Id: <20180801165036.367594309@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable I2C1 and I2C2 exposed on the low speed expansion connector in
-Bubblegum-96 board.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+------------------
+
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+[ Upstream commit 7207b94754b6f503b278b5b200faaf662ffa1da8 ]
+
+The PMU node references two interrupts, but lacks the interrupt-affinity
+property, which is required in that case:
+
+    hw perfevents: no interrupt-affinity property for /pmu, guessing.
+
+Add the missing property to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/boot/dts/emev2.dtsi |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index d0ba35df9015..57ae374cfb5a 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -7,6 +7,7 @@
- /dts-v1/;
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -31,13 +31,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- #include "s900.dtsi"
-+#include "s900-bubblegum-96-pins.dtsi"
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <533000000>;
+ 		};
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+@@ -57,6 +57,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
+ 	};
  
- / {
- 	compatible = "ucrobotics,bubblegum-96", "actions,s900";
-@@ -35,6 +36,16 @@
- 	clocks = <&cmu CLK_UART5>;
- };
- 
-+&i2c1 {
-+	status = "okay";
-+	clocks = <&cmu CLK_I2C1>;
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+	clocks = <&cmu CLK_I2C2>;
-+};
-+
- /*
-  * GPIO name legend: proper name = the GPIO line is used as GPIO
-  *         NC = not connected (pin out but not routed from the chip to
--- 
-2.17.1
+ 	clocks@e0110000 {
+
 
