@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0690C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F49C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57C1920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C1920862
+	by mail.kernel.org (Postfix) with ESMTP id 84DE220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84DE220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406198AbeHATIy (ORCPT
+        id S2406211AbeHATI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50638 "EHLO
+        Wed, 1 Aug 2018 15:08:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405310AbeHATIx (ORCPT
+        with ESMTP id S2405310AbeHATIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:53 -0400
+        Wed, 1 Aug 2018 15:08:55 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52B3ACC9;
-        Wed,  1 Aug 2018 17:22:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6180FCC3;
+        Wed,  1 Aug 2018 17:22:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 190/246] rsi: Fix invalid vdd warning in mmc
-Date:   Wed,  1 Aug 2018 18:51:40 +0200
-Message-Id: <20180801165020.806981953@linuxfoundation.org>
+Subject: [PATCH 4.14 208/246] media: atomisp: compat32: fix __user annotations
+Date:   Wed,  1 Aug 2018 18:51:58 +0200
+Message-Id: <20180801165021.661386715@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,76 +51,228 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit 78e450719c702784e42af6da912d3692fd3da0cb ]
+[ Upstream commit ad4222a0e29664666a71685a6e732923ca7c7e45 ]
 
-While performing cleanup, driver is messing with card->ocr
-value by not masking rocr against ocr_avail. Below panic
-is observed with some of the SDIO host controllers due to
-this. Issue is resolved by reverting incorrect modifications
-to vdd.
+The __user annotations at the compat32 code is not right:
 
-[  927.423821] mmc1: Invalid vdd 0x1f
-[  927.423925] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x
-	       mac80211 cfg80211 btrsi rfcomm bluetooth ecdh_generic
-[  927.424073] CPU: 0 PID: 1624 Comm: insmod Tainted: G		W        4.15.0-1000-caracalla #1
-[  927.424075] Hardware name: Dell Inc. Edge Gateway	3003/      , BIOS 01.00.06 01/22/2018
-[  927.424082] RIP: 0010:sdhci_set_power_noreg+0xdd/0x190[sdhci]
-[  927.424085] RSP: 0018:ffffac3fc064b930 EFLAGS:  00010282
-[  927.424107] Call Trace:
-[  927.424118]  sdhci_set_power+0x5a/0x60 [sdhci]
-[  927.424125]  sdhci_set_ios+0x360/0x3b0 [sdhci]
-[  927.424133]  mmc_set_initial_state+0x92/0x120
-[  927.424137]  mmc_power_up.part.34+0x33/0x1d0
-[  927.424141]  mmc_power_up+0x17/0x20
-[  927.424147]  mmc_sdio_runtime_resume+0x2d/0x50
-[  927.424151]  mmc_runtime_resume+0x17/0x20
-[  927.424156]  __rpm_callback+0xc4/0x200
-[  927.424161]  ? idr_alloc_cyclic+0x57/0xd0
-[  927.424165]  ? mmc_runtime_suspend+0x20/0x20
-[  927.424169]  rpm_callback+0x24/0x80
-[  927.424172]  ? mmc_runtime_suspend+0x20/0x20
-[  927.424176]  rpm_resume+0x4b3/0x6c0
-[  927.424181]  __pm_runtime_resume+0x4e/0x80
-[  927.424188]  driver_probe_device+0x41/0x490
-[  927.424192]  __driver_attach+0xdf/0xf0
-[  927.424196]  ? driver_probe_device+0x490/0x490
-[  927.424201]  bus_for_each_dev+0x6c/0xc0
-[  927.424205]  driver_attach+0x1e/0x20
-[  927.424209]  bus_add_driver+0x1f4/0x270
-[  927.424217]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.424221]  driver_register+0x60/0xe0
-[  927.424227]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.424231]  sdio_register_driver+0x20/0x30
-[  927.424237]  rsi_module_init+0x16/0x40 [rsi_sdio]
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18:    expected void *base
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:81:18:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23:    expected unsigned int [usertype] *xcoords_y
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:232:23:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23:    expected unsigned int [usertype] *ycoords_y
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:233:23:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24:    expected unsigned int [usertype] *xcoords_uv
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:234:24:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24:    expected unsigned int [usertype] *ycoords_uv
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:235:24:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29:    expected unsigned int [usertype] *effective_width
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:296:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29:    expected unsigned int [usertype] *effective_width
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:360:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19:    expected struct v4l2_framebuffer *frame
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:437:19:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29:    expected unsigned short *calb_grp_values
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:481:29:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:701:39: warning: cast removes address space of expression
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21:    expected void const volatile [noderef] <asn:1>*<noident>
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:704:21:    got unsigned int [usertype] *src
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43:    expected struct atomisp_shading_table *shading_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:737:43:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:742:44:    got struct atomisp_shading_table *shading_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41:    expected struct atomisp_morph_table *morph_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:755:41:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:760:44:    got struct atomisp_morph_table *morph_table
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40:    expected struct atomisp_dvs2_coefficients *dvs2_coefs
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:772:40:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:777:44:    got struct atomisp_dvs2_coefficients *dvs2_coefs
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46:    expected struct atomisp_dvs_6axis_config *dvs_6axis_config
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:788:46:    got void [noderef] <asn:1>*
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44: warning: incorrect type in argument 1 (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44:    expected void [noderef] <asn:1>*to
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:793:44:    got struct atomisp_dvs_6axis_config *dvs_6axis_config
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17: warning: incorrect type in assignment (different address spaces)
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17:    expected struct atomisp_sensor_ae_bracketing_lut_entry *lut
+   drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c:853:17:    got void [noderef] <asn:1>*
 
-Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_sdio.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c |   49 +++++-----
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -161,7 +161,6 @@ static void rsi_reset_card(struct sdio_f
- 	int err;
- 	struct mmc_card *card = pfunction->card;
- 	struct mmc_host *host = card->host;
--	s32 bit = (fls(host->ocr_avail) - 1);
- 	u8 cmd52_resp;
- 	u32 clock, resp, i;
- 	u16 rca;
-@@ -181,7 +180,6 @@ static void rsi_reset_card(struct sdio_f
- 	msleep(20);
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_compat_ioctl32.c
+@@ -81,7 +81,7 @@ static int get_v4l2_framebuffer32(struct
+ 		get_user(kp->flags, &up->flags))
+ 			return -EFAULT;
  
- 	/* Initialize the SDIO card */
--	host->ios.vdd = bit;
- 	host->ios.chip_select = MMC_CS_DONTCARE;
- 	host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
- 	host->ios.power_mode = MMC_POWER_UP;
+-	kp->base = compat_ptr(tmp);
++	kp->base = (void __force *)compat_ptr(tmp);
+ 	get_v4l2_pix_format((struct v4l2_pix_format *)&kp->fmt, &up->fmt);
+ 	return 0;
+ }
+@@ -232,10 +232,10 @@ static int get_atomisp_dvs_6axis_config3
+ 		get_user(ycoords_uv, &up->ycoords_uv))
+ 			return -EFAULT;
+ 
+-	kp->xcoords_y = compat_ptr(xcoords_y);
+-	kp->ycoords_y = compat_ptr(ycoords_y);
+-	kp->xcoords_uv = compat_ptr(xcoords_uv);
+-	kp->ycoords_uv = compat_ptr(ycoords_uv);
++	kp->xcoords_y = (void __force *)compat_ptr(xcoords_y);
++	kp->ycoords_y = (void __force *)compat_ptr(ycoords_y);
++	kp->xcoords_uv = (void __force *)compat_ptr(xcoords_uv);
++	kp->ycoords_uv = (void __force *)compat_ptr(ycoords_uv);
+ 	return 0;
+ }
+ 
+@@ -296,7 +296,7 @@ static int get_atomisp_metadata_stat32(s
+ 			return -EFAULT;
+ 
+ 	kp->data = compat_ptr(data);
+-	kp->effective_width = compat_ptr(effective_width);
++	kp->effective_width = (void __force *)compat_ptr(effective_width);
+ 	return 0;
+ }
+ 
+@@ -360,7 +360,7 @@ static int get_atomisp_metadata_by_type_
+ 			return -EFAULT;
+ 
+ 	kp->data = compat_ptr(data);
+-	kp->effective_width = compat_ptr(effective_width);
++	kp->effective_width = (void __force *)compat_ptr(effective_width);
+ 	return 0;
+ }
+ 
+@@ -437,7 +437,7 @@ static int get_atomisp_overlay32(struct
+ 		get_user(kp->overlay_start_x, &up->overlay_start_y))
+ 			return -EFAULT;
+ 
+-	kp->frame = compat_ptr(frame);
++	kp->frame = (void __force *)compat_ptr(frame);
+ 	return 0;
+ }
+ 
+@@ -481,7 +481,7 @@ static int get_atomisp_calibration_group
+ 		get_user(calb_grp_values, &up->calb_grp_values))
+ 			return -EFAULT;
+ 
+-	kp->calb_grp_values = compat_ptr(calb_grp_values);
++	kp->calb_grp_values = (void __force *)compat_ptr(calb_grp_values);
+ 	return 0;
+ }
+ 
+@@ -703,8 +703,8 @@ static int get_atomisp_parameters32(stru
+ 			return -EFAULT;
+ 
+ 	while (n >= 0) {
+-		compat_uptr_t *src = (compat_uptr_t *)up + n;
+-		uintptr_t *dst = (uintptr_t *)kp + n;
++		compat_uptr_t __user *src = ((compat_uptr_t __user *)up) + n;
++		uintptr_t *dst = ((uintptr_t *)kp) + n;
+ 
+ 		if (get_user((*dst), src))
+ 			return -EFAULT;
+@@ -751,12 +751,12 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->shading_table = user_ptr + offset;
++			kp->shading_table = (void __force *)user_ptr + offset;
+ 			offset = sizeof(struct atomisp_shading_table);
+ 			if (!kp->shading_table)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->shading_table,
++			if (copy_to_user((void __user *)kp->shading_table,
+ 					 &karg.shading_table,
+ 					 sizeof(struct atomisp_shading_table)))
+ 				return -EFAULT;
+@@ -777,13 +777,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->morph_table = user_ptr + offset;
++			kp->morph_table = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_morph_table);
+ 			if (!kp->morph_table)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->morph_table, &karg.morph_table,
+-					   sizeof(struct atomisp_morph_table)))
++			if (copy_to_user((void __user *)kp->morph_table,
++					 &karg.morph_table,
++					 sizeof(struct atomisp_morph_table)))
+ 				return -EFAULT;
+ 		}
+ 
+@@ -802,13 +803,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->dvs2_coefs = user_ptr + offset;
++			kp->dvs2_coefs = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_dis_coefficients);
+ 			if (!kp->dvs2_coefs)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->dvs2_coefs, &karg.dvs2_coefs,
+-				sizeof(struct atomisp_dis_coefficients)))
++			if (copy_to_user((void __user *)kp->dvs2_coefs,
++					 &karg.dvs2_coefs,
++					 sizeof(struct atomisp_dis_coefficients)))
+ 				return -EFAULT;
+ 		}
+ 		/* handle dvs 6axis configuration */
+@@ -826,13 +828,14 @@ static int get_atomisp_parameters32(stru
+ #endif
+ 				return -EFAULT;
+ 
+-			kp->dvs_6axis_config = user_ptr + offset;
++			kp->dvs_6axis_config = (void __force *)user_ptr + offset;
+ 			offset += sizeof(struct atomisp_dvs_6axis_config);
+ 			if (!kp->dvs_6axis_config)
+ 				return -EFAULT;
+ 
+-			if (copy_to_user(kp->dvs_6axis_config, &karg.dvs_6axis_config,
+-				sizeof(struct atomisp_dvs_6axis_config)))
++			if (copy_to_user((void __user *)kp->dvs_6axis_config,
++					 &karg.dvs_6axis_config,
++					 sizeof(struct atomisp_dvs_6axis_config)))
+ 				return -EFAULT;
+ 		}
+ 	}
+@@ -891,7 +894,7 @@ static int get_atomisp_sensor_ae_bracket
+ 		get_user(lut, &up->lut))
+ 			return -EFAULT;
+ 
+-	kp->lut = compat_ptr(lut);
++	kp->lut = (void __force *)compat_ptr(lut);
+ 	return 0;
+ }
+ 
 
 
