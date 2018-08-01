@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906BDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077CAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A7F20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A7F20840
+	by mail.kernel.org (Postfix) with ESMTP id 86E2A20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E2A20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387626AbeHAUVA (ORCPT
+        id S2387666AbeHAUVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:21:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+        Wed, 1 Aug 2018 16:21:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404149AbeHATDe (ORCPT
+        with ESMTP id S2404124AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B1A61263;
-        Wed,  1 Aug 2018 17:09:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFCB6FF0;
+        Wed,  1 Aug 2018 16:59:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Whitney <enwlinux@gmail.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.17 306/336] ext4: fix check to prevent initializing reserved inodes
-Date:   Wed,  1 Aug 2018 18:50:41 +0200
-Message-Id: <20180801165040.753288004@linuxfoundation.org>
+        stable@vger.kernel.org, Ethan Lien <ethanlien@synology.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 089/336] btrfs: balance dirty metadata pages in btrfs_finish_ordered_io
+Date:   Wed,  1 Aug 2018 18:47:04 +0200
+Message-Id: <20180801165032.582094517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,71 +51,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Ethan Lien <ethanlien@synology.com>
 
-commit 5012284700775a4e6e3fbe7eac4c543c4874b559 upstream.
+[ Upstream commit e73e81b6d0114d4a303205a952ab2e87c44bd279 ]
 
-Commit 8844618d8aa7: "ext4: only look at the bg_flags field if it is
-valid" will complain if block group zero does not have the
-EXT4_BG_INODE_ZEROED flag set.  Unfortunately, this is not correct,
-since a freshly created file system has this flag cleared.  It gets
-almost immediately after the file system is mounted read-write --- but
-the following somewhat unlikely sequence will end up triggering a
-false positive report of a corrupted file system:
+[Problem description and how we fix it]
+We should balance dirty metadata pages at the end of
+btrfs_finish_ordered_io, since a small, unmergeable random write can
+potentially produce dirty metadata which is multiple times larger than
+the data itself. For example, a small, unmergeable 4KiB write may
+produce:
 
-   mkfs.ext4 /dev/vdc
-   mount -o ro /dev/vdc /vdc
-   mount -o remount,rw /dev/vdc
+    16KiB dirty leaf (and possibly 16KiB dirty node) in subvolume tree
+    16KiB dirty leaf (and possibly 16KiB dirty node) in checksum tree
+    16KiB dirty leaf (and possibly 16KiB dirty node) in extent tree
 
-Instead, when initializing the inode table for block group zero, test
-to make sure that itable_unused count is not too large, since that is
-the case that will result in some or all of the reserved inodes
-getting cleared.
+Although we do call balance dirty pages in write side, but in the
+buffered write path, most metadata are dirtied only after we reach the
+dirty background limit (which by far only counts dirty data pages) and
+wakeup the flusher thread. If there are many small, unmergeable random
+writes spread in a large btree, we'll find a burst of dirty pages
+exceeds the dirty_bytes limit after we wakeup the flusher thread - which
+is not what we expect. In our machine, it caused out-of-memory problem
+since a page cannot be dropped if it is marked dirty.
 
-This fixes the failures reported by Eric Whiteney when running
-generic/230 and generic/231 in the the nojournal test case.
+Someone may worry about we may sleep in btrfs_btree_balance_dirty_nodelay,
+but since we do btrfs_finish_ordered_io in a separate worker, it will not
+stop the flusher consuming dirty pages. Also, we use different worker for
+metadata writeback endio, sleep in btrfs_finish_ordered_io help us throttle
+the size of dirty metadata pages.
 
-Fixes: 8844618d8aa7 ("ext4: only look at the bg_flags field if it is valid")
-Reported-by: Eric Whitney <enwlinux@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[Reproduce steps]
+To reproduce the problem, we need to do 4KiB write randomly spread in a
+large btree. In our 2GiB RAM machine:
+
+1) Create 4 subvolumes.
+2) Run fio on each subvolume:
+
+   [global]
+   direct=0
+   rw=randwrite
+   ioengine=libaio
+   bs=4k
+   iodepth=16
+   numjobs=1
+   group_reporting
+   size=128G
+   runtime=1800
+   norandommap
+   time_based
+   randrepeat=0
+
+3) Take snapshot on each subvolume and repeat fio on existing files.
+4) Repeat step (3) until we get large btrees.
+   In our case, by observing btrfs_root_item->bytes_used, we have 2GiB of
+   metadata in each subvolume tree and 12GiB of metadata in extent tree.
+5) Stop all fio, take snapshot again, and wait until all delayed work is
+   completed.
+6) Start all fio. Few seconds later we hit OOM when the flusher starts
+   to work.
+
+It can be reproduced even when using nocow write.
+
+Signed-off-by: Ethan Lien <ethanlien@synology.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ add comment ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/ialloc.c |    5 ++++-
- fs/ext4/super.c  |    8 +-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ fs/btrfs/inode.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1395,7 +1395,10 @@ int ext4_init_inode_table(struct super_b
- 			    ext4_itable_unused_count(sb, gdp)),
- 			    sbi->s_inodes_per_block);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3160,6 +3160,9 @@ out:
+ 	/* once for the tree */
+ 	btrfs_put_ordered_extent(ordered_extent);
  
--	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group)) {
-+	if ((used_blks < 0) || (used_blks > sbi->s_itb_per_group) ||
-+	    ((group == 0) && ((EXT4_INODES_PER_GROUP(sb) -
-+			       ext4_itable_unused_count(sb, gdp)) <
-+			      EXT4_FIRST_INO(sb)))) {
- 		ext4_error(sb, "Something is wrong with group %u: "
- 			   "used itable blocks: %d; "
- 			   "itable unused count: %u",
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3106,14 +3106,8 @@ static ext4_group_t ext4_has_uninit_itab
- 		if (!gdp)
- 			continue;
++	/* Try to release some metadata so we don't get an OOM but don't wait */
++	btrfs_btree_balance_dirty_nodelay(fs_info);
++
+ 	return ret;
+ }
  
--		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
--			continue;
--		if (group != 0)
-+		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
- 			break;
--		ext4_error(sb, "Inode table for bg 0 marked as "
--			   "needing zeroing");
--		if (sb_rdonly(sb))
--			return ngroups;
- 	}
- 
- 	return group;
 
 
