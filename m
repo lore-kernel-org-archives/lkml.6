@@ -2,216 +2,92 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2579C46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F05C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71142208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gYMD+bDE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71142208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 84A4720894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:47:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A4720894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389483AbeHAP0r (ORCPT
+        id S2389431AbeHAPcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:26:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36955 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389311AbeHAP0q (ORCPT
+        Wed, 1 Aug 2018 11:32:50 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:47588 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389217AbeHAPct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:26:46 -0400
-Received: by mail-wm0-f65.google.com with SMTP id n11-v6so7097981wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 06:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UYEBmVAVpj2krPvDto31OgUp5hzgNQb2z8iA1oiV9yE=;
-        b=gYMD+bDEmM6kCggp0w+/7IgreRUpyMDbHWOVyg1zGC6+Sne/SC7BQ29HS3wnd+a+K4
-         EXpLz25q9Jt5ZZkuKoMIWeBw4gyHEKXZ9k45t2dFSHJ7XH+RcGYsRhLSN5/WlM7bSdr+
-         KwvY/xN79gzr3tjU4lfHw0TjREuzCJJbPvTGC0A9PUynwkvQmoiKBSbmvs8mcWtnrL8W
-         LZWOdoNkuNgUuabtIaoCjoWIwh5rr4+e4dbwqz4v/hqtJe5S4vZplySKFYMl9WYMo1Qz
-         bVE/WLTNtSJ9s5jddy7FuIFtmMejXTyTEQhUKtjX9t7GSPuEdAcG0sR5seyI4fzpxESH
-         513Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UYEBmVAVpj2krPvDto31OgUp5hzgNQb2z8iA1oiV9yE=;
-        b=USKfsfhEFAzcgy75K4qSyIEJXbTx8BzZkElqb06c2qExqe6FcmQOygF3nLwGfK6w12
-         xjp/1WD0WtzfmWORHZYtgJZzbUD58d2tcGSv00EaCJ2ThPXxaUgpGlHxo/+fFcSFQs5N
-         U9bT2hCPVKZ9JxwRTOIvcsZ+24c2HHqMPE2MoNngQ6kjNwPROxbcd7SmXjipNfpZQoLB
-         XX0II0sbtIp37xhiASFgbiYZ0OAiAhb7Kcwo+scR4CEYDQJ2COJOfTLgiqE3o7uVGP6A
-         oT5WAtYsDktYPRSvlQR6Sgbi1eYDy5WByUIIQjm75vlAUdGteh60+6JOjtzNm1bz6CX3
-         yn8A==
-X-Gm-Message-State: AOUpUlHwsQwfAelqwphFAYPCQqOfyrp53AIozRjhtk0G1lPGqKTNID0o
-        Eyk3NPHoT6oIb4ef1NPJrMd6nA==
-X-Google-Smtp-Source: AAOMgpeEgT1tgCq/krNltf8ExF1ziiL3vrChVo4t1P0+/Tz0/e6thEsdhh5gmGPPLUCaNQev6v/mNg==
-X-Received: by 2002:a1c:13ca:: with SMTP id 193-v6mr2712344wmt.127.1533130855505;
-        Wed, 01 Aug 2018 06:40:55 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id f8-v6sm24347080wrj.9.2018.08.01.06.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 06:40:54 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: meson-axg: s400: add sound card
-Date:   Wed,  1 Aug 2018 15:40:33 +0200
-Message-Id: <20180801134033.21739-4-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180801134033.21739-1-jbrunet@baylibre.com>
-References: <20180801134033.21739-1-jbrunet@baylibre.com>
+        Wed, 1 Aug 2018 11:32:49 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1fkrSO-00029X-Oq; Wed, 01 Aug 2018 15:46:28 +0200
+Date:   Wed, 1 Aug 2018 15:46:28 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        David Miller <davem@davemloft.net>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        coreteam@netfilter.org,
+        Network Development <netdev@vger.kernel.org>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Dave Airlie <airlied@linux.ie>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: SLAB_TYPESAFE_BY_RCU without constructors (was Re: [PATCH v4
+ 13/17] khwasan: add hooks implementation)
+Message-ID: <20180801134628.ueyzwg2gszrvk2hc@breakpoint.cc>
+References: <e3b48104-3efb-1896-0d46-792419f49a75@virtuozzo.com>
+ <01000164f169bc6b-c73a8353-d7d9-47ec-a782-90aadcb86bfb-000000@email.amazonses.com>
+ <CA+55aFzHR1+YbDee6Cduo6YXHO9LKmLN1wP=MVzbP41nxUb5=g@mail.gmail.com>
+ <CA+55aFzYLgyNp1jsqsvUOjwZdO_1Piqj=iB=rzDShjScdNtkbg@mail.gmail.com>
+ <CACT4Y+aYZumcc-Od5T1AnP4mwn8-FaWfxvfb93MnNwQPqG8TDw@mail.gmail.com>
+ <CACT4Y+ZkgqDT77dshHg+hBtc9YPW-eZ8wVQA9LTDQ6q_y99oiQ@mail.gmail.com>
+ <20180801103537.d36t3snzulyuge7g@breakpoint.cc>
+ <CACT4Y+aHWpgDZygXv=smWwdVMWfjpedyajuVvvLDGMK-wFD5Lw@mail.gmail.com>
+ <20180801114048.ufkr7zwmir7ps3vl@breakpoint.cc>
+ <CACT4Y+ZNnYojj0x_DoUxeUREaEgzcf3UG=UW_P4vzsnZNjjgMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ZNnYojj0x_DoUxeUREaEgzcf3UG=UW_P4vzsnZNjjgMQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the sound card of the s400. With it the following interface
-should be working:
- * Lineout
- * Daugther card speaker 1 (same output as lineout)
- * Linein
- * SPDIF output
+Dmitry Vyukov <dvyukov@google.com> wrote:
+> If that scenario is possible that a fix would be to make
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- .../arm64/boot/dts/amlogic/meson-axg-s400.dts | 108 ++++++++++++++++++
- 1 file changed, 108 insertions(+)
+Looks possible.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index 9f5d81c3ee29..d399078d1f0c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -204,6 +204,113 @@
- 		status = "okay";
- 		sound-name-prefix = "DIT";
- 	};
-+
-+	sound {
-+		compatible = "amlogic,axg-sound-card";
-+		model = "AXG-S400";
-+		audio-aux-devs = <&tdmin_a>, <&tdmin_b>,  <&tdmin_c>,
-+				 <&tdmin_lb>, <&tdmout_c>;
-+		audio-widgets = "Line", "Lineout",
-+				"Line", "Linein",
-+				"Speaker", "Speaker1 Left",
-+				"Speaker", "Speaker1 Right";
-+		audio-routing = "TDMOUT_C IN 0", "FRDDR_A OUT 2",
-+				"SPDIFOUT IN 0", "FRDDR_A OUT 3",
-+				"TDMOUT_C IN 1", "FRDDR_B OUT 2",
-+				"SPDIFOUT IN 1", "FRDDR_B OUT 3",
-+				"TDMOUT_C IN 2", "FRDDR_C OUT 2",
-+				"SPDIFOUT IN 2", "FRDDR_C OUT 3",
-+				"TDM_C Playback", "TDMOUT_C OUT",
-+				"TDMIN_A IN 2", "TDM_C Capture",
-+				"TDMIN_A IN 5", "TDM_C Loopback",
-+				"TDMIN_B IN 2", "TDM_C Capture",
-+				"TDMIN_B IN 5", "TDM_C Loopback",
-+				"TDMIN_C IN 2", "TDM_C Capture",
-+				"TDMIN_C IN 5", "TDM_C Loopback",
-+				"TDMIN_LB IN 2", "TDM_C Loopback",
-+				"TDMIN_LB IN 5", "TDM_C Capture",
-+				"TODDR_A IN 0", "TDMIN_A OUT",
-+				"TODDR_B IN 0", "TDMIN_A OUT",
-+				"TODDR_C IN 0", "TDMIN_A OUT",
-+				"TODDR_A IN 1", "TDMIN_B OUT",
-+				"TODDR_B IN 1", "TDMIN_B OUT",
-+				"TODDR_C IN 1", "TDMIN_B OUT",
-+				"TODDR_A IN 2", "TDMIN_C OUT",
-+				"TODDR_B IN 2", "TDMIN_C OUT",
-+				"TODDR_C IN 2", "TDMIN_C OUT",
-+				"TODDR_A IN 6", "TDMIN_LB OUT",
-+				"TODDR_B IN 6", "TDMIN_LB OUT",
-+				"TODDR_C IN 6", "TDMIN_LB OUT",
-+				"Lineout", "Lineout AOUTL",
-+				"Lineout", "Lineout AOUTR",
-+				"Speaker1 Left", "SPK1 OUT_A",
-+				"Speaker1 Left", "SPK1 OUT_B",
-+				"Speaker1 Right", "SPK1 OUT_C",
-+				"Speaker1 Right", "SPK1 OUT_D",
-+				"Linein AINL", "Linein",
-+				"Linein AINR", "Linein";
-+		assigned-clocks = <&clkc CLKID_HIFI_PLL>,
-+				  <&clkc CLKID_MPLL0>,
-+				  <&clkc CLKID_MPLL1>;
-+		assigned-clock-parents = <0>, <0>, <0>;
-+		assigned-clock-rates = <589824000>,
-+				       <270950400>,
-+				       <393216000>;
-+		status = "okay";
-+
-+		dai-link@0 {
-+			sound-dai = <&frddr_a>;
-+		};
-+
-+		dai-link@1 {
-+			sound-dai = <&frddr_b>;
-+		};
-+
-+		dai-link@2 {
-+			sound-dai = <&frddr_c>;
-+		};
-+
-+		dai-link@3 {
-+			sound-dai = <&toddr_a>;
-+		};
-+
-+		dai-link@4 {
-+			sound-dai = <&toddr_b>;
-+		};
-+
-+		dai-link@5 {
-+			sound-dai = <&toddr_c>;
-+		};
-+
-+		dai-link@6 {
-+			sound-dai = <&tdmif_c>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-2 = <1 1>;
-+			dai-tdm-slot-rx-mask-1 = <1 1>;
-+			mclk-fs = <256>;
-+
-+			codec@0 {
-+				sound-dai = <&lineout>;
-+			};
-+
-+			codec@1 {
-+				sound-dai = <&speaker_amp1>;
-+			};
-+
-+			codec@2 {
-+				sound-dai = <&linein>;
-+			};
-+
-+		};
-+
-+		dai-link@7 {
-+			sound-dai = <&spdifout>;
-+
-+			codec {
-+				sound-dai = <&spdif_dit>;
-+			};
-+		};
-+	};
- };
- 
- &ethmac {
-@@ -272,6 +379,7 @@
- 		PVDD_B-supply = <&main_12v>;
- 		PVDD_C-supply = <&main_12v>;
- 		PVDD_D-supply = <&main_12v>;
-+		sound-name-prefix = "SPK1";
- 	};
- };
- 
--- 
-2.17.1
+> __nf_conntrack_find_get ever return NULL iff it got NULL from
+> ____nf_conntrack_find (not if any of the checks has failed).
 
+I don't see why we need to restart on nf_ct_is_dying(), but other
+than that this seems ok.
