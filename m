@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49B6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD29C46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8144020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8144020844
+	by mail.kernel.org (Postfix) with ESMTP id 6D6B520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6B520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404609AbeHATGk (ORCPT
+        id S2405364AbeHATG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48940 "EHLO
+        Wed, 1 Aug 2018 15:06:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404595AbeHATGk (ORCPT
+        with ESMTP id S2403967AbeHATG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:40 -0400
+        Wed, 1 Aug 2018 15:06:58 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED6C6D38;
-        Wed,  1 Aug 2018 17:19:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 999EED38;
+        Wed,  1 Aug 2018 17:20:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Boyko <alexander.boyko@seagate.com>,
-        Alexey Lyashkov <c17817@cray.com>,
-        Doug Oucharek <dougso@me.com>,
-        "John L. Hammond" <john.hammond@intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 165/246] staging: lustre: o2iblnd: fix race at kiblnd_connect_peer
-Date:   Wed,  1 Aug 2018 18:51:15 +0200
-Message-Id: <20180801165019.647438013@linuxfoundation.org>
+Subject: [PATCH 4.14 170/246] media: siano: get rid of __le32/__le16 cast warnings
+Date:   Wed,  1 Aug 2018 18:51:20 +0200
+Message-Id: <20180801165019.871884834@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -54,63 +52,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Oucahrek <dougso@me.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-[ Upstream commit cf04968efe341b9b1c30a527e5dd61b2af9c43d2 ]
+[ Upstream commit e1b7f11b37def5f3021c06e8c2b4953e099357aa ]
 
-cmid will be destroyed at OFED if kiblnd_cm_callback return error.
-if error happen before the end of kiblnd_connect_peer, it will touch
-destroyed cmid and fail as
-(o2iblnd_cb.c:1315:kiblnd_connect_peer())
-            ASSERTION( cmid->device != ((void *)0) ) failed:
+Those are all false-positives that appear with smatch when building for
+arm:
 
-Signed-off-by: Alexander Boyko <alexander.boyko@seagate.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10015
-Reviewed-by: Alexey Lyashkov <c17817@cray.com>
-Reviewed-by: Doug Oucharek <dougso@me.com>
-Reviewed-by: John L. Hammond <john.hammond@intel.com>
-Signed-off-by: Doug Oucharek <dougso@me.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:38:36: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:47:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:67:35: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:84:44: warning: cast to restricted __le32
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:98:26: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:99:28: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+  drivers/media/common/siano/smsendian.c:100:27: warning: cast to restricted __le16
+
+Get rid of them by adding explicit forced casts.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   18 +++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/media/common/siano/smsendian.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-@@ -1289,11 +1289,6 @@ kiblnd_connect_peer(struct kib_peer *pee
- 		goto failed2;
+--- a/drivers/media/common/siano/smsendian.c
++++ b/drivers/media/common/siano/smsendian.c
+@@ -35,7 +35,7 @@ void smsendian_handle_tx_message(void *b
+ 	switch (msg->x_msg_header.msg_type) {
+ 	case MSG_SMS_DATA_DOWNLOAD_REQ:
+ 	{
+-		msg->msg_data[0] = le32_to_cpu(msg->msg_data[0]);
++		msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
+ 		break;
  	}
  
--	LASSERT(cmid->device);
--	CDEBUG(D_NET, "%s: connection bound to %s:%pI4h:%s\n",
--	       libcfs_nid2str(peer->ibp_nid), dev->ibd_ifname,
--	       &dev->ibd_ifip, cmid->device->name);
--
- 	return;
+@@ -44,7 +44,7 @@ void smsendian_handle_tx_message(void *b
+ 				sizeof(struct sms_msg_hdr))/4;
  
-  failed2:
-@@ -2995,8 +2990,19 @@ kiblnd_cm_callback(struct rdma_cm_id *cm
- 		} else {
- 			rc = rdma_resolve_route(
- 				cmid, *kiblnd_tunables.kib_timeout * 1000);
--			if (!rc)
-+			if (!rc) {
-+				struct kib_net *net = peer->ibp_ni->ni_data;
-+				struct kib_dev *dev = net->ibn_dev;
-+
-+				CDEBUG(D_NET, "%s: connection bound to "\
-+				       "%s:%pI4h:%s\n",
-+				       libcfs_nid2str(peer->ibp_nid),
-+				       dev->ibd_ifname,
-+				       &dev->ibd_ifip, cmid->device->name);
-+
- 				return 0;
-+			}
-+
- 			/* Can't initiate route resolution */
- 			CERROR("Can't resolve route for %s: %d\n",
- 			       libcfs_nid2str(peer->ibp_nid), rc);
+ 		for (i = 0; i < msg_words; i++)
+-			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
++			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
+ 
+ 		break;
+ 	}
+@@ -64,7 +64,7 @@ void smsendian_handle_rx_message(void *b
+ 	{
+ 		struct sms_version_res *ver =
+ 			(struct sms_version_res *) msg;
+-		ver->chip_model = le16_to_cpu(ver->chip_model);
++		ver->chip_model = le16_to_cpu((__force __le16)ver->chip_model);
+ 		break;
+ 	}
+ 
+@@ -81,7 +81,7 @@ void smsendian_handle_rx_message(void *b
+ 				sizeof(struct sms_msg_hdr))/4;
+ 
+ 		for (i = 0; i < msg_words; i++)
+-			msg->msg_data[i] = le32_to_cpu(msg->msg_data[i]);
++			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
+ 
+ 		break;
+ 	}
+@@ -95,9 +95,9 @@ void smsendian_handle_message_header(voi
+ #ifdef __BIG_ENDIAN
+ 	struct sms_msg_hdr *phdr = (struct sms_msg_hdr *)msg;
+ 
+-	phdr->msg_type = le16_to_cpu(phdr->msg_type);
+-	phdr->msg_length = le16_to_cpu(phdr->msg_length);
+-	phdr->msg_flags = le16_to_cpu(phdr->msg_flags);
++	phdr->msg_type = le16_to_cpu((__force __le16)phdr->msg_type);
++	phdr->msg_length = le16_to_cpu((__force __le16)phdr->msg_length);
++	phdr->msg_flags = le16_to_cpu((__force __le16)phdr->msg_flags);
+ #endif /* __BIG_ENDIAN */
+ }
+ EXPORT_SYMBOL_GPL(smsendian_handle_message_header);
 
 
