@@ -2,155 +2,106 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08705C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D426C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7DDB2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F7772083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:07:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m/NQA0DF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UxRwfLq0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7DDB2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="v2F932TQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7772083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbeHAJvc (ORCPT
+        id S2387764AbeHAJwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 05:51:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39666 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733173AbeHAJvc (ORCPT
+        Wed, 1 Aug 2018 05:52:09 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49632 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387560AbeHAJwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:51:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0C376606AC; Wed,  1 Aug 2018 08:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533110824;
-        bh=DvRWMWTLnHP1lQ6Sh0uCi6L8rkneR069gy+uSJrzukc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=m/NQA0DFBn4nZvGy2rggYdU3GZPLQVnfB1uRV/IZ18M3BHG0goUfzegi16g86HFWQ
-         wucIqyLWaj6N9OoyGjkVZ153u8gFVl0lPX7AdTNDis9zPf+8PdIQF6iDpfjk96IqHh
-         XIAX2UTUyWTmQkdH45D183HFLqK84phXt8HrbLx8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1A3B1606AC;
-        Wed,  1 Aug 2018 08:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533110823;
-        bh=DvRWMWTLnHP1lQ6Sh0uCi6L8rkneR069gy+uSJrzukc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UxRwfLq0YUKKvhI7M5BNsKhK/fx9anSbTwaSragAY0nYrfOXcJ7q0aaV36qn0g0k6
-         hRbZ17EKv+XpIyxSis57FPaNeM44Utrnt3oyqPDbsGzpyfMkGWUs7hu+EByYCL5qO2
-         Pjb6owYSChqwJGOOR4fPgiw2j+xLhp1u6eHgLlB8=
+        Wed, 1 Aug 2018 05:52:09 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7183R3G021740;
+        Wed, 1 Aug 2018 08:07:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=nWsqERvyl8MU8WoKk1PvGL+3vgq6kLafxCh1AdEqR3o=;
+ b=v2F932TQhl9aozN0GNYwZuvKv7kC6diLDUB42CjPSiOOG47bFH1vjIDHt8cYaBl/Ux4G
+ tPBJAK7G8i8m5Mb0R8UU5eN/HRlnXlCPxwOSpgsz+uYfkvnmR59knB8DLQqr6fyzqobq
+ Vjb+cTNoPhXuZVTtxpVYz8brkumpjMtjXGV8IBubXRQdsOCZhHx9xW9DzvkSr/7iti88
+ CC6ZzkcEljUZnGUl5s4hBXlbmce0ZC/Hw+CUJ9P25JGltKz4PXWlgUKy4uxMKjsyiT2a
+ 4dwhO8DwpU5hRp46rMNoDqACuEfSnkL55d7bI/ftKBRwoO2G9gJL0GihtdMoK5wgsvKX Yw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2kgfwt4dfp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Aug 2018 08:07:33 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7187XVh020283
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Aug 2018 08:07:33 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7187Wav000456;
+        Wed, 1 Aug 2018 08:07:32 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Aug 2018 01:07:31 -0700
+Date:   Wed, 1 Aug 2018 11:07:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] overflow.h: Add arithmetic shift helper
+Message-ID: <20180801080724.2vgzagooda56aypw@mwanda>
+References: <20180801000039.44314-1-keescook@chromium.org>
+ <20180801000039.44314-2-keescook@chromium.org>
+ <20180801075744.qpppbaywp5dklxul@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 01 Aug 2018 01:07:03 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        isaacm@codeaurora.org, matt@codeblueprint.co.uk, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        pkondeti@codeaurora.org, stable@vger.kernel.org
-Subject: Re: [PATCH] stop_machine: Disable preemption after queueing stopper
- threads
-In-Reply-To: <20180730210728.GQ2494@hirez.programming.kicks-ass.net>
-References: <1531856129-9871-1-git-send-email-isaacm@codeaurora.org>
- <a30d1e147d3181fc7b294262e380a10c@codeaurora.org>
- <20180724062350.nlem2suuy5wlxpts@linutronix.de>
- <alpine.DEB.2.21.1807301220280.2518@nanos.tec.linutronix.de>
- <20180730112140.GH2494@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1807301440340.2518@nanos.tec.linutronix.de>
- <109d0e70606ccd34861a80525d6d11aa@codeaurora.org>
- <20180730210728.GQ2494@hirez.programming.kicks-ass.net>
-Message-ID: <52a34ed365cd560457e9abf5877c5b37@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801075744.qpppbaywp5dklxul@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=769
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808010089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-30 14:07, Peter Zijlstra wrote:
-> On Mon, Jul 30, 2018 at 10:12:43AM -0700, Sodagudi Prasad wrote:
->> How about including below change as well?  Currently, there is no way 
->> to
->> identify thread migrations completed or not.  When we observe this 
->> issue,
->> the symptom was work queue lock up. It is better to have some timeout 
->> here
->> and induce the bug_on.
+On Wed, Aug 01, 2018 at 10:57:44AM +0300, Dan Carpenter wrote:
+> The idea is nice, but I don't like the API.  The "_overflow" feels too
+> specific because maybe we could check for other things in the future.
+> Normally boolean macros should say they are boolean in the name and I
+> would prefer if it returned zero on failure.
 > 
-> You'd trigger the soft-lockup or hung-task detector I think. And if 
-> not,
-> we ought to look at making it trigger at least one of those.
-> 
->> There is no way to identify the migration threads stuck or not.
-> 
-> Should be pretty obvious from the splat generated by the above, no?
-Hi Peter and Thomas,
+> 	if (!checked_shift(dest, mask, shift)) {
+> 	if (!shift_ok(dest, mask, shift)) {
+> 	if (!safe_shift(dest, mask, shift)) {
 
-Thanks for your support.
-I have another question on this flow and retry mechanism used in this 
-cpu_stop_queue_two_works() function using the global variable 
-stop_cpus_in_progress.
+Huh...  It turns out I put the argument order different as well.
 
-This variable is getting used in various paths, such as task migration, 
-set task affinity, and CPU hotplug.
+If we wanted to keep it returning 1 on failure then some other names
+are:
 
-For example cpu hotplug path, stop_cpus_in_progress variable getting set 
-with true with out checking.
-takedown_cpu()
---stop_machine_cpuslocked()
----stop_cpus()
----__stop_cpus()
-----queue_stop_cpus_work()
-setting stop_cpus_in_progress to true directly.
+	if (shift_failed(dest, mask, shift)) {
+	if (shift_error(dest, mask, shift)) {
+	if (shift_overflow(dest, mask, shift)) {
 
-But in the task migration path only, the stop_cpus_in_progress  variable 
-is used for retry.
+regards,
+dan carpenter
 
-I am thinking that stop_cpus_in_progress variable lead race conditions, 
-where CPU hotplug and task migration happening simultaneously. Please 
-correct me If my understanding wrong.
-
--Thanks, Prasad
-
-> 
->> --- a/kernel/stop_machine.c
->> +++ b/kernel/stop_machine.c
->> @@ -290,6 +290,7 @@ int stop_two_cpus(unsigned int cpu1, unsigned int 
->> cpu2,
->> cpu_stop_fn_t fn, void *
->>         struct cpu_stop_done done;
->>         struct cpu_stop_work work1, work2;
->>         struct multi_stop_data msdata;
->> +       int ret;
->> 
->>         msdata = (struct multi_stop_data){
->>                 .fn = fn,
->> @@ -312,7 +313,10 @@ int stop_two_cpus(unsigned int cpu1, unsigned int 
->> cpu2,
->> cpu_stop_fn_t fn, void *
->>         if (cpu_stop_queue_two_works(cpu1, &work1, cpu2, &work2))
->>                 return -ENOENT;
->> 
->> -       wait_for_completion(&done.completion);
->> +       ret = wait_for_completion_timeout(&done.completion,
->> msecs_to_jiffies(1000));
->> +       if (!ret)
->> +               BUG_ON(1);
->> +
-> 
-> That's a random timeout, which if you spuriously trigger it, will take
-> down your machine. That seems like a cure worse than the disease.
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
