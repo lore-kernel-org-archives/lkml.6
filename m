@@ -2,145 +2,260 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFADC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E056EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69872083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="f8LVhPgn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69872083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 85BAA2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BAA2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733075AbeHAULH (ORCPT
+        id S1733080AbeHAULR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:11:07 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42373 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730449AbeHAULG (ORCPT
+        Wed, 1 Aug 2018 16:11:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404159AbeHATDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 16:11:06 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r4-v6so2686edp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Fvh2H4JSxbPu2GIVWeEdWu381yxmbCu0qRDCdjiFp3g=;
-        b=f8LVhPgnRIyxFKXTx4I5bvZknoGWuIoSnXkAhJwTbXulP2rFxCRsSl0WOfcJduEbY9
-         U3GQrZmV7JbrXd2tnA4WCbkjm7nDea93/iPskG/L4xrre5QaChY8+FPLSLpnJlgamOtY
-         93kPloyv31OD/TJYVWAggJY3qOZQwXVzjtyYvYq4CSlRHC+DombQCpi4RhnDNdscac7T
-         Shv0fuu2Rch1PlsdFzaHrPmiM5S04JCVL4K2J3JPNwWW1tzUzcvP2w0fuLVsYJTEl1Z7
-         Qj2t/itqLV3YeJS9hD6ZJXnBUD7JUJtqmsvvdEefbMSONCCsLTzYcevQgIG77pzBTyKp
-         CCqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Fvh2H4JSxbPu2GIVWeEdWu381yxmbCu0qRDCdjiFp3g=;
-        b=WZa47o32LettL1b6U5PbpbmMmjCDzKhfmn5t38jG1kCn6/ORU9TjuzTs2Uqt6le0xQ
-         uvapdqDKKcBNA1B9lkizaz4lbvdq8EZy9ymDGbjeQdjyB2a6NzyhN84JdDZ4j+vJlPKO
-         mqu01cNj3q+T+FRi/8MmVInCMuROH+2M2Nz1iGz9VEXzggwka6FT8lM7DQQDj9+6Cdw3
-         h7P9kVb9c8ZnDKWTzsO552YrMHyyTv5reID0cgragC+b1qwxTvQKMhzRMP1mf/CM4TJu
-         26WZ7cRKskH5eBHhRMVv1AnEL+FZcAZPYGaBOixVfufe0E9k0zfYopUFcbFpYh61BHyH
-         ukWQ==
-X-Gm-Message-State: AOUpUlHPdCTGoWk8gjE3SnXn7FCgvHBuVLIeDPetQjHn+7/rS1m1aDxI
-        /ZCktbQj+tckebQAl+4D6x3YVxK4hs8=
-X-Google-Smtp-Source: AAOMgpdtuy6IsK5SpP7NxWHmONf0VCIue4vF20NAmJbF05iveeUEC86JB1igtugVKFs47k764k/bJA==
-X-Received: by 2002:aa7:d993:: with SMTP id u19-v6mr4871034eds.125.1533147845171;
-        Wed, 01 Aug 2018 11:24:05 -0700 (PDT)
-Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com. [74.125.82.48])
-        by smtp.gmail.com with ESMTPSA id t44-v6sm13245edh.18.2018.08.01.11.24.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 11:24:04 -0700 (PDT)
-Received: by mail-wm0-f48.google.com with SMTP id c14-v6so34170wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:24:03 -0700 (PDT)
-X-Received: by 2002:a1c:ee15:: with SMTP id m21-v6mr3556754wmh.112.1533147843693;
- Wed, 01 Aug 2018 11:24:03 -0700 (PDT)
+        Wed, 1 Aug 2018 15:03:38 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84AE81185;
+        Wed,  1 Aug 2018 17:07:07 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 260/336] rsi: fix nommu_map_sg overflow kernel panic
+Date:   Wed,  1 Aug 2018 18:49:55 +0200
+Message-Id: <20180801165038.996883718@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a1c:3644:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 11:23:43 -0700 (PDT)
-In-Reply-To: <mhng-47d9ea80-a0c6-4cde-be65-75046c5d49d2@palmer-si-x1c4>
-References: <1530073346-5341-1-git-send-email-alankao@andestech.com> <mhng-47d9ea80-a0c6-4cde-be65-75046c5d49d2@palmer-si-x1c4>
-From:   Andrew Waterman <andrew@sifive.com>
-Date:   Wed, 1 Aug 2018 11:23:43 -0700
-X-Gmail-Original-Message-ID: <CA++6G0AMXC0ZeTZ+tkLh_5QGoPMR+3YD8Ed=DR8-G=6FL1yDSw@mail.gmail.com>
-Message-ID: <CA++6G0AMXC0ZeTZ+tkLh_5QGoPMR+3YD8Ed=DR8-G=6FL1yDSw@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: Add support to no-FPU systems
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     alankao@andestech.com, Albert Ou <albert@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Darius Rad <darius@bluespec.com>, greentime@andestech.com,
-        Zong Li <zong@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 10:55 AM, Palmer Dabbelt <palmer@sifive.com> wrote:
-> On Tue, 26 Jun 2018 21:22:26 PDT (-0700), alankao@andestech.com wrote:
->>
->> This patch adds an option, CONFIG_FPU, to enable/disable floating
->> procedures.  Also, some style issues are fixed.
->>
->> Signed-off-by: Alan Kao <alankao@andestech.com>
->> Cc: Greentime Hu <greentime@andestech.com>
->> Cc: Zong Li <zong@andestech.com>
->> ---
->>  arch/riscv/Kconfig                 |  9 ++++
->>  arch/riscv/Makefile                | 19 +++----
->>  arch/riscv/include/asm/switch_to.h |  6 +++
->>  arch/riscv/kernel/entry.S          |  3 +-
->>  arch/riscv/kernel/process.c        |  7 ++-
->>  arch/riscv/kernel/signal.c         | 82 +++++++++++++++++++++---------
->>  6 files changed, 90 insertions(+), 36 deletions(-)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 6debcc4afc72..6069597ba73f 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -232,6 +232,15 @@ config RISCV_BASE_PMU
->>
->>  endmenu
->>
->> +config FPU
->> +       bool "FPU support"
->> +       default y
->> +       help
->> +         Say N here if you want to disable all floating-point related
->> procedure
->> +         in the kernel.
->> +
->> +         If you don't know what to do here, say Y.
->> +
->>  endmenu
->
->
-> Sorry for letting this slide for a bit.  While I'm not opposed to a solution
-> that requires a FPU Kconfig option, it'd be a bit better if we could detect
-> this at boot time.  I think this should be possible because at one point
-> this actually worked and we could boot the same kernel on FPU and no-FPU
-> systems.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-I believe it would suffice to have start_thread set sstatus.FS to OFF
-for no-FPU systems (vs. INITIAL for systems with FPU).   The ISA
-string in the devicetree should indicate whether F/D extensions are
-present.
+------------------
 
-That said, it makes sense to me to additionally provide the Kconfig
-option.  This would elide the sstatus.SD check for no-FPU systems,
-shaving a couple instructions off the context-switch path.  It would
-also enable mimicking the behavior of a no-FPU system even when the
-FPU is present.
+From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
 
->
-> If that's not possible then we'll have to take something like this.  There
-> were some comments on this v2 but I don't see a v3, did I miss one?
+[ Upstream commit f700546682a62a87a9615121a37ee7452dab4b76 ]
+
+Following overflow kernel panic is observed on some platforms while
+loading the driver. It is fixed if dynamically allocated memory is
+passed to SDIO instead of static one
+
+[  927.513963] nommu_map_sg: overflow 17d54064ba7c+20 of device mask ffffffff
+[  927.517712] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x mac80211 cfg80211
+	       btrsi rfcomm bluetooth ecdh_generic snd_soc_sst_bytcr_rt5660
+[  927.517861] CPU: 0 PID: 1624 Comm: insmod Tainted: G W 4.15.0-1000 #1
+[  927.517870] RIP: 0010:sdhci_send_command+0x5f0/0xa90 [sdhci]
+[  927.517873] RSP: 0000:ffffac3fc064b6d8 EFLAGS: 00010086
+[  927.517895] Call Trace:
+[  927.517908]  ? __schedule+0x3cd/0x890
+[  927.517915]  ? mod_timer+0x17b/0x3c0
+[  927.517922]  sdhci_request+0x7c/0xf0 [sdhci]
+[  927.517928]  __mmc_start_request+0x5a/0x170
+[  927.517932]  mmc_start_request+0x74/0x90
+[  927.517936]  mmc_wait_for_req+0x87/0xe0
+[  927.517940]  mmc_io_rw_extended+0x2fd/0x330
+[  927.517946]  ? mmc_wait_data_done+0x30/0x30
+[  927.517951]  sdio_io_rw_ext_helper+0x160/0x210
+[  927.517956]  sdio_writesb+0x1d/0x20
+[  927.517966]	rsi_sdio_write_register_multiple+0x68/0x110 [rsi_sdio]
+[  927.517976]  rsi_hal_device_init+0x357/0x910 [rsi_91x]
+[  927.517983]  ? rsi_hal_device_init+0x357/0x910 [rsi_91x]
+[  927.517990]  rsi_probe+0x2c6/0x450 [rsi_sdio]
+[  927.517995]  sdio_bus_probe+0xfc/0x110
+[  927.518000]  driver_probe_device+0x2b3/0x490
+[  927.518005]  __driver_attach+0xdf/0xf0
+[  927.518008]  ? driver_probe_device+0x490/0x490
+[  927.518014]  bus_for_each_dev+0x6c/0xc0
+[  927.518018]  driver_attach+0x1e/0x20
+[  927.518021]  bus_add_driver+0x1f4/0x270
+[  927.518028]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.518031]  driver_register+0x60/0xe0
+[  927.518038]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
+[  927.518041]  sdio_register_driver+0x20/0x30
+[  927.518047]  rsi_module_init+0x16/0x40 [rsi_sdio]
+
+Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/wireless/rsi/rsi_91x_hal.c  |   35 +++++++++++++++++++-------------
+ drivers/net/wireless/rsi/rsi_91x_sdio.c |   21 ++++++++++++-------
+ drivers/net/wireless/rsi/rsi_sdio.h     |    2 -
+ 3 files changed, 36 insertions(+), 22 deletions(-)
+
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -616,28 +616,32 @@ static int bl_write_header(struct rsi_hw
+ 			   u32 content_size)
+ {
+ 	struct rsi_host_intf_ops *hif_ops = adapter->host_intf_ops;
+-	struct bl_header bl_hdr;
++	struct bl_header *bl_hdr;
+ 	u32 write_addr, write_len;
+ 	int status;
+ 
+-	bl_hdr.flags = 0;
+-	bl_hdr.image_no = cpu_to_le32(adapter->priv->coex_mode);
+-	bl_hdr.check_sum = cpu_to_le32(
+-				*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
+-	bl_hdr.flash_start_address = cpu_to_le32(
+-					*(u32 *)&flash_content[ADDR_OFFSET]);
+-	bl_hdr.flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
++	bl_hdr = kzalloc(sizeof(*bl_hdr), GFP_KERNEL);
++	if (!bl_hdr)
++		return -ENOMEM;
++
++	bl_hdr->flags = 0;
++	bl_hdr->image_no = cpu_to_le32(adapter->priv->coex_mode);
++	bl_hdr->check_sum =
++		cpu_to_le32(*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
++	bl_hdr->flash_start_address =
++		cpu_to_le32(*(u32 *)&flash_content[ADDR_OFFSET]);
++	bl_hdr->flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
+ 	write_len = sizeof(struct bl_header);
+ 
+ 	if (adapter->rsi_host_intf == RSI_HOST_INTF_USB) {
+ 		write_addr = PING_BUFFER_ADDRESS;
+ 		status = hif_ops->write_reg_multiple(adapter, write_addr,
+-						 (u8 *)&bl_hdr, write_len);
++						 (u8 *)bl_hdr, write_len);
+ 		if (status < 0) {
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Failed to load Version/CRC structure\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 	} else {
+ 		write_addr = PING_BUFFER_ADDRESS >> 16;
+@@ -646,20 +650,23 @@ static int bl_write_header(struct rsi_hw
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Unable to set ms word to common reg\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 		write_addr = RSI_SD_REQUEST_MASTER |
+ 			     (PING_BUFFER_ADDRESS & 0xFFFF);
+ 		status = hif_ops->write_reg_multiple(adapter, write_addr,
+-						 (u8 *)&bl_hdr, write_len);
++						 (u8 *)bl_hdr, write_len);
+ 		if (status < 0) {
+ 			rsi_dbg(ERR_ZONE,
+ 				"%s: Failed to load Version/CRC structure\n",
+ 				__func__);
+-			return status;
++			goto fail;
+ 		}
+ 	}
+-	return 0;
++	status = 0;
++fail:
++	kfree(bl_hdr);
++	return status;
+ }
+ 
+ static u32 read_flash_capacity(struct rsi_hw *adapter)
+--- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
++++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+@@ -1040,17 +1040,21 @@ static void ulp_read_write(struct rsi_hw
+ /*This function resets and re-initializes the chip.*/
+ static void rsi_reset_chip(struct rsi_hw *adapter)
+ {
+-	__le32 data;
++	u8 *data;
+ 	u8 sdio_interrupt_status = 0;
+ 	u8 request = 1;
+ 	int ret;
+ 
++	data = kzalloc(sizeof(u32), GFP_KERNEL);
++	if (!data)
++		return;
++
+ 	rsi_dbg(INFO_ZONE, "Writing disable to wakeup register\n");
+ 	ret =  rsi_sdio_write_register(adapter, 0, SDIO_WAKEUP_REG, &request);
+ 	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Failed to write SDIO wakeup register\n", __func__);
+-		return;
++		goto err;
+ 	}
+ 	msleep(20);
+ 	ret =  rsi_sdio_read_register(adapter, RSI_FN1_INT_REGISTER,
+@@ -1058,7 +1062,7 @@ static void rsi_reset_chip(struct rsi_hw
+ 	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE, "%s: Failed to Read Intr Status Register\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 	rsi_dbg(INFO_ZONE, "%s: Intr Status Register value = %d\n",
+ 		__func__, sdio_interrupt_status);
+@@ -1068,17 +1072,17 @@ static void rsi_reset_chip(struct rsi_hw
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Unable to set ms word to common reg\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 
+-	data = TA_HOLD_THREAD_VALUE;
++	put_unaligned_le32(TA_HOLD_THREAD_VALUE, data);
+ 	if (rsi_sdio_write_register_multiple(adapter, TA_HOLD_THREAD_REG |
+ 					     RSI_SD_REQUEST_MASTER,
+-					     (u8 *)&data, 4)) {
++					     data, 4)) {
+ 		rsi_dbg(ERR_ZONE,
+ 			"%s: Unable to hold Thread-Arch processor threads\n",
+ 			__func__);
+-		return;
++		goto err;
+ 	}
+ 
+ 	/* This msleep will ensure Thread-Arch processor to go to hold
+@@ -1099,6 +1103,9 @@ static void rsi_reset_chip(struct rsi_hw
+ 	 * read write operations to complete for chip reset.
+ 	 */
+ 	msleep(500);
++err:
++	kfree(data);
++	return;
+ }
+ 
+ /**
+--- a/drivers/net/wireless/rsi/rsi_sdio.h
++++ b/drivers/net/wireless/rsi/rsi_sdio.h
+@@ -87,7 +87,7 @@ enum sdio_interrupt_type {
+ #define TA_SOFT_RST_CLR              0
+ #define TA_SOFT_RST_SET              BIT(0)
+ #define TA_PC_ZERO                   0
+-#define TA_HOLD_THREAD_VALUE         cpu_to_le32(0xF)
++#define TA_HOLD_THREAD_VALUE         0xF
+ #define TA_RELEASE_THREAD_VALUE      cpu_to_le32(0xF)
+ #define TA_BASE_ADDR                 0x2200
+ #define MISC_CFG_BASE_ADDR           0x4105
+
+
