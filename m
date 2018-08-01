@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A041FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D579C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623962083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 623962083D
+	by mail.kernel.org (Postfix) with ESMTP id BB79C2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB79C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732498AbeHATuy (ORCPT
+        id S2387397AbeHATvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:50:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49804 "EHLO
+        Wed, 1 Aug 2018 15:51:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405838AbeHATIh (ORCPT
+        with ESMTP id S2405807AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FC1613CB;
-        Wed,  1 Aug 2018 17:15:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B0D81362;
+        Wed,  1 Aug 2018 17:13:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        Omar Sandoval <osandov@fb.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 082/246] Btrfs: dont return ino to ino cache if inode item removal fails
-Date:   Wed,  1 Aug 2018 18:49:52 +0200
-Message-Id: <20180801165015.648707667@linuxfoundation.org>
+Subject: [PATCH 4.14 038/246] netfilter: ipset: List timing out entries with "timeout 1" instead of zero
+Date:   Wed,  1 Aug 2018 18:49:08 +0200
+Message-Id: <20180801165013.510415415@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,66 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 
-[ Upstream commit c08db7d8d295a4f3a10faaca376de011afff7950 ]
+[ Upstream commit bd975e691486ba52790ba23cc9b4fecab7bc0d31 ]
 
-In btrfs_evict_inode(), if btrfs_truncate_inode_items() fails, the inode
-item will still be in the tree but we still return the ino to the ino
-cache. That will blow up later when someone tries to allocate that ino,
-so don't return it to the cache.
+When listing sets with timeout support, there's a probability that
+just timing out entries with "0" timeout value is listed/saved.
+However when restoring the saved list, the zero timeout value means
+permanent elelements.
 
-Fixes: 581bb050941b ("Btrfs: Cache free inode numbers in memory")
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+The new behaviour is that timing out entries are listed with "timeout 1"
+instead of zero.
+
+Fixes netfilter bugzilla #1258.
+
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/inode.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ include/linux/netfilter/ipset/ip_set_timeout.h |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5499,13 +5499,18 @@ void btrfs_evict_inode(struct inode *ino
- 		trans->block_rsv = rsv;
+--- a/include/linux/netfilter/ipset/ip_set_timeout.h
++++ b/include/linux/netfilter/ipset/ip_set_timeout.h
+@@ -65,8 +65,14 @@ ip_set_timeout_set(unsigned long *timeou
+ static inline u32
+ ip_set_timeout_get(const unsigned long *timeout)
+ {
+-	return *timeout == IPSET_ELEM_PERMANENT ? 0 :
+-		jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
++	u32 t;
++
++	if (*timeout == IPSET_ELEM_PERMANENT)
++		return 0;
++
++	t = jiffies_to_msecs(*timeout - jiffies)/MSEC_PER_SEC;
++	/* Zero value in userspace means no timeout */
++	return t == 0 ? 1 : t;
+ }
  
- 		ret = btrfs_truncate_inode_items(trans, root, inode, 0, 0);
--		if (ret != -ENOSPC && ret != -EAGAIN)
-+		if (ret) {
-+			trans->block_rsv = &fs_info->trans_block_rsv;
-+			btrfs_end_transaction(trans);
-+			btrfs_btree_balance_dirty(fs_info);
-+			if (ret != -ENOSPC && ret != -EAGAIN) {
-+				btrfs_orphan_del(NULL, BTRFS_I(inode));
-+				btrfs_free_block_rsv(fs_info, rsv);
-+				goto no_delete;
-+			}
-+		} else {
- 			break;
--
--		trans->block_rsv = &fs_info->trans_block_rsv;
--		btrfs_end_transaction(trans);
--		trans = NULL;
--		btrfs_btree_balance_dirty(fs_info);
-+		}
- 	}
- 
- 	btrfs_free_block_rsv(fs_info, rsv);
-@@ -5514,12 +5519,8 @@ void btrfs_evict_inode(struct inode *ino
- 	 * Errors here aren't a big deal, it just means we leave orphan items
- 	 * in the tree.  They will be cleaned up on the next mount.
- 	 */
--	if (ret == 0) {
--		trans->block_rsv = root->orphan_block_rsv;
--		btrfs_orphan_del(trans, BTRFS_I(inode));
--	} else {
--		btrfs_orphan_del(NULL, BTRFS_I(inode));
--	}
-+	trans->block_rsv = root->orphan_block_rsv;
-+	btrfs_orphan_del(trans, BTRFS_I(inode));
- 
- 	trans->block_rsv = &fs_info->trans_block_rsv;
- 	if (!(root == fs_info->tree_root ||
+ #endif	/* __KERNEL__ */
 
 
