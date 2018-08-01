@@ -2,96 +2,97 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C62C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF3AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B47A120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47A120862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AA90208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:57:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA90208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732280AbeHAVoG (ORCPT
+        id S1732362AbeHAVpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:44:06 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:39723 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729629AbeHAVoF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:44:05 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 84D0A1CC67D
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 14:56:41 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id kxEHfuALTBcCXkxEWfVoLf; Wed, 01 Aug 2018 14:56:41 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=37680 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fkxEH-004EXZ-AJ; Wed, 01 Aug 2018 14:56:17 -0500
-Date:   Wed, 1 Aug 2018 14:56:16 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, patches@opensource.cirrus.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 11/11] ASoC: wm8994: Mark expected switch fall-through
-Message-ID: <8e3df79b1dca92d49fd9d5c97391d31814ab40f9.1533151956.git.gustavo@embeddedor.com>
-References: <cover.1533151956.git.gustavo@embeddedor.com>
+        Wed, 1 Aug 2018 17:45:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58001 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729765AbeHAVpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 17:45:01 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5867520789; Wed,  1 Aug 2018 21:57:34 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D730720739;
+        Wed,  1 Aug 2018 21:57:33 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 21:57:33 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Piotr Bugalski <bugalski.piotr@gmail.com>,
+        linux-spi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Piotr Bugalski <pbu@cryptera.com>
+Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
+Message-ID: <20180801215733.4dfa3a95@bbrezillon>
+In-Reply-To: <20180801172747.GJ5509@sirena.org.uk>
+References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
+        <20180627131609.13681-6-bugalski.piotr@gmail.com>
+        <20180801172747.GJ5509@sirena.org.uk>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1533151956.git.gustavo@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.61.218
-X-Source-L: No
-X-Exim-ID: 1fkxEH-004EXZ-AJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.61.218]:37680
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 86
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Hi Mark,
 
-Addresses-Coverity-ID: 115050 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/soc/codecs/wm8994.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, 1 Aug 2018 18:27:47 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
-index 7fdfdf3..62f8c5b 100644
---- a/sound/soc/codecs/wm8994.c
-+++ b/sound/soc/codecs/wm8994.c
-@@ -2432,6 +2432,7 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
- 			snd_soc_component_update_bits(component, WM8994_POWER_MANAGEMENT_2,
- 					    WM8994_OPCLK_ENA, 0);
- 		}
-+		/* fall through */
- 
- 	default:
- 		return -EINVAL;
--- 
-2.7.4
+> On Wed, Jun 27, 2018 at 03:16:08PM +0200, Piotr Bugalski wrote:
+> > Kernel contains QSPI driver strongly tied to MTD and nor-flash memory.
+> > New spi-mem interface allows usage also other memory types, especially
+> > much larger NAND with SPI interface. This driver works as SPI controller
+> > and is not related to MTD, however can work with NAND-flash or other
+> > peripherals using spi-mem interface.  
+> 
+> This is fine from a SPI point of view
+
+Cool. There are still 2 things I think should be addressed before
+merging the driver:
+1/ Fixing the SoB tag to match the author (problem reported by
+   Alexandre)
+2/ Getting this patch [1] merged and implementing the ->get_name() hook
+   in this driver so that SPI NOR devs declared to the MTD layer keep
+   the same name after the transition to spi-mem and mtdparts= passed on
+   the cmdline keep working. Without this in place we're likely to
+   break a few setups :-/.
+
+> but I'd like to apply it directly
+> to the SPI tree rather than ack it for merge via the MTD tree - can we
+> work something out with a shared branch or something?
+
+Sure, I can provide an immutable tag for you to pull and I'll add my
+acks on those patches once the 2 things I mentioned above are
+addressed.
+
+Regards,
+
+Boris
+
+[1]https://patchwork.kernel.org/patch/10508693/ 
 
