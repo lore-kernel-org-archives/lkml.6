@@ -3,37 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE2C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A98C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13D320862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13D320862
+	by mail.kernel.org (Postfix) with ESMTP id B1C9C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C9C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405351AbeHATG4 (ORCPT
+        id S2405436AbeHATHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49084 "EHLO
+        Wed, 1 Aug 2018 15:07:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbeHATGz (ORCPT
+        with ESMTP id S2389677AbeHATHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:55 -0400
+        Wed, 1 Aug 2018 15:07:13 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3A75D1F;
-        Wed,  1 Aug 2018 17:20:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DAA5CC2;
+        Wed,  1 Aug 2018 17:20:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 169/246] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
-Date:   Wed,  1 Aug 2018 18:51:19 +0200
-Message-Id: <20180801165019.820632860@linuxfoundation.org>
+Subject: [PATCH 4.14 175/246] dt-bindings: pinctrl: meson: add support for the Meson8m2 SoC
+Date:   Wed,  1 Aug 2018 18:51:25 +0200
+Message-Id: <20180801165020.107605069@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,38 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 5b19d284f5195a925dd015a6397bfce184097378 ]
+[ Upstream commit 03d9fbc39730b3e6b2e7047dc85f0f70de8fb97d ]
 
-pageout() in MM traslates EAGAIN, so calls handle_write_error()
- -> mapping_set_error() -> set_bit(AS_EIO, ...).
- file_write_and_wait_range() will see EIO error, which is critical
- to return value of fsync() followed by atomic_write failure to user.
+The Meson8m2 SoC is a variant of Meson8 with some updates from Meson8b
+(such as the Gigabit capable DesignWare MAC).
+It is mostly pin compatible with Meson8, only 10 (existing) CBUS pins
+get an additional function (four of these are Ethernet RXD2, RXD3, TXD2
+and TXD3 which are required when the board uses an RGMII PHY).
+The AOBUS pins seem to be identical on Meson8 and Meson8m2.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/data.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1601,7 +1601,13 @@ out:
- 
- redirty_out:
- 	redirty_page_for_writepage(wbc, page);
--	if (!err)
-+	/*
-+	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
-+	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
-+	 * file_write_and_wait_range() will see EIO error, which is critical
-+	 * to return value of fsync() followed by atomic_write failure to user.
-+	 */
-+	if (!err || wbc->for_reclaim)
- 		return AOP_WRITEPAGE_ACTIVATE;
- 	unlock_page(page);
- 	return err;
+--- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+@@ -3,8 +3,10 @@
+ Required properties for the root node:
+  - compatible: one of "amlogic,meson8-cbus-pinctrl"
+ 		      "amlogic,meson8b-cbus-pinctrl"
++		      "amlogic,meson8m2-cbus-pinctrl"
+ 		      "amlogic,meson8-aobus-pinctrl"
+ 		      "amlogic,meson8b-aobus-pinctrl"
++		      "amlogic,meson8m2-aobus-pinctrl"
+ 		      "amlogic,meson-gxbb-periphs-pinctrl"
+ 		      "amlogic,meson-gxbb-aobus-pinctrl"
+ 		      "amlogic,meson-gxl-periphs-pinctrl"
 
 
