@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0A6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FECC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A8A208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A8A208A5
+	by mail.kernel.org (Postfix) with ESMTP id B161D208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:52:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B161D208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390609AbeHATjH (ORCPT
+        id S2406054AbeHATIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:39:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50150 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405941AbeHATIl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50224 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405914AbeHATIj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:08:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7693A10BD;
-        Wed,  1 Aug 2018 17:03:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C6FB1285;
+        Wed,  1 Aug 2018 17:12:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 195/336] tty: Fix data race in tty_insert_flip_string_fixed_flag
-Date:   Wed,  1 Aug 2018 18:48:50 +0200
-Message-Id: <20180801165036.555945137@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 017/246] tracing: Quiet gcc warning about maybe unused link variable
+Date:   Wed,  1 Aug 2018 18:48:47 +0200
+Message-Id: <20180801165012.522993337@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,100 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: DaeRyong Jeong <threeearcat@gmail.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit b6da31b2c07c46f2dcad1d86caa835227a16d9ff ]
+commit 2519c1bbe38d7acacc9aacba303ca6f97482ed53 upstream.
 
-Unlike normal serials, in pty layer, there is no guarantee that multiple
-threads don't insert input characters at the same time. If it is happened,
-tty_insert_flip_string_fixed_flag can be executed concurrently. This can
-lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
+Commit 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on
+enable_trace_kprobe() failure") added an if statement that depends on another
+if statement that gcc doesn't see will initialize the "link" variable and
+gives the warning:
 
-Call sequences are as follows.
-CPU0                                    CPU1
-n_tty_ioctl_helper                      n_tty_ioctl_helper
-__start_tty                             tty_send_xchar
-tty_wakeup                              pty_write
-n_hdlc_tty_wakeup                       tty_insert_flip_string
-n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
-pty_write
-tty_insert_flip_string
-tty_insert_flip_string_fixed_flag
+ "warning: 'link' may be used uninitialized in this function"
 
-To fix the race, acquire port->lock in pty_write() before it inserts input
-characters to tty buffer. It prevents multiple threads from inserting
-input characters concurrently.
+It is really a false positive, but to quiet the warning, and also to make
+sure that it never actually is used uninitialized, initialize the "link"
+variable to NULL and add an if (!WARN_ON_ONCE(!link)) where the compiler
+thinks it could be used uninitialized.
 
-The crash log is as follows:
-BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
-0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
-Write of size 1792 by task syz-executor0/30017
-CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
- 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
- ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
- ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
-Call Trace:
- __dump_stack lib/dump_stack.c:15 [inline]
- dump_stack+0xb3/0x110 lib/dump_stack.c:51
- kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
- print_address_description mm/kasan/report.c:194 [inline]
- kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
- kasan_report+0x36/0x40 mm/kasan/report.c:303
- check_memory_region_inline mm/kasan/kasan.c:292 [inline]
- check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
- memcpy+0x37/0x50 mm/kasan/kasan.c:335
- tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
- tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
- pty_write+0x7f/0xc0 drivers/tty/pty.c:115
- n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
- n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
- tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
- __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
- __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
- n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
- n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
- tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
- vfs_ioctl fs/ioctl.c:43 [inline]
- do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
- SYSC_ioctl fs/ioctl.c:694 [inline]
- SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
- entry_SYSCALL_64_fastpath+0x1f/0xbd
-
-Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/tty/pty.c |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/trace/trace_kprobe.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -110,16 +110,19 @@ static void pty_unthrottle(struct tty_st
- static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -376,7 +376,7 @@ static struct trace_kprobe *find_trace_k
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
  {
- 	struct tty_struct *to = tty->link;
-+	unsigned long flags;
+-	struct event_file_link *link;
++	struct event_file_link *link = NULL;
+ 	int ret = 0;
  
- 	if (tty->stopped)
- 		return 0;
+ 	if (file) {
+@@ -402,7 +402,9 @@ enable_trace_kprobe(struct trace_kprobe
  
- 	if (c > 0) {
-+		spin_lock_irqsave(&to->port->lock, flags);
- 		/* Stuff the data into the input queue of the other end */
- 		c = tty_insert_flip_string(to->port, buf, c);
- 		/* And shovel */
- 		if (c)
- 			tty_flip_buffer_push(to->port);
-+		spin_unlock_irqrestore(&to->port->lock, flags);
- 	}
- 	return c;
- }
+ 	if (ret) {
+ 		if (file) {
+-			list_del_rcu(&link->list);
++			/* Notice the if is true on not WARN() */
++			if (!WARN_ON_ONCE(!link))
++				list_del_rcu(&link->list);
+ 			kfree(link);
+ 			tk->tp.flags &= ~TP_FLAG_TRACE;
+ 		} else {
 
 
