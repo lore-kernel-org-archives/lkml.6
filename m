@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55D1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60E1C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95FA72083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FA72083D
+	by mail.kernel.org (Postfix) with ESMTP id 664C32083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664C32083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406679AbeHATLr (ORCPT
+        id S2406691AbeHATLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51268 "EHLO
+        Wed, 1 Aug 2018 15:11:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404619AbeHATLr (ORCPT
+        with ESMTP id S2404619AbeHATLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:47 -0400
+        Wed, 1 Aug 2018 15:11:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 720CBCC9;
-        Wed,  1 Aug 2018 17:25:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E94DCC3;
+        Wed,  1 Aug 2018 17:25:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Anant Shende <anantshende@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 002/144] Input: i8042 - add Lenovo LaVie Z to the i8042 reset list
-Date:   Wed,  1 Aug 2018 18:50:29 +0200
-Message-Id: <20180801164949.143313561@linuxfoundation.org>
+Subject: [PATCH 4.9 003/144] Input: elan_i2c - add another ACPI ID for Lenovo Ideapad 330-15AST
+Date:   Wed,  1 Aug 2018 18:50:30 +0200
+Message-Id: <20180801164949.189635452@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,40 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: KT Liao <kt.liao@emc.com.tw>
 
-commit 384cf4285b34e08917e3e66603382f2b0c4f6e1b upstream.
+commit 6f88a6439da5d94de334a341503bc2c7f4a7ea7f upstream.
 
-The Lenovo LaVie Z laptop requires i8042 to be reset in order to
-consistently detect its Elantech touchpad. The nomux and kbdreset
-quirks are not sufficient.
+Add ELAN0622 to ACPI mapping table to support Elan touchpad found in
+Ideapad 330-15AST.
 
-It's possible the other LaVie Z models from NEC require this as well.
-
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Reported-by: Anant Shende <anantshende@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/serio/i8042-x86ia64io.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -527,6 +527,13 @@ static const struct dmi_system_id __init
- 			DMI_MATCH(DMI_PRODUCT_NAME, "N24_25BU"),
- 		},
- 	},
-+	{
-+		/* Lenovo LaVie Z */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo LaVie Z"),
-+		},
-+	},
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1252,6 +1252,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0612", 0 },
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
  	{ }
  };
- 
 
 
