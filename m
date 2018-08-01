@@ -2,122 +2,118 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CF0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C267C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98ED4208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2608C208B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkODkbuX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98ED4208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="isajhvXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2608C208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390534AbeHATbz (ORCPT
+        id S2390560AbeHATcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:31:55 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41778 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390457AbeHATby (ORCPT
+        Wed, 1 Aug 2018 15:32:09 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42943 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389951AbeHATcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:31:54 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so36148841oiw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:45:06 -0700 (PDT)
+        Wed, 1 Aug 2018 15:32:08 -0400
+Received: by mail-qt0-f193.google.com with SMTP id z8-v6so20821330qto.9
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 10:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/hrQ/zVHKT8Nzvab5rUiOWM6k45yoYeCt80tXk2VamI=;
-        b=rkODkbuXHekZlVTk6NLgXOM6QPfcl1xTCjnW2sRz/Ug2PbvgzyXqRB7OXidvKI45XQ
-         zPWuHEWtrrsD3d9vNl8grb5SQr1B8vbaYZRdX3fxN9U/QlGYtsxvVFRFCz9F5QqVVymC
-         Il+0uwYyxq3oDvyXsXVFH3VH3Vgnb5FyOqTHoXtqk/RehhuawPkRODtjAq0QlksCubXW
-         AKtuefHW3Jde7yMPce0eA9PoqYCrt4ewieTShmAv4vTnOeInzqHnEmG4q9ftOAgCDANf
-         CGUuRyRZf4DCox3bO0RMoDE8D2JySdheWIuhsevUtGtKovPbr7ZnAELxdJeA8Wnk7/kY
-         rhsg==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tEL9IwiuuNHcEfw7I+59d25RLfFPQ9mHGxhbc8p2Ko4=;
+        b=isajhvXrGQCJfVfj0vDORkixO0BfJW4iBeg8XblkXS/7N7RaQCZEgsIM/Lvk2W4gbd
+         2sRnvB9sq8JamTWwanU5M0z8Br1MsADsAqp0q1EDciBkTLA/fBqv5/MvI2w/wmGRgFQo
+         WJxzjPyJy62oIA23gydhNIZKFvFb5beCSH65OtLaYgTUTeqYXFFD0tR+euFu16zv2yNs
+         wFXKe5NiYtvHfu8R67Trh91N7lpTpWZ1SEt6AETEBk1TUSE1CFmbK5elpIlFQNm98GGW
+         i1M3ANf0wf/CqubswqEzLBsBJ03Oi73esCLbodZ+9By9tLcm9bPrZyu+n4eTMGlbno2l
+         vmqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/hrQ/zVHKT8Nzvab5rUiOWM6k45yoYeCt80tXk2VamI=;
-        b=YeVnuDh6f2pXUJcnWOHtMB5+AT0GcbLd3p+S9axTVYgXAMpbZ6NxFziji61JURMcqe
-         5s+dLSkAf7MBHCg7bssRytjeSURyXo+RK0344lb27E59R6dReo94azzELwpiAo+Iaqq3
-         jLjGS/34YAZZzqLbuyZYQLD4JipxJXyPNl16T2hk+GczZX75e4JVHmXcQy2mYoxj4PIr
-         4uN++A35nFvthEC15lyja5WALb28KbdQNGZ+yrDBEAhjHlqJRyM7eZ1T9zGSS3efHfWk
-         cJt6WMzF9vBvb5k8RNzMIQN3QCqTDqxbmYZuPWrEJJHY2ttmPAN0fPS0ZzhbBX9ib63j
-         MpJA==
-X-Gm-Message-State: AOUpUlEJOblkPzOJbg9vitS1KJMz5RlJrVbmk8y5PHZA2UmYd4ZNafur
-        bjxm9dL41+GZJM8P5zOI/9HhqcTPVioK+40jFQbtxQ==
-X-Google-Smtp-Source: AAOMgpd54c6tmQPxTskl+tIkz5hXNCXzGmEwvNidwohvsXbC7PspjYfjfsGXj7iYgu2Xz0XFRPuOtEDIQOnlpMzv2ow=
-X-Received: by 2002:aca:7c5:: with SMTP id 188-v6mr4752997oih.58.1533145505868;
- Wed, 01 Aug 2018 10:45:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tEL9IwiuuNHcEfw7I+59d25RLfFPQ9mHGxhbc8p2Ko4=;
+        b=ScUbj8yPTUFySToVl4qw42u5xs1aOW9vWOW8querO4/Ume3ZLx6MffAuzIpZ2Q5/hZ
+         iMvANQsBtbiZ8rTHGDS3yqofQNQ2tPg2d58w7qJqEDdBJh3qQBU7tS2ibDuBPQgZI88P
+         mlIXxhAVEnya+CwuF3P+NtOw/CRwvnSKL6/5vIC8icuipvBJPrQkGDnV1ch/OZ4Uu25y
+         NQvFDn4e2XK6IPO+m+z6WccR38wPjOjoSiKAwoBFcj6bsCB8EKY316SayN2WG/DczKzo
+         JUBlJ6z4zyfrKRUDPIO27LMifQS+z8ikjIv54DrKhquuAsuf1hFxhHXZ5RwQwuACWTJK
+         f2HA==
+X-Gm-Message-State: AOUpUlE2mix1kOjqW7zheRD5RmCnnqh/x+2zF+y/dUmU68wCyn8fKCi/
+        ERpqhWf1KNYijBFaTYsicJeTFg==
+X-Google-Smtp-Source: AAOMgpeLyfgM7OA+tXypG/aclvSbpd4qs7SOaeL1krD1RLUcNdB2uxZoGLj6Xx75h5RlXH3cPCD9eg==
+X-Received: by 2002:a0c:9547:: with SMTP id m7-v6mr23876583qvm.138.1533145520084;
+        Wed, 01 Aug 2018 10:45:20 -0700 (PDT)
+Received: from localhost (216.49.36.201.res-cmts.bus.ptd.net. [216.49.36.201])
+        by smtp.gmail.com with ESMTPSA id b83-v6sm12524909qkc.20.2018.08.01.10.45.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 10:45:19 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 13:48:14 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] mm, oom: introduce memory.oom.group
+Message-ID: <20180801174814.GC11386@cmpxchg.org>
+References: <20180730180100.25079-1-guro@fb.com>
+ <20180730180100.25079-4-guro@fb.com>
+ <20180731090700.GF4557@dhcp22.suse.cz>
+ <20180801011447.GB25953@castle.DHCP.thefacebook.com>
+ <20180801055503.GB16767@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20180730211254.173686-1-pshier@google.com> <alpine.DEB.2.21.1807302342570.1725@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1807302342570.1725@nanos.tec.linutronix.de>
-From:   Peter Shier <pshier@google.com>
-Date:   Wed, 1 Aug 2018 10:44:55 -0700
-Message-ID: <CACwOFJQqqh6m2x+JXBnmeCzS7Zb-3e+5iPzp_vAZPGCqW+i_8w@mail.gmail.com>
-Subject: Re: [PATCH] proc: added ept_ad flag to /proc/cpuinfo
-To:     tglx@linutronix.de
-Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org, bp@suse.de,
-        konrad.wilk@oracle.com, dwmw@amazon.co.uk,
-        Jim Mattson <jmattson@google.com>,
-        linux-kernel@vger.kernel.org, Peter Feiner <pfeiner@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801055503.GB16767@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Thomas. Wording issues understood and will post a new patch
-with updated subject.
+On Wed, Aug 01, 2018 at 07:55:03AM +0200, Michal Hocko wrote:
+> On Tue 31-07-18 18:14:48, Roman Gushchin wrote:
+> > On Tue, Jul 31, 2018 at 11:07:00AM +0200, Michal Hocko wrote:
+> > > On Mon 30-07-18 11:01:00, Roman Gushchin wrote:
+> > > > +struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
+> > > > +					    struct mem_cgroup *oom_domain)
+> > > > +{
+> > > > +	struct mem_cgroup *oom_group = NULL;
+> > > > +	struct mem_cgroup *memcg;
+> > > > +
+> > > > +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys))
+> > > > +		return NULL;
+> > > > +
+> > > > +	if (!oom_domain)
+> > > > +		oom_domain = root_mem_cgroup;
+> > > > +
+> > > > +	rcu_read_lock();
+> > > > +
+> > > > +	memcg = mem_cgroup_from_task(victim);
+> > > > +	if (!memcg || memcg == root_mem_cgroup)
+> > > > +		goto out;
+> > > 
+> > > When can we have memcg == NULL? victim should be always non-NULL.
+> > > Also why do you need to special case the root_mem_cgroup here. The loop
+> > > below should handle that just fine no?
+> > 
+> > Idk, I prefer to keep an explicit root_mem_cgroup check,
+> > rather than traversing the tree and relying on an inability
+> > to set oom_group on the root.
+> 
+> I will not insist but this just makes the code harder to read.
 
-Re goals: purpose is to expose feature bit with side effect of
-"ept_ad" in /proc/cpuinfo and is not necessarily related to VMX code.
-We are upstreaming some internal patches that we think would be
-generally useful and I will be careful from now on to remove any
-wording that is not publicly relevant.
-
-On Mon, Jul 30, 2018 at 3:12 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 30 Jul 2018, Peter Shier wrote:
->
-> > Subject: [PATCH] proc: added ept_ad flag to /proc/cpuinfo
->
-> The 'proc:' prefix is misleading here. x86/cpufeatures is the right
-> choice. The /proc/cpuinfo display is a side effect.
->
-> Also please avoid 'added'. Changelogs should be written in imperative
-> mood. Something like this:
->
->  x86/cpufeatures: Add EPT_AD feature bit
->
-> > The Intel Haswell architecture has an EPT feature whereby the access &
-> > dirty bits in EPT entries are updated without taking a guest exit.
->
-> Why would this be Haswell specific?
->
-> Aside of that I don't see what this has to do with exits. From the SDM:
->
->   " * If bit 21 is read as 1, accessed and dirty flags for EPT are
->       supported (see Section 28.2.4)"
->
-> And nothing in 28.2.4 says anything about exits. It's all about whether the
-> feature is supported or not. If it is supported it can be enabled in EPTP.
->
-> > This patch adds the "ept_ad" flag to /proc/cpuinfo if this feature is
-> > available.
->
-> See Documentation/process/submitting-patches.rst and search for 'This
-> patch'.
->
-> The other question is why is this new feature bit not used in the VMX code?
-> It needs to be checked to enable the AD bit in EPTP ....
->
-> Thanks,
->
->         tglx
+Just FYI, I'd prefer the explicit check. The loop would do the right
+thing, but it's a little too implicit and subtle for my taste...
