@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C43CC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1E0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC684208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC684208A4
+	by mail.kernel.org (Postfix) with ESMTP id 6F11F208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F11F208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390556AbeHATig (ORCPT
+        id S2390507AbeHATig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:38:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406039AbeHATIl (ORCPT
+        with ESMTP id S2406024AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FA281164;
-        Wed,  1 Aug 2018 17:06:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73DAA1082;
+        Wed,  1 Aug 2018 17:02:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yixun Lan <yixun.lan@amlogic.com>,
-        Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 240/336] dt-bindings: net: meson-dwmac: new compatible name for AXG SoC
-Date:   Wed,  1 Aug 2018 18:49:35 +0200
-Message-Id: <20180801165038.241469273@linuxfoundation.org>
+Subject: [PATCH 4.17 171/336] net: ethernet: ti: cpsw-phy-sel: check bus_find_device() ret value
+Date:   Wed,  1 Aug 2018 18:48:26 +0200
+Message-Id: <20180801165035.651367733@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,32 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 7e5d05e18ba1ed491c6f836edee7f0b90f3167bc ]
+[ Upstream commit c6213eb1aee308e67377fd1890d84f7284caf531 ]
 
-We need to introduce a new compatible name for the Meson-AXG SoC
-in order to support the RMII 100M ethernet PHY, since the PRG_ETH0
-register of the dwmac glue layer is changed from previous old SoC.
+This fixes klockworks warnings: Pointer 'dev' returned from call to
+function 'bus_find_device' at line 179 may be NULL and will be dereferenced
+at line 181.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+    cpsw-phy-sel.c:179: 'dev' is assigned the return value from function 'bus_find_device'.
+    bus.c:342: 'bus_find_device' explicitly returns a NULL value.
+    cpsw-phy-sel.c:181: 'dev' is dereferenced by passing argument 1 to function 'dev_get_drvdata'.
+    device.h:1024: 'dev' is passed to function 'dev_get_drvdata'.
+    device.h:1026: 'dev' is explicitly dereferenced.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+[nsekhar@ti.com: add an error message, fix return path]
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/net/meson-dwmac.txt |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/ti/cpsw-phy-sel.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/Documentation/devicetree/bindings/net/meson-dwmac.txt
-+++ b/Documentation/devicetree/bindings/net/meson-dwmac.txt
-@@ -11,6 +11,7 @@ Required properties on all platforms:
- 			- "amlogic,meson8b-dwmac"
- 			- "amlogic,meson8m2-dwmac"
- 			- "amlogic,meson-gxbb-dwmac"
-+			- "amlogic,meson-axg-dwmac"
- 		Additionally "snps,dwmac" and any applicable more
- 		detailed version number described in net/stmmac.txt
- 		should be used.
+--- a/drivers/net/ethernet/ti/cpsw-phy-sel.c
++++ b/drivers/net/ethernet/ti/cpsw-phy-sel.c
+@@ -177,12 +177,18 @@ void cpsw_phy_sel(struct device *dev, ph
+ 	}
+ 
+ 	dev = bus_find_device(&platform_bus_type, NULL, node, match);
+-	of_node_put(node);
++	if (!dev) {
++		dev_err(dev, "unable to find platform device for %pOF\n", node);
++		goto out;
++	}
++
+ 	priv = dev_get_drvdata(dev);
+ 
+ 	priv->cpsw_phy_sel(priv, phy_mode, slave);
+ 
+ 	put_device(dev);
++out:
++	of_node_put(node);
+ }
+ EXPORT_SYMBOL_GPL(cpsw_phy_sel);
+ 
 
 
