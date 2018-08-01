@@ -2,167 +2,99 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30099C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D64C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E745720844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:50:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E745720844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=phrozen.org
+	by mail.kernel.org (Postfix) with ESMTP id 44D0F20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:51:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bz5oMAxm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D0F20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388928AbeHAMfI (ORCPT
+        id S2387875AbeHAMgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:35:08 -0400
-Received: from nbd.name ([46.4.11.11]:55698 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388505AbeHAMfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:35:07 -0400
-From:   John Crispin <john@phrozen.org>
-To:     Alban Bedel <albeu@free.fr>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        John Crispin <john@phrozen.org>
-Subject: [PATCH V2 3/3] qcom: ipq4019: add USB devicetree nodes
-Date:   Wed,  1 Aug 2018 12:49:41 +0200
-Message-Id: <20180801104941.29432-4-john@phrozen.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180801104941.29432-1-john@phrozen.org>
-References: <20180801104941.29432-1-john@phrozen.org>
+        Wed, 1 Aug 2018 08:36:54 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35544 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387575AbeHAMgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 08:36:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hF7GYvsO3zIzEXmwyY9Q1LoSUfI59RHx1f8i9whFF+c=; b=bz5oMAxmTOB0u2doFXp6pMMj9
+        1X9ATIyrJC13ObeG4WgnvDqLj5uqeRe3ojCi0ZqnrW4EiJ+jXTo0nQnpqIBHkHqrtizzHhsoWN56h
+        ufmUzE2ga+weYTVIDYu6kBTKM4W2yPcmeMbuEC05KtXBcDb72pv2nWt1E3a0gOhVsjrus=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fkoj5-0000mG-Rn; Wed, 01 Aug 2018 10:51:31 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1F1591124241; Wed,  1 Aug 2018 11:51:31 +0100 (BST)
+Date:   Wed, 1 Aug 2018 11:51:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        srinivas.kandagatla@linaro.org, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] ASoC: qcom: add sdm845 sound card support
+Message-ID: <20180801105131.GF5509@sirena.org.uk>
+References: <1533114069-16570-1-git-send-email-rohitkr@codeaurora.org>
+ <1533114069-16570-5-git-send-email-rohitkr@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+Content-Disposition: inline
+In-Reply-To: <1533114069-16570-5-git-send-email-rohitkr@codeaurora.org>
+X-Cookie: You are as I am with You.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes USB work on the Dakota EVB.
 
-Signed-off-by: John Crispin <john@phrozen.org>
----
- arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 20 +++++++
- arch/arm/boot/dts/qcom-ipq4019.dtsi           | 76 +++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
+--rMWmSaSbD7nr+du9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-index 418f9a022336..0c226de1c672 100644
---- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
-@@ -109,5 +109,25 @@
- 		wifi@a800000 {
- 			status = "ok";
- 		};
-+
-+		usb3_ss_phy: usb-phy@9a000 {
-+			status = "ok";
-+		};
-+
-+		usb3_hs_phy: usb-phy@a6000 {
-+			status = "ok";
-+		};
-+
-+		usb3: usb3@8af8800 {
-+			status = "ok";
-+		};
-+
-+		usb2_hs_phy: usb-phy@a8000 {
-+			status = "ok";
-+		};
-+
-+		usb2: usb2@60f8800 {
-+			status = "ok";
-+		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 4620beafa84d..2ef20749b446 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -553,5 +553,81 @@
- 					  "legacy";
- 			status = "disabled";
- 		};
-+
-+		usb3_ss_phy: usb-phy@9a000 {
-+			compatible = "qcom,ipq4019-usb-ss-phy";
-+			#phy-cells = <0>;
-+			reg = <0x9a000 0x800>;
-+			reg-names = "phy_base";
-+			resets = <&gcc USB3_UNIPHY_PHY_ARES>;
-+			reset-names = "por";
-+			status = "disabled";
-+		};
-+
-+		usb3_hs_phy: usb-phy@a6000 {
-+			compatible = "qcom,ipq4019-usb-hs-phy";
-+			#phy-cells = <0>;
-+			reg = <0xa6000 0x40>;
-+			reg-names = "phy_base";
-+			resets = <&gcc USB3_HSPHY_POR_ARES>,
-+				 <&gcc USB3_HSPHY_S_ARES>;
-+			reset-names = "por", "srif";
-+			status = "disabled";
-+		};
-+
-+		usb3@8af8800 {
-+			compatible = "qcom,dwc3";
-+			reg = <0x8af8800 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			clocks = <&gcc GCC_USB3_MASTER_CLK>,
-+				 <&gcc GCC_USB3_SLEEP_CLK>,
-+				 <&gcc GCC_USB3_MOCK_UTMI_CLK>;
-+			clock-names = "master", "sleep", "mock_utmi";
-+			ranges;
-+			status = "disabled";
-+
-+			dwc3@8a00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x8a00000 0xf8000>;
-+				interrupts = <0 132 0>;
-+				phys = <&usb3_hs_phy>, <&usb3_ss_phy>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+				dr_mode = "host";
-+			};
-+		};
-+
-+		usb2_hs_phy: usb-phy@a8000 {
-+			compatible = "qcom,ipq4019-usb-hs-phy";
-+			#phy-cells = <0>;
-+			reg = <0xa8000 0x40>;
-+			reg-names = "phy_base";
-+			resets = <&gcc USB2_HSPHY_POR_ARES>,
-+				 <&gcc USB2_HSPHY_S_ARES>;
-+			reset-names = "por", "srif";
-+			status = "disabled";
-+		};
-+
-+		usb2@60f8800 {
-+			compatible = "qcom,dwc3";
-+			reg = <0x60f8800 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			clocks = <&gcc GCC_USB2_MASTER_CLK>,
-+				 <&gcc GCC_USB2_SLEEP_CLK>,
-+				 <&gcc GCC_USB2_MOCK_UTMI_CLK>;
-+			clock-names = "master", "sleep", "mock_utmi";
-+			ranges;
-+			status = "disabled";
-+
-+			dwc3@6000000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x6000000 0xf8000>;
-+				interrupts = <0 136 0>;
-+				phys = <&usb2_hs_phy>;
-+				phy-names = "usb2-phy";
-+				dr_mode = "host";
-+			};
-+		};
- 	};
- };
--- 
-2.11.0
+On Wed, Aug 01, 2018 at 02:31:09PM +0530, Rohit kumar wrote:
 
+> --- /dev/null
+> +++ b/sound/soc/qcom/sdm845.c
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+
+Please make the entire thing a C++ comment, it makes it look more
+intentional.
+
+--rMWmSaSbD7nr+du9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthkLIACgkQJNaLcl1U
+h9BBVAf9H4oTxZ8FrcKTi+6zDylOZrUcflwy65D1oUjD/O2ojrKbjzvrLgKQF1EQ
+j8DCBTuVk0FWCU+s9JjASBe//po6IWZjV3WFW0c/5F0Ao1ubyqoKjFfISJGn0D8u
+K1o/mu51BlqJBv+pehniywwaZdqM2N6iGhzq6uJRorzVtnCF+tthaDJ73m9LV4dK
+1PVNETgfMazdDfR8v/d++TrOvFvwDTRke2vyjaZ9H0JrIyEkRrQaF4WFIlYCe3/+
+5rI/zL6H87tPHc8uvJ8Nv4YUkTZB/lopaf+sRXpCg96WKvWkEWPKGq+wGOHZejXm
+EP2CUWsrZr5edEbVY57U6m6kYD1miw==
+=STS5
+-----END PGP SIGNATURE-----
+
+--rMWmSaSbD7nr+du9--
