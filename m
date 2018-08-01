@@ -3,43 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D863CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD2AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D6A62083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:07:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D6A62083D
+	by mail.kernel.org (Postfix) with ESMTP id B493E2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:08:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B493E2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732797AbeHATyl (ORCPT
+        id S1732535AbeHATyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:54:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
+        Wed, 1 Aug 2018 15:54:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405794AbeHATIg (ORCPT
+        with ESMTP id S2405020AbeHATIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE2111086;
-        Wed,  1 Aug 2018 17:02:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6FA8F1395;
+        Wed,  1 Aug 2018 17:15:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 173/336] net: hns3: Fix for fiber link up problem
-Date:   Wed,  1 Aug 2018 18:48:28 +0200
-Message-Id: <20180801165035.720872893@linuxfoundation.org>
+Subject: [PATCH 4.14 019/246] mlxsw: spectrum_switchdev: Fix port_vlan refcounting
+Date:   Wed,  1 Aug 2018 18:48:49 +0200
+Message-Id: <20180801165012.627922023@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -49,49 +49,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit be8d8cdb8ebf3afd841c109dd035fd789a0c7d53 ]
+[ Upstream commit 9e25826ffc942e985b8595b2f1cf2065d3880514 ]
 
-When hclge_ae_start is called, hdev->hw.mac.link may be set
-to one after up/down multi-times, which does not correspond to
-the link state of netdev when the netdev is up.
+Switchdev notifications for addition of SWITCHDEV_OBJ_ID_PORT_VLAN are
+distributed not only on clean addition, but also when flags on an
+existing VLAN are changed. mlxsw_sp_bridge_port_vlan_add() calls
+mlxsw_sp_port_vlan_get() to get at the port_vlan in question, which
+implicitly references the object. This then leads to discrepancies in
+reference counting when the VLAN is removed. spectrum.c warns about the
+problem when the module is removed:
 
-This fixes it by setting hdev->hw.mac.link to zero when
-hclge_ae_start is called.
+[13578.493090] WARNING: CPU: 0 PID: 2454 at drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2973 mlxsw_sp_port_remove+0xfd/0x110 [mlxsw_spectrum]
+[...]
+[13578.627106] Call Trace:
+[13578.629617]  mlxsw_sp_fini+0x2a/0xe0 [mlxsw_spectrum]
+[13578.634748]  mlxsw_core_bus_device_unregister+0x3e/0x130 [mlxsw_core]
+[13578.641290]  mlxsw_pci_remove+0x13/0x40 [mlxsw_pci]
+[13578.646238]  pci_device_remove+0x31/0xb0
+[13578.650244]  device_release_driver_internal+0x14f/0x220
+[13578.655562]  driver_detach+0x32/0x70
+[13578.659183]  bus_remove_driver+0x47/0xa0
+[13578.663134]  pci_unregister_driver+0x1e/0x80
+[13578.667486]  mlxsw_sp_module_exit+0xc/0x3fa [mlxsw_spectrum]
+[13578.673207]  __x64_sys_delete_module+0x13b/0x1e0
+[13578.677888]  ? exit_to_usermode_loop+0x78/0x80
+[13578.682374]  do_syscall_64+0x39/0xe0
+[13578.685976]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Fix by putting the port_vlan when mlxsw_sp_port_vlan_bridge_join()
+determines it's a flag-only change.
+
+Fixes: b3529af6bb0d ("spectrum: Reference count VLAN entries")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3783,6 +3783,7 @@ static int hclge_ae_start(struct hnae3_h
- 	hclge_cfg_mac_mode(hdev, true);
- 	clear_bit(HCLGE_STATE_DOWN, &hdev->state);
- 	mod_timer(&hdev->service_timer, jiffies + HZ);
-+	hdev->hw.mac.link = 0;
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -912,8 +912,10 @@ mlxsw_sp_port_vlan_bridge_join(struct ml
+ 	int err;
  
- 	/* reset tqp stats */
- 	hclge_reset_tqp_stats(handle);
-@@ -3819,7 +3820,6 @@ static void hclge_ae_stop(struct hnae3_h
+ 	/* No need to continue if only VLAN flags were changed */
+-	if (mlxsw_sp_port_vlan->bridge_port)
++	if (mlxsw_sp_port_vlan->bridge_port) {
++		mlxsw_sp_port_vlan_put(mlxsw_sp_port_vlan);
+ 		return 0;
++	}
  
- 	/* reset tqp stats */
- 	hclge_reset_tqp_stats(handle);
--	hclge_update_link_status(hdev);
- }
- 
- static int hclge_get_mac_vlan_cmd_status(struct hclge_vport *vport,
+ 	err = mlxsw_sp_port_vlan_fid_join(mlxsw_sp_port_vlan, bridge_port);
+ 	if (err)
 
 
