@@ -7,64 +7,61 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AA9C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C30FC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E130320894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C61CF20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="FhMxhbfE";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="UmJD32fy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E130320894
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="RJD1NJsu";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="EXmNMVJU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C61CF20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387549AbeHBA0v (ORCPT
+        id S2388642AbeHBA2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 20:26:51 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54032 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730632AbeHBA0t (ORCPT
+        Wed, 1 Aug 2018 20:28:30 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58164 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732372AbeHBA0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 20:26:49 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71MYfoo016468;
-        Wed, 1 Aug 2018 15:38:25 -0700
+        Wed, 1 Aug 2018 20:26:51 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w71MbYRm009539;
+        Wed, 1 Aug 2018 15:38:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=qGtDowD9XKbzM8Jae4SYFfVcCSuFG5sG+sEXv0fEVv0=;
- b=FhMxhbfECWZ89m8I8hYWKjJLQNxns0xhX2bU+UFqvRd//9hWYT1OG4grPiq1sKp56JHm
- NSglJydc7MeoLkkWjC3xlFfMnAUeMIOQsA5D3xwooMEZZcbmnGKWdfDyOoLkd1OQ+KOa
- 7gLjfPwHQA9Mh8PNFYQUlvYaCSB9aBKSem0= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2kknrj80d0-1
+ content-type; s=facebook; bh=CEOKcUFZGpGhEHi3JMHvbEOG9CE3U4TfGlKXBGbmyJI=;
+ b=RJD1NJsuJs/cYxxpj3E6lkrMDC1wkiVIXGmG4fAIxSnoJSx9XtC53CyujiX4fj7DFkxD
+ Gg3MsXl21pQuU5kfg98sl8gioRq5mKQZIhQN0lQemxsW1ZsdX3l4eLvEpDXo5qqDfS/e
+ vr/1Fk51HSRjlF7F1rxjPpS5HrCeAkEz+7M= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2kkfcvh9pr-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 01 Aug 2018 15:38:25 -0700
-Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
- PRN-CHUB09.TheFacebook.com (2620:10d:c081:35::18) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 1 Aug 2018 15:38:24 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.12) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Wed, 1 Aug 2018 15:38:23 -0700
+        Wed, 01 Aug 2018 15:38:27 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.33) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Wed, 1 Aug 2018 18:38:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qGtDowD9XKbzM8Jae4SYFfVcCSuFG5sG+sEXv0fEVv0=;
- b=UmJD32fy3G38h/pSOlhqJcDRGf1Pu1WLG9IdY7RONNm1uUJA2IREpk8VJDGnpqWO8j4QKfPQlgv9d48VxNWSv7EePGqzZahE4q04qMndIDv60XJM5YpIoFigdTp9tZsu7SU9AqLQRgl42ZLYHrLllGB1LbgUa2MSpm+rInP2FQc=
+ bh=CEOKcUFZGpGhEHi3JMHvbEOG9CE3U4TfGlKXBGbmyJI=;
+ b=EXmNMVJU3BXFPcMAn8uH65Ydc7+iTqQzRYhpw2MweCKkkx6EM4swdsw/MuTVUp2KefYUo03ElB1HVwW80oVqJPVbva02iotiZMO+0QkkQ12L78yq+/3BApWzt3i7xISK6m/wCUxGtYYs46jjotCW5n6v1aVEgt/zCJKC/AncKBc=
 Received: from castle.thefacebook.com (2620:10d:c090:200::5:7cca) by
  SN1PR15MB0176.namprd15.prod.outlook.com (2a01:111:e400:58cf::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Wed, 1 Aug
- 2018 22:38:20 +0000
+ 2018 22:38:23 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     <netdev@vger.kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH v6 bpf-next 07/14] bpf: don't allow create maps of cgroup local storages
-Date:   Wed, 1 Aug 2018 15:37:33 -0700
-Message-ID: <20180801223740.11252-8-guro@fb.com>
+Subject: [PATCH v6 bpf-next 09/14] bpf: sync bpf.h to tools/
+Date:   Wed, 1 Aug 2018 15:37:35 -0700
+Message-ID: <20180801223740.11252-10-guro@fb.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180801223740.11252-1-guro@fb.com>
 References: <20180801223740.11252-1-guro@fb.com>
@@ -75,49 +72,49 @@ X-ClientProxiedBy: MWHPR1601CA0016.namprd16.prod.outlook.com
  (2603:10b6:300:da::26) To SN1PR15MB0176.namprd15.prod.outlook.com
  (2a01:111:e400:58cf::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 54ba96b2-2991-49b9-f627-08d5f7ff7c41
+X-MS-Office365-Filtering-Correlation-Id: c697d25b-dd59-4f47-d7ed-08d5f7ff7d84
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:SN1PR15MB0176;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;3:Lm1PAn/7eVZSjUz6hHhbb44NA6O7+o5xMPXYnIAjU1qVm4E7ZH9BAANcDzj2wR0oIscTigmoAIq/vNWOgEtsRHTjxE4JNrkowmg0oCsHI0C8XJXqaWA7bzmv7nz6KBzOjNP1VZ9f+cbLceV/msABIVMG6ivZUs4Lqwt50wyAoQAHCsUiTduEoTxYHX/4il5fRWw/5Z/PpyyjdfGyl7lXTLsg8L9tGyVvX3t3LmnWUCSfYDDhdC+G8cBLSjhfQ6CC;25:A1u8nMeHMQSbHXIckaPEovGFZH4aUa/foPypmRP1qhOGcddYFkZjnre/QaByLoMq1kA2tkU78Ig4vWw2X5lurx8dWjrma2V8cd68KnkWoAUbQ3my+RGu2ug/mZkwWWE/DLNA9CwdxmY6WfWEkjR3unAZYExzu605EAy/L3EiuQCtsrBb4Fk+6DsW4tgWzQvwV4P11C7VEP7XtXdtQyzbYjyl4Xhjq5JSPCUBCciBf3dYHG+xO5TWvH8lLxrh2FMzVgIuDKlCV+gLse/SEcCZ7wFEddSdBpfhbgGIxc0JIcOqWFjS5t9GT5Nl2bGCPlnR2a5q5pVUx9RpdfK+mbR2dA==;31:77lto4bWxNMx+3Nm96bxxfZ1VD3aaG3eyA7XEOBvNjA7/UvaRAXNQt6wM5NhHQ8ETQnII7CRaZBtbZNMnMcx6gbzB+/MNNkqoka4MhDSF+lfOzbbpfNOEWCAOYdEn13T2mq/qXO7wSj8ICwPPPfJiZI9tuECvIfbkoNVx4CeZzkVzTn+HNHjR9E+t3xzkrbckDuSYKC9JKkZoTewqjAffFSKoEwW7hBysjg0hDiAizs=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;3:TFcIAv+nOOt+9h46qrrn8rqeS9/e9c5S1GW/u5LpoFlNqfnH/sAMmk0+3KR/4DG8gt2Jy1lMoKz1zIkl2H6xY+x5To4RjrKwo7keeotSkv1RrpWiGUbDsc0aeV8QPY6nOIq9d/DTuvVtA3vDlvSJMuiNw7WGqoce7XeqxkBOFR3dxHd6DrXpJiQ2PVykNqxjlZBInDKx40BxUl7gtl8lLHFeS8bS90K5Wjs0zP6ZMpbsjbI4Ecuotv0Hs44B/ycV;25:CfX5b1LMUGU3jcxzIwsDm9ewotjEgEpdrpHXbqavTE9zd8SuAyIx/aDFLjiqqV3YZcyYWlyntTRtyd88lDGKFkM8dA8S8iXvALDAij81rRYow/a5Wt0rd2rU8JlQnr/TynOTtfyqiUcmEEZBXS5OVSijUt4J3vy+9/1wXrvtbCcE49DU/GRxM5FHAb3N3Dt3hqCvgJKvHW0kyxVfkb61YyX0nOTwQQfms/MBy2RyL6f0PNcT33Jc+BY2h9i/M0eFKFs20yel9NMbwtTOm6IUa3okXJyDPvN8rFiqWGxmbmnFSfj8NBZ22ZOoxLpmx+kCTJXWY+N2VGcA/P2E3j3KAA==;31:ItkhZyHFvcSi6gQu94CTn44Xv1MOM2pDFvKnrTvOY6PJZmmWdaU1P+eEjNmKlqf/6jg2hYGCO+C55kUXehAJL7PuSUv3Jwg8zmmhutpcd3gqR6zeTixAeVZcUMb4Jci8xj2UEZwnIhxkOJUUxEaa+9CMPIEAzjedaLB4ggGyKw1AIUZBDarysVCE/kHt4HcaCBOBJOLJB7/A2LisHhlaErPhkGiCOS3ga7YbcUDeOPE=
 X-MS-TrafficTypeDiagnostic: SN1PR15MB0176:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:384I8qZ6dXhTRSBxBRDVkEYw+nHL4TwgU4v4z52Si03CQjP8B9HZec2Np4W/efMNmEfBhqBkqbyKck3+epJNc0icYzdD/44a1sx797HmiPHgl3b7f/FgWQ8byBLv/t0E2nT3kIxL20GJdf15SQ5lW9lsT3NEoq6ciyD8hFZ5IM2HF1HND24trjOwSRFpITXZ5kHC+9mMV15wK6ucNxLg2PW+K+WRJo5JtSefd4V5XUIMc6MI5KqCxqSFghgrr9jtuY+rRa0AEOUhiQa8gCPiey2UbI8SV2tbu+jlBrfn6W2Ub6QWLxfkTt+j08K8Du8mLaFCJqkcyhzWcQ/OCNPSf3pReNmkWzUwyVzGhUpBQ9mwPbTR3MZVuBBRAsnol8L3FUPXLaBGXpmvOUmW02/4ccnuKPgcnoCwKgoRVgJ0HO+Hd7t56BGTvCApLm88+3xAMlPxn2cZ2DzJfHctRVBuIgs+gbe5eggwDDR9WJjsG/xNOqDn5gy6JzLulBGaRG7P;4:BZ/u3+MK1xKTPvGyVqkw1JfYU/hKV7W/r1QLUSlz9rU98sQ3CTMbXJT3uNQiFcRJZRyeN2cawMZq0vW8VXd8yn9cSydCjUIXoF0AdT50UipRoHob97ZKTo4UIfA9iKqZnPQIMEHvGLiKlZK13wvqJ4q9GVoZb0Mex+51UwwL+jtWYAKmD+dFSj9HLczuO/E44xBABay5k9aqmB4ORrXhXYPEfvliLnifCzS5nNw1p6/NM2G3hhFzdNmyi1k5/llw+rWFQnlIs5wmfZbnDKiVkkUFqLHFNktUyA4IPiINLFD6azQGAzvJ+qGrS20+kA6A
-X-Microsoft-Antispam-PRVS: <SN1PR15MB0176B756286E96A830E7223ABE2D0@SN1PR15MB0176.namprd15.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:ImojBh00J9dXYSN8MxStd/KSaQ6hN6kX+2P0UW6SFbEGuFIop8DGi9n7ZKIIbosy9zeeBMDl4crQLEEoMURNv0no0LW3VDM7d28Wr0JqG4x7uViYHvsqdGTLhF/36mAhTn7Zb8ElYD7gvRz2shjP32/iKk7DRtVz/5sQf4Qp91w/dPdQNonn1WUoaoAig47wVrta0u/gWc4prmh5dQGlJD6wX6zLnoqcXadgCXymxUCwD6bd1G1FYx+l44kFg0YcnriYXNKpg35IDQnjQfSWQnA6iFEnZNqZPX39f5rggCkFasy8MOResIR4P3p1S6X2DFQXtUaoHDGeQlEVzAb7GzuxR6YxmZ7NR0dhQga/qnyOJMsGoJUdCLBAT2PPjMg+071P5PE0CLTaA235hDK/elnEoJZvmnH+loI/ykqlDwxjSvs1SbtpvWBj+PhQTfHs1NoG5PdnHxBSXuQAgkhJ8TNiPXreSQY+ZXUkNnZ+iE3JODAYMbOqEAq4ipMZLfMn;4:ulmBs+yIu+A1fNWXMJk8hjGCA60fFgplffPjCysLko6zEaROHWJuS1A3jEuoHW0BAsB9Iw9qannU98cRobuqa7U8QgtYN26d2+mviuurWpNOHme8l9kStZBNYHRGMGSoTgaVMTRnSj/Cn0AOlc5phQLMUTFuLC6FyQGzoMtXrrS0F5WIerMRIi1woeD3utg56bYYHejmg3RFqnjHUnVHuzFpkI9C1dLzzRqeeLDbftSjtpWGSQlJvXDDURUBD2pZxN26OwCaUS/ku6LYt48hEdZ0oiuZqy4eu4zCFxtRviJiM2DmVWkp66655N3pEhVu
+X-Microsoft-Antispam-PRVS: <SN1PR15MB017603DF62FC84185FD20F79BE2D0@SN1PR15MB0176.namprd15.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(11241501184)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN1PR15MB0176;BCL:0;PCL:0;RULEID:;SRVR:SN1PR15MB0176;
 X-Forefront-PRVS: 0751474A44
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(346002)(396003)(136003)(199004)(189003)(11346002)(6486002)(6512007)(50226002)(6916009)(2361001)(5660300001)(53416004)(68736007)(6666003)(386003)(106356001)(6506007)(76176011)(105586002)(52116002)(51416003)(86362001)(36756003)(486006)(2616005)(8936002)(81166006)(16586007)(54906003)(478600001)(50466002)(316002)(81156014)(6116002)(2351001)(69596002)(7736002)(1076002)(52396003)(14444005)(16526019)(46003)(8676002)(4326008)(476003)(97736004)(47776003)(305945005)(446003)(186003)(2906002)(48376002)(25786009)(53936002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0176;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(346002)(396003)(136003)(199004)(189003)(11346002)(6486002)(6512007)(50226002)(6916009)(2361001)(5660300001)(53416004)(68736007)(6666003)(386003)(106356001)(6506007)(76176011)(105586002)(52116002)(51416003)(86362001)(36756003)(486006)(2616005)(8936002)(81166006)(16586007)(54906003)(478600001)(50466002)(316002)(81156014)(6116002)(2351001)(69596002)(7736002)(1076002)(52396003)(14444005)(5024004)(16526019)(46003)(8676002)(4326008)(476003)(97736004)(47776003)(305945005)(446003)(186003)(2906002)(48376002)(25786009)(53936002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR15MB0176;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0176;23:2G0Zb2r/ayRvQGnyKCgh9e9Hbke6CFyS8libfkDxN?=
- =?us-ascii?Q?g3KpkdyNF2MfReflI+zpva5eGYIGMVxItzHZ+673nfsBxUJrgBss2TJSv1Mj?=
- =?us-ascii?Q?VQADg4NkiPzkrNfC6pT8+yej5yZWCR2jZpSsUFEB0dPkqShVD5sQH6cxOT9p?=
- =?us-ascii?Q?hF5gkJdsVosf70tiVeRM15r53IMFi4lAxFxt4lp9a9L/Ik4vypRt1OWUvmmB?=
- =?us-ascii?Q?XCQXTi9dkwYzo5NYnrmpTG5tboNOJPILYwIvs3ZYzeGy4zsyK3HtAIrno1vK?=
- =?us-ascii?Q?Kb9TROKjJgRx2XnVCXD15W4GUxucBjlUEjgkmge/eN759fRsggCV0+vWLOSZ?=
- =?us-ascii?Q?7NtIF6lo8B1LQeza3/LyL+yK1J1ndsUWGdeuHkeXUI6xFO7nhiXOnnocNrdX?=
- =?us-ascii?Q?3tQFzEH+DHJ3R0eNrFetxeg5oqGRBDr+D1bunNOgGrNsOJG8EclTbL2Hm3gM?=
- =?us-ascii?Q?nefk1bGK+gd8qVVGpOgPBOM9vLH4o7Dv2Ge9K8oKXDMYvaYoZF1y+o22R+Ad?=
- =?us-ascii?Q?Z49u/Db7MJF9jznM8zWlFAJ3NvsVOxx3XMnGPeHwsu+d0RHnEKb/GaMb17uR?=
- =?us-ascii?Q?O35Aj8HhlHBgTjqqWExaU5V7sFvTtxQQXnKADHCkCTwoPpS2697Xi3W10YN7?=
- =?us-ascii?Q?nmUYCQr3kPcBQziJHp1cR4a4VH4IBBHC+jRTZJaQ9G1y8sf+5A2E/L08+Wyr?=
- =?us-ascii?Q?pPMOAjIPqKcw2qEcW74LKXfXzMURKsMvZjOzTaWA/do/OmDE6o8eHWR1nsnt?=
- =?us-ascii?Q?6pJuqF7YdwJyjw1DpyNMsbnWbHJOvTichQoGkOKta8UK6/oiOV3UQh02M3eT?=
- =?us-ascii?Q?Kiv3HdjY9ez8ucPi04l8L5DszMmEXtMgQvfDBr4ph1mfT+dh+a0hm0HPxhiH?=
- =?us-ascii?Q?Tk7RZer4xUvgBV+FdSsOuGV8n9kBgLpkfWL5eO9ebGFiQubA7qkDi2BXJ1iw?=
- =?us-ascii?Q?2Zh0q8odXNCiv1QMolxk69ArIQutMxgzJMVvOMWYyz4A/Il26H8plXN1CBKI?=
- =?us-ascii?Q?+BRjNaEDUFIpdzfezqaUwO/KZ9z2ex3xhBRS2qMnYsCuAHDsI0689J6NaRWD?=
- =?us-ascii?Q?qGHoEigBd0dxBKLFRn/xhDi/zxWgPh96+NEbbpmbREqVkccIbvi/0z3q3q0I?=
- =?us-ascii?Q?3hE3hALGGQoTx2Z+qR71u43ip+6uvJ667ptCdM5Rh3PAscwepu8kt0ovd3Qh?=
- =?us-ascii?Q?tePX1s8usKcVCAlC/FThZU7XIJJ+oG4XOtxkGCFWWWl0OJw3LZn/C2DNafwt?=
- =?us-ascii?Q?b6PnHEhpMCP0SNw/+y4VKqW9maGmaYEznKAyqFytjtblusSs/0uAwinAd9Q9?=
- =?us-ascii?B?QT09?=
-X-Microsoft-Antispam-Message-Info: BHqtH46F4oQLc2A73etnNLF28Q9ww8H6l2nLdQ5LLHyQE8o95v2UHWphCZ/Aro5rLFAsBgl/noaRuryT3QEMX5LdgQ25h1SRqmhoHRYBkeUpJn9wHd5x1LRZj/JTy6iSMbbCDDiTfIP0l1Sq7OsRzaoN/dVdxhuTF4yUD7tMPXd4Oz/Wmp7y4bCgtKYsiJ2jUYKrMJZliss214TFGRt5LH2K+Ar99CXMzUpZw51Mk8pZP/o8nHlZ/4BG/mMs0NaSdJD0RfWOrC5RET+Fd83wbagqBq0DDKfoFF9IE/tMI5qSHcoOclgedRcXzKsfGsjsOhN8T0uIruWdezDpCVM1RtyBvEet+nar1mNcwi9IIt4=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;6:YT6EJnR6XJnwmjm8gdR/zLF1x6oZ6SPFOu1/XlVoL68YQ/Gxu2zXVjn6gfQwlaWP7C/KcEcGhOOBGU0yQE3uxylXixF9ObtS8QEASg23hCZxLutFN5RU7wlVQAf0Q4bkD69z9O/25Zru+9yfDcbkRidCC1ptJKZ21VgmknUpInoBJiOP0g3ap6AB3nsBLX6GcKN3qrfrLYZWh9u/LrmMjIInSS5yldGL+mXBH12gOuXXsIy8IZH+/Gfp3zNGB90PZfIUOQhEJLP6ruxTQN/+c2QvC/viNKp2yagLUglFeAu+NuERLJEryZLY/Djwvf8PD4CPLZt4gVUjFS6rX5vwZ6fct2lTQ4A/ZkyEZx8C1FkqS+Vp/b7rZAFBC0IMO4OTm93ly8DmmnFSYHBe3qSHvL7XZq0knEGmm83VDy/N6u/pD2E2PUpTpAH3a9sXdPMLpz5jPKP+K0NZC1a5BpfhyA==;5:ChbCfWS8XtKwwgwv0S8IskckStOoFY9cZG38O5ZKWd7NkrkMkzRWIzHHrxHsrvEYZIy1ztmuanLmFOuNbL0RoxSIxdp24HuGCM/6QKPeJD38mBXoHK9TgR4p3yhg7TTxGQdxdDR4kG9gMcSev1PZovbrLcfB9ENeR9UmKBJc/xs=;7:yDVeWEepC9li4nTFhkVJS//3+zSgKwvhXyw3jOLKQX525nR1rtisUhONl35uzU72BCUMLEnugSIKwdtSlJ8hAeWSi7hj7qeTFrNeY/JrjftaSxphhUfMHT1Shw1eKw375NC8/y03NqMmiKJsTh74FIlcLmpZB6LcnVKRe+xdEpxZCaLX+SsojBj2dAsPKGt4kOhShYFy8GEVae0lOxVfbt3kLt2NnB/ysl+X7QMV8COY08wuwisW21+fw8quWvC3
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR15MB0176;23:1wRvkboxaw1Qxs4kS7z6qqaz7HpMep4lIG/6L1yG8?=
+ =?us-ascii?Q?rgbQ/O8aiqMtrklTFdKIpRkwKzd3dsqmbFCDhKpl2eSEkVEzTPfxVJHxBYp4?=
+ =?us-ascii?Q?6XTX6kuMM25YkpLThSmH9l1kllEqAuLkJHk5IsiQit5USG69Z3SZTF4GpQKC?=
+ =?us-ascii?Q?HdYQnRDP8pdcPNoK8W3Ap/X1OyIVE17fpkyUSJkou3FgC2cEX++Qm0slakLD?=
+ =?us-ascii?Q?aWHsrEFDj6U2WGvqocmE/RPBD1OA9wVcoeLpxNmRrEfaz7qmR+WEBqpAK6lI?=
+ =?us-ascii?Q?jvvVoCts0MiTgwuA9uOAYLpU9W06lwpK/LpgEQuQhyCL4LQX+oE2Cq6Rqgcq?=
+ =?us-ascii?Q?P1oOQzMVEq5YZ50w4lQ97Ax2zSGahRQJN3463l/S6HrdwD9RR/j/68GJgP6U?=
+ =?us-ascii?Q?QDSM3Bm+eu1KGa/svUgCVhJV16XDO0twolmXNBSy8hBqHq10Czq6QFXJWuSl?=
+ =?us-ascii?Q?gp3SkzmELN6wuIRvZQFci04eqJQBMDqLRHioI8Bp8blfyDVRGQ/ZeO1UulLk?=
+ =?us-ascii?Q?G/VgDdZ0/Z0sEC3ub0mKASSha29H7vy0dbW20jKArBAtA4e4eh2HWKDdeOX1?=
+ =?us-ascii?Q?087JF2poAKLJUB6OAe5RpveKvcUod9b5SlF3JqeMDcrNWPEmLqDqIzTNYbX0?=
+ =?us-ascii?Q?4jcY+69M5lBKiSzBlg7HdNpV70KOO6l6XeC5rnxVEMGHPBzm/u149KSBf6+K?=
+ =?us-ascii?Q?oRiLzah8wxgyFJREASDBjo0cPB77M4rSWM0s+0V9ZzbfcXepHCnZ0vFAslKz?=
+ =?us-ascii?Q?joTdYsTEQwxOgWa5NYKk7UGGji4USPkNn+aK2AMby+7K4jdlbkIjkwceXDlt?=
+ =?us-ascii?Q?eDP32l3QK3JQ+PZ95JJIeXEUSRyxf0AT++96V0X9tD860+TYdlZEq2BqRNUo?=
+ =?us-ascii?Q?vN3ppwBXa8fO5yPG7AJKG9zL9cg+sodRsCHhfzAuf/i/HkSttUc3GivThHeR?=
+ =?us-ascii?Q?D7vjs78tH/uh8gRPfOr6axoYELNQo5e6lCSYys9dqTDJHglP3K1MoBJzu4H2?=
+ =?us-ascii?Q?MPWh7NwkY0GXHSbnVXM8zuDfY1OSsNUKtj0O6EAlu/lP1Da8NADLTKzEYqsl?=
+ =?us-ascii?Q?KmNUc4qZa9/Tg8Sd9XMDzz1QMgVVjqrPPswFp6nG7YZy7jLCIdzbzvuNSlzq?=
+ =?us-ascii?Q?G/IG25biP101rHIqQbuoCaSEWZ4OlFdm34MYPKx1HYikbNikguaL+ZOnz8NK?=
+ =?us-ascii?Q?AKlp20Qwfh9ha6lEwsLza7OD5Q6Yc5amsxS41MR2b14MCqs2SMyiqnAD2MY+?=
+ =?us-ascii?Q?cKO534ehtnSshLAF8ejmX9barOB5bRqLLxIgJ9Drd6Tp1KSV8cgyA40yhdes?=
+ =?us-ascii?Q?AfGNEY1yao3K/AFzfI2qy8=3D?=
+X-Microsoft-Antispam-Message-Info: xNBRPjlrGSJgXRluau7L7FBU4RuOCaAlWpV+3MbX4a9CtRIpXuMC5FxuACvH/TWgVci4PqsteYiy35glfI2Pls2aRHd6RDpW7QZeaHRLdL7FNzh6t5oJqV8DLVQRV2Rl7587BCpb4DFjVCBT1SaCUj5SWwywVAgcQaTALc9mwlbfK1wsqQFjgE815s46+H1G3qu5s9NtmoZzhaWWjbjHqHK31lw8Tbp6i5vPQqevsj1C+cmF5YLyaEyR7aQlfZVjhhuqwnX6Achq9NAyM5z0nw0ZQFqOekskFMUmVvQyBodq8t01YOaTho5xfDfG1NpPPaaKaENsSdvVcPr8SeS087ZPHEIxx7KI1TW75lCY//8=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;6:/GDBKVVX/09bFKWeCfHtW89pysvJkdhN2XUWOcDwcpUjPVlBsaVmxg7m2HO6vgjvV5pdnkZIoYm6BbeAdUPQykek1MERxdIFdN66yoIH4uCJPAHyQb7zLzT8K1Q+9bLhFRNx8wDWmSLF2mU9L8elSuSI+mpIdXZWhGrTkgPFtyp9h4QRi2iJFb0YyinUoNVx+qy5ngzRTIOAyOkAwIFcYqyUrRA9bwgUl7Ahf/Kknqf657kkZiPqby3elX32ApkwEkqSz/0Ei2vYDYkBrlrF/0i85YtjExUMyYitSghqnszosnE/EEijnP1548J9O0XoXIkJZ7J0yIbaNGcvZR/cVvi+ozIg/rFOebbX0wf2v1BSsZ9yGDDKerNhDoALZx6CaXqk7HilkW0kyI8jv5hCryepWgYJGs3WTONvGFeAniJpr4gJLYIguOEkqa0x9WC1BR6beVF81q18ky04zgX8cA==;5:M8Qu9vrbRHmxk7fRx+gKyeByiEhjSQMg8LDU/OeWml460DeCqqLDAAJz8W1Tn55EssGJRiIKb4O6rrDT9xoYoUltPCh+F1b0idRRxEdFOEL7zjJXzvM/4fiQK8e13Qtb4JrXHYRnTJVB7B3cmMFij5NRFSRt0M1Nx5GlcuNsaX4=;7:cYdCV81DAA/pe+psZHA4HbDSjj903bTr5xNkZB9p5U0c8oMMxZ4O4SNDUQA0N3P3XejvAUiWfLzo/QZq0Z/w+2NWs47ovdeqz10YARtPKx5X3J9OLxfRR4HE6GsnYIz4qzezwsLXFhKdA0uR0uBzRt424JRULE+gwllp6tHLSoQIKiRaEMDShDpIeTskxHLhOAecy0YEP61+vUxYJm6qsZRPb/7qqP8KzJbZQfa7t4+EY9CEVN8lK3z8LJrK3M74
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:eC3nMXlC7UyKZSPlizHOtzQdugnc7jWl1ycwfxSo5rBsvtiQ6BvZe/0UbbIKFPoerwvxU1nBWLXMLuKwuNb6tRgB6Sp73oA4WbELqFrfBwKJbQWjvEtHMLk8uxXhseyfeecNw6yiQfNwyIWUvdn+QZa4XeBuY+5QzpgWGIeOOvM=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2018 22:38:20.9996 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54ba96b2-2991-49b9-f627-08d5f7ff7c41
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR15MB0176;20:vPLnJUobvLfVjyrXysQ4K1LV7KGOIF6Ht/V6sX1Fr/g3/95F0zV/wtXzG3QSfVCIxL9OTplvDJ1Zm9uUNpn2M667dkjjIOtXx7q/xDpnwSnTaHIdf6bGyVNJW0Mr1Fsi9BQV0dDk0N4WzTTOZqzSgmDTGFTLNEb5KdsPtgXJ38g=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2018 22:38:23.0465 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c697d25b-dd59-4f47-d7ed-08d5f7ff7d84
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR15MB0176
@@ -131,34 +128,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As there is one-to-one relation between a bpf program
-and cgroup local storage map, there is no sense in
-creating a map of cgroup local storage maps.
-
-Forbid it explicitly to avoid possible side effects.
+Sync cgroup storage related changes:
+1) new BPF_MAP_TYPE_CGROUP_STORAGE map type
+2) struct bpf_cgroup_sotrage_key definition
+3) get_local_storage() helper
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Daniel Borkmann <daniel@iogearbox.net>
 Acked-by: Martin KaFai Lau <kafai@fb.com>
 ---
- kernel/bpf/map_in_map.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/include/uapi/linux/bpf.h | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/map_in_map.c b/kernel/bpf/map_in_map.c
-index 1da574612bea..3bfbf4464416 100644
---- a/kernel/bpf/map_in_map.c
-+++ b/kernel/bpf/map_in_map.c
-@@ -23,7 +23,8 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
- 	 * is a runtime binding.  Doing static check alone
- 	 * in the verifier is not enough.
- 	 */
--	if (inner_map->map_type == BPF_MAP_TYPE_PROG_ARRAY) {
-+	if (inner_map->map_type == BPF_MAP_TYPE_PROG_ARRAY ||
-+	    inner_map->map_type == BPF_MAP_TYPE_CGROUP_STORAGE) {
- 		fdput(f);
- 		return ERR_PTR(-ENOTSUPP);
- 	}
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 0ebaaf7f3568..dd5758dc35d3 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -75,6 +75,11 @@ struct bpf_lpm_trie_key {
+ 	__u8	data[0];	/* Arbitrary size */
+ };
+ 
++struct bpf_cgroup_storage_key {
++	__u64	cgroup_inode_id;	/* cgroup inode id */
++	__u32	attach_type;		/* program attach type */
++};
++
+ /* BPF syscall commands, see bpf(2) man-page for details. */
+ enum bpf_cmd {
+ 	BPF_MAP_CREATE,
+@@ -120,6 +125,7 @@ enum bpf_map_type {
+ 	BPF_MAP_TYPE_CPUMAP,
+ 	BPF_MAP_TYPE_XSKMAP,
+ 	BPF_MAP_TYPE_SOCKHASH,
++	BPF_MAP_TYPE_CGROUP_STORAGE,
+ };
+ 
+ enum bpf_prog_type {
+@@ -2089,6 +2095,24 @@ union bpf_attr {
+  * 	Return
+  * 		A 64-bit integer containing the current cgroup id based
+  * 		on the cgroup within which the current task is running.
++ *
++ * void* get_local_storage(void *map, u64 flags)
++ *	Description
++ *		Get the pointer to the local storage area.
++ *		The type and the size of the local storage is defined
++ *		by the *map* argument.
++ *		The *flags* meaning is specific for each map type,
++ *		and has to be 0 for cgroup local storage.
++ *
++ *		Depending on the bpf program type, a local storage area
++ *		can be shared between multiple instances of the bpf program,
++ *		running simultaneously.
++ *
++ *		A user should care about the synchronization by himself.
++ *		For example, by using the BPF_STX_XADD instruction to alter
++ *		the shared data.
++ *	Return
++ *		Pointer to the local storage area.
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -2171,7 +2195,8 @@ union bpf_attr {
+ 	FN(rc_repeat),			\
+ 	FN(rc_keydown),			\
+ 	FN(skb_cgroup_id),		\
+-	FN(get_current_cgroup_id),
++	FN(get_current_cgroup_id),	\
++	FN(get_local_storage),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
 -- 
 2.14.4
 
