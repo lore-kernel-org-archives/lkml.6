@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99340C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39823C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E22F208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E22F208A4
+	by mail.kernel.org (Postfix) with ESMTP id ED277208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED277208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405973AbeHATIk (ORCPT
+        id S1726941AbeHATov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        Wed, 1 Aug 2018 15:44:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405920AbeHATIj (ORCPT
+        with ESMTP id S2405943AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:39 -0400
+        Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C76E13ED;
-        Wed,  1 Aug 2018 17:16:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88F3E1153;
+        Wed,  1 Aug 2018 17:05:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 098/246] ath: Add regulatory mapping for Bermuda
-Date:   Wed,  1 Aug 2018 18:50:08 +0200
-Message-Id: <20180801165016.410513002@linuxfoundation.org>
+Subject: [PATCH 4.17 232/336] f2fs: check cap_resource only for data blocks
+Date:   Wed,  1 Aug 2018 18:49:27 +0200
+Message-Id: <20180801165037.947498195@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,54 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 9c790f2d234f65697e3b0948adbfdf36dbe63dd7 ]
+[ Upstream commit a90a0884ac75f825157470a1c17e707d487bceb6 ]
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+This patch changes the rule to check cap_resource for data blocks, not inode
+or node blocks in order to avoid selinux denial.
 
-  Invalid EEPROM contents
-
-The current CTL mappings for this country are:
-
-* 2.4GHz: FCC
-* 5GHz: FCC
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
+ fs/f2fs/f2fs.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -74,6 +74,7 @@ enum CountryCode {
- 	CTRY_BELARUS = 112,
- 	CTRY_BELGIUM = 56,
- 	CTRY_BELIZE = 84,
-+	CTRY_BERMUDA = 60,
- 	CTRY_BOLIVIA = 68,
- 	CTRY_BOSNIA_HERZ = 70,
- 	CTRY_BRAZIL = 76,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -313,6 +313,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_BELGIUM, ETSI1_WORLD, "BE"},
- 	{CTRY_BELGIUM2, ETSI4_WORLD, "BL"},
- 	{CTRY_BELIZE, APL1_ETSIC, "BZ"},
-+	{CTRY_BERMUDA, FCC3_FCCA, "BM"},
- 	{CTRY_BOLIVIA, APL1_ETSIC, "BO"},
- 	{CTRY_BOSNIA_HERZ, ETSI1_WORLD, "BA"},
- 	{CTRY_BRAZIL, FCC3_WORLD, "BR"},
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1602,7 +1602,7 @@ static inline bool f2fs_has_xattr_block(
+ }
+ 
+ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+-					struct inode *inode)
++					struct inode *inode, bool cap)
+ {
+ 	if (!inode)
+ 		return true;
+@@ -1615,7 +1615,7 @@ static inline bool __allow_reserved_bloc
+ 	if (!gid_eq(F2FS_OPTION(sbi).s_resgid, GLOBAL_ROOT_GID) &&
+ 					in_group_p(F2FS_OPTION(sbi).s_resgid))
+ 		return true;
+-	if (capable(CAP_SYS_RESOURCE))
++	if (cap && capable(CAP_SYS_RESOURCE))
+ 		return true;
+ 	return false;
+ }
+@@ -1650,7 +1650,7 @@ static inline int inc_valid_block_count(
+ 	avail_user_block_count = sbi->user_block_count -
+ 					sbi->current_reserved_blocks;
+ 
+-	if (!__allow_reserved_blocks(sbi, inode))
++	if (!__allow_reserved_blocks(sbi, inode, true))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+@@ -1857,7 +1857,7 @@ static inline int inc_valid_node_count(s
+ 	valid_block_count = sbi->total_valid_block_count +
+ 					sbi->current_reserved_blocks + 1;
+ 
+-	if (!__allow_reserved_blocks(sbi, inode))
++	if (!__allow_reserved_blocks(sbi, inode, false))
+ 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(valid_block_count > sbi->user_block_count)) {
 
 
