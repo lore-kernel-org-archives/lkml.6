@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDF2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF0CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F13220840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F13220840
+	by mail.kernel.org (Postfix) with ESMTP id 32CC520840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CC520840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387658AbeHAUWv (ORCPT
+        id S2404147AbeHATDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:22:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46076 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404099AbeHATDd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403979AbeHATDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:32 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3678FE2;
-        Wed,  1 Aug 2018 16:59:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 340691026;
+        Wed,  1 Aug 2018 17:00:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 119/336] ath: Add regulatory mapping for APL13_WORLD
-Date:   Wed,  1 Aug 2018 18:47:34 +0200
-Message-Id: <20180801165033.703455708@linuxfoundation.org>
+Subject: [PATCH 4.17 139/336] PCI: pciehp: Request control of native hotplug only if supported
+Date:   Wed,  1 Aug 2018 18:47:54 +0200
+Message-Id: <20180801165034.453312653@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,47 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 9ba8df0c52b3e6baa436374b429d3d73bd09a320 ]
+[ Upstream commit 408fec36a1ab3d14273c2116b449ef1e9be3cb8b ]
 
-The regdomain code is used to select the correct the correct conformance
-test limits (CTL) for a country. If the regdomain code isn't available and
-it is still programmed in the EEPROM then it will cause an error and stop
-the initialization with:
+Currently we request control of native PCIe hotplug unconditionally.
+Native PCIe hotplug events are handled by the pciehp driver, and if it is
+not enabled those events will be lost.
 
-  Invalid EEPROM contents
+Request control of native PCIe hotplug only if the pciehp driver is
+enabled, so we will actually handle native PCIe hotplug events.
 
-The current CTL mappings for this regdomain code are:
-
-* 2.4GHz: ETSI
-* 5GHz: ETSI
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd_common.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/pci_root.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -69,6 +69,7 @@ enum EnumRd {
- 	APL1_ETSIC = 0x55,
- 	APL2_ETSIC = 0x56,
- 	APL5_WORLD = 0x58,
-+	APL13_WORLD = 0x5A,
- 	APL6_WORLD = 0x5B,
- 	APL7_FCCA = 0x5C,
- 	APL8_WORLD = 0x5D,
-@@ -195,6 +196,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{APL3_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL4_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL5_WORLD, CTL_FCC, CTL_ETSI},
-+	{APL13_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL6_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL8_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL9_WORLD, CTL_ETSI, CTL_ETSI},
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -472,9 +472,11 @@ static void negotiate_os_control(struct
+ 	}
+ 
+ 	control = OSC_PCI_EXPRESS_CAPABILITY_CONTROL
+-		| OSC_PCI_EXPRESS_NATIVE_HP_CONTROL
+ 		| OSC_PCI_EXPRESS_PME_CONTROL;
+ 
++	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE))
++		control |= OSC_PCI_EXPRESS_NATIVE_HP_CONTROL;
++
+ 	if (pci_aer_available()) {
+ 		if (aer_acpi_firmware_first())
+ 			dev_info(&device->dev,
 
 
