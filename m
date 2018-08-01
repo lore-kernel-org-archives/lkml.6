@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88387C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E006C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490FF20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490FF20862
+	by mail.kernel.org (Postfix) with ESMTP id 4F1C5208AC
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1C5208AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404974AbeHATIs (ORCPT
+        id S2406187AbeHATIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50618 "EHLO
+        Wed, 1 Aug 2018 15:08:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405036AbeHATIr (ORCPT
+        with ESMTP id S2405036AbeHATIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:47 -0400
+        Wed, 1 Aug 2018 15:08:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11505CC9;
-        Wed,  1 Aug 2018 17:22:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 336CBD27;
+        Wed,  1 Aug 2018 17:22:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
         "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 206/246] scsi: cxlflash: Synchronize reset and remove ops
-Date:   Wed,  1 Aug 2018 18:51:56 +0200
-Message-Id: <20180801165021.573908267@linuxfoundation.org>
+Subject: [PATCH 4.14 207/246] scsi: cxlflash: Avoid clobbering context control register value
+Date:   Wed,  1 Aug 2018 18:51:57 +0200
+Message-Id: <20180801165021.615011170@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,54 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
+From: "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
 
-[ Upstream commit a3feb6ef50def7c91244d7bd15a3625b7b49b81f ]
+[ Upstream commit 465891fe9237b02f8d0fd26448f733fae7236f4a ]
 
-The following Oops can be encountered if a device removal or system shutdown
-is initiated while an EEH recovery is in process:
+The SISLite specification originally defined the context control register with
+a single field of bits to represent the LISN and also stipulated that the
+register reset value be 0. The cxlflash driver took advantage of this when
+programming the LISN for the master contexts via an unconditional write - no
+other bits were preserved.
 
-[c000000ff2f479c0] c008000015256f18 cxlflash_pci_slot_reset+0xa0/0x100
-                                      [cxlflash]
-[c000000ff2f47a30] c00800000dae22e0 cxl_pci_slot_reset+0x168/0x290 [cxl]
-[c000000ff2f47ae0] c00000000003ef1c eeh_report_reset+0xec/0x170
-[c000000ff2f47b20] c00000000003d0b8 eeh_pe_dev_traverse+0x98/0x170
-[c000000ff2f47bb0] c00000000003f80c eeh_handle_normal_event+0x56c/0x580
-[c000000ff2f47c60] c00000000003fba4 eeh_handle_event+0x2a4/0x338
-[c000000ff2f47d10] c0000000000400b8 eeh_event_handler+0x1f8/0x200
-[c000000ff2f47dc0] c00000000013da48 kthread+0x1a8/0x1b0
-[c000000ff2f47e30] c00000000000b528 ret_from_kernel_thread+0x5c/0xb4
+When unmap support was added, SISLite was updated to define bit 0 of the
+context control register as a way for the AFU to notify the context owner that
+unmap operations were supported. Thus the assumptions under which the register
+is setup changed and the existing unconditional write is clobbering the unmap
+state for master contexts. This is presently not an issue due to the order in
+which the context control register is programmed in relation to the unmap bit
+being queried but should be addressed to avoid a future regression in the
+event this code is moved elsewhere.
 
-The remove handler frees AFU memory while the EEH recovery is in progress,
-leading to a race condition. This can result in a crash if the recovery thread
-tries to access this memory.
+To remedy this issue, preserve the bits when programming the LISN field in the
+context control register. Since the LISN will now be programmed using a read
+value, assert that the initial state of the LISN field is as described in
+SISLite (0).
 
-To resolve this issue, the cxlflash remove handler will evaluate the device
-state and yield to any active reset or probing threads.
-
+Signed-off-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
 Signed-off-by: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
-Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/cxlflash/main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/cxlflash/main.c    |    5 ++++-
+ drivers/scsi/cxlflash/sislite.h |    1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 --- a/drivers/scsi/cxlflash/main.c
 +++ b/drivers/scsi/cxlflash/main.c
-@@ -946,9 +946,9 @@ static void cxlflash_remove(struct pci_d
- 		return;
- 	}
+@@ -1303,7 +1303,10 @@ static void afu_err_intr_init(struct afu
+ 	for (i = 0; i < afu->num_hwqs; i++) {
+ 		hwq = get_hwq(afu, i);
  
--	/* If a Task Management Function is active, wait for it to complete
--	 * before continuing with remove.
--	 */
-+	/* Yield to running recovery threads before continuing with remove */
-+	wait_event(cfg->reset_waitq, cfg->state != STATE_RESET &&
-+				     cfg->state != STATE_PROBING);
- 	spin_lock_irqsave(&cfg->tmf_slock, lock_flags);
- 	if (cfg->tmf_active)
- 		wait_event_interruptible_lock_irq(cfg->tmf_waitq,
+-		writeq_be(SISL_MSI_SYNC_ERROR, &hwq->host_map->ctx_ctrl);
++		reg = readq_be(&hwq->host_map->ctx_ctrl);
++		WARN_ON((reg & SISL_CTX_CTRL_LISN_MASK) != 0);
++		reg |= SISL_MSI_SYNC_ERROR;
++		writeq_be(reg, &hwq->host_map->ctx_ctrl);
+ 		writeq_be(SISL_ISTATUS_MASK, &hwq->host_map->intr_mask);
+ 	}
+ }
+--- a/drivers/scsi/cxlflash/sislite.h
++++ b/drivers/scsi/cxlflash/sislite.h
+@@ -284,6 +284,7 @@ struct sisl_host_map {
+ 	__be64 cmd_room;
+ 	__be64 ctx_ctrl;	/* least significant byte or b56:63 is LISN# */
+ #define SISL_CTX_CTRL_UNMAP_SECTOR	0x8000000000000000ULL /* b0 */
++#define SISL_CTX_CTRL_LISN_MASK		(0xFFULL)
+ 	__be64 mbox_w;		/* restricted use */
+ 	__be64 sq_start;	/* Submission Queue (R/W): write sequence and */
+ 	__be64 sq_end;		/* inclusion semantics are the same as RRQ    */
 
 
