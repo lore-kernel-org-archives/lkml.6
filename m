@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F819C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB08CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A37E20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A37E20840
+	by mail.kernel.org (Postfix) with ESMTP id 6E8FF20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8FF20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733165AbeHAUWV (ORCPT
+        id S1733210AbeHAUW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:22:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
+        Wed, 1 Aug 2018 16:22:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403983AbeHATDe (ORCPT
+        with ESMTP id S2403961AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C69651047;
-        Wed,  1 Aug 2018 17:00:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB10FF8C;
+        Wed,  1 Aug 2018 16:57:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 145/336] drivers/perf: arm-ccn: dont log to dmesg in event_init
-Date:   Wed,  1 Aug 2018 18:48:00 +0200
-Message-Id: <20180801165034.688612682@linuxfoundation.org>
+Subject: [PATCH 4.17 082/336] selftests: memfd: return Kselftest Skip code for skipped tests
+Date:   Wed,  1 Aug 2018 18:46:57 +0200
+Message-Id: <20180801165032.327033721@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,114 +52,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit 1898eb61fbc9703efee886d3abec27a388cf28c3 ]
+[ Upstream commit b27f0259e8cea74c627327c063742a83613dd460 ]
 
-The ARM CCN PMU driver uses dev_warn() to complain about parameters in
-the user-provided perf_event_attr. This means that under normal
-operation (e.g. a single invocation of the perf tool), a number of
-messages warnings may be logged to dmesg.
+When memfd test is skipped because of unmet dependencies and/or unsupported
+configuration, it returns non-zero value which is treated as a fail by the
+Kselftest framework. This leads to false negative result even when the test
+could not be run.
 
-Tools may issue multiple syscalls to probe for feature support, and
-multiple applications (from multiple users) can attempt to open events
-simultaneously, so this is not very helpful, even if a user happens to
-have access to dmesg. Worse, this can push important information out of
-the dmesg ring buffer, and can significantly slow down syscall fuzzers,
-vastly increasing the time it takes to find critical bugs.
+Change it to return kselftest skip code when a test gets skipped to clearly
+report that the test could not be run.
 
-Demote the dev_warn() instances to dev_dbg(), as is the case for all
-other PMU drivers under drivers/perf/. Users who wish to debug PMU event
-initialisation can enable dynamic debug to receive these messages.
+Added an explicit check for root user at the start of memfd hugetlbfs test
+and return skip code if a non-root user attempts to run it.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+In addition, return skip code when not enough huge pages are available to
+run the test.
+
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/perf/arm-ccn.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ tools/testing/selftests/memfd/run_tests.sh |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/perf/arm-ccn.c
-+++ b/drivers/perf/arm-ccn.c
-@@ -736,7 +736,7 @@ static int arm_ccn_pmu_event_init(struct
- 	ccn = pmu_to_arm_ccn(event->pmu);
+--- a/tools/testing/selftests/memfd/run_tests.sh
++++ b/tools/testing/selftests/memfd/run_tests.sh
+@@ -1,6 +1,9 @@
+ #!/bin/bash
+ # please run as root
  
- 	if (hw->sample_period) {
--		dev_warn(ccn->dev, "Sampling not supported!\n");
-+		dev_dbg(ccn->dev, "Sampling not supported!\n");
- 		return -EOPNOTSUPP;
- 	}
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
+ #
+ # Normal tests requiring no special resources
+ #
+@@ -29,12 +32,13 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $
+ 	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
+ 	hpages_needed=`expr $hpages_test - $freepgs`
  
-@@ -744,12 +744,12 @@ static int arm_ccn_pmu_event_init(struct
- 			event->attr.exclude_kernel || event->attr.exclude_hv ||
- 			event->attr.exclude_idle || event->attr.exclude_host ||
- 			event->attr.exclude_guest) {
--		dev_warn(ccn->dev, "Can't exclude execution levels!\n");
-+		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
- 		return -EINVAL;
- 	}
++	if [ $UID != 0 ]; then
++		echo "Please run memfd with hugetlbfs test as root"
++		exit $ksft_skip
++	fi
++
+ 	echo 3 > /proc/sys/vm/drop_caches
+ 	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+-	if [ $? -ne 0 ]; then
+-		echo "Please run this test as root"
+-		exit 1
+-	fi
+ 	while read name size unit; do
+ 		if [ "$name" = "HugePages_Free:" ]; then
+ 			freepgs=$size
+@@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
+ 	fi
+ 	printf "Not enough huge pages available (%d < %d)\n" \
+ 		$freepgs $needpgs
+-	exit 1
++	exit $ksft_skip
+ fi
  
- 	if (event->cpu < 0) {
--		dev_warn(ccn->dev, "Can't provide per-task data!\n");
-+		dev_dbg(ccn->dev, "Can't provide per-task data!\n");
- 		return -EOPNOTSUPP;
- 	}
- 	/*
-@@ -771,13 +771,13 @@ static int arm_ccn_pmu_event_init(struct
- 	switch (type) {
- 	case CCN_TYPE_MN:
- 		if (node_xp != ccn->mn_id) {
--			dev_warn(ccn->dev, "Invalid MN ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid MN ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		break;
- 	case CCN_TYPE_XP:
- 		if (node_xp >= ccn->num_xps) {
--			dev_warn(ccn->dev, "Invalid XP ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid XP ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		break;
-@@ -785,11 +785,11 @@ static int arm_ccn_pmu_event_init(struct
- 		break;
- 	default:
- 		if (node_xp >= ccn->num_nodes) {
--			dev_warn(ccn->dev, "Invalid node ID %d!\n", node_xp);
-+			dev_dbg(ccn->dev, "Invalid node ID %d!\n", node_xp);
- 			return -EINVAL;
- 		}
- 		if (!arm_ccn_pmu_type_eq(type, ccn->node[node_xp].type)) {
--			dev_warn(ccn->dev, "Invalid type 0x%x for node %d!\n",
-+			dev_dbg(ccn->dev, "Invalid type 0x%x for node %d!\n",
- 					type, node_xp);
- 			return -EINVAL;
- 		}
-@@ -808,19 +808,19 @@ static int arm_ccn_pmu_event_init(struct
- 		if (event_id != e->event)
- 			continue;
- 		if (e->num_ports && port >= e->num_ports) {
--			dev_warn(ccn->dev, "Invalid port %d for node/XP %d!\n",
-+			dev_dbg(ccn->dev, "Invalid port %d for node/XP %d!\n",
- 					port, node_xp);
- 			return -EINVAL;
- 		}
- 		if (e->num_vcs && vc >= e->num_vcs) {
--			dev_warn(ccn->dev, "Invalid vc %d for node/XP %d!\n",
-+			dev_dbg(ccn->dev, "Invalid vc %d for node/XP %d!\n",
- 					vc, node_xp);
- 			return -EINVAL;
- 		}
- 		valid = 1;
- 	}
- 	if (!valid) {
--		dev_warn(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
-+		dev_dbg(ccn->dev, "Invalid event 0x%x for node/XP %d!\n",
- 				event_id, node_xp);
- 		return -EINVAL;
- 	}
+ #
 
 
