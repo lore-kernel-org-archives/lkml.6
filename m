@@ -2,100 +2,282 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEB8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFADC46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E12208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E12208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 233D5208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 233D5208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390533AbeHASUG (ORCPT
+        id S2389825AbeHASUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 1 Aug 2018 14:20:08 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2682 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390527AbeHASUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 14:20:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:44826 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390500AbeHASUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 14:20:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDDAC80D;
-        Wed,  1 Aug 2018 09:33:33 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13DD93F5BA;
-        Wed,  1 Aug 2018 09:33:31 -0700 (PDT)
-Subject: Re: [BUG BISECT] Ethernet fail on VF50 (OF: Don't set default
- coherent DMA mask)
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Stefan Agner <stefan@agner.ch>, Christoph Hellwig <hch@lst.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Fugang Duan <fugang.duan@nxp.com>
-References: <CAJKOXPfageiBVXddtdJRBS+092O3QfD0yoS_Mk+PoX7+qNYNUA@mail.gmail.com>
- <20180727140448.GA29001@lst.de> <20180728165820.GA5731@roeck-us.net>
- <45f7fc82-fb9c-e666-4ada-c5338d2c1c96@arm.com>
- <39fa11ce4b7dd151d98868f375baf818@agner.ch>
- <0e893142-a5db-d119-6eb3-f849db6b5d04@arm.com>
- <f67628ad-4cae-96cd-d0c4-3b2f7d12a822@roeck-us.net>
- <4ce17098-850f-3bb0-b977-8d7932e74e06@arm.com>
- <20180731154353.GA29601@roeck-us.net>
- <10c2ca4d-d587-2705-2802-b6df3dc72fd4@arm.com>
- <20180731173859.GA17007@roeck-us.net>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9f32010e-3bcb-2153-dac3-996e9d1b1e9b@arm.com>
-Date:   Wed, 1 Aug 2018 17:33:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b61e0d90001>; Wed, 01 Aug 2018 09:33:29 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 01 Aug 2018 09:33:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 01 Aug 2018 09:33:34 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 1 Aug
+ 2018 16:33:33 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Wed, 1 Aug 2018 16:33:33 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b61e0db0000>; Wed, 01 Aug 2018 09:33:33 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH 17/40] mmc: tegra: Program pad autocal offsets from dt
+Date:   Wed, 1 Aug 2018 19:32:07 +0300
+Message-ID: <1533141150-10511-18-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+References: <1533141150-10511-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20180731173859.GA17007@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/07/18 18:38, Guenter Roeck wrote:
-> On Tue, Jul 31, 2018 at 04:58:41PM +0100, Robin Murphy wrote:
->> On 31/07/18 16:43, Guenter Roeck wrote:
->>> On Tue, Jul 31, 2018 at 03:09:34PM +0100, Robin Murphy wrote:
->>>>> Please note that sparc images still generate the warning (next-20180731).
->>>>
->>>> Ugh, OK, any ideas what sparc does to create these platform devices that
->>>> isn't of_platform_device_create_pdata() and has somehow grown an implicit
->>>> dependency on of_dma_configure() since 4.12? I'm looking, but nothing jumps
->>>> out...
->>>>
->>>
->>> I suspect it might be of_device_register(), called from
->>> 	arch/sparc/kernel/of_device_64.c:scan_one_device()
->>> 	arch/sparc/kernel/of_device_32.c:scan_one_device()
->>
->> Right, that's as far as I got as well, so I'm struggling to see how these
->> things ever got DMA masks set before the of_dma_configure() call moved out
->> of of_platform_device_create_pdata(), or why it wasn't a problem prior to
->> the generic dma_ops rework if they didn't :/
->>
-> Ah, ok. No idea, sorry. All I know is that the messages were first seen
-> with next-20180727.
+Parse the pad drive strength calibration offsets from the device tree.
+Program the calibration offsets in accordance with the current signaling
+mode.
 
-OK, I spent this afternoon wrangling toolchains and QEMU to boot an 
-instrumented 4.11 kernel, and the answer is that the warnings are 
-arguably correct. These masks have indeed never been set where they 
-should have been, but then the sbus_dma_ops don't reference them anyway.
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 152 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 151 insertions(+), 1 deletion(-)
 
-The coherent mask WARN_ON *should* have started appearing in 4.16 with 
-205e1b7f51e4("dma-mapping: warn when there is no coherent_dma_mask"), 
-but happened to be hidden by the inadvertent side-effect of the prior 
-dma_configure() change. Since there's seemingly no actual regression of 
-functionality, I'm inclined to leave this in the hands of whoever cares 
-about sparc32.
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index c2b388b..681987e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -50,6 +50,7 @@
+ #define SDHCI_TEGRA_AUTO_CAL_CONFIG			0x1e4
+ #define SDHCI_AUTO_CAL_START				BIT(31)
+ #define SDHCI_AUTO_CAL_ENABLE				BIT(29)
++#define SDHCI_AUTO_CAL_PDPU_OFFSET_MASK			0x0000ffff
+ 
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL			0x1e0
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
+@@ -73,6 +74,22 @@ struct sdhci_tegra_soc_data {
+ 	u32 nvquirks;
+ };
+ 
++/* Magic pull up and pull down pad calibration offsets */
++struct sdhci_tegra_autocal_offsets {
++	u32 pull_up_3v3;
++	u32 pull_down_3v3;
++	u32 pull_up_3v3_timeout;
++	u32 pull_down_3v3_timeout;
++	u32 pull_up_1v8;
++	u32 pull_down_1v8;
++	u32 pull_up_1v8_timeout;
++	u32 pull_down_1v8_timeout;
++	u32 pull_up_sdr104;
++	u32 pull_down_sdr104;
++	u32 pull_up_hs400;
++	u32 pull_down_hs400;
++};
++
+ struct sdhci_tegra {
+ 	const struct sdhci_tegra_soc_data *soc_data;
+ 	struct gpio_desc *power_gpio;
+@@ -84,6 +101,8 @@ struct sdhci_tegra {
+ 	struct pinctrl *pinctrl_sdmmc;
+ 	struct pinctrl_state *pinctrl_state_3v3;
+ 	struct pinctrl_state *pinctrl_state_1v8;
++
++	struct sdhci_tegra_autocal_offsets autocal_offsets;
+ };
+ 
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -281,12 +300,45 @@ static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
+ 	return orig_enabled;
+ }
+ 
++static void tegra_sdhci_set_pad_autocal_offset(struct sdhci_host *host,
++					       u16 pdpu)
++{
++	u32 reg;
++
++	reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
++	reg &= ~SDHCI_AUTO_CAL_PDPU_OFFSET_MASK;
++	reg |= pdpu;
++	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
++}
++
+ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	struct sdhci_tegra_autocal_offsets offsets =
++			tegra_host->autocal_offsets;
++	struct mmc_ios *ios = &host->mmc->ios;
+ 	bool card_clk_enabled;
++	u16 pdpu;
+ 	u32 reg;
+ 	int ret;
+ 
++	switch (ios->timing) {
++	case MMC_TIMING_UHS_SDR104:
++		pdpu = offsets.pull_down_sdr104 << 8 | offsets.pull_up_sdr104;
++		break;
++	case MMC_TIMING_MMC_HS400:
++		pdpu = offsets.pull_down_hs400 << 8 | offsets.pull_up_hs400;
++		break;
++	default:
++		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
++			pdpu = offsets.pull_down_1v8 << 8 | offsets.pull_up_1v8;
++		else
++			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
++	}
++
++	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
++
+ 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
+ 
+ 	tegra_sdhci_configure_cal_pad(host, true);
+@@ -304,8 +356,104 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ 
+ 	tegra_sdhci_configure_card_clk(host, card_clk_enabled);
+ 
+-	if (ret)
++	if (ret) {
+ 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
++
++		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
++			pdpu = offsets.pull_down_1v8_timeout << 8 |
++			       offsets.pull_up_1v8_timeout;
++		else
++			pdpu = offsets.pull_down_3v3_timeout << 8 |
++			       offsets.pull_up_3v3_timeout;
++
++		/* Disable automatic calibration and use fixed offsets */
++		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
++		reg &= ~SDHCI_AUTO_CAL_ENABLE;
++		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
++
++		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
++	}
++}
++
++static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	struct sdhci_tegra_autocal_offsets *autocal =
++			&tegra_host->autocal_offsets;
++	int err;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-3v3",
++			&autocal->pull_up_3v3);
++	if (err)
++		autocal->pull_up_3v3 = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-3v3",
++			&autocal->pull_down_3v3);
++	if (err)
++		autocal->pull_down_3v3 = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-1v8",
++			&autocal->pull_up_1v8);
++	if (err)
++		autocal->pull_up_1v8 = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-1v8",
++			&autocal->pull_down_1v8);
++	if (err)
++		autocal->pull_down_1v8 = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-3v3-timeout",
++			&autocal->pull_up_3v3);
++	if (err)
++		autocal->pull_up_3v3_timeout = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-3v3-timeout",
++			&autocal->pull_down_3v3);
++	if (err)
++		autocal->pull_down_3v3_timeout = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-1v8-timeout",
++			&autocal->pull_up_1v8);
++	if (err)
++		autocal->pull_up_1v8_timeout = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-1v8-timeout",
++			&autocal->pull_down_1v8);
++	if (err)
++		autocal->pull_down_1v8_timeout = 0;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-sdr104",
++			&autocal->pull_up_sdr104);
++	if (err)
++		autocal->pull_up_sdr104 = autocal->pull_up_1v8;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-sdr104",
++			&autocal->pull_down_sdr104);
++	if (err)
++		autocal->pull_down_sdr104 = autocal->pull_down_1v8;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-up-offset-hs400",
++			&autocal->pull_up_hs400);
++	if (err)
++		autocal->pull_up_hs400 = autocal->pull_up_1v8;
++
++	err = device_property_read_u32(host->mmc->parent,
++			"nvidia,pad-autocal-pull-down-offset-hs400",
++			&autocal->pull_down_hs400);
++	if (err)
++		autocal->pull_down_hs400 = autocal->pull_down_1v8;
+ }
+ 
+ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+@@ -682,6 +830,8 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+ 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
+ 
++	tegra_sdhci_parse_pad_autocal_dt(host);
++
+ 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
+ 							 GPIOD_OUT_HIGH);
+ 	if (IS_ERR(tegra_host->power_gpio)) {
+-- 
+2.7.4
 
-Robin.
