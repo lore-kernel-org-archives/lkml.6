@@ -2,78 +2,92 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31477C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B76C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B262C20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C5A20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="AyFsJCng"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B262C20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HbFLU1ZK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C5A20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732222AbeHAX56 (ORCPT
+        id S1732553AbeHAX6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:57:58 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38442 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeHAX56 (ORCPT
+        Wed, 1 Aug 2018 19:58:07 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33958 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732233AbeHAX6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:57:58 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so414645itb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 15:10:02 -0700 (PDT)
+        Wed, 1 Aug 2018 19:58:07 -0400
+Received: by mail-qt0-f194.google.com with SMTP id m13-v6so219986qth.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 15:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        d=broadcom.com; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j/KEPserGGJSOcpfkBze8WP8TQOyJEX4plFSnMPJpGY=;
-        b=AyFsJCngT0cqYonzwFIjfJ1/NTWd6DyJc9zYl8548M60seHZS+Qm0P/U5mjI7tezO8
-         OWWfzAfpZDcrdsceawfrINJsT/dyPUm/MydHIT6wQMQhguhLczd+E9wY/SKv3twn6KCT
-         TiDaDtqFCI7lMdubtPaPFslUgzUoSvqKFLIcTIoLPN+CINiBWSE4zhxKBTJa0UD19JHw
-         IZ4KfRzNzlr3g0oh0l2/702mYao04h9s1amUdq908bH2a+QtCsrJoOk8TbKz3R5Sqmqd
-         ITQ7gumJLKVxESXo4Jgd7o0tRwXYMXTmZL9PU/sKESc1AoR1i5bjDXSirsf/Ue2CBr6w
-         1jlQ==
+        bh=Fjsov7j9018AgqeCfIjNCbpCYWOjMNGjsD+QV0+OgoQ=;
+        b=HbFLU1ZKbB0eAR/zcafrIoDnpMTmIfNlU8QV0xTNwYZe+NkfRNcoTefqY42Ans8F7E
+         tbu2krY7/Tmjimzw8E3X0GHl/QtvLTdfe7W+AE3DXigb1xyCk4epIijpk3Vk2TjmEofd
+         hB/6BXb6QIBcrX13EhvAHIdV8bLzCf7X2DeG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=j/KEPserGGJSOcpfkBze8WP8TQOyJEX4plFSnMPJpGY=;
-        b=nLVQUIwYvUZQ6VMfIsttntPOwOTBIExugP+sMAasqD5yaZVJuhcxwquT0LHSataqUS
-         OrMMU+/cqSaKMt4cwMvJHlsnINtsvYiu9q7xStKxcLbKduQ6MoC7SE6fFcdf3Px183e6
-         RW1YXErCvxZDdEjNGDW+irV1lsz8XY89rWCO1aAMZCG5VbJcvdO1S5emyyTiUIenB8cD
-         LInWPoTgdSznV4J0n4P5SwcNj36N+ZoJOMgl7bewBf1lNClWA5PDvtgnr4/xrwOTqMaL
-         +NBiWi+R2643fBjkiyscxtgvl20O5oQh935ma6xI2Ewh90XbJtLCUXvRbDoEzQJnsuaw
-         TtYA==
-X-Gm-Message-State: AOUpUlEFEIFMrY04jJFnKkOaO6wTj4+CgDs/wcihwaRuBalFU7gu8zt8
-        2hWkmDUnLng6E5aqn3PcBqXKlw==
-X-Google-Smtp-Source: AAOMgpeC0Yb8TYoAiMnwrieLY022oFAXIYxtVvextme1WTMueFzOFug7G53Oc4WCw4Z28GCNLxkp+A==
-X-Received: by 2002:a24:70b:: with SMTP id f11-v6mr196184itf.137.1533161401797;
-        Wed, 01 Aug 2018 15:10:01 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id b129-v6sm83188ioa.75.2018.08.01.15.09.59
+        bh=Fjsov7j9018AgqeCfIjNCbpCYWOjMNGjsD+QV0+OgoQ=;
+        b=SWe03kYb096UOD+AjfRAP6O2gmOUcVPNM+da4Npb3FXAeSmc86BmVDacDB9O4hrJ6v
+         79m3URlOBydtKwj1dZady+An3LTDz1AzSaJXCr5OrH7vwS+8HomL2zKQniUloJ0nehXd
+         yV4gDL43CDDDdOBgfs791YqiiL1XlfCVPyA8ZS5vBinpE/A3Jk7zS6iBanozmgLDH/PG
+         fHvr8EXXjjuZTa8+MoEJlPscSrPkWSbVMV7WMzKYSfU1IajudD4czBRxmzLbrEaNMNMl
+         Q5mWZ62DQBMrqG8D98BxJ4wFovzOGyDdKetuDi5KR0PqZpUG6Dlcxc09RUdzuONigi5y
+         CoNw==
+X-Gm-Message-State: AOUpUlEvQtVqb2iZ7cMLnfUa+exrIFQwswdmul3XRgYq5l4wNv56a7Y9
+        uajF9I7jrEzn32rE4PfDN7FHkw==
+X-Google-Smtp-Source: AAOMgpdTHxUCSA8GCG4EO5SFE0cM4WnFWgxHM5zMbPbGanJ6ycBOofacbHWg0Zx6q8L6pkcUVHhThA==
+X-Received: by 2002:aed:2a06:: with SMTP id c6-v6mr225907qtd.50.1533161411510;
+        Wed, 01 Aug 2018 15:10:11 -0700 (PDT)
+Received: from [10.136.4.147] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id p18-v6sm186804qtp.3.2018.08.01.15.10.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 15:10:00 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
- in wbt_wait
-To:     Anchal Agarwal <anchalag@amazon.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     fllinden@amazon.com, msw@amazon.com, sblbir@amazon.com
-References: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
- <df2a0476-d9d1-c6c9-6553-f459e890ce8b@kernel.dk>
- <20180801170603.GA32864@kaos-source-ops-60001.pdx1.amazon.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a9871e54-83bf-7557-2d2f-99e006ceadcf@kernel.dk>
-Date:   Wed, 1 Aug 2018 16:09:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 01 Aug 2018 15:10:11 -0700 (PDT)
+Subject: Re: [PATCH v3 7/8] net: phy: Add support to configure clock in
+ Broadcom iProc mdio mux
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, netdev@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+References: <1533146186-8374-1-git-send-email-arun.parameswaran@broadcom.com>
+ <1533146186-8374-8-git-send-email-arun.parameswaran@broadcom.com>
+ <0cc6db4f-7008-0ad3-58d7-9e93060f152f@gmail.com>
+ <20180801184659.GG30658@n2100.armlinux.org.uk>
+ <9af7e7a3-54d4-8802-f64a-fc4f9c49c8b9@broadcom.com>
+ <20180801200712.GD19257@lunn.ch>
+ <20180801202313.GH30658@n2100.armlinux.org.uk>
+ <20180801203846.GE19257@lunn.ch>
+ <8133c1f0-addc-5c48-7a6a-44b0d106c425@broadcom.com>
+ <20180801215511.GG19257@lunn.ch>
+From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
+Message-ID: <af188f23-bbef-ed90-b42d-a680c07f3fd2@broadcom.com>
+Date:   Wed, 1 Aug 2018 15:10:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180801170603.GA32864@kaos-source-ops-60001.pdx1.amazon.com>
+In-Reply-To: <20180801215511.GG19257@lunn.ch>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,183 +96,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/18 11:06 AM, Anchal Agarwal wrote:
-> On Wed, Aug 01, 2018 at 09:14:50AM -0600, Jens Axboe wrote:
->> On 7/31/18 3:34 PM, Anchal Agarwal wrote:
->>> Hi folks,
->>>
->>> This patch modifies commit e34cbd307477a
->>> (blk-wbt: add general throttling mechanism)
->>>
->>> I am currently running a large bare metal instance (i3.metal)
->>> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a
->>> 4.18 kernel. I have a workload that simulates a database
->>> workload and I am running into lockup issues when writeback
->>> throttling is enabled,with the hung task detector also
->>> kicking in.
->>>
->>> Crash dumps show that most CPUs (up to 50 of them) are
->>> all trying to get the wbt wait queue lock while trying to add
->>> themselves to it in __wbt_wait (see stack traces below).
->>>
->>> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c69c000
->>> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf8/0x1a0
->>> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046
->>> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7fce2a00
->>> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RDI: ffff887f7709ca68
->>> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R09: 0000000000000000
->>> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R12: 0000000000000002
->>> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
->>> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc0000(0000) knlGS:0000000000000000
->>> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR4: 00000000003606e0
->>> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> [    0.948138] Call Trace:
->>> [    0.948139]  <IRQ>
->>> [    0.948142]  do_raw_spin_lock+0xad/0xc0
->>> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b
->>> [    0.948149]  ? __wake_up_common_lock+0x53/0x90
->>> [    0.948150]  __wake_up_common_lock+0x53/0x90
->>> [    0.948155]  wbt_done+0x7b/0xa0
->>> [    0.948158]  blk_mq_free_request+0xb7/0x110
->>> [    0.948161]  __blk_mq_complete_request+0xcb/0x140
->>> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]
->>> [    0.948169]  nvme_irq+0x23/0x50 [nvme]
->>> [    0.948173]  __handle_irq_event_percpu+0x46/0x300
->>> [    0.948176]  handle_irq_event_percpu+0x20/0x50
->>> [    0.948179]  handle_irq_event+0x34/0x60
->>> [    0.948181]  handle_edge_irq+0x77/0x190
->>> [    0.948185]  handle_irq+0xaf/0x120
->>> [    0.948188]  do_IRQ+0x53/0x110
->>> [    0.948191]  common_interrupt+0x87/0x87
->>> [    0.948192]  </IRQ>
->>> ....
->>> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
->>> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
->>> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1ec000
->>> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf5/0x1a0
->>> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046
->>> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7f722a00
->>> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RDI: ffff887f7709ca68
->>> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R09: 0000000000000000
->>> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R12: ffff887f7709ca68
->>> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R15: ffff887f7709ca00
->>> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f700000(0000) knlGS:0000000000000000
->>> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR4: 00000000003606e0
->>> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> [    0.311154] Call Trace:
->>> [    0.311157]  do_raw_spin_lock+0xad/0xc0
->>> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b
->>> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0
->>> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0
->>> [    0.311167]  wbt_wait+0x127/0x330
->>> [    0.311169]  ? finish_wait+0x80/0x80
->>> [    0.311172]  ? generic_make_request+0xda/0x3b0
->>> [    0.311174]  blk_mq_make_request+0xd6/0x7b0
->>> [    0.311176]  ? blk_queue_enter+0x24/0x260
->>> [    0.311178]  ? generic_make_request+0xda/0x3b0
->>> [    0.311181]  generic_make_request+0x10c/0x3b0
->>> [    0.311183]  ? submit_bio+0x5c/0x110
->>> [    0.311185]  submit_bio+0x5c/0x110
->>> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]
->>> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]
->>> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]
->>> [    0.311229]  ? do_writepages+0x3c/0xd0
->>> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]
->>> [    0.311240]  do_writepages+0x3c/0xd0
->>> [    0.311243]  ? _raw_spin_unlock+0x24/0x30
->>> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280
->>> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0
->>> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0
->>> [    0.311253]  file_write_and_wait_range+0x34/0x90
->>> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]
->>> [    0.311267]  do_fsync+0x38/0x60
->>> [    0.311270]  SyS_fsync+0xc/0x10
->>> [    0.311272]  do_syscall_64+0x6f/0x170
->>> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>>
->>> In the original patch, wbt_done is waking up all the exclusive
->>> processes in the wait queue, which can cause a thundering herd
->>> if there is a large number of writer threads in the queue. The
->>> original intention of the code seems to be to wake up one thread
->>> only however, it uses wake_up_all() in __wbt_done(), and then
->>> uses the following check in __wbt_wait to have only one thread
->>> actually get out of the wait loop:
->>>
->>> if (waitqueue_active(&rqw->wait) &&
->>>             rqw->wait.head.next != &wait->entry)
->>>                 return false;
->>>
->>> The problem with this is that the wait entry in wbt_wait is
->>> define with DEFINE_WAIT, which uses the autoremove wakeup function.
->>> That means that the above check is invalid - the wait entry will
->>> have been removed from the queue already by the time we hit the
->>> check in the loop.
->>>
->>> Secondly, auto-removing the wait entries also means that the wait
->>> queue essentially gets reordered "randomly" (e.g. threads re-add
->>> themselves in the order they got to run after being woken up).
->>> Additionally, new requests entering wbt_wait might overtake requests
->>> that were queued earlier, because the wait queue will be
->>> (temporarily) empty after the wake_up_all, so the waitqueue_active
->>> check will not stop them. This can cause certain threads to starve
->>> under high load.
->>>
->>> The fix is to leave the woken up requests in the queue and remove
->>> them in finish_wait() once the current thread breaks out of the
->>> wait loop in __wbt_wait. This will ensure new requests always
->>> end up at the back of the queue, and they won't overtake requests
->>> that are already in the wait queue. With that change, the loop
->>> in wbt_wait is also in line with many other wait loops in the kernel.
->>> Waking up just one thread drastically reduces lock contention, as
->>> does moving the wait queue add/remove out of the loop.
->>>
->>> A significant drop in lockdep's lock contention numbers is seen when
->>> running the test application on the patched kernel.
->>
->> I like the patch, and a few weeks ago we independently discovered that
->> the waitqueue list checking was bogus as well. My only worry is that
->> changes like this can be delicate, meaning that it's easy to introduce
->> stall conditions. What kind of testing did you push this through?
->>
->> -- 
->> Jens Axboe
->>
-> I ran the following tests on both real HW with NVME devices attached
-> and emulated NVME too:
-> 
-> 1. The test case I used to reproduce the issue, spawns a bunch of threads 
->    to concurrently read and write files with random size and content. 
->    Files are randomly fsync'd. The implementation is a FIFO queue of files. 
->    When the queue fills the test starts to verify and remove the files. This 
->    test will fail if there's a read, write, or hash check failure. It tests
->    for file corruption when lots of small files are being read and written 
->    with high concurrency.
-> 
-> 2. Fio for random writes with a root NVME device of 200GB
->   
->   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k 
->   --direct=0 --size=10G --numjobs=2 --runtime=60 --group_reporting
->   
->   fio --name=randwrite --ioengine=libaio --iodepth=1 --rw=randwrite --bs=4k
->   --direct=0 --size=5G --numjobs=2 --runtime=30 --fsync=64 --group_reporting
->   
->   I did see an improvement in the bandwidth numbers reported on the patched
->   kernel. 
-> 
-> Do you have any test case/suite in mind that you would suggest me to 
-> run to be sure that patch does not introduce any stall conditions?
+Hi Andrew,
 
-One thing that is always useful is to run xfstest, do a full run on
-the device. If that works, then do another full run, this time limiting
-the queue depth of the SCSI device to 1. If both of those pass, then
-I'd feel pretty good getting this applied for 4.19.
+On 18-08-01 02:55 PM, Andrew Lunn wrote:
+>> md->core_clk = devm_clk_get(&pdev->dev, NULL);
+>> if (md->core_clk == ERR_PTR(-ENOENT) || md->core_clk == ERR_PTR(-EINVAL)) {
+>> 	/* clock is optional, without it the default
+>> 	 * rate divider register values will be used
+>> 	 */
+>> 	md->core_clk = NULL;
+>> } else if (IS_ERR(md->core_clk)) {
+>> 	return PTR_ERR(md->core_clk);
+>> } else {
+>> 	rc = clk_prepare_enable(md->core_clk);
+>> 	...
+>> }
+> 
+> As Florian pointed out, the clk_ API is happy to take a NULL pointer
+> for a clock. So you don't need this last else.
+> 
+>     Andrew
+> 
+I do return with an error from the probe if the clk_prepare_enable() fails,
+so I was calling the prepare with a valid clock.
 
--- 
-Jens Axboe
+In the other places where I used the clock, the return values were being
+ignored.
 
+The 'else' part should have been, I apologize for the confusion.
+
+if (md->core_clk == ERR_PTR(-ENOENT) || md->core_clk == ERR_PTR(-EINVAL)) {
+ 	/* clock is optional, without it the default
+ 	 * rate divider register values will be used
+ 	 */
+ 	md->core_clk = NULL;
+} else if (IS_ERR(md->core_clk)) {
+ 	return PTR_ERR(md->core_clk);
+} else {
+	rc = clk_prepare_enable(md->core_clk);
+	if (rc) {
+		dev_err(&pdev->dev, "failed to enable core clk\n");
+		return rc;
+	}
+}
+
+
+Thanks
+Arun
