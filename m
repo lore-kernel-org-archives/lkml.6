@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB14C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBCDC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FD82083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FD82083E
+	by mail.kernel.org (Postfix) with ESMTP id 5AA022083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA022083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407482AbeHATZx (ORCPT
+        id S2436640AbeHAT0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:25:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52928 "EHLO
+        Wed, 1 Aug 2018 15:26:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52884 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436517AbeHATSh (ORCPT
+        with ESMTP id S2390532AbeHATSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:37 -0400
+        Wed, 1 Aug 2018 15:18:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64142DCB;
-        Wed,  1 Aug 2018 16:53:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCC66DD8;
+        Wed,  1 Aug 2018 16:53:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.17 012/336] tracing: Quiet gcc warning about maybe unused link variable
-Date:   Wed,  1 Aug 2018 18:45:47 +0200
-Message-Id: <20180801165029.407424498@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.17 013/336] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
+Date:   Wed,  1 Aug 2018 18:45:48 +0200
+Message-Id: <20180801165029.451008523@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,53 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-commit 2519c1bbe38d7acacc9aacba303ca6f97482ed53 upstream.
+commit 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee upstream.
 
-Commit 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on
-enable_trace_kprobe() failure") added an if statement that depends on another
-if statement that gcc doesn't see will initialize the "link" variable and
-gives the warning:
+Arnd reports the following arm64 randconfig build error with the PSI
+patches that add another page flag:
 
- "warning: 'link' may be used uninitialized in this function"
+  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
+  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
+  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
+  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
 
-It is really a false positive, but to quiet the warning, and also to make
-sure that it never actually is used uninitialized, initialize the "link"
-variable to NULL and add an if (!WARN_ON_ONCE(!link)) where the compiler
-thinks it could be used uninitialized.
+The additional page flag causes other information stored in
+page->flags to get bumped into their own struct page member:
 
+  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
+  BITS_PER_LONG - NR_PAGEFLAGS
+  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+  #else
+  #define LAST_CPUPID_WIDTH 0
+  #endif
+
+  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
+  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+  #endif
+
+which in turn causes the struct page size to exceed the size set in
+STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
+VMEMMAP page array according to address space and struct page size.
+
+However, the check is performed - and triggers here - on a !VMEMMAP
+config, which consumes an additional 22 page bits for the sparse
+section id. When VMEMMAP is enabled, those bits are returned, cpupid
+doesn't need its own member, and the page passes the VMEMMAP check.
+
+Restrict that check to the situation it was meant to check: that we
+are sizing the VMEMMAP page array correctly.
+
+Says Arnd:
+
+    Further experiments show that the build error already existed before,
+    but was only triggered with larger values of CONFIG_NR_CPU and/or
+    CONFIG_NODES_SHIFT that might be used in actual configurations but
+    not in randconfig builds.
+
+    With longer CPU and node masks, I could recreate the problem with
+    kernels as old as linux-4.7 when arm64 NUMA support got added.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
 Cc: stable@vger.kernel.org
-Fixes: 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 1a2db300348b ("arm64, numa: Add NUMA support for arm64 platforms.")
+Fixes: 3e1907d5bf5a ("arm64: mm: move vmemmap region right below the linear region")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_kprobe.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/mm/init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -400,7 +400,7 @@ static struct trace_kprobe *find_trace_k
- static int
- enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
- {
--	struct event_file_link *link;
-+	struct event_file_link *link = NULL;
- 	int ret = 0;
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -611,11 +611,13 @@ void __init mem_init(void)
+ 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
+ #endif
  
- 	if (file) {
-@@ -426,7 +426,9 @@ enable_trace_kprobe(struct trace_kprobe
++#ifdef CONFIG_SPARSEMEM_VMEMMAP
+ 	/*
+ 	 * Make sure we chose the upper bound of sizeof(struct page)
+-	 * correctly.
++	 * correctly when sizing the VMEMMAP array.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
++#endif
  
- 	if (ret) {
- 		if (file) {
--			list_del_rcu(&link->list);
-+			/* Notice the if is true on not WARN() */
-+			if (!WARN_ON_ONCE(!link))
-+				list_del_rcu(&link->list);
- 			kfree(link);
- 			tk->tp.flags &= ~TP_FLAG_TRACE;
- 		} else {
+ 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
+ 		extern int sysctl_overcommit_memory;
 
 
