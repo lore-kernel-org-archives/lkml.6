@@ -2,138 +2,141 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077CAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D9AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E2A20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E2A20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BE74220840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE74220840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbeHAUVI (ORCPT
+        id S2387720AbeHAUVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:21:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404124AbeHATDe (ORCPT
+        Wed, 1 Aug 2018 16:21:13 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34499 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733127AbeHAUVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:34 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFCB6FF0;
-        Wed,  1 Aug 2018 16:59:26 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Lien <ethanlien@synology.com>,
-        David Sterba <dsterba@suse.com>,
+        Wed, 1 Aug 2018 16:21:12 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E46A6806C8; Wed,  1 Aug 2018 20:34:06 +0200 (CEST)
+Date:   Wed, 1 Aug 2018 20:34:02 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 089/336] btrfs: balance dirty metadata pages in btrfs_finish_ordered_io
-Date:   Wed,  1 Aug 2018 18:47:04 +0200
-Message-Id: <20180801165032.582094517@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Subject: Re: [PATCH 4.9 131/144] media: omap3isp: fix unbalanced
+ dma_iommu_mapping
+Message-ID: <20180801183402.GA26087@amd>
+References: <20180801164949.023217860@linuxfoundation.org>
+ <20180801164958.444609965@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
+Content-Disposition: inline
+In-Reply-To: <20180801164958.444609965@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Ethan Lien <ethanlien@synology.com>
+On Wed 2018-08-01 18:52:38, Greg Kroah-Hartman wrote:
+> 4.9-stable review patch.  If anyone has any objections, please let
+me know.
 
-[ Upstream commit e73e81b6d0114d4a303205a952ab2e87c44bd279 ]
+How was this tested?
 
-[Problem description and how we fix it]
-We should balance dirty metadata pages at the end of
-btrfs_finish_ordered_io, since a small, unmergeable random write can
-potentially produce dirty metadata which is multiple times larger than
-the data itself. For example, a small, unmergeable 4KiB write may
-produce:
+> From: Suman Anna <s-anna@ti.com>
+>=20
+> [ Upstream commit b7e1e6859fbf60519fd82d7120cee106a6019512 ]
+>=20
+> The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+> ARM DMA backend. The current code creates a dma_iommu_mapping and
+> attaches this to the ISP device, but never detaches the mapping in
+> either the probe failure paths or the driver remove path resulting
+> in an unbalanced mapping refcount and a memory leak. Fix this properly.
+>=20
+> Reported-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Tested-by: Pavel Machek <pavel@ucw.cz>
 
-    16KiB dirty leaf (and possibly 16KiB dirty node) in subvolume tree
-    16KiB dirty leaf (and possibly 16KiB dirty node) in checksum tree
-    16KiB dirty leaf (and possibly 16KiB dirty node) in extent tree
+Changelog implies I tested this, but I certainly did not test it in
+v4.9.
 
-Although we do call balance dirty pages in write side, but in the
-buffered write path, most metadata are dirtied only after we reach the
-dirty background limit (which by far only counts dirty data pages) and
-wakeup the flusher thread. If there are many small, unmergeable random
-writes spread in a large btree, we'll find a burst of dirty pages
-exceeds the dirty_bytes limit after we wakeup the flusher thread - which
-is not what we expect. In our machine, it caused out-of-memory problem
-since a page cannot be dropped if it is marked dirty.
+								Pavel
 
-Someone may worry about we may sleep in btrfs_btree_balance_dirty_nodelay,
-but since we do btrfs_finish_ordered_io in a separate worker, it will not
-stop the flusher consuming dirty pages. Also, we use different worker for
-metadata writeback endio, sleep in btrfs_finish_ordered_io help us throttle
-the size of dirty metadata pages.
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/media/platform/omap3isp/isp.c |    7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> --- a/drivers/media/platform/omap3isp/isp.c
+> +++ b/drivers/media/platform/omap3isp/isp.c
+> @@ -1941,6 +1941,7 @@ error_csiphy:
+> =20
+>  static void isp_detach_iommu(struct isp_device *isp)
+>  {
+> +	arm_iommu_detach_device(isp->dev);
+>  	arm_iommu_release_mapping(isp->mapping);
+>  	isp->mapping =3D NULL;
+>  	iommu_group_remove_device(isp->dev);
+> @@ -1974,8 +1975,7 @@ static int isp_attach_iommu(struct isp_d
+>  	mapping =3D arm_iommu_create_mapping(&platform_bus_type, SZ_1G, SZ_2G);
+>  	if (IS_ERR(mapping)) {
+>  		dev_err(isp->dev, "failed to create ARM IOMMU mapping\n");
+> -		ret =3D PTR_ERR(mapping);
+> -		goto error;
+> +		return PTR_ERR(mapping);
+>  	}
+> =20
+>  	isp->mapping =3D mapping;
+> @@ -1990,7 +1990,8 @@ static int isp_attach_iommu(struct isp_d
+>  	return 0;
+> =20
+>  error:
+> -	isp_detach_iommu(isp);
+> +	arm_iommu_release_mapping(isp->mapping);
+> +	isp->mapping =3D NULL;
+>  	return ret;
+>  }
+> =20
+>=20
 
-[Reproduce steps]
-To reproduce the problem, we need to do 4KiB write randomly spread in a
-large btree. In our 2GiB RAM machine:
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-1) Create 4 subvolumes.
-2) Run fio on each subvolume:
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-   [global]
-   direct=0
-   rw=randwrite
-   ioengine=libaio
-   bs=4k
-   iodepth=16
-   numjobs=1
-   group_reporting
-   size=128G
-   runtime=1800
-   norandommap
-   time_based
-   randrepeat=0
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-3) Take snapshot on each subvolume and repeat fio on existing files.
-4) Repeat step (3) until we get large btrees.
-   In our case, by observing btrfs_root_item->bytes_used, we have 2GiB of
-   metadata in each subvolume tree and 12GiB of metadata in extent tree.
-5) Stop all fio, take snapshot again, and wait until all delayed work is
-   completed.
-6) Start all fio. Few seconds later we hit OOM when the flusher starts
-   to work.
+iEYEARECAAYFAlth/RoACgkQMOfwapXb+vKLBQCff+7jJv5rOYbpz/5MeqXsiqsV
+V04Anit/jaSFDI5PdnV6iuwPB8F00T/X
+=DIXv
+-----END PGP SIGNATURE-----
 
-It can be reproduced even when using nocow write.
-
-Signed-off-by: Ethan Lien <ethanlien@synology.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add comment ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3160,6 +3160,9 @@ out:
- 	/* once for the tree */
- 	btrfs_put_ordered_extent(ordered_extent);
- 
-+	/* Try to release some metadata so we don't get an OOM but don't wait */
-+	btrfs_btree_balance_dirty_nodelay(fs_info);
-+
- 	return ret;
- }
- 
-
-
+--huq684BweRXVnRxX--
