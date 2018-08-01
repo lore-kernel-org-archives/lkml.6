@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E56C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6301C46467
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F323320840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F323320840
+	by mail.kernel.org (Postfix) with ESMTP id 6AEFD20840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEFD20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404168AbeHATDe (ORCPT
+        id S2388150AbeHAUVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
+        Wed, 1 Aug 2018 16:21:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403844AbeHATDc (ORCPT
+        with ESMTP id S2404098AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:32 -0400
+        Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB54112EB;
-        Wed,  1 Aug 2018 17:11:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0210106F;
+        Wed,  1 Aug 2018 17:01:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        netdev@vger.kernel.org, Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 4.17 327/336] netlink: Do not subscribe to non-existent groups
-Date:   Wed,  1 Aug 2018 18:51:02 +0200
-Message-Id: <20180801165041.552542865@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 159/336] rtc: tps6586x: fix possible race condition
+Date:   Wed,  1 Aug 2018 18:48:14 +0200
+Message-Id: <20180801165035.204445291@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,35 +51,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 7acf9d4237c46894e0fa0492dd96314a41742e84 ]
+[ Upstream commit 63d22063073b0ab46d1e06fe633fb5de8f5c58e1 ]
 
-Make ABI more strict about subscribing to group > ngroups.
-Code doesn't check for that and it looks bogus.
-(one can subscribe to non-existing group)
-Still, it's possible to bind() to all possible groups with (-1)
+The probe function is not allowed to fail after the RTC is registered
+because the following may happen:
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlink/af_netlink.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-tps6586x.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1008,6 +1008,7 @@ static int netlink_bind(struct socket *s
- 		if (err)
- 			return err;
- 	}
-+	groups &= (1UL << nlk->ngroups) - 1;
+--- a/drivers/rtc/rtc-tps6586x.c
++++ b/drivers/rtc/rtc-tps6586x.c
+@@ -276,14 +276,15 @@ static int tps6586x_rtc_probe(struct pla
+ 	device_init_wakeup(&pdev->dev, 1);
  
- 	bound = nlk->bound;
- 	if (bound) {
+ 	platform_set_drvdata(pdev, rtc);
+-	rtc->rtc = devm_rtc_device_register(&pdev->dev, dev_name(&pdev->dev),
+-				       &tps6586x_rtc_ops, THIS_MODULE);
++	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc->rtc)) {
+ 		ret = PTR_ERR(rtc->rtc);
+-		dev_err(&pdev->dev, "RTC device register: ret %d\n", ret);
++		dev_err(&pdev->dev, "RTC allocate device: ret %d\n", ret);
+ 		goto fail_rtc_register;
+ 	}
+ 
++	rtc->rtc->ops = &tps6586x_rtc_ops;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
+ 				tps6586x_rtc_irq,
+ 				IRQF_ONESHOT,
+@@ -294,6 +295,13 @@ static int tps6586x_rtc_probe(struct pla
+ 		goto fail_rtc_register;
+ 	}
+ 	disable_irq(rtc->irq);
++
++	ret = rtc_register_device(rtc->rtc);
++	if (ret) {
++		dev_err(&pdev->dev, "RTC device register: ret %d\n", ret);
++		goto fail_rtc_register;
++	}
++
+ 	return 0;
+ 
+ fail_rtc_register:
 
 
