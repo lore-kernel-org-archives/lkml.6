@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D823C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C939C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF60E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF60E2083D
+	by mail.kernel.org (Postfix) with ESMTP id 2F4A320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4A320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407220AbeHATOD (ORCPT
+        id S2407232AbeHATOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:14:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51904 "EHLO
+        Wed, 1 Aug 2018 15:14:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404699AbeHATOD (ORCPT
+        with ESMTP id S2404699AbeHATOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:14:03 -0400
+        Wed, 1 Aug 2018 15:14:06 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAE7EC3C;
-        Wed,  1 Aug 2018 17:27:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10FB8D2F;
+        Wed,  1 Aug 2018 17:27:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 020/144] rtc: ensure rtc_set_alarm fails when alarms are not supported
-Date:   Wed,  1 Aug 2018 18:50:47 +0200
-Message-Id: <20180801164950.777761867@linuxfoundation.org>
+Subject: [PATCH 4.9 056/144] ath: Add regulatory mapping for Uganda
+Date:   Wed,  1 Aug 2018 18:51:23 +0200
+Message-Id: <20180801164952.935670348@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,39 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
+[ Upstream commit 1ea3986ad2bc72081c69f3fbc1e5e0eeb3c44f17 ]
 
-When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
-rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
-subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
-case.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
-programs think the alarms are working for a particular RTC when they are
-not.
+  Invalid EEPROM contents
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/interface.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -359,6 +359,11 @@ int rtc_set_alarm(struct rtc_device *rtc
- {
- 	int err;
- 
-+	if (!rtc->ops)
-+		return -ENODEV;
-+	else if (!rtc->ops->set_alarm)
-+		return -EINVAL;
-+
- 	err = rtc_valid_tm(&alarm->time);
- 	if (err != 0)
- 		return err;
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -175,6 +175,7 @@ enum CountryCode {
+ 	CTRY_TUNISIA = 788,
+ 	CTRY_TURKEY = 792,
+ 	CTRY_UAE = 784,
++	CTRY_UGANDA = 800,
+ 	CTRY_UKRAINE = 804,
+ 	CTRY_UNITED_KINGDOM = 826,
+ 	CTRY_UNITED_STATES = 840,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -467,6 +467,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_TRINIDAD_Y_TOBAGO, FCC3_WORLD, "TT"},
+ 	{CTRY_TUNISIA, ETSI3_WORLD, "TN"},
+ 	{CTRY_TURKEY, ETSI3_WORLD, "TR"},
++	{CTRY_UGANDA, FCC3_WORLD, "UG"},
+ 	{CTRY_UKRAINE, NULL1_WORLD, "UA"},
+ 	{CTRY_UAE, NULL1_WORLD, "AE"},
+ 	{CTRY_UNITED_KINGDOM, ETSI1_WORLD, "GB"},
 
 
