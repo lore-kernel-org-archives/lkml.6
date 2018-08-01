@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EDCC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89155C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5257220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5257220844
+	by mail.kernel.org (Postfix) with ESMTP id 3FC622083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC622083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406625AbeHATL3 (ORCPT
+        id S2406631AbeHATLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51190 "EHLO
+        Wed, 1 Aug 2018 15:11:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404068AbeHATL2 (ORCPT
+        with ESMTP id S2404619AbeHATLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:28 -0400
+        Wed, 1 Aug 2018 15:11:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8AB81D2F;
-        Wed,  1 Aug 2018 17:24:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D824FCC3;
+        Wed,  1 Aug 2018 17:24:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 010/144] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
-Date:   Wed,  1 Aug 2018 18:50:37 +0200
-Message-Id: <20180801164949.617655067@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 012/144] kcov: ensure irq code sees a valid area
+Date:   Wed,  1 Aug 2018 18:50:39 +0200
+Message-Id: <20180801164949.807218634@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,83 +56,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee upstream.
+[ Upstream commit c9484b986ef03492357fddd50afbdd02929cfa72 ]
 
-Arnd reports the following arm64 randconfig build error with the PSI
-patches that add another page flag:
+Patch series "kcov: fix unexpected faults".
 
-  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
-  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
-  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
-  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
+These patches fix a few issues where KCOV code could trigger recursive
+faults, discovered while debugging a patch enabling KCOV for arch/arm:
 
-The additional page flag causes other information stored in
-page->flags to get bumped into their own struct page member:
+* On CONFIG_PREEMPT kernels, there's a small race window where
+  __sanitizer_cov_trace_pc() can see a bogus kcov_area.
 
-  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
-  BITS_PER_LONG - NR_PAGEFLAGS
-  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
-  #else
-  #define LAST_CPUPID_WIDTH 0
-  #endif
+* Lazy faulting of the vmalloc area can cause mutual recursion between
+  fault handling code and __sanitizer_cov_trace_pc().
 
-  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
-  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
-  #endif
+* During the context switch, switching the mm can cause the kcov_area to
+  be transiently unmapped.
 
-which in turn causes the struct page size to exceed the size set in
-STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
-VMEMMAP page array according to address space and struct page size.
+These are prerequisites for enabling KCOV on arm, but the issues
+themsevles are generic -- we just happen to avoid them by chance rather
+than design on x86-64 and arm64.
 
-However, the check is performed - and triggers here - on a !VMEMMAP
-config, which consumes an additional 22 page bits for the sparse
-section id. When VMEMMAP is enabled, those bits are returned, cpupid
-doesn't need its own member, and the page passes the VMEMMAP check.
+This patch (of 3):
 
-Restrict that check to the situation it was meant to check: that we
-are sizing the VMEMMAP page array correctly.
+For kernels built with CONFIG_PREEMPT, some C code may execute before or
+after the interrupt handler, while the hardirq count is zero.  In these
+cases, in_task() can return true.
 
-Says Arnd:
+A task can be interrupted in the middle of a KCOV_DISABLE ioctl while it
+resets the task's kcov data via kcov_task_init().  Instrumented code
+executed during this period will call __sanitizer_cov_trace_pc(), and as
+in_task() returns true, will inspect t->kcov_mode before trying to write
+to t->kcov_area.
 
-    Further experiments show that the build error already existed before,
-    but was only triggered with larger values of CONFIG_NR_CPU and/or
-    CONFIG_NODES_SHIFT that might be used in actual configurations but
-    not in randconfig builds.
+In kcov_init_task() we update t->kcov_{mode,area,size} with plain stores,
+which may be re-ordered, torn, etc.  Thus __sanitizer_cov_trace_pc() may
+see bogus values for any of these fields, and may attempt to write to
+memory which is not mapped.
 
-    With longer CPU and node masks, I could recreate the problem with
-    kernels as old as linux-4.7 when arm64 NUMA support got added.
+Let's avoid this by using WRITE_ONCE() to set t->kcov_mode, with a
+barrier() to ensure this is ordered before we clear t->kov_{area,size}.
+This ensures that any code execute while kcov_init_task() is preempted
+will either see valid values for t->kcov_{area,size}, or will see that
+t->kcov_mode is KCOV_MODE_DISABLED, and bail out without touching
+t->kcov_area.
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org
-Fixes: 1a2db300348b ("arm64, numa: Add NUMA support for arm64 platforms.")
-Fixes: 3e1907d5bf5a ("arm64: mm: move vmemmap region right below the linear region")
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/20180504135535.53744-2-mark.rutland@arm.com
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/mm/init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/kcov.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -468,11 +468,13 @@ void __init mem_init(void)
- 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
- #endif
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -103,7 +103,8 @@ static void kcov_put(struct kcov *kcov)
  
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
- 	/*
- 	 * Make sure we chose the upper bound of sizeof(struct page)
--	 * correctly.
-+	 * correctly when sizing the VMEMMAP array.
- 	 */
- 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
-+#endif
- 
- 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
- 		extern int sysctl_overcommit_memory;
+ void kcov_task_init(struct task_struct *t)
+ {
+-	t->kcov_mode = KCOV_MODE_DISABLED;
++	WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
++	barrier();
+ 	t->kcov_size = 0;
+ 	t->kcov_area = NULL;
+ 	t->kcov = NULL;
 
 
