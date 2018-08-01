@@ -2,115 +2,108 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC39C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A573C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B71320894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B71320894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 26CAE20894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="K71vuEAF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZHhpQWIP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CAE20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732151AbeHBAXd (ORCPT
+        id S1731969AbeHBA0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 20:23:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50268 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbeHBAXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 20:23:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 70DDE7262C;
-        Wed,  1 Aug 2018 22:35:31 +0000 (UTC)
-Received: from redhat.com (ovpn-121-8.rdu2.redhat.com [10.10.121.8])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D600A1C679;
-        Wed,  1 Aug 2018 22:35:27 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 01:35:27 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180802013230-mutt-send-email-mst@kernel.org>
-References: <20180720035941.6844-1-khandual@linux.vnet.ibm.com>
- <20180727095804.GA25592@arm.com>
- <20180730093414.GD26245@infradead.org>
- <20180730125100-mutt-send-email-mst@kernel.org>
- <20180730111802.GA9830@infradead.org>
- <20180730155633-mutt-send-email-mst@kernel.org>
- <20180731173052.GA17153@infradead.org>
- <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
- <20180801081637.GA14438@arm.com>
- <20180801083639.GF26378@infradead.org>
+        Wed, 1 Aug 2018 20:26:11 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:43882 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbeHBA0K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 20:26:10 -0400
+Received: by mail-yw0-f194.google.com with SMTP id l189-v6so81553ywb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 15:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
+        b=K71vuEAF6Ul/ChDUFpprKa6DfJSfo6VfhmTd08xIpt1t4v8L100wgX5ZVfNWhQ9TBO
+         qwNrds5awpFw9MHQEHxNKnmqGf3Ai39JM9XNpROHEyCaq1I9fhzBtOIkXmi2a/uYa97e
+         ePOr7KxW0qCm7lKGwfOkeTxLnikHvx0jCcvgA8i6xUWFHFoO7bHXNWSWjl4M+kg3duR5
+         rGCMCAJAFBi9NzB+dn+pN0FlQK4RKGeb7c4L66rNcRr/mjo3h3mJoVg8JgMX+7Cy47PV
+         uN3aY9Bo3Ko7ortdNIpEGNAK4Yk8whc6dbgk8acejiM1/wv01x+7UmAl0eTSUNrNrXtT
+         f2nw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
+        b=ZHhpQWIPJyWVPc/dACObUhc+31MNGt/oFC3Visnxj440Np2yluWAbXQMPLx9SKib9m
+         7t9GcVa5fByrShHhR4ElvWSdZ73ohVBg/HLD4IQV6r94KwDRluVeIzDalzU6i0g3xyWu
+         4wgjLZfkKynMqi7v2S2ndooE0HiTSNCdw3vDY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
+        b=N+Gj7ocPGKQVWvcLlVzKTbvUc5U9SLF6CqGv8wCimQ7K4GDHlrFErcQUCZCqmOSh6S
+         0lZ8JGgCSyyZ+xf0u+RKN0jcDFxqieTEP4gpjwbXdeRL7QuqJUJp/e/DbPCzmb6zRpFT
+         XMEkkKUSnewYmcms21DV7uGGN6shvsT1itMt+DDOvi1bV1VfFR2c/kL4suDPsc/6j0T1
+         eQI2eeQ672Iix6gFWcvjAFFz93LMdDosG8uSv+ehtPKaDTAvdYlpQUS7hf4joU/BUgj7
+         slVft57q5XtOqFL3M1Pixxu6JF+42ADrBQ709iyw0/z/9SF4ZWiZpNExXxUvruUnisGK
+         3vtQ==
+X-Gm-Message-State: AOUpUlH3MU/ZULUKBeQSnligjuUG8azTPEiTdxtAZTNmEfpKaUPs30gz
+        06sPCzhu9/oWXPQvxm7uwA+st+H91pOtvKxuEbYrJw==
+X-Google-Smtp-Source: AAOMgpd5I7pch1yz05pMbQIyjXljHevoJFnnlZNcAlG85mhltMCRshNJ2hWDmPkITdPCpbc/vGXQX3SC3Zl0U+GEdy8=
+X-Received: by 2002:a81:b248:: with SMTP id q69-v6mr170974ywh.38.1533163088735;
+ Wed, 01 Aug 2018 15:38:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801083639.GF26378@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 22:35:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 22:35:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 15:38:07 -0700 (PDT)
+In-Reply-To: <8da60549d9c649bc6f00cd82f70464b982ecb2a0.1533122560.git.geliangtang@gmail.com>
+References: <8da60549d9c649bc6f00cd82f70464b982ecb2a0.1533122560.git.geliangtang@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 1 Aug 2018 15:38:07 -0700
+X-Google-Sender-Auth: wTu1aK7XaoHpps5adyX4YW2JpV0
+Message-ID: <CAGXu5jKhP6FFYF0O=Vy6aMqJxD9Ubt80nX9Mh=guU8wgUzvzQw@mail.gmail.com>
+Subject: Re: [PATCH] pstore: add zstd compression support
+To:     Geliang Tang <geliangtang@gmail.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 01:36:39AM -0700, Christoph Hellwig wrote:
-> On Wed, Aug 01, 2018 at 09:16:38AM +0100, Will Deacon wrote:
-> > On arm/arm64, the problem we have is that legacy virtio devices on the MMIO
-> > transport (so definitely not PCI) have historically been advertised by qemu
-> > as not being cache coherent, but because the virtio core has bypassed DMA
-> > ops then everything has happened to work. If we blindly enable the arch DMA
-> > ops,
-> 
-> No one is suggesting that as far as I can tell.
-> 
-> > we'll plumb in the non-coherent ops and start getting data corruption,
-> > so we do need a way to quirk virtio as being "always coherent" if we want to
-> > use the DMA ops (which we do, because our emulation platforms have an IOMMU
-> > for all virtio devices).
-> 
-> >From all that I've gather so far: no you do not want that.  We really
-> need to figure out virtio "dma" interacts with the host / device.
-> 
-> If you look at the current iommu spec it does talk of physical address
-> with a little careveout for VIRTIO_F_IOMMU_PLATFORM.
-> 
-> So between that and our discussion in this thread and its previous
-> iterations I think we need to stick to the current always physical,
-> bypass system dma ops mode of virtio operation as the default.
-> 
-> We just need to figure out how to deal with devices that deviate
-> from the default.  One things is that VIRTIO_F_IOMMU_PLATFORM really
-> should become VIRTIO_F_PLATFORM_DMA to cover the cases of non-iommu
-> dma tweaks (offsets, cache flushing), which seems well in spirit of
-> the original design.
+On Wed, Aug 1, 2018 at 4:23 AM, Geliang Tang <geliangtang@gmail.com> wrote:
+> This patch added the 6th compression algorithm support for pstore: zstd.
+>
+> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
 
-Well I wouldn't say that. VIRTIO_F_IOMMU_PLATFORM is for guest
-programmable protection which is designed for things like userspace
-drivers but still very much which a CPU doing the accesses. I think
-VIRTIO_F_IO_BARRIER needs to be extended to VIRTIO_F_PLATFORM_DMA.
+Thanks! I've applied this to my tree and it should be visible in -next soon.
 
->  The other issue is VIRTIO_F_IO_BARRIER
-> which is very vaguely defined, and which needs a better definition.
-> And last but not least we'll need some text explaining the challenges
-> of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
-> is what would basically cover them, but a good description including
-> an explanation of why these matter.
+> +#if IS_ENABLED(CONFIG_PSTORE_ZSTD_COMPRESS)
+> +static int zbufsize_zstd(size_t size)
+> +{
+> +       return ZSTD_compressBound(size);
+> +}
+> +#endif
 
-I think VIRTIO_F_IOMMU_PLATFORM + VIRTIO_F_PLATFORM_DMA but yea.
+One thing I've been pondering is if there might be a way to extend the
+crypto compression API to provide the "buffer output size" interface
+directly. If that happened, pstore wouldn't need per-compression-algo
+entries like it still has.
+
+-Kees
 
 -- 
-MST
+Kees Cook
+Pixel Security
