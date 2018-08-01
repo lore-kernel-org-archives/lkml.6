@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529EEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD18C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0861B208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2418E208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RdF/OcGG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CwZZHkrX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0861B208A2
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZEXaot6x";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WGVtfibX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2418E208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733175AbeHAHXQ (ORCPT
+        id S1733229AbeHAHXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:23:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51606 "EHLO
+        Wed, 1 Aug 2018 03:23:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51736 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731897AbeHAHXP (ORCPT
+        with ESMTP id S1731897AbeHAHXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:23:15 -0400
+        Wed, 1 Aug 2018 03:23:18 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4B87A606AC; Wed,  1 Aug 2018 05:39:24 +0000 (UTC)
+        id 98AF360B7A; Wed,  1 Aug 2018 05:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533101965;
-        bh=svhKuuwb/cVy1S1ckhF4E00Qbwt87n6Tvgn3udtySbo=;
+        s=default; t=1533101967;
+        bh=kTdXujUNh+/gLe7/yg3WsFY29XtgH3REhfBGhc9a77M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RdF/OcGGANMW6PxC5I5mSM53QocXttJhtOrvJ+obztrYoqnykzq5KaA1Xktp6EtqD
-         vhTVDDJoyKwDI5DiW3nqBHnDr0UfsVySm0u4s+cK3yQ6wlQkhIG5TG9HOekVRlbZ/M
-         96GROahWPllcVwIV/fMuFd6ErO8vs6T6g6jhS9rQ=
+        b=ZEXaot6xjJauL7A2xTjH8Tgo6ogMQgVDGicdMOHgLbeYYWQCIo352WFJlkSAUq3wR
+         2AQrShAvOW53pp3lS1FxVEWmAYseIl7V6Bhgbbl208yaBfuTYpzLyMU8r+F5zYwi7z
+         DP8E2KS1aLUaH8FyUoO9hTq5X7t2rsC5ir+nXHf4=
 Received: from corebsp04-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: mshettel@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9A051606DD;
-        Wed,  1 Aug 2018 05:39:22 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D2B360B62;
+        Wed,  1 Aug 2018 05:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533101963;
-        bh=svhKuuwb/cVy1S1ckhF4E00Qbwt87n6Tvgn3udtySbo=;
+        s=default; t=1533101966;
+        bh=kTdXujUNh+/gLe7/yg3WsFY29XtgH3REhfBGhc9a77M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CwZZHkrX4OgtspSijQGx8KPT2vJVQl3ByMBfBTcncrXbzhnB0bP0/YpPf+0+/A3Mr
-         Dh4kUmJbD/GRhJuUP4BGLmvsZNfv3tV8FSo14MYSXRkSPBqMf5sICybGJJl5dA6nfu
-         fklmrWCRu0rq+Tes/hhSTnMbz9oy+PXz2JJP2U5Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A051606DD
+        b=WGVtfibXXHkA4qvGZyNYSBTymMPUN7CkLbFyoFfvbznEwva1xGLsF4joQ+p8HIqZq
+         /1iD9Zpi5IbvXGwbM+5LFYCVPRWtXXLN992ARZ1VyuMrCMFoILWuI/kWdh8fxBHzQs
+         Ygm9WDaNfqjUNrHYdwnr7xRRhBpItHsyByLhtLz0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D2B360B62
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mshettel@codeaurora.org
 From:   Mike Shettel <mshettel@codeaurora.org>
@@ -60,9 +60,9 @@ Cc:     Mike Shettel <mshettel@codeaurora.org>,
         linux-kernel@vger.kernel.org, evgreen@chromium.org,
         acourbot@chromium.org, swboyd@chromium.org, dianders@chromium.org,
         mka@chromium.org, bjorn.andersson@linaro.org
-Subject: [PATCH v1 2/3] dt-bindings: i3c: Document Qualcomm GENI I3C master bindings
-Date:   Tue, 31 Jul 2018 23:39:01 -0600
-Message-Id: <1533101942-29442-3-git-send-email-mshettel@codeaurora.org>
+Subject: [PATCH v1 3/3] MAINTAINERS: Add Qualcomm Generic Interface I3C driver maintainer
+Date:   Tue, 31 Jul 2018 23:39:02 -0600
+Message-Id: <1533101942-29442-4-git-send-email-mshettel@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533101942-29442-1-git-send-email-mshettel@codeaurora.org>
 References: <1533101942-29442-1-git-send-email-mshettel@codeaurora.org>
@@ -73,60 +73,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Shettel <mshettel@codeaurora.org>
 ---
- .../devicetree/bindings/i3c/qcom,geni-i3c.txt      | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/qcom,geni-i3c.txt
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i3c/qcom,geni-i3c.txt b/Documentation/devicetree/bindings/i3c/qcom,geni-i3c.txt
-new file mode 100644
-index 0000000..8b76fda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/qcom,geni-i3c.txt
-@@ -0,0 +1,44 @@
-+Bindings for Qualcomm Geni I3C master block
-+===========================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 622327b..775829c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10943,6 +10943,14 @@ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	drivers/net/ethernet/qualcomm/emac/
+ 
++QUALCOMM GENERIC INTERFACE I3C DRIVER
++M:	Alok Chauhan <alokc@codeaurora.org>
++M:	Mike Shettel <mshettel@codeaurora.org>
++L:	linux-i2c@vger.kernel.org
++L:	linux-arm-msm@vger.kernel.org
++S:	Supported
++F:	drivers/i3c/master/i3c-master-qcom-geni.c
 +
-+Required properties:
-+--------------------
-+- compatible: shall be "qcom,geni-i3c"
-+- clocks: shall reference the se clock
-+- clock-names: shall contain clock name corresponding to the serial engine
-+- interrupts: the interrupt line connected to this I3C master
-+- reg: I3C master registers
-+
-+Optional properties:
-+--------------------
-+- se-clock-frequency: Source serial clock frequency to use
-+- dfs-index: Dynamic frequency scaling table index to use
-+
-+Mandatory properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- #address-cells: shall be set to 3
-+- #size-cells: shall be set to 0
-+
-+Optional properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- i2c-scl-hz
-+- i3c-scl-hz
-+
-+I3C device connected on the bus follow the generic description (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details).
-+
-+Example:
-+
-+	i3c-master@0d040000 {
-+		compatible = "qcom,geni-i3c";
-+		clocks = <&clock_gcc GCC_QUPV3_WRAP0_S0_CLK>;
-+		clock-names = "se";
-+		interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+		reg = <0x0d040000 0x4000>;
-+		#address-cells = <3>;
-+		#size-cells = <0>;
-+		i2c-scl-hz = <100000>;
-+	};
-+
+ QUALCOMM HEXAGON ARCHITECTURE
+ M:	Richard Kuo <rkuo@codeaurora.org>
+ L:	linux-hexagon@vger.kernel.org
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
