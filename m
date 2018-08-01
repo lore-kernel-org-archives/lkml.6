@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5661C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E56EEC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E732083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E732083D
+	by mail.kernel.org (Postfix) with ESMTP id A8FE82083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FE82083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404393AbeHATDi (ORCPT
+        id S1733300AbeHAULm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:03:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45946 "EHLO
+        Wed, 1 Aug 2018 16:11:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404311AbeHATDh (ORCPT
+        with ESMTP id S2404346AbeHATDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:37 -0400
+        Wed, 1 Aug 2018 15:03:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8DB0128F;
-        Wed,  1 Aug 2018 17:10:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8ABA5FEC;
+        Wed,  1 Aug 2018 16:59:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 315/336] netdevsim: dont leak devlink resources
-Date:   Wed,  1 Aug 2018 18:50:50 +0200
-Message-Id: <20180801165041.098352498@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 088/336] PCI: Fix devm_pci_alloc_host_bridge() memory leak
+Date:   Wed,  1 Aug 2018 18:47:03 +0200
+Message-Id: <20180801165032.542151522@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,31 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-[ Upstream commit c259b4fb33ee6e7667bf1d34bf0803b7c5fdbdce ]
+[ Upstream commit 3bbce531788719749520f28052cabdef16af6b16 ]
 
-Devlink resources registered with devlink_resource_register() have
-to be unregistered.
+Fix a memory leak by freeing the PCI resource list in
+devm_pci_release_host_bridge_dev().
 
-Fixes: 37923ed6b8ce ("netdevsim: Add simple FIB resource controller via devlink")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5c3f18cce083 ("PCI: Add devm_pci_alloc_host_bridge() interface")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/netdevsim/devlink.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/probe.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/netdevsim/devlink.c
-+++ b/drivers/net/netdevsim/devlink.c
-@@ -206,6 +206,7 @@ void nsim_devlink_teardown(struct netdev
- 		struct net *net = nsim_to_net(ns);
- 		bool *reg_devlink = net_generic(net, nsim_devlink_id);
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -526,12 +526,14 @@ static void devm_pci_release_host_bridge
  
-+		devlink_resources_unregister(ns->devlink, NULL);
- 		devlink_unregister(ns->devlink);
- 		devlink_free(ns->devlink);
- 		ns->devlink = NULL;
+ 	if (bridge->release_fn)
+ 		bridge->release_fn(bridge);
++
++	pci_free_resource_list(&bridge->windows);
+ }
+ 
+ static void pci_release_host_bridge_dev(struct device *dev)
+ {
+ 	devm_pci_release_host_bridge_dev(dev);
+-	pci_free_host_bridge(to_pci_host_bridge(dev));
++	kfree(to_pci_host_bridge(dev));
+ }
+ 
+ struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
 
 
