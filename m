@@ -6,95 +6,71 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F87FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F332C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC31D208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC31D208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AA660208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA660208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405173AbeHATJW (ORCPT
+        id S2406274AbeHATJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50758 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389759AbeHATJV (ORCPT
+        Wed, 1 Aug 2018 15:09:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46542 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405286AbeHATJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:21 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD9A4CC3;
-        Wed,  1 Aug 2018 17:22:39 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>, Martin Wilck <mwilck@suse.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 216/246] blkdev: __blkdev_direct_IO_simple: fix leak in error case
-Date:   Wed,  1 Aug 2018 18:52:06 +0200
-Message-Id: <20180801165022.052181579@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Wed, 1 Aug 2018 15:09:25 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fkupe-0002aL-06; Wed, 01 Aug 2018 17:22:42 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Vasyl Gomonovych <gomonovych@gmail.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers: net: lmc: fix case value for target abort error
+Date:   Wed,  1 Aug 2018 18:22:41 +0100
+Message-Id: <20180801172241.1974-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Colin Ian King <colin.king@canonical.com>
 
-------------------
+Current value for a target abort error is 0x010, however, this value
+should in fact be 0x002.  As it stands, the range of error is 0..7 so
+it is currently never being detected.  This bug has been in the driver
+since the early 2.6.12 days (or before).
 
-From: Martin Wilck <mwilck@suse.com>
+Detected by CoverityScan, CID#744290 ("Logically dead code")
 
-commit 9362dd1109f87a9d0a798fbc890cb339c171ed35 upstream.
-
-Fixes: 72ecad22d9f1 ("block: support a full bio worth of IO for simplified bdev direct-io")
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin Wilck <mwilck@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/block_dev.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/wan/lmc/lmc_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -231,7 +231,7 @@ __blkdev_direct_IO_simple(struct kiocb *
- 
- 	ret = bio_iov_iter_get_pages(&bio, iter);
- 	if (unlikely(ret))
--		return ret;
-+		goto out;
- 	ret = bio.bi_iter.bi_size;
- 
- 	if (iov_iter_rw(iter) == READ) {
-@@ -260,12 +260,13 @@ __blkdev_direct_IO_simple(struct kiocb *
- 		put_page(bvec->bv_page);
- 	}
- 
--	if (vecs != inline_vecs)
--		kfree(vecs);
--
- 	if (unlikely(bio.bi_status))
- 		ret = blk_status_to_errno(bio.bi_status);
- 
-+out:
-+	if (vecs != inline_vecs)
-+		kfree(vecs);
-+
- 	bio_uninit(&bio);
- 
- 	return ret;
-
+diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
+index 093bd21f574d..4907453f17f5 100644
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -1362,7 +1362,7 @@ static irqreturn_t lmc_interrupt (int irq, void *dev_instance) /*fold00*/
+             case 0x001:
+                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
+                 break;
+-            case 0x010:
++            case 0x002:
+                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
+                 break;
+             default:
+-- 
+2.17.1
 
