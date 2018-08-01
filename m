@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E27D8C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D627C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F0D520862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F0D520862
+	by mail.kernel.org (Postfix) with ESMTP id 23F2C20862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F2C20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408051AbeHATZN (ORCPT
+        id S2408150AbeHATZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:25:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52918 "EHLO
+        Wed, 1 Aug 2018 15:25:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436520AbeHATSi (ORCPT
+        with ESMTP id S2436521AbeHATSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:18:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1005DDF;
-        Wed,  1 Aug 2018 16:53:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7F77E62;
+        Wed,  1 Aug 2018 16:54:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
-        Clint Taylor <clinton.a.taylor@intel.com>,
-        Daniel Scheller <d.scheller.oss@gmail.com>,
-        Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.17 014/336] drm/i915/glk: Add Quirk for GLK NUC HDMI port issues.
-Date:   Wed,  1 Aug 2018 18:45:49 +0200
-Message-Id: <20180801165029.496921690@linuxfoundation.org>
+        stable@vger.kernel.org, Kirti Wankhede <kwankhede@nvidia.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 029/336] vfio/mdev: Check globally for duplicate devices
+Date:   Wed,  1 Aug 2018 18:46:04 +0200
+Message-Id: <20180801165030.168299759@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,140 +54,284 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Clint Taylor <clinton.a.taylor@intel.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-commit 0ca9488193e61ec5f31a631d8147f74525629e8a upstream.
+[ Upstream commit 002fe996f67f4f46d8917b14cfb6e4313c20685a ]
 
-On GLK NUC platforms the HDMI retiming buffer needs additional disabled
-time to correctly sync to a faster incoming signal.
+When we create an mdev device, we check for duplicates against the
+parent device and return -EEXIST if found, but the mdev device
+namespace is global since we'll link all devices from the bus.  We do
+catch this later in sysfs_do_create_link_sd() to return -EEXIST, but
+with it comes a kernel warning and stack trace for trying to create
+duplicate sysfs links, which makes it an undesirable response.
 
-When measured on a scope the highspeed lines of the HDMI clock turn off
- for ~400uS during a normal resolution change. The HDMI retimer on the
- GLK NUC appears to require at least a full frame of quiet time before a
-new faster clock can be correctly sync'd. Wait 100ms due to msleep
-inaccuracies while waiting for a completed frame. Add a quirk to the
-driver for GLK boards that use ITE66317 HDMI retimers.
+Therefore we should really be looking for duplicates across all mdev
+parent devices, or as implemented here, against our mdev device list.
+Using mdev_list to prevent duplicates means that we can remove
+mdev_parent.lock, but in order not to serialize mdev device creation
+and removal globally, we add mdev_device.active which allows UUIDs to
+be reserved such that we can drop the mdev_list_lock before the mdev
+device is fully in place.
 
-V2: Add more devices to the quirk list
-V3: Delay increased to 100ms, check to confirm crtc type is HDMI.
-V4: crtc type check extended to include _DDI and whitespace fixes
-v5: Fix white spaces, remove the macro for delay. Revert the crtc type
-    check introduced in v4.
+Two behavioral notes; first, mdev_parent.lock had the side-effect of
+serializing mdev create and remove ops per parent device.  This was
+an implementation detail, not an intentional guarantee provided to
+the mdev vendor drivers.  Vendor drivers can trivially provide this
+serialization internally if necessary.  Second, review comments note
+the new -EAGAIN behavior when the device, and in particular the remove
+attribute, becomes visible in sysfs.  If a remove is triggered prior
+to completion of mdev_device_create() the user will see a -EAGAIN
+error.  While the errno is different, receiving an error during this
+period is not, the previous implementation returned -ENODEV for the
+same condition.  Furthermore, the consistency to the user is improved
+in the case where mdev_device_remove_ops() returns error.  Previously
+concurrent calls to mdev_device_remove() could see the device
+disappear with -ENODEV and return in the case of error.  Now a user
+would see -EAGAIN while the device is in this transitory state.
 
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: <stable@vger.kernel.org> # v4.14+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105887
-Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
-Tested-by: Daniel Scheller <d.scheller.oss@gmail.com>
-Signed-off-by: Radhakrishna Sripada <radhakrishna.sripada@intel.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Reviewed-by: Imre Deak <imre.deak@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180710200205.1478-1-radhakrishna.sripada@intel.com
-(cherry picked from commit 90c3e2198777aaa355b6994a31a79c636c8d4306)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Reviewed-by: Kirti Wankhede <kwankhede@nvidia.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
+Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/i915_drv.h      |    1 +
- drivers/gpu/drm/i915/intel_ddi.c     |   13 +++++++++++--
- drivers/gpu/drm/i915/intel_display.c |   21 ++++++++++++++++++++-
- drivers/gpu/drm/i915/intel_drv.h     |    3 +--
- 4 files changed, 33 insertions(+), 5 deletions(-)
+ Documentation/vfio-mediated-device.txt |    5 +
+ drivers/vfio/mdev/mdev_core.c          |  102 +++++++++++----------------------
+ drivers/vfio/mdev/mdev_private.h       |    2 
+ 3 files changed, 42 insertions(+), 67 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -804,6 +804,7 @@ enum intel_sbi_destination {
- #define QUIRK_BACKLIGHT_PRESENT (1<<3)
- #define QUIRK_PIN_SWIZZLED_PAGES (1<<5)
- #define QUIRK_INCREASE_T12_DELAY (1<<6)
-+#define QUIRK_INCREASE_DDI_DISABLED_TIME (1<<7)
+--- a/Documentation/vfio-mediated-device.txt
++++ b/Documentation/vfio-mediated-device.txt
+@@ -145,6 +145,11 @@ The functions in the mdev_parent_ops str
+ * create: allocate basic resources in a driver for a mediated device
+ * remove: free resources in a driver when a mediated device is destroyed
  
- struct intel_fbdev;
- struct intel_fbc_work;
---- a/drivers/gpu/drm/i915/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/intel_ddi.c
-@@ -1605,15 +1605,24 @@ void intel_ddi_enable_transcoder_func(co
- 	I915_WRITE(TRANS_DDI_FUNC_CTL(cpu_transcoder), temp);
++(Note that mdev-core provides no implicit serialization of create/remove
++callbacks per mdev parent device, per mdev type, or any other categorization.
++Vendor drivers are expected to be fully asynchronous in this respect or
++provide their own internal resource protection.)
++
+ The callbacks in the mdev_parent_ops structure are as follows:
+ 
+ * open: open callback of mediated device
+--- a/drivers/vfio/mdev/mdev_core.c
++++ b/drivers/vfio/mdev/mdev_core.c
+@@ -66,34 +66,6 @@ uuid_le mdev_uuid(struct mdev_device *md
  }
+ EXPORT_SYMBOL(mdev_uuid);
  
--void intel_ddi_disable_transcoder_func(struct drm_i915_private *dev_priv,
--				       enum transcoder cpu_transcoder)
-+void intel_ddi_disable_transcoder_func(const struct intel_crtc_state *crtc_state)
+-static int _find_mdev_device(struct device *dev, void *data)
+-{
+-	struct mdev_device *mdev;
+-
+-	if (!dev_is_mdev(dev))
+-		return 0;
+-
+-	mdev = to_mdev_device(dev);
+-
+-	if (uuid_le_cmp(mdev->uuid, *(uuid_le *)data) == 0)
+-		return 1;
+-
+-	return 0;
+-}
+-
+-static bool mdev_device_exist(struct mdev_parent *parent, uuid_le uuid)
+-{
+-	struct device *dev;
+-
+-	dev = device_find_child(parent->dev, &uuid, _find_mdev_device);
+-	if (dev) {
+-		put_device(dev);
+-		return true;
+-	}
+-
+-	return false;
+-}
+-
+ /* Should be called holding parent_list_lock */
+ static struct mdev_parent *__find_parent_device(struct device *dev)
  {
-+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->base.crtc);
-+	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
-+	enum transcoder cpu_transcoder = crtc_state->cpu_transcoder;
- 	i915_reg_t reg = TRANS_DDI_FUNC_CTL(cpu_transcoder);
- 	uint32_t val = I915_READ(reg);
+@@ -221,7 +193,6 @@ int mdev_register_device(struct device *
+ 	}
  
- 	val &= ~(TRANS_DDI_FUNC_ENABLE | TRANS_DDI_PORT_MASK | TRANS_DDI_DP_VC_PAYLOAD_ALLOC);
- 	val |= TRANS_DDI_PORT_NONE;
- 	I915_WRITE(reg, val);
+ 	kref_init(&parent->ref);
+-	mutex_init(&parent->lock);
+ 
+ 	parent->dev = dev;
+ 	parent->ops = ops;
+@@ -297,6 +268,10 @@ static void mdev_device_release(struct d
+ {
+ 	struct mdev_device *mdev = to_mdev_device(dev);
+ 
++	mutex_lock(&mdev_list_lock);
++	list_del(&mdev->next);
++	mutex_unlock(&mdev_list_lock);
 +
-+	if (dev_priv->quirks & QUIRK_INCREASE_DDI_DISABLED_TIME &&
-+	    intel_crtc_has_type(crtc_state, INTEL_OUTPUT_HDMI)) {
-+		DRM_DEBUG_KMS("Quirk Increase DDI disabled time\n");
-+		/* Quirk time at 100ms for reliable operation */
-+		msleep(100);
+ 	dev_dbg(&mdev->dev, "MDEV: destroying\n");
+ 	kfree(mdev);
+ }
+@@ -304,7 +279,7 @@ static void mdev_device_release(struct d
+ int mdev_device_create(struct kobject *kobj, struct device *dev, uuid_le uuid)
+ {
+ 	int ret;
+-	struct mdev_device *mdev;
++	struct mdev_device *mdev, *tmp;
+ 	struct mdev_parent *parent;
+ 	struct mdev_type *type = to_mdev_type(kobj);
+ 
+@@ -312,21 +287,28 @@ int mdev_device_create(struct kobject *k
+ 	if (!parent)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&parent->lock);
++	mutex_lock(&mdev_list_lock);
+ 
+ 	/* Check for duplicate */
+-	if (mdev_device_exist(parent, uuid)) {
+-		ret = -EEXIST;
+-		goto create_err;
++	list_for_each_entry(tmp, &mdev_list, next) {
++		if (!uuid_le_cmp(tmp->uuid, uuid)) {
++			mutex_unlock(&mdev_list_lock);
++			ret = -EEXIST;
++			goto mdev_fail;
++		}
+ 	}
+ 
+ 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev) {
++		mutex_unlock(&mdev_list_lock);
+ 		ret = -ENOMEM;
+-		goto create_err;
++		goto mdev_fail;
+ 	}
+ 
+ 	memcpy(&mdev->uuid, &uuid, sizeof(uuid_le));
++	list_add(&mdev->next, &mdev_list);
++	mutex_unlock(&mdev_list_lock);
++
+ 	mdev->parent = parent;
+ 	kref_init(&mdev->ref);
+ 
+@@ -338,35 +320,28 @@ int mdev_device_create(struct kobject *k
+ 	ret = device_register(&mdev->dev);
+ 	if (ret) {
+ 		put_device(&mdev->dev);
+-		goto create_err;
++		goto mdev_fail;
+ 	}
+ 
+ 	ret = mdev_device_create_ops(kobj, mdev);
+ 	if (ret)
+-		goto create_failed;
++		goto create_fail;
+ 
+ 	ret = mdev_create_sysfs_files(&mdev->dev, type);
+ 	if (ret) {
+ 		mdev_device_remove_ops(mdev, true);
+-		goto create_failed;
++		goto create_fail;
+ 	}
+ 
+ 	mdev->type_kobj = kobj;
++	mdev->active = true;
+ 	dev_dbg(&mdev->dev, "MDEV: created\n");
+ 
+-	mutex_unlock(&parent->lock);
+-
+-	mutex_lock(&mdev_list_lock);
+-	list_add(&mdev->next, &mdev_list);
+-	mutex_unlock(&mdev_list_lock);
+-
+-	return ret;
++	return 0;
+ 
+-create_failed:
++create_fail:
+ 	device_unregister(&mdev->dev);
+-
+-create_err:
+-	mutex_unlock(&parent->lock);
++mdev_fail:
+ 	mdev_put_parent(parent);
+ 	return ret;
+ }
+@@ -377,44 +352,39 @@ int mdev_device_remove(struct device *de
+ 	struct mdev_parent *parent;
+ 	struct mdev_type *type;
+ 	int ret;
+-	bool found = false;
+ 
+ 	mdev = to_mdev_device(dev);
+ 
+ 	mutex_lock(&mdev_list_lock);
+ 	list_for_each_entry(tmp, &mdev_list, next) {
+-		if (tmp == mdev) {
+-			found = true;
++		if (tmp == mdev)
+ 			break;
+-		}
+ 	}
+ 
+-	if (found)
+-		list_del(&mdev->next);
++	if (tmp != mdev) {
++		mutex_unlock(&mdev_list_lock);
++		return -ENODEV;
 +	}
- }
  
- int intel_ddi_toggle_hdcp_signalling(struct intel_encoder *intel_encoder,
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -5685,7 +5685,7 @@ static void haswell_crtc_disable(struct
- 		intel_ddi_set_vc_payload_alloc(intel_crtc->config, false);
+-	mutex_unlock(&mdev_list_lock);
++	if (!mdev->active) {
++		mutex_unlock(&mdev_list_lock);
++		return -EAGAIN;
++	}
  
- 	if (!transcoder_is_dsi(cpu_transcoder))
--		intel_ddi_disable_transcoder_func(dev_priv, cpu_transcoder);
-+		intel_ddi_disable_transcoder_func(old_crtc_state);
+-	if (!found)
+-		return -ENODEV;
++	mdev->active = false;
++	mutex_unlock(&mdev_list_lock);
  
- 	if (INTEL_GEN(dev_priv) >= 9)
- 		skylake_scaler_disable(intel_crtc);
-@@ -14388,6 +14388,18 @@ static void quirk_increase_t12_delay(str
- 	DRM_INFO("Applying T12 delay quirk\n");
- }
+ 	type = to_mdev_type(mdev->type_kobj);
+ 	parent = mdev->parent;
+-	mutex_lock(&parent->lock);
  
-+/*
-+ * GeminiLake NUC HDMI outputs require additional off time
-+ * this allows the onboard retimer to correctly sync to signal
-+ */
-+static void quirk_increase_ddi_disabled_time(struct drm_device *dev)
-+{
-+	struct drm_i915_private *dev_priv = to_i915(dev);
-+
-+	dev_priv->quirks |= QUIRK_INCREASE_DDI_DISABLED_TIME;
-+	DRM_INFO("Applying Increase DDI Disabled quirk\n");
-+}
-+
- struct intel_quirk {
- 	int device;
- 	int subsystem_vendor;
-@@ -14474,6 +14486,13 @@ static struct intel_quirk intel_quirks[]
+ 	ret = mdev_device_remove_ops(mdev, force_remove);
+ 	if (ret) {
+-		mutex_unlock(&parent->lock);
+-
+-		mutex_lock(&mdev_list_lock);
+-		list_add(&mdev->next, &mdev_list);
+-		mutex_unlock(&mdev_list_lock);
+-
++		mdev->active = true;
+ 		return ret;
+ 	}
  
- 	/* Toshiba Satellite P50-C-18C */
- 	{ 0x191B, 0x1179, 0xF840, quirk_increase_t12_delay },
-+
-+	/* GeminiLake NUC */
-+	{ 0x3185, 0x8086, 0x2072, quirk_increase_ddi_disabled_time },
-+	{ 0x3184, 0x8086, 0x2072, quirk_increase_ddi_disabled_time },
-+	/* ASRock ITX*/
-+	{ 0x3185, 0x1849, 0x2212, quirk_increase_ddi_disabled_time },
-+	{ 0x3184, 0x1849, 0x2212, quirk_increase_ddi_disabled_time },
+ 	mdev_remove_sysfs_files(dev, type);
+ 	device_unregister(dev);
+-	mutex_unlock(&parent->lock);
+ 	mdev_put_parent(parent);
+ 
+ 	return 0;
+--- a/drivers/vfio/mdev/mdev_private.h
++++ b/drivers/vfio/mdev/mdev_private.h
+@@ -20,7 +20,6 @@ struct mdev_parent {
+ 	struct device *dev;
+ 	const struct mdev_parent_ops *ops;
+ 	struct kref ref;
+-	struct mutex lock;
+ 	struct list_head next;
+ 	struct kset *mdev_types_kset;
+ 	struct list_head type_list;
+@@ -34,6 +33,7 @@ struct mdev_device {
+ 	struct kref ref;
+ 	struct list_head next;
+ 	struct kobject *type_kobj;
++	bool active;
  };
  
- static void intel_init_quirks(struct drm_device *dev)
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -1368,8 +1368,7 @@ void hsw_fdi_link_train(struct intel_crt
- void intel_ddi_init(struct drm_i915_private *dev_priv, enum port port);
- bool intel_ddi_get_hw_state(struct intel_encoder *encoder, enum pipe *pipe);
- void intel_ddi_enable_transcoder_func(const struct intel_crtc_state *crtc_state);
--void intel_ddi_disable_transcoder_func(struct drm_i915_private *dev_priv,
--				       enum transcoder cpu_transcoder);
-+void intel_ddi_disable_transcoder_func(const struct intel_crtc_state *crtc_state);
- void intel_ddi_enable_pipe_clock(const struct intel_crtc_state *crtc_state);
- void intel_ddi_disable_pipe_clock(const  struct intel_crtc_state *crtc_state);
- struct intel_encoder *
+ #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
 
 
