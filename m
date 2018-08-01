@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD2EC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061F7C46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D41820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D41820844
+	by mail.kernel.org (Postfix) with ESMTP id B913320862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B913320862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405323AbeHATGs (ORCPT
+        id S2405335AbeHATGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:06:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49042 "EHLO
+        Wed, 1 Aug 2018 15:06:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbeHATGr (ORCPT
+        with ESMTP id S2403967AbeHATGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:06:47 -0400
+        Wed, 1 Aug 2018 15:06:49 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C77FED38;
-        Wed,  1 Aug 2018 17:20:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0E96D6A;
+        Wed,  1 Aug 2018 17:20:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Oucharek <doug.s.oucharek@intel.com>,
-        Andrew Perepechko <andrew.perepechko@seagate.com>,
-        Dmitry Eremin <dmitry.eremin@intel.com>,
-        James Simmons <uja.ornl@yahoo.com>,
-        Oleg Drokin <oleg.drokin@intel.com>,
-        Doug Oucharek <dougso@me.com>,
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 166/246] staging: lustre: o2iblnd: Fix FastReg map/unmap for MLX5
-Date:   Wed,  1 Aug 2018 18:51:16 +0200
-Message-Id: <20180801165019.688313360@linuxfoundation.org>
+Subject: [PATCH 4.14 167/246] thermal: exynos: fix setting rising_threshold for Exynos5433
+Date:   Wed,  1 Aug 2018 18:51:17 +0200
+Message-Id: <20180801165019.733979912@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -55,80 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Oucharek <dougso@me.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-[ Upstream commit 24d4b7c8de007cff9c7d83c06ae76099fdcce008 ]
+[ Upstream commit 8bfc218d0ebbabcba8ed2b8ec1831e0cf1f71629 ]
 
-The FastReg support in ko2iblnd was not unmapping pool items
-causing the items to leak.  In addition, the mapping code
-is not growing the pool like we do with FMR.
+Add missing clearing of the previous value when setting rising
+temperature threshold.
 
-This patch makes sure we are unmapping FastReg pool elements
-when we are done with them.  It also makes sure the pool
-will grow when we depleat the pool.
-
-Signed-off-by: Doug Oucharek <doug.s.oucharek@intel.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9472
-Reviewed-on: https://review.whamcloud.com/27015
-Reviewed-by: Andrew Perepechko <andrew.perepechko@seagate.com>
-Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
-Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
-Signed-off-by: Doug Oucharek <dougso@me.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c    |    2 +-
- drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   12 ++++--------
- 2 files changed, 5 insertions(+), 9 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-@@ -1710,7 +1710,7 @@ int kiblnd_fmr_pool_map(struct kib_fmr_p
- 				return 0;
- 			}
- 			spin_unlock(&fps->fps_lock);
--			rc = -EBUSY;
-+			rc = -EAGAIN;
- 		}
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -598,6 +598,7 @@ static int exynos5433_tmu_initialize(str
+ 		threshold_code = temp_to_code(data, temp);
  
- 		spin_lock(&fps->fps_lock);
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-@@ -47,7 +47,7 @@ static int kiblnd_init_rdma(struct kib_c
- 			    __u64 dstcookie);
- static void kiblnd_queue_tx_locked(struct kib_tx *tx, struct kib_conn *conn);
- static void kiblnd_queue_tx(struct kib_tx *tx, struct kib_conn *conn);
--static void kiblnd_unmap_tx(struct lnet_ni *ni, struct kib_tx *tx);
-+static void kiblnd_unmap_tx(struct kib_tx *tx);
- static void kiblnd_check_sends_locked(struct kib_conn *conn);
+ 		rising_threshold = readl(data->base + rising_reg_offset);
++		rising_threshold &= ~(0xff << j * 8);
+ 		rising_threshold |= (threshold_code << j * 8);
+ 		writel(rising_threshold, data->base + rising_reg_offset);
  
- static void
-@@ -65,7 +65,7 @@ kiblnd_tx_done(struct lnet_ni *ni, struc
- 	LASSERT(!tx->tx_waiting);	      /* mustn't be awaiting peer response */
- 	LASSERT(tx->tx_pool);
- 
--	kiblnd_unmap_tx(ni, tx);
-+	kiblnd_unmap_tx(tx);
- 
- 	/* tx may have up to 2 lnet msgs to finalise */
- 	lntmsg[0] = tx->tx_lntmsg[0]; tx->tx_lntmsg[0] = NULL;
-@@ -590,13 +590,9 @@ kiblnd_fmr_map_tx(struct kib_net *net, s
- 	return 0;
- }
- 
--static void kiblnd_unmap_tx(struct lnet_ni *ni, struct kib_tx *tx)
-+static void kiblnd_unmap_tx(struct kib_tx *tx)
- {
--	struct kib_net *net = ni->ni_data;
--
--	LASSERT(net);
--
--	if (net->ibn_fmr_ps)
-+	if (tx->fmr.fmr_pfmr || tx->fmr.fmr_frd)
- 		kiblnd_fmr_pool_unmap(&tx->fmr, tx->tx_status);
- 
- 	if (tx->tx_nfrags) {
 
 
