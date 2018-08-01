@@ -2,43 +2,44 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06927C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F47C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988E720840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988E720840
+	by mail.kernel.org (Postfix) with ESMTP id B64F220841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64F220841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbeHAUUR (ORCPT
+        id S1733303AbeHAUUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:20:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
+        Wed, 1 Aug 2018 16:20:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404193AbeHATDe (ORCPT
+        with ESMTP id S2404170AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E16031045;
-        Wed,  1 Aug 2018 17:00:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67EA0F88;
+        Wed,  1 Aug 2018 16:57:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@iguana.be>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 144/336] watchdog: renesas-wdt: Add support for the R8A77965 WDT
-Date:   Wed,  1 Aug 2018 18:47:59 +0200
-Message-Id: <20180801165034.653469480@linuxfoundation.org>
+Subject: [PATCH 4.17 039/336] perf tools: Fix pmu events parsing rule
+Date:   Wed,  1 Aug 2018 18:46:14 +0200
+Message-Id: <20180801165030.580386234@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -55,35 +56,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit b1eb8fedc01499132ced4b2a44b3ab3855c4e681 ]
+[ Upstream commit ceac7b79df7bd67ef9aaf464b0179a2686aff4ee ]
 
-Document support for the Watchdog Timer (WDT) Controller in the Renesas
-R-Car M3-N (R8A77965) SoC. No driver update is needed.
+Currently all the event parsing fails end up
+in the event_pmu rule, and display misleading
+help like:
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[wsa: rebased to v4.17-rc3]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ Cannot find PMU `inst'. Missing kernel support?
+  ...
+
+The reason is that the event_pmu is too strong
+and match also single string. Changing it to
+force the '/' separators to be part of the rule,
+and getting the proper error now:
+
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ parser error
+  Run 'perf list' for a list of valid events
+  ...
+
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180605121416.31645-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/parse-events.y |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -7,6 +7,7 @@ Required properties:
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
-+		 - "renesas,r8a77965-wdt" (R-Car M3-N)
- 	         - "renesas,r8a77970-wdt" (R-Car V3M)
- 	         - "renesas,r8a77995-wdt" (R-Car D3)
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -73,6 +73,7 @@ static void inc_group_count(struct list_
+ %type <num> value_sym
+ %type <head> event_config
+ %type <head> opt_event_config
++%type <head> opt_pmu_config
+ %type <term> event_term
+ %type <head> event_pmu
+ %type <head> event_legacy_symbol
+@@ -224,7 +225,7 @@ event_def: event_pmu |
+ 	   event_bpf_file
  
+ event_pmu:
+-PE_NAME opt_event_config
++PE_NAME opt_pmu_config
+ {
+ 	struct list_head *list, *orig_terms, *terms;
+ 
+@@ -495,6 +496,17 @@ opt_event_config:
+ {
+ 	$$ = NULL;
+ }
++
++opt_pmu_config:
++'/' event_config '/'
++{
++	$$ = $2;
++}
++|
++'/' '/'
++{
++	$$ = NULL;
++}
+ 
+ start_terms: event_config
+ {
 
 
