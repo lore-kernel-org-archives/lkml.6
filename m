@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05A5C46467
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532FBC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3167208B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3167208B0
+	by mail.kernel.org (Postfix) with ESMTP id 0ADFE208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:55:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADFE208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729628AbeHATmh (ORCPT
+        id S1731622AbeHATmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:42:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50156 "EHLO
+        Wed, 1 Aug 2018 15:42:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50242 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405018AbeHATIk (ORCPT
+        with ESMTP id S2405970AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81FFF1346;
-        Wed,  1 Aug 2018 17:12:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2251913EB;
+        Wed,  1 Aug 2018 17:16:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Donald Shanty III <dshanty@protonmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 008/246] Input: elan_i2c - add ACPI ID for lenovo ideapad 330
-Date:   Wed,  1 Aug 2018 18:48:38 +0200
-Message-Id: <20180801165012.096563759@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 097/246] ath: Add regulatory mapping for Serbia
+Date:   Wed,  1 Aug 2018 18:50:07 +0200
+Message-Id: <20180801165016.365276995@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -50,31 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Donald Shanty III <dshanty@protonmail.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit 938f45008d8bc391593c97508bc798cc95a52b9b upstream.
+[ Upstream commit 2a3169a54bb53717928392a04fb84deb765b51f1 ]
 
-This allows Elan driver to bind to the touchpad found in Lenovo Ideapad 330
-series laptops.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Signed-off-by: Donald Shanty III <dshanty@protonmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+  Invalid EEPROM contents
+
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: ETSI
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1262,6 +1262,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN0611", 0 },
- 	{ "ELAN0612", 0 },
- 	{ "ELAN0618", 0 },
-+	{ "ELAN061D", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
- };
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -159,6 +159,7 @@ enum CountryCode {
+ 	CTRY_ROMANIA = 642,
+ 	CTRY_RUSSIA = 643,
+ 	CTRY_SAUDI_ARABIA = 682,
++	CTRY_SERBIA = 688,
+ 	CTRY_SERBIA_MONTENEGRO = 891,
+ 	CTRY_SINGAPORE = 702,
+ 	CTRY_SLOVAKIA = 703,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -452,6 +452,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_ROMANIA, NULL1_WORLD, "RO"},
+ 	{CTRY_RUSSIA, NULL1_WORLD, "RU"},
+ 	{CTRY_SAUDI_ARABIA, NULL1_WORLD, "SA"},
++	{CTRY_SERBIA, ETSI1_WORLD, "RS"},
+ 	{CTRY_SERBIA_MONTENEGRO, ETSI1_WORLD, "CS"},
+ 	{CTRY_SINGAPORE, APL6_WORLD, "SG"},
+ 	{CTRY_SLOVAKIA, ETSI1_WORLD, "SK"},
 
 
