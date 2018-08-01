@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABEFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FB7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46B220844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46B220844
+	by mail.kernel.org (Postfix) with ESMTP id B4E59208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:22:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4E59208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406283AbeHATJ3 (ORCPT
+        id S2406296AbeHATJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50782 "EHLO
+        Wed, 1 Aug 2018 15:09:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405186AbeHATJ2 (ORCPT
+        with ESMTP id S2405186AbeHATJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:28 -0400
+        Wed, 1 Aug 2018 15:09:31 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8115D27;
-        Wed,  1 Aug 2018 17:22:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 366B2D2F;
+        Wed,  1 Aug 2018 17:22:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 191/246] rsi: fix nommu_map_sg overflow kernel panic
-Date:   Wed,  1 Aug 2018 18:51:41 +0200
-Message-Id: <20180801165020.855298986@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 218/246] random: mix rdrand with entropy sent in from userspace
+Date:   Wed,  1 Aug 2018 18:52:08 +0200
+Message-Id: <20180801165022.140213822@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,209 +50,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit f700546682a62a87a9615121a37ee7452dab4b76 ]
+commit 81e69df38e2911b642ec121dec319fad2a4782f3 upstream.
 
-Following overflow kernel panic is observed on some platforms while
-loading the driver. It is fixed if dynamically allocated memory is
-passed to SDIO instead of static one
+Fedora has integrated the jitter entropy daemon to work around slow
+boot problems, especially on VM's that don't support virtio-rng:
 
-[  927.513963] nommu_map_sg: overflow 17d54064ba7c+20 of device mask ffffffff
-[  927.517712] Modules linked in: rsi_sdio(+) cmac bnep arc4 rsi_91x mac80211 cfg80211
-	       btrsi rfcomm bluetooth ecdh_generic snd_soc_sst_bytcr_rt5660
-[  927.517861] CPU: 0 PID: 1624 Comm: insmod Tainted: G W 4.15.0-1000 #1
-[  927.517870] RIP: 0010:sdhci_send_command+0x5f0/0xa90 [sdhci]
-[  927.517873] RSP: 0000:ffffac3fc064b6d8 EFLAGS: 00010086
-[  927.517895] Call Trace:
-[  927.517908]  ? __schedule+0x3cd/0x890
-[  927.517915]  ? mod_timer+0x17b/0x3c0
-[  927.517922]  sdhci_request+0x7c/0xf0 [sdhci]
-[  927.517928]  __mmc_start_request+0x5a/0x170
-[  927.517932]  mmc_start_request+0x74/0x90
-[  927.517936]  mmc_wait_for_req+0x87/0xe0
-[  927.517940]  mmc_io_rw_extended+0x2fd/0x330
-[  927.517946]  ? mmc_wait_data_done+0x30/0x30
-[  927.517951]  sdio_io_rw_ext_helper+0x160/0x210
-[  927.517956]  sdio_writesb+0x1d/0x20
-[  927.517966]	rsi_sdio_write_register_multiple+0x68/0x110 [rsi_sdio]
-[  927.517976]  rsi_hal_device_init+0x357/0x910 [rsi_91x]
-[  927.517983]  ? rsi_hal_device_init+0x357/0x910 [rsi_91x]
-[  927.517990]  rsi_probe+0x2c6/0x450 [rsi_sdio]
-[  927.517995]  sdio_bus_probe+0xfc/0x110
-[  927.518000]  driver_probe_device+0x2b3/0x490
-[  927.518005]  __driver_attach+0xdf/0xf0
-[  927.518008]  ? driver_probe_device+0x490/0x490
-[  927.518014]  bus_for_each_dev+0x6c/0xc0
-[  927.518018]  driver_attach+0x1e/0x20
-[  927.518021]  bus_add_driver+0x1f4/0x270
-[  927.518028]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.518031]  driver_register+0x60/0xe0
-[  927.518038]  ? rsi_sdio_ack_intr+0x50/0x50 [rsi_sdio]
-[  927.518041]  sdio_register_driver+0x20/0x30
-[  927.518047]  rsi_module_init+0x16/0x40 [rsi_sdio]
+    https://bugzilla.redhat.com/show_bug.cgi?id=1572944
 
-Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Signed-off-by: Amitkumar Karwar <amit.karwar@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+It's understandable why they did this, but the Jitter entropy daemon
+works fundamentally on the principle: "the CPU microarchitecture is
+**so** complicated and we can't figure it out, so it *must* be
+random".  Yes, it uses statistical tests to "prove" it is secure, but
+AES_ENCRYPT(NSA_KEY, COUNTER++) will also pass statistical tests with
+flying colors.
+
+So if RDRAND is available, mix it into entropy submitted from
+userspace.  It can't hurt, and if you believe the NSA has backdoored
+RDRAND, then they probably have enough details about the Intel
+microarchitecture that they can reverse engineer how the Jitter
+entropy daemon affects the microarchitecture, and attack its output
+stream.  And if RDRAND is in fact an honest DRNG, it will immeasurably
+improve on what the Jitter entropy daemon might produce.
+
+This also provides some protection against someone who is able to read
+or set the entropy seed file.
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/rsi/rsi_91x_hal.c  |   35 +++++++++++++++++++-------------
- drivers/net/wireless/rsi/rsi_91x_sdio.c |   21 ++++++++++++-------
- drivers/net/wireless/rsi/rsi_sdio.h     |    2 -
- 3 files changed, 36 insertions(+), 22 deletions(-)
 
---- a/drivers/net/wireless/rsi/rsi_91x_hal.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
-@@ -557,28 +557,32 @@ static int bl_write_header(struct rsi_hw
- 			   u32 content_size)
+---
+ drivers/char/random.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1897,14 +1897,22 @@ static int
+ write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
  {
- 	struct rsi_host_intf_ops *hif_ops = adapter->host_intf_ops;
--	struct bl_header bl_hdr;
-+	struct bl_header *bl_hdr;
- 	u32 write_addr, write_len;
- 	int status;
+ 	size_t bytes;
+-	__u32 buf[16];
++	__u32 t, buf[16];
+ 	const char __user *p = buffer;
  
--	bl_hdr.flags = 0;
--	bl_hdr.image_no = cpu_to_le32(adapter->priv->coex_mode);
--	bl_hdr.check_sum = cpu_to_le32(
--				*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
--	bl_hdr.flash_start_address = cpu_to_le32(
--					*(u32 *)&flash_content[ADDR_OFFSET]);
--	bl_hdr.flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
-+	bl_hdr = kzalloc(sizeof(*bl_hdr), GFP_KERNEL);
-+	if (!bl_hdr)
-+		return -ENOMEM;
+ 	while (count > 0) {
++		int b, i = 0;
 +
-+	bl_hdr->flags = 0;
-+	bl_hdr->image_no = cpu_to_le32(adapter->priv->coex_mode);
-+	bl_hdr->check_sum =
-+		cpu_to_le32(*(u32 *)&flash_content[CHECK_SUM_OFFSET]);
-+	bl_hdr->flash_start_address =
-+		cpu_to_le32(*(u32 *)&flash_content[ADDR_OFFSET]);
-+	bl_hdr->flash_len = cpu_to_le32(*(u32 *)&flash_content[LEN_OFFSET]);
- 	write_len = sizeof(struct bl_header);
+ 		bytes = min(count, sizeof(buf));
+ 		if (copy_from_user(&buf, p, bytes))
+ 			return -EFAULT;
  
- 	if (adapter->rsi_host_intf == RSI_HOST_INTF_USB) {
- 		write_addr = PING_BUFFER_ADDRESS;
- 		status = hif_ops->write_reg_multiple(adapter, write_addr,
--						 (u8 *)&bl_hdr, write_len);
-+						 (u8 *)bl_hdr, write_len);
- 		if (status < 0) {
- 			rsi_dbg(ERR_ZONE,
- 				"%s: Failed to load Version/CRC structure\n",
- 				__func__);
--			return status;
-+			goto fail;
- 		}
- 	} else {
- 		write_addr = PING_BUFFER_ADDRESS >> 16;
-@@ -587,20 +591,23 @@ static int bl_write_header(struct rsi_hw
- 			rsi_dbg(ERR_ZONE,
- 				"%s: Unable to set ms word to common reg\n",
- 				__func__);
--			return status;
-+			goto fail;
- 		}
- 		write_addr = RSI_SD_REQUEST_MASTER |
- 			     (PING_BUFFER_ADDRESS & 0xFFFF);
- 		status = hif_ops->write_reg_multiple(adapter, write_addr,
--						 (u8 *)&bl_hdr, write_len);
-+						 (u8 *)bl_hdr, write_len);
- 		if (status < 0) {
- 			rsi_dbg(ERR_ZONE,
- 				"%s: Failed to load Version/CRC structure\n",
- 				__func__);
--			return status;
-+			goto fail;
- 		}
- 	}
--	return 0;
-+	status = 0;
-+fail:
-+	kfree(bl_hdr);
-+	return status;
- }
- 
- static u32 read_flash_capacity(struct rsi_hw *adapter)
---- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
-@@ -968,17 +968,21 @@ static void ulp_read_write(struct rsi_hw
- /*This function resets and re-initializes the chip.*/
- static void rsi_reset_chip(struct rsi_hw *adapter)
- {
--	__le32 data;
-+	u8 *data;
- 	u8 sdio_interrupt_status = 0;
- 	u8 request = 1;
- 	int ret;
- 
-+	data = kzalloc(sizeof(u32), GFP_KERNEL);
-+	if (!data)
-+		return;
++		for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
++			if (!arch_get_random_int(&t))
++				break;
++			buf[i] ^= t;
++		}
 +
- 	rsi_dbg(INFO_ZONE, "Writing disable to wakeup register\n");
- 	ret =  rsi_sdio_write_register(adapter, 0, SDIO_WAKEUP_REG, &request);
- 	if (ret < 0) {
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Failed to write SDIO wakeup register\n", __func__);
--		return;
-+		goto err;
- 	}
- 	msleep(20);
- 	ret =  rsi_sdio_read_register(adapter, RSI_FN1_INT_REGISTER,
-@@ -986,7 +990,7 @@ static void rsi_reset_chip(struct rsi_hw
- 	if (ret < 0) {
- 		rsi_dbg(ERR_ZONE, "%s: Failed to Read Intr Status Register\n",
- 			__func__);
--		return;
-+		goto err;
- 	}
- 	rsi_dbg(INFO_ZONE, "%s: Intr Status Register value = %d\n",
- 		__func__, sdio_interrupt_status);
-@@ -996,17 +1000,17 @@ static void rsi_reset_chip(struct rsi_hw
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to set ms word to common reg\n",
- 			__func__);
--		return;
-+		goto err;
- 	}
+ 		count -= bytes;
+ 		p += bytes;
  
--	data = TA_HOLD_THREAD_VALUE;
-+	put_unaligned_le32(TA_HOLD_THREAD_VALUE, data);
- 	if (rsi_sdio_write_register_multiple(adapter, TA_HOLD_THREAD_REG |
- 					     RSI_SD_REQUEST_MASTER,
--					     (u8 *)&data, 4)) {
-+					     data, 4)) {
- 		rsi_dbg(ERR_ZONE,
- 			"%s: Unable to hold Thread-Arch processor threads\n",
- 			__func__);
--		return;
-+		goto err;
- 	}
- 
- 	/* This msleep will ensure Thread-Arch processor to go to hold
-@@ -1027,6 +1031,9 @@ static void rsi_reset_chip(struct rsi_hw
- 	 * read write operations to complete for chip reset.
- 	 */
- 	msleep(500);
-+err:
-+	kfree(data);
-+	return;
- }
- 
- /**
---- a/drivers/net/wireless/rsi/rsi_sdio.h
-+++ b/drivers/net/wireless/rsi/rsi_sdio.h
-@@ -85,7 +85,7 @@ enum sdio_interrupt_type {
- #define TA_SOFT_RST_CLR              0
- #define TA_SOFT_RST_SET              BIT(0)
- #define TA_PC_ZERO                   0
--#define TA_HOLD_THREAD_VALUE         cpu_to_le32(0xF)
-+#define TA_HOLD_THREAD_VALUE         0xF
- #define TA_RELEASE_THREAD_VALUE      cpu_to_le32(0xF)
- #define TA_BASE_ADDR                 0x2200
- #define MISC_CFG_BASE_ADDR           0x4105
 
 
