@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0455DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B284BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B204D20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B204D20840
+	by mail.kernel.org (Postfix) with ESMTP id 7407720840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7407720840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387522AbeHAUQE (ORCPT
+        id S2387558AbeHAUQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:16:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46122 "EHLO
+        Wed, 1 Aug 2018 16:16:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404239AbeHATDg (ORCPT
+        with ESMTP id S2404240AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE8FA12B9;
-        Wed,  1 Aug 2018 17:10:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC9EF1180;
+        Wed,  1 Aug 2018 17:06:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahisa KOJIMA <masahisa.kojima@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 288/336] net: socionext: reset hardware in ndo_stop
-Date:   Wed,  1 Aug 2018 18:50:23 +0200
-Message-Id: <20180801165040.046462282@linuxfoundation.org>
+Subject: [PATCH 4.17 255/336] igb: Fix queue selection on MAC filters on i210
+Date:   Wed,  1 Aug 2018 18:49:50 +0200
+Message-Id: <20180801165038.815724348@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -53,100 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahisa KOJIMA <masahisa.kojima@linaro.org>
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-[ Upstream commit 9a00b697ce31e38c670a3042cf9f1e9cf28dabb5 ]
+[ Upstream commit 4dc93fcf0b95dc3fda4db917effae31fbb8ad2a8 ]
 
-When the interface is down, head/tail of the descriptor
-ring address is set to 0 in netsec_netdev_stop().
-But netsec hardware still keeps the previous descriptor
-ring address, so there is inconsistency between driver
-and hardware after interface is up at a later time.
-To address this inconsistency, add netsec_reset_hardware()
-when the interface is down.
+On the RAH registers there are semantic differences on the meaning of
+the "queue" parameter for traffic steering depending on the controller
+model: there is the 82575 meaning, which "queue" means a RX Hardware
+Queue, and the i350 meaning, where it is a reception pool.
 
-In addition, to minimize the reset process,
-add flag to decide whether driver loads the netsec microcode.
-Even if driver resets the netsec hardware, netsec microcode
-keeps resident on RAM, so it is ok we only load the microcode
-at initialization.
+The previous behaviour was having no effect for i210 based controllers
+because the QSEL bit of the RAH register wasn't being set.
 
-This patch is critical for installation over network.
+This patch separates the condition in discrete cases, so the different
+handling is clearer.
 
-Signed-off-by: Masahisa KOJIMA <masahisa.kojima@linaro.org>
-Fixes: 533dd11a12f6 ("net: socionext: Add Synquacer NetSec driver")
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 83c21335c876 ("igb: improve MAC filter handling")
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/socionext/netsec.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/socionext/netsec.c
-+++ b/drivers/net/ethernet/socionext/netsec.c
-@@ -1057,7 +1057,8 @@ static int netsec_netdev_load_microcode(
- 	return 0;
- }
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -8763,12 +8763,17 @@ static void igb_rar_set_index(struct igb
+ 		if (is_valid_ether_addr(addr))
+ 			rar_high |= E1000_RAH_AV;
  
--static int netsec_reset_hardware(struct netsec_priv *priv)
-+static int netsec_reset_hardware(struct netsec_priv *priv,
-+				 bool load_ucode)
- {
- 	u32 value;
- 	int err;
-@@ -1102,11 +1103,14 @@ static int netsec_reset_hardware(struct
- 	netsec_write(priv, NETSEC_REG_NRM_RX_CONFIG,
- 		     1 << NETSEC_REG_DESC_ENDIAN);
- 
--	err = netsec_netdev_load_microcode(priv);
--	if (err) {
--		netif_err(priv, probe, priv->ndev,
--			  "%s: failed to load microcode (%d)\n", __func__, err);
--		return err;
-+	if (load_ucode) {
-+		err = netsec_netdev_load_microcode(priv);
-+		if (err) {
-+			netif_err(priv, probe, priv->ndev,
-+				  "%s: failed to load microcode (%d)\n",
-+				  __func__, err);
-+			return err;
+-		if (hw->mac.type == e1000_82575)
++		switch (hw->mac.type) {
++		case e1000_82575:
++		case e1000_i210:
+ 			rar_high |= E1000_RAH_POOL_1 *
+ 				    adapter->mac_table[index].queue;
+-		else
++			break;
++		default:
+ 			rar_high |= E1000_RAH_POOL_1 <<
+ 				    adapter->mac_table[index].queue;
++			break;
 +		}
  	}
  
- 	/* start DMA engines */
-@@ -1328,6 +1332,7 @@ err1:
- 
- static int netsec_netdev_stop(struct net_device *ndev)
- {
-+	int ret;
- 	struct netsec_priv *priv = netdev_priv(ndev);
- 
- 	netif_stop_queue(priv->ndev);
-@@ -1343,12 +1348,14 @@ static int netsec_netdev_stop(struct net
- 	netsec_uninit_pkt_dring(priv, NETSEC_RING_TX);
- 	netsec_uninit_pkt_dring(priv, NETSEC_RING_RX);
- 
-+	ret = netsec_reset_hardware(priv, false);
-+
- 	phy_stop(ndev->phydev);
- 	phy_disconnect(ndev->phydev);
- 
- 	pm_runtime_put_sync(priv->dev);
- 
--	return 0;
-+	return ret;
- }
- 
- static int netsec_netdev_init(struct net_device *ndev)
-@@ -1364,7 +1371,7 @@ static int netsec_netdev_init(struct net
- 	if (ret)
- 		goto err1;
- 
--	ret = netsec_reset_hardware(priv);
-+	ret = netsec_reset_hardware(priv, true);
- 	if (ret)
- 		goto err2;
- 
+ 	wr32(E1000_RAL(index), rar_low);
 
 
