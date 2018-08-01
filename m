@@ -3,47 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25440C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48D6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D984120862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D984120862
+	by mail.kernel.org (Postfix) with ESMTP id 6E115208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E115208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbeHAT7a (ORCPT
+        id S2405702AbeHATIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:59:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405670AbeHATIe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49442 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405665AbeHATId (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:08:33 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B94161326;
-        Wed,  1 Aug 2018 17:11:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC53D1096;
+        Wed,  1 Aug 2018 17:02:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 001/246] fork: unconditionally clear stack on fork
-Date:   Wed,  1 Aug 2018 18:48:31 +0200
-Message-Id: <20180801165011.771687701@linuxfoundation.org>
+        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 179/336] drm/amd/display: remove need of modeset flag for overlay planes (V2)
+Date:   Wed,  1 Aug 2018 18:48:34 +0200
+Message-Id: <20180801165035.946243722@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,103 +48,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Shirish S <shirish.s@amd.com>
 
-commit e01e80634ecdde1dd113ac43b3adad21b47f3957 upstream.
+[ Upstream commit a2a330ad66313084c9432b32862aa7e1255da9b4 ]
 
-One of the classes of kernel stack content leaks[1] is exposing the
-contents of prior heap or stack contents when a new process stack is
-allocated.  Normally, those stacks are not zeroed, and the old contents
-remain in place.  In the face of stack content exposure flaws, those
-contents can leak to userspace.
+This patch is in continuation to the
+"843e3c7 drm/amd/display: defer modeset check in dm_update_planes_state"
+where we started to eliminate the dependency on
+DRM_MODE_ATOMIC_ALLOW_MODESET to be set by the user space,
+which as such is not mandatory.
 
-Fixing this will make the kernel no longer vulnerable to these flaws, as
-the stack will be wiped each time a stack is assigned to a new process.
-There's not a meaningful change in runtime performance; it almost looks
-like it provides a benefit.
+After deferring, this patch eliminates the dependency on the flag
+for overlay planes.
 
-Performing back-to-back kernel builds before:
-	Run times: 157.86 157.09 158.90 160.94 160.80
-	Mean: 159.12
-	Std Dev: 1.54
+This has to be done in stages as its a pretty complex and requires thorough
+testing before we free primary planes as well from dependency on modeset
+flag.
 
-and after:
-	Run times: 159.31 157.34 156.71 158.15 160.81
-	Mean: 158.46
-	Std Dev: 1.46
+V2: Simplified the plane type check.
 
-Instead of making this a build or runtime config, Andy Lutomirski
-recommended this just be enabled by default.
-
-[1] A noisy search for many kinds of stack content leaks can be seen here:
-https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=linux+kernel+stack+leak
-
-I did some more with perf and cycle counts on running 100,000 execs of
-/bin/true.
-
-before:
-Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
-Mean:  221015379122.60
-Std Dev: 4662486552.47
-
-after:
-Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
-Mean:  217745009865.40
-Std Dev: 5935559279.99
-
-It continues to look like it's faster, though the deviation is rather
-wide, but I'm not sure what I could do that would be less noisy.  I'm
-open to ideas!
-
-Link: http://lkml.kernel.org/r/20180221021659.GA37073@beast
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/thread_info.h |    6 +-----
- kernel/fork.c               |    3 +--
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -43,11 +43,7 @@ enum {
- #define THREAD_ALIGN	THREAD_SIZE
- #endif
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4037,7 +4037,7 @@ static void amdgpu_dm_commit_planes(stru
+ 		}
+ 		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
  
--#if IS_ENABLED(CONFIG_DEBUG_STACK_USAGE) || IS_ENABLED(CONFIG_DEBUG_KMEMLEAK)
--# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_ZERO)
--#else
--# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT)
--#endif
-+#define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+-		if (!pflip_needed) {
++		if (!pflip_needed || plane->type == DRM_PLANE_TYPE_OVERLAY) {
+ 			WARN_ON(!dm_new_plane_state->dc_state);
  
- /*
-  * flag set/clear/test wrappers
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -215,10 +215,9 @@ static unsigned long *alloc_thread_stack
- 		if (!s)
- 			continue;
+ 			plane_states_constructed[planes_count] = dm_new_plane_state->dc_state;
+@@ -4783,7 +4783,8 @@ static int dm_update_planes_state(struct
  
--#ifdef CONFIG_DEBUG_KMEMLEAK
- 		/* Clear stale pointers from reused stack. */
- 		memset(s->addr, 0, THREAD_SIZE);
--#endif
-+
- 		tsk->stack_vm_area = s;
- 		return s->addr;
- 	}
+ 		/* Remove any changed/removed planes */
+ 		if (!enable) {
+-			if (pflip_needed)
++			if (pflip_needed &&
++			    plane->type != DRM_PLANE_TYPE_OVERLAY)
+ 				continue;
+ 
+ 			if (!old_plane_crtc)
+@@ -4830,7 +4831,8 @@ static int dm_update_planes_state(struct
+ 			if (!dm_new_crtc_state->stream)
+ 				continue;
+ 
+-			if (pflip_needed)
++			if (pflip_needed &&
++			    plane->type != DRM_PLANE_TYPE_OVERLAY)
+ 				continue;
+ 
+ 			WARN_ON(dm_new_plane_state->dc_state);
 
 
