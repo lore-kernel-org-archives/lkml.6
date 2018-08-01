@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6E6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA7AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE85208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503C420841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ON+eMvSD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE85208A4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="anauqrt2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503C420841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390124AbeHARtc (ORCPT
+        id S2390140AbeHARtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:49:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57246 "EHLO
+        Wed, 1 Aug 2018 13:49:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57270 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389663AbeHARtb (ORCPT
+        with ESMTP id S2389550AbeHARtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:49:31 -0400
+        Wed, 1 Aug 2018 13:49:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Y1FI2wNeTrVfe5NpVOIyP50fQCXefARFxQWqlJBGm3Q=; b=ON+eMvSDgJgmOkBlMVjgoYbZo
-        ZB0KThc/W8QQG6CQT19BCAff2gkZxeY2IbQDefYwYN4Vo9hWzeyMjpNeNEGJrUxi7ZF7VzkFH5ANT
-        vrKFgexac3a+XLWf+7w3Wk1S/7RYv3uD4qyl75kvjvC7/vxIavYkBMJKhm3EajEtTg1aLHQNB34A2
-        44ICtdLmOclTULUT1PNHHy929Xc/no00URkR/vkvMpc9YOqYXoFMTNQ7pKMoMZ3wiLfcJfceQ8xwA
-        mo8eKK9yV1cRFFW+QxsVuObkadacS7l6LIw6NnfogjnZKXAIOF7+cjWvWSCKfDHc/L5CD+1KbSulO
-        PyYRF/7Ug==;
+         bh=Qh38dSOFjZskxprx4IK2IpOxs4n4nGSAQXmhdnmEtU0=; b=anauqrt2Q8/AAnBwdlHz6Plxq
+        mIrDwK3Z5o106Z9q4JdoSs6B1oexwRlEfvHiE1vConHU7lmAbHF51tKhnVpDg+EiZr33/NaR9ja6+
+        IqZjxCqy+y+OKG5NR+lEYlm4gqIJ5QCaRxVVitsbQelGhPfSZlZ0vLYjTauPXAoSMePWAKZo/iZAa
+        x9BZoFjHOK8F0rW6FCxsNGW+IDCfV7C3ke2pcjQ5xaTjFM2lZpeQufpwJMcmxCs3ZJIgIFuM1aSQK
+        Ff3z27STGNvf6KWED8mKCUSuwGfHwokn66F9//60W4NgVsqc8iLxaaoj59hLq6j6vah5Gvw8dOqx7
+        r9gbGVfrw==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fktad-0007eD-LV; Wed, 01 Aug 2018 16:03:07 +0000
+        id 1fktai-0007fl-Bp; Wed, 01 Aug 2018 16:03:12 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
 Cc:     David Woodhouse <dwmw2@infradead.org>, linux-ia64@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         iommu@lists.linux-foundation.org
-Subject: [PATCH 5/9] ia64: remove the unused pci_iommu_shutdown function
-Date:   Wed,  1 Aug 2018 18:02:48 +0200
-Message-Id: <20180801160252.25629-6-hch@lst.de>
+Subject: [PATCH 7/9] ia64/sn2: remove no-ops dma sync methods
+Date:   Wed,  1 Aug 2018 18:02:50 +0200
+Message-Id: <20180801160252.25629-8-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801160252.25629-1-hch@lst.de>
 References: <20180801160252.25629-1-hch@lst.de>
@@ -57,40 +57,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+These do nothing but duplicating an assert that would have triggered
+earlier on setting the dma mask, so remove them.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/ia64/include/asm/iommu.h | 1 -
- arch/ia64/kernel/pci-dma.c    | 5 -----
- 2 files changed, 6 deletions(-)
+ arch/ia64/sn/pci/pci_dma.c | 29 -----------------------------
+ 1 file changed, 29 deletions(-)
 
-diff --git a/arch/ia64/include/asm/iommu.h b/arch/ia64/include/asm/iommu.h
-index 156b9d8e1932..5397e5aa3704 100644
---- a/arch/ia64/include/asm/iommu.h
-+++ b/arch/ia64/include/asm/iommu.h
-@@ -5,7 +5,6 @@
- /* 10 seconds */
- #define DMAR_OPERATION_TIMEOUT (((cycles_t) local_cpu_data->itc_freq)*10)
+diff --git a/arch/ia64/sn/pci/pci_dma.c b/arch/ia64/sn/pci/pci_dma.c
+index 74c934a997bb..3b944fba0a3e 100644
+--- a/arch/ia64/sn/pci/pci_dma.c
++++ b/arch/ia64/sn/pci/pci_dma.c
+@@ -314,31 +314,6 @@ static int sn_dma_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return nhwentries;
+ }
  
--extern void pci_iommu_shutdown(void);
- extern void no_iommu_init(void);
- #ifdef	CONFIG_INTEL_IOMMU
- extern int force_iommu, no_iommu;
-diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
-index 924966e5aa25..936af0ec7f8f 100644
---- a/arch/ia64/kernel/pci-dma.c
-+++ b/arch/ia64/kernel/pci-dma.c
-@@ -37,11 +37,6 @@ static int __init pci_iommu_init(void)
- /* Must execute after PCI subsystem */
- fs_initcall(pci_iommu_init);
- 
--void pci_iommu_shutdown(void)
+-static void sn_dma_sync_single_for_cpu(struct device *dev, dma_addr_t dma_handle,
+-				       size_t size, enum dma_data_direction dir)
 -{
--	return;
+-	BUG_ON(!dev_is_pci(dev));
 -}
 -
- void __init
- iommu_dma_init(void)
+-static void sn_dma_sync_single_for_device(struct device *dev, dma_addr_t dma_handle,
+-					  size_t size,
+-					  enum dma_data_direction dir)
+-{
+-	BUG_ON(!dev_is_pci(dev));
+-}
+-
+-static void sn_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+-				   int nelems, enum dma_data_direction dir)
+-{
+-	BUG_ON(!dev_is_pci(dev));
+-}
+-
+-static void sn_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+-				      int nelems, enum dma_data_direction dir)
+-{
+-	BUG_ON(!dev_is_pci(dev));
+-}
+-
+ static int sn_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
  {
+ 	return 0;
+@@ -467,10 +442,6 @@ static struct dma_map_ops sn_dma_ops = {
+ 	.unmap_page		= sn_dma_unmap_page,
+ 	.map_sg			= sn_dma_map_sg,
+ 	.unmap_sg		= sn_dma_unmap_sg,
+-	.sync_single_for_cpu 	= sn_dma_sync_single_for_cpu,
+-	.sync_sg_for_cpu	= sn_dma_sync_sg_for_cpu,
+-	.sync_single_for_device = sn_dma_sync_single_for_device,
+-	.sync_sg_for_device	= sn_dma_sync_sg_for_device,
+ 	.mapping_error		= sn_dma_mapping_error,
+ 	.dma_supported		= sn_dma_supported,
+ };
 -- 
 2.18.0
 
