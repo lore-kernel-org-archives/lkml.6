@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48980C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A530DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCD320844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCD320844
+	by mail.kernel.org (Postfix) with ESMTP id 4D37B208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D37B208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407416AbeHATPH (ORCPT
+        id S2407425AbeHATPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52154 "EHLO
+        Wed, 1 Aug 2018 15:15:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406866AbeHATPG (ORCPT
+        with ESMTP id S2406866AbeHATPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:06 -0400
+        Wed, 1 Aug 2018 15:15:12 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1970D2F;
-        Wed,  1 Aug 2018 17:28:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5298DD4A;
+        Wed,  1 Aug 2018 17:28:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 078/144] ixgbevf: fix MAC address changes through ixgbevf_set_mac()
-Date:   Wed,  1 Aug 2018 18:51:45 +0200
-Message-Id: <20180801164955.439915263@linuxfoundation.org>
+Subject: [PATCH 4.9 079/144] media: smiapp: fix timeout checking in smiapp_read_nvm
+Date:   Wed,  1 Aug 2018 18:51:46 +0200
+Message-Id: <20180801164955.492402570@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,34 +52,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emil Tantilov <emil.s.tantilov@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 6e7d0ba1e59b1a306761a731e67634c0f2efea2a ]
+[ Upstream commit 7a2148dfda8001c983f0effd9afd8a7fa58e99c4 ]
 
-Set hw->mac.perm_addr in ixgbevf_set_mac() in order to avoid losing the
-custom MAC on reset. This can happen in the following case:
+The current code decrements the timeout counter i and the end of
+each loop i is incremented, so the check for timeout will always
+be false and hence the timeout mechanism is just a dead code path.
+Potentially, if the RD_READY bit is not set, we could end up in
+an infinite loop.
 
->ip link set $vf address $mac
->ethtool -r $vf
+Fix this so the timeout starts from 1000 and decrements to zero,
+if at the end of the loop i is zero we have a timeout condition.
 
-Signed-off-by: Emil Tantilov <emil.s.tantilov@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Detected by CoverityScan, CID#1324008 ("Logically dead code")
+
+Fixes: ccfc97bdb5ae ("[media] smiapp: Add driver")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/i2c/smiapp/smiapp-core.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -3729,6 +3729,7 @@ static int ixgbevf_set_mac(struct net_de
- 		return -EPERM;
+--- a/drivers/media/i2c/smiapp/smiapp-core.c
++++ b/drivers/media/i2c/smiapp/smiapp-core.c
+@@ -991,7 +991,7 @@ static int smiapp_read_nvm(struct smiapp
+ 		if (rval)
+ 			goto out;
  
- 	ether_addr_copy(hw->mac.addr, addr->sa_data);
-+	ether_addr_copy(hw->mac.perm_addr, addr->sa_data);
- 	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+-		for (i = 0; i < 1000; i++) {
++		for (i = 1000; i > 0; i--) {
+ 			rval = smiapp_read(
+ 				sensor,
+ 				SMIAPP_REG_U8_DATA_TRANSFER_IF_1_STATUS, &s);
+@@ -1002,11 +1002,10 @@ static int smiapp_read_nvm(struct smiapp
+ 			if (s & SMIAPP_DATA_TRANSFER_IF_1_STATUS_RD_READY)
+ 				break;
  
- 	return 0;
+-			if (--i == 0) {
+-				rval = -ETIMEDOUT;
+-				goto out;
+-			}
+-
++		}
++		if (!i) {
++			rval = -ETIMEDOUT;
++			goto out;
+ 		}
+ 
+ 		for (i = 0; i < SMIAPP_NVM_PAGE_SIZE; i++) {
 
 
