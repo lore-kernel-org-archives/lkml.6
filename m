@@ -5,110 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC997C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C936CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C72020894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C72020894
+	by mail.kernel.org (Postfix) with ESMTP id 8B24720894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B24720894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389438AbeHAOpM (ORCPT
+        id S2389456AbeHAOpS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:45:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45768 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 10:45:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47742 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389419AbeHAOpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:45:11 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S2389419AbeHAOpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 10:45:18 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4DF997DAC7;
-        Wed,  1 Aug 2018 12:59:31 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4B7D87A70;
+        Wed,  1 Aug 2018 12:59:37 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1F1B2026D68;
-        Wed,  1 Aug 2018 12:59:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31BF810CD885;
+        Wed,  1 Aug 2018 12:59:36 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next 07/10] rxrpc: Trace socket notification
+Subject: [PATCH net-next 08/10] rxrpc: Increase the size of a call's Rx
+ window
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 01 Aug 2018 13:59:30 +0100
-Message-ID: <153312837027.27702.5314316912358595624.stgit@warthog.procyon.org.uk>
+Date:   Wed, 01 Aug 2018 13:59:36 +0100
+Message-ID: <153312837646.27702.2759342380944431664.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153312832565.27702.15302541876382957550.stgit@warthog.procyon.org.uk>
 References: <153312832565.27702.15302541876382957550.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 12:59:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 12:59:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 12:59:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 12:59:37 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trace notifications from the softirq side of the socket to the
-process-context side.
+Increase the size of a call's Rx window from 32 to 63 - ie. one less than
+the size of the ring buffer.  This makes large data transfers perform
+better when the Tx window on the other side is around 64 (as is the case
+with Auristor's YFS fileserver).
+
+If the server window size is ~32 or smaller, this should make no
+difference.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/trace/events/rxrpc.h |   20 ++++++++++++++++++++
- net/rxrpc/input.c            |    4 +++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ net/rxrpc/ar-internal.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index c1a800a6dee3..196587b8f204 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -1528,6 +1528,26 @@ TRACE_EVENT(rxrpc_call_reset,
- 		      __entry->tx_seq, __entry->rx_seq)
- 	    );
- 
-+TRACE_EVENT(rxrpc_notify_socket,
-+	    TP_PROTO(unsigned int debug_id, rxrpc_serial_t serial),
-+
-+	    TP_ARGS(debug_id, serial),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		debug_id	)
-+		    __field(rxrpc_serial_t,		serial		)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->debug_id = debug_id;
-+		    __entry->serial = serial;
-+			   ),
-+
-+	    TP_printk("c=%08x r=%08x",
-+		      __entry->debug_id,
-+		      __entry->serial)
-+	    );
-+
- #endif /* _TRACE_RXRPC_H */
- 
- /* This part must be outside protection */
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 8989d760b6b2..cfdc199c6351 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -597,8 +597,10 @@ static void rxrpc_input_data(struct rxrpc_call *call, struct sk_buff *skb,
- 				  false, true,
- 				  rxrpc_propose_ack_input_data);
- 
--	if (sp->hdr.seq == READ_ONCE(call->rx_hard_ack) + 1)
-+	if (sp->hdr.seq == READ_ONCE(call->rx_hard_ack) + 1) {
-+		trace_rxrpc_notify_socket(call->debug_id, serial);
- 		rxrpc_notify_socket(call);
-+	}
- 	_leave(" [queued]");
- }
- 
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 7eee955a768a..e791d35ee34b 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -589,7 +589,7 @@ struct rxrpc_call {
+ 	 */
+ #define RXRPC_RXTX_BUFF_SIZE	64
+ #define RXRPC_RXTX_BUFF_MASK	(RXRPC_RXTX_BUFF_SIZE - 1)
+-#define RXRPC_INIT_RX_WINDOW_SIZE 32
++#define RXRPC_INIT_RX_WINDOW_SIZE 63
+ 	struct sk_buff		**rxtx_buffer;
+ 	u8			*rxtx_annotations;
+ #define RXRPC_TX_ANNO_ACK	0
 
