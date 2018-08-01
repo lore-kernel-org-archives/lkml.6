@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C323BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E1CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FAE2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FAE2083D
+	by mail.kernel.org (Postfix) with ESMTP id 5FCFB20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:20:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FCFB20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbeHAUHB (ORCPT
+        id S2404497AbeHATDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:07:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404459AbeHATDk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404397AbeHATDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4997A1259;
-        Wed,  1 Aug 2018 17:09:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20E971075;
+        Wed,  1 Aug 2018 17:01:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.17 304/336] ext4: fix inline data updates with checksums enabled
-Date:   Wed,  1 Aug 2018 18:50:39 +0200
-Message-Id: <20180801165040.679308018@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 125/336] ath: Add regulatory mapping for Bahamas
+Date:   Wed,  1 Aug 2018 18:47:40 +0200
+Message-Id: <20180801165033.926995182@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -49,166 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit 362eca70b53389bddf3143fe20f53dcce2cfdf61 upstream.
+[ Upstream commit 699e2302c286a14afe7b7394151ce6c4e1790cc1 ]
 
-The inline data code was updating the raw inode directly; this is
-problematic since if metadata checksums are enabled,
-ext4_mark_inode_dirty() must be called to update the inode's checksum.
-In addition, the jbd2 layer requires that get_write_access() be called
-before the metadata buffer is modified.  Fix both of these problems.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200443
+  Invalid EEPROM contents
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/inline.c |   19 +++++++++++--------
- fs/ext4/inode.c  |   16 +++++++---------
- 2 files changed, 18 insertions(+), 17 deletions(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -682,6 +682,10 @@ int ext4_try_to_write_inline_data(struct
- 		goto convert;
- 	}
- 
-+	ret = ext4_journal_get_write_access(handle, iloc.bh);
-+	if (ret)
-+		goto out;
-+
- 	flags |= AOP_FLAG_NOFS;
- 
- 	page = grab_cache_page_write_begin(mapping, 0, flags);
-@@ -710,7 +714,7 @@ int ext4_try_to_write_inline_data(struct
- out_up_read:
- 	up_read(&EXT4_I(inode)->xattr_sem);
- out:
--	if (handle)
-+	if (handle && (ret != 1))
- 		ext4_journal_stop(handle);
- 	brelse(iloc.bh);
- 	return ret;
-@@ -752,6 +756,7 @@ int ext4_write_inline_data_end(struct in
- 
- 	ext4_write_unlock_xattr(inode, &no_expand);
- 	brelse(iloc.bh);
-+	mark_inode_dirty(inode);
- out:
- 	return copied;
- }
-@@ -898,7 +903,6 @@ retry_journal:
- 		goto out;
- 	}
- 
--
- 	page = grab_cache_page_write_begin(mapping, 0, flags);
- 	if (!page) {
- 		ret = -ENOMEM;
-@@ -916,6 +920,9 @@ retry_journal:
- 		if (ret < 0)
- 			goto out_release_page;
- 	}
-+	ret = ext4_journal_get_write_access(handle, iloc.bh);
-+	if (ret)
-+		goto out_release_page;
- 
- 	up_read(&EXT4_I(inode)->xattr_sem);
- 	*pagep = page;
-@@ -936,7 +943,6 @@ int ext4_da_write_inline_data_end(struct
- 				  unsigned len, unsigned copied,
- 				  struct page *page)
- {
--	int i_size_changed = 0;
- 	int ret;
- 
- 	ret = ext4_write_inline_data_end(inode, pos, len, copied, page);
-@@ -954,10 +960,8 @@ int ext4_da_write_inline_data_end(struct
- 	 * But it's important to update i_size while still holding page lock:
- 	 * page writeout could otherwise come in and zero beyond i_size.
- 	 */
--	if (pos+copied > inode->i_size) {
-+	if (pos+copied > inode->i_size)
- 		i_size_write(inode, pos+copied);
--		i_size_changed = 1;
--	}
- 	unlock_page(page);
- 	put_page(page);
- 
-@@ -967,8 +971,7 @@ int ext4_da_write_inline_data_end(struct
- 	 * ordering of page lock and transaction start for journaling
- 	 * filesystems.
- 	 */
--	if (i_size_changed)
--		mark_inode_dirty(inode);
-+	mark_inode_dirty(inode);
- 
- 	return copied;
- }
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1389,9 +1389,10 @@ static int ext4_write_end(struct file *f
- 	loff_t old_size = inode->i_size;
- 	int ret = 0, ret2;
- 	int i_size_changed = 0;
-+	int inline_data = ext4_has_inline_data(inode);
- 
- 	trace_ext4_write_end(inode, pos, len, copied);
--	if (ext4_has_inline_data(inode)) {
-+	if (inline_data) {
- 		ret = ext4_write_inline_data_end(inode, pos, len,
- 						 copied, page);
- 		if (ret < 0) {
-@@ -1419,7 +1420,7 @@ static int ext4_write_end(struct file *f
- 	 * ordering of page lock and transaction start for journaling
- 	 * filesystems.
- 	 */
--	if (i_size_changed)
-+	if (i_size_changed || inline_data)
- 		ext4_mark_inode_dirty(handle, inode);
- 
- 	if (pos + len > inode->i_size && ext4_can_truncate(inode))
-@@ -1493,6 +1494,7 @@ static int ext4_journalled_write_end(str
- 	int partial = 0;
- 	unsigned from, to;
- 	int size_changed = 0;
-+	int inline_data = ext4_has_inline_data(inode);
- 
- 	trace_ext4_journalled_write_end(inode, pos, len, copied);
- 	from = pos & (PAGE_SIZE - 1);
-@@ -1500,7 +1502,7 @@ static int ext4_journalled_write_end(str
- 
- 	BUG_ON(!ext4_handle_valid(handle));
- 
--	if (ext4_has_inline_data(inode)) {
-+	if (inline_data) {
- 		ret = ext4_write_inline_data_end(inode, pos, len,
- 						 copied, page);
- 		if (ret < 0) {
-@@ -1531,7 +1533,7 @@ static int ext4_journalled_write_end(str
- 	if (old_size < pos)
- 		pagecache_isize_extended(inode, old_size, pos);
- 
--	if (size_changed) {
-+	if (size_changed || inline_data) {
- 		ret2 = ext4_mark_inode_dirty(handle, inode);
- 		if (!ret)
- 			ret = ret2;
-@@ -2028,11 +2030,7 @@ static int __ext4_journalled_writepage(s
- 	}
- 
- 	if (inline_data) {
--		BUFFER_TRACE(inode_bh, "get write access");
--		ret = ext4_journal_get_write_access(handle, inode_bh);
--
--		err = ext4_handle_dirty_metadata(handle, inode, inode_bh);
--
-+		ret = ext4_mark_inode_dirty(handle, inode);
- 	} else {
- 		ret = ext4_walk_page_buffers(handle, page_bufs, 0, len, NULL,
- 					     do_journal_get_write_access);
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -68,6 +68,7 @@ enum CountryCode {
+ 	CTRY_AUSTRALIA = 36,
+ 	CTRY_AUSTRIA = 40,
+ 	CTRY_AZERBAIJAN = 31,
++	CTRY_BAHAMAS = 44,
+ 	CTRY_BAHRAIN = 48,
+ 	CTRY_BANGLADESH = 50,
+ 	CTRY_BARBADOS = 52,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -306,6 +306,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_AUSTRALIA2, FCC6_WORLD, "AU"},
+ 	{CTRY_AUSTRIA, ETSI1_WORLD, "AT"},
+ 	{CTRY_AZERBAIJAN, ETSI4_WORLD, "AZ"},
++	{CTRY_BAHAMAS, FCC3_WORLD, "BS"},
+ 	{CTRY_BAHRAIN, APL6_WORLD, "BH"},
+ 	{CTRY_BANGLADESH, NULL1_WORLD, "BD"},
+ 	{CTRY_BARBADOS, FCC2_WORLD, "BB"},
 
 
