@@ -2,159 +2,91 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC66C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3272C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 967E92083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87AC5208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1VXtdoA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967E92083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMmkTvv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AC5208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbeHATv5 (ORCPT
+        id S1732668AbeHATwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:51:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40157 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732581AbeHATv4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:51:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id e13-v6so8244616pff.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 11:05:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2pWiTqMDsoMOxuo1kybX0qJyORiAw5vulAq9JPZVfNM=;
-        b=Y1VXtdoAKANAKkUMTCZ5E6fH/sbsr6Z/ijoW8ERft+cXnzHEgLRliFtYgbYn0kjzqX
-         NVAXHm5y9DLAiNQEoOZAALILuETls29QGLFk2YnMrdBMgoaS+0pZ6nSTEHHRKzSRW5XV
-         afQo8F3R16Blz3N2d2HlTgULqn4XmH79D7Q8w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2pWiTqMDsoMOxuo1kybX0qJyORiAw5vulAq9JPZVfNM=;
-        b=mHqD3QURAqRVbNlB0VcoY8QJmbAkNxqchUsUoo7ozCL4BrRmOBVQDi1mE5ceX6MWUv
-         zaecsXuZNFGkvEsQ9quodYwjwDPeNsMyLec+julx7eA0cVjiv+oIj0N1gaN8HFVE4cAe
-         dGT37nGEXSwBq9FLwVEXkjU3TUE3Kr6tEI543+GUnET4SSt+Inf9VLGRLxgXY/gYoOvG
-         6tQpr0y9XYSy9tjOu0nRh9e8nFxgp6VQiG2KQ29GTwbJOktIhSjaXohSd0GIA8trbFPJ
-         xWYypjSQL2lPRAoakJl2w5hJ1Hi5xJci18AR3Qq4O0rlQYPXlxzlT7EKYAdeufzcL5Bo
-         Il/Q==
-X-Gm-Message-State: AOUpUlEcbeN8TTUjgoSWouzTq6cmQ5CCd1+qo9NYAXSsaY+XE59haAQA
-        1etPCF03o0GiDQq0t1GUEAxP
-X-Google-Smtp-Source: AAOMgpc6cao8i4/xrx7/1eUxm/n0/XZHhwRHr0WznSqQEqY7B8QjtIgvSXpSUcZUQL63B0Fw/OQm/w==
-X-Received: by 2002:a62:f0d:: with SMTP id x13-v6mr27547729pfi.123.1533146701256;
-        Wed, 01 Aug 2018 11:05:01 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:73c1:5a70:e532:a47d:7290:5aa6])
-        by smtp.gmail.com with ESMTPSA id x80-v6sm12961649pfe.129.2018.08.01.11.04.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 11:04:49 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v8 3/6] arm64: dts: actions: Add Actions Semiconductor S900 I2C controller nodes
-Date:   Wed,  1 Aug 2018 23:32:29 +0530
-Message-Id: <20180801180232.23680-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
-References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+        Wed, 1 Aug 2018 15:52:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729616AbeHATwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:52:04 -0400
+Received: from [10.82.12.2] (unknown [131.107.159.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5B222083D;
+        Wed,  1 Aug 2018 18:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533146709;
+        bh=74v+EfS6PzK8Jdd/UwS08bJu9i2C5azdxT3XO9pFltg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eMmkTvv6SUgh69oQ5wFmPzH2HURTwF95wzi2YG+2PQxdbhLwyflzyBXXEvyT6tBPk
+         tsiD3r9FTCjmN9hxLICFGYa4CjKe5zfTTs2X06C4phdKJi/lCJ9X7u47B8/1P72OHd
+         zgnfRKqzUSCyB1RdYkWseS+1XSBH2vy3wkweGwxo=
+Subject: Re: [PATCH 3/3] PCI/portdrv: Add support for sharing xilinx
+ controller irq with AER
+To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bhelgaas@google.com, rgummal@xilinx.com
+References: <1533141889-19962-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+ <1533141889-19962-4-git-send-email-bharat.kumar.gogada@xilinx.com>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <7d5ae8ed-5623-3cd2-7769-77702448b2d6@kernel.org>
+Date:   Wed, 1 Aug 2018 11:05:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1533141889-19962-4-git-send-email-bharat.kumar.gogada@xilinx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add I2C controller nodes for Actions Semiconductor S900 SoC.
+On 8/1/2018 9:44 AM, Bharat Kumar Gogada wrote:
+> Xilinx ZynqMP PS PCIe does not report AER interrupts using Advanced
+> Error Interrupt Message Number. The controller has dedicated interrupt line
+> for reporting PCIe errors along with AER.
+> 
+> Using dedicated controller irq number for AER which is shared with misc
+> interrupt handler in pcie-xilinx-nwl. This irq number is set
+> using PCI quirk.
+> 
+> Signed-off-by: Bharat Kumar Gogada<bharat.kumar.gogada@xilinx.com>
+> ---
+>   drivers/pci/pcie/portdrv_core.c |    4 ++++
+>   1 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+> index e0261ad..fa9150e 100644
+> --- a/drivers/pci/pcie/portdrv_core.c
+> +++ b/drivers/pci/pcie/portdrv_core.c
+> @@ -264,6 +264,10 @@ static int pcie_device_init(struct pci_dev *pdev, int service, int irq)
+>   	int retval;
+>   	struct pcie_device *pcie;
+>   	struct device *device;
+> +#if defined(CONFIG_ARCH_ZYNQMP) && defined(CONFIG_PCIE_XILINX_NWL)
+> +	if (service == PCIE_PORT_SERVICE_AER && pdev->sysdata)
+> +		irq = *(int *)pdev->sysdata;
+> +#endif
+>   
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s900.dtsi | 60 +++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 7ae8b931f000..6f7b89edbe4d 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -174,6 +174,66 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		i2c0: i2c@e0170000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe0170000 0 0x1000>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&i2c0_default>;
-+		};
-+
-+		i2c1: i2c@e0172000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe0172000 0 0x1000>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&i2c1_default>;
-+		};
-+
-+		i2c2: i2c@e0174000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe0174000 0 0x1000>;
-+			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&i2c2_default>;
-+		};
-+
-+		i2c3: i2c@e0176000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe0176000 0 0x1000>;
-+			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e0178000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe0178000 0 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e017a000 {
-+			compatible = "actions,s900-i2c";
-+			reg = <0 0xe017a000 0 0x1000>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		pinctrl: pinctrl@e01b0000 {
- 			compatible = "actions,s900-pinctrl";
- 			reg = <0x0 0xe01b0000 0x0 0x1000>;
--- 
-2.17.1
+I remember seeing a similar patch before. The patch above looks ugly to
+be honest. Need to find a way to generalize this. Can you search the
+mailing list archive to find out what the history is?
 
