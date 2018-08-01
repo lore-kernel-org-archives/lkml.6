@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03CBC46463
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1968F208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5516120894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="kT802V4g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1968F208A4
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="YMeIfO7c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5516120894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389819AbeHARDo (ORCPT
+        id S2389833AbeHARDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:03:44 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35524 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389806AbeHARDn (ORCPT
+        Wed, 1 Aug 2018 13:03:46 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35075 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389806AbeHARDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:03:43 -0400
-Received: by mail-qk0-f195.google.com with SMTP id u21-v6so12919126qku.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:17:32 -0700 (PDT)
+        Wed, 1 Aug 2018 13:03:45 -0400
+Received: by mail-qt0-f193.google.com with SMTP id a5-v6so20262699qtp.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NnxyiouhvZnUSydapW5h/V7JQgsuHd8XHvJ9oMKS3Xk=;
-        b=kT802V4gaqvbzln+f7fYdlx75z3raFvWWaTBt1Ow9JJu+sYDH8AC31h2MpNN+ybowx
-         kWiCmVtbOreLhY2E7Ss/RDFI5q+e71n0rRqALyj7H1GsxqyD90HGeMonuHIcCMH16La9
-         d0OcbT8ER8TruLjo/js6yfJNamgONc0l0RaEaNrDbELS7WDGUe56gFohc3Wang2B/ils
-         ekHw80UG/aGi4IdbXx4x294G9wbS8PW4DfBlYTJBxpUmYqT5Q3qXQ1Sf6qTCVbJpuAsU
-         uqHWEUJLMkuO0nmka52QhW6d+spDzMj6+dbkZD6t/BbBAvDVb4Q9l+tye6zJkb5XxztA
-         P9rw==
+        bh=EOH4yuXU61UFUoCxssnGS0E9pmyAjCBzpOCJhmVNCYY=;
+        b=YMeIfO7cHaOPiMpMbEL3NOKawxOjbeGFP0k9cxcW/u73CdC8UdEjGti+n/J1hepbbL
+         zC9EPQ6M3PsLnBBXu7zrA5qGMcnCgHgagLN5jzI9+SmcImMJ961PzYjpSy45FkXX0JZw
+         0eAz+TM8bpe3OY27wnif6jAJ8/W4uBGXYf3fvtSHMoZ0RqTjQt589ELUAgAfzwQ2ojr+
+         jkjjPbmQoZ9q0yzFS9xHB+gBuD9Lvz9GjaGpD1GL9Bvs1M/hMOlWdjgmBnGYs5V2O6SN
+         YNN1XzVzvzPZx98pl+pkHX8yqqelvVMDJ+ZoYPpNA5PyWTg8YW5QcvjCMws1CkX9fo8r
+         xyPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NnxyiouhvZnUSydapW5h/V7JQgsuHd8XHvJ9oMKS3Xk=;
-        b=qcHaiJpDyHjfyA7Mhh0im1PgW8hWvcjj/OWqWBJC32816BeCOSLRnPvW8oLONL2VCt
-         Fp/EzoPMbEr7uEcHMcJCNYisO8XVlb2WHBmRagASJB7gj7y+mvqoDVXX5Iy2kmJd7WJK
-         94MaJF+vzQYa2yIUmbNgpQ0kkbAjt9XEDVIiq2eYO9ZKRAjhVcMZGhngZ1gR0bWPEvPE
-         VHEM8Sx35HrHKPUbtgEjEQYitY/9d6cH3tQ2JI3hDxr3K1uQ1Q9W/oFzwOQkY8QcY/+e
-         V4vZv0hudnaduDwtgkjzKrC0mNXzQN7EkAbYKfeBCXFvOA4BlAJ8r6z4r3d4W8d1YQL1
-         Yk4g==
-X-Gm-Message-State: AOUpUlG7DLsY+HjKpLLOHYj9h+7HgVDx2NVOrq/Ouhd6uP9u6g/dQC/i
-        TqKID7avTaNNUnR7GZ8loGXD7g==
-X-Google-Smtp-Source: AAOMgpd6XA3VsHPvUpK58x5ONBk2skDpwBhL2vuXnT9tx3uqOGsyoxJ/SijzpC0KWqY+DZB2nZer+A==
-X-Received: by 2002:a37:dd4e:: with SMTP id n75-v6mr23297165qki.370.1533136652152;
-        Wed, 01 Aug 2018 08:17:32 -0700 (PDT)
+        bh=EOH4yuXU61UFUoCxssnGS0E9pmyAjCBzpOCJhmVNCYY=;
+        b=ceFvA2yJjoiVpamNEfZJPSZaUf/5OdpaCIGSSZC8Is03SLCTMm/vWfeE57a5xRR+o6
+         N3pp8BBXnNeYqaykSMAqt9bm6twYxUH/j/DNDbHOmbMK3Nke665/K4yBTut1pJNoaTMG
+         UQxNwLyW9BKXsza7jYQpqYKzJkSMfVU3IFaewCsIUjkBAYORVCuNf/2dE8CJknhXMswD
+         JPn3emKMhr3ro0HtqEaZqCBi+RMJF3o3im3FvQqW8GRGw/KRqVyAQ7Sn9VAbxnyIKEr/
+         4eOcdf4Wmq8/FtRSsipuKVnuoF5oe12ZhMthcjwCwu8vKQLiCV3Rf66jalpwfjqfiVbs
+         DeTg==
+X-Gm-Message-State: AOUpUlHdMkIjD8h0ShivMZ88QEfoTzj94VsKLQHqyfhc7YYgdLDS+N6V
+        frTwVbLtn1sEWe34mKofnlU9jc4227k=
+X-Google-Smtp-Source: AAOMgpeUwxxVwE79rZ0AeguIBPrw6fa3hN35INPzAmkwgRZJ3nR0gQGHLrKgRnEqqtyC2D7jwYOOgA==
+X-Received: by 2002:a0c:f8ce:: with SMTP id h14-v6mr23582982qvo.163.1533136654208;
+        Wed, 01 Aug 2018 08:17:34 -0700 (PDT)
 Received: from localhost (216.49.36.201.res-cmts.bus.ptd.net. [216.49.36.201])
-        by smtp.gmail.com with ESMTPSA id t27-v6sm13257610qkl.11.2018.08.01.08.17.30
+        by smtp.gmail.com with ESMTPSA id k38-v6sm13787746qtc.45.2018.08.01.08.17.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 08:17:31 -0700 (PDT)
+        Wed, 01 Aug 2018 08:17:33 -0700 (PDT)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -71,9 +71,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
         Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 6/9] sched: sched.h: make rq locking and clock functions available in stats.h
-Date:   Wed,  1 Aug 2018 11:19:55 -0400
-Message-Id: <20180801151958.32590-7-hannes@cmpxchg.org>
+Subject: [PATCH 7/9] sched: introduce this_rq_lock_irq()
+Date:   Wed,  1 Aug 2018 11:19:56 -0400
+Message-Id: <20180801151958.32590-8-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801151958.32590-1-hannes@cmpxchg.org>
 References: <20180801151958.32590-1-hannes@cmpxchg.org>
@@ -82,212 +82,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel/sched/sched.h includes "stats.h" half-way through the file. The
-next patch introduces users of sched.h's rq locking functions and
-update_rq_clock() in kernel/sched/stats.h. Move those definitions up
-in the file so they are available in stats.h.
+do_sched_yield() disables IRQs, looks up this_rq() and locks it. The
+next patch is adding another site with the same pattern, so provide a
+convenience function for it.
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- kernel/sched/sched.h | 164 +++++++++++++++++++++----------------------
- 1 file changed, 82 insertions(+), 82 deletions(-)
+ kernel/sched/core.c  |  4 +---
+ kernel/sched/sched.h | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 211890edf37e..9586a8141f16 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4960,9 +4960,7 @@ static void do_sched_yield(void)
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+-	local_irq_disable();
+-	rq = this_rq();
+-	rq_lock(rq, &rf);
++	rq = this_rq_lock_irq(&rf);
+ 
+ 	schedstat_inc(rq->yld_count);
+ 	current->sched_class->yield_task(rq);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index cb467c221b15..b8f038497240 100644
+index b8f038497240..bc798c7cb4d4 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -919,6 +919,8 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
- #define raw_rq()		raw_cpu_ptr(&runqueues)
- 
-+extern void update_rq_clock(struct rq *rq);
-+
- static inline u64 __rq_clock_broken(struct rq *rq)
- {
- 	return READ_ONCE(rq->clock);
-@@ -1037,6 +1039,86 @@ static inline void rq_repin_lock(struct rq *rq, struct rq_flags *rf)
- #endif
+@@ -1119,6 +1119,18 @@ rq_unlock(struct rq *rq, struct rq_flags *rf)
+ 	raw_spin_unlock(&rq->lock);
  }
  
-+struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-+	__acquires(rq->lock);
-+
-+struct rq *task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-+	__acquires(p->pi_lock)
-+	__acquires(rq->lock);
-+
-+static inline void __task_rq_unlock(struct rq *rq, struct rq_flags *rf)
-+	__releases(rq->lock)
-+{
-+	rq_unpin_lock(rq, rf);
-+	raw_spin_unlock(&rq->lock);
-+}
-+
-+static inline void
-+task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
-+	__releases(rq->lock)
-+	__releases(p->pi_lock)
-+{
-+	rq_unpin_lock(rq, rf);
-+	raw_spin_unlock(&rq->lock);
-+	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
-+}
-+
-+static inline void
-+rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
++static inline struct rq *
++this_rq_lock_irq(struct rq_flags *rf)
 +	__acquires(rq->lock)
 +{
-+	raw_spin_lock_irqsave(&rq->lock, rf->flags);
-+	rq_pin_lock(rq, rf);
-+}
++	struct rq *rq;
 +
-+static inline void
-+rq_lock_irq(struct rq *rq, struct rq_flags *rf)
-+	__acquires(rq->lock)
-+{
-+	raw_spin_lock_irq(&rq->lock);
-+	rq_pin_lock(rq, rf);
-+}
-+
-+static inline void
-+rq_lock(struct rq *rq, struct rq_flags *rf)
-+	__acquires(rq->lock)
-+{
-+	raw_spin_lock(&rq->lock);
-+	rq_pin_lock(rq, rf);
-+}
-+
-+static inline void
-+rq_relock(struct rq *rq, struct rq_flags *rf)
-+	__acquires(rq->lock)
-+{
-+	raw_spin_lock(&rq->lock);
-+	rq_repin_lock(rq, rf);
-+}
-+
-+static inline void
-+rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
-+	__releases(rq->lock)
-+{
-+	rq_unpin_lock(rq, rf);
-+	raw_spin_unlock_irqrestore(&rq->lock, rf->flags);
-+}
-+
-+static inline void
-+rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
-+	__releases(rq->lock)
-+{
-+	rq_unpin_lock(rq, rf);
-+	raw_spin_unlock_irq(&rq->lock);
-+}
-+
-+static inline void
-+rq_unlock(struct rq *rq, struct rq_flags *rf)
-+	__releases(rq->lock)
-+{
-+	rq_unpin_lock(rq, rf);
-+	raw_spin_unlock(&rq->lock);
++	local_irq_disable();
++	rq = this_rq();
++	rq_lock(rq, rf);
++	return rq;
 +}
 +
  #ifdef CONFIG_NUMA
  enum numa_topology_type {
  	NUMA_DIRECT,
-@@ -1670,8 +1752,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
- 	sched_update_tick_dependency(rq);
- }
- 
--extern void update_rq_clock(struct rq *rq);
--
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
- extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
- 
-@@ -1752,86 +1832,6 @@ static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta) { }
- static inline void sched_avg_update(struct rq *rq) { }
- #endif
- 
--struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
--	__acquires(rq->lock);
--
--struct rq *task_rq_lock(struct task_struct *p, struct rq_flags *rf)
--	__acquires(p->pi_lock)
--	__acquires(rq->lock);
--
--static inline void __task_rq_unlock(struct rq *rq, struct rq_flags *rf)
--	__releases(rq->lock)
--{
--	rq_unpin_lock(rq, rf);
--	raw_spin_unlock(&rq->lock);
--}
--
--static inline void
--task_rq_unlock(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
--	__releases(rq->lock)
--	__releases(p->pi_lock)
--{
--	rq_unpin_lock(rq, rf);
--	raw_spin_unlock(&rq->lock);
--	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
--}
--
--static inline void
--rq_lock_irqsave(struct rq *rq, struct rq_flags *rf)
--	__acquires(rq->lock)
--{
--	raw_spin_lock_irqsave(&rq->lock, rf->flags);
--	rq_pin_lock(rq, rf);
--}
--
--static inline void
--rq_lock_irq(struct rq *rq, struct rq_flags *rf)
--	__acquires(rq->lock)
--{
--	raw_spin_lock_irq(&rq->lock);
--	rq_pin_lock(rq, rf);
--}
--
--static inline void
--rq_lock(struct rq *rq, struct rq_flags *rf)
--	__acquires(rq->lock)
--{
--	raw_spin_lock(&rq->lock);
--	rq_pin_lock(rq, rf);
--}
--
--static inline void
--rq_relock(struct rq *rq, struct rq_flags *rf)
--	__acquires(rq->lock)
--{
--	raw_spin_lock(&rq->lock);
--	rq_repin_lock(rq, rf);
--}
--
--static inline void
--rq_unlock_irqrestore(struct rq *rq, struct rq_flags *rf)
--	__releases(rq->lock)
--{
--	rq_unpin_lock(rq, rf);
--	raw_spin_unlock_irqrestore(&rq->lock, rf->flags);
--}
--
--static inline void
--rq_unlock_irq(struct rq *rq, struct rq_flags *rf)
--	__releases(rq->lock)
--{
--	rq_unpin_lock(rq, rf);
--	raw_spin_unlock_irq(&rq->lock);
--}
--
--static inline void
--rq_unlock(struct rq *rq, struct rq_flags *rf)
--	__releases(rq->lock)
--{
--	rq_unpin_lock(rq, rf);
--	raw_spin_unlock(&rq->lock);
--}
--
- #ifdef CONFIG_SMP
- #ifdef CONFIG_PREEMPT
- 
 -- 
 2.18.0
 
