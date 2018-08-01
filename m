@@ -6,42 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AA7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A34CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 855A820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855A820844
+	by mail.kernel.org (Postfix) with ESMTP id 9D68220844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D68220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeHATtT (ORCPT
+        id S1731512AbeHATt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:49:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49886 "EHLO
+        Wed, 1 Aug 2018 15:49:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49890 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405869AbeHATIi (ORCPT
+        with ESMTP id S2405859AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A72D6133C;
-        Wed,  1 Aug 2018 17:12:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFC3310C8;
+        Wed,  1 Aug 2018 17:03:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Steve Wise <swise@opengridcomputing.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 004/246] drivers/infiniband/core/verbs.c: fix build with gcc-4.4.4
-Date:   Wed,  1 Aug 2018 18:48:34 +0200
-Message-Id: <20180801165011.911638357@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 199/336] libata: Fix command retry decision
+Date:   Wed,  1 Aug 2018 18:48:54 +0200
+Message-Id: <20180801165036.708581220@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -51,48 +47,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit 6ee687735e745eafae9e6b93d1ea70bc52e7ad07 upstream.
+[ Upstream commit 804689ad2d9b66d0d3920b48cf05881049d44589 ]
 
-gcc-4.4.4 has issues with initialization of anonymous unions.
+For failed commands with valid sense data (e.g. NCQ commands),
+scsi_check_sense() is used in ata_analyze_tf() to determine if the
+command can be retried. In such case, rely on this decision and ignore
+the command error mask based decision done in ata_worth_retry().
 
-drivers/infiniband/core/verbs.c: In function '__ib_drain_sq':
-drivers/infiniband/core/verbs.c:2204: error: unknown field 'wr_cqe' specified in initializer
-drivers/infiniband/core/verbs.c:2204: warning: initialization makes integer from pointer without a cast
+This fixes useless retries of commands such as unaligned writes on zoned
+disks (TYPE_ZAC).
 
-Work around this.
-
-Fixes: a1ae7d0345edd5 ("RDMA/core: Avoid that ib_drain_qp() triggers an out-of-bounds stack access")
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Steve Wise <swise@opengridcomputing.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/verbs.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ata/libata-eh.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/core/verbs.c
-+++ b/drivers/infiniband/core/verbs.c
-@@ -2118,8 +2118,9 @@ static void __ib_drain_sq(struct ib_qp *
- 	struct ib_send_wr *bad_swr;
- 	struct ib_rdma_wr swr = {
- 		.wr = {
-+			.next = NULL,
-+			{ .wr_cqe	= &sdrain.cqe, },
- 			.opcode	= IB_WR_RDMA_WRITE,
--			.wr_cqe	= &sdrain.cqe,
- 		},
- 	};
- 	int ret;
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -2218,12 +2218,16 @@ static void ata_eh_link_autopsy(struct a
+ 		if (qc->err_mask & ~AC_ERR_OTHER)
+ 			qc->err_mask &= ~AC_ERR_OTHER;
+ 
+-		/* SENSE_VALID trumps dev/unknown error and revalidation */
++		/*
++		 * SENSE_VALID trumps dev/unknown error and revalidation. Upper
++		 * layers will determine whether the command is worth retrying
++		 * based on the sense data and device class/type. Otherwise,
++		 * determine directly if the command is worth retrying using its
++		 * error mask and flags.
++		 */
+ 		if (qc->flags & ATA_QCFLAG_SENSE_VALID)
+ 			qc->err_mask &= ~(AC_ERR_DEV | AC_ERR_OTHER);
+-
+-		/* determine whether the command is worth retrying */
+-		if (ata_eh_worth_retry(qc))
++		else if (ata_eh_worth_retry(qc))
+ 			qc->flags |= ATA_QCFLAG_RETRY;
+ 
+ 		/* accumulate error info */
 
 
