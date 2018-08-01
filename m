@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED515C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC47C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5BF22083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5BF22083D
+	by mail.kernel.org (Postfix) with ESMTP id 57D842083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D842083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407025AbeHATOX (ORCPT
+        id S2407298AbeHATO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:14:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51978 "EHLO
+        Wed, 1 Aug 2018 15:14:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51994 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407028AbeHATOW (ORCPT
+        with ESMTP id S2404714AbeHATOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:14:22 -0400
+        Wed, 1 Aug 2018 15:14:25 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C000C3C;
-        Wed,  1 Aug 2018 17:27:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C090D4A;
+        Wed,  1 Aug 2018 17:27:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noam Rathaus <noamr@beyondsecurity.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 023/144] infiniband: fix a possible use-after-free bug
-Date:   Wed,  1 Aug 2018 18:50:50 +0200
-Message-Id: <20180801164950.975585288@linuxfoundation.org>
+Subject: [PATCH 4.9 024/144] powerpc/eeh: Fix use-after-release of EEH driver
+Date:   Wed,  1 Aug 2018 18:50:51 +0200
+Message-Id: <20180801164951.005230190@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,55 +51,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit cb2595c1393b4a5211534e6f0a0fbad369e21ad8 ]
+[ Upstream commit 46d4be41b987a6b2d25a2ebdd94cafb44e21d6c5 ]
 
-ucma_process_join() will free the new allocated "mc" struct,
-if there is any error after that, especially the copy_to_user().
+Correct two cases where eeh_pcid_get() is used to reference the driver's
+module but the reference is dropped before the driver pointer is used.
 
-But in parallel, ucma_leave_multicast() could find this "mc"
-through idr_find() before ucma_process_join() frees it, since it
-is already published.
+In eeh_rmv_device() also refactor a little so that only two calls to
+eeh_pcid_put() are needed, rather than three and the reference isn't
+taken at all if it wasn't needed.
 
-So "mc" could be used in ucma_leave_multicast() after it is been
-allocated and freed in ucma_process_join(), since we don't refcnt
-it.
-
-Fix this by separating "publish" from ID allocation, so that we
-can get an ID first and publish it later after copy_to_user().
-
-Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
-Reported-by: Noam Rathaus <noamr@beyondsecurity.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/ucma.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh_driver.c |   28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -218,7 +218,7 @@ static struct ucma_multicast* ucma_alloc
- 		return NULL;
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -450,9 +450,11 @@ static void *eeh_add_virt_device(void *d
  
- 	mutex_lock(&mut);
--	mc->id = idr_alloc(&multicast_idr, mc, 0, 0, GFP_KERNEL);
-+	mc->id = idr_alloc(&multicast_idr, NULL, 0, 0, GFP_KERNEL);
- 	mutex_unlock(&mut);
- 	if (mc->id < 0)
- 		goto error;
-@@ -1385,6 +1385,10 @@ static ssize_t ucma_process_join(struct
- 		goto err3;
+ 	driver = eeh_pcid_get(dev);
+ 	if (driver) {
+-		eeh_pcid_put(dev);
+-		if (driver->err_handler)
++		if (driver->err_handler) {
++			eeh_pcid_put(dev);
+ 			return NULL;
++		}
++		eeh_pcid_put(dev);
  	}
  
-+	mutex_lock(&mut);
-+	idr_replace(&multicast_idr, mc, mc->id);
-+	mutex_unlock(&mut);
-+
- 	mutex_unlock(&file->mut);
- 	ucma_put_ctx(ctx);
- 	return 0;
+ #ifdef CONFIG_PPC_POWERNV
+@@ -489,17 +491,19 @@ static void *eeh_rmv_device(void *data,
+ 	if (eeh_dev_removed(edev))
+ 		return NULL;
+ 
+-	driver = eeh_pcid_get(dev);
+-	if (driver) {
+-		eeh_pcid_put(dev);
+-		if (removed &&
+-		    eeh_pe_passed(edev->pe))
+-			return NULL;
+-		if (removed &&
+-		    driver->err_handler &&
+-		    driver->err_handler->error_detected &&
+-		    driver->err_handler->slot_reset)
++	if (removed) {
++		if (eeh_pe_passed(edev->pe))
+ 			return NULL;
++		driver = eeh_pcid_get(dev);
++		if (driver) {
++			if (driver->err_handler &&
++			    driver->err_handler->error_detected &&
++			    driver->err_handler->slot_reset) {
++				eeh_pcid_put(dev);
++				return NULL;
++			}
++			eeh_pcid_put(dev);
++		}
+ 	}
+ 
+ 	/* Remove it from PCI subsystem */
 
 
