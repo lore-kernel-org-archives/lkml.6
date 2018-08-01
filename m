@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC07C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFC8C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2952208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2952208A4
+	by mail.kernel.org (Postfix) with ESMTP id EBB572083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB572083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405894AbeHATIi (ORCPT
+        id S1731977AbeHATt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:08:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:49:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49804 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405717AbeHATIf (ORCPT
+        with ESMTP id S2405873AbeHATIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:08:35 -0400
+        Wed, 1 Aug 2018 15:08:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C006513C1;
-        Wed,  1 Aug 2018 17:15:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F26D91342;
+        Wed,  1 Aug 2018 17:12:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ganapathi Bhat <gbhat@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/246] mwifiex: handle race during mwifiex_usb_disconnect
-Date:   Wed,  1 Aug 2018 18:49:47 +0200
-Message-Id: <20180801165015.399947188@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 006/246] drivers/infiniband/ulp/srpt/ib_srpt.c: fix build with gcc-4.4.4
+Date:   Wed,  1 Aug 2018 18:48:36 +0200
+Message-Id: <20180801165012.008693768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,47 +54,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ganapathi Bhat <gbhat@marvell.com>
+From: Andrew Morton <akpm@linux-foundation.org>
 
-[ Upstream commit b817047ae70c0bd67b677b65d0d69d72cd6e9728 ]
+commit 06892cc190550807d332c95a0114c7e175584012 upstream.
 
-Race condition is observed during rmmod of mwifiex_usb:
+gcc-4.4.4 has issues with initialization of anonymous unions:
 
-1. The rmmod thread will call mwifiex_usb_disconnect(), download
-   SHUTDOWN command and do wait_event_interruptible_timeout(),
-   waiting for response.
+drivers/infiniband/ulp/srpt/ib_srpt.c: In function 'srpt_zerolength_write':
+drivers/infiniband/ulp/srpt/ib_srpt.c:854: error: unknown field 'wr_cqe' specified in initializer
+drivers/infiniband/ulp/srpt/ib_srpt.c:854: warning: initialization makes integer from pointer without a cast
 
-2. The main thread will handle the response and will do a
-   wake_up_interruptible(), unblocking rmmod thread.
+Work aound this.
 
-3. On getting unblocked, rmmod thread  will make rx_cmd.urb = NULL in
-   mwifiex_usb_free().
-
-4. The main thread will try to resubmit rx_cmd.urb in
-   mwifiex_usb_submit_rx_urb(), which is NULL.
-
-To fix, wait for main thread to complete before calling
-mwifiex_usb_free().
-
-Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 2a78cb4db487 ("IB/srpt: Fix an out-of-bounds stack access in srpt_zerolength_write()")
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/mwifiex/usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/usb.c
-+++ b/drivers/net/wireless/marvell/mwifiex/usb.c
-@@ -644,6 +644,9 @@ static void mwifiex_usb_disconnect(struc
- 					 MWIFIEX_FUNC_SHUTDOWN);
- 	}
- 
-+	if (adapter->workqueue)
-+		flush_workqueue(adapter->workqueue);
-+
- 	mwifiex_usb_free(card);
- 
- 	mwifiex_dbg(adapter, FATAL,
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -790,8 +790,9 @@ static int srpt_zerolength_write(struct
+ 	struct ib_send_wr *bad_wr;
+ 	struct ib_rdma_wr wr = {
+ 		.wr = {
++			.next		= NULL,
++			{ .wr_cqe	= &ch->zw_cqe, },
+ 			.opcode		= IB_WR_RDMA_WRITE,
+-			.wr_cqe		= &ch->zw_cqe,
+ 			.send_flags	= IB_SEND_SIGNALED,
+ 		}
+ 	};
 
 
