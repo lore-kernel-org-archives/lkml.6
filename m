@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38428C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76441C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E004720841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E004720841
+	by mail.kernel.org (Postfix) with ESMTP id 31EA120841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 06:30:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EA120841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387479AbeHAIOT (ORCPT
+        id S2387497AbeHAIOj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 04:14:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51030 "EHLO mx1.suse.de"
+        Wed, 1 Aug 2018 04:14:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51080 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387419AbeHAIOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 04:14:19 -0400
+        id S2387419AbeHAIOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 04:14:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4EF48AEB9;
-        Wed,  1 Aug 2018 06:30:14 +0000 (UTC)
-Subject: Re: [PATCH 1/3] fcoe: fix use-after-free in fcoe_ctlr_els_send
+        by mx1.suse.de (Postfix) with ESMTP id 02FE4AEB9;
+        Wed,  1 Aug 2018 06:30:34 +0000 (UTC)
+Subject: Re: [PATCH 2/3] scsi: fcoe: drop frames in ELS LOGO error path
 To:     Johannes Thumshirn <jthumshirn@suse.de>,
         "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
         Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
         ard <ard@kwaak.net>
 References: <20180731134603.20089-1-jthumshirn@suse.de>
- <20180731134603.20089-2-jthumshirn@suse.de>
+ <20180731134603.20089-3-jthumshirn@suse.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <a3ad59a7-3ccb-46e7-60b6-6ce073417564@suse.de>
-Date:   Wed, 1 Aug 2018 08:30:13 +0200
+Message-ID: <bf4d9fbb-4801-044b-680e-b44894592b11@suse.de>
+Date:   Wed, 1 Aug 2018 08:30:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180731134603.20089-2-jthumshirn@suse.de>
+In-Reply-To: <20180731134603.20089-3-jthumshirn@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -49,34 +49,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/31/2018 03:46 PM, Johannes Thumshirn wrote:
-> KASAN reports a use-after-free in fcoe_ctlr_els_send() when we're
-> sending a LOGO and have FIP debugging enabled. This is because we're
-> first freeing the skb and then printing the frame's DID. But the DID
-> is a member of the FC frame header which in turn is the skb's payload.
+> Drop the frames in the ELS LOGO error path instead of just returning
+> an error.
 > 
-> Exchange the debug print and kfree_skb() calls so we're not touching
-> the freed data.
+> This fixes the following kmemleak report:
+> unreferenced object 0xffff880064cb1000 (size 424):
+>   comm "kworker/0:2", pid 24, jiffies 4294904293 (age 68.504s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<(____ptrval____)>] _fc_frame_alloc+0x2c/0x180 [libfc]
+>     [<(____ptrval____)>] fc_lport_enter_logo+0x106/0x360 [libfc]
+>     [<(____ptrval____)>] fc_fabric_logoff+0x8c/0xc0 [libfc]
+>     [<(____ptrval____)>] fcoe_if_destroy+0x79/0x3b0 [fcoe]
+>     [<(____ptrval____)>] fcoe_destroy_work+0xd2/0x170 [fcoe]
+>     [<(____ptrval____)>] process_one_work+0x7ff/0x1420
+>     [<(____ptrval____)>] worker_thread+0x87/0xef0
+>     [<(____ptrval____)>] kthread+0x2db/0x390
+>     [<(____ptrval____)>] ret_from_fork+0x35/0x40
+>     [<(____ptrval____)>] 0xffffffffffffffff
+> 
+> which can be triggered by issuing
+> echo eth0 > /sys/bus/fcoe/ctlr_destroy
 > 
 > Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
 > ---
->  drivers/scsi/fcoe/fcoe_ctlr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/scsi/fcoe/fcoe_ctlr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-> index ea23c8dffc25..ceb35ebbeb8f 100644
+> index ceb35ebbeb8f..ffec695e0bfb 100644
 > --- a/drivers/scsi/fcoe/fcoe_ctlr.c
 > +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-> @@ -799,9 +799,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr *fip, struct fc_lport *lport,
->  	fip->send(fip, skb);
->  	return -EINPROGRESS;
->  drop:
-> -	kfree_skb(skb);
->  	LIBFCOE_FIP_DBG(fip, "drop els_send op %u d_id %x\n",
->  			op, ntoh24(fh->fh_d_id));
-> +	kfree_skb(skb);
->  	return -EINVAL;
->  }
->  EXPORT_SYMBOL(fcoe_ctlr_els_send);
+> @@ -754,9 +754,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr *fip, struct fc_lport *lport,
+>  	case ELS_LOGO:
+>  		if (fip->mode == FIP_MODE_VN2VN) {
+>  			if (fip->state != FIP_ST_VNMP_UP)
+> -				return -EINVAL;
+> +				goto drop;
+>  			if (ntoh24(fh->fh_d_id) == FC_FID_FLOGI)
+> -				return -EINVAL;
+> +				goto drop;
+>  		} else {
+>  			if (fip->state != FIP_ST_ENABLED)
+>  				return 0;
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
