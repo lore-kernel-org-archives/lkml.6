@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096EFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF816C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1B3220841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B3220841
+	by mail.kernel.org (Postfix) with ESMTP id A784820840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A784820840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387889AbeHAUVa (ORCPT
+        id S2387798AbeHAUVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:21:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46136 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404164AbeHATDe (ORCPT
+        with ESMTP id S2403979AbeHATDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B3A3FAE;
-        Wed,  1 Aug 2018 16:58:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 665531028;
+        Wed,  1 Aug 2018 17:00:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 102/336] media: tw686x: Fix incorrect vb2_mem_ops GFP flags
-Date:   Wed,  1 Aug 2018 18:47:17 +0200
-Message-Id: <20180801165033.066784550@linuxfoundation.org>
+Subject: [PATCH 4.17 122/336] ath: Add regulatory mapping for Tanzania
+Date:   Wed,  1 Aug 2018 18:47:37 +0200
+Message-Id: <20180801165033.817927326@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,36 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 636757ab6c93e19e2f58d3b3af1312e34eaffbab ]
+[ Upstream commit 667ddac5745fb9fddfe8f7fd2523070f50bd4442 ]
 
-When the driver is configured in the "memcpy" dma-mode,
-it uses vb2_vmalloc_memops, which is backed by a SLAB
-allocator and so shouldn't be using GFP_DMA32.
+The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
+and to select the correct conformance test limits (CTL) for a country. If
+the country isn't available and it is still programmed in the EEPROM then
+it will cause an error and stop the initialization with:
 
-Fix it.
+  Invalid EEPROM contents
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The current CTL mappings for this country are:
+
+* 2.4GHz: ETSI
+* 5GHz: FCC
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/tw686x/tw686x-video.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd.h        |    1 +
+ drivers/net/wireless/ath/regd_common.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -1228,7 +1228,8 @@ int tw686x_video_init(struct tw686x_dev
- 		vc->vidq.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
- 		vc->vidq.min_buffers_needed = 2;
- 		vc->vidq.lock = &vc->vb_mutex;
--		vc->vidq.gfp_flags = GFP_DMA32;
-+		vc->vidq.gfp_flags = dev->dma_mode != TW686X_DMA_MODE_MEMCPY ?
-+				     GFP_DMA32 : 0;
- 		vc->vidq.dev = &dev->pci_dev->dev;
- 
- 		err = vb2_queue_init(&vc->vidq);
+--- a/drivers/net/wireless/ath/regd.h
++++ b/drivers/net/wireless/ath/regd.h
+@@ -170,6 +170,7 @@ enum CountryCode {
+ 	CTRY_SWITZERLAND = 756,
+ 	CTRY_SYRIA = 760,
+ 	CTRY_TAIWAN = 158,
++	CTRY_TANZANIA = 834,
+ 	CTRY_THAILAND = 764,
+ 	CTRY_TRINIDAD_Y_TOBAGO = 780,
+ 	CTRY_TUNISIA = 788,
+--- a/drivers/net/wireless/ath/regd_common.h
++++ b/drivers/net/wireless/ath/regd_common.h
+@@ -463,6 +463,7 @@ static struct country_code_to_enum_rd al
+ 	{CTRY_SWITZERLAND, ETSI1_WORLD, "CH"},
+ 	{CTRY_SYRIA, NULL1_WORLD, "SY"},
+ 	{CTRY_TAIWAN, APL3_FCCA, "TW"},
++	{CTRY_TANZANIA, APL1_WORLD, "TZ"},
+ 	{CTRY_THAILAND, FCC3_WORLD, "TH"},
+ 	{CTRY_TRINIDAD_Y_TOBAGO, FCC3_WORLD, "TT"},
+ 	{CTRY_TUNISIA, ETSI3_WORLD, "TN"},
 
 
