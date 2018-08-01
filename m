@@ -2,92 +2,126 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CDBC46462
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2530C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 672A0208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672A0208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B81320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:49:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzZDB9jP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B81320844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388893AbeHAMdr (ORCPT
+        id S2388653AbeHAMfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:33:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39187 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387581AbeHAMdC (ORCPT
+        Wed, 1 Aug 2018 08:35:01 -0400
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:45094 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388522AbeHAMfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:33:02 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fkofS-0006Wd-H7; Wed, 01 Aug 2018 10:47:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Jaya Kumar <jayakumar.alsa@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] ASoC: stm32: remove redundant pointers 'priv' and 'rtd'
-Date:   Wed,  1 Aug 2018 11:47:40 +0100
-Message-Id: <20180801104742.4328-8-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180801104742.4328-1-colin.king@canonical.com>
-References: <20180801104742.4328-1-colin.king@canonical.com>
+        Wed, 1 Aug 2018 08:35:01 -0400
+Received: by mail-pf1-f171.google.com with SMTP id i26-v6so7653394pfo.12;
+        Wed, 01 Aug 2018 03:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8OICv+Y1dMuYh3GpHFlTBDMuB3V3WMbu4pn4lEiil+o=;
+        b=hzZDB9jP4l/xxlaAs5tTV+pN3KllibWTItRWZETwb8TOCU+TiY6g9OfbLBJs1bqw1q
+         cuxKau0hqRTu81kRIbwwoQNWl5uCSU1boj/Yh5tVd2QDXILxj1GICDdgvyHoCrSxUF50
+         VsPbxKyK/5KDQwR7zTSk4RLualAy8JrpXcEoXKYdPX7JDJzM1T/dT4THl5n6yeZ5Ha3+
+         UWhZlVraewBpQoWyU09b4miSwAtBFnSdTwVYNlUI7gREpmPhLSJp1UgUzZrIhMud1jUc
+         +CK/MoYBQCoaq3rAg8L2SeXA+yJ9WSa0bCP0avp0ctJGb9DqGLl28e0flDHE1GsoELvy
+         h4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8OICv+Y1dMuYh3GpHFlTBDMuB3V3WMbu4pn4lEiil+o=;
+        b=eyuWavouumCjM0E2QhfbGrdV8ON6SXlwc2a3jvV7GMWGWTlQuj3If8mYUjpAX5r302
+         1GDwBYRsnBnz6pVzua/lN3WZ7Xgkd0hgimynsUdhIYXgsRgl7kl6mRF9gQUl9rNN8BJv
+         CiZ5siYNh6lf+EnN3LrNZ3esI2vjCRondYO6+GQ8O/2B9klFxuVRe22c6o66XPl5Z322
+         YynvyVKifgqeMO7nCWp6zh5cu9+Mwfw889Vfr+BOqeCggGYT94Rj69ifRANBrZ/1OT8x
+         7JD/YfQE7dlc1Z2lUIOCtsKmQKEtfiaACpV4Ts4RFTu08rPRZGm3mMhb5zyQsQJOlhVm
+         naxQ==
+X-Gm-Message-State: AOUpUlEKJhRExhGWu85+VlOavO3FFSxVarfVDg5bp7M0k/PwsKKVn2El
+        8aERm1SGbCpMn/MZUmri/Bw=
+X-Google-Smtp-Source: AAOMgpe5yO5+oF5VFOmKehAuKrRBMLsWLSLJGif/NfQ/sPYF5K7eZ9n/bQbQuSmTQhBZ+8sLHo0ddA==
+X-Received: by 2002:a62:9c17:: with SMTP id f23-v6mr26397154pfe.209.1533120590203;
+        Wed, 01 Aug 2018 03:49:50 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id y5-v6sm51739386pfj.169.2018.08.01.03.49.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 03:49:49 -0700 (PDT)
+Subject: Re: AW: AW: PROBLEM: Kernel Oops in UDP stack
+To:     Paolo Abeni <pabeni@redhat.com>,
+        Marcel Hellwig <mhellwig@mut-group.com>,
+        'Eric Dumazet' <eric.dumazet@gmail.com>,
+        "'davem@davemloft.net'" <davem@davemloft.net>,
+        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
+        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
+        "'andrew@lunn.ch'" <andrew@lunn.ch>
+Cc:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        Matthias Wystrik <mwystrik@mut-group.com>
+References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+ <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+ <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
+ <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
+ <9f9d731107594b368504cbbaf698bc3d@ZCOM03.mut-group.com>
+ <225373e97b42e0e5ee6210b329f0bbb94055b651.camel@redhat.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <cd53c2fe-5349-c0e2-c6f5-8bcebdef7024@gmail.com>
+Date:   Wed, 1 Aug 2018 03:49:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <225373e97b42e0e5ee6210b329f0bbb94055b651.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Pointer 'priv' is assigned and not used, removing this allows
-the removal of pointer 'rtd'.
 
-Cleans up clang warning:
-warning: variable 'priv' set but not used [-Wunused-but-set-variable]
+On 08/01/2018 03:44 AM, Paolo Abeni wrote:
+> On Wed, 2018-08-01 at 10:35 +0000, Marcel Hellwig wrote:
+>>>> [<c0228adc>] (udp_recvmsg+0x284/0x33c) from [<c02306e0>] (inet_recvmsg+0x38/0x4c): net/ipv4/udp.c:1234
+>>>
+>>>              sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
+>>>
+>>> Unaligned access trap (virtual address c14fe63a), so either sin or ip_hdr(skb) are not on a 32bit alignment
+>>>
+>>> Can you produce the disassembly of the trapping instruction ?
+>>
+>> https://gist.github.com/hellow554/6b11c6c0827d5db80a7e66f71f5636ff#file-net_uipv4_udp-lst-L1892-L1895
+>>
+>> 		sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
+>> c0228ad8:	e5943080 	ldr	r3, [r4, #128]	; 0x80
+>> c0228adc:	e593300c 	ldr	r3, [r3, #12]
+>> c0228ae0: 	e5823004	str	r3, [r2, #4]
+> 
+> I *think* pskb_trim_rcsum() in __udp4_lib_rcv() can copy the ipv4
+> header to an unaligned address, for cloned skbs. If I understood
+> correctly the relevant socket is a mcast one, so cloned skbs can land
+> there.
+> 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/stm/stm32_adfsdm.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+kmalloc() should return aligned pointer.
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index 0e9373064032..706ff005234f 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -269,16 +269,10 @@ static int stm32_adfsdm_pcm_new(struct snd_soc_pcm_runtime *rtd)
- static void stm32_adfsdm_pcm_free(struct snd_pcm *pcm)
- {
- 	struct snd_pcm_substream *substream;
--	struct snd_soc_pcm_runtime *rtd;
--	struct stm32_adfsdm_priv *priv;
- 
- 	substream = pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
--	if (substream) {
--		rtd = substream->private_data;
--		priv = snd_soc_dai_get_drvdata(rtd->cpu_dai);
--
-+	if (substream)
- 		snd_pcm_lib_preallocate_free_for_all(pcm);
--	}
- }
- 
- static struct snd_soc_component_driver stm32_adfsdm_soc_platform = {
--- 
-2.17.1
+pskb_expand_head() should allocate aligned skb->head
+
+So pskb_expand_head() should keep whatever offset was provided in the source skb 
+
+( Driver called skb_reserve() or similar function)
 
