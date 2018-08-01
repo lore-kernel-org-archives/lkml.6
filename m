@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BE0C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1E7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7842083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7842083D
+	by mail.kernel.org (Postfix) with ESMTP id 152E52083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152E52083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407883AbeHATSH (ORCPT
+        id S2407900AbeHATSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52778 "EHLO
+        Wed, 1 Aug 2018 15:18:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407434AbeHATSG (ORCPT
+        with ESMTP id S2407434AbeHATSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:06 -0400
+        Wed, 1 Aug 2018 15:18:10 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26AD3D4A;
-        Wed,  1 Aug 2018 17:31:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37C06D54;
+        Wed,  1 Aug 2018 17:31:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Suman Anna <s-anna@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org,
+        NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        SCSI ML <linux-scsi@vger.kernel.org>,
+        DM ML <dm-devel@redhat.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 131/144] media: omap3isp: fix unbalanced dma_iommu_mapping
-Date:   Wed,  1 Aug 2018 18:52:38 +0200
-Message-Id: <20180801164958.444609965@linuxfoundation.org>
+Subject: [PATCH 4.9 132/144] scsi: scsi_dh: replace too broad "TP9" string with the exact models
+Date:   Wed,  1 Aug 2018 18:52:39 +0200
+Message-Id: <20180801164958.515048187@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -54,57 +57,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suman Anna <s-anna@ti.com>
+From: Xose Vazquez Perez <xose.vazquez@gmail.com>
 
-[ Upstream commit b7e1e6859fbf60519fd82d7120cee106a6019512 ]
+[ Upstream commit 37b37d2609cb0ac267280ef27350b962d16d272e ]
 
-The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
-ARM DMA backend. The current code creates a dma_iommu_mapping and
-attaches this to the ISP device, but never detaches the mapping in
-either the probe failure paths or the driver remove path resulting
-in an unbalanced mapping refcount and a memory leak. Fix this properly.
+SGI/TP9100 is not an RDAC array:
+    ^^^
+https://git.opensvc.com/gitweb.cgi?p=multipath-tools/.git;a=blob;f=libmultipath/hwtable.c;h=88b4700beb1d8940008020fbe4c3cd97d62f4a56;hb=HEAD#l235
 
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+This partially reverts commit 35204772ea03 ("[SCSI] scsi_dh_rdac :
+Consolidate rdac strings together")
+
+[mkp: fixed up the new entries to align with rest of struct]
+
+Cc: NetApp RDAC team <ng-eseries-upstream-maintainers@netapp.com>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: SCSI ML <linux-scsi@vger.kernel.org>
+Cc: DM ML <dm-devel@redhat.com>
+Signed-off-by: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/omap3isp/isp.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_dh.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -1941,6 +1941,7 @@ error_csiphy:
- 
- static void isp_detach_iommu(struct isp_device *isp)
- {
-+	arm_iommu_detach_device(isp->dev);
- 	arm_iommu_release_mapping(isp->mapping);
- 	isp->mapping = NULL;
- 	iommu_group_remove_device(isp->dev);
-@@ -1974,8 +1975,7 @@ static int isp_attach_iommu(struct isp_d
- 	mapping = arm_iommu_create_mapping(&platform_bus_type, SZ_1G, SZ_2G);
- 	if (IS_ERR(mapping)) {
- 		dev_err(isp->dev, "failed to create ARM IOMMU mapping\n");
--		ret = PTR_ERR(mapping);
--		goto error;
-+		return PTR_ERR(mapping);
- 	}
- 
- 	isp->mapping = mapping;
-@@ -1990,7 +1990,8 @@ static int isp_attach_iommu(struct isp_d
- 	return 0;
- 
- error:
--	isp_detach_iommu(isp);
-+	arm_iommu_release_mapping(isp->mapping);
-+	isp->mapping = NULL;
- 	return ret;
- }
- 
+--- a/drivers/scsi/scsi_dh.c
++++ b/drivers/scsi/scsi_dh.c
+@@ -58,7 +58,10 @@ static const struct scsi_dh_blist scsi_d
+ 	{"IBM", "3526",			"rdac", },
+ 	{"IBM", "3542",			"rdac", },
+ 	{"IBM", "3552",			"rdac", },
+-	{"SGI", "TP9",			"rdac", },
++	{"SGI", "TP9300",		"rdac", },
++	{"SGI", "TP9400",		"rdac", },
++	{"SGI", "TP9500",		"rdac", },
++	{"SGI", "TP9700",		"rdac", },
+ 	{"SGI", "IS",			"rdac", },
+ 	{"STK", "OPENstorage",		"rdac", },
+ 	{"STK", "FLEXLINE 380",		"rdac", },
 
 
