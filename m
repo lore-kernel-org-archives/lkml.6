@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F5AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82A7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C37F20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C37F20862
+	by mail.kernel.org (Postfix) with ESMTP id 68D04208A6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D04208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732681AbeHAT5G (ORCPT
+        id S1732557AbeHAT5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:57:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:57:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405750AbeHATIf (ORCPT
+        with ESMTP id S2405733AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D7BE1397;
-        Wed,  1 Aug 2018 17:14:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C62D810FD;
+        Wed,  1 Aug 2018 17:05:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Yunlei He <heyunlei@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        Madhur Verma <madhur.verma@samsung.com>,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 057/246] f2fs: fix to dont trigger writeback during recovery
-Date:   Wed,  1 Aug 2018 18:49:27 +0200
-Message-Id: <20180801165014.439877217@linuxfoundation.org>
+Subject: [PATCH 4.17 230/336] drm/atomic: Handling the case when setting old crtc for plane
+Date:   Wed,  1 Aug 2018 18:49:25 +0200
+Message-Id: <20180801165037.869675854@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -48,50 +50,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Satendra Singh Thakur <satendra.t@samsung.com>
 
-[ Upstream commit 64c74a7ab505ea40d1b3e5d02735ecab08ae1b14 ]
+[ Upstream commit fc2a69f3903dfd97cd47f593e642b47918c949df ]
 
-- f2fs_fill_super
- - recover_fsync_data
-  - recover_data
-   - del_fsync_inode
-    - iput
-     - iput_final
-      - write_inode_now
-       - f2fs_write_inode
-        - f2fs_balance_fs
-         - f2fs_balance_fs_bg
-          - sync_dirty_inodes
+In the func drm_atomic_set_crtc_for_plane, with the current code,
+if crtc of the plane_state and crtc passed as argument to the func
+are same, entire func will executed in vein.
+It will get state of crtc and clear and set the bits in plane_mask.
+All these steps are not required for same old crtc.
+Ideally, we should do nothing in this case, this patch handles the same,
+and causes the program to return without doing anything in such scenario.
 
-With data_flush mount option, during recovery, in order to avoid entering
-above writeback flow, let's detect recovery status and do skip in
-f2fs_balance_fs_bg.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: Madhur Verma <madhur.verma@samsung.com>
+Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/1525326572-25854-1-git-send-email-satendra.t@samsung.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/drm_atomic.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -435,6 +435,9 @@ void f2fs_balance_fs(struct f2fs_sb_info
- 
- void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1429,7 +1429,9 @@ drm_atomic_set_crtc_for_plane(struct drm
  {
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
-+		return;
-+
- 	/* try to shrink extent cache when there is no enough memory */
- 	if (!available_free_memory(sbi, EXTENT_CACHE))
- 		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
+ 	struct drm_plane *plane = plane_state->plane;
+ 	struct drm_crtc_state *crtc_state;
+-
++	/* Nothing to do for same crtc*/
++	if (plane_state->crtc == crtc)
++		return 0;
+ 	if (plane_state->crtc) {
+ 		crtc_state = drm_atomic_get_crtc_state(plane_state->state,
+ 						       plane_state->crtc);
 
 
