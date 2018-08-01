@@ -2,90 +2,128 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB28C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CF6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D0D20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D0D20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mut-group.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E89420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:29:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iWE01wiI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E89420844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbeHAPNT (ORCPT
+        id S2389357AbeHAPPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:13:19 -0400
-Received: from mut-gw.mut-group.com ([213.209.114.184]:51117 "EHLO
-        mut-gw.mut-group.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389316AbeHAPNT (ORCPT
+        Wed, 1 Aug 2018 11:15:13 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35001 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389217AbeHAPPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:13:19 -0400
-Received: from [192.168.20.11] (port=61607 helo=zcom03.mut-group.com)
-        by mut-gw.mut-group.com with esmtps (TLSv1.2:AES256-SHA:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <mhellwig@mut-group.com>)
-        id 1fkr9u-0000rB-1u; Wed, 01 Aug 2018 15:27:22 +0200
-Received: from ZCOM03.mut-group.com (192.168.20.11) by ZCOM03.mut-group.com
- (192.168.20.11) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Wed, 1 Aug
- 2018 15:27:22 +0200
-Received: from ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960]) by
- ZCOM03.mut-group.com ([fe80::6097:6956:3dd6:4960%12]) with mapi id
- 15.00.1263.000; Wed, 1 Aug 2018 15:27:22 +0200
-From:   Marcel Hellwig <mhellwig@mut-group.com>
-To:     'Eric Dumazet' <eric.dumazet@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "'davem@davemloft.net'" <davem@davemloft.net>,
-        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
-        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
-        "'andrew@lunn.ch'" <andrew@lunn.ch>
-CC:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "Matthias Wystrik" <mwystrik@mut-group.com>
-Subject: AW: AW: AW: PROBLEM: Kernel Oops in UDP stack
-Thread-Topic: AW: AW: PROBLEM: Kernel Oops in UDP stack
-Thread-Index: AdQo32X7ylxOxyzCQIq96qKkvZ0yzgAovJrxAAAgVdAAAeBGhv//4AKA//++9KA=
-Date:   Wed, 1 Aug 2018 13:27:22 +0000
-Message-ID: <1ae1b19241734bfaacff082d241932f9@ZCOM03.mut-group.com>
-References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
- <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
- <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
- <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
- <9f9d731107594b368504cbbaf698bc3d@ZCOM03.mut-group.com>
- <225373e97b42e0e5ee6210b329f0bbb94055b651.camel@redhat.com>
- <cd53c2fe-5349-c0e2-c6f5-8bcebdef7024@gmail.com>
- <b727135a-a428-72bc-fa04-dbd64095b21e@gmail.com>
- <7feb4b8950b842469265672f4c7b381d@ZCOM03.mut-group.com>
-In-Reply-To: <7feb4b8950b842469265672f4c7b381d@ZCOM03.mut-group.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.21.69]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 1 Aug 2018 11:15:13 -0400
+Received: by mail-it0-f66.google.com with SMTP id q20-v6so9317355ith.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 06:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Z4X27xPlOHVle2VFkWx36s5HOu7wG2DiXBnwVVvFhlg=;
+        b=iWE01wiIhoKqNQ/Tg+6IP8JR4ddS3PmM4cRsOVwQjIj/ChqiV53X0LY0kGr8eFFkKo
+         /E2Up16SAB6lspHlkTdCrmoKXVq3UEDpxa2AXy5pu2Ew+UcVtc86cf8f0ZnsUbGn7fGG
+         JLxFrOpQiLt71pTBw7gGSPCleCcgqUQ+hcqq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Z4X27xPlOHVle2VFkWx36s5HOu7wG2DiXBnwVVvFhlg=;
+        b=mRovt8/OMiyzlRK87RoCpMDk1WrSMc0W0x9HdsHgFgMgFV7HKtSeoWbQuP8YOvhu0e
+         c8GCOqqKW8z/4fUuLPZxdljoX3QF/HjOOIDSGDP4SJAt3vGLLuDmEAQF6PtdB82d0+/U
+         mmf64HaCSDEcvJtqCr8H5aUJ5h7VPBqWUGacLwx9tpzPlPgWA2qzRZ8noxnNit2j7M03
+         Hu9G47h/fuvM1L6mDSjFIrN+bIWpGuAKodT0yh/8RaMuU4bv/Gr3B5sVFacGgT5VMmv0
+         WRMv3V6o0SNNeJ5NxJNckHm1o7LKYSZLIkfAe3GPEqrvejGAVsqwKKxNpSE2WzDOIqPH
+         wjIA==
+X-Gm-Message-State: AOUpUlFazGwRSIfeGYvG115CGXOn3J4OOlP0diLJlE2nXKaD0iF90ifu
+        ZqMFl7z6nB1C5Mwykv+CwePpO91lW+p5i1WQNx/xvg==
+X-Google-Smtp-Source: AAOMgpez+GFtONlZchtCzKR0R0jyPB3wvZSNumxOHuRKasIaRooGxgNTi58toerOa0lchj6cm4YijIcE1OEna4mlY2Q=
+X-Received: by 2002:a24:4524:: with SMTP id y36-v6mr3506882ita.97.1533130165116;
+ Wed, 01 Aug 2018 06:29:25 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 06:29:24 -0700 (PDT)
+In-Reply-To: <20180731061721.15831-5-kai.heng.feng@canonical.com>
+References: <20180731061721.15831-1-kai.heng.feng@canonical.com> <20180731061721.15831-5-kai.heng.feng@canonical.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 1 Aug 2018 15:29:24 +0200
+Message-ID: <CAPDyKFp0ut38EountRQ7pJPXGCQPZzzMroyBz6GAh25DJGMwkA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] memstick: rtsx_usb_ms: Support runtime power management
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Bauer.Chen" <bauer.chen@realtek.com>, ricky_wu@realtek.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PkFub3RoZXIgd2F5IHRvIHNwb3QgdGhlIHByb2JsZW0gd291bGQgYmUgdG8gYWRkIGEgY2hlY2sg
-aW4gDQo+cHNrYl9leHBhbmRfaGVhZCgpDQo+DQoNCk1hbnkgdGhhbmtzIGZvciB0aGlzIGFkdmlj
-ZS4gSW5kZWVkLCBieSBiYWNrcG9ydGluZyB0aGUgcHNrYl9leHBhbmRfaGVhZCAoYW5kIGJ1aWxk
-X3NrYiBiZWNhdXNlIGl0IGRpZG4ndCBleGlzdCkgZnJvbSB0aGUgdmVyc2lvbiAzLjUuNyB0byAz
-LjQuMTEzIGZpeGVzICg/KSB0aGUgaXNzdWUgZm9yIG5vdy4gV2Ugd2FudCB0byB0ZXN0IDMgb3Ig
-NCBtYWNoaW5lcyBvdmVyIG5pZ2h0IGFuZCBzZWUgaWYgYW55IHByb2JsZW0gb2NjdXJzLiANCg0K
-TGV0J3Mgc2VlIGlmIHdlIGNhbiBkbyB0aGUgc2FtZSBmb3Igb3VyIDIuNi4zOS4yIGtlcm5lbCAo
-SSBndWVzcyB0aGF0IHdpbGwgYmUgcHVyZSBwYWluIPCfmIMgKS4NCg0KTWFueSB0aGFua3Mgc28g
-ZmFyIGZvciB5b3VyIHN1cHBvcnQhIEkgd2lsbCByZXBvcnQgdG9tb3Jyb3cgKENFU1QpIGlmIHdl
-IHN1Y2NlZWRlZC4NCg0KDQpNaXQgZnJldW5kbGljaGVuIEdyw7zDn2VuIC8gV2l0aCBraW5kIHJl
-Z2FyZHMNCg0KTWFyY2VsIEhlbGx3aWcNCkIuIFNjLiBJbmZvcm1hdGlrDQpFbnR3aWNrbGVyDQoN
-Cm0tdS10wqBHbWJIDQpBbSBNYXJpZW5ob2YgMg0KMjI4ODAgV2VkZWwNCkdlcm1hbnkNCg0KUGhv
-bmU6CSs0OSA0MTAzIDkzMDggLSA0NzQNCkZheDrCoMKgCSs0OSA0MTAzIDkzMDggLSA5OQ0KbWhl
-bGx3aWdAbXV0LWdyb3VwLmNvbQ0KDQp3d3cubXV0LWdyb3VwLmNvbQ0KDQpHZXNjaMOkZnRzZsO8
-aHJlcsKgKE1hbmFnaW5nIERpcmVjdG9yKTogRmFiaWFuIFBldGVycyBBbXRzZ2VyaWNodCBQaW5u
-ZWJlcmcgKENvbW1lcmNpYWwgUmVnaXN0ZXIgTm8uKTogSFJCwqAxMDMwNCBQSSBVU3QtSWROci4g
-KFZBVC1Oby4pOiBERTIyODI3NTM5MA0KV0VFRS1SZWctTnIuOiBERSA3MjI3MTgwOA0KDQoNCg==
+[...]
+
+> -#ifdef CONFIG_PM_SLEEP
+> -static int rtsx_usb_ms_suspend(struct device *dev)
+> +#ifdef CONFIG_PM
+> +static int rtsx_usb_ms_runtime_suspend(struct device *dev)
+>  {
+>         struct rtsx_usb_ms *host = dev_get_drvdata(dev);
+>         struct memstick_host *msh = host->msh;
+>
+> -       dev_dbg(ms_dev(host), "--> %s\n", __func__);
+> -
+> +       host->suspend = true;
+>         memstick_suspend_host(msh);
+
+I missed this one. Does this really work? To me, this looks like doing
+things upside-down.
+
+To suspend the host, you first need to runtime resume it, because
+mmc_suspend_host() calls into one of the host ops and my touch the
+device, right?
+
+If you want to suspend the host (actually the naming is wrong, as it's
+about suspending/power-iff the memstick card), that should be done via
+when the memstick core finds that the card is removed or during system
+wide suspend.
+
+> +
+>         return 0;
+>  }
+>
+> -static int rtsx_usb_ms_resume(struct device *dev)
+> +static int rtsx_usb_ms_runtime_resume(struct device *dev)
+>  {
+>         struct rtsx_usb_ms *host = dev_get_drvdata(dev);
+>         struct memstick_host *msh = host->msh;
+>
+> -       dev_dbg(ms_dev(host), "--> %s\n", __func__);
+> -
+>         memstick_resume_host(msh);
+
+According to the above, this seems not correct to me.
+
+> +       host->suspend = false;
+> +       schedule_delayed_work(&host->poll_card, 100);
+> +
+>         return 0;
+>  }
+> -#endif /* CONFIG_PM_SLEEP */
+>
+
+[...]
+
+Kind regards
+Uffe
