@@ -2,99 +2,115 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D64C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7168CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D0F20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C808320894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 10:57:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bz5oMAxm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D0F20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Sjb9rlcI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C808320894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387875AbeHAMgy (ORCPT
+        id S2387762AbeHAMmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 08:36:54 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35544 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387575AbeHAMgy (ORCPT
+        Wed, 1 Aug 2018 08:42:38 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36623 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387581AbeHAMmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 08:36:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hF7GYvsO3zIzEXmwyY9Q1LoSUfI59RHx1f8i9whFF+c=; b=bz5oMAxmTOB0u2doFXp6pMMj9
-        1X9ATIyrJC13ObeG4WgnvDqLj5uqeRe3ojCi0ZqnrW4EiJ+jXTo0nQnpqIBHkHqrtizzHhsoWN56h
-        ufmUzE2ga+weYTVIDYu6kBTKM4W2yPcmeMbuEC05KtXBcDb72pv2nWt1E3a0gOhVsjrus=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fkoj5-0000mG-Rn; Wed, 01 Aug 2018 10:51:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1F1591124241; Wed,  1 Aug 2018 11:51:31 +0100 (BST)
-Date:   Wed, 1 Aug 2018 11:51:31 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        srinivas.kandagatla@linaro.org, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] ASoC: qcom: add sdm845 sound card support
-Message-ID: <20180801105131.GF5509@sirena.org.uk>
-References: <1533114069-16570-1-git-send-email-rohitkr@codeaurora.org>
- <1533114069-16570-5-git-send-email-rohitkr@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
-Content-Disposition: inline
-In-Reply-To: <1533114069-16570-5-git-send-email-rohitkr@codeaurora.org>
-X-Cookie: You are as I am with You.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 1 Aug 2018 08:42:37 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9-v6so19667860wro.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 03:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=BN37pvmmWbVTpksW6gMLiYsUHWEhBJrmBHOOgcKUudk=;
+        b=Sjb9rlcIQxvuL6/1CeU+lySdkSLQtmhI3ThZ+wcNKruBwZczT2w/Xg5yN7ww2OIoQo
+         x6kr3M/k+48vV+dH22qf24xbgVnZl0EoVrc/iPjNaNV6vvj2gGeG22Mxh4hHFNfFicEb
+         3KZr/IVt761alTmY/pP/Bz2G5mPVMQe49WMlkDl/deKooKAB7+TXJLUMEwdAmzKnYRIS
+         40CSczSQLkJrmmBI+SkoTHesUJoVW8A3v4gayF1ouiWKbgJ18/LCOwBPx7TALK1xRvRn
+         B2cl5v6QVvuolIKW0z6SjNdft9QWM00LZhHO4AaKLPjfTH3a5Gj2ZHhJA9WKo3hajIoC
+         NOoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BN37pvmmWbVTpksW6gMLiYsUHWEhBJrmBHOOgcKUudk=;
+        b=EeH2UBedSGDhPo6rMobQdmqJNWlOoUw82+Ex+xdTZCEHl7GsOuQnBJKQAenLQkdaxm
+         tUqd2tyK4pmEZrBij6Z6Yqm8eENXu7H6aCzE4BxPftlDU6NwzZ9iUzs2EUA4EFqlg/i0
+         4X5nThQRFl+v3III5v6Ym6KtTRQ697h+TM712LRYwRNAmyEOkg3HBNq9XEi310LN4CzI
+         32sqIjERH2AvF4E4nDgqySuT5NzRxbxX8vqKR3cHRurG9R2oi8pCp/pTBn8cvK2Ae7am
+         jm//yDxS0VpjulJJm3fvwjXE2l+leun/AZ9K4XXLP9unHMJwVR1OCYcuT667mNGYMvfM
+         Zx6Q==
+X-Gm-Message-State: AOUpUlGzdIlZLB/+/oFrW5ubzuSsjFZDIgHPETCgQjpk5G6Sd0pP6Fp8
+        O5edKaxhKdYhScFGXCC0r41x7Q==
+X-Google-Smtp-Source: AAOMgpeY/CxUFN6u+NxQmNMD0Z5s1oidxKIp8ZF4SNgeik9qDWL/xR37mkaXgrlT3MQ5s50UFieaow==
+X-Received: by 2002:adf:dc4c:: with SMTP id m12-v6mr24870340wrj.84.1533121043956;
+        Wed, 01 Aug 2018 03:57:23 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id b202-v6sm7528939wme.22.2018.08.01.03.57.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 03:57:23 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-pwm@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pwm: meson: fix mux clock names
+Date:   Wed,  1 Aug 2018 12:57:20 +0200
+Message-Id: <20180801105720.23999-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Current clock name looks like this:
+/soc/bus@ffd00000/pwm@1b000#mux0
 
---rMWmSaSbD7nr+du9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is bad because CCF uses the clock to create a directory in clk debugfs.
+With such name, the directory creation (silently) fails and the debugfs
+entry end up being created at the debugfs root.
 
-On Wed, Aug 01, 2018 at 02:31:09PM +0530, Rohit kumar wrote:
+With this change, the clock name will now be:
+ffd1b000.pwm#mux0
 
-> --- /dev/null
-> +++ b/sound/soc/qcom/sdm845.c
-> @@ -0,0 +1,286 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
+This matches the clock naming scheme used in the ethernet and mmc driver.
+It also fixes the problem with debugfs.
 
-Please make the entire thing a C++ comment, it makes it look more
-intentional.
+Fixes: 36af66a79056 ("pwm: Convert to using %pOF instead of full_name")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pwm/pwm-meson.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---rMWmSaSbD7nr+du9
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 822860b4801a..c1ed641b3e26 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -458,7 +458,6 @@ static int meson_pwm_init_channels(struct meson_pwm *meson,
+ 				   struct meson_pwm_channel *channels)
+ {
+ 	struct device *dev = meson->chip.dev;
+-	struct device_node *np = dev->of_node;
+ 	struct clk_init_data init;
+ 	unsigned int i;
+ 	char name[255];
+@@ -467,7 +466,7 @@ static int meson_pwm_init_channels(struct meson_pwm *meson,
+ 	for (i = 0; i < meson->chip.npwm; i++) {
+ 		struct meson_pwm_channel *channel = &channels[i];
+ 
+-		snprintf(name, sizeof(name), "%pOF#mux%u", np, i);
++		snprintf(name, sizeof(name), "%s#mux%u", dev_name(dev), i);
+ 
+ 		init.name = name;
+ 		init.ops = &clk_mux_ops;
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthkLIACgkQJNaLcl1U
-h9BBVAf9H4oTxZ8FrcKTi+6zDylOZrUcflwy65D1oUjD/O2ojrKbjzvrLgKQF1EQ
-j8DCBTuVk0FWCU+s9JjASBe//po6IWZjV3WFW0c/5F0Ao1ubyqoKjFfISJGn0D8u
-K1o/mu51BlqJBv+pehniywwaZdqM2N6iGhzq6uJRorzVtnCF+tthaDJ73m9LV4dK
-1PVNETgfMazdDfR8v/d++TrOvFvwDTRke2vyjaZ9H0JrIyEkRrQaF4WFIlYCe3/+
-5rI/zL6H87tPHc8uvJ8Nv4YUkTZB/lopaf+sRXpCg96WKvWkEWPKGq+wGOHZejXm
-EP2CUWsrZr5edEbVY57U6m6kYD1miw==
-=STS5
------END PGP SIGNATURE-----
-
---rMWmSaSbD7nr+du9--
