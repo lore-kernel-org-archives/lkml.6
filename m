@@ -2,246 +2,195 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89513C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D09E7C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB7120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76325208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s/yiQBya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB7120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S045EwCS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76325208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbeHAKPQ (ORCPT
+        id S2388375AbeHAKRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:15:16 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35245 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387959AbeHAKPP (ORCPT
+        Wed, 1 Aug 2018 06:17:25 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:51357 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387502AbeHAKRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:15:15 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so2374732pfh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 01:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vuD4B/omTKbF53qpXutE+SGENoGNSQUgBRUesq4aQ4E=;
-        b=s/yiQByaevLn53+veFGKWUkz23c5LTy7i+/+NGYIYaAeGjaCemrilSzqCSS6/xgtvG
-         vj0i8hfdnaiP0PyXkQhOfpGXpNWxt2RnUFVFo4TZxrU2BMmZtDkRUK3oPWJkvuXNu8Jf
-         Qk96VZ6GDPVZjU10s+opFRYUPL5HStYaj4pr2fzJRWCuW/YNhP0YDpRJAgBvqUZqhFv+
-         j/JxChfztuWZrxmhTzZxIoEFj6pggyJ4peU+YfkAFBVeAWrMfLfeuth9aSXIBG41XOf5
-         J/N5E7xgxgv9jxWQX9RNSFR1RfvAE+I76BiN9KuONGbR3J6hpyT48gxelfAhnDY6mwev
-         7RzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vuD4B/omTKbF53qpXutE+SGENoGNSQUgBRUesq4aQ4E=;
-        b=OeKASCDFXwpxU9yBybsx5FmZC5iVAwLeZWpSr3kKB1s4xfPthXvBaWT8PRFSu9L7eK
-         KkA0siI/DYQV3SJqDTiIGLRxLXwOTeasjZFB0gTbV287jePuQCIY/s3RhgOdVAp5Ju41
-         9lVv9EJSO+HFGL0iBBogyMfATo7R3MZgnVDy3mMsEB3hbX36axfLjVsdWovDwUpEZU5n
-         Jz5JZjvtCQ8s7SyOnc7ADk33LAUAYj59gLn6XjsdnswR1DCm8D0MRydlGQpPJICmSB+6
-         fLJE6vHsRxzp6UVP3jHDUfxtZ4kqmb61OBoNtkgQd+Te6Yj7wWQqlLXJ+hBZbB9a5Njp
-         /c9A==
-X-Gm-Message-State: AOUpUlEJDl+Upt9ANbYlqbS28I+0Q9UgelS7dKBx1xoq6VVHl8kLcIQ9
-        iVqnOVF+22qckLKSrGPpcIfLtqWF7RbwRY0pqPxMTMA9Ero=
-X-Google-Smtp-Source: AAOMgpddZkGj0AAph31hIIu1/mF/7hSbnPoawS4eLObahk8zaHbnUdMpR4Vv3gzxvAZIclIYQCVq55MACjTjjzSBWD8=
-X-Received: by 2002:a65:58c8:: with SMTP id e8-v6mr1188254pgu.96.1533112240220;
- Wed, 01 Aug 2018 01:30:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 1 Aug 2018 01:30:19
- -0700 (PDT)
-In-Reply-To: <20180731154351.GF17816@stefanha-x1.localdomain>
-References: <000000000000b4f77905723b70ee@google.com> <20180731154351.GF17816@stefanha-x1.localdomain>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 1 Aug 2018 10:30:19 +0200
-Message-ID: <CACT4Y+YG-n1iKeQKHiVK73fkSumFgYNdye1yCB1nJW7xgN-9Kw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in vhost_transport_send_pkt
-To:     Stefan Hajnoczi <stefanha@gmail.com>
-Cc:     syzbot <syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com>,
-        Jason Wang <jasowang@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        netdev <netdev@vger.kernel.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Aug 2018 06:17:25 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180801083247epoutp04d8c47297bcf48634c0411035790da8ba~GtZNg3m7L1803318033epoutp043;
+        Wed,  1 Aug 2018 08:32:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180801083247epoutp04d8c47297bcf48634c0411035790da8ba~GtZNg3m7L1803318033epoutp043
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533112367;
+        bh=21NTEC72XCQKFqcck5LhuVKk6QB7/G3hOr2KWD5Rvi8=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=S045EwCSvzW/iFmQ9fFeCqYFU545C9lYXGE4Y1GHp+nfqBFGqKgOW1N2SJy7N2ir2
+         NFKAZAEi6EVJu0x05XKTcCQsRkbU6MU7wRMxXVdant7JNGVdXCjXqGSk6n2Jcsfkx0
+         VtXbK0EC6hQTt010K6NfBreE9gyAj8bIKN+lv4vg=
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20180801083245epcas1p331ba7a8c11c809117986bfb85510b6cf~GtZLFhr-d2987829878epcas1p3K;
+        Wed,  1 Aug 2018 08:32:45 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        12.95.04144.C20716B5; Wed,  1 Aug 2018 17:32:45 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180801083244epcas1p1e8a3146203aaaf1b067827fb631c77d4~GtZKyJ2oR3220132201epcas1p1p;
+        Wed,  1 Aug 2018 08:32:44 +0000 (GMT)
+X-AuditID: b6c32a39-bb5ff70000001030-bd-5b61702c88ba
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id CA.C2.03704.C20716B5; Wed,  1 Aug
+        2018 17:32:44 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PCR001VAX2KTLA0@mmp2.samsung.com>; Wed, 01 Aug 2018 17:32:44 +0900 (KST)
+Message-id: <5B61702C.4090702@samsung.com>
+Date:   Wed, 01 Aug 2018 17:32:44 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 06/12] PM / devfreq: Make update_devfreq() public
+In-reply-to: <20180703234705.227473-7-mka@chromium.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTVxje6b299+LWcbmgnrCxsZssmSQt3JbC0VFjNrPcZMSQ8cfZLOUO
+        joVAP+xtzRj7wfC70ekwm5GiwFTimi5qV7FODYKl+FmFCurEmagzKmZflcEgJrb3zuiv87zv
+        eZ437/PkHIbgzlD5TIPTiz1OqYmn5pF9Zxbp9Xq3ZC2Z/B6gp+1xGu26lyRR+O8/tagrltCi
+        S70DFArdHARo3b5DFLrU9phGt6eGAEr+0kmh1LYYQAeujWhQ6vBdgG5+fZBC56+lKHTxwqgW
+        bTgVo9GRKXEZJ4b2hoA4N9sOxEDrCClGb+0HYji4hRInxk9SYv+eEC1ePdumFSNjm0jxm0gQ
+        iKnwW1WvrsIV9Viqw55C7Kx11TU47Rb+42rbhzZzWYmgFxajcr7QKTmwhV9eWaX/qKEpbY0v
+        XCs1+dKtKkmW+eKlFR6Xz4sL612y18JbBcFoEErKDUZj+jR9tsRoTlNqcH1i/zHSfZv7ovf0
+        ZaoVRLP9IIuBbClsG9lA+sE8hmOjACb3Pfm/mE4XwQvUc9bTyLBGvTgM4JR/VrnQsTlwZudv
+        aQXDEOzbMDbamGkT7CJ49MQhWuXfAnDM36tV+UWwf/dZIoNJ9l3YHU3SGUxl+g+uKzOz2Xfg
+        2MxdkMHz2ZXweNe/CiePrYbd/11WtiPYSRL2rJ9ThuayIuw7NaEMzWLL4XRwp0KCbIKG9ycS
+        ynaQXQ7/6TOqbnLho+EIrbbfgKNDFpW+CcAnD9Zp1WIHgH+d/1mjCkzwfo9fo1p7Hf4xtVWr
+        inVw80ZOhSIMXEGq4WMADnRupHeAgo6XMup4kVHHSxl1AyIIFmC37LBjWXCbDbLkkH1Ou6HW
+        5QgD5QEXLY6CeKJyELAM4F/TuZtrrJxWWis3OwYBZAg+T1fxps3K6eqk5i+xx2Xz+JqwPAjM
+        6Yi/JfLn17rS38HptQlmo8lkQqVCmVkQ+IU644pqK8faJS9uxNiNPc91GiYrvxUMR53BXQXC
+        DY/xk+8ufrX9x9VDgeNkdupxzfT4vc9bOl0tOf6HAc37q8/FocXqwr6DR0tKHaGf4o3v5Z5Y
+        Nle7tZULRuvuxCIaQ3HxZOUA3r5k9Gq8QT4dnh3/QLCfawn8uvJAz+6F63NmjnRl5/3+SjDZ
+        tqr/hzJ6TfmNT9t90QKelOsloYjwyNIzTAnBxtYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t9jQV2dgsRog+3PtS3+TjrGbjH9yWUW
+        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
+        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
+        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB3FZZOSmpNZllqkb5fAlXFu
+        yXaWgvtCFcsOnGdrYNzB38XIySEhYCLxd8txpi5GLg4hgXWMEpu7tjGBJHgFBCV+TL7H0sXI
+        wcEsIC9x5FI2SJhZQF1i0rxFzBD19xkldq3ZzQpRryWxf+YJZhCbRUBVYsGOy+wgNhtI/MUN
+        NhCbX0BR4uqPx4wgM0UFIiS6T1SChEUEgiU+NPewgcxkFnjLIrH0239GkISwgIfEtr13oJZt
+        Z5S4dfsf2CBOAXOJ76sms0xgFJiF5NZZCLfOQnLrAkbmVYySqQXFuem5xUYFhnmp5XrFibnF
+        pXnpesn5uZsYgVG57bBW3w7G+0viDzEKcDAq8fCeqE6IFmJNLCuuzD3EKMHBrCTCayMTHy3E
+        m5JYWZValB9fVJqTWnyIUZqDRUmc93besUghgfTEktTs1NSC1CKYLBMHp1QDo1fWTlXJxYcl
+        z/dt/jWt/3PmTNFfTVF5b26cMzo+XXOD9xUef1dGd7M3Eia3Ju1XnFictk1i66bQYNu1jYvZ
+        Zp6dH5lkX/NVL6bIoYwpO7pD0flyU8K8idUKr1smnf7cbXGoUnzCuconCpPOigXtWd6fWZuc
+        aB7T/Ue19NqeFXOEhepW2R5hUmIpzkg01GIuKk4EAClvOgzGAgAA
+X-CMS-MailID: 20180801083244epcas1p1e8a3146203aaaf1b067827fb631c77d4
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703234938epcas3p188a1f1bc1ba7eb819ba690485c850c79
+References: <20180703234705.227473-1-mka@chromium.org>
+        <CGME20180703234938epcas3p188a1f1bc1ba7eb819ba690485c850c79@epcas3p1.samsung.com>
+        <20180703234705.227473-7-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 5:43 PM, Stefan Hajnoczi <stefanha@gmail.com> wrote:
-> On Mon, Jul 30, 2018 at 11:15:03AM -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    acb1872577b3 Linux 4.18-rc7
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=14eb932c400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc0cd7c2eefb46f
->> dashboard link: https://syzkaller.appspot.com/bug?extid=bd391451452fb0b93039
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+bd391451452fb0b93039@syzkaller.appspotmail.com
->>
->> netlink: 'syz-executor5': attribute type 2 has an invalid length.
->> binder: 28577:28588 transaction failed 29189/-22, size 0-0 line 2852
->> ==================================================================
->> BUG: KASAN: use-after-free in debug_spin_lock_before
->> kernel/locking/spinlock_debug.c:83 [inline]
->> BUG: KASAN: use-after-free in do_raw_spin_lock+0x1c0/0x200
->> kernel/locking/spinlock_debug.c:112
->> Read of size 4 at addr ffff880194d0ec6c by task syz-executor4/28583
->>
->> CPU: 1 PID: 28583 Comm: syz-executor4 Not tainted 4.18.0-rc7+ #169
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->>  kasan_report_error mm/kasan/report.c:354 [inline]
->>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->>  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->>  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
->>  do_raw_spin_lock+0x1c0/0x200 kernel/locking/spinlock_debug.c:112
->>  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:136 [inline]
->>  _raw_spin_lock_bh+0x39/0x40 kernel/locking/spinlock.c:168
->>  spin_lock_bh include/linux/spinlock.h:315 [inline]
->>  vhost_transport_send_pkt+0x12e/0x380 drivers/vhost/vsock.c:223
->
-> Thanks for the vsock fuzzing.  This is a useful bug report.
+Hi Matthias,
 
-Thanks. But note that syzkaller descriptions for vsock were written by
-people who have no idea what is vsock whatsoever:
-https://github.com/google/syzkaller/blob/master/sys/linux/socket_vnet.txt
-So most likely fuzzing is inefficient and does not test the most
-interesting parts of vsock.
-
-
-> It looks like vhost_vsock_get() needs to involve a reference count so
-> that vhost_vsock instances cannot be freed while something is still
-> using them.
->
-> The reproducer probably involves racing close() with connect().
->
-> I am looking into a fix.
->
-> Stefan
->
->>  virtio_transport_send_pkt_info+0x31d/0x460
->> net/vmw_vsock/virtio_transport_common.c:190
->>  virtio_transport_connect+0x17c/0x220
->> net/vmw_vsock/virtio_transport_common.c:588
->>  vsock_stream_connect+0x4fb/0xfc0 net/vmw_vsock/af_vsock.c:1197
->>  __sys_connect+0x37d/0x4c0 net/socket.c:1673
->>  __do_sys_connect net/socket.c:1684 [inline]
->>  __se_sys_connect net/socket.c:1681 [inline]
->>  __x64_sys_connect+0x73/0xb0 net/socket.c:1681
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x456a09
->> Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
->> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
->> 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007fa4aee5bc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
->> RAX: ffffffffffffffda RBX: 00007fa4aee5c6d4 RCX: 0000000000456a09
->> RDX: 0000000000000010 RSI: 0000000020000200 RDI: 0000000000000016
->> RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
->> R13: 00000000004ca838 R14: 00000000004c25fb R15: 0000000000000000
->>
->> Allocated by task 28583:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->>  __do_kmalloc_node mm/slab.c:3682 [inline]
->>  __kmalloc_node+0x47/0x70 mm/slab.c:3689
->>  kmalloc_node include/linux/slab.h:555 [inline]
->>  kvmalloc_node+0xb9/0xf0 mm/util.c:423
->>  kvmalloc include/linux/mm.h:573 [inline]
->>  vhost_vsock_dev_open+0xa2/0x5a0 drivers/vhost/vsock.c:511
->>  misc_open+0x3ca/0x560 drivers/char/misc.c:141
->>  chrdev_open+0x25a/0x770 fs/char_dev.c:417
->>  do_dentry_open+0x818/0xe40 fs/open.c:794
->>  vfs_open+0x139/0x230 fs/open.c:908
->>  do_last fs/namei.c:3399 [inline]
->>  path_openat+0x174a/0x4e10 fs/namei.c:3540
->>  do_filp_open+0x255/0x380 fs/namei.c:3574
->>  do_sys_open+0x584/0x760 fs/open.c:1101
->>  __do_sys_openat fs/open.c:1128 [inline]
->>  __se_sys_openat fs/open.c:1122 [inline]
->>  __x64_sys_openat+0x9d/0x100 fs/open.c:1122
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> Freed by task 28579:
->>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->>  set_track mm/kasan/kasan.c:460 [inline]
->>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->>  __cache_free mm/slab.c:3498 [inline]
->>  kfree+0xd9/0x260 mm/slab.c:3813
->>  kvfree+0x61/0x70 mm/util.c:442
->>  vhost_vsock_free drivers/vhost/vsock.c:499 [inline]
->>  vhost_vsock_dev_release+0x4fd/0x750 drivers/vhost/vsock.c:604
->>  __fput+0x355/0x8b0 fs/file_table.c:209
->>  ____fput+0x15/0x20 fs/file_table.c:243
->>  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
->>  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
->>  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
->>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> The buggy address belongs to the object at ffff880194d05f80
->>  which belongs to the cache kmalloc-65536 of size 65536
->> The buggy address is located 36076 bytes inside of
->>  65536-byte region [ffff880194d05f80, ffff880194d15f80)
->> The buggy address belongs to the page:
->> page:ffffea0006534000 count:1 mapcount:0 mapping:ffff8801dac02500 index:0x0
->> compound_mapcount: 0
->> flags: 0x2fffc0000008100(slab|head)
->> raw: 02fffc0000008100 ffffea0006599808 ffff8801dac01e48 ffff8801dac02500
->> raw: 0000000000000000 ffff880194d05f80 0000000100000001 0000000000000000
->> page dumped because: kasan: bad access detected
->>
->> Memory state around the buggy address:
->>  ffff880194d0eb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff880194d0eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> > ffff880194d0ec00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>                                                           ^
->>  ffff880194d0ec80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>  ffff880194d0ed00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ==================================================================
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report. See:
->> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->> syzbot.
->
+On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
+> Currently update_devfreq() is only visible to devfreq governors outside
+> of devfreq.c. Make it public to allow drivers that adjust devfreq policies
+> to cause a re-evaluation of the frequency after a policy change.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
 > --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180731154351.GF17816%40stefanha-x1.localdomain.
-> For more options, visit https://groups.google.com/d/optout.
+> Changes in v5:
+> - none
+> 
+> Changed in v4:
+> - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+> 
+> Changes in v3:
+> - none
+> 
+> Changes in v2:
+> - added 'Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>' tag
+> ---
+>  drivers/devfreq/governor.h | 3 ---
+>  include/linux/devfreq.h    | 8 ++++++++
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index b81700244ce3..f53339ca610f 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -57,9 +57,6 @@ struct devfreq_governor {
+>  				unsigned int event, void *data);
+>  };
+>  
+> -/* Caution: devfreq->lock must be locked before calling update_devfreq */
+> -extern int update_devfreq(struct devfreq *devfreq);
+> -
+>  extern void devfreq_monitor_start(struct devfreq *devfreq);
+>  extern void devfreq_monitor_stop(struct devfreq *devfreq);
+>  extern void devfreq_monitor_suspend(struct devfreq *devfreq);
+> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+> index 7c8dce96db73..c4f84a769cb5 100644
+> --- a/include/linux/devfreq.h
+> +++ b/include/linux/devfreq.h
+> @@ -222,6 +222,14 @@ extern void devm_devfreq_remove_device(struct device *dev,
+>  extern int devfreq_suspend_device(struct devfreq *devfreq);
+>  extern int devfreq_resume_device(struct devfreq *devfreq);
+>  
+> +/**
+> + * update_devfreq() - Reevaluate the device and configure frequency
+> + * @devfreq:	the devfreq device
+> + *
+> + * Note: devfreq->lock must be held
+> + */
+> +extern int update_devfreq(struct devfreq *devfreq);
+> +
+>  /* Helper functions for devfreq user device driver with OPP. */
+>  extern struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+>  					   unsigned long *freq, u32 flags);
+> 
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
