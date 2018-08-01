@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412E7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7148BC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F3A20840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F3A20840
+	by mail.kernel.org (Postfix) with ESMTP id 39BF020841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BF020841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbeHAUSG (ORCPT
+        id S2388209AbeHAUSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:18:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404201AbeHATDf (ORCPT
+        with ESMTP id S2404209AbeHATDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53EA0125F;
-        Wed,  1 Aug 2018 17:09:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A2CAFCC;
+        Wed,  1 Aug 2018 16:58:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.17 305/336] ext4: check for allocation block validity with block group locked
-Date:   Wed,  1 Aug 2018 18:50:40 +0200
-Message-Id: <20180801165040.722153415@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Elder <elder@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 113/336] soc: qcom: smem: fix qcom_smem_set_global_partition()
+Date:   Wed,  1 Aug 2018 18:47:28 +0200
+Message-Id: <20180801165033.473444756@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,69 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Alex Elder <elder@linaro.org>
 
-commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef upstream.
+[ Upstream commit 8fa1a21409da6abfe890f66532f9fcd8d2c25a3d ]
 
-With commit 044e6e3d74a3: "ext4: don't update checksum of new
-initialized bitmaps" the buffer valid bit will get set without
-actually setting up the checksum for the allocation bitmap, since the
-checksum will get calculated once we actually allocate an inode or
-block.
+If there is at least one entry in the partition table, but no global
+entry, the qcom_smem_set_global_partition() should return an error
+just like it does if there are no partition table entries.
 
-If we are doing this, then we need to (re-)check the verified bit
-after we take the block group lock.  Otherwise, we could race with
-another process reading and verifying the bitmap, which would then
-complain about the checksum being invalid.
+It turns out the function still returns an error in this case, but
+it waits to do so until it has mistakenly treated the last entry in
+the table as if it were the global entry found.
 
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
+Fix the function to return immediately if no global entry is found
+in the table.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Alex Elder <elder@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/balloc.c |    3 +++
- fs/ext4/ialloc.c |    3 +++
- 2 files changed, 6 insertions(+)
+ drivers/soc/qcom/smem.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -379,6 +379,8 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -695,9 +695,10 @@ static u32 qcom_smem_get_item_count(stru
+ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
+ {
+ 	struct smem_partition_header *header;
+-	struct smem_ptable_entry *entry = NULL;
++	struct smem_ptable_entry *entry;
+ 	struct smem_ptable *ptable;
+ 	u32 host0, host1, size;
++	bool found = false;
+ 	int i;
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
- 			desc, bh))) {
- 		ext4_unlock_group(sb, block_group);
-@@ -401,6 +403,7 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -91,6 +91,8 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSCORRUPTED;
+ 	ptable = qcom_smem_get_ptable(smem);
+@@ -709,11 +710,13 @@ static int qcom_smem_set_global_partitio
+ 		host0 = le16_to_cpu(entry->host0);
+ 		host1 = le16_to_cpu(entry->host1);
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	blk = ext4_inode_bitmap(sb, desc);
- 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
- 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
-@@ -108,6 +110,7 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSBADCRC;
+-		if (host0 == SMEM_GLOBAL_HOST && host0 == host1)
++		if (host0 == SMEM_GLOBAL_HOST && host0 == host1) {
++			found = true;
+ 			break;
++		}
  	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
+ 
+-	if (!entry) {
++	if (!found) {
+ 		dev_err(smem->dev, "Missing entry for global partition\n");
+ 		return -EINVAL;
+ 	}
 
 
