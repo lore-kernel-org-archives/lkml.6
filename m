@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1D7C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B3AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B389A2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B389A2083D
+	by mail.kernel.org (Postfix) with ESMTP id 835D72083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:32:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835D72083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407964AbeHATSf (ORCPT
+        id S2408067AbeHATSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52864 "EHLO
+        Wed, 1 Aug 2018 15:18:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52932 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390532AbeHATSd (ORCPT
+        with ESMTP id S2436606AbeHATSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:33 -0400
+        Wed, 1 Aug 2018 15:18:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB4DCD57;
-        Wed,  1 Aug 2018 17:31:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21FA5F3E;
+        Wed,  1 Aug 2018 16:56:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.9 139/144] ext4: check for allocation block validity with block group locked
-Date:   Wed,  1 Aug 2018 18:52:46 +0200
-Message-Id: <20180801164958.920203558@linuxfoundation.org>
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 072/336] f2fs: Fix deadlock in shutdown ioctl
+Date:   Wed,  1 Aug 2018 18:46:47 +0200
+Message-Id: <20180801165031.893099245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
-References: <20180801164949.023217860@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,73 +47,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef upstream.
+[ Upstream commit 60b2b4ee2bc01dd052f99fa9d65da2232102ef8e ]
 
-With commit 044e6e3d74a3: "ext4: don't update checksum of new
-initialized bitmaps" the buffer valid bit will get set without
-actually setting up the checksum for the allocation bitmap, since the
-checksum will get calculated once we actually allocate an inode or
-block.
+f2fs_ioc_shutdown() ioctl gets stuck in the below path
+when issued with F2FS_GOING_DOWN_FULLSYNC option.
 
-If we are doing this, then we need to (re-)check the verified bit
-after we take the block group lock.  Otherwise, we could race with
-another process reading and verifying the bitmap, which would then
-complain about the checksum being invalid.
+__switch_to+0x90/0xc4
+percpu_down_write+0x8c/0xc0
+freeze_super+0xec/0x1e4
+freeze_bdev+0xc4/0xcc
+f2fs_ioctl+0xc0c/0x1ce0
+f2fs_compat_ioctl+0x98/0x1f0
 
-https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/balloc.c |    3 +++
- fs/ext4/ialloc.c |    3 +++
- 2 files changed, 6 insertions(+)
+ fs/f2fs/file.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -378,6 +378,8 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1851,9 +1851,11 @@ static int f2fs_ioc_shutdown(struct file
+ 	if (get_user(in, (__u32 __user *)arg))
+ 		return -EFAULT;
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
- 			desc, bh))) {
- 		ext4_unlock_group(sb, block_group);
-@@ -400,6 +402,7 @@ static int ext4_validate_block_bitmap(st
- 		return -EFSCORRUPTED;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -88,6 +88,8 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSCORRUPTED;
+-	ret = mnt_want_write_file(filp);
+-	if (ret)
+-		return ret;
++	if (in != F2FS_GOING_DOWN_FULLSYNC) {
++		ret = mnt_want_write_file(filp);
++		if (ret)
++			return ret;
++	}
  
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	blk = ext4_inode_bitmap(sb, desc);
- 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
- 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
-@@ -105,6 +107,7 @@ static int ext4_validate_inode_bitmap(st
- 		return -EFSBADCRC;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
+ 	switch (in) {
+ 	case F2FS_GOING_DOWN_FULLSYNC:
+@@ -1894,7 +1896,8 @@ static int f2fs_ioc_shutdown(struct file
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+-	mnt_drop_write_file(filp);
++	if (in != F2FS_GOING_DOWN_FULLSYNC)
++		mnt_drop_write_file(filp);
+ 	return ret;
  }
+ 
 
 
