@@ -2,106 +2,133 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FDFC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5ACC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16FA208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28E52208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTqSOAq9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16FA208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4WY1k+m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E52208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732121AbeHAW4C (ORCPT
+        id S1732313AbeHAW4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 18:56:02 -0400
-Received: from mail-io0-f202.google.com ([209.85.223.202]:52495 "EHLO
-        mail-io0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeHAW4C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 18:56:02 -0400
-Received: by mail-io0-f202.google.com with SMTP id y26-v6so14832433iob.19
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 14:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=JfQ/MsRcHfx2Y3EaJLe0gfU1g3PTz5+rH597G5zAFm4=;
-        b=DTqSOAq9+SROUlYWnL43fAxh3dlvievQmscczPnV/2EGjowqcnds5WsDl6UZd1mM/A
-         0E4YmwsoN62Kd8BeUd4+dPE1ZaEMuLl3JcN6J0cT0MZhOx8EXCo8wLGJVg8c4M/4nyjp
-         7vvzjqXjiVQ05H36IWihW/krjX0JcTy4tkO/KsjHZh3/u3gvSSUcYD4SjSaQXjK9JaTF
-         sxjhMaIKi3YsPcgZLpvy6CPtOk3e+tEE7BTFlCvb5mABn3ELXOfKBttac8i40aKEjDdV
-         rA45kG1i9V/0DQufLdMMru9DrDI8ZxgZNIlJfp+uIiCxPT/0HqHUkWWP5yGREHLBGA9t
-         Fkww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=JfQ/MsRcHfx2Y3EaJLe0gfU1g3PTz5+rH597G5zAFm4=;
-        b=nQLCQn4+2MuPPG00hK+8Lwdu/Y2ZADsD2Su79dyHiBcCJC+SMtlLmJUo6KohaBvnaZ
-         85OYBtKnjmy+OiTT4tw6kIdu/Iuk6qAVkf/QLhquOYvb4aGDLoT52bcuJ2y/tLRGNTdn
-         0ZaWM2S1x7ClumGfGXDfOpQRHXTBvxCc5RBXgo94D0Fc2DNy2qQUjQGtxrdsJWEy7gu8
-         yYbdunHwrlxTESjpJWeuEnKt0oUwfPSSCWXKuIdt0rePAmjHJO37P1ClO8pHaGI8jjqb
-         NanRtuXAS3JZWYpA9G/mL3nEJInPtlkMmIJWjH7OTUeAQMXUZbeea7OVFkx4WiWkoI6t
-         TCUg==
-X-Gm-Message-State: AOUpUlGQwVuQlWNF+XkA8JWn5WyslNqN4ftU79SCDq/rdF2wtiw0C5QA
-        qnorGA6X5YK8en2Aoiyh7+LanGj9Fuy+bCCTkTI=
-X-Google-Smtp-Source: AA+uWPxHIjRbX+UqWtaS/tHTa6rpHj2A1fZb3OLPYd2HhRNqu30k/jRhyRoIH7V7+iu/FVVwtRrjLx54322CEkODjAA=
-X-Received: by 2002:a6b:5d5:: with SMTP id 204-v6mr2671iof.98.1533157702141;
- Wed, 01 Aug 2018 14:08:22 -0700 (PDT)
-Date:   Wed,  1 Aug 2018 14:08:03 -0700
-Message-Id: <20180801210804.175176-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
-Subject: [PATCH] x86/kexec: prefer _THIS_IP_ to current_text_addr
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc:     natechancellor@gmail.com,
-        Nick Desaulniers <ndesaulniers@google.com>, x86@kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 1 Aug 2018 18:56:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbeHAW4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 18:56:07 -0400
+Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 193E8208A3;
+        Wed,  1 Aug 2018 21:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533157706;
+        bh=dvd1bgd6Cp6l2Qnao5MXj+DB44/IYYzXa7d1T8QP2pI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O4WY1k+mYmAqVkW9h+Anmh24oz+qayYE8epqvll34b4aukSMFVELfEM+tY9LSC+RO
+         4aZv09HQzqucG4YYZcVJ5xoUfezuatm3Yj0DM1LWLUYODv2rMWQiLRbclKm6B5LDYA
+         762T1E405X5Gw57IHSMStKkauOonDiORrxMHD6/Q=
+Date:   Wed, 1 Aug 2018 23:08:23 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
+ timer softirq
+Message-ID: <20180801210822.GA20627@lerouge>
+References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
+ <alpine.DEB.2.21.1808011812160.1835@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1808011812160.1835@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of the effort to reduce the code duplication between _THIS_IP_
-and current_text_addr(), let's consolidate callers of
-current_text_addr() to use _THIS_IP_.
+On Wed, Aug 01, 2018 at 07:46:10PM +0200, Thomas Gleixner wrote:
+> On Wed, 1 Aug 2018, Frederic Weisbecker wrote:
+> > Before updating the full nohz tick or the idle time on IRQ exit, we
+> > check first if we are not in a nesting interrupt, whether the inner
+> > interrupt is a hard or a soft IRQ.
+> > 
+> > There is a historical reason for that: the dyntick idle mode used to
+> > reprogram the tick on IRQ exit, after softirq processing, and there was
+> > no point in doing that job in the outer nesting interrupt because the
+> > tick update will be performed through the end of the inner interrupt
+> > eventually, with even potential new timer updates.
+> > 
+> > One corner case could show up though: if an idle tick interrupts a softirq
+> > executing inline in the idle loop (through a call to local_bh_enable())
+> 
+> Where does this happen? Why is anything in the idle loop doing a
+> local_bh_disable/enable() pair?
+> 
+> Or are you talking about NOHZ FULL and arbitrary task context?
 
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/include/asm/kexec.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It's about the idle loop. But I'm not aware of any example in practice, this is
+a purely theoretical, and more importantly it doesn't concern upstream anymore since
+we don't stop the tick from IRQ-tail anymore in dynticks-idle mode after Rafael's
+changes.
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index f327236f0fa7..86924d594ecd 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -21,6 +21,7 @@
- #ifndef __ASSEMBLY__
- 
- #include <linux/string.h>
-+#include <linux/kernel.h>
- 
- #include <asm/page.h>
- #include <asm/ptrace.h>
-@@ -132,7 +133,7 @@ static inline void crash_setup_regs(struct pt_regs *newregs,
- 		asm volatile("movl %%cs, %%eax;" :"=a"(newregs->cs));
- 		asm volatile("pushfq; popq %0" :"=m"(newregs->flags));
- #endif
--		newregs->ip = (unsigned long)current_text_addr();
-+		newregs->ip = _THIS_IP_;
- 	}
- }
- 
--- 
-2.18.0.597.ga71716f1ad-goog
+> 
+> > after we entered in dynticks mode, the IRQ won't reprogram the tick
+> > because it assumes the softirq executes on an inner IRQ-tail. As a
+> > result we might put the CPU in sleep mode with the tick completely
+> > stopped whereas a timer can still be enqueued. Indeed there is no tick
+> > reprogramming in local_bh_enable(). We probably asssumed there was no bh
+> > disabled section in idle, although there didn't seem to be debug code
+> > ensuring that.
 
+In fact I should remove this whole paragraph, it's about code history that's
+not relevant anymore and it confuses the whole explanation which should
+concern nohz_full only.
+
+> > 
+> > Nowadays the nesting interrupt optimization still stands but only concern
+> > full dynticks. The tick is stopped on IRQ exit in full dynticks mode
+> > and we want to wait for the end of the inner IRQ to reprogramm the tick.
+> > But in_interrupt() doesn't make a difference between softirqs executing
+> > on IRQ tail and those executing inline. What was to be considered a
+> > corner case in dynticks-idle mode now becomes a serious opportunity for
+> > a bug in full dynticks mode: if a tick interrupts a task executing
+> > softirq inline, the tick reprogramming will be ignored and we may exit
+> > to userspace after local_bh_enable() with an enqueued timer that will
+> > never fire.
+> > 
+> > To fix this, simply keep reprogramming the tick if we are in a hardirq
+> > interrupting softirq. We can still figure out a way later to restore
+> > this optimization while excluding inline softirq processing.
+> 
+> I'm not really happy with that 'fix' because what happens if:
+> 
+>   ....
+>   local_bh_enable()
+>     do_softirq()
+>       --> interrupt()
+> 	     tick_nohz_irq_exit();
+>       arm_timer();
+> 
+> So if that new timer is the only one on the CPU, what is going to arm the
+> timer hardware which was just switched off in tick_nohz_irq_exit()?
+> 
+> I haven't looked deep enough, but a simple unconditional call to
+> tick_irq_exit() at the end of do_softirq() might do the trick.
+
+Nope it should be ok, nohz_full is supposed to support timers queued on the fly
+while the tick is stopped, we issue a self-IPI if necessary:
+
+    internal_add_timer() -> trigger_dyntick_cpu() -> wake_up_nohz_cpu()
+
+Thanks.
