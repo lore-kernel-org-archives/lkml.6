@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18BBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37679C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 898E220862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 898E220862
+	by mail.kernel.org (Postfix) with ESMTP id E2DEC2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:27:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DEC2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407193AbeHATNz (ORCPT
+        id S2407196AbeHATN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:13:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51874 "EHLO
+        Wed, 1 Aug 2018 15:13:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405636AbeHATNx (ORCPT
+        with ESMTP id S2405636AbeHATN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:13:53 -0400
+        Wed, 1 Aug 2018 15:13:56 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1EB5C3C;
-        Wed,  1 Aug 2018 17:27:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7C7CC3C;
+        Wed,  1 Aug 2018 17:27:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sven Eckelmann <sven.eckelmann@openmesh.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 053/144] ath: Add regulatory mapping for ETSI8_WORLD
-Date:   Wed,  1 Aug 2018 18:51:20 +0200
-Message-Id: <20180801164952.735655140@linuxfoundation.org>
+Subject: [PATCH 4.9 054/144] ath: Add regulatory mapping for APL13_WORLD
+Date:   Wed,  1 Aug 2018 18:51:21 +0200
+Message-Id: <20180801164952.792249555@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -54,7 +54,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-[ Upstream commit 45faf6e096da8bb80e1ddf8c08a26a9601d9469e ]
+[ Upstream commit 9ba8df0c52b3e6baa436374b429d3d73bd09a320 ]
 
 The regdomain code is used to select the correct the correct conformance
 test limits (CTL) for a country. If the regdomain code isn't available and
@@ -78,21 +78,21 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/net/wireless/ath/regd_common.h
 +++ b/drivers/net/wireless/ath/regd_common.h
-@@ -45,6 +45,7 @@ enum EnumRd {
- 	ETSI4_ETSIC = 0x38,
- 	ETSI5_WORLD = 0x39,
- 	ETSI6_WORLD = 0x34,
-+	ETSI8_WORLD = 0x3D,
- 	ETSI_RESERVED = 0x33,
- 
- 	MKK1_MKKA = 0x40,
-@@ -181,6 +182,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{ETSI4_WORLD, CTL_ETSI, CTL_ETSI},
- 	{ETSI5_WORLD, CTL_ETSI, CTL_ETSI},
- 	{ETSI6_WORLD, CTL_ETSI, CTL_ETSI},
-+	{ETSI8_WORLD, CTL_ETSI, CTL_ETSI},
- 
- 	/* XXX: For ETSI3_ETSIA, Was NO_CTL meant for the 2 GHz band ? */
- 	{ETSI3_ETSIA, CTL_ETSI, CTL_ETSI},
+@@ -69,6 +69,7 @@ enum EnumRd {
+ 	APL1_ETSIC = 0x55,
+ 	APL2_ETSIC = 0x56,
+ 	APL5_WORLD = 0x58,
++	APL13_WORLD = 0x5A,
+ 	APL6_WORLD = 0x5B,
+ 	APL7_FCCA = 0x5C,
+ 	APL8_WORLD = 0x5D,
+@@ -195,6 +196,7 @@ static struct reg_dmn_pair_mapping regDo
+ 	{APL3_WORLD, CTL_FCC, CTL_ETSI},
+ 	{APL4_WORLD, CTL_FCC, CTL_ETSI},
+ 	{APL5_WORLD, CTL_FCC, CTL_ETSI},
++	{APL13_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{APL6_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{APL8_WORLD, CTL_ETSI, CTL_ETSI},
+ 	{APL9_WORLD, CTL_ETSI, CTL_ETSI},
 
 
