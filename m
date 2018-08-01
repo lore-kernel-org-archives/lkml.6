@@ -2,107 +2,107 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B3FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B4CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73C1320844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:54:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C1320844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id AC1C520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 07:57:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vWz/2OjD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1C520844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387676AbeHAJiq (ORCPT
+        id S2387667AbeHAJld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 05:38:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60628 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729769AbeHAJiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 05:38:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 034C420740; Wed,  1 Aug 2018 09:54:20 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1657E207BD;
-        Wed,  1 Aug 2018 09:54:00 +0200 (CEST)
-Date:   Wed, 1 Aug 2018 09:54:00 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        f.fainelli@gmail.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, allan.nielsen@microsemi.com,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 00/10] mscc: ocelot: add support for SerDes muxing
- configuration
-Message-ID: <20180801075400.cvvasvi2g2m56xp4@qschulz>
-References: <cover.aa759035f6eefdd0bb2a5ae335dab5bd5399bd46.1532954208.git-series.quentin.schulz@bootlin.com>
- <20180730132441.GC13198@lunn.ch>
+        Wed, 1 Aug 2018 05:41:33 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35366 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387605AbeHAJld (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 05:41:33 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so7752922oic.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 00:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=xYnkeUElkhxdaWZJddBYUPpse1oG6z/9BY3e5KpySqU=;
+        b=vWz/2OjDFXxDaFA0h+iSUluc0mQExA+oOmDTZ1FFW6bjW5wDyxfAGvF+wqxa+dwp0C
+         F+P1ODkcdnrLEoB0Z9JyO0g7JeILl5TvvXPVbjwiMTzqCbPkCbpkrux2BA+ZcnMvLVkZ
+         HZhvF3dPM1UtNp8wnDnTeQTAJ/yaadu7A7nUTRMbWfApCiKS6vufRX/Q4KlHIHsKaHWh
+         tg9jDUqE6Wa+bhybShAE2THF+9x8atJQGK8JoAEO1uhqdmB9cIxKrmvbDTGetLOu6a+V
+         0qkhEG5Befa9n9QDuUWm83tye9RK5VUutpT6atpNeg1vGwFpCSBkEbywrvByhNG8i87Q
+         xitg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xYnkeUElkhxdaWZJddBYUPpse1oG6z/9BY3e5KpySqU=;
+        b=KGmAsNAhB0/0G2YRJ8V4ux0KMqi+uzW/KGqWFIgZyyb69YmSH5TpKLqHj87Vv0AP7H
+         tAakOOKc3D79kdlR3Fk8kXl3CJgt4YCEybq0+nN37FUwaE//JvAdsSZTTlbaIc1aaGMx
+         2ifvzb71UrxDtwlyh883Znk2qaSeUCAke1qgGwv+ND4fY2JLsExFORi26CNCqnTtK5Wi
+         EzH2/5rh4Pr2YBd23xlJ+J28stjY5gIoGj7yzLZFRnF7XlQ64I+LkrabuXP0PQi4GjDj
+         4DpEXeErpTkYv5pTyZWdIRM/P5QTAkR6hyd7fY9+TxeEcq09c48QFroDNn5eRS0T4Qkt
+         3zJQ==
+X-Gm-Message-State: AOUpUlEUvvFDvMELQv5/Q542h+AVLodv+AliXdnw6A7lH7G6DtDrspSt
+        Ot2GEMY1vgdOCudOBDhi+lZwr3Zz5vEnIx4vF03IbA==
+X-Google-Smtp-Source: AAOMgpeO/22/EbQVFqrdRsPNAeW03Pw/1ve8t2vLcnDZKpoGWiv6kS37Y2q1mfZ5x9sghgl0x9cc6oiXPRMXrucHFr0=
+X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr2225505oiy.219.1533110227836;
+ Wed, 01 Aug 2018 00:57:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u35ohko4nfagn3ww"
-Content-Disposition: inline
-In-Reply-To: <20180730132441.GC13198@lunn.ch>
-User-Agent: NeoMutt/20171215
+References: <20180730075241.24002-1-j@bitron.ch> <CAG48ez1izZ+W_cPdNp3SOUwb_8YzwAYdSA6d=eqvaF=5+GKemA@mail.gmail.com>
+ <625ede00c618783eb610b7109c35c514e8faa793.camel@bitron.ch>
+In-Reply-To: <625ede00c618783eb610b7109c35c514e8faa793.camel@bitron.ch>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 1 Aug 2018 09:56:41 +0200
+Message-ID: <CAG48ez3uu9-QXOnAu0-3-3PcE=kn=uaWqv4A_uc666XqkisJrw@mail.gmail.com>
+Subject: Re: [PATCH] prctl: add PR_[GS]ET_KILLABLE
+To:     j@bitron.ch
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 1, 2018 at 9:44 AM J=C3=BCrg Billeter <j@bitron.ch> wrote:
+>
+> On Tue, 2018-07-31 at 18:26 +0200, Jann Horn wrote:
+> > On Mon, Jul 30, 2018 at 10:01 AM J=C3=BCrg Billeter <j@bitron.ch> wrote=
+:
+> >
+> > [...]
+> > > diff --git a/kernel/sys.c b/kernel/sys.c
+> > > index 38509dc1f77b..264de630d548 100644
+> > > --- a/kernel/sys.c
+> > > +++ b/kernel/sys.c
+> >
+> > [...]
+> > > +       case PR_SET_KILLABLE:
+> > > +               if (arg2 !=3D 1 || arg3 || arg4 || arg5)
+> > > +                       return -EINVAL;
+> > > +               me->signal->flags &=3D ~SIGNAL_UNKILLABLE;
+> > > +               break;
+> >
+> > I don't have an opinion on this patchset otherwise, but should this
+> > prctl maybe block PR_SET_KILLABLE if you're actually the real init
+> > process? This seems like it could potentially lead to weird things.
+>
+> While I don't expect global init to use this, I can't think of a good
+> reason to disallow it in the kernel. Do you have specific concerns or
+> is the code in kernel/fork.c the only reason?
 
---u35ohko4nfagn3ww
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, I don't have any other specific concerns.
 
-Hi Andrew,
-
-On Mon, Jul 30, 2018 at 03:24:41PM +0200, Andrew Lunn wrote:
-> > The SerDes configuration is in the middle of an address space (HSIO) th=
-at
-> > is used to configure some parts in the MAC controller driver, that is w=
-hy
-> > we need to use a syscon so that we can write to the same address space =
-=66rom
-> > different drivers safely using regmap.
->=20
-> Hi Quentin
->=20
-> I assume breaking backwards compatibility is not an issue here, since
-> there currently is only one board using the DT binding. But it would
-> be good to give a warning in the cover notes. git bisect will also
-> break for this one particular board. And since these changes are going
-> through different trees, it could be quite a big break.
->=20
-
-Yes sorry, I should have mentioned it in the cover letter, will do
-if/when there is a v2.
-
-Thanks,
-Quentin
-
---u35ohko4nfagn3ww
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlthZxcACgkQhLiadT7g
-8aPTNw/+IVukDr3iYoXQ4ry2nF4nPhV12+CSQJn1pKAQFUYs3p4DGzfQPXKgXLPR
-27hCz+QoYZSJwvyYwCLeh7/DC39p9jKwWZJymUPunuhsExrloLxUwH7XuT386p9O
-Ym8bHhtsF2hyicESpNsTc+yQZpslNM0fN6iW87NN3Me5zRXGKr4aUjS4SN73EPyB
-JiVT8lF31Whph0mWcCv94sR02u0gU8fqm+EtguJpPj3o6USceNvGo/plgrm6IKam
-u2b1qd97AKw3jlFdPIimOJ9fu0vy/L5aj/6/dQqXSwE+Qd4o8lsh5rgOqsJTg322
-JBN78zFlng0RcHbWoEoAF/SpYZb5kyMIPU0b5y7xHkPaIiu19AtHMhqfuN85tNt9
-kt+77KdcVuDj73HWw3FnhT1f3V8DKtKWWN0bJW5OKO4TdP5RtA9/bU0vcMkcY2mJ
-TgXqZCHijh5i0DltePNDqR+RIXeBJ358Dwi5QBdJmnWvsZMV8ZJOHQFJMqCaFHw0
-LFo9q1H+u20AhC3jt7iFKDvkddadFcDHQfjT8S7Vh6bnYhVepIuorNVkJRdqp0pI
-qzoWbXIRZuuUjBBagA8RwEpxboIwwJ7teAI8YDWUSnM3WTbGtYclVSGSyEdOA7WX
-an+3naqXa4/g0/n1XcGs8ksgtskb6ciL/BX8jdYTz9XkHu69aKo=
-=LSYK
------END PGP SIGNATURE-----
-
---u35ohko4nfagn3ww--
+> I prefer avoiding special cases unless really required.
