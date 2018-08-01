@@ -2,168 +2,104 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1796CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B747C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0DD20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0DD20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 083CA208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083CA208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389412AbeHAPSY (ORCPT
+        id S2389426AbeHAPSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 11:18:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:42817 "EHLO mga12.intel.com"
+        Wed, 1 Aug 2018 11:18:45 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:34118 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389329AbeHAPSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 11:18:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 06:32:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
-   d="scan'208";a="58865025"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Aug 2018 06:32:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 3CFBEF7; Wed,  1 Aug 2018 16:32:31 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Malkin <d.malkin@real-time-systems.com>,
-        youling 257 <youling257@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] x86/boot/compressed/64: Validate trampoline placement against e820
-Date:   Wed,  1 Aug 2018 16:32:25 +0300
-Message-Id: <20180801133225.38121-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        id S2389278AbeHAPSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 11:18:45 -0400
+Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fkrFD-0005Ll-Pc; Wed, 01 Aug 2018 15:32:51 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     hjc@rock-chips.com, airlied@linux.ie,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: Convert drm_atomic_helper_suspend/resume()
+Date:   Wed, 01 Aug 2018 15:32:50 +0200
+Message-ID: <4854810.RcpRblXvbi@phil>
+In-Reply-To: <CAFqt6zbd5pJJEV+9_sqs3bML18gpWROBjGA13VeK3AWFgJ_u+A@mail.gmail.com>
+References: <20180731203430.GA30136@jordon-HP-15-Notebook-PC> <1843623.lUM99VBV1x@phil> <CAFqt6zbd5pJJEV+9_sqs3bML18gpWROBjGA13VeK3AWFgJ_u+A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were two report of boot failure cased by trampoline placed into
-a reserved memory region. It can happen on machines that don't report
-EBDA correctly.
+Am Mittwoch, 1. August 2018, 15:14:24 CEST schrieb Souptick Joarder:
+> On Wed, Aug 1, 2018 at 6:40 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> > Am Mittwoch, 1. August 2018, 14:43:47 CEST schrieb Souptick Joarder:
+> >> On Wed, Aug 1, 2018 at 6:03 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> >> > Hi Souptick,
+> >> >
+> >> > Am Dienstag, 31. Juli 2018, 22:34:30 CEST schrieb Souptick Joarder:
+> >> >> convert drm_atomic_helper_suspend/resume() to use
+> >> >> drm_mode_config_helper_suspend/resume().
+> >> >>
+> >> >> With this conversion, rockchip_drm_fb_resume() and
+> >> >> rockchip_drm_fb_suspend() will not be used anymore.
+> >> >> Both of these functions can be removed.
+> >> >>
+> >> >> Also, in struct rockchip_drm_private state will not be
+> >> >> used anymore. So this can be removed forever.
+> >> >>
+> >> >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >> >> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> >> >
+> >> > the patch itself looks great, just a simple bookkeeping question.
+> >> >
+> >> > What role did Ajit play in creating the patch? If I remember correctly
+> >> > it is meant to be
+> >> > - 1st Signed-off: Patch-Author
+> >> > - 2nd Signed-off: E-Mail sender + patch possibly patch changes
+> >> > (optional of course if the same)
+> >> >
+> >> > So was this meant to be a Reviewed-by from Ajit?
+> >>
+> >> We both are working together for these patches to
+> >> convert drm_atomic_helper_suspend/resume().
+> >> That's the reason to add his name in 2nd Signed-off
+> >> in all similar patches.
+> >>
+> >> Is it a incorrect way to put 2nd Signed-off here ?
+> >
+> > Thanks for the clarification and the interesting question :-)
+> >
+> > I've just read through Documentation/process/submitting-patches.rst
+> > and it seems there is an "official" way to show that relationship, via a
+> > tag named "Co-Developed-by:" described under number 12.
+> >
+> > So I guess we could just adapt the patch accordingly, if that is ok with
+> > both of you (i.e. I can change this when applying, so no need to resend).
+> 
+> We are ok with it :-)
 
-Fix the problem by re-validating the found address against e820 table.
-If the address is in a reserved area, find the next usable region below
-the initial address.
+applied to drm-misc-next with the second signed-off changed to
+co-developed-by.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: Dmitry Malkin <d.malkin@real-time-systems.com>
-Reported-by: youling 257 <youling257@gmail.com>
-Fixes: 3548e131ec6a ("x86/boot/compressed/64: Find a place for 32-bit trampoline")
----
- arch/x86/boot/compressed/pgtable_64.c | 73 ++++++++++++++++++++-------
- 1 file changed, 55 insertions(+), 18 deletions(-)
+Thanks for that nice cleanup.
+Heiko
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 8c5107545251..9e2157371491 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -1,3 +1,4 @@
-+#include <asm/e820/types.h>
- #include <asm/processor.h>
- #include "pgtable.h"
- #include "../string.h"
-@@ -34,10 +35,62 @@ unsigned long *trampoline_32bit __section(.data);
- extern struct boot_params *boot_params;
- int cmdline_find_option_bool(const char *option);
- 
-+static unsigned long find_trampoline_placement(void)
-+{
-+	unsigned long bios_start, ebda_start;
-+	unsigned long trampoline_start;
-+	struct boot_e820_entry *entry;
-+	int i;
-+
-+	/*
-+	 * Find a suitable spot for the trampoline.
-+	 * This code is based on reserve_bios_regions().
-+	 */
-+
-+	ebda_start = *(unsigned short *)0x40e << 4;
-+	bios_start = *(unsigned short *)0x413 << 10;
-+
-+	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
-+		bios_start = BIOS_START_MAX;
-+
-+	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
-+		bios_start = ebda_start;
-+
-+	bios_start = round_down(bios_start, PAGE_SIZE);
-+
-+	/* Find the first usable memory region under bios_start. */
-+	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
-+		entry = &boot_params->e820_table[i];
-+
-+		/* Skip all entries above bios_start. */
-+		if (bios_start <= entry->addr)
-+			continue;
-+
-+		/* Skip non-RAM entries. */
-+		if (entry->type != E820_TYPE_RAM)
-+			continue;
-+
-+		/* Adjust bios_start to the end of the entry if needed. */
-+		if (bios_start > entry->addr + entry->size)
-+			bios_start = entry->addr + entry->size;
-+
-+		/* Keep bios_start page-aligned. */
-+		bios_start = round_down(bios_start, PAGE_SIZE);
-+
-+		/* Skip the entry if it's too small. */
-+		if (bios_start - TRAMPOLINE_32BIT_SIZE < entry->addr)
-+			continue;
-+
-+		break;
-+	}
-+
-+	/* Place the trampoline just below the end of low memory */
-+	return bios_start - TRAMPOLINE_32BIT_SIZE;
-+}
-+
- struct paging_config paging_prepare(void *rmode)
- {
- 	struct paging_config paging_config = {};
--	unsigned long bios_start, ebda_start;
- 
- 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
- 	boot_params = rmode;
-@@ -61,23 +114,7 @@ struct paging_config paging_prepare(void *rmode)
- 		paging_config.l5_required = 1;
- 	}
- 
--	/*
--	 * Find a suitable spot for the trampoline.
--	 * This code is based on reserve_bios_regions().
--	 */
--
--	ebda_start = *(unsigned short *)0x40e << 4;
--	bios_start = *(unsigned short *)0x413 << 10;
--
--	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
--		bios_start = BIOS_START_MAX;
--
--	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
--		bios_start = ebda_start;
--
--	/* Place the trampoline just below the end of low memory, aligned to 4k */
--	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
--	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
-+	paging_config.trampoline_start = find_trampoline_placement();
- 
- 	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
- 
--- 
-2.18.0
 
