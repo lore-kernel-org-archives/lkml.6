@@ -2,158 +2,96 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8ACCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B437C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C6420841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kRZQnp9F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C6420841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id D1DCF20841
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 16:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1DCF20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390193AbeHARty (ORCPT
+        id S2390209AbeHARt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:49:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57292 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390144AbeHARtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:49:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IXPSR5L2J5nio19Wz+NsFY1zS3FYX/nG37jzBlGc7Hs=; b=kRZQnp9FYFq5sJKhidYoYheiu
-        XwRR/NAy/dL6tSnB/0UwIrlNNyLbMroSOURBaJ5usSXtJ0EZlpehXQMTupMdP5SlzfiF4oEwtItBN
-        OSwJSkjRvXj5b4gPf9aoQxQtGCBpEBtzu19swxcAvGfC12aU3+kJqg/6R2le9Nmvi0xVbTQ3uS2pJ
-        mchdlDZVY2lR3HdR/6PQ9/R+MiZNGC4W6GoRbHlLoQn2H76ISWZrXLer1aTifANvyAcRAlmQpNyok
-        VzXxVyK5VJNnZY04BkiE6r48U+geRzBowSrh+bEbzY9dEXLdSykUrDF0UWp7UlpOEyawpQASNmZZi
-        GsC9y9cvw==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fktak-0007gG-MQ; Wed, 01 Aug 2018 16:03:15 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>, linux-ia64@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH 8/9] ia64: remove machvec_dma_sync_{single,sg}
-Date:   Wed,  1 Aug 2018 18:02:51 +0200
-Message-Id: <20180801160252.25629-9-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801160252.25629-1-hch@lst.de>
-References: <20180801160252.25629-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 1 Aug 2018 13:49:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44484 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390144AbeHARt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:49:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 710D980D;
+        Wed,  1 Aug 2018 09:03:33 -0700 (PDT)
+Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63D033F5D0;
+        Wed,  1 Aug 2018 09:03:31 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: Generic cpufreq governor
+To:     Saravana Kannan <skannan@codeaurora.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1532750217-8886-1-git-send-email-skannan@codeaurora.org>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <2a9bfa53-31b2-b44a-0bd5-07bcc344a466@arm.com>
+Date:   Wed, 1 Aug 2018 17:03:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1532750217-8886-1-git-send-email-skannan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original form of these was added (to the HP zx1 platform only) by
-the following bitkeeper commit (by the way of the historic.git tree):
 
-commit 66b99421d118a5ddd98a72913670b0fcf0a38d45
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Sat Mar 13 17:05:37 2004 -0800
 
-    [PATCH] DMA: Fill gaping hole in DMA API interfaces.
+On 28/07/18 04:56, Saravana Kannan wrote:
+> Many CPU architectures have caches that can scale independent of the CPUs.
+> Frequency scaling of the caches is necessary to make sure the cache is not
+> a performance bottleneck that leads to poor performance and power. The same
+> idea applies for RAM/DDR.
+> 
+> To achieve this, this patch adds a generic devfreq governor that can listen
+> to the frequency transitions of each CPU frequency domain and then adjusts
+> the frequency of the cache (or any devfreq device) based on the frequency
+> of the CPUs.
+> 
+> To decide the frequency of the device, the governor does one of the
+> following:
+> 
+> * Uses a CPU frequency to device frequency mapping table
+>   - Either one mapping table used for all CPU freq policies (typically used
+>     for system with homogeneous cores/clusters that have the same OPPs.
+>   - One mapping table per CPU freq policy (typically used for ASMP systems
+>     with heterogeneous CPUs with different OPPs)
+> 
+> OR
+> 
+> * Scales the device frequency in proportion to the CPU frequency. So, if
+>   the CPUs are running at their max frequency, the device runs at its max
+>   frequency.  If the CPUs are running at their min frequency, the device
+>   runs at its min frequency. And interpolated for frequencies in between.
+> 
 
-    From: "David S. Miller" <davem@redhat.com>
+Is this solution for the old generation of SDM ?
+I have seen newer ones have some kind of firmware interface/hardware to
+deal with CPUFreq. Do you need this solution for them too ?
 
-The commit does not explain why we'd need the memory barrier on ia64,
-it never included the swiotlb or SGI IOMMU based platforms, and also
-failed to address the map/unmap parts of the dma mapping interface,
-which should provide the same ordering semantics and actually are
-commonly used.  The conclusion of this is that they were added in
-error and should be removed.
+If yes, why ? IMO firmware can arbitrate various requests for frequency
+scaling and do the *right thing* for the platform. Having OSPM sending
+separate requests for such bus/interconnect might end up with conflicts.
+No ?
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/ia64/hp/common/sba_iommu.c     |  4 ----
- arch/ia64/include/asm/dma-mapping.h |  5 -----
- arch/ia64/kernel/machvec.c          | 16 ----------------
- arch/ia64/kernel/pci-dma.c          |  5 -----
- 4 files changed, 30 deletions(-)
-
-diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
-index ee5b652d320a..e8da6503ed2f 100644
---- a/arch/ia64/hp/common/sba_iommu.c
-+++ b/arch/ia64/hp/common/sba_iommu.c
-@@ -2207,10 +2207,6 @@ const struct dma_map_ops sba_dma_ops = {
- 	.unmap_page		= sba_unmap_page,
- 	.map_sg			= sba_map_sg_attrs,
- 	.unmap_sg		= sba_unmap_sg_attrs,
--	.sync_single_for_cpu	= machvec_dma_sync_single,
--	.sync_sg_for_cpu	= machvec_dma_sync_sg,
--	.sync_single_for_device	= machvec_dma_sync_single,
--	.sync_sg_for_device	= machvec_dma_sync_sg,
- 	.dma_supported		= sba_dma_supported,
- 	.mapping_error		= sba_dma_mapping_error,
- };
-diff --git a/arch/ia64/include/asm/dma-mapping.h b/arch/ia64/include/asm/dma-mapping.h
-index 76e4d6632d68..2b8cd4a6d958 100644
---- a/arch/ia64/include/asm/dma-mapping.h
-+++ b/arch/ia64/include/asm/dma-mapping.h
-@@ -16,11 +16,6 @@ extern const struct dma_map_ops *dma_ops;
- extern struct ia64_machine_vector ia64_mv;
- extern void set_iommu_machvec(void);
- 
--extern void machvec_dma_sync_single(struct device *, dma_addr_t, size_t,
--				    enum dma_data_direction);
--extern void machvec_dma_sync_sg(struct device *, struct scatterlist *, int,
--				enum dma_data_direction);
--
- static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
- {
- 	return platform_dma_get_ops(NULL);
-diff --git a/arch/ia64/kernel/machvec.c b/arch/ia64/kernel/machvec.c
-index 7bfe98859911..1b604d02250b 100644
---- a/arch/ia64/kernel/machvec.c
-+++ b/arch/ia64/kernel/machvec.c
-@@ -73,19 +73,3 @@ machvec_timer_interrupt (int irq, void *dev_id)
- {
- }
- EXPORT_SYMBOL(machvec_timer_interrupt);
--
--void
--machvec_dma_sync_single(struct device *hwdev, dma_addr_t dma_handle, size_t size,
--			enum dma_data_direction dir)
--{
--	mb();
--}
--EXPORT_SYMBOL(machvec_dma_sync_single);
--
--void
--machvec_dma_sync_sg(struct device *hwdev, struct scatterlist *sg, int n,
--		    enum dma_data_direction dir)
--{
--	mb();
--}
--EXPORT_SYMBOL(machvec_dma_sync_sg);
-diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
-index afb43677f9ca..5a5bf5a82ac2 100644
---- a/arch/ia64/kernel/pci-dma.c
-+++ b/arch/ia64/kernel/pci-dma.c
-@@ -41,11 +41,6 @@ void __init pci_iommu_alloc(void)
- {
- 	dma_ops = &intel_dma_ops;
- 
--	intel_dma_ops.sync_single_for_cpu = machvec_dma_sync_single;
--	intel_dma_ops.sync_sg_for_cpu = machvec_dma_sync_sg;
--	intel_dma_ops.sync_single_for_device = machvec_dma_sync_single;
--	intel_dma_ops.sync_sg_for_device = machvec_dma_sync_sg;
--
- 	/*
- 	 * The order of these functions is important for
- 	 * fall-back/fail-over reasons
 -- 
-2.18.0
-
+Regards,
+Sudeep
