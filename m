@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE660C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9239D208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9239D208A4
+	by mail.kernel.org (Postfix) with ESMTP id 1E41B208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:58:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E41B208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732434AbeHATpA (ORCPT
+        id S1732456AbeHATpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:45:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49924 "EHLO
+        Wed, 1 Aug 2018 15:45:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405952AbeHATIk (ORCPT
+        with ESMTP id S2405945AbeHATIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D0B613E3;
-        Wed,  1 Aug 2018 17:16:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B4681374;
+        Wed,  1 Aug 2018 17:13:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 093/246] ath: Add regulatory mapping for APL13_WORLD
-Date:   Wed,  1 Aug 2018 18:50:03 +0200
-Message-Id: <20180801165016.164288418@linuxfoundation.org>
+Subject: [PATCH 4.14 046/246] powerpc/lib: Adjust .balign inside string functions for PPC32
+Date:   Wed,  1 Aug 2018 18:49:16 +0200
+Message-Id: <20180801165013.920182664@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,47 +51,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 9ba8df0c52b3e6baa436374b429d3d73bd09a320 ]
+[ Upstream commit 1128bb7813a896bd608fb622eee3c26aaf33b473 ]
 
-The regdomain code is used to select the correct the correct conformance
-test limits (CTL) for a country. If the regdomain code isn't available and
-it is still programmed in the EEPROM then it will cause an error and stop
-the initialization with:
+commit 87a156fb18fe1 ("Align hot loops of some string functions")
+degraded the performance of string functions by adding useless
+nops
 
-  Invalid EEPROM contents
+A simple benchmark on an 8xx calling 100000x a memchr() that
+matches the first byte runs in 41668 TB ticks before this patch
+and in 35986 TB ticks after this patch. So this gives an
+improvement of approx 10%
 
-The current CTL mappings for this regdomain code are:
+Another benchmark doing the same with a memchr() matching the 128th
+byte runs in 1011365 TB ticks before this patch and 1005682 TB ticks
+after this patch, so regardless on the number of loops, removing
+those useless nops improves the test by 5683 TB ticks.
 
-* 2.4GHz: ETSI
-* 5GHz: ETSI
-
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 87a156fb18fe1 ("Align hot loops of some string functions")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd_common.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/include/asm/cache.h |    3 +++
+ arch/powerpc/lib/string.S        |    7 ++++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -69,6 +69,7 @@ enum EnumRd {
- 	APL1_ETSIC = 0x55,
- 	APL2_ETSIC = 0x56,
- 	APL5_WORLD = 0x58,
-+	APL13_WORLD = 0x5A,
- 	APL6_WORLD = 0x5B,
- 	APL7_FCCA = 0x5C,
- 	APL8_WORLD = 0x5D,
-@@ -195,6 +196,7 @@ static struct reg_dmn_pair_mapping regDo
- 	{APL3_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL4_WORLD, CTL_FCC, CTL_ETSI},
- 	{APL5_WORLD, CTL_FCC, CTL_ETSI},
-+	{APL13_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL6_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL8_WORLD, CTL_ETSI, CTL_ETSI},
- 	{APL9_WORLD, CTL_ETSI, CTL_ETSI},
+--- a/arch/powerpc/include/asm/cache.h
++++ b/arch/powerpc/include/asm/cache.h
+@@ -9,11 +9,14 @@
+ #if defined(CONFIG_PPC_8xx) || defined(CONFIG_403GCX)
+ #define L1_CACHE_SHIFT		4
+ #define MAX_COPY_PREFETCH	1
++#define IFETCH_ALIGN_SHIFT	2
+ #elif defined(CONFIG_PPC_E500MC)
+ #define L1_CACHE_SHIFT		6
+ #define MAX_COPY_PREFETCH	4
++#define IFETCH_ALIGN_SHIFT	3
+ #elif defined(CONFIG_PPC32)
+ #define MAX_COPY_PREFETCH	4
++#define IFETCH_ALIGN_SHIFT	3	/* 603 fetches 2 insn at a time */
+ #if defined(CONFIG_PPC_47x)
+ #define L1_CACHE_SHIFT		7
+ #else
+--- a/arch/powerpc/lib/string.S
++++ b/arch/powerpc/lib/string.S
+@@ -12,6 +12,7 @@
+ #include <asm/errno.h>
+ #include <asm/ppc_asm.h>
+ #include <asm/export.h>
++#include <asm/cache.h>
+ 
+ 	.text
+ 	
+@@ -23,7 +24,7 @@ _GLOBAL(strncpy)
+ 	mtctr	r5
+ 	addi	r6,r3,-1
+ 	addi	r4,r4,-1
+-	.balign 16
++	.balign IFETCH_ALIGN_BYTES
+ 1:	lbzu	r0,1(r4)
+ 	cmpwi	0,r0,0
+ 	stbu	r0,1(r6)
+@@ -43,7 +44,7 @@ _GLOBAL(strncmp)
+ 	mtctr	r5
+ 	addi	r5,r3,-1
+ 	addi	r4,r4,-1
+-	.balign 16
++	.balign IFETCH_ALIGN_BYTES
+ 1:	lbzu	r3,1(r5)
+ 	cmpwi	1,r3,0
+ 	lbzu	r0,1(r4)
+@@ -77,7 +78,7 @@ _GLOBAL(memchr)
+ 	beq-	2f
+ 	mtctr	r5
+ 	addi	r3,r3,-1
+-	.balign 16
++	.balign IFETCH_ALIGN_BYTES
+ 1:	lbzu	r0,1(r3)
+ 	cmpw	0,r0,r4
+ 	bdnzf	2,1b
 
 
