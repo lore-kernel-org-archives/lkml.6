@@ -5,189 +5,133 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1F6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7688CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB4420894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB4420894
+	by mail.kernel.org (Postfix) with ESMTP id 38BA620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38BA620894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389891AbeHARKx (ORCPT
+        id S2389755AbeHARLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:10:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42612 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 13:11:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389709AbeHARKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:10:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S2389709AbeHARLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:11:00 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 982994021704;
-        Wed,  1 Aug 2018 15:24:38 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 38FC381663C7;
+        Wed,  1 Aug 2018 15:24:46 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DACA31006EB9;
-        Wed,  1 Aug 2018 15:24:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CB0C1C701;
+        Wed,  1 Aug 2018 15:24:44 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 05/33] vfs: Introduce the basic header for the new mount
- API's filesystem context [ver #11]
+Subject: [PATCH 06/33] vfs: Introduce logging functions [ver #11]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 01 Aug 2018 16:24:37 +0100
-Message-ID: <153313707740.13253.2158391084792921118.stgit@warthog.procyon.org.uk>
+Date:   Wed, 01 Aug 2018 16:24:43 +0100
+Message-ID: <153313708376.13253.12307715668519958367.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
 References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 01 Aug 2018 15:24:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 01 Aug 2018 15:24:38 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 15:24:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 01 Aug 2018 15:24:46 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a filesystem context concept to be used during superblock
-creation for mount and superblock reconfiguration for remount.  This is
-allocated at the beginning of the mount procedure and into it is placed:
+Introduce a set of logging functions through which informational messages,
+warnings and error messages incurred by the mount procedure can be logged
+and, in a future patch, passed to userspace instead by way of the
+filesystem configuration context file descriptor.
 
- (1) Filesystem type.
+There are four functions:
 
- (2) Namespaces.
+ (1) infof(const char *fmt, ...);
 
- (3) Source/Device names (there may be multiple).
+     Logs an informational message.
 
- (4) Superblock flags (SB_*).
+ (2) warnf(const char *fmt, ...);
 
- (5) Security details.
+     Logs a warning message.
 
- (6) Filesystem-specific data, as set by the mount options.
+ (3) errorf(const char *fmt, ...);
 
-Also introduce a struct for typed key=value parameter concept with which
-configuration data will be passed to filesystems.  This will allow not only
-for ordinary string values, but also make it possible to pass more exotic
-values such as binary blobs, paths and fds with greater ease.
+     Logs an error message.
+
+ (4) invalf(const char *fmt, ...);
+
+     As errof(), but returns -EINVAL so can be used on a return statement.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/linux/fs_context.h |  101 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
- create mode 100644 include/linux/fs_context.h
+ include/linux/fs_context.h |   42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-new file mode 100644
-index 000000000000..0ff4969f9d5a
---- /dev/null
+index 0ff4969f9d5a..a88b54752f86 100644
+--- a/include/linux/fs_context.h
 +++ b/include/linux/fs_context.h
-@@ -0,0 +1,101 @@
-+/* Filesystem superblock creation and reconfiguration context.
+@@ -98,4 +98,46 @@ struct fs_context_operations {
+ 	int (*get_tree)(struct fs_context *fc);
+ };
+ 
++#define logfc(FC, FMT, ...) pr_notice(FMT, ## __VA_ARGS__)
++
++/**
++ * infof - Store supplementary informational message
++ * @fc: The context in which to log the informational message
++ * @fmt: The format string
 + *
-+ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
++ * Store the supplementary informational message for the process if the process
++ * has enabled the facility.
++ */
++#define infof(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
++
++/**
++ * warnf - Store supplementary warning message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
++ * Store the supplementary warning message for the process if the process has
++ * enabled the facility.
 + */
++#define warnf(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
 +
-+#ifndef _LINUX_FS_CONTEXT_H
-+#define _LINUX_FS_CONTEXT_H
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+
-+struct cred;
-+struct dentry;
-+struct file_operations;
-+struct file_system_type;
-+struct mnt_namespace;
-+struct net;
-+struct pid_namespace;
-+struct super_block;
-+struct user_namespace;
-+struct vfsmount;
-+
-+enum fs_context_purpose {
-+	FS_CONTEXT_FOR_USER_MOUNT,	/* New superblock for user-specified mount */
-+	FS_CONTEXT_FOR_KERNEL_MOUNT,	/* New superblock for kernel-internal mount */
-+	FS_CONTEXT_FOR_SUBMOUNT,	/* New superblock for automatic submount */
-+	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
-+};
-+
-+/*
-+ * Type of parameter value.
-+ */
-+enum fs_value_type {
-+	fs_value_is_undefined,
-+	fs_value_is_flag,		/* Value not given a value */
-+	fs_value_is_string,		/* Value is a string */
-+	fs_value_is_blob,		/* Value is a binary blob */
-+	fs_value_is_filename,		/* Value is a filename* + dirfd */
-+	fs_value_is_filename_empty,	/* Value is a filename* + dirfd + AT_EMPTY_PATH */
-+	fs_value_is_file,		/* Value is a file* */
-+};
-+
-+/*
-+ * Configuration parameter.
-+ */
-+struct fs_parameter {
-+	const char		*key;		/* Parameter name */
-+	enum fs_value_type	type:8;		/* The type of value here */
-+	union {
-+		char		*string;
-+		void		*blob;
-+		struct filename	*name;
-+		struct file	*file;
-+	};
-+	size_t	size;
-+	int	dirfd;
-+};
-+
-+/*
-+ * Filesystem context for holding the parameters used in the creation or
-+ * reconfiguration of a superblock.
++/**
++ * errorf - Store supplementary error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
 + *
-+ * Superblock creation fills in ->root whereas reconfiguration begins with this
-+ * already set.
-+ *
-+ * See Documentation/filesystems/mounting.txt
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility.
 + */
-+struct fs_context {
-+	const struct fs_context_operations *ops;
-+	struct file_system_type	*fs_type;
-+	void			*fs_private;	/* The filesystem's context */
-+	struct dentry		*root;		/* The root and superblock */
-+	struct user_namespace	*user_ns;	/* The user namespace for this mount */
-+	struct net		*net_ns;	/* The network namespace for this mount */
-+	const struct cred	*cred;		/* The mounter's credentials */
-+	char			*source;	/* The source name (eg. dev path) */
-+	char			*subtype;	/* The subtype to set on the superblock */
-+	void			*security;	/* The LSM context */
-+	void			*s_fs_info;	/* Proposed s_fs_info */
-+	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
-+	enum fs_context_purpose	purpose:8;
-+	bool			sloppy:1;	/* T if unrecognised options are okay */
-+	bool			silent:1;	/* T if "o silent" specified */
-+};
++#define errorf(fc, fmt, ...) ({ logfc(fc, fmt, ## __VA_ARGS__); })
 +
-+struct fs_context_operations {
-+	void (*free)(struct fs_context *fc);
-+	int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
-+	int (*parse_param)(struct fs_context *fc, struct fs_parameter *param);
-+	int (*parse_monolithic)(struct fs_context *fc, void *data, size_t data_size);
-+	int (*validate)(struct fs_context *fc);
-+	int (*get_tree)(struct fs_context *fc);
-+};
++/**
++ * invalf - Store supplementary invalid argument error message
++ * @fc: The context in which to log the error message
++ * @fmt: The format string
++ *
++ * Store the supplementary error message for the process if the process has
++ * enabled the facility and return -EINVAL.
++ */
++#define invalf(fc, fmt, ...) ({	errorf(fc, fmt, ## __VA_ARGS__); -EINVAL; })
 +
-+#endif /* _LINUX_FS_CONTEXT_H */
+ #endif /* _LINUX_FS_CONTEXT_H */
 
