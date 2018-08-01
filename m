@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B6EC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAABC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 061832083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061832083D
+	by mail.kernel.org (Postfix) with ESMTP id B29EA2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29EA2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407491AbeHATPe (ORCPT
+        id S2407497AbeHATPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:15:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52248 "EHLO
+        Wed, 1 Aug 2018 15:15:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52258 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404699AbeHATPe (ORCPT
+        with ESMTP id S2404699AbeHATPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:15:34 -0400
+        Wed, 1 Aug 2018 15:15:38 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB247D4D;
-        Wed,  1 Aug 2018 17:28:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E048FD4A;
+        Wed,  1 Aug 2018 17:28:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 086/144] HID: i2c-hid: check if device is there before really probing
-Date:   Wed,  1 Aug 2018 18:51:53 +0200
-Message-Id: <20180801164955.867190812@linuxfoundation.org>
+Subject: [PATCH 4.9 087/144] EDAC, altera: Fix ARM64 build warning
+Date:   Wed,  1 Aug 2018 18:51:54 +0200
+Message-Id: <20180801164955.918159963@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,43 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dtor@chromium.org>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-[ Upstream commit b3a81b6c4fc6730ac49e20d789a93c0faabafc98 ]
+[ Upstream commit 9ef20753e044f7468c4113e5aecd785419b0b3cc ]
 
-On many Chromebooks touch devices are multi-sourced; the components are
-electrically compatible and one can be freely swapped for another without
-changing the OS image or firmware.
+The kbuild test robot reported the following warning:
 
-To avoid bunch of scary messages when device is not actually present in the
-system let's try testing basic communication with it and if there is no
-response terminate probe early with -ENXIO.
+  drivers/edac/altera_edac.c: In function 'ocram_free_mem':
+  drivers/edac/altera_edac.c:1410:42: warning: cast from pointer to integer
+	of different size [-Wpointer-to-int-cast]
+    gen_pool_free((struct gen_pool *)other, (u32)p, size);
+                                             ^
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+After adding support for ARM64 architectures, the unsigned long
+parameter is 64 bits and causes a build warning on 64-bit configs. Fix
+by casting to the correct size (unsigned long) instead of u32.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: c3eea1942a16 ("EDAC, altera: Add Altera L2 cache and OCRAM support")
+Link: http://lkml.kernel.org/r/1526317441-4996-1-git-send-email-thor.thayer@linux.intel.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/edac/altera_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -1101,6 +1101,14 @@ static int i2c_hid_probe(struct i2c_clie
- 	pm_runtime_enable(&client->dev);
- 	device_enable_async_suspend(&client->dev);
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1111,7 +1111,7 @@ static void *ocram_alloc_mem(size_t size
  
-+	/* Make sure there is something at this address */
-+	ret = i2c_smbus_read_byte(client);
-+	if (ret < 0) {
-+		dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
-+		ret = -ENXIO;
-+		goto err_pm;
-+	}
-+
- 	ret = i2c_hid_fetch_hid_descriptor(ihid);
- 	if (ret < 0)
- 		goto err_pm;
+ static void ocram_free_mem(void *p, size_t size, void *other)
+ {
+-	gen_pool_free((struct gen_pool *)other, (u32)p, size);
++	gen_pool_free((struct gen_pool *)other, (unsigned long)p, size);
+ }
+ 
+ static const struct edac_device_prv_data ocramecc_data = {
 
 
