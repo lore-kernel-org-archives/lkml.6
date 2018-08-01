@@ -1,167 +1,175 @@
 Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D40C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946A6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED532083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:28:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED532083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 43A2620894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 08:28:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cTh/WZTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A2620894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388651AbeHAKMh (ORCPT
+        id S2388682AbeHAKMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:12:37 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:51302 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387672AbeHAKMg (ORCPT
+        Wed, 1 Aug 2018 06:12:39 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:59292 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388600AbeHAKMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:12:36 -0400
-Received: by mail-io0-f199.google.com with SMTP id w23-v6so13091575iob.18
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 01:28:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=1/r6wpP8sJ0DK1AkOpbdLmrlooR06z26dHxSh0Y/W9o=;
-        b=VUpyHjRWLXNg3NqWIb5r6otDr+PsFyRI7JFEML/cCJtYEu+4gvW6x8SVb97LA1X2Cm
-         l8wAo/TyaHYwC72Q2iInw4u6TKBW3paiGg7+fxaOBprh+OS/rneSTfYmzZzLTtuON5LV
-         DruvtPms8bk6un4VRujR8qNbZw5/Jmum4mrED6o+B9E/kmmJlV9glaLyh7jWkP1bAXO+
-         HXCZ6HEIxTKBOyiEbWuMNfbYXj0gCbYqon9PNwsXPeQhGgCBteq7W3omyJQNVQahZWvn
-         qOenfF49jJ1xoYPT5oqwOo5IGofMrfmOocVGrzvMA3K3OAjMy/hCNqEdto1O0Qk4S+wr
-         QoLQ==
-X-Gm-Message-State: AOUpUlFh/PAZhvo+CIL/swvfM0Lus0e+0ywcInptzJSGIsoQ3UrPb8C6
-        +HaBId8Nyqw4kMzHzbIPAV7qyexsAX48T0COvNO80H3gEsQ9
-X-Google-Smtp-Source: AAOMgpdZSX4y8ckNzMHqzBgn4aLABVz6J8NwVKvw8MnCNcF2T1T5gNEHbqRuMdQiJLktU6VPIHcVFs8QAQdmqvLL2ik99I5jjUO6
-MIME-Version: 1.0
-X-Received: by 2002:a02:b38c:: with SMTP id p12-v6mr12324428jan.43.1533112082376;
- Wed, 01 Aug 2018 01:28:02 -0700 (PDT)
-Date:   Wed, 01 Aug 2018 01:28:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000012325c05725b7920@google.com>
-Subject: INFO: rcu detected stall in tipc_sk_lookup
-From:   syzbot <syzbot+230075782a192b8ca880@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Wed, 1 Aug 2018 06:12:38 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180801082802epoutp03a7e0538fec5a7f7970f3d4abdac11820~GtVDqc0qb1979419794epoutp03V;
+        Wed,  1 Aug 2018 08:28:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180801082802epoutp03a7e0538fec5a7f7970f3d4abdac11820~GtVDqc0qb1979419794epoutp03V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533112082;
+        bh=Wmv/aY9J30d2WDUQmvFSRZfOv8W0HFmnJKnfZCvDIRA=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=cTh/WZTCSGed7rzc0QrgusIcfI6CSdSnm8djPHwVqgFE934/hgs3+jSFTBXBtf7+Z
+         bmU/IjaTs7thn64ej/wjsd9toztY5eScXPd1ZsmcEy8MGDH+KUJSr2iLX7oIfV2pab
+         Mr7CeZFsqYq/GkBC1lZDpwYGN2thuYPO8zOP7kkM=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180801082758epcas1p1558efbeda71aa7fa6de47e782b985227~GtVAW-yBS2589725897epcas1p1u;
+        Wed,  1 Aug 2018 08:27:58 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1F.BC.04292.E0F616B5; Wed,  1 Aug 2018 17:27:58 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180801082758epcas1p1ffe9bf5863877d30bad448f411ae5843~GtVAGe8K_2592725927epcas1p1a;
+        Wed,  1 Aug 2018 08:27:58 +0000 (GMT)
+X-AuditID: b6c32a38-d53ff700000010c4-ce-5b616f0e03ad
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id EA.A2.03704.E0F616B5; Wed,  1 Aug
+        2018 17:27:58 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PCR001NOWULTLA0@mmp2.samsung.com>; Wed, 01 Aug 2018 17:27:58 +0900 (KST)
+Message-id: <5B616F0D.1050901@samsung.com>
+Date:   Wed, 01 Aug 2018 17:27:57 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 09/12] dt-bindings: misc: add bindings for throttler
+In-reply-to: <20180703234705.227473-10-mka@chromium.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMJsWRmVeSWpSXmKPExsWy7bCmni5ffmK0wao/2hZ/Jx1jt5j+5DKL
+        xaaP71kt5h85x2pxdtlBNos1tw8xWjQvXs9mcbbpDbvF/a9HGS0u75rDZvG59wijxdLrF5ks
+        Pm94zGhxu3EFm8Wp65/ZLM6cvsRq0br3CLvFxq8eDkIea+atYfT4/WsSo8fshossHjvuLmH0
+        2LSqk83jzrU9bB77565h97hyoonVY8vVdhaPvi2rGD0+b5IL4I5KtclITUxJLVJIzUvOT8nM
+        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBek1JoSwxpxQoFJBYXKykb2dTlF9a
+        kqqQkV9cYqsUbWhopGdoYK5nZASkjWOtjEyBShJSM66fP8JYsI6n4tSlj0wNjL1cXYycHBIC
+        JhJTP1xlAbGFBHYwSsw+K9/FyAVkf2eUWD15ORNMUePWO+wQiQ2MEpf+TGYHSfAKCEr8mHwP
+        qJuDg1lAXuLIpWyQMLOApsTW3euh6u8ySnw51sQMUa8l8efhBbChLAKqEkcmbgKLswHF97+4
+        wQZi8wsoSlz98ZgRxBYViJDYOf8b2C4RgWCJBT/Ps4AMZRZ4zSKxsOU3K0hCWMBb4uGpRmaQ
+        IzgFLCRmLw8EqZEQOMcu8eHVQhaID1wkmhaeZYWwhSVeHd/CDlIvISAtcemoLUR9O9ChL5pZ
+        IZwJjBIfTm2Get9Y4tnCLiaI1/gk3n3tYYVo5pXoaBOCKPGQ+Lp7OSvEx8BgXNp4mG0Co+ws
+        pECahQikWUiBtICReRWjWGpBcW56arFhgYlecWJucWleul5yfu4mRnAC1rLYwbjnnM8hRgEO
+        RiUe3oLKhGgh1sSy4srcQ4wSHMxKIrw2MvHRQrwpiZVVqUX58UWlOanFhxhNgWE8kVlKNDkf
+        mB3ySuINTY2MjY0tTAzNTA0NlcR5jfyCo4UE0hNLUrNTUwtSi2D6mDg4pRoYzdpPf/MNkxb+
+        yLFlvqPRrw/q92WfKpfvdNTqKPx8wshW2LL1g9fB7Xbzrjj03ndkzVu0YO/lkO2T2/v5A1fX
+        b62cuPrCXEWWY1sqfzxwrVLNnu4aFWz81ud47ZH/TB+9jwfwhYW4pHw+pbRv4cqgK6x7LnxJ
+        POm5cOHDSofI7Svk6s7/PCz1XomlOCPRUIu5qDgRAJY+95vWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsVy+t9jQV2+/MRogzl9khZ/Jx1jt5j+5DKL
+        xaaP71kt5h85x2pxdtlBNos1tw8xWjQvXs9mcbbpDbvF/a9HGS0u75rDZvG59wijxdLrF5ks
+        Pm94zGhxu3EFm8Wp65/ZLM6cvsRq0br3CLvFxq8eDkIea+atYfT4/WsSo8fshossHjvuLmH0
+        2LSqk83jzrU9bB77565h97hyoonVY8vVdhaPvi2rGD0+b5IL4I7isklJzcksSy3St0vgyrh+
+        /ghjwTqeilOXPjI1MPZydTFyckgImEg0br3D3sXIxSEksI5RYt7aZcwgCV4BQYkfk++xdDFy
+        cDALyEscuZQNEmYWUJeYNG8RM0T9fUaJW7s/QdVrSfx5eIEJxGYRUJU4MnETWJwNKL7/xQ02
+        EJtfQFHi6o/HjCAzRQUiJLpPVIKERQSCJT4097CBzGQWeMsisfTbf0aQhLCAt8TDU41gc4QE
+        djBKfP+sBtLLKWAhMXt54ARGgVlILp2FcOksJJcuYGRexSiZWlCcm55bbFRgmJdarlecmFtc
+        mpeul5yfu4kRGJHbDmv17WC8vyT+EKMAB6MSD++J6oRoIdbEsuLK3EOMEhzMSiK8NjLx0UK8
+        KYmVValF+fFFpTmpxYcYpTlYlMR5b+cdixQSSE8sSc1OTS1ILYLJMnFwSjUw6id67IwNv27D
+        ddGdre/IXfPDAolHFBnvirOIZQT76mTMO5nQbnSFT5g9INWrMzqg28b95EUxkc1bm3oKV59s
+        3S6z58dZw4XSobf/p+RFzA1rtFriv3zbgrxvL674yexsbxH6urYxy9TPVt7lScV/Hz2hed+5
+        9x+8k5gsZpd9hPVqx2lltR1KLMUZiYZazEXFiQB0glHnxAIAAA==
+X-CMS-MailID: 20180801082758epcas1p1ffe9bf5863877d30bad448f411ae5843
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703234851epcas2p366dcf068db0a7761d7cdccabc4f1fb6e
+References: <20180703234705.227473-1-mka@chromium.org>
+        <CGME20180703234851epcas2p366dcf068db0a7761d7cdccabc4f1fb6e@epcas2p3.samsung.com>
+        <20180703234705.227473-10-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Matthias,
 
-syzbot found the following crash on:
+On 2018년 07월 04일 08:47, Matthias Kaehlcke wrote:
+> The Throttler is used for non-thermal throttling of system components
+> like CPUs or devfreq devices.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> --
+> Changes in v5:
+> - patch added to the series (replacing "dt-bindings: PM / OPP: add
+>   opp-throttlers property")
+> ---
+>  .../devicetree/bindings/misc/throttler.txt          | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/throttler.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/throttler.txt b/Documentation/devicetree/bindings/misc/throttler.txt
+> new file mode 100644
+> index 000000000000..2ea80c62dbe1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/throttler.txt
+> @@ -0,0 +1,13 @@
+> +Throttler driver
+> +
+> +The Throttler is used for non-thermal throttling of system components like
+> +CPUs or devfreq devices.
+> +
+> +Required properties:
+> +- throttler-opps	Array of OPP-v2 phandles with the OPPs used for
+> +			throttling.
+> +
+> +Example:
+> +	throttler {
+> +		 throttler-opps = <&cpu0_opp03, &cpu1_opp02, &gpu_opp03>;
+> +	};
+> 
 
-HEAD commit:    527838d470e3 Merge branch 'x86-urgent-for-linus' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12726f1c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc0cd7c2eefb46f
-dashboard link: https://syzkaller.appspot.com/bug?extid=230075782a192b8ca880
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+If possible, I hope the more detailed example for "cpu0_opp03, &cpu1_opp02, &gpu_opp03"
+because I'm confusing the meaning of 'cpu0_opp03' phandle.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+230075782a192b8ca880@syzkaller.appspotmail.com
-
-INFO: rcu_sched self-detected stall on CPU
-	1-....: (104999 ticks this GP) idle=002/1/4611686018427387906  
-softirq=125049/125058 fqs=26224
-	 (t=105000 jiffies g=69343 c=69342 q=1302)
-NMI backtrace for cpu 1
-CPU: 1 PID: 29490 Comm: syz-executor5 Not tainted 4.18.0-rc7+ #170
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1336
-  print_cpu_stall kernel/rcu/tree.c:1485 [inline]
-  check_cpu_stall.isra.60.cold.78+0x36c/0x5a6 kernel/rcu/tree.c:1553
-  __rcu_pending kernel/rcu/tree.c:3244 [inline]
-  rcu_pending kernel/rcu/tree.c:3291 [inline]
-  rcu_check_callbacks+0x23f/0xcd0 kernel/rcu/tree.c:2646
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1028 [inline]
-  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1053
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:lock_acquire+0x25f/0x540 kernel/locking/lockdep.c:3927
-Code: 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 6a 02 00 00 48 83 3d a8  
-8a 92 06 00 0f 84 d4 01 00 00 48 8b bd 20 ff ff ff 57 9d <0f> 1f 44 00 00  
-48 b8 00 00 00 00 00 fc ff df 48 01 c3 48 c7 03 00
-RSP: 0018:ffff8801999a67c0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff10033334cfd RCX: 0000000000000000
-RDX: 1ffffffff0fe3615 RSI: 0000000000000000 RDI: 0000000000000286
-RBP: ffff8801999a68b0 R08: 0000000000000008 R09: 0000000000000002
-R10: ffff880192d5c908 R11: 632564d1cb2a3fed R12: ffff880192d5c080
-R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
-  rcu_lock_acquire include/linux/rcupdate.h:245 [inline]
-  rcu_read_lock include/linux/rcupdate.h:631 [inline]
-  net_generic include/net/netns/generic.h:44 [inline]
-  tipc_sk_lookup+0x131/0xfa0 net/tipc/socket.c:2682
-  tipc_nl_publ_dump+0x243/0xfa2 net/tipc/socket.c:3456
-  __tipc_nl_compat_dumpit.isra.11+0x20b/0xad0 net/tipc/netlink_compat.c:192
-  tipc_nl_compat_publ_dump net/tipc/netlink_compat.c:920 [inline]
-  tipc_nl_compat_sk_dump+0x87c/0xca0 net/tipc/netlink_compat.c:968
-  __tipc_nl_compat_dumpit.isra.11+0x337/0xad0 net/tipc/netlink_compat.c:201
-  tipc_nl_compat_dumpit+0x1f4/0x440 net/tipc/netlink_compat.c:265
-  tipc_nl_compat_handle net/tipc/netlink_compat.c:1142 [inline]
-  tipc_nl_compat_recv+0x12b3/0x19a0 net/tipc/netlink_compat.c:1205
-  genl_family_rcv_msg+0x8a3/0x1140 net/netlink/genetlink.c:601
-  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
-  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa18/0xfd0 net/netlink/af_netlink.c:1901
-  sock_sendmsg_nosec net/socket.c:641 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:651
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2125
-  __sys_sendmsg+0x11d/0x290 net/socket.c:2163
-  __do_sys_sendmsg net/socket.c:2172 [inline]
-  __se_sys_sendmsg net/socket.c:2170 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2170
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x456a09
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f8665b39c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f8665b3a6d4 RCX: 0000000000456a09
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000022
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d3058 R14: 00000000004c7d3e R15: 0000000000000000
+cpu0_opp03 indicates the only one specific OPP entry among set of OPP entries of CPU0 cpufreq? or
+cpu0_opp03 indicates the set of OPP entries for CPU0 cpufreq ?
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
