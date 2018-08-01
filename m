@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A81C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C31AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EEE72083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEE72083D
+	by mail.kernel.org (Postfix) with ESMTP id 1F0392083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F0392083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733097AbeHAUOJ (ORCPT
+        id S2404321AbeHATDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:14:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45948 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404299AbeHATDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46152 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404159AbeHATDe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 15:03:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08E3A1293;
-        Wed,  1 Aug 2018 17:10:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64E6D105D;
+        Wed,  1 Aug 2018 17:01:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <pressmangal@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 316/336] net: ena: Fix use of uninitialized DMA address bits field
-Date:   Wed,  1 Aug 2018 18:50:51 +0200
-Message-Id: <20180801165041.134923675@linuxfoundation.org>
+        stable@vger.kernel.org, Subhash Jadavani <subhashj@codeaurora.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Can Guo <cang@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 152/336] scsi: ufs: ufshcd: fix possible unclocked register access
+Date:   Wed,  1 Aug 2018 18:48:07 +0200
+Message-Id: <20180801165034.948723683@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -50,44 +54,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gal Pressman <pressmangal@gmail.com>
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-[ Upstream commit 101f0cd4f2216d32f1b8a75a2154cf3997484ee2 ]
+[ Upstream commit b334456ec2021b1addc19806990115e69ec4ac32 ]
 
-UBSAN triggers the following undefined behaviour warnings:
-[...]
-[   13.236124] UBSAN: Undefined behaviour in drivers/net/ethernet/amazon/ena/ena_eth_com.c:468:22
-[   13.240043] shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
-[   13.744769] UBSAN: Undefined behaviour in drivers/net/ethernet/amazon/ena/ena_eth_com.c:373:4
-[   13.748694] shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
+Vendor specific setup_clocks ops may depend on clocks managed by ufshcd
+driver so if the vendor specific setup_clocks callback is called when
+the required clocks are turned off, it results into unclocked register
+access.
 
-When splitting the address to high and low, GENMASK_ULL is used to generate
-a bitmask with dma_addr_bits field from io_sq (in ena_com_prepare_tx and
-ena_com_add_single_rx_desc).
-The problem is that dma_addr_bits is not initialized with a proper value
-(besides being cleared in ena_com_create_io_queue).
-Assign dma_addr_bits the correct value that is stored in ena_dev when
-initializing the SQ.
+This change make sure that required clocks are enabled before vendor
+specific setup_clocks callback is called.
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Gal Pressman <pressmangal@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/ufs/ufshcd.c |   26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -333,6 +333,7 @@ static int ena_com_init_io_sq(struct ena
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6799,9 +6799,16 @@ static int __ufshcd_setup_clocks(struct
+ 	if (list_empty(head))
+ 		goto out;
  
- 	memset(&io_sq->desc_addr, 0x0, sizeof(io_sq->desc_addr));
+-	ret = ufshcd_vops_setup_clocks(hba, on, PRE_CHANGE);
+-	if (ret)
+-		return ret;
++	/*
++	 * vendor specific setup_clocks ops may depend on clocks managed by
++	 * this standard driver hence call the vendor specific setup_clocks
++	 * before disabling the clocks managed here.
++	 */
++	if (!on) {
++		ret = ufshcd_vops_setup_clocks(hba, on, PRE_CHANGE);
++		if (ret)
++			return ret;
++	}
  
-+	io_sq->dma_addr_bits = ena_dev->dma_addr_bits;
- 	io_sq->desc_entry_size =
- 		(io_sq->direction == ENA_COM_IO_QUEUE_DIRECTION_TX) ?
- 		sizeof(struct ena_eth_io_tx_desc) :
+ 	list_for_each_entry(clki, head, list) {
+ 		if (!IS_ERR_OR_NULL(clki->clk)) {
+@@ -6825,9 +6832,16 @@ static int __ufshcd_setup_clocks(struct
+ 		}
+ 	}
+ 
+-	ret = ufshcd_vops_setup_clocks(hba, on, POST_CHANGE);
+-	if (ret)
+-		return ret;
++	/*
++	 * vendor specific setup_clocks ops may depend on clocks managed by
++	 * this standard driver hence call the vendor specific setup_clocks
++	 * after enabling the clocks managed here.
++	 */
++	if (on) {
++		ret = ufshcd_vops_setup_clocks(hba, on, POST_CHANGE);
++		if (ret)
++			return ret;
++	}
+ 
+ out:
+ 	if (ret) {
 
 
