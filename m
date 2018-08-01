@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792F3C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2671AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2398E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2398E2083D
+	by mail.kernel.org (Postfix) with ESMTP id DC7552083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7552083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407654AbeHATQh (ORCPT
+        id S2407660AbeHATQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52482 "EHLO
+        Wed, 1 Aug 2018 15:16:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52496 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404800AbeHATQg (ORCPT
+        with ESMTP id S2389856AbeHATQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:36 -0400
+        Wed, 1 Aug 2018 15:16:40 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB282D4A;
-        Wed,  1 Aug 2018 17:29:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60AF7D4A;
+        Wed,  1 Aug 2018 17:29:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 066/144] pinctrl: at91-pio4: add missing of_node_put
-Date:   Wed,  1 Aug 2018 18:51:33 +0200
-Message-Id: <20180801164954.699993472@linuxfoundation.org>
+Subject: [PATCH 4.9 067/144] bpf: powerpc64: pad function address loads with NOPs
+Date:   Wed,  1 Aug 2018 18:51:34 +0200
+Message-Id: <20180801164954.759543145@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -52,55 +51,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
 
-[ Upstream commit 21816364715f508c10da1e087e352bc1e326614f ]
+[ Upstream commit 4ea69b2fd623dee2bbc77d3b6b7d8c0924e2026a ]
 
-The device node iterators perform an of_node_get on each iteration, so a
-jump out of the loop requires an of_node_put.
+For multi-function programs, loading the address of a callee
+function to a register requires emitting instructions whose
+count varies from one to five depending on the nature of the
+address.
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+Since we come to know of the callee's address only before the
+extra pass, the number of instructions required to load this
+address may vary from what was previously generated. This can
+make the JITed image grow or shrink.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
+To avoid this, we should generate a constant five-instruction
+when loading function addresses by padding the optimized load
+sequence with NOPs.
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/net/bpf_jit_comp64.c |   34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -573,8 +573,10 @@ static int atmel_pctl_dt_node_to_map(str
- 		for_each_child_of_node(np_config, np) {
- 			ret = atmel_pctl_dt_subnode_to_map(pctldev, np, map,
- 						    &reserved_maps, num_maps);
--			if (ret < 0)
-+			if (ret < 0) {
-+				of_node_put(np);
- 				break;
-+			}
- 		}
- 	}
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -207,25 +207,37 @@ static void bpf_jit_build_epilogue(u32 *
+ 
+ static void bpf_jit_emit_func_call(u32 *image, struct codegen_context *ctx, u64 func)
+ {
++	unsigned int i, ctx_idx = ctx->idx;
++
++	/* Load function address into r12 */
++	PPC_LI64(12, func);
++
++	/* For bpf-to-bpf function calls, the callee's address is unknown
++	 * until the last extra pass. As seen above, we use PPC_LI64() to
++	 * load the callee's address, but this may optimize the number of
++	 * instructions required based on the nature of the address.
++	 *
++	 * Since we don't want the number of instructions emitted to change,
++	 * we pad the optimized PPC_LI64() call with NOPs to guarantee that
++	 * we always have a five-instruction sequence, which is the maximum
++	 * that PPC_LI64() can emit.
++	 */
++	for (i = ctx->idx - ctx_idx; i < 5; i++)
++		PPC_NOP();
++
+ #ifdef PPC64_ELF_ABI_v1
+-	/* func points to the function descriptor */
+-	PPC_LI64(b2p[TMP_REG_2], func);
+-	/* Load actual entry point from function descriptor */
+-	PPC_BPF_LL(b2p[TMP_REG_1], b2p[TMP_REG_2], 0);
+-	/* ... and move it to LR */
+-	PPC_MTLR(b2p[TMP_REG_1]);
+ 	/*
+ 	 * Load TOC from function descriptor at offset 8.
+ 	 * We can clobber r2 since we get called through a
+ 	 * function pointer (so caller will save/restore r2)
+ 	 * and since we don't use a TOC ourself.
+ 	 */
+-	PPC_BPF_LL(2, b2p[TMP_REG_2], 8);
+-#else
+-	/* We can clobber r12 */
+-	PPC_FUNC_ADDR(12, func);
+-	PPC_MTLR(12);
++	PPC_BPF_LL(2, 12, 8);
++	/* Load actual entry point from function descriptor */
++	PPC_BPF_LL(12, 12, 0);
+ #endif
++
++	PPC_MTLR(12);
+ 	PPC_BLRL();
+ }
  
 
 
