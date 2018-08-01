@@ -2,134 +2,208 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A03CBC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BE3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5516120894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C650E208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="YMeIfO7c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5516120894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUCupEW2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C650E208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389833AbeHARDq (ORCPT
+        id S2389848AbeHARDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:03:46 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35075 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389806AbeHARDp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:03:45 -0400
-Received: by mail-qt0-f193.google.com with SMTP id a5-v6so20262699qtp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EOH4yuXU61UFUoCxssnGS0E9pmyAjCBzpOCJhmVNCYY=;
-        b=YMeIfO7cHaOPiMpMbEL3NOKawxOjbeGFP0k9cxcW/u73CdC8UdEjGti+n/J1hepbbL
-         zC9EPQ6M3PsLnBBXu7zrA5qGMcnCgHgagLN5jzI9+SmcImMJ961PzYjpSy45FkXX0JZw
-         0eAz+TM8bpe3OY27wnif6jAJ8/W4uBGXYf3fvtSHMoZ0RqTjQt589ELUAgAfzwQ2ojr+
-         jkjjPbmQoZ9q0yzFS9xHB+gBuD9Lvz9GjaGpD1GL9Bvs1M/hMOlWdjgmBnGYs5V2O6SN
-         YNN1XzVzvzPZx98pl+pkHX8yqqelvVMDJ+ZoYPpNA5PyWTg8YW5QcvjCMws1CkX9fo8r
-         xyPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EOH4yuXU61UFUoCxssnGS0E9pmyAjCBzpOCJhmVNCYY=;
-        b=ceFvA2yJjoiVpamNEfZJPSZaUf/5OdpaCIGSSZC8Is03SLCTMm/vWfeE57a5xRR+o6
-         N3pp8BBXnNeYqaykSMAqt9bm6twYxUH/j/DNDbHOmbMK3Nke665/K4yBTut1pJNoaTMG
-         UQxNwLyW9BKXsza7jYQpqYKzJkSMfVU3IFaewCsIUjkBAYORVCuNf/2dE8CJknhXMswD
-         JPn3emKMhr3ro0HtqEaZqCBi+RMJF3o3im3FvQqW8GRGw/KRqVyAQ7Sn9VAbxnyIKEr/
-         4eOcdf4Wmq8/FtRSsipuKVnuoF5oe12ZhMthcjwCwu8vKQLiCV3Rf66jalpwfjqfiVbs
-         DeTg==
-X-Gm-Message-State: AOUpUlHdMkIjD8h0ShivMZ88QEfoTzj94VsKLQHqyfhc7YYgdLDS+N6V
-        frTwVbLtn1sEWe34mKofnlU9jc4227k=
-X-Google-Smtp-Source: AAOMgpeUwxxVwE79rZ0AeguIBPrw6fa3hN35INPzAmkwgRZJ3nR0gQGHLrKgRnEqqtyC2D7jwYOOgA==
-X-Received: by 2002:a0c:f8ce:: with SMTP id h14-v6mr23582982qvo.163.1533136654208;
-        Wed, 01 Aug 2018 08:17:34 -0700 (PDT)
-Received: from localhost (216.49.36.201.res-cmts.bus.ptd.net. [216.49.36.201])
-        by smtp.gmail.com with ESMTPSA id k38-v6sm13787746qtc.45.2018.08.01.08.17.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 08:17:33 -0700 (PDT)
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>,
-        Peter Enderborg <peter.enderborg@sony.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: [PATCH 7/9] sched: introduce this_rq_lock_irq()
-Date:   Wed,  1 Aug 2018 11:19:56 -0400
-Message-Id: <20180801151958.32590-8-hannes@cmpxchg.org>
+        Wed, 1 Aug 2018 13:03:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389806AbeHARDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 13:03:48 -0400
+Received: from localhost.localdomain (unknown [121.229.118.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 082A0208A5;
+        Wed,  1 Aug 2018 15:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533136656;
+        bh=im+gNXIkdSFtzRHf2DOft1DtyGLJw0D0XgGPi3aRg6A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GUCupEW2jM5XZ1sYe/zZ/I3mIrXertSyPWYmAcwlW5TkrDofcMEFpderx8L65cPXP
+         m8tvaB47QdMSlnBd6iYeV4+ceM3/wt/igGfI2pIK76KbcXcL1Gh6W37BIg/245/rGF
+         xO1UXfdFz7pLaHYtguhYzi08cwubcErbMvL77DZk=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix invalid memory access
+Date:   Wed,  1 Aug 2018 23:16:42 +0800
+Message-Id: <20180801151642.2963-1-chao@kernel.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801151958.32590-1-hannes@cmpxchg.org>
-References: <20180801151958.32590-1-hannes@cmpxchg.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-do_sched_yield() disables IRQs, looks up this_rq() and locks it. The
-next patch is adding another site with the same pattern, so provide a
-convenience function for it.
+From: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+syzbot found the following crash on:
+
+HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
+
+loop7: rw=12288, want=8200, limit=20
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+openvswitch: netlink: Message has 8 unknown bytes.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
+ f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
+ mount_bdev+0x314/0x3e0 fs/super.c:1344
+ f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
+ legacy_get_tree+0x131/0x460 fs/fs_context.c:729
+ vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
+ do_new_mount fs/namespace.c:2603 [inline]
+ do_mount+0x6f2/0x1e20 fs/namespace.c:2927
+ ksys_mount+0x12d/0x140 fs/namespace.c:3143
+ __do_sys_mount fs/namespace.c:3157 [inline]
+ __se_sys_mount fs/namespace.c:3154 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45943a
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
+RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
+RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
+R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+---[ end trace bd8550c129352286 ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+openvswitch: netlink: Message has 8 unknown bytes.
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
+will pass returned invalid page pointer into f2fs_put_page, cause accessing
+invalid memory, this patch tries to handle error path correctly to fix this
+issue.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- kernel/sched/core.c  |  4 +---
- kernel/sched/sched.h | 12 ++++++++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ fs/f2fs/checkpoint.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 211890edf37e..9586a8141f16 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4960,9 +4960,7 @@ static void do_sched_yield(void)
- 	struct rq_flags rf;
- 	struct rq *rq;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 2cffc37e6c5b..861e61e08aa6 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -780,6 +780,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
  
--	local_irq_disable();
--	rq = this_rq();
--	rq_lock(rq, &rf);
-+	rq = this_rq_lock_irq(&rf);
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+ 	if (crc_offset > (blk_size - sizeof(__le32))) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"invalid crc_offset: %zu", crc_offset);
+ 		return -EINVAL;
+@@ -787,6 +788,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
  
- 	schedstat_inc(rq->yld_count);
- 	current->sched_class->yield_task(rq);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b8f038497240..bc798c7cb4d4 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1119,6 +1119,18 @@ rq_unlock(struct rq *rq, struct rq_flags *rf)
- 	raw_spin_unlock(&rq->lock);
+ 	crc = cur_cp_crc(*cp_block);
+ 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+ 		return -EINVAL;
+ 	}
+@@ -806,14 +808,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_1, version);
+ 	if (err)
+-		goto invalid_cp1;
++		return NULL;
+ 
+ 	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
+ 					sbi->log_blocks_per_seg) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"invalid cp_pack_total_block_count:%u",
+ 			le32_to_cpu(cp_block->cp_pack_total_block_count));
+-		goto invalid_cp1;
++		goto invalid_cp;
+ 	}
+ 	pre_version = *version;
+ 
+@@ -821,7 +823,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_2, version);
+ 	if (err)
+-		goto invalid_cp2;
++		goto invalid_cp;
+ 	cur_version = *version;
+ 
+ 	if (cur_version == pre_version) {
+@@ -829,9 +831,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 		f2fs_put_page(cp_page_2, 1);
+ 		return cp_page_1;
+ 	}
+-invalid_cp2:
+-	f2fs_put_page(cp_page_2, 1);
+-invalid_cp1:
++invalid_cp:
+ 	f2fs_put_page(cp_page_1, 1);
+ 	return NULL;
  }
- 
-+static inline struct rq *
-+this_rq_lock_irq(struct rq_flags *rf)
-+	__acquires(rq->lock)
-+{
-+	struct rq *rq;
-+
-+	local_irq_disable();
-+	rq = this_rq();
-+	rq_lock(rq, rf);
-+	return rq;
-+}
-+
- #ifdef CONFIG_NUMA
- enum numa_topology_type {
- 	NUMA_DIRECT,
 -- 
 2.18.0
 
