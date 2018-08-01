@@ -3,111 +3,224 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC493C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41736C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5AF20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A21208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 23:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cR57ACM0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5AF20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUrZI4IS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A21208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732237AbeHBBPm (ORCPT
+        id S1731899AbeHBBSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 21:15:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:43609 "EHLO ozlabs.org"
+        Wed, 1 Aug 2018 21:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729616AbeHBBPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 21:15:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729616AbeHBBSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 21:18:04 -0400
+Received: from [192.168.0.101] (unknown [121.229.118.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41gqGR5TTWz9rxx;
-        Thu,  2 Aug 2018 09:27:27 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533166047;
-        bh=pUjpedKNr8hGTJQrYFwm1UTQlZCpvuytOaiJGvplw/o=;
-        h=Date:From:To:Cc:Subject:From;
-        b=cR57ACM02LMLdVW1fZydRO1uUgdGNPo+CeU9TnVYhqCrhovQD/YCxOFsPu8LcqNUB
-         cCRSUHGL+JL45/CLvHUiOQxrXdx/DpmIK5UleCvseb44rAuhyUoS9qiswzonn4SJ1C
-         Y4kMwRRgCs6+HXcPLOcT8Jwdp4TsyQ6tODAJKQ50ex5lE0XLqc+wEbVRFMSRWlAkca
-         /8ruB6zc8fDxHZfpl+O8qmFRcIU5hq4OWIfhcGH51dkzguHQ43k0r2U9zmnM2tXcfD
-         oj1J8q/p7++Ic4i6TnmzZE2BhvFFy+XZHQbFBnuBJ577p/cINGiSXqwYn23mOVmwyy
-         TJMI6yZgjwLEA==
-Date:   Thu, 2 Aug 2018 09:27:20 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Finn Thain <fthain@telegraphics.com.au>
-Subject: linux-next: manual merge of the powerpc tree with the m68k tree
-Message-ID: <20180802092708.10e1a71d@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id BF77B20862;
+        Wed,  1 Aug 2018 23:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533166190;
+        bh=sKbMmXeJqdPLRzujNT3f/wfr6U9rruzDcuppTxF1zPw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QUrZI4ISJCRsa1gDWoadQiOCah5CI59/lsExK2bUzJ3npD+v70BiilgGxlta2l8m4
+         L414a2SdOhiCXOLGvU11cggP9vA1QdeYvo0mxpUI5muq0E4mfY5P7ICcd1TR2zzpgy
+         h7sRfI4Xorx+/hJ9jVjdwPPHddblyfWsA5R1wnB4=
+Subject: Re: [PATCH] f2fs: fix invalid memory access
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+References: <20180801151642.2963-1-chao@kernel.org>
+ <20180801185811.GA57086@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <48493318-c2e2-ee09-35e6-1b758ccdf3e5@kernel.org>
+Date:   Thu, 2 Aug 2018 07:29:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EC1hrN=C=vY6p+aOKx0Fx8S"; protocol="application/pgp-signature"
+In-Reply-To: <20180801185811.GA57086@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EC1hrN=C=vY6p+aOKx0Fx8S
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018/8/2 2:58, Jaegeuk Kim wrote:
+> On 08/01, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
+>>
+>> loop7: rw=12288, want=8200, limit=20
+>> netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+>> openvswitch: netlink: Message has 8 unknown bytes.
+>> kasan: CONFIG_KASAN_INLINE enabled
+>> kasan: GPF could be caused by NULL-ptr deref or user memory access
+>> general protection fault: 0000 [#1] SMP KASAN
+>> CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+>> RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+>> RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+>> RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+>> RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+>> Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+>> RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+>> RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+>> RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+>> RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+>> R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+>> R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+>> FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>  f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
+>>  f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
+>>  mount_bdev+0x314/0x3e0 fs/super.c:1344
+>>  f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
+>>  legacy_get_tree+0x131/0x460 fs/fs_context.c:729
+>>  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
+>>  do_new_mount fs/namespace.c:2603 [inline]
+>>  do_mount+0x6f2/0x1e20 fs/namespace.c:2927
+>>  ksys_mount+0x12d/0x140 fs/namespace.c:3143
+>>  __do_sys_mount fs/namespace.c:3157 [inline]
+>>  __se_sys_mount fs/namespace.c:3154 [inline]
+>>  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
+>>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x45943a
+>> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+>> RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+>> RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
+>> RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
+>> RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
+>> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
+>> R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
+>> Modules linked in:
+>> Dumping ftrace buffer:
+>>    (ftrace buffer empty)
+>> ---[ end trace bd8550c129352286 ]---
+>> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+>> RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+>> RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+>> RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+>> RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+>> Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+>> RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+>> RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+>> RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+>> netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+>> RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+>> openvswitch: netlink: Message has 8 unknown bytes.
+>> R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+>> R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+>> FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>
+>> In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
+>> will pass returned invalid page pointer into f2fs_put_page, cause accessing
+>> invalid memory, this patch tries to handle error path correctly to fix this
+>> issue.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/checkpoint.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 2cffc37e6c5b..861e61e08aa6 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -780,6 +780,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>>  
+>>  	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+>>  	if (crc_offset > (blk_size - sizeof(__le32))) {
+>> +		f2fs_put_page(*cp_page, 1);
+>>  		f2fs_msg(sbi->sb, KERN_WARNING,
+>>  			"invalid crc_offset: %zu", crc_offset);
+>>  		return -EINVAL;
+>> @@ -787,6 +788,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>>  
+>>  	crc = cur_cp_crc(*cp_block);
+>>  	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
+>> +		f2fs_put_page(*cp_page, 1);
+>>  		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+>>  		return -EINVAL;
+>>  	}
+>> @@ -806,14 +808,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+>>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+>>  					&cp_page_1, version);
+>>  	if (err)
+>> -		goto invalid_cp1;
+>> +		return NULL;
+>>  
+>>  	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
+>>  					sbi->log_blocks_per_seg) {
+>>  		f2fs_msg(sbi->sb, KERN_WARNING,
+>>  			"invalid cp_pack_total_block_count:%u",
+>>  			le32_to_cpu(cp_block->cp_pack_total_block_count));
+>> -		goto invalid_cp1;
+>> +		goto invalid_cp;
+>>  	}
+>>  	pre_version = *version;
+>>  
+>> @@ -821,7 +823,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+>>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+>>  					&cp_page_2, version);
+>>  	if (err)
+>> -		goto invalid_cp2;
+>> +		goto invalid_cp;
+>>  	cur_version = *version;
+>>  
+>>  	if (cur_version == pre_version) {
+>> @@ -829,9 +831,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+>>  		f2fs_put_page(cp_page_2, 1);
+>>  		return cp_page_1;
+>>  	}
+>> -invalid_cp2:
+>> -	f2fs_put_page(cp_page_2, 1);
+> 
+> 	we need to put cp_page_2 above.
 
-Hi all,
+Yes, let me update it in v2.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+Thanks,
 
-  arch/m68k/mac/misc.c
-
-between commit:
-
-  5b9bfb8ec467 ("m68k: mac: Use time64_t in RTC handling")
-
-from the m68k tree and commit:
-
-  ebd722275f9c ("macintosh/via-pmu: Replace via-pmu68k driver with via-pmu =
-driver")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EC1hrN=C=vY6p+aOKx0Fx8S
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiQdgACgkQAVBC80lX
-0GyAswgAigCIeYhR/Or4bRfmuchCPWtOPZTnVo2tMHxqchkY432i2UhwBgtU07B1
-gwcS04uA2N9eSxdC3hUjrwIO8lpmVcN7K78plR+gXAAiDdDVu3x6N3JvUP67f7oK
-YBp9PjhQt4fxAJFvq7bGTK8OrU6UBhOekIXHB1gizaxlX0KuL9ruqWtY6Z3WKnix
-/ovssha1WwahddfE6E5/3LLWL+gFgMWAOlOYoQjkkxRGxn3F7CTuWV46HJR1slu1
-wyTYGKk5zX7AD3bliDwJWjEN37YbO5VonG+kz5Pp4Kopfq7p3I7nDStm5l84hceZ
-LN+47YmDKXWuNUtW0PXDemjp9sP5dg==
-=kELf
------END PGP SIGNATURE-----
-
---Sig_/EC1hrN=C=vY6p+aOKx0Fx8S--
+> 
+>> -invalid_cp1:
+>> +invalid_cp:
+>>  	f2fs_put_page(cp_page_1, 1);
+>>  	return NULL;
+>>  }
+>> -- 
+>> 2.18.0
