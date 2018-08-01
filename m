@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA81C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7890CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB94E208A6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB94E208A6
+	by mail.kernel.org (Postfix) with ESMTP id 2FA1920862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA1920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732647AbeHAT6g (ORCPT
+        id S1732846AbeHAT6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:58:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50080 "EHLO
+        Wed, 1 Aug 2018 15:58:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405691AbeHATIf (ORCPT
+        with ESMTP id S2405690AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CADE13E9;
-        Wed,  1 Aug 2018 17:16:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 395F01338;
+        Wed,  1 Aug 2018 17:12:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 096/246] ath: Add regulatory mapping for Tanzania
-Date:   Wed,  1 Aug 2018 18:50:06 +0200
-Message-Id: <20180801165016.313288974@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 018/246] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
+Date:   Wed,  1 Aug 2018 18:48:48 +0200
+Message-Id: <20180801165012.573453540@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -52,50 +51,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-[ Upstream commit 667ddac5745fb9fddfe8f7fd2523070f50bd4442 ]
+commit 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee upstream.
 
-The country code is used by the ath to detect the ISO 3166-1 alpha-2 name
-and to select the correct conformance test limits (CTL) for a country. If
-the country isn't available and it is still programmed in the EEPROM then
-it will cause an error and stop the initialization with:
+Arnd reports the following arm64 randconfig build error with the PSI
+patches that add another page flag:
 
-  Invalid EEPROM contents
+  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
+  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
+  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
+  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
 
-The current CTL mappings for this country are:
+The additional page flag causes other information stored in
+page->flags to get bumped into their own struct page member:
 
-* 2.4GHz: ETSI
-* 5GHz: FCC
+  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
+  BITS_PER_LONG - NR_PAGEFLAGS
+  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+  #else
+  #define LAST_CPUPID_WIDTH 0
+  #endif
 
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
+  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+  #endif
+
+which in turn causes the struct page size to exceed the size set in
+STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
+VMEMMAP page array according to address space and struct page size.
+
+However, the check is performed - and triggers here - on a !VMEMMAP
+config, which consumes an additional 22 page bits for the sparse
+section id. When VMEMMAP is enabled, those bits are returned, cpupid
+doesn't need its own member, and the page passes the VMEMMAP check.
+
+Restrict that check to the situation it was meant to check: that we
+are sizing the VMEMMAP page array correctly.
+
+Says Arnd:
+
+    Further experiments show that the build error already existed before,
+    but was only triggered with larger values of CONFIG_NR_CPU and/or
+    CONFIG_NODES_SHIFT that might be used in actual configurations but
+    not in randconfig builds.
+
+    With longer CPU and node masks, I could recreate the problem with
+    kernels as old as linux-4.7 when arm64 NUMA support got added.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org
+Fixes: 1a2db300348b ("arm64, numa: Add NUMA support for arm64 platforms.")
+Fixes: 3e1907d5bf5a ("arm64: mm: move vmemmap region right below the linear region")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/regd.h        |    1 +
- drivers/net/wireless/ath/regd_common.h |    1 +
- 2 files changed, 2 insertions(+)
 
---- a/drivers/net/wireless/ath/regd.h
-+++ b/drivers/net/wireless/ath/regd.h
-@@ -170,6 +170,7 @@ enum CountryCode {
- 	CTRY_SWITZERLAND = 756,
- 	CTRY_SYRIA = 760,
- 	CTRY_TAIWAN = 158,
-+	CTRY_TANZANIA = 834,
- 	CTRY_THAILAND = 764,
- 	CTRY_TRINIDAD_Y_TOBAGO = 780,
- 	CTRY_TUNISIA = 788,
---- a/drivers/net/wireless/ath/regd_common.h
-+++ b/drivers/net/wireless/ath/regd_common.h
-@@ -463,6 +463,7 @@ static struct country_code_to_enum_rd al
- 	{CTRY_SWITZERLAND, ETSI1_WORLD, "CH"},
- 	{CTRY_SYRIA, NULL1_WORLD, "SY"},
- 	{CTRY_TAIWAN, APL3_FCCA, "TW"},
-+	{CTRY_TANZANIA, APL1_WORLD, "TZ"},
- 	{CTRY_THAILAND, FCC3_WORLD, "TH"},
- 	{CTRY_TRINIDAD_Y_TOBAGO, FCC3_WORLD, "TT"},
- 	{CTRY_TUNISIA, ETSI3_WORLD, "TN"},
+---
+ arch/arm64/mm/init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -651,11 +651,13 @@ void __init mem_init(void)
+ 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
+ #endif
+ 
++#ifdef CONFIG_SPARSEMEM_VMEMMAP
+ 	/*
+ 	 * Make sure we chose the upper bound of sizeof(struct page)
+-	 * correctly.
++	 * correctly when sizing the VMEMMAP array.
+ 	 */
+ 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
++#endif
+ 
+ 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
+ 		extern int sysctl_overcommit_memory;
 
 
