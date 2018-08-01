@@ -2,88 +2,77 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFA6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B8CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31FE208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D819E208A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 15:14:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qHoTuBty"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31FE208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="y9GCNcNm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D819E208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389678AbeHARAY (ORCPT
+        id S2389700AbeHARBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 13:00:24 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52807 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389611AbeHARAY (ORCPT
+        Wed, 1 Aug 2018 13:01:04 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43512 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389651AbeHARBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 13:00:24 -0400
-Received: by mail-it0-f67.google.com with SMTP id d9-v6so10115769itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:14:13 -0700 (PDT)
+        Wed, 1 Aug 2018 13:01:03 -0400
+Received: by mail-io0-f194.google.com with SMTP id y10-v6so16349266ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 08:14:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D8eAwEpuqiCtqwa/EZ36iHSKua01j47+PpWPuWnHjO4=;
-        b=qHoTuBtyzlT4YiWIwGZ0mkmyF4kn21gxBuVqm2UjB5sYlhjStOzfTjfX2JMEZFdJ42
-         KWIVJ0sHU9yWCgKytR1tI68nqw/f52UnxZ9xOOdpUerS3Mg7WxgHpYj/dwQT9obI9Cfn
-         WPnuQncqK1682GbBxcMBTaNdaKKPeIRTBxRVY523B+O723a0NTeOUacYdw843RinoEyV
-         QYtyTxxhv/BjQpdZ3n2lbdHH+663G56/ROJGL5ePw989S+qwHjMbSr26XADSYCcsmSCq
-         9DejYdapyDGT6xKV4NPL15FLlHFIxxLFb3Nq3Nt8ntMFznZhhDUF+1ZZWbTDWQZqGqKk
-         qJHA==
+        bh=Yk6H51y2ZLIcO3j+pK9JoTpumhbBjRrdnCQdK1xMB0w=;
+        b=y9GCNcNmsKFwg9CtnWulqdQAaglrJVjDSw2mI00s+VXdVTAtRNtdXUj54Nx+XjQfl0
+         9+q6hCsVJ3tWfNj7aHTYOzYaN6hRZZQ6THqL/CACbZl5RHc2iSrnHpyx5XTIPfnE5pbQ
+         GHIZuDv2uYlFQ386pYBIdDP6bb4y30YJUmKpDN4hFWQrYc7qvpnNfzt73aIBR8Uqak2e
+         HeEpcxxCkLz0Z4sWsRD0gEV/kyYPC5GofJFd07ZdCkGQY7y/4h3ZpwJeifoclyszDV1x
+         zS+bnVzYOYlycsfnOEnsLK0RsVy4WXC/KQrMdQhHadYrawW0qzJAVse9JtE6n+JF/y/r
+         Be/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=D8eAwEpuqiCtqwa/EZ36iHSKua01j47+PpWPuWnHjO4=;
-        b=Mnq9kKxQ4Z8NSknh0mYJqcN8TwbyrJMbLITOnFijrR8B0Aw1CMY0jAqBjSLPsKHRyQ
-         EWtBUWqgRPwYZ0cMYxmW1o39jQ9eZP/2082NhEm+kt5jVQTrcHnE0kMjSAZuKSiRztZS
-         bhOn4XlXc03N/RSfmWse9bPo8+mhCu4pD1fDkiBhnPsFQiyxvx3V+TEj57J5E3g5z9PQ
-         VkXNJ6btuvRvgAAHhv8CAseaEuaB8v24ziODCsKjxvSIAEUcMCwzeLki64rsMNagRITE
-         Qyc+BZCaB3F/G7X9HVIBOgu1lWeHzctOXItfhxLJEXW52B9UT0mWbvBp4eLyCo7aS0wW
-         z+vQ==
-X-Gm-Message-State: AOUpUlFDTyI8cyKTzlDQxBLXrDraLDul/0Ve8bxRk3yFmD9nzM97AzA6
-        O0WJo93goPhOHjynil+Hfwo=
-X-Google-Smtp-Source: AAOMgpcL6TzM47Ok1I/VOuxHQWe/2+NGO/Mo6V4kii7KgYgw+F9t67aoFlvRJxYNdV+cW2ou+5D6xA==
-X-Received: by 2002:a02:5f02:: with SMTP id r2-v6mr24800186jab.143.1533136453297;
-        Wed, 01 Aug 2018 08:14:13 -0700 (PDT)
-Received: from [10.0.2.15] ([72.138.96.106])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm5407078iog.63.2018.08.01.08.14.12
+        bh=Yk6H51y2ZLIcO3j+pK9JoTpumhbBjRrdnCQdK1xMB0w=;
+        b=Nmr+LlkIYkjzjjkkPTQfGjTvUWq5emlqs+luuuKDl63/aDddyWQ9PJ3zvAL0sW7n+1
+         pM3/FsRkQrVXxx6AYTn+Td2ORjM3m64jka40MHRLuRgnflpiEn9HpZAOu8ZZi0i7M++6
+         QlxhOVYyPNlQKbbkzO5t+nkx8BM6VhxCNt2SbosoS/UPhLbIAP6aFLtnSk6qaxyLxy/h
+         S84KcH0MZqXZnQ9SXbzdb09TkhvyE5GhaiObfvuIhWEss3N+feGGf17Z2rwNEzNHh1ke
+         g1kDtlxqk7WWCGl1xCTZTqREuWKX//RgCH39D3U3o8MdxgtY5Ph1LIy2Tcnajs/BA+Rz
+         +cZA==
+X-Gm-Message-State: AOUpUlFcch7aELY5sJwDPhcOxbbWokFCFjmPtVtjlEsnTG51EyPm+nvq
+        viPphNTmMEd/1nZC4FkkIfmJGA==
+X-Google-Smtp-Source: AAOMgpdIa5xYwzDvABF7qnRSPMh3830WL4YfkxFS1dbdanQhB7Oei0hBM4yrCPFQh6riaw39me+dHQ==
+X-Received: by 2002:a6b:84d6:: with SMTP id o83-v6mr3862110ioi.93.1533136492619;
+        Wed, 01 Aug 2018 08:14:52 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id t20-v6sm2959493itb.31.2018.08.01.08.14.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 08:14:12 -0700 (PDT)
-Subject: Re: [PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, John Paul Walters <jwalters@isi.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Colin <acolin@isi.edu>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180730225035.28365-1-acolin@isi.edu>
- <20180730225035.28365-7-acolin@isi.edu> <20180731084143.GA4680@arm.com>
- <d09cb4f5-768b-acd8-f9b1-d1d320a93564@gmail.com>
- <20180731155228.GN17271@n2100.armlinux.org.uk>
- <044af717-3883-a7a6-c346-18fa8cebce76@gmail.com>
- <20180731181834.GA30658@n2100.armlinux.org.uk>
- <570ad147-3c58-8911-0111-29e21087ca7a@gmail.com>
- <20180801103855.GD30658@n2100.armlinux.org.uk>
-From:   Alex Bounine <alex.bou9@gmail.com>
-Message-ID: <ea3b7ad0-feef-0a53-d0e7-d3bbe8c52251@gmail.com>
-Date:   Wed, 1 Aug 2018 11:14:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 01 Aug 2018 08:14:51 -0700 (PDT)
+Subject: Re: [PATCH] blk-wbt: Avoid lock contention and thundering herd issue
+ in wbt_wait
+To:     Anchal Agarwal <anchalag@amazon.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     fllinden@amazon.com, msw@amazon.com, sblbir@amazon.com
+References: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <df2a0476-d9d1-c6c9-6553-f459e890ce8b@kernel.dk>
+Date:   Wed, 1 Aug 2018 09:14:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180801103855.GD30658@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180731213410.GA35291@kaos-source-ops-60001.pdx1.amazon.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -91,246 +80,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/31/18 3:34 PM, Anchal Agarwal wrote:
+> Hi folks,
+> 
+> This patch modifies commit e34cbd307477a
+> (blk-wbt: add general throttling mechanism)
+> 
+> I am currently running a large bare metal instance (i3.metal)
+> on EC2 with 72 cores, 512GB of RAM and NVME drives, with a
+> 4.18 kernel. I have a workload that simulates a database
+> workload and I am running into lockup issues when writeback
+> throttling is enabled,with the hung task detector also
+> kicking in.
+> 
+> Crash dumps show that most CPUs (up to 50 of them) are
+> all trying to get the wbt wait queue lock while trying to add
+> themselves to it in __wbt_wait (see stack traces below).
+> 
+> [    0.948118] CPU: 45 PID: 0 Comm: swapper/45 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
+> [    0.948119] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
+> [    0.948120] task: ffff883f7878c000 task.stack: ffffc9000c69c000
+> [    0.948124] RIP: 0010:native_queued_spin_lock_slowpath+0xf8/0x1a0
+> [    0.948125] RSP: 0018:ffff883f7fcc3dc8 EFLAGS: 00000046
+> [    0.948126] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7fce2a00
+> [    0.948128] RDX: 000000000000001c RSI: 0000000000740001 RDI: ffff887f7709ca68
+> [    0.948129] RBP: 0000000000000002 R08: 0000000000b80000 R09: 0000000000000000
+> [    0.948130] R10: ffff883f7fcc3d78 R11: 000000000de27121 R12: 0000000000000002
+> [    0.948131] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+> [    0.948132] FS:  0000000000000000(0000) GS:ffff883f7fcc0000(0000) knlGS:0000000000000000
+> [    0.948134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.948135] CR2: 000000c424c77000 CR3: 0000000002010005 CR4: 00000000003606e0
+> [    0.948136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    0.948137] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    0.948138] Call Trace:
+> [    0.948139]  <IRQ>
+> [    0.948142]  do_raw_spin_lock+0xad/0xc0
+> [    0.948145]  _raw_spin_lock_irqsave+0x44/0x4b
+> [    0.948149]  ? __wake_up_common_lock+0x53/0x90
+> [    0.948150]  __wake_up_common_lock+0x53/0x90
+> [    0.948155]  wbt_done+0x7b/0xa0
+> [    0.948158]  blk_mq_free_request+0xb7/0x110
+> [    0.948161]  __blk_mq_complete_request+0xcb/0x140
+> [    0.948166]  nvme_process_cq+0xce/0x1a0 [nvme]
+> [    0.948169]  nvme_irq+0x23/0x50 [nvme]
+> [    0.948173]  __handle_irq_event_percpu+0x46/0x300
+> [    0.948176]  handle_irq_event_percpu+0x20/0x50
+> [    0.948179]  handle_irq_event+0x34/0x60
+> [    0.948181]  handle_edge_irq+0x77/0x190
+> [    0.948185]  handle_irq+0xaf/0x120
+> [    0.948188]  do_IRQ+0x53/0x110
+> [    0.948191]  common_interrupt+0x87/0x87
+> [    0.948192]  </IRQ>
+> ....
+> [    0.311136] CPU: 4 PID: 9737 Comm: run_linux_amd64 Not tainted 4.14.51-62.38.amzn1.x86_64 #1
+> [    0.311137] Hardware name: Amazon EC2 i3.metal/Not Specified, BIOS 1.0 10/16/2017
+> [    0.311138] task: ffff883f6e6a8000 task.stack: ffffc9000f1ec000
+> [    0.311141] RIP: 0010:native_queued_spin_lock_slowpath+0xf5/0x1a0
+> [    0.311142] RSP: 0018:ffffc9000f1efa28 EFLAGS: 00000046
+> [    0.311144] RAX: 0000000000000000 RBX: ffff887f7709ca68 RCX: ffff883f7f722a00
+> [    0.311145] RDX: 0000000000000035 RSI: 0000000000d80001 RDI: ffff887f7709ca68
+> [    0.311146] RBP: 0000000000000202 R08: 0000000000140000 R09: 0000000000000000
+> [    0.311147] R10: ffffc9000f1ef9d8 R11: 000000001a249fa0 R12: ffff887f7709ca68
+> [    0.311148] R13: ffffc9000f1efad0 R14: 0000000000000000 R15: ffff887f7709ca00
+> [    0.311149] FS:  000000c423f30090(0000) GS:ffff883f7f700000(0000) knlGS:0000000000000000
+> [    0.311150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.311151] CR2: 00007feefcea4000 CR3: 0000007f7016e001 CR4: 00000000003606e0
+> [    0.311152] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    0.311153] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    0.311154] Call Trace:
+> [    0.311157]  do_raw_spin_lock+0xad/0xc0
+> [    0.311160]  _raw_spin_lock_irqsave+0x44/0x4b
+> [    0.311162]  ? prepare_to_wait_exclusive+0x28/0xb0
+> [    0.311164]  prepare_to_wait_exclusive+0x28/0xb0
+> [    0.311167]  wbt_wait+0x127/0x330
+> [    0.311169]  ? finish_wait+0x80/0x80
+> [    0.311172]  ? generic_make_request+0xda/0x3b0
+> [    0.311174]  blk_mq_make_request+0xd6/0x7b0
+> [    0.311176]  ? blk_queue_enter+0x24/0x260
+> [    0.311178]  ? generic_make_request+0xda/0x3b0
+> [    0.311181]  generic_make_request+0x10c/0x3b0
+> [    0.311183]  ? submit_bio+0x5c/0x110
+> [    0.311185]  submit_bio+0x5c/0x110
+> [    0.311197]  ? __ext4_journal_stop+0x36/0xa0 [ext4]
+> [    0.311210]  ext4_io_submit+0x48/0x60 [ext4]
+> [    0.311222]  ext4_writepages+0x810/0x11f0 [ext4]
+> [    0.311229]  ? do_writepages+0x3c/0xd0
+> [    0.311239]  ? ext4_mark_inode_dirty+0x260/0x260 [ext4]
+> [    0.311240]  do_writepages+0x3c/0xd0
+> [    0.311243]  ? _raw_spin_unlock+0x24/0x30
+> [    0.311245]  ? wbc_attach_and_unlock_inode+0x165/0x280
+> [    0.311248]  ? __filemap_fdatawrite_range+0xa3/0xe0
+> [    0.311250]  __filemap_fdatawrite_range+0xa3/0xe0
+> [    0.311253]  file_write_and_wait_range+0x34/0x90
+> [    0.311264]  ext4_sync_file+0x151/0x500 [ext4]
+> [    0.311267]  do_fsync+0x38/0x60
+> [    0.311270]  SyS_fsync+0xc/0x10
+> [    0.311272]  do_syscall_64+0x6f/0x170
+> [    0.311274]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> 
+> In the original patch, wbt_done is waking up all the exclusive
+> processes in the wait queue, which can cause a thundering herd
+> if there is a large number of writer threads in the queue. The
+> original intention of the code seems to be to wake up one thread
+> only however, it uses wake_up_all() in __wbt_done(), and then
+> uses the following check in __wbt_wait to have only one thread
+> actually get out of the wait loop:
+> 
+> if (waitqueue_active(&rqw->wait) &&
+>             rqw->wait.head.next != &wait->entry)
+>                 return false;
+> 
+> The problem with this is that the wait entry in wbt_wait is
+> define with DEFINE_WAIT, which uses the autoremove wakeup function.
+> That means that the above check is invalid - the wait entry will
+> have been removed from the queue already by the time we hit the
+> check in the loop.
+> 
+> Secondly, auto-removing the wait entries also means that the wait
+> queue essentially gets reordered "randomly" (e.g. threads re-add
+> themselves in the order they got to run after being woken up).
+> Additionally, new requests entering wbt_wait might overtake requests
+> that were queued earlier, because the wait queue will be
+> (temporarily) empty after the wake_up_all, so the waitqueue_active
+> check will not stop them. This can cause certain threads to starve
+> under high load.
+> 
+> The fix is to leave the woken up requests in the queue and remove
+> them in finish_wait() once the current thread breaks out of the
+> wait loop in __wbt_wait. This will ensure new requests always
+> end up at the back of the queue, and they won't overtake requests
+> that are already in the wait queue. With that change, the loop
+> in wbt_wait is also in line with many other wait loops in the kernel.
+> Waking up just one thread drastically reduces lock contention, as
+> does moving the wait queue add/remove out of the loop.
+> 
+> A significant drop in lockdep's lock contention numbers is seen when
+> running the test application on the patched kernel.
 
-On 2018-08-01 06:38 AM, Russell King - ARM Linux wrote:
-> On Tue, Jul 31, 2018 at 04:01:27PM -0400, Alex Bounine wrote:
->> On 2018-07-31 02:18 PM, Russell King - ARM Linux wrote:
->>> On Tue, Jul 31, 2018 at 01:59:27PM -0400, Alex Bounine wrote:
->>>> On 2018-07-31 11:52 AM, Russell King - ARM Linux wrote:
->>>>> On Tue, Jul 31, 2018 at 08:54:14AM -0400, Alex Bounine wrote:
->>>>>> On 2018-07-31 04:41 AM, Will Deacon wrote:
->>>>>>> On Mon, Jul 30, 2018 at 06:50:34PM -0400, Alexei Colin wrote:
->>>>>>>> Platforms with a PCI bus will be offered the RapidIO menu since they may
->>>>>>>> be want support for a RapidIO PCI device. Platforms without a PCI bus
->>>>>>>> that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
->>>>>>>> in the platform-/machine-specific "config ARCH_*" Kconfig entry.
->>>>>>>>
->>>>>>>> Tested that kernel builds for arm64 with RapidIO subsystem and
->>>>>>>> switch drivers enabled, also that the modules load successfully
->>>>>>>> on a custom Aarch64 Qemu model.
->>>>>>>>
->>>>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>>>>> Cc: Russell King <linux@armlinux.org.uk>
->>>>>>>> Cc: John Paul Walters <jwalters@isi.edu>
->>>>>>>> Cc: linux-arm-kernel@lists.infradead.org
->>>>>>>> Cc: linux-kernel@vger.kernel.org,
->>>>>>>> Signed-off-by: Alexei Colin <acolin@isi.edu>
->>>>>>>> ---
->>>>>>>>   arch/arm64/Kconfig | 2 ++
->>>>>>>>   1 file changed, 2 insertions(+)
->>>>>>>
->>>>>>> Thanks, this looks much cleaner than before:
->>>>>>>
->>>>>>> Acked-by: Will Deacon <will.deacon@arm.com>
->>>>>>>
->>>>>>> The only thing I'm not sure about is why we don't just select HAS_RAPIDIO
->>>>>>> unconditionally in the arm64 Kconfig. Does selecting only that option
->>>>>>> actually pull in new code to the build?
->>>>>>>
->>>>>> HAS_RAPIDIO option is intended for SOCs that have built in SRIO controllers,
->>>>>> like TI KeyStoneII or FPGAs. Because RapidIO subsystem core is required
->>>>>> during RapidIO port driver initialization, having separate option allows us
->>>>>> to control available build options for RapidIO core and port driver (bool
->>>>>> vs. tristate) and disable module option if port driver is configured as
->>>>>> built-in.
->>>>>
->>>>> Your explanation doesn't make much sense to me.
->>>>>
->>>>> RAPIDIO is the bus-level support, right?  So drivers that depend on
->>>>> the bus-level support should depend on RAPIDIO, and so, if RAPIDIO
->>>>> is configured as a module, they will also be allowed to be disabled
->>>>> or a module, but not built-in if tristate.  If it is boolean, and
->>>>> causes the driver to be built-in to the kernel, then you need to use
->>>>> "RAPIDIO=y" so that it's dependency is only satisfied when the core
->>>>> is built-in.
->>>>>
->>>>
->>>> RapidIO host controllers (on local bus like SoC internal or PCIe) are
->>>> serviced by MPORT device drivers that are subsystem specific and communicate
->>>> with RapidIO core using set of callbacks. Depending on HW architecture these
->>>> drivers may be defined as built-in or module.
->>>
->>> Why does hardware architecture define whether something has to be built
->>> in or can be modular?
->>>
->>> It is the case today that (eg) on-SoC hardware _can_ be built as a module
->>> if desired - just because it's on the SoC does not mean it has to be
->>> built in to the kernel.  Why is RapidIO any different?
->>>
->>
->> Not HW architecture - legacy can be blamed as well. Freescale's FSL_RIO
->> driver still exist as built-in so far. Intent of this patch set is to allow
->> RapidIO support in more architectures without reworking old stuff.
->> I do not think that anyone will be updating FSL_RIO driver soon.
-> 
-> Sorry, but I'm even more confused.  If it's not hardware architecture,
-> then why did you say previously "Depending on HW architecture these
-> drivers may be defined as built-in or module." ?
+I like the patch, and a few weeks ago we independently discovered that
+the waitqueue list checking was bogus as well. My only worry is that
+changes like this can be delicate, meaning that it's easy to introduce
+stall conditions. What kind of testing did you push this through?
 
-My fault, I took some shortcuts in writing here and that made it not 
-clear enough. In this case I was talking about legacy code existing in 
-PowerPC architecture branch. FSL_RIO host driver can be built only as 
-built-in what forces RIO core to be built-in as well.
+-- 
+Jens Axboe
 
-> If it's that the driver isn't written to be a module, then that is not
-> "HW architecture".  Are you just trying to muddy the water?
-
-Not at all :) See above. Driver within architectural branch.
-
->> Also we cannot dictate to developers of future drivers which method to use -
->> they may have built-in option only for the first release.
-> 
-> How is that any different from all the other drivers that we have?
-> 
-> If a driver can only be built-in, then we do this in the Kconfig:
-> 
-> config DRIVERFOO
-> 	bool "Support driverfoo"
-> 	depends on SUBSYSTEM=y
-> 
-> which ensures that the driver can only be built when it's dependent
-> subsystem is also built-in.
-> 
-> There is another alternative way, which is:
-> 
-> config SUBSYSTEM
-> 	tristate
-> 
-> config DRIVERFOO
-> 	bool "Support driverfoo"
-> 	select SUBSYSTEM
-> 
-> config DRIVERBAR
-> 	tristate "Support driverbar"
-> 	select SUBSYSTEM
-> 
-> and "SUBSYSTEM" will automatically adopt either 'm' or 'y' correctly
-> depending on whether any drivers are built-in or not.
-> 
-Agree.
-
->> Unfortunately we have on hands dependency between mport driver build mode
->> and  RapidIO core which we need to respect.
-> 
-> How is that any different from (eg) hundreds of network drivers and the
-> networking core code that we already have?  That doesn't have such a
-> convoluted configuration system, and what you have is much simpler.
-> 
->>> For example, can you point out why my idea I present below would not
->>> work?
->>
->> See below.
->>
->>>
->>>> For peripheral devices attached to the RapidIO fabric such dependency on
->>>> local mport implementation does not exist and therefore they all can be
->>>> treated as tristate.
->>>>
->>>>> HAS_RAPIDIO gives the impression that it defines whether or not
->>>>> the rapidio core code is allowable or not - it doesn't suggest that
->>>>> it has anything to do with drivers. However, reading the PowerPC
->>>>> Kconfig files, it seems to be used that way.  That's confusing, and
->>>>> ought to be fixed.  From what I can tell, it's only used for FSL_RIO,
->>>>> so I suggest that gets converted to:
->>>>>
->>>>> config HAS_RAPIDIO
->>>>> 	bool PCI
->>
->> PCI and RAPIDIO can be mutually exclusive.
-> 
-> Please explain this in light of your patches which contain:
-> 
-
-Availability of PCIe and RapidIO can be mutually exclusive on specific 
-boards.
-On oter boards we may have both buses at the same time.
-Any platform with PCIe can add RapidIO support using PCIe-to-SRIO host 
-bridge.
-
-> config RAPIDIO
-> 	tristate "RapidIO support"
-> 	depends on HAS_RAPIDIO || PCI
-> 
-> This allows RAPIDIO can be selected when PCI is enabled.  Therefore,
-> PCI and RAPIDIO *are not* mutually exclusive as your comment above
-> states, therefore, I have to assume that your comment is wrong.
-> 
->>>>>
->>>>> config RAPIDIO
->>>>> 	tristate "RapidIO support"
->>>>> 	depends on HAS_RAPIDIO
->>>>>
->>>>> config HAS_FSL_RIO
->>>>> 	bool
->>>>> 	select HAS_RAPIDIO
->>
->> Introducing new variable HAS_FSL_RIO here. Do you suggest having one for
->> each ARM-based board that has on-chip RIO?
-> 
-> No, I'm suggesting a solution for what I see in the kernel tree today,
-> which is frankly a mess for the reasons I've already outlined.
-> 
-> HAS_FSL_RIO is based on the _only_ SoC driver apparently in the tree
-> based on what I could find in the arch/*/Kconfig files.  If you don't
-> think having individual HAS_* options in this way is appropriate,
-> then maybe instead having per-SoC hidden HAS_* config options are
-> more appropriate.
-> 
-This is what we are trying to use here: per-SoC option HAS_RAPIDIO. 
-While the name does not have an individual designation (like 
-HAS_FSL_RIO) it will be only the SoC in the given system that selects 
-it. This will enable RapidIO configuration menu, allowing user to go 
-ahead with remaining RIO configuration. Enabling on-chip port stays as 
-per-SoC option.
-
-Having PCIe bus brings another twist because PCIe-to-SRIO bridge can be 
-used when HAS_RAPIDIO=n. As result every platform that has PCIe should 
-enable RapidIO (except in architectures that do not support RIO at this 
-moment).
-
->>>>>
->>>>> config FSL_RIO
->>>>> 	bool "Freescale Embedded SRIO Controller support"
->>>>> 	depends on RAPIDIO = y && HAS_FSL_RIO
->>>>>
->>>>> This frees up HAS_RAPIDIO to operate as one would expect - to define
->>>>> whether or not RAPIDIO should be offered.  This also allows:
->>>>>
->>>>> config ARM
->>>>> 	select HAS_RAPIDIO if PCI
->>
->> Some SOCs can be configured without PCI. We have confusing action here - we
->> have to enable PCI on platform that does not have it.
-> 
-> Again, you said above "PCI and RAPIDIO can be mutually exclusive."  This
-> comment self-conflicts with your previous comment.
-
-I explained "mutually exclusive" above.
-
-> 
-> What you now seem to be saying goes against the patches and the current
-> Kconfig.  You seem to be saying that RAPIDIO _requires_ PCI.
-> 
-> So, we now have three completely different statements from you:
-> - "we have to enable PCI on platform that does not have it."
-> - "PCI and RAPIDIO can be mutually exclusive."
-> - RAPIDIO does not require PCI (since HAS_RAPIDIO=y RAPIDIO=y PCI=n is
->    a permissible configuration as things stand with PowerPC.)
-> 
-> Which is it?
-> 
-> It seems to be that your replies are just muddying the water - I can
-> only assume that this is to make us give up.  Please don't do that,
-> it's not in your interest.
-> 
->> Why we cannot use "select HAS_RAPIDIO" HW-specific Kconfig file
->> (mach-*/Kconfig)? And have on-chip port selection in the same board-specific
->> place.
-> 
-> As I've already explained, HAS_RAPIDIO has the expectation that it
-> controls the availability of the RAPIDIO option, not of drivers.
-> It is HAS_*RAPIDIO*, the clue is in the name.  Using it as you are
-> (basically, to mean that on-SoC rapidio hardware is present) and
-> allowing such configurations as HAS_RAPIDIO=n RAPIDIO=y PCI=y is
-> completely counter-intuitive.
-> 
