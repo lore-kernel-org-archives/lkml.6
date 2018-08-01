@@ -3,79 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB856C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADD2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A3E208A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:08:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A3E208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B25B208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 13:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B25B208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389305AbeHAOx6 (ORCPT
+        id S2389346AbeHAO4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:53:58 -0400
-Received: from mga05.intel.com ([192.55.52.43]:23303 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388930AbeHAOx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:53:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 06:08:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,432,1526367600"; 
-   d="scan'208";a="250193287"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 01 Aug 2018 06:08:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 5D20E86; Wed,  1 Aug 2018 16:08:12 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Tony Luck <tony.luck@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] ia64: Make stack VMA anonymous
-Date:   Wed,  1 Aug 2018 16:08:01 +0300
-Message-Id: <20180801130801.30095-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        Wed, 1 Aug 2018 10:56:05 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:17418 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389266AbeHAO4E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 10:56:04 -0400
+X-IronPort-AV: E=Sophos;i="5.51,432,1526322600"; 
+   d="scan'208";a="119713"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 01 Aug 2018 18:40:20 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,8971"; a="713655"
+Received: from gkohli-linux.qualcomm.com ([10.204.78.26])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 01 Aug 2018 18:40:19 +0530
+Received: by gkohli-linux.qualcomm.com (Postfix, from userid 427023)
+        id 2F02B30CD; Wed,  1 Aug 2018 18:40:18 +0530 (IST)
+From:   Gaurav Kohli <gkohli@codeaurora.org>
+To:     tglx@linutronix.de, john.stultz@linaro.org, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>
+Subject: [PATCH v1] timers: Clear must_forward_clk inside base lock
+Date:   Wed,  1 Aug 2018 18:40:16 +0530
+Message-Id: <1533129016-28050-1-git-send-email-gkohli@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA64 allocates stack in a custom way. Stack has to be marked as
-anonymous otherwise the process will be killed with SIGBUS on the first
-access to the stack.
+Timer wheel base->must_forward_clock is indicating that
+the base clock might be stale due to a long idle sleep.
+The forwarding of base clock takes place in softirq of timer
+or when a timer is enqueued to base which is idle. While migrate
+timer from remote CPU to the new base which is idle, then
+following race can happen:
 
-Add missing vma_set_anonymous().
+  CPU0                                  CPU1
+  run_timer_softirq                     timers_dead_cpu
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: Tony Luck <tony.luck@intel.com>
-Fixes: bfd40eaff5ab ("mm: fix vma_is_anonymous() false-positives")
+					base = lock_timer_base(timer);
+  base->must_forward_clk = false
+					if (base->must_forward_clk)
+				         forward(base); >>skip
+
+					migrate_timer_list
+					enqueue_timer(base, timer, idx);
+					>> idx is calculated high due to
+					>> stale base
+					unlock_timer_base(timer);
+  base = lock_timer_base(timer);
+  forward(base);
+
+The root cause is that base->must_forward_clk is cleared outside the
+base->lock held region, so the remote queuing CPU observes it as
+cleared, but the base clock is still stale. This can cause large
+granularity values for timers, i.e. the accuracy of the expiry time
+suffers.
+
+Prevent this by clearing the flag with base->lock held, so that the
+forwarding takes place before the cleared flag is observable by a remote
+CPU.
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
 ---
- arch/ia64/mm/init.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
-index e6c6dfd98de2..99044db28040 100644
---- a/arch/ia64/mm/init.c
-+++ b/arch/ia64/mm/init.c
-@@ -116,6 +116,7 @@ ia64_init_addr_space (void)
- 	 */
- 	vma = vm_area_alloc(current->mm);
- 	if (vma) {
-+		vma_set_anonymous(vma);
- 		vma->vm_start = current->thread.rbs_bot & PAGE_MASK;
- 		vma->vm_end = vma->vm_start + PAGE_SIZE;
- 		vma->vm_flags = VM_DATA_DEFAULT_FLAGS|VM_GROWSUP|VM_ACCOUNT;
+Changes since v0:
+ - Updated commit text and comment suggested by Thomas.
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index cc2d23e..70aa1c6 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1657,6 +1657,17 @@ static inline void __run_timers(struct timer_base *base)
+ 
+ 	raw_spin_lock_irq(&base->lock);
+ 
++	/*
++	 * The must_forward_clk flag is cleared unconditionally also for
++	 * the deferrable base. The deferrable base is not affected by idle
++	 * tracking and never forwarded, so clearing the flag is a NOOP.
++	 *
++	 * The fact that the deferrable base is never forwarded can cause
++	 * large variations in granularity for deferrable timers, but they
++	 * can be deferred for long periods due to idle anyway.
++	 */
++	base->must_forward_clk = false;
++
+ 	while (time_after_eq(jiffies, base->clk)) {
+ 
+ 		levels = collect_expired_timers(base, heads);
+@@ -1676,19 +1687,6 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
+ {
+ 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
+ 
+-	/*
+-	 * must_forward_clk must be cleared before running timers so that any
+-	 * timer functions that call mod_timer will not try to forward the
+-	 * base. idle trcking / clock forwarding logic is only used with
+-	 * BASE_STD timers.
+-	 *
+-	 * The deferrable base does not do idle tracking at all, so we do
+-	 * not forward it. This can result in very large variations in
+-	 * granularity for deferrable timers, but they can be deferred for
+-	 * long periods due to idle.
+-	 */
+-	base->must_forward_clk = false;
+-
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
 -- 
-2.18.0
+1.9.1
 
