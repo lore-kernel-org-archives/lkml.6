@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7148BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B40AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BF020841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BF020841
+	by mail.kernel.org (Postfix) with ESMTP id F2AA720840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AA720840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388209AbeHAUSG (ORCPT
+        id S2388025AbeHAUSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:18:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46096 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404209AbeHATDf (ORCPT
+        with ESMTP id S2404002AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:03:35 -0400
+        Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A2CAFCC;
-        Wed,  1 Aug 2018 16:58:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58FBA11C2;
+        Wed,  1 Aug 2018 17:07:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 113/336] soc: qcom: smem: fix qcom_smem_set_global_partition()
-Date:   Wed,  1 Aug 2018 18:47:28 +0200
-Message-Id: <20180801165033.473444756@linuxfoundation.org>
+Subject: [PATCH 4.17 246/336] stop_machine: Use raw spinlocks
+Date:   Wed,  1 Aug 2018 18:49:41 +0200
+Message-Id: <20180801165038.475735787@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,59 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Elder <elder@linaro.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 8fa1a21409da6abfe890f66532f9fcd8d2c25a3d ]
+[ Upstream commit de5b55c1d4e30740009864eb35ce4ed856aac01d ]
 
-If there is at least one entry in the partition table, but no global
-entry, the qcom_smem_set_global_partition() should return an error
-just like it does if there are no partition table entries.
+Use raw-locks in stop_machine() to allow locking in irq-off and
+preempt-disabled regions on -RT. This also documents the possible locking
+context in general.
 
-It turns out the function still returns an error in this case, but
-it waits to do so until it has mistakenly treated the last entry in
-the table as if it were the global entry found.
-
-Fix the function to return immediately if no global entry is found
-in the table.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+[bigeasy: update patch description.]
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lkml.kernel.org/r/20180423191635.6014-1-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/qcom/smem.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/stop_machine.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -695,9 +695,10 @@ static u32 qcom_smem_get_item_count(stru
- static int qcom_smem_set_global_partition(struct qcom_smem *smem)
- {
- 	struct smem_partition_header *header;
--	struct smem_ptable_entry *entry = NULL;
-+	struct smem_ptable_entry *entry;
- 	struct smem_ptable *ptable;
- 	u32 host0, host1, size;
-+	bool found = false;
- 	int i;
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -37,7 +37,7 @@ struct cpu_stop_done {
+ struct cpu_stopper {
+ 	struct task_struct	*thread;
  
- 	ptable = qcom_smem_get_ptable(smem);
-@@ -709,11 +710,13 @@ static int qcom_smem_set_global_partitio
- 		host0 = le16_to_cpu(entry->host0);
- 		host1 = le16_to_cpu(entry->host1);
+-	spinlock_t		lock;
++	raw_spinlock_t		lock;
+ 	bool			enabled;	/* is this stopper enabled? */
+ 	struct list_head	works;		/* list of pending works */
  
--		if (host0 == SMEM_GLOBAL_HOST && host0 == host1)
-+		if (host0 == SMEM_GLOBAL_HOST && host0 == host1) {
-+			found = true;
- 			break;
-+		}
+@@ -81,13 +81,13 @@ static bool cpu_stop_queue_work(unsigned
+ 	unsigned long flags;
+ 	bool enabled;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled = stopper->enabled;
+ 	if (enabled)
+ 		__cpu_stop_queue_work(stopper, work, &wakeq);
+ 	else if (work->done)
+ 		cpu_stop_signal_done(work->done);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 
+ 	wake_up_q(&wakeq);
+ 
+@@ -237,8 +237,8 @@ static int cpu_stop_queue_two_works(int
+ 	DEFINE_WAKE_Q(wakeq);
+ 	int err;
+ retry:
+-	spin_lock_irq(&stopper1->lock);
+-	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
++	raw_spin_lock_irq(&stopper1->lock);
++	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
+ 
+ 	err = -ENOENT;
+ 	if (!stopper1->enabled || !stopper2->enabled)
+@@ -261,8 +261,8 @@ retry:
+ 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
+ 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
+ unlock:
+-	spin_unlock(&stopper2->lock);
+-	spin_unlock_irq(&stopper1->lock);
++	raw_spin_unlock(&stopper2->lock);
++	raw_spin_unlock_irq(&stopper1->lock);
+ 
+ 	if (unlikely(err == -EDEADLK)) {
+ 		while (stop_cpus_in_progress)
+@@ -461,9 +461,9 @@ static int cpu_stop_should_run(unsigned
+ 	unsigned long flags;
+ 	int run;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	run = !list_empty(&stopper->works);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 	return run;
+ }
+ 
+@@ -474,13 +474,13 @@ static void cpu_stopper_thread(unsigned
+ 
+ repeat:
+ 	work = NULL;
+-	spin_lock_irq(&stopper->lock);
++	raw_spin_lock_irq(&stopper->lock);
+ 	if (!list_empty(&stopper->works)) {
+ 		work = list_first_entry(&stopper->works,
+ 					struct cpu_stop_work, list);
+ 		list_del_init(&work->list);
+ 	}
+-	spin_unlock_irq(&stopper->lock);
++	raw_spin_unlock_irq(&stopper->lock);
+ 
+ 	if (work) {
+ 		cpu_stop_fn_t fn = work->fn;
+@@ -554,7 +554,7 @@ static int __init cpu_stop_init(void)
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
+ 
+-		spin_lock_init(&stopper->lock);
++		raw_spin_lock_init(&stopper->lock);
+ 		INIT_LIST_HEAD(&stopper->works);
  	}
  
--	if (!entry) {
-+	if (!found) {
- 		dev_err(smem->dev, "Missing entry for global partition\n");
- 		return -EINVAL;
- 	}
 
 
