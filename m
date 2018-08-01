@@ -2,59 +2,115 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46342C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73DFC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DBB208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DBB208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 46FD6208AC
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 05:33:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oB9YiDed"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FD6208AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387483AbeHAHJE (ORCPT
+        id S1733112AbeHAHRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 03:09:04 -0400
-Received: from ozlabs.org ([203.11.71.1]:59419 "EHLO ozlabs.org"
+        Wed, 1 Aug 2018 03:17:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:44065 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733085AbeHAHHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 03:07:47 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 41gMDH3hWCz9s3x; Wed,  1 Aug 2018 15:23:59 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9c7b185ab2fe313b4426bf55da3624bef71f342b
-In-Reply-To: <20180705114022.19285-2-akshay.adiga@linux.vnet.ibm.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     stewart@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        rjw@rjwysocki.net, npiggin@gmail.com,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: [v4, 1/2] powernv/cpuidle: Parse dt idle properties into global structure
-Message-Id: <41gMDH3hWCz9s3x@ozlabs.org>
-Date:   Wed,  1 Aug 2018 15:23:59 +1000 (AEST)
+        id S1731897AbeHAHRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 03:17:35 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41gMRY3sfNz9s0R;
+        Wed,  1 Aug 2018 15:33:45 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533101625;
+        bh=WRugDvmS1IF/oxyUoNxUffJezI3mwiAHJGjS2wd+dRc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oB9YiDedWL6wx4euokMnDytvfqNvza+P41jV3RRdr4YE09ulsALJjsEd3MoIGb9bE
+         VQ1DW8imU4s72YRAOGbO5MsZXFTdpm40mf6Ee0vaenH2hvKg+hzLtJBkqBcsFhqpgj
+         91q3RYQ5VJuujIrmbOb3vozOSlVwgUVR+qUWEECptJkNjjC/gps5gF6A4C1zRTFnlx
+         DVwGn82+V1/bC681iMCr4g6xbv4Ru05KCc9jZweecNG//HJw0XS2VETR4u4Addxk3h
+         +o101PBffUquhgn96qd87j2H+OBdiv9tFIFp83uBS4QRL3DhS85hdiTRbOMZ8NTtmp
+         45lzN7kWFF+MQ==
+Date:   Wed, 1 Aug 2018 15:33:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the net-next tree with the rdma
+ tree
+Message-ID: <20180801153345.22692adb@canb.auug.org.au>
+In-Reply-To: <VI1PR0502MB3008076016496152D4898D8ED12E0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+References: <20180727123301.3ac97ddc@canb.auug.org.au>
+        <20180727024832.GA30023@mellanox.com>
+        <20180727132847.2be8563b@canb.auug.org.au>
+        <VI1PR0502MB3008702AFA64F44DE57DC9F5D12A0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+        <20180727150903.0f2816ba@canb.auug.org.au>
+        <VI1PR0502MB3008076016496152D4898D8ED12E0@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dDQdiXnugJklB1/GrWVKH5K"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-05 at 11:40:21 UTC, Akshay Adiga wrote:
-> Device-tree parsing happens twice, once while deciding idle state to be
-> used for hotplug and once during cpuidle init. Hence, parsing the device
-> tree and caching it will reduce code duplication. Parsing code has been
-> moved to pnv_parse_cpuidle_dt() from pnv_probe_idle_states(). In addition
-> to the properties in the device tree the number of available states is
-> also required.
-> 
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-> Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+--Sig_/dDQdiXnugJklB1/GrWVKH5K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Series applied to powerpc next, thanks.
+Hi Parav,
 
-https://git.kernel.org/powerpc/c/9c7b185ab2fe313b4426bf55da3624
+On Tue, 31 Jul 2018 21:12:00 +0000 Parav Pandit <parav@mellanox.com> wrote:
+>
+> You might want to consider this compatibility patch in Linux-rdma
+> tree to avoid a merge conflict of smc.
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=
+=3Dfor-next&id=3D7aaa1807e698f73094b78f0ef25b1a37a4409a55
 
-cheers
+Ok, since commit that is now in the rdma tree, my resolution of the
+original conflicts comes down to dropping all the changes to
+net/smc/smc_core.c net/smc/smc_ib.c that come from the rdma tree and
+adding
+
+#include <rdma/ib_cache.h>
+
+to net/smc/smc_ib.c.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dDQdiXnugJklB1/GrWVKH5K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlthRjkACgkQAVBC80lX
+0GyjwggAk3Mmdj+p/qwxlJS9NnJ8IwCPYvSGfbGVRKNun/AwSGSJO60X57M8Ne00
+KN+8uJrqwwtxSfrfdPlVeTZhODK55vePIIaUbmAxUvcKvOQvNGSwPajCFXzXA1IC
+mJUAV5w2vq5RReJWfKX0dusZZJKf2VvGzDxbu9JEeE05hMNy94A8r4lRJX7zN8cQ
+QPvS22C42D02UbnhjTeBDkQstbZdHvbu4NMkckdajU1p9eXIL73zQVCWtfBPe5op
+zNmHq0jPu9R5GyysqU+By88pbtPqJRnfoA8LriKuEk64Hznc3t82V7Ygbg3VlCRL
+YRysMdLWiLTfc2rXqeCyCGd75Iq0yg==
+=dBjF
+-----END PGP SIGNATURE-----
+
+--Sig_/dDQdiXnugJklB1/GrWVKH5K--
