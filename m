@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D248FC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D00C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7F520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7F520844
+	by mail.kernel.org (Postfix) with ESMTP id CBA5A20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA5A20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407832AbeHATRr (ORCPT
+        id S2407842AbeHATRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:17:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52714 "EHLO
+        Wed, 1 Aug 2018 15:17:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406895AbeHATRr (ORCPT
+        with ESMTP id S2406895AbeHATRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:17:47 -0400
+        Wed, 1 Aug 2018 15:17:50 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E369BD57;
-        Wed,  1 Aug 2018 17:31:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 27943D5D;
+        Wed,  1 Aug 2018 17:31:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 126/144] serial: core: Make sure compiler barfs for 16-byte earlycon names
-Date:   Wed,  1 Aug 2018 18:52:33 +0200
-Message-Id: <20180801164958.135424899@linuxfoundation.org>
+Subject: [PATCH 4.9 127/144] microblaze: Fix simpleImage format generation
+Date:   Wed,  1 Aug 2018 18:52:34 +0200
+Message-Id: <20180801164958.211194266@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -50,50 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Michal Simek <michal.simek@xilinx.com>
 
-[ Upstream commit c1c734cb1f54b062f7e67ffc9656d82f5b412b9c ]
+[ Upstream commit ece97f3a5fb50cf5f98886fbc63c9665f2bb199d ]
 
-As part of bringup I ended up wanting to call an earlycon driver by a
-name that was exactly 16-bytes big, specifically "qcom_geni_serial".
+simpleImage generation was broken for some time. This patch is fixing
+steps how simpleImage.*.ub file is generated. Steps are objdump of
+vmlinux and create .ub.
+Also make sure that there is striped elf version with .strip suffix.
 
-Unfortunately, when I tried this I found that things compiled just
-fine.  They just didn't work.
-
-Specifically the compiler felt perfectly justified in initting the
-".name" field of "struct earlycon_id" with the full 16-bytes and just
-skipping the '\0'.  Needless to say, that behavior didn't seem ideal,
-but I guess someone must have allowed it for a reason.
-
-One way to fix this is to shorten the name field to 15 bytes and then
-add an extra byte after that nobody touches.  This should always be
-initted to 0 and we're golden.
-
-There are, of course, other ways to fix this too.  We could audit all
-the users of the "name" field and make them stop at both null
-termination or at 16 bytes.  We could also just make the name field
-much bigger so that we're not likely to run into this.  ...but both
-seem like we'll just hit the bug again.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/serial_core.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/microblaze/boot/Makefile |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -344,7 +344,8 @@ struct earlycon_device {
- };
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -21,17 +21,19 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FO
+ quiet_cmd_cp = CP      $< $@$2
+ 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
  
- struct earlycon_id {
--	char	name[16];
-+	char	name[15];
-+	char	name_term;	/* In case compiler didn't '\0' term name */
- 	char	compatible[128];
- 	int	(*setup)(struct earlycon_device *, const char *options);
- };
+-quiet_cmd_strip = STRIP   $@
++quiet_cmd_strip = STRIP   $< $@$2
+ 	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
+-				-K _fdt_start vmlinux -o $@
++				-K _fdt_start $< -o $@$2
+ 
+ UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
++UIMAGE_IN = $@
++UIMAGE_OUT = $@.ub
+ 
+ $(obj)/simpleImage.%: vmlinux FORCE
+ 	$(call if_changed,cp,.unstrip)
+ 	$(call if_changed,objcopy)
+ 	$(call if_changed,uimage)
+-	$(call if_changed,strip)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
++	$(call if_changed,strip,.strip)
++	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
+ 
+ clean-files += simpleImage.*.unstrip linux.bin.ub dts/*.dtb
 
 
