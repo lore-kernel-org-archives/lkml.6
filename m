@@ -2,108 +2,108 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A573C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54591C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26CAE20894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0362420862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 22:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="K71vuEAF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZHhpQWIP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CAE20894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="STPiYMdQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0362420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeHBA0L (ORCPT
+        id S2387415AbeHBA0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 20:26:11 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:43882 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726688AbeHBA0K (ORCPT
+        Wed, 1 Aug 2018 20:26:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39499 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732049AbeHBA0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 20:26:10 -0400
-Received: by mail-yw0-f194.google.com with SMTP id l189-v6so81553ywb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 15:38:09 -0700 (PDT)
+        Wed, 1 Aug 2018 20:26:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j8-v6so117260pff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 15:38:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
-        b=K71vuEAF6Ul/ChDUFpprKa6DfJSfo6VfhmTd08xIpt1t4v8L100wgX5ZVfNWhQ9TBO
-         qwNrds5awpFw9MHQEHxNKnmqGf3Ai39JM9XNpROHEyCaq1I9fhzBtOIkXmi2a/uYa97e
-         ePOr7KxW0qCm7lKGwfOkeTxLnikHvx0jCcvgA8i6xUWFHFoO7bHXNWSWjl4M+kg3duR5
-         rGCMCAJAFBi9NzB+dn+pN0FlQK4RKGeb7c4L66rNcRr/mjo3h3mJoVg8JgMX+7Cy47PV
-         uN3aY9Bo3Ko7ortdNIpEGNAK4Yk8whc6dbgk8acejiM1/wv01x+7UmAl0eTSUNrNrXtT
-         f2nw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
-        b=ZHhpQWIPJyWVPc/dACObUhc+31MNGt/oFC3Visnxj440Np2yluWAbXQMPLx9SKib9m
-         7t9GcVa5fByrShHhR4ElvWSdZ73ohVBg/HLD4IQV6r94KwDRluVeIzDalzU6i0g3xyWu
-         4wgjLZfkKynMqi7v2S2ndooE0HiTSNCdw3vDY=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aLxw0gq+MkJVxvwPIApQqXsq6eYwQS4XQmZKhO4nyIE=;
+        b=STPiYMdQX61PzvwchmHE3wrPeM44zdW+Ur4+HaJJbsKTUWLz6BKApnoAeFjIoaEnx1
+         wJAFo+e2EDkmCkZRCnJzo+2w7jLAS51zXXAOqQc746QethVSO9GPCK5x1JN/StvvrG0g
+         WtJjlVEIGFkr6NFZU5iBi63h0WwTLKjh8m+iw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=xbkJcJgly9eymOzPmiGURjcYZqWqwn35dWO+IKYIMUw=;
-        b=N+Gj7ocPGKQVWvcLlVzKTbvUc5U9SLF6CqGv8wCimQ7K4GDHlrFErcQUCZCqmOSh6S
-         0lZ8JGgCSyyZ+xf0u+RKN0jcDFxqieTEP4gpjwbXdeRL7QuqJUJp/e/DbPCzmb6zRpFT
-         XMEkkKUSnewYmcms21DV7uGGN6shvsT1itMt+DDOvi1bV1VfFR2c/kL4suDPsc/6j0T1
-         eQI2eeQ672Iix6gFWcvjAFFz93LMdDosG8uSv+ehtPKaDTAvdYlpQUS7hf4joU/BUgj7
-         slVft57q5XtOqFL3M1Pixxu6JF+42ADrBQ709iyw0/z/9SF4ZWiZpNExXxUvruUnisGK
-         3vtQ==
-X-Gm-Message-State: AOUpUlH3MU/ZULUKBeQSnligjuUG8azTPEiTdxtAZTNmEfpKaUPs30gz
-        06sPCzhu9/oWXPQvxm7uwA+st+H91pOtvKxuEbYrJw==
-X-Google-Smtp-Source: AAOMgpd5I7pch1yz05pMbQIyjXljHevoJFnnlZNcAlG85mhltMCRshNJ2hWDmPkITdPCpbc/vGXQX3SC3Zl0U+GEdy8=
-X-Received: by 2002:a81:b248:: with SMTP id q69-v6mr170974ywh.38.1533163088735;
- Wed, 01 Aug 2018 15:38:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aLxw0gq+MkJVxvwPIApQqXsq6eYwQS4XQmZKhO4nyIE=;
+        b=JwMDJfvdhLOAgIDyF1GrzO4/09bY6RKREMW0YhnX+b7yaSIQnMvFGBpTh94FjmN1uR
+         h6YcyvRFwbfbwfvX2sv0cM2xaxlofliRDbnD1jvBItiNOzxrc9H9M1VCzqHikRs3fymU
+         gOwSEVvF7rmYMwBh1wJ/tedxevNjbDNHj0xloY0QD90iHME6qRUlKnGei2X7OcDnfW7Z
+         Z2xUe+EbdkKcezkZsEimHkHnL2jbP94807oIFtHXhRvcx1GdilG2A64Yk26d1HW9mLBs
+         PorGsZ9YMbTTI0S8S/Zp3fzGmyYpGj62NGUn8CZC+IWG3SlA4+F1+1BAxJoH2aRsvKqQ
+         fUOg==
+X-Gm-Message-State: AOUpUlGarntdL7F5J3lx05TPs7Heo9m0NsJI9ewafTS/hIU3WAcKMQ5J
+        QBaluSshF++sQqj/zyj/kntatQ==
+X-Google-Smtp-Source: AAOMgpd538Sr1cBtBN1rZtXffIP5vzAqPn+DUuGomneLUlUc91ms5XDIM5+l15fcKdo5UdyUpRcvsQ==
+X-Received: by 2002:a62:ea05:: with SMTP id t5-v6mr245021pfh.228.1533163091552;
+        Wed, 01 Aug 2018 15:38:11 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 64-v6sm140761pfi.89.2018.08.01.15.38.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 15:38:10 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 15:36:35 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>, swboyd@chromium.org,
+        evgreen@chromium.org, linus.walleij@linaro.org,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup
+ capability to GPIO
+Message-ID: <20180801223635.GO30024@minitux>
+References: <20180801020021.9782-1-ilina@codeaurora.org>
+ <20180801020021.9782-2-ilina@codeaurora.org>
+ <86600uy4vh.wl-marc.zyngier@arm.com>
+ <20180801194538.GA6422@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 15:38:07 -0700 (PDT)
-In-Reply-To: <8da60549d9c649bc6f00cd82f70464b982ecb2a0.1533122560.git.geliangtang@gmail.com>
-References: <8da60549d9c649bc6f00cd82f70464b982ecb2a0.1533122560.git.geliangtang@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 1 Aug 2018 15:38:07 -0700
-X-Google-Sender-Auth: wTu1aK7XaoHpps5adyX4YW2JpV0
-Message-ID: <CAGXu5jKhP6FFYF0O=Vy6aMqJxD9Ubt80nX9Mh=guU8wgUzvzQw@mail.gmail.com>
-Subject: Re: [PATCH] pstore: add zstd compression support
-To:     Geliang Tang <geliangtang@gmail.com>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801194538.GA6422@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 4:23 AM, Geliang Tang <geliangtang@gmail.com> wrote:
-> This patch added the 6th compression algorithm support for pstore: zstd.
->
-> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+On Wed 01 Aug 12:45 PDT 2018, Lina Iyer wrote:
 
-Thanks! I've applied this to my tree and it should be visible in -next soon.
+> Thanks for the feedback, Marc.
+> 
+> On Wed, Aug 01 2018 at 00:31 -0600, Marc Zyngier wrote:
+> > On Wed, 01 Aug 2018 03:00:18 +0100,
+> > Lina Iyer <ilina@codeaurora.org> wrote:
+[..]
+> > Why isn't that the case? And if that's because the HW is broken and
+> > doesn't buffer edge interrupts, why can't you use the resend mechanism
+> > instead?
+> > 
+> The PDC hardware can replay the interrupts accurately. However, it will
+> replay only the pin and its not the TLMM summary IRQ. The handler here,
+> needs to notify the driver that the wakeup interrupt happened and needs
+> to take action. If I could trip the summary IRQ in this handler that
+> would work too. Can it be done?
+> 
 
-> +#if IS_ENABLED(CONFIG_PSTORE_ZSTD_COMPRESS)
-> +static int zbufsize_zstd(size_t size)
-> +{
-> +       return ZSTD_compressBound(size);
-> +}
-> +#endif
+Does this means that the intr_status_reg will not hold the information
+about the interrupt events that occurred before we powered on the TLMM
+again? Or is the problem limited to it not triggering the TLMM IRQ?
 
-One thing I've been pondering is if there might be a way to extend the
-crypto compression API to provide the "buffer output size" interface
-directly. If that happened, pstore wouldn't need per-compression-algo
-entries like it still has.
+Can the PDC (and MPM) be used in the non-sleep use cases as well?
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Regards,
+Bjorn
