@@ -5,76 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966F4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC997C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5765120894
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5765120894
+	by mail.kernel.org (Postfix) with ESMTP id 6C72020894
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 12:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C72020894
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389417AbeHAOpG (ORCPT
+        id S2389438AbeHAOpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 10:45:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47726 "EHLO mx1.redhat.com"
+        Wed, 1 Aug 2018 10:45:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45768 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389397AbeHAOpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 10:45:05 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S2389419AbeHAOpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 10:45:11 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2412D87A76;
-        Wed,  1 Aug 2018 12:59:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4DF997DAC7;
+        Wed,  1 Aug 2018 12:59:31 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9048120389E0;
-        Wed,  1 Aug 2018 12:59:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C1F1B2026D68;
+        Wed,  1 Aug 2018 12:59:30 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next 06/10] rxrpc: Fix ACK proposal tracepoint
+Subject: [PATCH net-next 07/10] rxrpc: Trace socket notification
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 01 Aug 2018 13:59:24 +0100
-Message-ID: <153312836406.27702.2789293612643509573.stgit@warthog.procyon.org.uk>
+Date:   Wed, 01 Aug 2018 13:59:30 +0100
+Message-ID: <153312837027.27702.5314316912358595624.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153312832565.27702.15302541876382957550.stgit@warthog.procyon.org.uk>
 References: <153312832565.27702.15302541876382957550.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 12:59:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 12:59:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 12:59:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 01 Aug 2018 12:59:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the ACK proposal tracepoint outcomes list by making the one that's an
-empty string not an empty string - which gets rendered as a hex number
-string instead.
+Trace notifications from the softirq side of the socket to the
+process-context side.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/trace/events/rxrpc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/trace/events/rxrpc.h |   20 ++++++++++++++++++++
+ net/rxrpc/input.c            |    4 +++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 2aa6f615b60d..c1a800a6dee3 100644
+index c1a800a6dee3..196587b8f204 100644
 --- a/include/trace/events/rxrpc.h
 +++ b/include/trace/events/rxrpc.h
-@@ -396,7 +396,7 @@ enum rxrpc_tx_point {
- #define rxrpc_propose_ack_outcomes \
- 	EM(rxrpc_propose_ack_subsume,		" Subsume") \
- 	EM(rxrpc_propose_ack_update,		" Update") \
--	E_(rxrpc_propose_ack_use,		"")
-+	E_(rxrpc_propose_ack_use,		" New")
+@@ -1528,6 +1528,26 @@ TRACE_EVENT(rxrpc_call_reset,
+ 		      __entry->tx_seq, __entry->rx_seq)
+ 	    );
  
- #define rxrpc_congest_modes \
- 	EM(RXRPC_CALL_CONGEST_AVOIDANCE,	"CongAvoid") \
++TRACE_EVENT(rxrpc_notify_socket,
++	    TP_PROTO(unsigned int debug_id, rxrpc_serial_t serial),
++
++	    TP_ARGS(debug_id, serial),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,		debug_id	)
++		    __field(rxrpc_serial_t,		serial		)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->debug_id = debug_id;
++		    __entry->serial = serial;
++			   ),
++
++	    TP_printk("c=%08x r=%08x",
++		      __entry->debug_id,
++		      __entry->serial)
++	    );
++
+ #endif /* _TRACE_RXRPC_H */
+ 
+ /* This part must be outside protection */
+diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
+index 8989d760b6b2..cfdc199c6351 100644
+--- a/net/rxrpc/input.c
++++ b/net/rxrpc/input.c
+@@ -597,8 +597,10 @@ static void rxrpc_input_data(struct rxrpc_call *call, struct sk_buff *skb,
+ 				  false, true,
+ 				  rxrpc_propose_ack_input_data);
+ 
+-	if (sp->hdr.seq == READ_ONCE(call->rx_hard_ack) + 1)
++	if (sp->hdr.seq == READ_ONCE(call->rx_hard_ack) + 1) {
++		trace_rxrpc_notify_socket(call->debug_id, serial);
+ 		rxrpc_notify_socket(call);
++	}
+ 	_leave(" [queued]");
+ }
+ 
 
