@@ -2,215 +2,108 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A2BC46463
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D1EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321A1208A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE30B208A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:03:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jphq42WU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321A1208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="di2BA9Pt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE30B208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388895AbeHAKrl (ORCPT
+        id S2388908AbeHAKrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 06:47:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43228 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388774AbeHAKrk (ORCPT
+        Wed, 1 Aug 2018 06:47:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40054 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388689AbeHAKrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 06:47:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d17-v6so6062886pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 02:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=V489fPjcWJFEgMeaZj6nA1jSnBaSIxvzoUyi5ky2k2w=;
-        b=Jphq42WUOusIpGAfz/0kWpe2G+gHhAAXMK/TI16VPOl0ntbsGHfU1wXcm7lj6V3DL1
-         ZH3+xniSLMCZSHntqHMEFlDFgg2eTCwKzLSCH2P31OzhSghUOuidSDKcDgZ0aexgwbxT
-         jHvVd+N0k8MO47C1UGkZrJsyyhh7+tyeAT7Sc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=V489fPjcWJFEgMeaZj6nA1jSnBaSIxvzoUyi5ky2k2w=;
-        b=R0wLtMG5mMPmHHDcpmhV59GjIOqixcWbDECSrjeWKRs3hY5wp5Mmy/ywQwXFJzpX8J
-         KbRy4h8sdeuFAdgU62NKNPcahA88efqkB2oBaTA04hI3rVQOtoIKWKJQwWoG/tgAgCiI
-         e1tpz9nDAAf/fOyfXwOPqCOWxS5WpNHVt6Dt2dbln6JkgvXZVj/Mp2+CYxnhyA9rCV+p
-         FKspIZWg+NGRbh45wvOvK/VeZhqEKz1YGAlPmDEFalpG9WvfTUTIIAIACIeJFX7eIVI+
-         yC72Yrp1+uPHriTG8YS0BYcXhMqioEw0+VWS7VEEwmgb8XM0YRuFAa/aEOMlHHFNFUZb
-         5Vig==
-X-Gm-Message-State: AOUpUlE84v92YliXgGrJ/kEufyX5BYvxkFpOl7U/UW6DZNju5JxyFmWH
-        H0UrPLd0EBmsioeuK8ZDLOeURg==
-X-Google-Smtp-Source: AAOMgpdQSBDAxqtLNfccDoltFgfHAn9fE5R1J0jsHweW4ZN03ahy5F6qMIEHSwK3rSf9vCRMTwAIVw==
-X-Received: by 2002:a63:524e:: with SMTP id s14-v6mr24143820pgl.35.1533114176752;
-        Wed, 01 Aug 2018 02:02:56 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id f90-v6sm7215590pfh.168.2018.08.01.02.02.53
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 02:02:56 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
-        david@lechnology.com, baolin.wang@linaro.org, broonie@kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date:   Wed,  1 Aug 2018 17:01:43 +0800
-Message-Id: <1a902eb33d1643466e77d339ff025623cdd2fda4.1533112637.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
-References: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
-In-Reply-To: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
-References: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
+        Wed, 1 Aug 2018 06:47:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w718v9FY059965;
+        Wed, 1 Aug 2018 09:02:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=ZYRALe7c82nqu7xw7Wbt6qptIfJChNTjhmSYnBKVFSQ=;
+ b=di2BA9Pt6LYgawoOKp8J3EvXCKxKC68JUX867ESu90RrJH9Lw1fbpeVpbbGHCCYhZYca
+ Src7ds96ST6TxLzcO033BZgVBs/xb1cBtOq3+0i/auVOGUuo69BWXP3+x22Bxk6BFtsV
+ a0fdhok7k95oJPqoKznyL9B/ZGtS3r5zS4MNpZOvd01WxyTTxVAYzjlwv5P+rbURBfIg
+ GRmHDg7+3iuTqB/guFK2gejZNflQp3sJfVaWyppBcRPKfNZk31kZBJzf8zdzCUSsnQx3
+ UpR4oJarNo19xBOPVAEe6s0h6GHE7gNX/KCZCp/BTKxiQCMOwyaXx3kaDfqIKkynMb9x Sw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2kgh4q4j1p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Aug 2018 09:02:54 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7192rVP005889
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Aug 2018 09:02:53 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7192p4T019549;
+        Wed, 1 Aug 2018 09:02:52 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Aug 2018 02:02:51 -0700
+Date:   Wed, 1 Aug 2018 12:02:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, yuchao0@huawei.com,
+        linux-erofs@lists.ozlabs.org, hsiangkao@aol.com,
+        linux-kernel@vger.kernel.org, weidu.du@huawei.com,
+        miaoxie@huawei.com, chao@kernel.org
+Subject: Re: [PATCH 1/2] staging: erofs: add the missing break in
+ z_erofs_map_blocks_iter
+Message-ID: <20180801090243.ah7lhj2h6hjtvn4a@mwanda>
+References: <1532915461-2512-1-git-send-email-gaoxiang25@huawei.com>
+ <1533105511-26197-1-git-send-email-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533105511-26197-1-git-send-email-gaoxiang25@huawei.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8971 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808010096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+On Wed, Aug 01, 2018 at 02:38:30PM +0800, Gao Xiang wrote:
+> diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+> index bd2d7a8..6d3ab31 100644
+> --- a/drivers/staging/erofs/unzip_vle.c
+> +++ b/drivers/staging/erofs/unzip_vle.c
+> @@ -1596,10 +1596,10 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+>  	cluster_type = vle_cluster_type(di);
+>  
+>  	switch (cluster_type) {
+> -	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
+> +	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:	/* fallthrough */
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-changes from v1:
- - Remove pattern_get interface.
----
- drivers/leds/leds-sc27xx-bltc.c |   94 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+This fallthrough comment is in the wrong place.  It should be at the end
+where the break would have been.  Like this:
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..297dd43 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +127,91 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +230,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +334,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+	switch (cluster_type) {
+	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
+		frob();
+		frob();
+		frob();
+		/* fallthrough */
+	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
+		frob();
+
+regards,
+dan carpenter
 
