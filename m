@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7890CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5851C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA1920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA1920862
+	by mail.kernel.org (Postfix) with ESMTP id 638A620862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638A620862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbeHAT6u (ORCPT
+        id S1732564AbeHAT6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 15:58:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49794 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405690AbeHATIf (ORCPT
+        with ESMTP id S2405709AbeHATIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 395F01338;
-        Wed,  1 Aug 2018 17:12:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C84FD1393;
+        Wed,  1 Aug 2018 17:14:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 018/246] arm64: fix vmemmap BUILD_BUG_ON() triggering on !vmemmap setups
-Date:   Wed,  1 Aug 2018 18:48:48 +0200
-Message-Id: <20180801165012.573453540@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 054/246] pnfs: Dont release the sequence slot until weve processed layoutget on open
+Date:   Wed,  1 Aug 2018 18:49:24 +0200
+Message-Id: <20180801165014.300306695@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,83 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 7b0eb6b41a08fa1fa0d04b1c53becd62b5fbfaee upstream.
+[ Upstream commit ae55e59da0e401893b3c52b575fc18a00623d0a1 ]
 
-Arnd reports the following arm64 randconfig build error with the PSI
-patches that add another page flag:
+If the server recalls the layout that was just handed out, we risk hitting
+a race as described in RFC5661 Section 2.10.6.3 unless we ensure that we
+release the sequence slot after processing the LAYOUTGET operation that
+was sent as part of the OPEN compound.
 
-  /git/arm-soc/arch/arm64/mm/init.c: In function 'mem_init':
-  /git/arm-soc/include/linux/compiler.h:357:38: error: call to
-  '__compiletime_assert_618' declared with attribute error: BUILD_BUG_ON
-  failed: sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT)
-
-The additional page flag causes other information stored in
-page->flags to get bumped into their own struct page member:
-
-  #if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <=
-  BITS_PER_LONG - NR_PAGEFLAGS
-  #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
-  #else
-  #define LAST_CPUPID_WIDTH 0
-  #endif
-
-  #if defined(CONFIG_NUMA_BALANCING) && LAST_CPUPID_WIDTH == 0
-  #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
-  #endif
-
-which in turn causes the struct page size to exceed the size set in
-STRUCT_PAGE_MAX_SHIFT. This value is an an estimate used to size the
-VMEMMAP page array according to address space and struct page size.
-
-However, the check is performed - and triggers here - on a !VMEMMAP
-config, which consumes an additional 22 page bits for the sparse
-section id. When VMEMMAP is enabled, those bits are returned, cpupid
-doesn't need its own member, and the page passes the VMEMMAP check.
-
-Restrict that check to the situation it was meant to check: that we
-are sizing the VMEMMAP page array correctly.
-
-Says Arnd:
-
-    Further experiments show that the build error already existed before,
-    but was only triggered with larger values of CONFIG_NR_CPU and/or
-    CONFIG_NODES_SHIFT that might be used in actual configurations but
-    not in randconfig builds.
-
-    With longer CPU and node masks, I could recreate the problem with
-    kernels as old as linux-4.7 when arm64 NUMA support got added.
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Tested-by: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org
-Fixes: 1a2db300348b ("arm64, numa: Add NUMA support for arm64 platforms.")
-Fixes: 3e1907d5bf5a ("arm64: mm: move vmemmap region right below the linear region")
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm64/mm/init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4proc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -651,11 +651,13 @@ void __init mem_init(void)
- 	BUILD_BUG_ON(TASK_SIZE_32			> TASK_SIZE_64);
- #endif
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2695,7 +2695,7 @@ static int _nfs4_open_and_get_state(stru
+ 	if (ret != 0)
+ 		goto out;
  
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
- 	/*
- 	 * Make sure we chose the upper bound of sizeof(struct page)
--	 * correctly.
-+	 * correctly when sizing the VMEMMAP array.
- 	 */
- 	BUILD_BUG_ON(sizeof(struct page) > (1 << STRUCT_PAGE_MAX_SHIFT));
-+#endif
+-	state = nfs4_opendata_to_nfs4_state(opendata);
++	state = _nfs4_opendata_to_nfs4_state(opendata);
+ 	ret = PTR_ERR(state);
+ 	if (IS_ERR(state))
+ 		goto out;
+@@ -2731,6 +2731,7 @@ static int _nfs4_open_and_get_state(stru
+ 			nfs4_schedule_stateid_recovery(server, state);
+ 	}
+ out:
++	nfs4_sequence_free_slot(&opendata->o_res.seq_res);
+ 	return ret;
+ }
  
- 	if (PAGE_SIZE >= 16384 && get_num_physpages() <= 128) {
- 		extern int sysctl_overcommit_memory;
 
 
