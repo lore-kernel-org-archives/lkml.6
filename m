@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D900CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF4CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4F7208A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4F7208A4
+	by mail.kernel.org (Postfix) with ESMTP id 6A228208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A228208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406254AbeHATJZ (ORCPT
+        id S2406152AbeHATIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:09:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50770 "EHLO
+        Wed, 1 Aug 2018 15:08:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405177AbeHATJY (ORCPT
+        with ESMTP id S2406035AbeHATIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:24 -0400
+        Wed, 1 Aug 2018 15:08:41 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF14ED27;
-        Wed,  1 Aug 2018 17:22:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76EA31094;
+        Wed,  1 Aug 2018 17:02:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 217/246] block: reset bi_iter.bi_done after splitting bio
-Date:   Wed,  1 Aug 2018 18:52:07 +0200
-Message-Id: <20180801165022.105121223@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Nguyen Viet Dung <nv-dung@jinso.co.jp>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 178/336] arm64: dts: renesas: salvator-common: use audio-graph-card for Sound
+Date:   Wed,  1 Aug 2018 18:48:33 +0200
+Message-Id: <20180801165035.908076905@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
-References: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,38 +49,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Greg Edwards <gedwards@ddn.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 5151842b9d8732d4cbfa8400b40bff894f501b2f upstream.
+[ Upstream commit 06a574c7ef69bd0bd26ed08e35967acb76622ab3 ]
 
-After the bio has been updated to represent the remaining sectors, reset
-bi_done so bio_rewind_iter() does not rewind further than it should.
+Current Sound is using simple-audio-card which can't support HDMI.
+To use HDMI sound, we need to use audio-graph-card.
+But, one note is that r8a7795 has 2 HDMI ports, but r8a7796 has 1.
+Because of this mismatch, supporting HDMI on salvator-common is
+impossible.
+Thus, this patch exchange sound card to audio-graph-card and keep
+supporting ak4613 as 1st sound node.
+r8a7795/r8a7796 salvator-x{s} need to add HDMI sound individually.
 
-This resolves a bio_integrity_process() failure on reads where the
-original request was split.
-
-Fixes: 63573e359d05 ("bio-integrity: Restore original iterator on verify stage")
-Signed-off-by: Greg Edwards <gedwards@ddn.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/bio.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |   38 +++++++++++++----------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1889,6 +1889,7 @@ struct bio *bio_split(struct bio *bio, i
- 		bio_integrity_trim(split);
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -93,20 +93,12 @@
+ 		regulator-always-on;
+ 	};
  
- 	bio_advance(bio, split->bi_iter.bi_size);
-+	bio->bi_iter.bi_done = 0;
+-	rsnd_ak4613: sound {
+-		compatible = "simple-audio-card";
++	sound_card: sound {
++		compatible = "audio-graph-card";
  
- 	if (bio_flagged(bio, BIO_TRACE_COMPLETION))
- 		bio_set_flag(split, BIO_TRACE_COMPLETION);
+-		simple-audio-card,format = "left_j";
+-		simple-audio-card,bitclock-master = <&sndcpu>;
+-		simple-audio-card,frame-master = <&sndcpu>;
++		label = "rcar-sound";
+ 
+-		sndcpu: simple-audio-card,cpu {
+-			sound-dai = <&rcar_sound>;
+-		};
+-
+-		sndcodec: simple-audio-card,codec {
+-			sound-dai = <&ak4613>;
+-		};
++		dais = <&rsnd_port0>;
+ 	};
+ 
+ 	vbus0_usb2: regulator-vbus0-usb2 {
+@@ -322,6 +314,12 @@
+ 		asahi-kasei,out4-single-end;
+ 		asahi-kasei,out5-single-end;
+ 		asahi-kasei,out6-single-end;
++
++		port {
++			ak4613_endpoint: endpoint {
++				remote-endpoint = <&rsnd_endpoint0>;
++			};
++		};
+ 	};
+ 
+ 	cs2000: clk_multiplier@4f {
+@@ -581,10 +579,18 @@
+ 		 <&audio_clk_c>,
+ 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
+ 
+-	rcar_sound,dai {
+-		dai0 {
+-			playback = <&ssi0 &src0 &dvc0>;
+-			capture  = <&ssi1 &src1 &dvc1>;
++	ports {
++		rsnd_port0: port@0 {
++			rsnd_endpoint0: endpoint {
++				remote-endpoint = <&ak4613_endpoint>;
++
++				dai-format = "left_j";
++				bitclock-master = <&rsnd_endpoint0>;
++				frame-master = <&rsnd_endpoint0>;
++
++				playback = <&ssi0 &src0 &dvc0>;
++				capture  = <&ssi1 &src1 &dvc1>;
++			};
+ 		};
+ 	};
+ };
 
 
