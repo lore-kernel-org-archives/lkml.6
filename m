@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66EAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DC6C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AEA6208A5
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEA6208A5
+	by mail.kernel.org (Postfix) with ESMTP id 26CF72083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CF72083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732537AbeHATw1 (ORCPT
+        id S1732767AbeHATwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:52:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
+        Wed, 1 Aug 2018 15:52:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405826AbeHATIh (ORCPT
+        with ESMTP id S2405817AbeHATIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51B3A1170;
-        Wed,  1 Aug 2018 17:06:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 560801100;
+        Wed,  1 Aug 2018 17:04:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Christian Gromm <christian.gromm@microchip.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 208/336] perf: fix invalid bit in diagnostic entry
-Date:   Wed,  1 Aug 2018 18:49:03 +0200
-Message-Id: <20180801165037.039572984@linuxfoundation.org>
+Subject: [PATCH 4.17 213/336] staging: most: cdev: fix chrdev_region leak
+Date:   Wed,  1 Aug 2018 18:49:08 +0200
+Message-Id: <20180801165037.224090530@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,39 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Christian Gromm <christian.gromm@microchip.com>
 
-[ Upstream commit 3c0a83b14ea71fef5ccc93a3bd2de5f892be3194 ]
+[ Upstream commit aba258b73101670c06b1dd700e500ed0a3fa0e8e ]
 
-The s390 CPU measurement facility sampling mode supports basic entries
-and diagnostic entries. Each entry has a valid bit to indicate the
-status of the entry as valid or invalid.
+The function unregister_chrdev_region is called with a different counter
+as the alloc_chrdev_region. To fix this, this patch introduces the
+constant CHRDEV_REGION_SIZE that is used in both functions.
 
-This bit is bit 31 in the diagnostic entry, but the bit mask definition
-refers to bit 30.
-
-Fix this by making the reserved field one bit larger.
-
-Fixes: 7e75fc3ff4cf ("s390/cpum_sf: Add raw data sampling to support the diagnostic-sampling function")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Christian Gromm <christian.gromm@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/cpu_mf.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/most/cdev/cdev.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/s390/include/asm/cpu_mf.h
-+++ b/arch/s390/include/asm/cpu_mf.h
-@@ -113,7 +113,7 @@ struct hws_basic_entry {
+--- a/drivers/staging/most/cdev/cdev.c
++++ b/drivers/staging/most/cdev/cdev.c
+@@ -18,6 +18,8 @@
+ #include <linux/idr.h>
+ #include "most/core.h"
  
- struct hws_diag_entry {
- 	unsigned int def:16;	    /* 0-15  Data Entry Format		 */
--	unsigned int R:14;	    /* 16-19 and 20-30 reserved		 */
-+	unsigned int R:15;	    /* 16-19 and 20-30 reserved		 */
- 	unsigned int I:1;	    /* 31 entry valid or invalid	 */
- 	u8	     data[];	    /* Machine-dependent sample data	 */
- } __packed;
++#define CHRDEV_REGION_SIZE 50
++
+ static struct cdev_component {
+ 	dev_t devno;
+ 	struct ida minor_id;
+@@ -513,7 +515,7 @@ static int __init mod_init(void)
+ 	spin_lock_init(&ch_list_lock);
+ 	ida_init(&comp.minor_id);
+ 
+-	err = alloc_chrdev_region(&comp.devno, 0, 50, "cdev");
++	err = alloc_chrdev_region(&comp.devno, 0, CHRDEV_REGION_SIZE, "cdev");
+ 	if (err < 0)
+ 		goto dest_ida;
+ 	comp.major = MAJOR(comp.devno);
+@@ -523,7 +525,7 @@ static int __init mod_init(void)
+ 	return 0;
+ 
+ free_cdev:
+-	unregister_chrdev_region(comp.devno, 1);
++	unregister_chrdev_region(comp.devno, CHRDEV_REGION_SIZE);
+ dest_ida:
+ 	ida_destroy(&comp.minor_id);
+ 	class_destroy(comp.class);
 
 
