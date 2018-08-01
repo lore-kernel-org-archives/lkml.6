@@ -2,136 +2,102 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A16C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C56C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E877220840
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:23:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qqx37g9r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E877220840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D35B520840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D35B520840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732270AbeHAVKe (ORCPT
+        id S1732289AbeHAVNt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:10:34 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37087 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbeHAVKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:10:33 -0400
-Received: by mail-lf1-f67.google.com with SMTP id j8-v6so14112985lfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 12:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tkh6lwZA8JMHQqH5OvWbTjGHbZ4sBHRIh4AUzQZ0g3U=;
-        b=Qqx37g9rJ+uOAsVs7WdIDbeRnUNhMAi7StoIUBSINmHzMc/Bau4ZcVuwXz4uX5fST2
-         ue2F0ov8BwPdXagcwBi/rX+6Uu3V762YRBjEOQeviqKlNWJY+4/h/0zDQYh13saDb15f
-         HYh6A6rFp5ZiTxc9XhukHhBaBarc3HrEMVXbw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tkh6lwZA8JMHQqH5OvWbTjGHbZ4sBHRIh4AUzQZ0g3U=;
-        b=iMhDt0vNBDi/tJ8i3rv7oPR63WvWomUfBBnYYTHASnYOcdo0xF43S/b16PlcRJnMoK
-         5v/Kyx6Bou2byrWaS7XnnCFJL3J4Q3nUdqCQ9F94eGY776k4MBUTB5ZvL6sDOU1WMpJu
-         0oVAUIcPU32DDVrpy+aUOwFs2+9SHCcLZhjSUkN9n6q6eTcIynRTm1twDRf6DbZOyG0t
-         Y9IJNXdD0CRf86tv1cOmkPmtFvW4E6qia3Dd4ABzhXXCxWtfZsKYlBbklypIMaIml4AI
-         wlUlBHxhGQqLJ1xNXsOyBctiKwPu4pZoINAUf6Tu3grAgZKzK4D43K3hqsHL63P5c0bM
-         kEQA==
-X-Gm-Message-State: AOUpUlHlp8IpskH9bPFGeBMEmcDWt9+r+nUL/QkgEnTaqUpRXMFwqpxE
-        71mx5Kg4uw0F+6e6xMJ9cTcu3rZCPR2oTqF0bfewsw==
-X-Google-Smtp-Source: AAOMgpe8opEWIakyu0p9u1RfVBNpJgU1pvS6RTSs1cZpVKBKZAa1Za6WFInpcRA2kSz/Q1ckKSHs3hWj7hbVTxCDAlU=
-X-Received: by 2002:a19:548e:: with SMTP id b14-v6mr15869390lfl.10.1533151396326;
- Wed, 01 Aug 2018 12:23:16 -0700 (PDT)
+        Wed, 1 Aug 2018 17:13:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43656 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727608AbeHAVNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 17:13:48 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37C759BA9A;
+        Wed,  1 Aug 2018 19:26:31 +0000 (UTC)
+Received: from bistromath.localdomain (ovpn-204-30.brq.redhat.com [10.40.204.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F03C215670D;
+        Wed,  1 Aug 2018 19:26:27 +0000 (UTC)
+Date:   Wed, 1 Aug 2018 21:26:39 +0200
+From:   Sabrina Dubroca <sd@queasysnail.net>
+To:     David Miller <davem@davemloft.net>
+Cc:     xiyou.wangcong@gmail.com, eric.dumazet@gmail.com,
+        syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com,
+        christian.brauner@ubuntu.com, dsahern@gmail.com, fw@strlen.de,
+        jbenc@redhat.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, lucien.xin@gmail.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in rtnetlink_put_metrics
+Message-ID: <20180801192639.GA30287@bistromath.localdomain>
+References: <c8ffd001-8c67-19b9-7223-34ca8d436db2@gmail.com>
+ <20180731134014.GA32114@bistromath.localdomain>
+ <CAM_iQpURKOMAaPfs9v7FzhqqQPzj71sQD2LS0eU8cuqTML-YoA@mail.gmail.com>
+ <20180801.114636.279269263935333136.davem@davemloft.net>
 MIME-Version: 1.0
-References: <1532609691-16863-1-git-send-email-suzuki.poulose@arm.com>
- <1532609691-16863-3-git-send-email-suzuki.poulose@arm.com>
- <20180731170731.GA11692@xps15> <7b311596-025a-f4f4-1859-6f3531258b75@arm.com>
-In-Reply-To: <7b311596-025a-f4f4-1859-6f3531258b75@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 1 Aug 2018 13:23:04 -0600
-Message-ID: <CANLsYkzyb0Lmb3DNomVuK-Bon2gfS7jGYRnX4F7LQghR-aMZCw@mail.gmail.com>
-Subject: Re: [PATCH v3 02/13] coresight: etb10: Fix handling of perf mode
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        coresight@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180801.114636.279269263935333136.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 19:26:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 19:26:31 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sd@queasysnail.net' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Jul 2018 at 15:32, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> On 07/31/2018 06:07 PM, Mathieu Poirier wrote:
-> > Hello,
-> >
-> > On Thu, Jul 26, 2018 at 01:54:40PM +0100, Suzuki K Poulose wrote:
-> >> If the ETB is already enabled in sysfs mode, the ETB reports
-> >> success even if a perf mode is requested. Fix this by checking
-> >> the requested mode.
-> >>
-> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> ---
-> >>   drivers/hwtracing/coresight/coresight-etb10.c | 8 ++++++--
-> >>   1 file changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-> >> index 306119e..e5808fd 100644
-> >> --- a/drivers/hwtracing/coresight/coresight-etb10.c
-> >> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
-> >> @@ -148,8 +148,12 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
-> >>              return -EBUSY;
-> >>
-> >>      /* Nothing to do, the tracer is already enabled. */
-> >> -    if (val == CS_MODE_SYSFS)
-> >> -            goto out;
-> >> +    if (val == CS_MODE_SYSFS) {
-> >> +            if (mode == CS_MODE_SYSFS)
-> >> +                    goto out;
-> >> +            else
-> >> +                    return -EBUSY;
-> >> +    }
-> >
-> > How about:
-> >
-> >          if (val == CS_MODE_PERF)
-> >                  return -EBUSY;
-> >
-> > +       /* Don't let perf disturb sysFS sessions */
-> > +       if (val == CS_MODE_SYSFS && mode = CS_MODE_PERF)
-> > +               return -EBUSY;
-> > +
-> >          /* Nothing to do, the tracer is already enabled. */
-> >          if (val == CS_MODE_SYSFS)
-> >                  goto out;
-> >
-> >
-> > I just find it more readable that way.
->
-> Sure, thats fine by me.
+2018-08-01, 11:46:36 -0700, David Miller wrote:
+> From: Cong Wang <xiyou.wangcong@gmail.com>
+> Date: Tue, 31 Jul 2018 16:03:13 -0700
+> 
+> > Looks like this commit is completely unnecessary,
+> > fib6_drop_pcpu_from() calls fib6_info_release()
+> > which calls fib6_info_destroy_rcu(), so this metrics
+> > will be released twice...
+> 
+> And even if there was a leak here, it's illegal to free this
+> metrics memory synchronously since it is RCU protected.
 
-Ok good.  Doing another round just to address this is cumbersome so I
-just fixed it in my tree.  Also, I still think the WARN_ON() in patch
-5/13 is superfluous but once again not important enough to make a big
-deal out of it.  I have applied this set.
+Yeah, I noticed that today, but I don't think that's the problem we're
+seeing here.
 
-Thanks,
-Mathieu
+> That's why it normally goes through fib6_info_destroy_rcu().
+> 
+> Sabrina, I'm going to revert your changes unless I see some
+> progress here by the end of today.
 
->
-> Cheers
-> Suzuki
->
+Yeah, I'm fine with a revert, we can fix the leak later.
+
+
+syzbot hasn't found a reproducer so I'm not sure it's the same issue,
+but I ran into this: we can create a route, start using it, and then
+give it some metrics. In that case, we'll hit rt6_set_from() with the
+default metrics, so we don't refcount them. Then fib6_metric_set()
+will assign the new metrics to the parent route.
+Then fib6_drop_pcpu_from will see that the parent route has
+non-default metrics, and try to release this, but the percpu copy
+doesn't actually hold a reference. Bandaid would be to put a
+DST_METRICS_REFCOUNTED check in fib6_drop_pcpu_from().
+
+Looking at rt6_set_from(), it seems we can also do dst_init_metrics
+with the old metrics, then refcount the new metrics.
+
+And I'm not sure whether the refcount_set in fib6_metric_set() can't
+be reordered so that rt6_set_from() might see the new metrics pointer,
+increment the refcount, then fib6_metric_set() would do its
+refcount_set, stepping over the previous increment.
+
+-- 
+Sabrina
