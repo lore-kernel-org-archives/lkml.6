@@ -2,100 +2,95 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8BEC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C381AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD0520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:25:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v4oXWOPH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD0520844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 874FB20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 09:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874FB20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388861AbeHALKV (ORCPT
+        id S2388943AbeHALLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 07:10:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60256 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387643AbeHALKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 07:10:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tuvA9/tIcmjF4vEv/ty5hOsRxvI+zAjncrMUP3/c/oM=; b=v4oXWOPH7sxXEjSb50U1SqRVq
-        fwmmHkDqw6CIiegvc/iP83WBz8oUsW910FvK2Zmg3dYD8JZ//BIOlemxUbTFUVHR9q+LOFZ09iY8A
-        Us7nFXfRxjtFUUxwVnsXCPpiF3BOMzLAvmRoFpF9LEtT+KIvbJlpLWTLeuMV0ITOOVALQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fknNY-0000hb-Kj; Wed, 01 Aug 2018 09:25:12 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2523F1124216; Wed,  1 Aug 2018 10:25:12 +0100 (BST)
-Date:   Wed, 1 Aug 2018 10:25:12 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v2 2/5] regulator: rk808: add RK809 and RK817 support.
-Message-ID: <20180801092512.GA5509@sirena.org.uk>
-References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
- <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
+        Wed, 1 Aug 2018 07:11:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37132 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388622AbeHALLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 07:11:07 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C05D287A7B;
+        Wed,  1 Aug 2018 09:26:16 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F4832142F20;
+        Wed,  1 Aug 2018 09:26:14 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
+Cc:     "mhkelley58\@gmail.com" <mhkelley58@gmail.com>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel\@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf\@aepfle.de" <olaf@aepfle.de>,
+        "apw\@canonical.com" <apw@canonical.com>,
+        "jasowang\@redhat.com" <jasowang@redhat.com>,
+        "marcelo.cerri\@canonical.com" <marcelo.cerri@canonical.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: Re: [PATCH char-misc 1/1] Drivers: hv: vmbus: Make synic_initialized flag per-cpu
+References: <1533004484-3937-1-git-send-email-mikelley@microsoft.com>
+        <87ftzzodnv.fsf@vitty.brq.redhat.com>
+        <CY4PR21MB0773EFCF6EA21CF8F9CE01E0DC2D0@CY4PR21MB0773.namprd21.prod.outlook.com>
+Date:   Wed, 01 Aug 2018 11:26:13 +0200
+In-Reply-To: <CY4PR21MB0773EFCF6EA21CF8F9CE01E0DC2D0@CY4PR21MB0773.namprd21.prod.outlook.com>
+        (Michael Kelley's message of "Wed, 1 Aug 2018 05:47:08 +0000")
+Message-ID: <8736vyo2tm.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
-In-Reply-To: <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
-X-Cookie: You are as I am with You.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 09:26:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 01 Aug 2018 09:26:16 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+"Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com> writes:
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Vitaly Kuznetsov <vkuznets@redhat.com> Sent: Tuesday, July 31, 2018 4:20 AM
+>> 
+>> Alternatively, we can get rid of synic_initialized flag altogether:
+>> hv_synic_init() never fails in the first place but we can always
+>> implement something like:
+>> 
+>> int hv_synic_is_initialized(void) {
+>> 	union hv_synic_scontrol sctrl;
+>> 
+>> 	hv_get_synic_state(sctrl.as_uint64);
+>> 
+>> 	return sctrl.enable;
+>> }
+>> 
+>> as it doesn't seem that we need to check synic state on _other_ CPUs.
+>> 
+>
+> I was trying to decide if there are any arguments in favor of one
+> approach vs. the other:  a per-cpu flag in memory or checking
+> the synic_control "enable" bit.   Seems like a wash to me, in which
+> case I have a slight preference for the per-cpu flag in memory vs.
+> creating another function to return sctrl.enable.  But I'm completely
+> open to reasons why checking sctrl.enable is better.
 
-On Tue, Jul 31, 2018 at 03:57:27PM +0800, Tony Xie wrote:
+Just a few thoughts: reading MSR is definitely slower but we avoid
+'shadowing' the state, the reading is always correct. In case there's a
+chance the SynIC will get disabled from host side we can only find this
+out by doing MSR read. This is a purely theoretical possibility, I
+believe, we can go ahead with this patch.
 
-> +	default:
-> +		pr_warn("%s ramp_delay: %d not supported, setting 10000\n",
-> +			rdev->desc->name, ramp_delay);
-> +	}
-
-This looks mostly good but I notice that most of the prints in the
-driver are pr_ rather than dev_ ones - using dev_ is better as it allows
-people to see which device was affected.
-
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthfHcACgkQJNaLcl1U
-h9C8Igf/dgHh7kVnRuWvWyT7b/+8mMS+HNtVuTBMtiUf5textB9vCDqH+oOZoZE/
-2PEPQccsJdhF2tkxfuArUQtY8lxO7BQFu3HFxD70ROweX9CfuvfnJBVDAw094Wx6
-Z4G8HLLp0WqLiqSdGvASehN8jspMmWRkV4ucf6ED/yUjGKZMUf3ow7cwgfg2e6S/
-It4Yp/5Z4QrXpQchKhRWYvJZ6xAbtGevKaEvjBWegj7L9vFJTZn1uSJJeDrrnste
-b0I0q4MUN6cfgQwYFK8JeBLvJWkmAC4bBQYv0ulDzboDtRB5VcP6WnjnDiWHBCnj
-G39mcKBy/R9YlALxB1kxGxp2Aj3Y9g==
-=3sW2
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+-- 
+  Vitaly
