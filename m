@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55E1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67ABC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CB220841
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CB220841
+	by mail.kernel.org (Postfix) with ESMTP id 9302220840
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:29:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9302220840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbeHAUQX (ORCPT
+        id S2387606AbeHAUQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 1 Aug 2018 16:16:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46148 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404253AbeHATDg (ORCPT
+        with ESMTP id S2404228AbeHATDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2FA711AB;
-        Wed,  1 Aug 2018 17:07:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13176123F;
+        Wed,  1 Aug 2018 17:09:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 267/336] staging: ks7010: fix error handling in ks7010_upload_firmware
-Date:   Wed,  1 Aug 2018 18:50:02 +0200
-Message-Id: <20180801165039.261462592@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.17 301/336] random: mix rdrand with entropy sent in from userspace
+Date:   Wed,  1 Aug 2018 18:50:36 +0200
+Message-Id: <20180801165040.573314937@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -52,39 +50,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 6e043704fb99e3e1d7a1bb02030e49c093cdd943 ]
+commit 81e69df38e2911b642ec121dec319fad2a4782f3 upstream.
 
-This commit checks missing error code check when checking
-if the firmware is running reading General Communication
-Register A (GCR_A).
+Fedora has integrated the jitter entropy daemon to work around slow
+boot problems, especially on VM's that don't support virtio-rng:
 
-It also set ret to EBUSY if firmware is running before
-copying it.
+    https://bugzilla.redhat.com/show_bug.cgi?id=1572944
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+It's understandable why they did this, but the Jitter entropy daemon
+works fundamentally on the principle: "the CPU microarchitecture is
+**so** complicated and we can't figure it out, so it *must* be
+random".  Yes, it uses statistical tests to "prove" it is secure, but
+AES_ENCRYPT(NSA_KEY, COUNTER++) will also pass statistical tests with
+flying colors.
+
+So if RDRAND is available, mix it into entropy submitted from
+userspace.  It can't hurt, and if you believe the NSA has backdoored
+RDRAND, then they probably have enough details about the Intel
+microarchitecture that they can reverse engineer how the Jitter
+entropy daemon affects the microarchitecture, and attack its output
+stream.  And if RDRAND is in fact an honest DRNG, it will immeasurably
+improve on what the Jitter entropy daemon might produce.
+
+This also provides some protection against someone who is able to read
+or set the entropy seed file.
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/staging/ks7010/ks7010_sdio.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/char/random.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -657,8 +657,11 @@ static int ks7010_upload_firmware(struct
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1895,14 +1895,22 @@ static int
+ write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
+ {
+ 	size_t bytes;
+-	__u32 buf[16];
++	__u32 t, buf[16];
+ 	const char __user *p = buffer;
  
- 	/* Firmware running ? */
- 	ret = ks7010_sdio_readb(priv, GCR_A, &byte);
-+	if (ret)
-+		goto release_host_and_free;
- 	if (byte == GCR_A_RUN) {
- 		netdev_dbg(priv->net_dev, "MAC firmware running ...\n");
-+		ret = -EBUSY;
- 		goto release_host_and_free;
- 	}
+ 	while (count > 0) {
++		int b, i = 0;
++
+ 		bytes = min(count, sizeof(buf));
+ 		if (copy_from_user(&buf, p, bytes))
+ 			return -EFAULT;
+ 
++		for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
++			if (!arch_get_random_int(&t))
++				break;
++			buf[i] ^= t;
++		}
++
+ 		count -= bytes;
+ 		p += bytes;
  
 
 
