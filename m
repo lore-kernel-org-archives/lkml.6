@@ -6,39 +6,44 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60583C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25440C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D4920862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D4920862
+	by mail.kernel.org (Postfix) with ESMTP id D984120862
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D984120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbeHAT7b (ORCPT
+        id S1732848AbeHAT7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:59:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50082 "EHLO
+        Wed, 1 Aug 2018 15:59:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405692AbeHATIe (ORCPT
+        with ESMTP id S2405670AbeHATIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:08:34 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3160E1146;
-        Wed,  1 Aug 2018 17:05:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B94161326;
+        Wed,  1 Aug 2018 17:11:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 226/336] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
-Date:   Wed,  1 Aug 2018 18:49:21 +0200
-Message-Id: <20180801165037.719292562@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 001/246] fork: unconditionally clear stack on fork
+Date:   Wed,  1 Aug 2018 18:48:31 +0200
+Message-Id: <20180801165011.771687701@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
-References: <20180801165028.930831994@linuxfoundation.org>
+In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+References: <20180801165011.700991984@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,42 +51,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 5b19d284f5195a925dd015a6397bfce184097378 ]
+commit e01e80634ecdde1dd113ac43b3adad21b47f3957 upstream.
 
-pageout() in MM traslates EAGAIN, so calls handle_write_error()
- -> mapping_set_error() -> set_bit(AS_EIO, ...).
- file_write_and_wait_range() will see EIO error, which is critical
- to return value of fsync() followed by atomic_write failure to user.
+One of the classes of kernel stack content leaks[1] is exposing the
+contents of prior heap or stack contents when a new process stack is
+allocated.  Normally, those stacks are not zeroed, and the old contents
+remain in place.  In the face of stack content exposure flaws, those
+contents can leak to userspace.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixing this will make the kernel no longer vulnerable to these flaws, as
+the stack will be wiped each time a stack is assigned to a new process.
+There's not a meaningful change in runtime performance; it almost looks
+like it provides a benefit.
+
+Performing back-to-back kernel builds before:
+	Run times: 157.86 157.09 158.90 160.94 160.80
+	Mean: 159.12
+	Std Dev: 1.54
+
+and after:
+	Run times: 159.31 157.34 156.71 158.15 160.81
+	Mean: 158.46
+	Std Dev: 1.46
+
+Instead of making this a build or runtime config, Andy Lutomirski
+recommended this just be enabled by default.
+
+[1] A noisy search for many kinds of stack content leaks can be seen here:
+https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=linux+kernel+stack+leak
+
+I did some more with perf and cycle counts on running 100,000 execs of
+/bin/true.
+
+before:
+Cycles: 218858861551 218853036130 214727610969 227656844122 224980542841
+Mean:  221015379122.60
+Std Dev: 4662486552.47
+
+after:
+Cycles: 213868945060 213119275204 211820169456 224426673259 225489986348
+Mean:  217745009865.40
+Std Dev: 5935559279.99
+
+It continues to look like it's faster, though the deviation is rather
+wide, but I'm not sure what I could do that would be less noisy.  I'm
+open to ideas!
+
+Link: http://lkml.kernel.org/r/20180221021659.GA37073@beast
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/data.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1848,7 +1848,13 @@ out:
+---
+ include/linux/thread_info.h |    6 +-----
+ kernel/fork.c               |    3 +--
+ 2 files changed, 2 insertions(+), 7 deletions(-)
+
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -43,11 +43,7 @@ enum {
+ #define THREAD_ALIGN	THREAD_SIZE
+ #endif
  
- redirty_out:
- 	redirty_page_for_writepage(wbc, page);
--	if (!err)
-+	/*
-+	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
-+	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
-+	 * file_write_and_wait_range() will see EIO error, which is critical
-+	 * to return value of fsync() followed by atomic_write failure to user.
-+	 */
-+	if (!err || wbc->for_reclaim)
- 		return AOP_WRITEPAGE_ACTIVATE;
- 	unlock_page(page);
- 	return err;
+-#if IS_ENABLED(CONFIG_DEBUG_STACK_USAGE) || IS_ENABLED(CONFIG_DEBUG_KMEMLEAK)
+-# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+-#else
+-# define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT)
+-#endif
++#define THREADINFO_GFP		(GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+ 
+ /*
+  * flag set/clear/test wrappers
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -215,10 +215,9 @@ static unsigned long *alloc_thread_stack
+ 		if (!s)
+ 			continue;
+ 
+-#ifdef CONFIG_DEBUG_KMEMLEAK
+ 		/* Clear stale pointers from reused stack. */
+ 		memset(s->addr, 0, THREAD_SIZE);
+-#endif
++
+ 		tsk->stack_vm_area = s;
+ 		return s->addr;
+ 	}
 
 
