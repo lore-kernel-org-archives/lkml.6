@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2384C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792F3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9055120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9055120844
+	by mail.kernel.org (Postfix) with ESMTP id 2398E2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:29:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2398E2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407643AbeHATQe (ORCPT
+        id S2407654AbeHATQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:16:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52476 "EHLO
+        Wed, 1 Aug 2018 15:16:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404800AbeHATQd (ORCPT
+        with ESMTP id S2404800AbeHATQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:16:33 -0400
+        Wed, 1 Aug 2018 15:16:36 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADDA4D4A;
-        Wed,  1 Aug 2018 17:29:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB282D4A;
+        Wed,  1 Aug 2018 17:29:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 065/144] powerpc/8xx: fix invalid register expression in head_8xx.S
-Date:   Wed,  1 Aug 2018 18:51:32 +0200
-Message-Id: <20180801164954.584852821@linuxfoundation.org>
+Subject: [PATCH 4.9 066/144] pinctrl: at91-pio4: add missing of_node_put
+Date:   Wed,  1 Aug 2018 18:51:33 +0200
+Message-Id: <20180801164954.699993472@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -51,36 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit e4ccb1dae6bdef228d729c076c38161ef6e7ca34 ]
+[ Upstream commit 21816364715f508c10da1e087e352bc1e326614f ]
 
-New binutils generate the following warning
+The device node iterators perform an of_node_get on each iteration, so a
+jump out of the loop requires an of_node_put.
 
-  AS      arch/powerpc/kernel/head_8xx.o
-arch/powerpc/kernel/head_8xx.S: Assembler messages:
-arch/powerpc/kernel/head_8xx.S:916: Warning: invalid register expression
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-This patch fixes it.
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
++  of_node_put(child);
+?  break;
+   ...
+}
+... when != child
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/head_8xx.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -769,7 +769,7 @@ start_here:
- 	tovirt(r6,r6)
- 	lis	r5, abatron_pteptrs@h
- 	ori	r5, r5, abatron_pteptrs@l
--	stw	r5, 0xf0(r0)	/* Must match your Abatron config file */
-+	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
- 	tophys(r5,r5)
- 	stw	r6, 0(r5)
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -573,8 +573,10 @@ static int atmel_pctl_dt_node_to_map(str
+ 		for_each_child_of_node(np_config, np) {
+ 			ret = atmel_pctl_dt_subnode_to_map(pctldev, np, map,
+ 						    &reserved_maps, num_maps);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(np);
+ 				break;
++			}
+ 		}
+ 	}
  
 
 
