@@ -2,134 +2,178 @@ Return-Path: <SRS0=pNWC=KQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17034C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C60AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E7B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:21:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDHBMKx8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E7B20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 020FB208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 21:24:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020FB208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732073AbeHAXJA (ORCPT
+        id S1732110AbeHAXMH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 19:09:00 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39620 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729736AbeHAXJA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 19:09:00 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d189-v6so84144oib.6
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 14:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ucwNnjxHiiHHwhrYQyRF97UJ0t2Xnv51N7lgffCez0U=;
-        b=YDHBMKx8U38+8VAmSA1otru15KoVR/xWTp9rYZCf/Q1gFlyBE4K5j0vWeQzWOHN578
-         Y3n+3dOFomUbIpMZizETkOWmaJFSxVsGj7TClKcG5fAWoCP9thqVCfpBI3CZKWMSgj9U
-         qtwBWRJNZv+Vkd2ckYbnpsMvbgeauv3T8YG1ZVaWT3YICl6guisnpxfyGqnKNFp6jBk3
-         iKW/FzPs2an9RByYLYosm9vIvrp4S4oB4xgIKsEuV3USmUuwbN8MqQTDFYs6ZBR+U1oG
-         5GXE4RIbszIxQNn2UcNyoj9YYvXBvBEHpLfsNG7lFlS0XfS23yvS9B1zu6jw8gJEpZRM
-         oY9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ucwNnjxHiiHHwhrYQyRF97UJ0t2Xnv51N7lgffCez0U=;
-        b=ji8cmuUvVVS3sflTmAdDO89qPqs2eDeQOmMWrSpTcwkJ/QYxgxor9UP7rmrW2RbxyI
-         /uwT5M61hK0boKOOhI0kJU8rxXcAmUU9zWGA6XtC1zqMcYNIQ75PDr5aydRiU7QwBcOS
-         yCDqIhNXA+0e4ySyhGJsa80Hu83jGvKpZAYAnLXyxEipzu9iOuNQJuxajx9+CfOlaCSK
-         Weu205xrZDjy3Mx1Nn80RS+u/Ntmj0qSxjtuHbgav16mJJMhhDlfGTCr5ynd+Q4WboVa
-         VFrLycr/Pbu9R06+dg3+VOZX1b2XhZrHl0lAXFXxIpsjXhp5dlPNJqSI9f+kZzs025wR
-         zozA==
-X-Gm-Message-State: AOUpUlF0tZV3Vs+9Y78+dc29PhN173Z80PpTJU3CQpMs+Bl9/4/ahnL4
-        pJ3T70fOk8okkScOSSjfusHEA9R91Wk0ctDflRg=
-X-Google-Smtp-Source: AAOMgpd/6fu2fk/C0cAPtg3IvJRpVXghvpfuHJiHNm7ZoOupjj4owLDu2093gUbetAm9/qUFfiZ8749PfhhMgJ6v3hI=
-X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr40045oig.282.1533158476809;
- Wed, 01 Aug 2018 14:21:16 -0700 (PDT)
+        Wed, 1 Aug 2018 19:12:07 -0400
+Received: from mga02.intel.com ([134.134.136.20]:15888 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727086AbeHAXMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 19:12:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 14:24:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,433,1526367600"; 
+   d="scan'208";a="61643603"
+Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
+  by orsmga008.jf.intel.com with ESMTP; 01 Aug 2018 14:24:21 -0700
+Received: from orsmsx108.amr.corp.intel.com ([169.254.2.3]) by
+ ORSMSX109.amr.corp.intel.com ([169.254.11.113]) with mapi id 14.03.0319.002;
+ Wed, 1 Aug 2018 14:24:20 -0700
+From:   "Moore, Robert" <robert.moore@intel.com>
+To:     Russ Anderson <rja@hpe.com>
+CC:     Mike Travis <mike.travis@hpe.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        "Dimitri Sivanich" <dimitri.sivanich@hpe.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Verma, Vishal L" <vishal.l.verma@intel.com>,
+        "Jiang, Dave" <dave.jiang@intel.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/1] x86, pmem, acpi: Remove excessive ACPI Large
+ Reference Count warnings
+Thread-Topic: [PATCH 1/1] x86, pmem, acpi: Remove excessive ACPI Large
+ Reference Count warnings
+Thread-Index: AQHUKFhOdnOKO84lh0ePNJ9MGeCA/6SrUJBwgACDS4D//5anYA==
+Date:   Wed, 1 Aug 2018 21:24:19 +0000
+Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B94DEDFF@ORSMSX108.amr.corp.intel.com>
+References: <20180730195545.795802877@stormcage.americas.sgi.com>
+ <20180730195548.580717146@stormcage.americas.sgi.com>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B94DED8F@ORSMSX108.amr.corp.intel.com>
+ <20180801203827.ozkvldizkpsatmg5@hpe.com>
+In-Reply-To: <20180801203827.ozkvldizkpsatmg5@hpe.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWQyM2MyOGUtZGUzYi00ZThlLTgzODEtMDBjYzM3ZjE1ZmU5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiamIrRzN3cDVhdERFQXZQSDJXQnBhaUoxUmFlTWFPS3dOOUNMVzZ0V1FNSzd0XC8zV2ozVnpiQ3pmdStFWWt5a0IifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 14:21:16 -0700 (PDT)
-In-Reply-To: <68b90830d5024ce75a20b017aaf21c05@codeaurora.org>
-References: <1532035440-7860-1-git-send-email-rishabhb@codeaurora.org>
- <CAJZ5v0gWqx5Op-Bbg7bAYALCyBPsc=-+homAYj2Q1qd3WsqmDw@mail.gmail.com>
- <e4ca8572ed913ab65f63be8a351d4439@codeaurora.org> <CAJZ5v0ixuWo9RC21Z8zVhuHfkr1uV4vdqMh4s+qGMR7R8Wycag@mail.gmail.com>
- <68b90830d5024ce75a20b017aaf21c05@codeaurora.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 1 Aug 2018 23:21:16 +0200
-X-Google-Sender-Auth: 5FyVw2g84TQtsNFI2Jyxd2zZFag
-Message-ID: <CAJZ5v0jpm8tVjyWjA36Sp-bTEWUE+6cExjH7=CM=LUB-6xvePA@mail.gmail.com>
-Subject: Re: [PATCH] dd: Invoke one probe retry cycle after every initcall level
-To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ckadabi@codeaurora.org, tsoni@codeaurora.org,
-        Vikram Mulukutla <markivx@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 11:18 PM,  <rishabhb@codeaurora.org> wrote:
-> On 2018-07-24 01:24, Rafael J. Wysocki wrote:
->>
->> On Mon, Jul 23, 2018 at 10:22 PM,  <rishabhb@codeaurora.org> wrote:
->>>
->>> On 2018-07-23 04:17, Rafael J. Wysocki wrote:
->>>>
->>>>
->>>> On Thu, Jul 19, 2018 at 11:24 PM, Rishabh Bhatnagar
->>>> <rishabhb@codeaurora.org> wrote:
->>>>>
->>>>>
->>>>> Drivers that are registered at an initcall level may have to
->>>>> wait until late_init before the probe deferral mechanism can
->>>>> retry their probe functions. It is possible that their
->>>>> dependencies were resolved much earlier, in some cases even
->>>>> before the next initcall level. Invoke one probe retry cycle
->>>>> at every _sync initcall level, allowing these drivers to be
->>>>> probed earlier.
->>>>
->>>>
->>>>
->>>> Can you please say something about the actual use case this is
->>>> expected to address?
->>>
->>>
->>> We have a display driver that depends 3 other devices to be
->>> probed so that it can bring-up the display. Because of dependencies
->>> not being met the deferral mechanism defers the probes for a later time,
->>> even though the dependencies might be met earlier. With this change
->>> display can be brought up much earlier.
->>
->>
->> OK
->>
->> What runlevel brings up the display after the change?
->>
->> Thanks,
->> Rafael
->
-> After the change the display can come up after device_initcall level
-> itself.
-> The above mentioned 3 devices are probed at 0.503253, 0.505210 and 0.523264
-> secs.
-> Only the first device is probed successfully. With the current
-> deferral mechanism the devices get probed again after late_initcall
-> at 9.19 and 9.35 secs. So display can only come up after 9.35 secs.
-> With this change the devices are re-probed successfully at 0.60 and
-> 0.613 secs. Therefore display can come just after 0.613 secs.
+> -----Original Message-----
+> From: Russ Anderson [mailto:rja@hpe.com]
+> Sent: Wednesday, August 1, 2018 1:38 PM
+> To: Moore, Robert <robert.moore@intel.com>
+> Cc: Mike Travis <mike.travis@hpe.com>; Schmauss, Erik
+> <erik.schmauss@intel.com>; Wysocki, Rafael J
+> <rafael.j.wysocki@intel.com>; Len Brown <lenb@kernel.org>; Russ Anderson
+> <russ.anderson@hpe.com>; Dimitri Sivanich <dimitri.sivanich@hpe.com>;
+> Ross Zwisler <ross.zwisler@linux.intel.com>; Williams, Dan J
+> <dan.j.williams@intel.com>; Verma, Vishal L <vishal.l.verma@intel.com>;
+> Jiang, Dave <dave.jiang@intel.com>; linux-acpi@vger.kernel.org;
+> devel@acpica.org; linux-nvdimm@lists.01.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/1] x86, pmem, acpi: Remove excessive ACPI Large
+> Reference Count warnings
+> 
+> On Wed, Aug 01, 2018 at 07:49:14PM +0000, Moore, Robert wrote:
+> > Are there any actual memory leaks, or this a consequence of the number
+> of sockets?
+> 
+> It is a consequence of the number of sockets.
+> It is not an actual memory leak.
+> 
+> Thanks.
+> 
+[Moore, Robert] 
 
-OK, so why do you touch the initcall levels earlier than device_?
+It does bother me a bit that there are over 4096 references to a single object, however. Could you send us the ACPI dump for the machine?
 
-> This change helps in overall android bootup as well.
+This issue sounds vaguely familiar though. Perhaps Dan remembers, it was something about large reference counts and the NFIT/NVDIMM stuff. If so, this has been fixed for some time now.
 
-How exactly?
+Bob
+
+
+> > > -----Original Message-----
+> > > From: Mike Travis [mailto:mike.travis@hpe.com]
+> > > Sent: Monday, July 30, 2018 12:56 PM
+> > > To: Moore, Robert <robert.moore@intel.com>; Schmauss, Erik
+> > > <erik.schmauss@intel.com>; Wysocki, Rafael J
+> > > <rafael.j.wysocki@intel.com>; Len Brown <lenb@kernel.org>
+> > > Cc: Russ Anderson <russ.anderson@hpe.com>; Dimitri Sivanich
+> > > <dimitri.sivanich@hpe.com>; Ross Zwisler
+> > > <ross.zwisler@linux.intel.com>; Williams, Dan J
+> > > <dan.j.williams@intel.com>; Verma, Vishal L
+> > > <vishal.l.verma@intel.com>; Jiang, Dave <dave.jiang@intel.com>;
+> > > linux- acpi@vger.kernel.org; devel@acpica.org;
+> > > linux-nvdimm@lists.01.org; linux-kernel@vger.kernel.org
+> > > Subject: [PATCH 1/1] x86, pmem, acpi: Remove excessive ACPI Large
+> > > Reference Count warnings
+> > >
+> > > With the Intel BIOS support for 8 processor sockets with a full
+> > > complement of NVDIMMS potentially installable, and there are empty
+> > > sockets without NVDIMMS, there is an extremely large amount of the
+> > > following warnings:
+> > >
+> > > ACPI Warning: Large Reference Count (0x1001) in object
+> ffff99453fc71750,
+> > > 	Type=0x0A
+> > >
+> > > On a 4 socket system with 4 NVDIMMs there were over 6000 of these
+> > > warning messages and it has been seem on systems from 4 to 32
+> sockets.
+> > >
+> > > Through some guidance from the BIOS developers and testing, it
+> > > appears that simply bumping up the threshold for warnings from
+> > > 0x1000 to 0x2000 eliminates these messages.  Changing them to be
+> > > ACPI DEBUG messages, or even removing them are other options, but it
+> > > would then defeat the purpose of the warnings as the problem would
+> effectively be hidden.
+> > >
+> > > Reviewed-by: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+> > > Tested-by: Russ Anderson <russ.anderson@hpe.com>
+> > > Signed-off-by: Mike Travis <mike.travis@hpe.com>
+> > > ---
+> > >  include/acpi/acconfig.h |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > --- linux-4.12.orig/include/acpi/acconfig.h
+> > > +++ linux-4.12/include/acpi/acconfig.h
+> > > @@ -123,7 +123,7 @@
+> > >
+> > >  /* Maximum object reference count (detects object deletion issues)
+> > > */
+> > >
+> > > -#define ACPI_MAX_REFERENCE_COUNT        0x1000
+> > > +#define ACPI_MAX_REFERENCE_COUNT        0x2000
+> > >
+> > >  /* Default page size for use in mapping memory for operation
+> > > regions */
+> > >
+> > >
+> > > --
+> >
+> 
+> --
+> Russ Anderson,  SuperDome Flex Linux Kernel Group Manager HPE - Hewlett
+> Packard Enterprise (formerly SGI)  rja@hpe.com
