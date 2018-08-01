@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA57C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97E3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F34B20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F34B20862
+	by mail.kernel.org (Postfix) with ESMTP id 99061208A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:36:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99061208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436601AbeHATSj (ORCPT
+        id S2405500AbeHATW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:18:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52908 "EHLO
+        Wed, 1 Aug 2018 15:22:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436511AbeHATSh (ORCPT
+        with ESMTP id S2436579AbeHATSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:18:37 -0400
+        Wed, 1 Aug 2018 15:18:39 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66684E9B;
-        Wed,  1 Aug 2018 16:54:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07E93F3A;
+        Wed,  1 Aug 2018 16:56:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Yunlei He <heyunlei@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 036/336] rtc: ensure rtc_set_alarm fails when alarms are not supported
-Date:   Wed,  1 Aug 2018 18:46:11 +0200
-Message-Id: <20180801165030.466473752@linuxfoundation.org>
+Subject: [PATCH 4.17 070/336] f2fs: fix to dont trigger writeback during recovery
+Date:   Wed,  1 Aug 2018 18:46:45 +0200
+Message-Id: <20180801165031.816304024@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,39 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit abfdff44bc38e9e2ef7929f633fb8462632299d4 ]
+[ Upstream commit 64c74a7ab505ea40d1b3e5d02735ecab08ae1b14 ]
 
-When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
-rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
-subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
-case.
+- f2fs_fill_super
+ - recover_fsync_data
+  - recover_data
+   - del_fsync_inode
+    - iput
+     - iput_final
+      - write_inode_now
+       - f2fs_write_inode
+        - f2fs_balance_fs
+         - f2fs_balance_fs_bg
+          - sync_dirty_inodes
 
-Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
-programs think the alarms are working for a particular RTC when they are
-not.
+With data_flush mount option, during recovery, in order to avoid entering
+above writeback flow, let's detect recovery status and do skip in
+f2fs_balance_fs_bg.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/interface.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/f2fs/segment.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -441,6 +441,11 @@ int rtc_set_alarm(struct rtc_device *rtc
- {
- 	int err;
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -478,6 +478,9 @@ void f2fs_balance_fs(struct f2fs_sb_info
  
-+	if (!rtc->ops)
-+		return -ENODEV;
-+	else if (!rtc->ops->set_alarm)
-+		return -EINVAL;
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ {
++	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
++		return;
 +
- 	err = rtc_valid_tm(&alarm->time);
- 	if (err != 0)
- 		return err;
+ 	/* try to shrink extent cache when there is no enough memory */
+ 	if (!available_free_memory(sbi, EXTENT_CACHE))
+ 		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
 
 
