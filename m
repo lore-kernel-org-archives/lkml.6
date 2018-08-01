@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3465AC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4D3C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E78C420862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E78C420862
+	by mail.kernel.org (Postfix) with ESMTP id 3F62C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F62C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405514AbeHATHc (ORCPT
+        id S2390268AbeHATHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:07:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49216 "EHLO
+        Wed, 1 Aug 2018 15:07:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404780AbeHATHb (ORCPT
+        with ESMTP id S2389677AbeHATHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:07:31 -0400
+        Wed, 1 Aug 2018 15:07:35 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69560CC2;
-        Wed,  1 Aug 2018 17:20:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85430CE6;
+        Wed,  1 Aug 2018 17:20:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 180/246] backlight: pwm_bl: Dont use GPIOF_* with gpiod_get_direction
-Date:   Wed,  1 Aug 2018 18:51:30 +0200
-Message-Id: <20180801165020.345834849@linuxfoundation.org>
+Subject: [PATCH 4.14 181/246] stop_machine: Use raw spinlocks
+Date:   Wed,  1 Aug 2018 18:51:31 +0200
+Message-Id: <20180801165020.387588667@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -54,44 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit bb084c0f61d659f0e6d371b096e0e57998f191d6 ]
+[ Upstream commit de5b55c1d4e30740009864eb35ce4ed856aac01d ]
 
-The documentation was wrong, gpiod_get_direction() returns 0/1 instead
-of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
-("gpio: correct docs about return value of gpiod_get_direction"). Now,
-fix this user (until a better, system-wide solution is in place).
+Use raw-locks in stop_machine() to allow locking in irq-off and
+preempt-disabled regions on -RT. This also documents the possible locking
+context in general.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+[bigeasy: update patch description.]
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lkml.kernel.org/r/20180423191635.6014-1-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/backlight/pwm_bl.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/stop_machine.c |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct pl
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -37,7 +37,7 @@ struct cpu_stop_done {
+ struct cpu_stopper {
+ 	struct task_struct	*thread;
  
- 	/*
- 	 * If the GPIO is not known to be already configured as output, that
--	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
--	 * change the direction to output and set the GPIO as active.
-+	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
-+	 * direction to output and set the GPIO as active.
- 	 * Do not force the GPIO to active when it was already output as it
- 	 * could cause backlight flickering or we would enable the backlight too
- 	 * early. Leave the decision of the initial backlight state for later.
- 	 */
- 	if (pb->enable_gpio &&
--	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
-+	    gpiod_get_direction(pb->enable_gpio) != 0)
- 		gpiod_direction_output(pb->enable_gpio, 1);
+-	spinlock_t		lock;
++	raw_spinlock_t		lock;
+ 	bool			enabled;	/* is this stopper enabled? */
+ 	struct list_head	works;		/* list of pending works */
  
- 	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+@@ -81,13 +81,13 @@ static bool cpu_stop_queue_work(unsigned
+ 	unsigned long flags;
+ 	bool enabled;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled = stopper->enabled;
+ 	if (enabled)
+ 		__cpu_stop_queue_work(stopper, work, &wakeq);
+ 	else if (work->done)
+ 		cpu_stop_signal_done(work->done);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 
+ 	wake_up_q(&wakeq);
+ 
+@@ -237,8 +237,8 @@ static int cpu_stop_queue_two_works(int
+ 	DEFINE_WAKE_Q(wakeq);
+ 	int err;
+ retry:
+-	spin_lock_irq(&stopper1->lock);
+-	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
++	raw_spin_lock_irq(&stopper1->lock);
++	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
+ 
+ 	err = -ENOENT;
+ 	if (!stopper1->enabled || !stopper2->enabled)
+@@ -261,8 +261,8 @@ retry:
+ 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
+ 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
+ unlock:
+-	spin_unlock(&stopper2->lock);
+-	spin_unlock_irq(&stopper1->lock);
++	raw_spin_unlock(&stopper2->lock);
++	raw_spin_unlock_irq(&stopper1->lock);
+ 
+ 	if (unlikely(err == -EDEADLK)) {
+ 		while (stop_cpus_in_progress)
+@@ -461,9 +461,9 @@ static int cpu_stop_should_run(unsigned
+ 	unsigned long flags;
+ 	int run;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	run = !list_empty(&stopper->works);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 	return run;
+ }
+ 
+@@ -474,13 +474,13 @@ static void cpu_stopper_thread(unsigned
+ 
+ repeat:
+ 	work = NULL;
+-	spin_lock_irq(&stopper->lock);
++	raw_spin_lock_irq(&stopper->lock);
+ 	if (!list_empty(&stopper->works)) {
+ 		work = list_first_entry(&stopper->works,
+ 					struct cpu_stop_work, list);
+ 		list_del_init(&work->list);
+ 	}
+-	spin_unlock_irq(&stopper->lock);
++	raw_spin_unlock_irq(&stopper->lock);
+ 
+ 	if (work) {
+ 		cpu_stop_fn_t fn = work->fn;
+@@ -554,7 +554,7 @@ static int __init cpu_stop_init(void)
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
+ 
+-		spin_lock_init(&stopper->lock);
++		raw_spin_lock_init(&stopper->lock);
+ 		INIT_LIST_HEAD(&stopper->works);
+ 	}
+ 
 
 
