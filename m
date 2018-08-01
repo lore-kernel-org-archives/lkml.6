@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEB1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776EAC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621CA20862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621CA20862
+	by mail.kernel.org (Postfix) with ESMTP id 2A64C208A5
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 19:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A64C208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387734AbeHAVjq (ORCPT
+        id S2387850AbeHAVk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 17:39:46 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.233]:17798 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727159AbeHAVjq (ORCPT
+        Wed, 1 Aug 2018 17:40:29 -0400
+Received: from gateway20.websitewelcome.com ([192.185.55.25]:22750 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727159AbeHAVk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 17:39:46 -0400
+        Wed, 1 Aug 2018 17:40:29 -0400
 Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id E1D6DE0C7
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 14:52:23 -0500 (CDT)
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 3850E400CEA29
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 14:53:06 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id kxA9fnyFxkBj6kxANf70m5; Wed, 01 Aug 2018 14:52:23 -0500
+        id kxApfo0JQkBj6kxB2f72qa; Wed, 01 Aug 2018 14:53:05 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=37648 helo=embeddedor)
+Received: from [189.250.61.218] (port=37656 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fkxA8-004CEP-IG; Wed, 01 Aug 2018 14:52:00 -0500
-Date:   Wed, 1 Aug 2018 14:51:59 -0500
+        id 1fkxAo-004CdH-6Y; Wed, 01 Aug 2018 14:52:42 -0500
+Date:   Wed, 1 Aug 2018 14:52:41 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, patches@opensource.cirrus.com
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 05/11] ASoC: wm8960: Mark expected switch fall-through
-Message-ID: <b473ea056634ccb9316146590c7ed4d9efc14368.1533151956.git.gustavo@embeddedor.com>
+Subject: [PATCH 06/11] ASoC: wm8904: Mark expected switch fall-through
+Message-ID: <83b523e449805ffb65f43443ce2aac4a97880e64.1533151956.git.gustavo@embeddedor.com>
 References: <cover.1533151956.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.61.218
 X-Source-L: No
-X-Exim-ID: 1fkxA8-004CEP-IG
+X-Exim-ID: 1fkxAo-004CdH-6Y
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.61.218]:37648
+X-Source-Sender: (embeddedor) [189.250.61.218]:37656
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 44
+X-Email-Count: 51
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,24 +74,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 115041 ("Missing break in switch")
+Addresses-Coverity-ID: 115042 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/soc/codecs/wm8960.c | 1 +
+ sound/soc/codecs/wm8904.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/wm8960.c b/sound/soc/codecs/wm8960.c
-index c30f5aa..8dc1f3d 100644
---- a/sound/soc/codecs/wm8960.c
-+++ b/sound/soc/codecs/wm8960.c
-@@ -839,6 +839,7 @@ static int wm8960_hw_params(struct snd_pcm_substream *substream,
- 			iface |= 0x000c;
- 			break;
- 		}
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index 9037a35..1965635 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -1455,6 +1455,7 @@ static int wm8904_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_DSP_B:
+ 		aif1 |= 0x3 | WM8904_AIF_LRCLK_INV;
 +		/* fall through */
- 	default:
- 		dev_err(component->dev, "unsupported width %d\n",
- 			params_width(params));
+ 	case SND_SOC_DAIFMT_DSP_A:
+ 		aif1 |= 0x3;
+ 		break;
 -- 
 2.7.4
 
