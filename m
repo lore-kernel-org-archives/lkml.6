@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5988BC28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F2AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A1C220862
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1C220862
+	by mail.kernel.org (Postfix) with ESMTP id D8AD620844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8AD620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404843AbeHATEm (ORCPT
+        id S2404858AbeHATEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:04:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46564 "EHLO
+        Wed, 1 Aug 2018 15:04:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46572 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403856AbeHATEk (ORCPT
+        with ESMTP id S2403856AbeHATEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:04:40 -0400
+        Wed, 1 Aug 2018 15:04:43 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84944C96;
-        Wed,  1 Aug 2018 17:17:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F3A6C96;
+        Wed,  1 Aug 2018 17:18:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 124/246] rtc: tps65910: fix possible race condition
-Date:   Wed,  1 Aug 2018 18:50:34 +0200
-Message-Id: <20180801165017.660900984@linuxfoundation.org>
+Subject: [PATCH 4.14 125/246] ALSA: emu10k1: Rate-limit error messages about page errors
+Date:   Wed,  1 Aug 2018 18:50:35 +0200
+Message-Id: <20180801165017.709014335@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,51 +50,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit e6000a438e534ee0afd9e83b67f4e23a26dd1067 ]
+[ Upstream commit 11d42c81036324697d367600bfc16f6dd37636fd ]
 
-The IRQ is requested before the struct rtc is allocated and registered, but
-this struct is used in the IRQ handler. This may lead to a NULL pointer
-dereference.
+The error messages at sanity checks of memory pages tend to repeat too
+many times once when it hits, and without the rate limit, it may flood
+and become unreadable.  Replace such messages with the *_ratelimited()
+variant.
 
-Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
-before requesting the IRQ.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1093027
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-tps65910.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ sound/pci/emu10k1/memory.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/rtc/rtc-tps65910.c
-+++ b/drivers/rtc/rtc-tps65910.c
-@@ -380,6 +380,10 @@ static int tps65910_rtc_probe(struct pla
- 	if (!tps_rtc)
- 		return -ENOMEM;
- 
-+	tps_rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(tps_rtc->rtc))
-+		return PTR_ERR(tps_rtc->rtc);
-+
- 	/* Clear pending interrupts */
- 	ret = regmap_read(tps65910->regmap, TPS65910_RTC_STATUS, &rtc_reg);
- 	if (ret < 0)
-@@ -421,10 +425,10 @@ static int tps65910_rtc_probe(struct pla
- 	tps_rtc->irq = irq;
- 	device_set_wakeup_capable(&pdev->dev, 1);
- 
--	tps_rtc->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
--		&tps65910_rtc_ops, THIS_MODULE);
--	if (IS_ERR(tps_rtc->rtc)) {
--		ret = PTR_ERR(tps_rtc->rtc);
-+	tps_rtc->rtc->ops = &tps65910_rtc_ops;
-+
-+	ret = rtc_register_device(tps_rtc->rtc);
-+	if (ret) {
- 		dev_err(&pdev->dev, "RTC device register: err %d\n", ret);
- 		return ret;
+--- a/sound/pci/emu10k1/memory.c
++++ b/sound/pci/emu10k1/memory.c
+@@ -237,13 +237,13 @@ __found_pages:
+ static int is_valid_page(struct snd_emu10k1 *emu, dma_addr_t addr)
+ {
+ 	if (addr & ~emu->dma_mask) {
+-		dev_err(emu->card->dev,
++		dev_err_ratelimited(emu->card->dev,
+ 			"max memory size is 0x%lx (addr = 0x%lx)!!\n",
+ 			emu->dma_mask, (unsigned long)addr);
+ 		return 0;
  	}
+ 	if (addr & (EMUPAGESIZE-1)) {
+-		dev_err(emu->card->dev, "page is not aligned\n");
++		dev_err_ratelimited(emu->card->dev, "page is not aligned\n");
+ 		return 0;
+ 	}
+ 	return 1;
+@@ -334,7 +334,7 @@ snd_emu10k1_alloc_pages(struct snd_emu10
+ 		else
+ 			addr = snd_pcm_sgbuf_get_addr(substream, ofs);
+ 		if (! is_valid_page(emu, addr)) {
+-			dev_err(emu->card->dev,
++			dev_err_ratelimited(emu->card->dev,
+ 				"emu: failure page = %d\n", idx);
+ 			mutex_unlock(&hdr->block_mutex);
+ 			return NULL;
 
 
