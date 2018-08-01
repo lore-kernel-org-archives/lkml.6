@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CF1C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7545CC28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DE920844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DE920844
+	by mail.kernel.org (Postfix) with ESMTP id 278D820844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:23:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278D820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406399AbeHATKA (ORCPT
+        id S2406402AbeHATKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:10:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50892 "EHLO
+        Wed, 1 Aug 2018 15:10:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50946 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389790AbeHATJ7 (ORCPT
+        with ESMTP id S2389790AbeHATKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:09:59 -0400
+        Wed, 1 Aug 2018 15:10:12 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75F10CC3;
-        Wed,  1 Aug 2018 17:23:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEFACD40;
+        Wed,  1 Aug 2018 17:23:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 227/246] RDMA/uverbs: Protect from attempts to create flows on unsupported QP
-Date:   Wed,  1 Aug 2018 18:52:17 +0200
-Message-Id: <20180801165022.586543029@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 193/246] staging: vchiq_core: Fix missing semaphore release in error case
+Date:   Wed,  1 Aug 2018 18:51:43 +0200
+Message-Id: <20180801165020.958876027@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -53,44 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 940efcc8889f0d15567eb07fc9fd69b06e366aa5 upstream.
+[ Upstream commit 8113b89fc615cfb531df0334fb3a091cf6a45ce0 ]
 
-Flows can be created on UD and RAW_PACKET QP types. Attempts to provide
-other QP types as an input causes to various unpredictable failures.
+The bail out branch in case of a invalid tx_pos missed a semaphore
+release. Dan Carpenter found this with a static checker.
 
-The reason is that in order to support all various types (e.g. XRC), we
-are supposed to use real_qp handle and not qp handle and expect to
-driver/FW to fail such (XRC) flows. The simpler and safer variant is to
-ban all QP types except UD and RAW_PACKET, instead of relying on
-driver/FW.
-
-Cc: <stable@vger.kernel.org> # 3.11
-Fixes: 436f2ad05a0b ("IB/core: Export ib_create/destroy_flow through uverbs")
-Cc: syzkaller <syzkaller@googlegroups.com>
-Reported-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Fixes: d1eab9dec610 ("staging: vchiq_core: Bail out in case of invalid tx_pos")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3376,6 +3376,11 @@ int ib_uverbs_ex_create_flow(struct ib_u
- 		goto err_uobj;
- 	}
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -601,6 +601,7 @@ reserve_space(VCHIQ_STATE_T *state, size
+ 		}
  
-+	if (qp->qp_type != IB_QPT_UD && qp->qp_type != IB_QPT_RAW_PACKET) {
-+		err = -EINVAL;
-+		goto err_put;
-+	}
-+
- 	flow_attr = kzalloc(sizeof(*flow_attr) + cmd.flow_attr.num_of_specs *
- 			    sizeof(union ib_flow_spec), GFP_KERNEL);
- 	if (!flow_attr) {
+ 		if (tx_pos == (state->slot_queue_available * VCHIQ_SLOT_SIZE)) {
++			up(&state->slot_available_event);
+ 			pr_warn("%s: invalid tx_pos: %d\n", __func__, tx_pos);
+ 			return NULL;
+ 		}
 
 
