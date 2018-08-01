@@ -3,48 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA69C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39548C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE7C2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE7C2083D
+	by mail.kernel.org (Postfix) with ESMTP id E550320844
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:26:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E550320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406991AbeHATMv (ORCPT
+        id S2407016AbeHATMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:12:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51484 "EHLO
+        Wed, 1 Aug 2018 15:12:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51504 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405547AbeHATMu (ORCPT
+        with ESMTP id S2406575AbeHATMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:12:50 -0400
+        Wed, 1 Aug 2018 15:12:53 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86FB3CC3;
-        Wed,  1 Aug 2018 17:26:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C219ACC9;
+        Wed,  1 Aug 2018 17:26:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 018/144] mm: vmalloc: avoid racy handling of debugobjects in vunmap
-Date:   Wed,  1 Aug 2018 18:50:45 +0200
-Message-Id: <20180801164950.659542487@linuxfoundation.org>
+Subject: [PATCH 4.9 036/144] usbip: usbip_detach: Fix memory, udev context and udev leak
+Date:   Wed,  1 Aug 2018 18:51:03 +0200
+Message-Id: <20180801164951.738582428@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801164949.023217860@linuxfoundation.org>
 References: <20180801164949.023217860@linuxfoundation.org>
@@ -61,64 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chintan Pandya <cpandya@codeaurora.org>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit f3c01d2f3ade6790db67f80fef60df84424f8964 ]
+[ Upstream commit d179f99a651685b19333360e6558110da2fe9bd7 ]
 
-Currently, __vunmap flow is,
- 1) Release the VM area
- 2) Free the debug objects corresponding to that vm area.
+detach_port() fails to call usbip_vhci_driver_close() from its error
+path after usbip_vhci_detach_device() returns failure, leaking memory
+allocated in usbip_vhci_driver_open() and holding udev_context and udev
+references. Fix it to call usbip_vhci_driver_close().
 
-This leave some race window open.
- 1) Release the VM area
- 1.5) Some other client gets the same vm area
- 1.6) This client allocates new debug objects on the same
-      vm area
- 2) Free the debug objects corresponding to this vm area.
-
-Here, we actually free 'other' client's debug objects.
-
-Fix this by freeing the debug objects first and then releasing the VM
-area.
-
-Link: http://lkml.kernel.org/r/1523961828-9485-2-git-send-email-cpandya@codeaurora.org
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Byungchul Park <byungchul.park@lge.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmalloc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/usb/usbip/src/usbip_detach.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1494,7 +1494,7 @@ static void __vunmap(const void *addr, i
- 			addr))
- 		return;
+--- a/tools/usb/usbip/src/usbip_detach.c
++++ b/tools/usb/usbip/src/usbip_detach.c
+@@ -43,7 +43,7 @@ void usbip_detach_usage(void)
  
--	area = remove_vm_area(addr);
-+	area = find_vmap_area((unsigned long)addr)->vm;
- 	if (unlikely(!area)) {
- 		WARN(1, KERN_ERR "Trying to vfree() nonexistent vm area (%p)\n",
- 				addr);
-@@ -1504,6 +1504,7 @@ static void __vunmap(const void *addr, i
- 	debug_check_no_locks_freed(addr, get_vm_area_size(area));
- 	debug_check_no_obj_freed(addr, get_vm_area_size(area));
+ static int detach_port(char *port)
+ {
+-	int ret;
++	int ret = 0;
+ 	uint8_t portnum;
+ 	char path[PATH_MAX+1];
  
-+	remove_vm_area(addr);
- 	if (deallocate_pages) {
- 		int i;
+@@ -73,9 +73,12 @@ static int detach_port(char *port)
+ 	}
  
+ 	ret = usbip_vhci_detach_device(portnum);
+-	if (ret < 0)
+-		return -1;
++	if (ret < 0) {
++		ret = -1;
++		goto call_driver_close;
++	}
+ 
++call_driver_close:
+ 	usbip_vhci_driver_close();
+ 
+ 	return ret;
 
 
