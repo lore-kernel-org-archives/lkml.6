@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF558C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED07C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F00820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F00820844
+	by mail.kernel.org (Postfix) with ESMTP id 2E9EF2083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 17:24:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9EF2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406567AbeHATLJ (ORCPT
+        id S2406580AbeHATLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 15:11:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51136 "EHLO
+        Wed, 1 Aug 2018 15:11:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406206AbeHATLJ (ORCPT
+        with ESMTP id S2405332AbeHATLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 15:11:09 -0400
+        Wed, 1 Aug 2018 15:11:12 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EE6DCC3;
-        Wed,  1 Aug 2018 17:24:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21D21CC9;
+        Wed,  1 Aug 2018 17:24:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 236/246] net: mdio-mux: bcm-iproc: fix wrong getter and setter pair
-Date:   Wed,  1 Aug 2018 18:52:26 +0200
-Message-Id: <20180801165023.050065340@linuxfoundation.org>
+Subject: [PATCH 4.14 237/246] NET: stmmac: align DMA stuff to largest cache line length
+Date:   Wed,  1 Aug 2018 18:52:27 +0200
+Message-Id: <20180801165023.090411540@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
 References: <20180801165011.700991984@linuxfoundation.org>
@@ -51,35 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit b0753408aadf32c7ece9e6b765017881e54af833 ]
+[ Upstream commit 9939a46d90c6c76f4533d534dbadfa7b39dc6acc ]
 
-mdio_mux_iproc_probe() uses platform_set_drvdata() to store md pointer
-in device, whereas mdio_mux_iproc_remove() restores md pointer by
-dev_get_platdata(&pdev->dev). This leads to wrong resources release.
+As for today STMMAC_ALIGN macro (which is used to align DMA stuff)
+relies on L1 line length (L1_CACHE_BYTES).
+This isn't correct in case of system with several cache levels
+which might have L1 cache line length smaller than L2 line. This
+can lead to sharing one cache line between DMA buffer and other
+data, so we can lose this data while invalidate DMA buffer before
+DMA transaction.
 
-The patch replaces getter to platform_get_drvdata.
+Fix that by using SMP_CACHE_BYTES instead of L1_CACHE_BYTES for
+aligning.
 
-Fixes: 98bc865a1ec8 ("net: mdio-mux: Add MDIO mux driver for iProc SoCs")
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-mux-bcm-iproc.c |    2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/phy/mdio-mux-bcm-iproc.c
-+++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -218,7 +218,7 @@ out:
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -51,7 +51,7 @@
+ #include <linux/of_mdio.h>
+ #include "dwmac1000.h"
  
- static int mdio_mux_iproc_remove(struct platform_device *pdev)
- {
--	struct iproc_mdiomux_desc *md = dev_get_platdata(&pdev->dev);
-+	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
+-#define STMMAC_ALIGN(x)	L1_CACHE_ALIGN(x)
++#define	STMMAC_ALIGN(x)		__ALIGN_KERNEL(x, SMP_CACHE_BYTES)
+ #define	TSO_MAX_BUFF_SIZE	(SZ_16K - 1)
  
- 	mdio_mux_uninit(md->mux_handle);
- 	mdiobus_unregister(md->mii_bus);
+ /* Module parameters */
 
 
