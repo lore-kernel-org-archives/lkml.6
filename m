@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001A6C28CF6
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC563C28CF6
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C7E2083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C7E2083D
+	by mail.kernel.org (Postfix) with ESMTP id 7DB452083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  1 Aug 2018 18:27:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB452083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732893AbeHAUOm (ORCPT
+        id S1733141AbeHAUOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 16:14:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46070 "EHLO
+        Wed, 1 Aug 2018 16:14:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404262AbeHATDh (ORCPT
+        with ESMTP id S2404246AbeHATDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 1 Aug 2018 15:03:37 -0400
 Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 940D9F99;
-        Wed,  1 Aug 2018 16:57:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3F0D11EB;
+        Wed,  1 Aug 2018 17:08:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 095/336] Bluetooth: btusb: Add a new Realtek 8723DE ID 2ff8:b011
-Date:   Wed,  1 Aug 2018 18:47:10 +0200
-Message-Id: <20180801165032.809638276@linuxfoundation.org>
+Subject: [PATCH 4.17 282/336] scsi: cxlflash: Synchronize reset and remove ops
+Date:   Wed,  1 Aug 2018 18:50:17 +0200
+Message-Id: <20180801165039.815203766@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 References: <20180801165028.930831994@linuxfoundation.org>
@@ -51,62 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
 
-[ Upstream commit 66d9975c5a7c40aa7e4bb0ec0b0c37ba1f190923 ]
+[ Upstream commit a3feb6ef50def7c91244d7bd15a3625b7b49b81f ]
 
-Without this patch we cannot turn on the Bluethooth adapter on ASUS
-E406MA.
+The following Oops can be encountered if a device removal or system shutdown
+is initiated while an EEH recovery is in process:
 
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=2ff8 ProdID=b011 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=802.11n WLAN Adapter
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+[c000000ff2f479c0] c008000015256f18 cxlflash_pci_slot_reset+0xa0/0x100
+                                      [cxlflash]
+[c000000ff2f47a30] c00800000dae22e0 cxl_pci_slot_reset+0x168/0x290 [cxl]
+[c000000ff2f47ae0] c00000000003ef1c eeh_report_reset+0xec/0x170
+[c000000ff2f47b20] c00000000003d0b8 eeh_pe_dev_traverse+0x98/0x170
+[c000000ff2f47bb0] c00000000003f80c eeh_handle_normal_event+0x56c/0x580
+[c000000ff2f47c60] c00000000003fba4 eeh_handle_event+0x2a4/0x338
+[c000000ff2f47d10] c0000000000400b8 eeh_event_handler+0x1f8/0x200
+[c000000ff2f47dc0] c00000000013da48 kthread+0x1a8/0x1b0
+[c000000ff2f47e30] c00000000000b528 ret_from_kernel_thread+0x5c/0xb4
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+The remove handler frees AFU memory while the EEH recovery is in progress,
+leading to a race condition. This can result in a crash if the recovery thread
+tries to access this memory.
+
+To resolve this issue, the cxlflash remove handler will evaluate the device
+state and yield to any active reset or probing threads.
+
+Signed-off-by: Uma Krishnan <ukrishn@linux.vnet.ibm.com>
+Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btusb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/cxlflash/main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -371,6 +371,9 @@ static const struct usb_device_id blackl
- 	/* Additional Realtek 8723BU Bluetooth devices */
- 	{ USB_DEVICE(0x7392, 0xa611), .driver_info = BTUSB_REALTEK },
+--- a/drivers/scsi/cxlflash/main.c
++++ b/drivers/scsi/cxlflash/main.c
+@@ -946,9 +946,9 @@ static void cxlflash_remove(struct pci_d
+ 		return;
+ 	}
  
-+	/* Additional Realtek 8723DE Bluetooth devices */
-+	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info = BTUSB_REALTEK },
-+
- 	/* Additional Realtek 8821AE Bluetooth devices */
- 	{ USB_DEVICE(0x0b05, 0x17dc), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3414), .driver_info = BTUSB_REALTEK },
+-	/* If a Task Management Function is active, wait for it to complete
+-	 * before continuing with remove.
+-	 */
++	/* Yield to running recovery threads before continuing with remove */
++	wait_event(cfg->reset_waitq, cfg->state != STATE_RESET &&
++				     cfg->state != STATE_PROBING);
+ 	spin_lock_irqsave(&cfg->tmf_slock, lock_flags);
+ 	if (cfg->tmf_active)
+ 		wait_event_interruptible_lock_irq(cfg->tmf_waitq,
 
 
