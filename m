@@ -2,84 +2,84 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E94C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71473C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5432154D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5432154D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 18CF821569
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:33:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Thj1IXqV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18CF821569
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbeHBVXu (ORCPT
+        id S1727362AbeHBV0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:23:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41784 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726654AbeHBVXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:23:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A0DDF2B54;
-        Thu,  2 Aug 2018 19:31:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 30E9F100708A;
-        Thu,  2 Aug 2018 19:31:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w72JVILG032049;
-        Thu, 2 Aug 2018 15:31:18 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w72JVG7b032045;
-        Thu, 2 Aug 2018 15:31:17 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 2 Aug 2018 15:31:15 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        libc-alpha@sourceware.org
-Subject: framebuffer corruption due to overlapping stp instructions on
- arm64
-Message-ID: <alpine.LRH.2.02.1808021242320.31834@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Thu, 2 Aug 2018 17:26:21 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40024 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbeHBV0U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 17:26:20 -0400
+Received: by mail-oi0-f65.google.com with SMTP id w126-v6so5610877oie.7
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lREbU5nO+yKjW8KwBiFYjYeD9wWhVpX/dcmCv11tXJQ=;
+        b=Thj1IXqVBwpD85aJQOtn8fwm1gFlxjylqPZ9mD2D3jBwcTzMSDWjHWy6M6sqUxD+Xl
+         lY2MYc9ZOAF0Wlv0IMcfn7A7FPYKovLRn7TtJJD0kSI1TVfYexAv84LjVlXFag5wMZsm
+         WtOsCjaqBD6KAeg4uvYVLFlUft/EsBO9EYfz08D+ckaBlXqJbqQaTsTX/RvVbbUyG8Cx
+         cDbh5IoPU8Q0/xV/eBL3hJDcYfcZrgr+FlvaxIbR5VmjqJiTkbYCk4jn3h1/N4sd8N3b
+         kwGLsMPVzIPfL6EhbBvtEzPtZBUOAFy11Ev2xUbVAaqqWsDhwCIDDaCsiqjgbyZI7EH3
+         UHBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lREbU5nO+yKjW8KwBiFYjYeD9wWhVpX/dcmCv11tXJQ=;
+        b=YVR7zjWx1vkLdrlW9HTkBcwImTCvyuzZgyOOSey92pgEY2vhv4n92F8sWchvskLrYx
+         8hnmh1d6o8/wkpbWOxDOgOGqLESAgarfK4FNYrwgunp+/wrZq7nCdocDYkZdU4p7t2A4
+         y+50FKeb9hGBThSMcPfa79jIcz0Qpgfh7MmdwnhsuZyD2QTXYfajlLGMq8ohU/xIimJc
+         Au97/gXWA1cczxhL5/HWw5vBNAf8sNcOVRyDlUk38fqEFyX/5bf4zk/dfq1Sc47G42bo
+         Noc49HbVSDBPRTOsGsb8a665NU+9MlP8aoqlDwgdH3N9ZS5GXYtC2kb/Hv+gSX69AGgT
+         m0pw==
+X-Gm-Message-State: AOUpUlE/cI9e5cEamn+JA9KKZS/FmRfgLotD+SKXEzzRxc5H+L3V1CnQ
+        396JPzc/DgiujdPFf++YVQZUmyKyGZu1yIKHmNWVUA==
+X-Google-Smtp-Source: AAOMgpfNfJd0KTil1Kd1J7PH7umdKfD8TK8OdDtCZcpebRLmT1SaMmPBdJmT7709x3FkuePr5i0bixky0bVgtiihTUI=
+X-Received: by 2002:aca:ab11:: with SMTP id u17-v6mr112484oie.53.1533238428084;
+ Thu, 02 Aug 2018 12:33:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 19:31:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 19:31:18 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+References: <20180730211254.173686-1-pshier@google.com> <alpine.DEB.2.21.1807302342570.1725@nanos.tec.linutronix.de>
+ <CACwOFJQqqh6m2x+JXBnmeCzS7Zb-3e+5iPzp_vAZPGCqW+i_8w@mail.gmail.com> <alpine.DEB.2.21.1808011954410.1835@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808011954410.1835@nanos.tec.linutronix.de>
+From:   Peter Shier <pshier@google.com>
+Date:   Thu, 2 Aug 2018 12:33:37 -0700
+Message-ID: <CACwOFJSta=jM7LDiEtT-V_UnCwhggurDa4B+dViqLcdyPvYGxQ@mail.gmail.com>
+Subject: Re: [PATCH] proc: added ept_ad flag to /proc/cpuinfo
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, hpa@zytor.com, x86@kernel.org, bp@suse.de,
+        konrad.wilk@oracle.com, dwmw@amazon.co.uk,
+        Jim Mattson <jmattson@google.com>,
+        linux-kernel@vger.kernel.org, Peter Feiner <pfeiner@google.com>,
+        kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Thank you Thomas. I missed what I think is your fundamental point
+regarding duplication created by this patch between CPU feature bits
+and KVM's consumption of the IA32_VMX_EPT_VPID_CAP MSR.
 
-I tried to use a PCIe graphics card on the MacchiatoBIN board and I hit a 
-strange problem.
-
-When I use the links browser in graphics mode on the framebuffer, I get 
-occasional pixel corruption. Links does memcpy, memset and 4-byte writes 
-on the framebuffer - nothing else.
-
-I found out that the pixel corruption is caused by overlapping unaligned 
-stp instructions inside memcpy. In order to avoid branching, the arm64 
-memcpy implementation may write the same destination twice with different 
-alignment. If I put "dmb sy" between the overlapping stp instructions, the 
-pixel corruption goes away.
-
-This seems like a hardware bug. Is it a known errata? Do you have any 
-workarounds for it?
-
-I tried AMD card (HD 6350) and NVidia (NVS 285) and both exhibit the same 
-corruption. OpenGL doesn't work (it results in artifacts on the AMD card 
-and lock-up on the NVidia card), but it's quite expected if even simple 
-writing to the framebuffer doesn't work.
-
-Mikulas
+Should all the features in this MSR be exposed via CPU feature bits
+and should KVM consume only from there rather than reading the MSR
+directly? There are 16 feature bits in the MSR per SDM Vol 3d section
+A.10.
