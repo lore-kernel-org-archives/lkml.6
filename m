@@ -2,103 +2,156 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEDDC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E33C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA1D208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 109ED208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:15:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="TL9iiEdb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA1D208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="djPQ6F9w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 109ED208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeHBC6S (ORCPT
+        id S1731926AbeHBDDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 22:58:18 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:2042 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729888AbeHBC6S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 22:58:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533172185; x=1564708185;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=AtCiDbQqiJV6h8y6PE0sPv0D/QVuEFu/r1gXu28beLU=;
-  b=TL9iiEdbubLuvB/ieWRdmARKO2OKIEv/J15Y1zBTlSVM01ZpHoWCG0lO
-   yrPQzD2m0vZqFIBTlSXwxUNCWt+D58lD1JGwSd3OzCqzHZ9xRPfH+GyNd
-   zjzwZNyEz2zUHfJcGL+UQowTJHlwoTT55g/EWCY/5GUc0GR0/ald4gU3B
-   YkfHK8qNYJbKRSKyzU5XHiNXcsSmpKJh+oa280ekd/WEAZyjtBRSJ8Lg7
-   g5tiI8F/BTJmJHz15PwIe/pCAmqgdlQzLxzW4AcYD5M3BhHOU8iHEebNa
-   R9F/IUFC9QnbcFQx4HTRMqgH5p69rRn2iwmB083mqahOdlng47xzU4t8h
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.51,434,1526313600"; 
-   d="scan'208";a="89523221"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Aug 2018 09:09:44 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 01 Aug 2018 17:58:07 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 01 Aug 2018 18:09:44 -0700
-Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <20180726143723.16585-1-hch@lst.de>
- <20180726143723.16585-8-hch@lst.de>
- <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com>
- <dc69d688-f765-74cc-3234-563fecff6002@wdc.com> <20180731165712.GA2521@lst.de>
- <dcb17e67-9f83-0ff5-a2c6-a6dd1b4d9c0d@wdc.com>
- <20180801121656.GA25806@lst.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <1b380e3c-e137-ebe9-4528-852062d2192e@wdc.com>
-Date:   Wed, 1 Aug 2018 18:09:42 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 1 Aug 2018 23:03:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:39091 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbeHBDDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 23:03:53 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41gsfn0PqVz9s3q;
+        Thu,  2 Aug 2018 11:15:12 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533172516;
+        bh=O/Gduby3zNHwTEX3Yl2JtXQ/2dAnsnMaj43SOXnStHc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=djPQ6F9wNgnuGZKCCThfq7clsS1PHAiW3xgy5/rmYcfLxxhRJU3k8i8gwS+AoAjD9
+         75najSEeWM8jqyvZo5sEKb3wzlxfzY2/FZtO30B76ZvfPJBVwR0ibKpJ2TBI6iHzVt
+         Gtm7oK2IrF+WZpuz1wzBOpmKni9O/bKspys3YTrFXT6icoesM6aN87Ax7FwHpJAaem
+         THg2XeoPt9OxTFw46kS0dVMQLRvdhT3udm+Gd74Aow3zo0eHAJ6YOTLb/bl4pMgIeF
+         gcp2rIzTBGbvhp3VhQOOJS+XoDR8cwXngWCuNsPsJ6prP0lCPeblNqgoyBaRXOFnBi
+         plLu9P4DYIW9A==
+Date:   Thu, 2 Aug 2018 11:15:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jonathan Corbet <corbet@lwn.net>, Theodore Ts'o <tytso@mit.edu>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: linux-next: manual merge of the jc_docs tree with the ext4 tree
+Message-ID: <20180802111512.3a467ff5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180801121656.GA25806@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7=12L=sr.Fv+AsRsDlGk3uz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/18 5:12 AM, Christoph Hellwig wrote:
-> On Tue, Jul 31, 2018 at 05:38:01PM -0700, Atish Patra wrote:
->> crash details are at
->> https://paste.debian.net/1036078/
-> 
-> Is this running without kallsyms?  It seems to lack useful symbols
-> and a backtrace unfortunately.
-> 
-Yes. I checked the config. All KALLSYMS options and STACKTRACE are enabled
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-CONFIG_KALLSYMS=y
-CONFIG_KALLSYMS_ALL=y
-CONFIG_KALLSYMS_BASE_RELATIVE=y
+Hi all,
 
-CONFIG_STACKTRACE_SUPPORT=y
-CONFIG_STACKTRACE=y
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-Not sure if I missed something.
+  Documentation/index.rst
 
-Regards,
-Atish
+between commit:
+
+  6684874af063 ("docs: create filesystem internal section")
+
+from the ext4 tree and commit:
+
+  85c32d9c6f3e ("doc: move away translations from top-level index")
+
+from the jc_docs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/index.rst
+index f95ba981f8cd,5d310d960f82..000000000000
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@@ -102,40 -104,13 +104,24 @@@ implementation
+ =20
+     sh/index
+ =20
+ +Filesystem Documentation
+ +------------------------
+ +
+ +The documentation in this section are provided by specific filesystem
+ +subprojects.
+ +
+ +.. toctree::
+ +   :maxdepth: 2
+ +
+ +   filesystems/ext4/index
+ +
+- Korean translations
+- -------------------
+-=20
+- .. toctree::
+-    :maxdepth: 1
+-=20
+-    translations/ko_KR/index
+-=20
+- Chinese translations
+- --------------------
++ Translations
++ ------------
+ =20
+  .. toctree::
+-    :maxdepth: 1
+-=20
+-    translations/zh_CN/index
+-=20
+- Japanese translations
+- ---------------------
+-=20
+- .. toctree::
+-    :maxdepth: 1
++    :maxdepth: 2
+ =20
+-    translations/ja_JP/index
++    translations/index
+ =20
+  Indices and tables
+  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiWyAACgkQAVBC80lX
+0GxhKAgAmxX4uTddswsJeFVLG4euFxLC2EbdjLawn7+ZFazDNrneLbOVuW2zq6+I
+Ww525gMYrZImk1JxllMUw2JcSwSEiUNvkoqSPk1ZSbEbvhu1AT7XPNDs00+tiMrc
+UXnss5tnDAy9czB2eZBdzmLxdOc98Q4QMNoDdTf+9sG25jDwInfFWeT+uitSHyvN
+kx+h9DDKSYm/W2ydLzXgLPslvauKtOkrwpsvzGzI/aW17oUXP1X5ZJWozWOxaUt/
+A6jP+U/RlAHe0reKHC0WmS/pugWoKBEtxmAMlulILxVm9PpmDef7okqqAdrNlfCl
+c/6J/1AW6+C37KmX+xlmKA0YpvkmCQ==
+=oAag
+-----END PGP SIGNATURE-----
+
+--Sig_/7=12L=sr.Fv+AsRsDlGk3uz--
