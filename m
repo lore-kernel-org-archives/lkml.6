@@ -2,107 +2,107 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820B9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 150D1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43155208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43155208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B1792208DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZMNPrncs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1792208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeHBIBp (ORCPT
+        id S1726745AbeHBICM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:01:45 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10609 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726145AbeHBIBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:01:45 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C434D3B7AB123;
-        Thu,  2 Aug 2018 14:12:07 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
- 14:12:02 +0800
-Subject: Re: linux-next: build failure after merge of the staging tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Gao Xiang <gaoxiang25@huawei.com>, Greg KH <greg@kroah.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Linus <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180730161622.3837cb15@canb.auug.org.au>
- <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
- <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
- <20180802010705.24a72730@canb.auug.org.au>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fb9fb971-c607-c93e-d16f-16534edb8224@huawei.com>
-Date:   Thu, 2 Aug 2018 14:12:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 04:02:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44012 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbeHBICM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:02:12 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7264539122915;
+        Thu, 2 Aug 2018 06:12:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=kS4foqt/6bOC8QY3RGD+ah6CP+9XssfnGY2zOFQUmgw=;
+ b=ZMNPrncsQfVmzGl3/iKzss4RPlJg1Z6HzqJ58p/Rp8r4NpXtO76Dyw7qsKQcZKmpw5ib
+ OhWS4X7jLg0m/B31+SczAXvKc35PK8aEVf0T+9ax961vyyMQYWdAgiUmedeN65UawDML
+ vW6SkJ/7jHJ/JdGfHM5cwial0GAv4AcmMFIAkmdkJ7cKJTkQD6yIsg6gkD7Ti8jtECWT
+ vT2Kd3Ermzfph2t8INelVfxofCb3cJy1K+2sFVCZK5y/Ifo+DVidG+3PVYG49QgpenGC
+ ksXjJ27Px7dTgH7wUFcQJVmAzjx20cjxDaT6QISRhwn67VWpaT2J+tkAjOLo0u4fqE+9 Rw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2kggep9qbk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Aug 2018 06:12:38 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w726Cbvh011902
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Aug 2018 06:12:37 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w726CaFq023232;
+        Thu, 2 Aug 2018 06:12:36 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Aug 2018 23:12:36 -0700
+Date:   Thu, 2 Aug 2018 09:12:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jheng-Jhong Wu <goodwater.wu@gmail.com>
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: mt29f_spinand: fix memory leak while
+ programming pages
+Message-ID: <20180802061229.vg4zefomfxek4vvi@mwanda>
+References: <1533116658-14924-1-git-send-email-goodwater.wu@gmail.com>
+ <20180801114518.ajkgsx7exjny63mt@mwanda>
+ <CALtPoQCyoe5V0m5=3K1XeZm41aDCaJ0rmYU-a=qkm=Yb8jgMxg@mail.gmail.com>
+ <CALtPoQA7EdUDmN26Z406J6gFFx4XLUy1zTb65x8MgTVpoG57tg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180802010705.24a72730@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALtPoQA7EdUDmN26Z406J6gFFx4XLUy1zTb65x8MgTVpoG57tg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8972 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=828
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808020066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-Sorry, yesterday I missed this email due to my email filter.
-
-On 2018/8/1 23:07, Stephen Rothwell wrote:
-> Hi Chao,
+On Thu, Aug 02, 2018 at 11:42:30AM +0800, Jheng-Jhong Wu wrote:
+> Dear Dan,
 > 
-> On Wed, 1 Aug 2018 17:09:13 +0800 Chao Yu <yuchao0@huawei.com> wrote:
->>
->> Xiang has submitted several patches as below to fix compiling error on -next
->> tree, could you consider to merge those temporary fixes into -next after merging
->> staging-next's updates, and reenable CONFIG_EROFS_FS for further integrity
->> compiling and test?
->>
->> staging: erofs: fix superblock/inode flags (MS_RDONLY -> SB_RDONLY, S_NOATIME)
->> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
->>
->> staging: erofs: remove RADIX_TREE_EXCEPTIONAL_{ENTRY, SHIFT}
->> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000283.html
->>
->> staging: erofs: update .mount and .remount_sb
->> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000285.html
+> I know what you wrote, but before the spinand device is removed and
+> freed memory automatically, programming pages may do many many times.
+> Assume we erase and rewrite a large part of the flash, then
+> spinand_program_page() might exhaust memory if memory is not large
+> enough.
+> In fact, OOM indeed occured when I tested programming multi-pages by
+> mtd_debug tool.
+> If OOM was not caused by devm_kzalloc() in spinand_program_page(),
+> what may exhaust memory?
 > 
-> OK, I will apply those tomorrow (actually later today :-)) and and stop
-> disabling CONFIG_EROFS_FS.
 
-OK, thanks for doing that, I and Xiang will keep an eye on compile result.
+Ok.  That makes sense.  I didn't look at it in context.  You should say
+that sort of thing in your changelog.  Looking at it now, the devm_
+model isn't right for this function so we should change it to use normal
+kzalloc().
 
-> 
->> BTW, for this condition that erofs was not covered by some common vfs
->> stuff changes in other one's tree, who should take care of those
->> missing fixes during coming next merge window?
-> 
-> It might be easiest for Greg to add the disabling CONFIG_EROFS_FS patch
-> to the staging tree itself for his first pull request during the merge
-> window and then send a second pull request (after the vfs and maybe the
-> Xarray stuff has been merged by Linus) with these patches followed by a
-> revert of the disabling patch.
+We should fix all the error paths as well.  It looks like if this
+function starts returning errors, we are probably toasted, but it's
+still good practice to avoid slow leaks.
 
-Thanks for the advice, I think that's a good way to solve the issue, let me send
-a patch to disable erofs compiling temporarily to avoid conflict during merge
-window. :)
+regards,
+dan carpenter
 
-Thanks,
-
-> 
 
