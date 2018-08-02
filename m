@@ -2,126 +2,114 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B969C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8C7C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C3621525
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:19:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="HFGg0RD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C3621525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id 8087121501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:21:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8087121501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387683AbeHBRK7 (ORCPT
+        id S1732599AbeHBRM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:10:59 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33781 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387456AbeHBRK7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:10:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id x5-v6so1093557edr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 08:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FtBjHKBRWCTND0nq29zdYttazcwXXmGJgqYkpmhpM60=;
-        b=HFGg0RD5Fj6clhPSUOZd/4T3XzAISnjU0+RNDwI4X7L5EY9d/zFCOZcVohV0eA5frZ
-         mV95S0jgBwaVBCfORJqO/PmMBiQNn9kCxuDhmL/PN5MQufrKJ8j8yDPRTPkWzcn75vY5
-         5bywSrzksk5otuACjqFE1AhbcSp0h8TpRKBG9H6aT4mnCFzEOXTniwEuUm2ClKCl/fp7
-         i03QyzsnQpX0iuc08rvxW1F6I6gVRYasKuRBtesesX0ku52SHXe1z6ZNt7f9O7P2/vMB
-         eBSe1fTiy/E+BzFrjMFNzpwSAk5384jvhrk3UK6lBRe6hYz6kLBtL8Jo3Fgf+Z9r1+Zu
-         ZX+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FtBjHKBRWCTND0nq29zdYttazcwXXmGJgqYkpmhpM60=;
-        b=UNHFX/vI/5u3t33n95JdDpeVZzFkYTpNAPngcmRH8IsnxwAypJdc8r2fBq3pdIl3Ey
-         sRXRV3Lm3LkRw64Bas1dSr9TZjFxx+VxbyHEYwFG1d7I/NjTs4i+8Lv65C5T4wAINz0l
-         Wax59YPqv+TwNgfWOyJBTyUHBKyCzxwTCUsqJarSFi/sWmxy1CYOMiCbWBUVgk8oDhTQ
-         UnTXtlX5uT8I5Tlznxf/qeaEvL8TWF7gOKW6/n8vogpaPFaMa/8Op9TJ/utbSkKeNvf5
-         rEzRNSri2Ugr3k7xCbZlWHIm07q2p1zPe+0oaJpNK3PgGQ+QIN9TYzPJVcsobLW4ImDb
-         50mg==
-X-Gm-Message-State: AOUpUlFBYT/daE/kINA1+LLMeIThc8DY3vKUth/8zL/BgRmRUykQ0wRE
-        QM3RLJ28Wyi9Cv7iC3F4VO9hZw==
-X-Google-Smtp-Source: AAOMgpdyED36QLv8abxDILBk2cS1GVpv7p3xgtVHN9Qr3qMUKM3R+01Zb6gCEZJkgYtcjeS+xJhu+w==
-X-Received: by 2002:a50:9069:: with SMTP id z38-v6mr3855999edz.79.1533223160091;
-        Thu, 02 Aug 2018 08:19:20 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id c25-v6sm865750edt.54.2018.08.02.08.19.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 08:19:16 -0700 (PDT)
-Message-ID: <1533223155.2679.136.camel@arista.com>
-Subject: Re: [PATCHv3] lib/ratelimit: Lockless ratelimiting
-From:   Dmitry Safonov <dima@arista.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Date:   Thu, 02 Aug 2018 16:19:15 +0100
-In-Reply-To: <20180801214855.3ae1abb9@vmware.local.home>
-References: <20180703225628.25684-1-dima@arista.com>
-         <1531789154.18720.3.camel@arista.com>
-         <CAHp75VdmQ1YLzWpYb7878zKOCCyOEicdLAtpohbmY2hL1h1RNg@mail.gmail.com>
-         <20180720150948.nv57fjmmrmo2r7rx@pathway.suse.cz>
-         <1532100816.18720.44.camel@arista.com>
-         <20180801214855.3ae1abb9@vmware.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 13:12:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:59430 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732533AbeHBRM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:12:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C68C280D;
+        Thu,  2 Aug 2018 08:21:20 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 824AB3F5B3;
+        Thu,  2 Aug 2018 08:21:16 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 16:21:11 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     skannan@codeaurora.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
+ aggregation method
+Message-ID: <20180802152109.2k45jqbfquef6u62@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-11-quentin.perret@arm.com>
+ <331552975e858911db66bc78c2c8e720@codeaurora.org>
+ <20180802123315.GV2476@hirez.programming.kicks-ass.net>
+ <20180802124511.GN2512@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802124511.GN2512@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
-Thanks for your reply,
-
-On Wed, 2018-08-01 at 21:48 -0400, Steven Rostedt wrote:
-> I'm just catching up from my vacation. What about making rs->missed
-> into an atomic, and have:
+On Thursday 02 Aug 2018 at 14:45:11 (+0200), Peter Zijlstra wrote:
+> On Thu, Aug 02, 2018 at 02:33:15PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 30, 2018 at 12:35:27PM -0700, skannan@codeaurora.org wrote:
+> > > On 2018-07-24 05:25, Quentin Perret wrote:
+> > > If it's going to be a different aggregation from what's done for frequency
+> > > guidance, I don't see the point of having this inside schedutil. Why not
+> > > keep it inside the scheduler files? Also, it seems weird to use a governor's
+> > > code when it might not actually be in use. What if someone is using
+> > > ondemand, conservative, performance, etc?
+> > 
+> > EAS hard relies on schedutil -- I suppose we need a check for that
+> > somewhere and maybe some infrastructure to pin the cpufreq governor.
 > 
-> 	if (!raw_spin_trylock_irqsave(&rs->lock, flags)) {
-> 		atomic_inc(&rs->missed);
-> 		return 0;
-> 	}
+> Either that or disable EAS when another governor is selected.
 > 
-> ?
-
-Uhm. Do you mean as a preparation patch to split this on two patches?
-Because it will not solve the issue where one CPU has taken rs->lock,
-and is updating rs->printed, checking burst and whatnot; while the
-second CPU will loose the message which was even *under* burst limit.
-
-I.e.: there are enough of printk_ratelimit() users in tree and a
-message from one can be suppressed, while shouldn't.
-
-> You would also need to do:
+> > We're simply not going to support it for anything else.
 > 
-> 	if (time_is_before_jiffies(rs->begin + rs->interval)) {
-> 		int missed = atomic_xchg(&rs->missed, 0);
-> 		if (missed) {
-> 
-> So that you don't have a race between checking rs->missed and setting
-> it
-> to zero.
+> To clarify, it makes absolutely no sense what so ever to attempt EAS
+> when the DVFS control is not coordinated.
 
--- 
+I tend to agree with that, but at the same time even if we create a very
+strong dependency on schedutil, we will have no guarantee that the actual
+frequencies used on the platform are the ones we predicted in EAS.
+
+There are a number of reasons why a frequency request might not be served
+(throttling, thermal capping, something HW-related, ...), so it's hard
+to enforce the EAS model in practice.
+
+The way I see things, EAS needs to assume that OPPs follow utilization.
+Sugov does something that looks like that too, and it's also in the
+scheduler, so that makes sense to try and factorize things, especially
+for maintenance purpose. But I feel like the correlation between the two
+could stop here.
+
+If you use some sort HW governor that tries to always have some idle time
+on the CPUs, then the assumption that OPPs follow utilization isn't _totally_
+wrong. There should be a (loose) relation between what EAS 'thinks'
+and the reality. And if this isn't true, then you might make slightly
+sub-optimal decisions, but I'm not sure if there is anything we can do
+about it :/
+
+The scheduler works with various models which, by definition, don't
+always perfectly reflect the reality. But those models are useful
+because they enable us to reason about things and make decisions. EAS uses
+a model where OPPs follow utilization. I think it's just another model
+to the list, and we can't really enforce it strictly in practice anyway,
+so we will have to live with its inaccuracies I suppose ...
+
+I hope that makes sense :-)
+
 Thanks,
-             Dmitry
+Quentin
