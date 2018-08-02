@@ -2,104 +2,129 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAF4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B14C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C182154D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pSdqpVKM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C182154D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EA32121501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA32121501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387422AbeHBTKv (ORCPT
+        id S1732261AbeHBTLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:10:51 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51667 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732395AbeHBTKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:10:50 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so3395177wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z4wbxk/n9WK646OOk+xWHw+425xgHexLf0Sb56gT10k=;
-        b=pSdqpVKMEdeiCDCDbR3vzJfDUazFqGAdXsHVJtoH2f18WcVucjHGfxArJcVdhDVe+d
-         2Jxe9nNyRKHoqZlb1a69vZhruNK+KfpCjeoNlHP2teKtOPj/AZay2zQD0gvUVz8NUrPf
-         D1Pktfo+bKILNohX1A3SH7124zRuj43xsoDTBN3G2UYpXsR/gJYVJMLD3CEvhmousJEA
-         mYF9oLI1OtRI4Q56pfZGiEvw/l1ARkWTeGrcDL+Q2CtLIVCNWnf3Wuhvege0kvvsGA13
-         28laA6yYd0opd6PtLtok1XEylu1MNN5y6zb8FqAt/H1NhCqr4hXkDk7oN7ezZNZhl2c4
-         k/UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=z4wbxk/n9WK646OOk+xWHw+425xgHexLf0Sb56gT10k=;
-        b=l2/NSWFa3ov2GtTI61Nd5350kN4nqVUQwDSwMtGSXxp1b97+MEmg5PVZXvTyU9LbeI
-         ZV3h7St6xxKF5liNRSVqzQseZCsWTzuRZdmqV6x1bPgp5AGrjsLhfxThkxIH06q1wPdH
-         DssXkmih97H+453AIrLrLSAKQhk33bhkZrC305YUnsQq25xAqkNFaN0tKriitWeveTSk
-         gUYQbtniQc3r0EB1Gu/IzmFd4XVntWNOdi/lrv++qHrOM2MMsvuiLAB/iGdLqCE4Eyz7
-         ypunSvLyw1oeO9p1Hz9hMiNrVHc+nF+SycBQGHpXhssq1Bw7RQWcpfVRzp/A8Jnp3Onf
-         7JMA==
-X-Gm-Message-State: AOUpUlHxUIlx7gurqRwCzA2P+9PUxChazPPSRp4Sme6bOF2YI+hNzWfX
-        SSCnDFztnaFztCXdQX/bIzE=
-X-Google-Smtp-Source: AAOMgpfUVW+Vone7AW2wvHeqGz8cRr5yAOPu8b0czD07PYTE+492hmiQZAfnq7NwFV9Hwiowx5CJNw==
-X-Received: by 2002:a1c:4405:: with SMTP id r5-v6mr2454825wma.4.1533230325949;
-        Thu, 02 Aug 2018 10:18:45 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm3205081wrn.34.2018.08.02.10.18.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 10:18:45 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/6] staging: rtl8188eu: cleanup block comment - style
-Date:   Thu,  2 Aug 2018 19:18:20 +0200
-Message-Id: <20180802171823.1571-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180802171823.1571-1-straube.linux@gmail.com>
-References: <20180802171823.1571-1-straube.linux@gmail.com>
+        Thu, 2 Aug 2018 15:11:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55326 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726938AbeHBTLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 15:11:51 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0442B40287F6;
+        Thu,  2 Aug 2018 17:19:47 +0000 (UTC)
+Received: from redhat.com (ovpn-117-57.ams2.redhat.com [10.36.117.57])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 443AE10CD7D5;
+        Thu,  2 Aug 2018 17:19:42 +0000 (UTC)
+Date:   Thu, 2 Aug 2018 20:19:41 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180802200646-mutt-send-email-mst@kernel.org>
+References: <20180730125100-mutt-send-email-mst@kernel.org>
+ <20180730111802.GA9830@infradead.org>
+ <20180730155633-mutt-send-email-mst@kernel.org>
+ <20180731173052.GA17153@infradead.org>
+ <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+ <20180801081637.GA14438@arm.com>
+ <20180801083639.GF26378@infradead.org>
+ <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+ <20180802182959-mutt-send-email-mst@kernel.org>
+ <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:19:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:19:47 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup a block comment to conform with kernel coding style.
-Also cleans 'line over 80 characters' checkpatch warnings.
+On Thu, Aug 02, 2018 at 11:01:26AM -0500, Benjamin Herrenschmidt wrote:
+> On Thu, 2018-08-02 at 18:41 +0300, Michael S. Tsirkin wrote:
+> > 
+> > > I don't completely agree:
+> > > 
+> > > 1 - VIRTIO_F_IOMMU_PLATFORM is a property of the "other side", ie qemu
+> > > for example. It indicates that the peer bypasses the normal platform
+> > > iommu. The platform code in the guest has no real way to know that this
+> > > is the case, this is a specific "feature" of the qemu implementation.
+> > > 
+> > > 2 - VIRTIO_F_PLATFORM_DMA (or whatever you want to call it), is a
+> > > property of the guest platform itself (not qemu), there's no way the
+> > > "peer" can advertize it via the virtio negociated flags. At least for
+> > > us. I don't know for sure whether that would be workable for the ARM
+> > > case. In our case, qemu has no idea at VM creation time that the VM
+> > > will turn itself into a secure VM and thus will require bounce
+> > > buffering for IOs (including virtio).
+> > > 
+> > > So unless we have another hook for the arch code to set
+> > > VIRTIO_F_PLATFORM_DMA on selected (or all) virtio devices from the
+> > > guest itself, I don't see that as a way to deal with it.
+> > > 
+> > > >  The other issue is VIRTIO_F_IO_BARRIER
+> > > > which is very vaguely defined, and which needs a better definition.
+> > > > And last but not least we'll need some text explaining the challenges
+> > > > of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
+> > > > is what would basically cover them, but a good description including
+> > > > an explanation of why these matter.
+> > > 
+> > > Ben.
+> > > 
+> > 
+> > So is it true that from qemu point of view there is nothing special
+> > going on?  You pass in a PA, host writes there.
+> 
+> Yes, qemu doesn't see a different. It's the guest that will bounce the
+> pages via a pool of "insecure" pages that qemu can access. Normal pages
+> in a secure VM come from PAs that qemu cannot physically access.
+> 
+> Cheers,
+> Ben.
+> 
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I see. So yes, given that device does not know or care, using
+virtio features is an awkward fit.
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index 82fc5075e0a6..6925ec48dff1 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -43,9 +43,11 @@ static void rtl8188eu_cal_txdesc_chksum(struct tx_desc	*ptxdesc)
- 	ptxdesc->txdw7 |= cpu_to_le32(0x0000ffff & checksum);
- }
- 
--/*  Description: In normal chip, we should send some packet to Hw which will be used by Fw */
--/*			in FW LPS mode. The function is to fill the Tx descriptor of this packets, then */
--/*			Fw can tell Hw to send these packet derectly. */
-+/*
-+ * In normal chip, we should send some packet to Hw which will be used by Fw
-+ * in FW LPS mode. The function is to fill the Tx descriptor of this packets,
-+ * then Fw can tell Hw to send these packet derectly.
-+ */
- void rtl8188e_fill_fake_txdesc(struct adapter *adapt, u8 *desc, u32 BufferLen, u8  ispspoll, u8  is_btqosnull)
- {
- 	struct tx_desc *ptxdesc;
+So let's say as a quick fix for you maybe we could generalize the
+xen_domain hack, instead of just checking xen_domain check some static
+branch.  Then teach xen and others to enable that.
+OK but problem then becomes this: if you do this and virtio device appears
+behind a vIOMMU and it does not advertize the IOMMU flag, the
+code will try to use the vIOMMU mappings and fail.
+
+It does look like even with trick above, you need a special version of
+DMA ops that does just swiotlb but not any of the other things DMA API
+might do.
+
+Thoughts?
+
 -- 
-2.18.0
-
+MST
