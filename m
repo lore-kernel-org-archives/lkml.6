@@ -2,102 +2,119 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64C2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF742C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713E921501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:56:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGTHXGU0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713E921501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 74C7F21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C7F21501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732365AbeHBOrV (ORCPT
+        id S1732425AbeHBOtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:47:21 -0400
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:44888 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732110AbeHBOrV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:47:21 -0400
-Received: by mail-qt0-f179.google.com with SMTP id b15-v6so2073601qtp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 05:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GLyB/82VIzTzdmHxzT2S/kEVm7jpJGLASkuCq657Awg=;
-        b=CGTHXGU02puxzzGUBuDIIREbNcbzEZSvx170/XibPIOATuZuv/2mqP9ZMCbNpYi9dU
-         IwKpiJY421HOswTMm4ycb4Zm1bHFsU8n8xNpWAteHzX9z/gLl/gBAaXd7wIQdjjGVPs5
-         4oDRIojCCNvkYUdaZCYKDMU2onIynmEtJeMnZowFZjeOKElDZQ7Tf+b9sW8IkegdREBs
-         Vk8zj9WYJ/fSmen3NDmhuQnwi2piIEykd53BIkaAH1QBsxVKZ2W7uP3GAZSa/F0etBQk
-         D/pOhnWD60Fjms4drSpUNge7wLsQN/Ugzc+iVUBheBWoSEZaEF8JRB7nece+Y4RX/7I9
-         c0Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GLyB/82VIzTzdmHxzT2S/kEVm7jpJGLASkuCq657Awg=;
-        b=G7O/KzDH+op/nNNVbyERrwq9lkuyH7aSfZ0mvZK6uqr6mnqsT3kAGdPkw7l+jR6xHY
-         FRuLqO5b1I+KqWD9o30pAtFybd6TZiP3F018HHtsmn5DCpVbXjgs7kNxIV+DxVYuIUXc
-         toCgqTN0v6owTQsRIbmmUEDQfapTQ6bzsU5Woi3nmuua5qKvW0bxF11dLX2kbA6npFXK
-         BUbJCxHLVgHMWk5OUMwI8UoMumjrLKN9L29PoO3UwLzkXOND/uTcyl6B2wsBnWMAuYed
-         FsjrVtLjymKxy5kuSU2tVaj6bP/2NmzE7Z0igClE8dteYzAS9tf/G/230Hz04U0Sro4E
-         2v1w==
-X-Gm-Message-State: AOUpUlGsAQOeWUi0hUoTuVeSQ+qVc/cazXYAeiiu4mKeVV8IwR5XMPUi
-        1K4z3FFxxbnNYYVQb9eMetEDPcrA7ZXrSXdl3UY=
-X-Google-Smtp-Source: AAOMgpc+4X9Zc2zuKUw+du4bwVYSeON/igA/Z31gUx629xFc7hMQH+UaAweQ2abY5sjMlj73auv6kdl14CiHCXkYMgk=
-X-Received: by 2002:ac8:6055:: with SMTP id k21-v6mr2521553qtm.204.1533214576386;
- Thu, 02 Aug 2018 05:56:16 -0700 (PDT)
+        Thu, 2 Aug 2018 10:49:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58746 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732367AbeHBOtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:49:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8F05A40241EA;
+        Thu,  2 Aug 2018 12:57:59 +0000 (UTC)
+Received: from [10.36.117.197] (ovpn-117-197.ams2.redhat.com [10.36.117.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CCC45213ED6A;
+        Thu,  2 Aug 2018 12:57:58 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: Skip pae_root shadow allocation if tdp enabled
+To:     Liang Chen <liangchen.linux@gmail.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180725083214.7703-1-liangchen.linux@gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2027f8c1-15c6-1c2a-65b0-cc7f095af28d@redhat.com>
+Date:   Thu, 2 Aug 2018 14:57:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a0c:c482:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 05:56:15 -0700 (PDT)
-In-Reply-To: <20180802132956.6b7110ed@alans-desktop>
-References: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
- <CACVXFVPpSJDqR8ki2PiDBbU36KsGFMYsOEf_9bmN6Cpo3w_YoQ@mail.gmail.com>
- <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
- <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com> <20180802132956.6b7110ed@alans-desktop>
-From:   Jeff Chua <jeff.chua.linux@gmail.com>
-Date:   Thu, 2 Aug 2018 20:56:15 +0800
-Message-ID: <CAAJw_ZsAUstFKrMQCy5AguyXb9=oQVecN2+b5G8ubQqLUp1YTQ@mail.gmail.com>
-Subject: Re: How to secure erase PCI-E NVME SSD connected via USB3?
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Ming Lei <tom.leiming@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180725083214.7703-1-liangchen.linux@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 02 Aug 2018 12:57:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 02 Aug 2018 12:57:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 8:29 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
->> # hdparm --user-master u --security-erase p /dev/sda
->> (returns immediately and does nothing).
->>
->> I've tried hdparm on an SSD connected via USB3 and it secure-erased ok.
->>
->> Anyone working on this?
->
-> Sounds to me like you need to contact the vendor of the interface in
-> question. If it accepted a security erase command and didn't do it then
-> it's broken. It's at liberty to refuse it, or report it doesn't know what
-> you are talking about, but if it just returned and after re-plugging the
-> device its still using the old keys then it or the device is busted and
-> it's not something the OS can do much about.
+On 25/07/2018 10:32, Liang Chen wrote:
+> Considering the fact that the pae_root shadow is not needed when
+> tdp is in use, skip the pae_root shadow page allocation to allow
+> mmu creation even not being able to obtain memory from DMA32
+> zone when particular cgroup cpuset.mems or mempolicy control is
+> applied.
+> 
+> Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+> ---
+>  arch/x86/kvm/mmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index d594690..af8cc1e 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -5029,6 +5029,9 @@ static int alloc_mmu_pages(struct kvm_vcpu *vcpu)
+>  	struct page *page;
+>  	int i;
+>  
+> +	if (tdp_enabled)
+> +		return 0;
+> +
+>  	/*
+>  	 * When emulating 32-bit mode, cr3 is only 32 bits even on x86_64.
+>  	 * Therefore we need to allocate shadow page tables in the first
+> 
 
-Alan,
+Queued, thanks.
 
-You're right. I wrote to JMicron, and they are kind to reply that
-"hdparm not support secure-erase feature with USB to NVMe device", and
-told me to plug the card into a PCI slot to perform the
-security-erase.
-
-I'm asking JMicron again if the JMS583 even support security-erase.
-
-Thanks,
-Jeff
+Paolo
