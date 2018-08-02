@@ -2,106 +2,274 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50281C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDA0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0183E2150E
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:16:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvqPWRBB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0183E2150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C386A2151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:17:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C386A2151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732546AbeHBQIP (ORCPT
+        id S1732571AbeHBQIt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:08:15 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:33619 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732283AbeHBQIP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:08:15 -0400
-Received: by mail-io0-f193.google.com with SMTP id z20-v6so2003913iol.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 07:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IdF7jUEexRC4GbnJH7EPr1jr8K9tF5uKiVoaWGfOuMI=;
-        b=TvqPWRBBwZq+asp0Lf0wUBIErRz8bj3xUgb6E8/hMUZNqbx2WEtH5WoRPIURc1MSAK
-         McNywcshro03blTyWFGKqInFZX+IJcp2l4VKYBzkQrt2ay0kX9i4UA4uxDHNBjhYkSO3
-         vFnj2e1LD2M6yPEhz3ghOrRvjc7dfSMNnBmwCJUZOEWYn7nsDs4sJX55EPHqhSt+3aBX
-         s7h+3PBNIItSdV37QKI9QDU0U0IVSer5ibQZzAtqowTuIPHixtbaSWEP1Ja1ELDZ1DMO
-         Ll4ImBh77A9FIidNgHnbOuDfbLf0ehxZlgbdjBPMGRRf8UZeNSouEV8vxIMhbTxFUw7i
-         Phow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IdF7jUEexRC4GbnJH7EPr1jr8K9tF5uKiVoaWGfOuMI=;
-        b=Gd7T/Kxfn3jwr2mswxVY0ORHD7plTvG59mqNikhWITM5rqMZo79dkyeaVcxrVpAQxH
-         4UWh+QGnxqD5ZnrrC/tlL85uISSfk9LgkT/zRXn/QTduEEhHVT9FMEKQb5/VFC05cuxY
-         i4bYdw8MnontQy2mR1j/isad1stm2g97buC+FQHHFa+RVQK6qq/ZyCPo62HGZWSNmHMd
-         LV7nWdnpfKIW9mX17e+SIN9IBSf4yiG06LacEJwJ6ywoAeH+UaZLY5Pitb07UZ/0aahz
-         lYuXyUL2oE5u3lN2Kd5WvuXa7fmd3w81Q+OJANk0z4zbOtCNIzkTXrkI9voTPQVoB3eB
-         TNEg==
-X-Gm-Message-State: AOUpUlGiK9vKvi0sAK7OdU9/s8Ykv5Cam+QLYQwpjyMHMFe6j2OaO8p5
-        fXU5nRCdOWPJRIZ//RkFEmVsLhWquoM=
-X-Google-Smtp-Source: AAOMgpeLwTUWeGaVesbXIu+j2d95AI2ZWblwBqI3iW+z06pG3fY68VwNFiUBya2g7Lm+xU31XiCqxg==
-X-Received: by 2002:a6b:f40b:: with SMTP id i11-v6mr2400679iog.162.1533219410727;
-        Thu, 02 Aug 2018 07:16:50 -0700 (PDT)
-Received: from [100.71.5.67] ([184.151.246.124])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm528929iok.81.2018.08.02.07.16.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 07:16:49 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RESEND PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-From:   Alex Bounine <alex.bou9@gmail.com>
-X-Mailer: iPad Mail (15G77)
-In-Reply-To: <20180802140033.GH38497@guest228.east.isi.edu>
-Date:   Thu, 2 Aug 2018 10:16:48 -0400
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jwalters@isi.edu, Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <D6EE6CE1-FB11-41EB-B787-A093D26CE3E3@gmail.com>
-References: <20180731142954.30345-1-acolin@isi.edu> <20180731142954.30345-7-acolin@isi.edu> <20180801095404.GA17585@infradead.org> <fad8661c-cd8c-3a9c-ca03-5d2f63893a24@gmail.com> <CAMuHMdVDra1MKcuuD0SqEYXSggr0iVFcbcjL33z7JuiE1_y8yw@mail.gmail.com> <20180802134544.GG38497@guest228.east.isi.edu> <20180802135421.GA13512@infradead.org> <20180802140033.GH38497@guest228.east.isi.edu>
-To:     Alexei Colin <acolin@isi.edu>
+        Thu, 2 Aug 2018 12:08:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59010 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732419AbeHBQIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:08:48 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C3230D30E253A;
+        Thu,  2 Aug 2018 22:17:19 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
+ 22:17:20 +0800
+Message-ID: <5B63126A.6000702@huawei.com>
+Date:   Thu, 2 Aug 2018 22:17:14 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+MIME-Version: 1.0
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Linux Memory Management List" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Question] A novel case happened when using mempool allocate
+ memory.
+References: <5B61D243.9050608@huawei.com> <20180801153713.GA4039@bombadil.infradead.org> <5B62A30B.9000008@huawei.com> <20180802133134.GA11845@bombadil.infradead.org>
+In-Reply-To: <20180802133134.GA11845@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I will experiment with this idea.
-Please keep me in CC as well.
+On 2018/8/2 21:31, Matthew Wilcox wrote:
+> On Thu, Aug 02, 2018 at 02:22:03PM +0800, zhong jiang wrote:
+>> On 2018/8/1 23:37, Matthew Wilcox wrote:
+>>> Please post the code.
+>> when module is loaded. we create the specific mempool. The code flow is as follows.
+> I actually meant "post the code you are testing", not "write out some
+> pseudocode".
+>
+> .
+>
+The source code is as follow about mempool utility.
 
-Sent from my iPad
+**
+* @brief 元素的类型顺序与 @smio_mem_type_t的定义顺序一致
+*/
+static smio_mem_mng_t g_smio_mem[] =
+{
+{
+.name = "MEDIA_INFO",
+.min_pool_size = 128,
+.item_size = sizeof(smio_media_info_t),
+.slab_cache = NULL,
+},
+{
+.name = "DSW_IO_REQ",
+.min_pool_size = 1024,
+.item_size = sizeof(dsw_io_req_t),
+.slab_cache = NULL,
+},
+{
+.name = "DSW_IO_PAGE",
+.min_pool_size = 1024,
+.item_size = sizeof(dsw_page_t) * DSW_MAX_PAGE_PER_REQ,
+.slab_cache = NULL,
+},
+{
+.name = "32_ARRAY",
+.min_pool_size = 1024,
+.item_size = sizeof(void *) * 32,
+.slab_cache = NULL,
+},
+{
+.name = "SCSI_SENSE_BUF",
+.min_pool_size = 1024,
+.item_size = sizeof(char) * SCSI_SENSE_BUFFERSIZE,
+.slab_cache = NULL,
+},
+};
 
-> On Aug 2, 2018, at 10:00 AM, Alexei Colin <acolin@isi.edu> wrote:
-> 
->> On Thu, Aug 02, 2018 at 06:54:21AM -0700, Christoph Hellwig wrote:
->>> On Thu, Aug 02, 2018 at 09:45:44AM -0400, Alexei Colin wrote:
->>> If I move RapidIO option to drivers/Kconfig, then it won't appear under
->>> the Bus Options/System Support menu, along with other choices for the
->>> system bus (PCI, PCMCIA, ISA, TC, ...).
->> 
->> It's not like anyone cares.  And FYI, moving all those to
->> drivers/Kconfig is osmething I will submit for the next merge window.
-> 
-> Ok, I would appreciate a CC on that patch. After it lands, if
-> there is time, I'll resubmit a rebased version of this patch.
+/**
+* @brief 申请数据类型内存
+*
+* @param id 申请者模块ID
+* @param type 申请内存的类型
+*
+* @return 成功返回内存块的首地址;失败返回NULL
+*/
+void *smio_mem_alloc(smio_module_id_t id, smio_mem_type_t type)
+{
+void *m = NULL;
+smio_mem_mng_t *pool_mng = NULL;
+SMIO_ASSERT_RETURN(id < SMIO_MOD_ID_BUTT, NULL);
+SMIO_ASSERT_RETURN(type < SMIO_MEM_TYPE_BUTT, NULL);
+
+pool_mng = &g_smio_mem[type];
+
+SMIO_LOG_DEBUG("alloc %s, size: %d\n", pool_mng->name, pool_mng->item_size);
+
+m = mempool_alloc(pool_mng->pool, GFP_KERNEL);
+if (NULL == m)
+{
+return NULL;
+}
+
+memset(m, 0, pool_mng->item_size);
+
+atomic_inc(&pool_mng->statistics[id]);
+
+return m;
+}
+EXPORT_SYMBOL(smio_mem_alloc);
+
+
+/**
+* @brief 释放内存块
+*
+* @param id 申请者的模块ID
+* @param type 内存块的类型
+* @param m 内在的首地址
+*/
+void smio_mem_free(smio_module_id_t id, smio_mem_type_t type, void *m)
+{
+smio_mem_mng_t *pool_mng = NULL;
+SMIO_ASSERT(NULL != m);
+SMIO_ASSERT(id < SMIO_MOD_ID_BUTT);
+SMIO_ASSERT(type < SMIO_MEM_TYPE_BUTT);
+
+pool_mng = &g_smio_mem[type];
+
+mempool_free(m, pool_mng->pool);
+
+atomic_dec(&pool_mng->statistics[id]);
+}
+EXPORT_SYMBOL(smio_mem_free);
+
+
+/**
+* @brief 创建管理内在池
+*
+* @param pool_mng 内存类型管理结构
+*
+* @return 成功返回@SMIO_OK;失败返回@SMIO_ERR
+*/
+static int smio_mem_pool_create(smio_mem_mng_t *pool_mng)
+{
+int i;
+SMIO_ASSERT_RETURN(NULL != pool_mng, SMIO_ERR);
+
+pool_mng->slab_cache = kmem_cache_create(pool_mng->name,
+pool_mng->item_size, 0, 0, NULL);
+
+if (SMIO_IS_ERR_OR_NULL(pool_mng->slab_cache))
+{
+SMIO_LOG_ERR("kmem_cache_create for %s failed\n", pool_mng->name);
+return SMIO_ERR;
+}
+pool_mng->pool = mempool_create(pool_mng->min_pool_size, mempool_alloc_slab,
+mempool_free_slab, pool_mng->slab_cache);
+if (NULL == pool_mng->pool)
+{
+SMIO_LOG_ERR("pool create for %s failed\n", pool_mng->name);
+kmem_cache_destroy(pool_mng->slab_cache);
+return SMIO_ERR;
+}
+
+for (i = 0; i < SMIO_MOD_ID_BUTT; i++)
+{
+atomic_set(&pool_mng->statistics[i], 0);
+}
+
+return SMIO_OK;
+}
+
+
+/**
+* @brief 清除内存池
+*
+* @param pool_mng 所要清除的内存池
+*/
+void smio_mem_pool_destroy(smio_mem_mng_t *pool_mng)
+{
+SMIO_ASSERT(NULL != pool_mng);
+
+if (NULL != pool_mng->pool)
+{
+mempool_destroy(pool_mng->pool);
+pool_mng->pool = NULL;
+}
+
+if (NULL != pool_mng->slab_cache)
+{
+kmem_cache_destroy(pool_mng->slab_cache);
+pool_mng->slab_cache = NULL;
+}
+}
+
+
+/**
+* @brief 内存管理单元初始化
+*
+* @return 成功返回@SMIO_OK;失败返回@SMIO_ERR
+*/
+int smio_mem_init(void)
+{
+int i;
+int pool_num = (int) SMIO_ARRAY_SIZE(g_smio_mem);
+int ret = SMIO_OK;
+bool free = SMIO_FALSE;
+
+for (i = 0; i < pool_num; i++)
+{
+SMIO_LOG_INFO("memory of %s initialize, min_pool_size: %d, item_size: %d\n",
+g_smio_mem[i].name, g_smio_mem[i].min_pool_size, g_smio_mem[i].item_size);
+if (SMIO_OK != smio_mem_pool_create(&g_smio_mem[i]))
+{
+SMIO_LOG_ERR("memory of %s initialize failed\n", g_smio_mem[i].name);
+ret = SMIO_ERR;
+free = SMIO_TRUE;
+break;
+}
+}
+
+/* clean if smio_mem_pool_create failed*/
+while ((SMIO_TRUE == free) && (--i >= 0))
+{
+smio_mem_pool_destroy(&g_smio_mem[i]);
+}
+
+return ret;
+}
+
+
+/**
+* @brief 内存管理模块清除退出
+*/
+void smio_mem_exit(void)
+{
+int i;
+int pool_num = (int) SMIO_ARRAY_SIZE(g_smio_mem);
+
+for (i = 0; i < pool_num; i++)
+{
+smio_mem_pool_destroy(&g_smio_mem[i]);
+}
+}
+
+
+
