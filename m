@@ -2,104 +2,113 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BE3C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB93C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 577B920895
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2392720895
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dCFdy/3m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 577B920895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="PrsAWzEd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2392720895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbeHBMgA (ORCPT
+        id S1731848AbeHBMh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:36:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41396 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbeHBMgA (ORCPT
+        Thu, 2 Aug 2018 08:37:29 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.135]:26395 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbeHBMh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:36:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=C2eR26YrzddPTdVhhGlDs6gHYB+9/kXqfWSWHvtuk8Y=; b=dCFdy/3mhutM0tqOGYb+QMzjz
-        ybquzzvlX36jiGHqF5ZC/EaWf58NvjVTs2F2p0jD5Z3ItPcBS3BEMafabAgShaTZn6fXPf67yZKwO
-        3G+YaZEbrFjlnFS11avvwQRqxz6rl/X1goTIWJktxdJUfYcKYPYrahznDq39JT+cJ9oJM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1flB64-0001uQ-7C; Thu, 02 Aug 2018 10:44:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BC04611242E7; Thu,  2 Aug 2018 11:44:43 +0100 (BST)
-Date:   Thu, 2 Aug 2018 11:44:43 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
+        Thu, 2 Aug 2018 08:37:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533206809;
+        s=strato-dkim-0002; d=as-electronics.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Dwuepp3Kz8OY7lkVU6bYf0lR1ZRzlSASh5OstA1ZZwo=;
+        b=PrsAWzEdzKBhjZ6kcGJbKPkqrl2pMaq/5NCBI/cKlzZCvEmG+lFcjqT+BoB/oDG+fN
+        H92pQ13Dp32jqIQhvVDo/bmtDPj27yaVyjvMskzDfdpjC6vvXWSWUy3FsvLQUlJjkd5o
+        FZrOzjbY2viQTdnVo8t0p0o3R1HYjZorLIdP8bjFrdyrOrwGv1SHuR5cHmrFVp+tbEQH
+        eUgsMZgdxNSXaOIerwjqC21DhKS8ev/okeDvn+p/Nyp1B6EElEwtRAuiSO5gU9D94uSc
+        DeyjBK41Ewd7Uv//eL0lqYDBD7M7WwFoXkmdToFhswpzjARj9MUSLOtdYoywcouPwdLh
+        faSA==
+X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyOl37jyAS87PCGcNaCZVo5Ii+ho54367TWBV/lW2wDTBEfJgEO"
+X-RZG-CLASS-ID: mo05
+Received: from [IPv6:2001:16b8:24f5:3a00:953c:3d9b:ce66:61a3]
+        by smtp.strato.de (RZmta 43.14 AUTH)
+        with ESMTPSA id Z0998bu72Aka6n7
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 2 Aug 2018 12:46:36 +0200 (CEST)
+Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
+To:     Mark Brown <broonie@kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        Piotr Bugalski <pbu@cryptera.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180802104443.GH9117@sirena.org.uk>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
+        linux-mtd@lists.infradead.org,
+        Piotr Bugalski <bugalski.piotr@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>
+References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
+ <20180627131609.13681-6-bugalski.piotr@gmail.com>
+ <20180801172747.GJ5509@sirena.org.uk> <20180801215733.4dfa3a95@bbrezillon>
+ <20180802101742.GF9117@sirena.org.uk>
+From:   Frieder Schrempf <frieder.schrempf@exceet.de>
+Message-ID: <6f9ca4f1-6809-2d7d-4d64-6869a4e413cb@exceet.de>
+Date:   Thu, 2 Aug 2018 12:46:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
-Content-Disposition: inline
-In-Reply-To: <20180802103425.3053-4-o.rempel@pengutronix.de>
-X-Cookie: BARBARA STANWYCK makes me nervous!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180802101742.GF9117@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mark,
 
---2oox5VnwalALFvA7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 02.08.2018 12:17, Mark Brown wrote:
+> On Wed, Aug 01, 2018 at 09:57:33PM +0200, Boris Brezillon wrote:
+>> Mark Brown <broonie@kernel.org> wrote:
+> 
+>> 2/ Getting this patch [1] merged and implementing the ->get_name() hook
+>>     in this driver so that SPI NOR devs declared to the MTD layer keep
+>>     the same name after the transition to spi-mem and mtdparts= passed on
+>>     the cmdline keep working. Without this in place we're likely to
+>>     break a few setups :-/.
+> 
+>> [1]https://patchwork.kernel.org/patch/10508693/
+> 
+> I don't seem to have a copy of this patch...  not sure it was sent to
+> me?
 
-On Thu, Aug 02, 2018 at 12:34:22PM +0200, Oleksij Rempel wrote:
-> Export pm_power_off_prepare. It is needed to implement power off on
-> Freescale/NXP iMX6 based boards with external power management
-> integrated circuit (PMIC).
+When I sent the patch I put you in cc. So if nothing went wrong you 
+should have it.
+It is part of the SPI MEM conversion series for the FSL QSPI driver [1].
 
-I thought we'd got an ack for this from Raphael on a previous version or
-am I mistaken?
+Boris made some remarks on documentation in v2, that I have fixed, but 
+not sent out yet, as we have some blocking issues with the driver itself.
 
---2oox5VnwalALFvA7
-Content-Type: application/pgp-signature; name="signature.asc"
+So if you want I could send the patch separately so it can be applied 
+with the Atmel driver.
 
------BEGIN PGP SIGNATURE-----
+Regards,
+Frieder
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti4JoACgkQJNaLcl1U
-h9DRVggAgz0AKW33j9seRp5nJB5gGs1Gi5SjZMd7GKJLj7Fk6GOZEj4vBxZV+AWc
-9F3COPoOWo7sFq2OVhmDw2UgfGWLqI3atHUkkqmk31mrAsHcts6+6AIlGK0z2sii
-QrxzJoVm+7vn7ft6OcXu8Z73I5pWvzAHxOA16GNDoJDMxYgXFNjaetpntWq/z0XG
-AlgagvG+Tn3ibAP5UxWR2hbfNP9gVxOMz+W784ssF02puTjU/4oY+ZQkDJYuE+Km
-gbvLWq6E77+S6cF0CxuKYcqUVv4xcmMsHz0jRJWBSgJBuRG6jQiVCFxzGFy0TFx5
-BgMtR9r3+Fze77Wb4fjJURqe0dykNQ==
-=YEMF
------END PGP SIGNATURE-----
-
---2oox5VnwalALFvA7--
+[1] https://patchwork.ozlabs.org/cover/939864/
