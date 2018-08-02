@@ -2,136 +2,263 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E408C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5515DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F158214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F158214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id D81D5214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JnPzbCsn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81D5214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732295AbeHBN1S (ORCPT
+        id S1732323AbeHBN1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:27:18 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33029 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728767AbeHBN1S (ORCPT
+        Thu, 2 Aug 2018 09:27:33 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33404 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732302AbeHBN1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:27:18 -0400
-X-UUID: 73e2cb4ec47b468bbc38be9bf13ab8a2-20180802
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1083127647; Thu, 02 Aug 2018 19:36:27 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 2 Aug 2018 19:36:26 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 2 Aug 2018 19:36:26 +0800
-Message-ID: <1533209786.11190.60.camel@mtksdccf07>
-Subject: Re: [PATCH v1 06/15] drm/mediatek: add memory mode for RDMA
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date:   Thu, 2 Aug 2018 19:36:26 +0800
-In-Reply-To: <1532486454.9280.12.camel@mtksdaap41>
-References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
-         <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
-         <1532486454.9280.12.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 09:27:33 -0400
+Received: by mail-pl0-f67.google.com with SMTP id b90-v6so116823plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 04:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=M/nXno3zqZg0+jrj7mzrw1FY0OHE76d4A7UBHPq0YaQ=;
+        b=JnPzbCsnnGmEqXt8jKrg3iPEnyNrd8g6sS4bf811nAs5iHzPlWG2qCB8MLDuB7nX4g
+         W74rpTQWJVnWD/z3kFnDoMhPHb7sQ7YTM+BJ9kv8TxjkmLXYE09KRxMCtUmqsqdRIDB9
+         oo3QD4jDRCGeB3xMsXTG9AnFWtZnHwu3DFTBNdPQs8AQsU0zZwqgdfjRuxPpCdCaboAo
+         jSbaW0jvH+9AujNk0MbRtrqwRv4qxvJ4KvykNP7RbrmBkcm+upEL9dpsTez1pefGE+n1
+         GmoTHjfm51CqExQ59SRMN8e6RuIgjqHEMaue+sLC7jW+W64ZX6qoOq0b5SyWqX6TPF2H
+         VBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=M/nXno3zqZg0+jrj7mzrw1FY0OHE76d4A7UBHPq0YaQ=;
+        b=kavLNJkzYKZDPrSwdePvfQ7Az0A328zwNaX8EPd8g9miNK0QP3308Wblec7XQii7W7
+         oV57pSHpFyZFcu6a8NUtMMdEFQ/vj/Ic5n7jyQ4KQKQmEXaDOs/4PUxyxFbx5NOfUuy8
+         z5VVJhT6orrEHUM9eSToHIQ5P9zI8yKKDngCEavDTFBZ1ce1vejwkQYuoBRmGTF/ewdg
+         eQIkbSNu3uF+NHtyexaQ05ngiikVPEkQT+l5guKToEwkVgIBxy/jJWyh6efj5DZUAqPM
+         giOmnBs3EZoKQPYttSKau0MHiJIFziZha5sKEGlzvFnPQwx7rvxpDw6HhcG7qBLIKDGG
+         /KQA==
+X-Gm-Message-State: AOUpUlESTK/pp473IdFp/DkjLPsf9xERXAJvjXSGXArBRepXHELFLQJO
+        dEghYjdR7eIJrhLiUuckTnZgCVVDmB4oxSGdkCBITg==
+X-Google-Smtp-Source: AAOMgpeqjgPAlDp3Bf5+YfG2bz2Bo6mkiJPU1mWwD8ZIg5c0ZPM+j8MHlbUwJJp8z2blVl6nDTJas9BNa0uV1zyu1fA=
+X-Received: by 2002:a17:902:4401:: with SMTP id k1-v6mr2023875pld.97.1533209806295;
+ Thu, 02 Aug 2018 04:36:46 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 2 Aug 2018 04:36:25
+ -0700 (PDT)
+In-Reply-To: <20180802111031.yx3x6y5d5q6drq52@armageddon.cambridge.arm.com>
+References: <cover.1530018818.git.andreyknvl@google.com> <20180628105057.GA26019@e103592.cambridge.arm.com>
+ <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
+ <20180629110709.GA17859@arm.com> <CAAeHK+wHd8B2nhat-Z2Y2=s4NVobPG7vjr2CynjFhqPTwQRepQ@mail.gmail.com>
+ <20180703173608.GF27243@arm.com> <CAAeHK+wTcH+2hgm_BTkLLdn1GkjBtkhQ=vPWZCncJ6KenqgKpg@mail.gmail.com>
+ <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
+ <20180801163538.GA10800@arm.com> <CACT4Y+aZtph5qDsLzTDEgpQRz4_Vtg1DD-cB18qooi6D0bexDg@mail.gmail.com>
+ <20180802111031.yx3x6y5d5q6drq52@armageddon.cambridge.arm.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 2 Aug 2018 13:36:25 +0200
+Message-ID: <CACT4Y+b0gkSQHUG67MbYZUTA_aZWs7EmJ2eUzOEPWdt9==ysdg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Paul Lawrence <paullawrence@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Alexander Potapenko <glider@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Christoph Lameter <cl@linux.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-sparse@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, CK:
+On Thu, Aug 2, 2018 at 1:10 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> On Wed, Aug 01, 2018 at 06:52:09PM +0200, Dmitry Vyukov wrote:
+>> On Wed, Aug 1, 2018 at 6:35 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> > On Tue, Jul 31, 2018 at 03:22:13PM +0200, Andrey Konovalov wrote:
+>> >> On Wed, Jul 18, 2018 at 7:16 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>> >> > On Tue, Jul 3, 2018 at 7:36 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> >> >> Hmm, but elsewhere in this thread, Evgenii is motivating the need for this
+>> >> >> patch set precisely because the lower overhead means it's suitable for
+>> >> >> "near-production" use. So I don't think writing this off as a debugging
+>> >> >> feature is the right approach, and we instead need to put effort into
+>> >> >> analysing the impact of address tags on the kernel as a whole. Playing
+>> >> >> whack-a-mole with subtle tag issues sounds like the worst possible outcome
+>> >> >> for the long-term.
+>> >> >
+>> >> > I don't see a way to find cases where pointer tags would matter
+>> >> > statically, so I've implemented the dynamic approach that I mentioned
+>> >> > above. I've instrumented all pointer comparisons/subtractions in an
+>> >> > LLVM compiler pass and used a kernel module that would print a bug
+>> >> > report whenever two pointers with different tags are being
+>> >> > compared/subtracted (ignoring comparisons with NULL pointers and with
+>> >> > pointers obtained by casting an error code to a pointer type). Then I
+>> >> > tried booting the kernel in QEMU and on an Odroid C2 board and I ran
+>> >> > syzkaller overnight.
+>> >> >
+>> >> > This yielded the following results.
+>> >> >
+>> >> > ======
+>> >> >
+>> >> > The two places that look interesting are:
+>> >> >
+>> >> > is_vmalloc_addr in include/linux/mm.h (already mentioned by Catalin)
+>> >> > is_kernel_rodata in mm/util.c
+>> >> >
+>> >> > Here we compare a pointer with some fixed untagged values to make sure
+>> >> > that the pointer lies in a particular part of the kernel address
+>> >> > space. Since KWHASAN doesn't add tags to pointers that belong to
+>> >> > rodata or vmalloc regions, this should work as is. To make sure I've
+>> >> > added debug checks to those two functions that check that the result
+>> >> > doesn't change whether we operate on pointers with or without
+>> >> > untagging.
+>> >> >
+>> >> > ======
+>> >> >
+>> >> > A few other cases that don't look that interesting:
+>> >> >
+>> >> > Comparing pointers to achieve unique sorting order of pointee objects
+>> >> > (e.g. sorting locks addresses before performing a double lock):
+>> >> >
+>> >> > tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
+>> >> > pipe_double_lock in fs/pipe.c
+>> >> > unix_state_double_lock in net/unix/af_unix.c
+>> >> > lock_two_nondirectories in fs/inode.c
+>> >> > mutex_lock_double in kernel/events/core.c
+>> >> >
+>> >> > ep_cmp_ffd in fs/eventpoll.c
+>> >> > fsnotify_compare_groups fs/notify/mark.c
+>> >> >
+>> >> > Nothing needs to be done here, since the tags embedded into pointers
+>> >> > don't change, so the sorting order would still be unique.
+>> >> >
+>> >> > Check that a pointer belongs to some particular allocation:
+>> >> >
+>> >> > is_sibling_entry lib/radix-tree.c
+>> >> > object_is_on_stack in include/linux/sched/task_stack.h
+>> >> >
+>> >> > Nothing needs to be here either, since two pointers can only belong to
+>> >> > the same allocation if they have the same tag.
+>> >> >
+>> >> > ======
+>> >> >
+>> >> > Will, Catalin, WDYT?
+>> >>
+>> >> ping
+>> >
+>> > Thanks for tracking these cases down and going through each of them. The
+>> > obvious follow-up question is: how do we ensure that we keep on top of
+>> > this in mainline? Are you going to repeat your experiment at every kernel
+>> > release or every -rc or something else? I really can't see how we can
+>> > maintain this in the long run, especially given that the coverage we have
+>> > is only dynamic -- do you have an idea of how much coverage you're actually
+>> > getting for, say, a defconfig+modules build?
+>> >
+>> > I'd really like to enable pointer tagging in the kernel, I'm just still
+>> > failing to see how we can do it in a controlled manner where we can reason
+>> > about the semantic changes using something other than a best-effort,
+>> > case-by-case basis which is likely to be fragile and error-prone.
+>> > Unfortunately, if that's all we have, then this gets relegated to a
+>> > debug feature, which sort of defeats the point in my opinion.
+>>
+>> Well, in some cases there is no other way as resorting to dynamic testing.
+>> How do we ensure that kernel does not dereference NULL pointers, does
+>> not access objects after free or out of bounds?
+>
+> We should not confuse software bugs (like NULL pointer dereference) with
+> unexpected software behaviour introduced by khwasan where pointers no
+> longer represent only an address range (e.g. calling find_vmap_area())
+> but rather an address and a tag.
 
-On Wed, 2018-07-25 at 10:40 +0800, CK Hu wrote:
-> Hi, Stu:
-> 
-> On Tue, 2018-07-24 at 16:17 +0800, Stu Hsieh wrote:
-> > This patch add memory mode for RDMA
-> > 
-> > If use RDMA to read data from memory, it should set memory mode to RDMA
-> > 
-> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 16 +++++++++++++++-
-> >  1 file changed, 15 insertions(+), 1 deletion(-)
-> > 
-> 
-> [...]
-> 
-> >  static inline struct mtk_disp_rdma *comp_to_rdma(struct mtk_ddp_comp *comp)
-> > @@ -111,7 +116,8 @@ static void mtk_rdma_start(struct mtk_ddp_comp *comp)
-> >  
-> >  static void mtk_rdma_stop(struct mtk_ddp_comp *comp)
-> >  {
-> > -	rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON, RDMA_ENGINE_EN, 0);
-> > +	writel(RDMA_SOFT_RESET, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
-> > +	writel(0, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
-> 
-> Without reset, what happen to dram mode? Why direct link mode need not
-> this reset?
-> 
+These are also software bugs, not different from NULL derefs that we
+do not detect statically.
 
-There is nothing to happen, I would remove it.
+> Parts of the kernel rely on pointers
+> being just address ranges.
+>
+> It's the latter that we'd like to identify more easily and avoid subtle
+> bugs or change in behaviour when running correctly written code.
 
-> >  }
-> >  
-> >  static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
-> > @@ -121,10 +127,18 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
-> >  	unsigned int threshold;
-> >  	unsigned int reg;
-> >  	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
-> > +	bool *rdma_memory_mode = comp->comp_mode;
-> >  
-> >  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xfff, width);
-> >  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_1, 0xfffff, height);
-> >  
-> > +	if (*rdma_memory_mode == true) {
-> > +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
-> > +				 MATRIX_INT_MTX_SEL_DEFAULT);
-> > +		rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON,
-> > +				 RDMA_MODE_MEMORY, RDMA_MODE_MEMORY);
-> > +	}
-> > +
-> 
-> I would like this to be a kind of 'layer' config. In some SoC, one layer
-> of OVL could switch to direct link input or dram input. So I think it's
-> better to move this setting into some layer interface.
-> 
-> Regards,
-> CK
-> 
+You mean _previously_ correct code, now it's just incorrect code. Not
+different from any other types of incorrect code, and we do have
+thousands of types of incorrect code already, most of these types are
+not detectable statically.
 
-If move it to layer_config, RDMA would not trigger interrupt.
-In the future, when cmdq patch upstream and accepted, this part can move
-to layer_config. 
+>> And, yes, it's
+>> constant maintenance burden resolved via dynamic testing.
+>> In some sense HWASAN is better in this regard because it's like, say,
+>> LOCKDEP in this regard. It's enabled only when one does dynamic
+>> testing and collect, analyze and fix everything that pops up. Any
+>> false positives will fail loudly (as opposed to, say, silent memory
+>> corruptions due to use-after-frees), so any false positives will be
+>> just first things to fix during the tool application.
+>
+> Again, you are talking about the bugs that khwasan would discover. We
+> don't deny its value and false positives are acceptable here.
 
-Regard,
-Stu
+I am talking about the same thing you are talking about. New crashes
+of changes in behavior will also pop up and will need to be fixed.
 
-> >  	/*
-> >  	 * Enable FIFO underflow since DSI and DPI can't be blocked.
-> >  	 * Keep the FIFO pseudo size reset default of 8 KiB. Set the
-> 
-> 
+> However, not untagging a pointer when converting to long may have
+> side-effects in some cases and I consider these bugs introduced by the
+> khwasan support rather than bugs in the original kernel code. Ideally
+> we'd need some tooling on top of khwasan to detect such shortcomings but
+> I'm not sure we can do this statically, as Andrey already mentioned. For
+> __user pointers, things are slightly better as we can detect the
+> conversion either with sparse (modified) or some LLVM changes.
 
+I agree. Ideally we have strict static checking for this type of bugs.
+Ideally we have it for all types of bugs. NULL derefs,
+use-after-frees, or say confusion between a function returning 0/1 for
+ok/failure with a function returning true/false. How do we detect that
+statically? Nohow.
 
+For example, LOCKDEP has the same problem. Previously correct code can
+become incorrect and require finer-grained lock class annotations.
+KMEMLEAK has the same problem: previously correct code that hides a
+pointer may now need changes to unhide the pointer.
+
+If somebody has a practical idea how to detect these statically, let's
+do it. Otherwise let's go with the traditional solution to this --
+dynamic testing. The patch series show that the problem is not a
+disaster and we won't need to change just every line of kernel code.
