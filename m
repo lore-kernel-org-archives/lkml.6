@@ -2,320 +2,312 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A004C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FB4C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C04B2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:05:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RZUXAI+H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C04B2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4B1112146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1112146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeHBJz3 (ORCPT
+        id S1728052AbeHBJ5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:55:29 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35668 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbeHBJz2 (ORCPT
+        Thu, 2 Aug 2018 05:57:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57231 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbeHBJ5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:55:28 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so1444092wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=q7WXrxM49cKiZDEzJD4fwIpf+oadpdyg7AkB52KE0o0=;
-        b=RZUXAI+HVkicOKQAb/KlNm052pvArwFMF4ryDhViqv0Hccnm/Bm8oJrtf7wznAtyrH
-         M+4OKUqgTt9lejo38GerPAKGSaV6bFXB/5JGrSww7CgAwHZ5Yz1oxCSBRu+Lpdmp67du
-         QP4rQH2ufy+CRe68PAvK/4ilzRu+EuVRLOg2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=q7WXrxM49cKiZDEzJD4fwIpf+oadpdyg7AkB52KE0o0=;
-        b=FxxcZXVseKoPiH/bycia/muUFlbBVngR5moGt2NVU+oBa6Xc2gPVs0X5wFzkVMlx16
-         D/4STSj1rGHHxg0BajqwjnEVeaj0iIQFls2qS2MA3xDRlqXDq1qD1upT7vJKadHO+dfh
-         VV6soakYbc66cbCl3odO1XWYEQK+AFvZk+mMiLkbGFl7afBssYjx5rAYJ9UiiYSr9GOv
-         8t167sjVdecJoW7Ojd1jzUWCrhQg8lMOEW6h5bkyeR4NjWjXT0e2Gue9YjPp/O1flkwa
-         BaFDNzIm8vLILiPW0T0YfdntwCioX4LxJJLsyEztZLzWRbckNZfO/OBOnX5LPJg2+Zp5
-         J+Ig==
-X-Gm-Message-State: AOUpUlE8u15+MRIu68yjoVIgcwPE2HLfQCd9MMk0GF0eh0rMCVQ9iGJf
-        Via/TlNWo9Tv4saocMjRsdtkhQ==
-X-Google-Smtp-Source: AAOMgpdQJtdkJijAGN3izpB64Pf3dnK9x6lYAwg8gknn8cvQx5fBb+hT9kXxbfgU/SyauMjLAAmFNw==
-X-Received: by 2002:a1c:98a:: with SMTP id 132-v6mr1205080wmj.86.1533197128345;
-        Thu, 02 Aug 2018 01:05:28 -0700 (PDT)
-Received: from dell ([95.149.160.4])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm1578456wmh.3.2018.08.02.01.05.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 01:05:27 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 09:05:25 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh+dt@kernel.org, broonie@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, tiwai@suse.com, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 03/10] mfd: wcd9335: add wcd irq support
-Message-ID: <20180802080525.GM4662@dell>
-References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
- <20180727121806.18209-4-srinivas.kandagatla@linaro.org>
+        Thu, 2 Aug 2018 05:57:32 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72874LI3430546
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Aug 2018 01:07:04 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72873p23430543;
+        Thu, 2 Aug 2018 01:07:03 -0700
+Date:   Thu, 2 Aug 2018 01:07:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-90am4vm8hh1osms894dp2otr@git.kernel.org>
+Cc:     wangnan0@huawei.com, dsahern@gmail.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, namhyung@kernel.org, acme@redhat.com,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org
+Reply-To: dsahern@gmail.com, wangnan0@huawei.com, adrian.hunter@intel.com,
+          namhyung@kernel.org, tglx@linutronix.de, acme@redhat.com,
+          mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace beauty: Default header_dir to cwd to
+ work without parms
+Git-Commit-ID: 61b229ce2c152e7700ca603c7b86cdd99619db01
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180727121806.18209-4-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Jul 2018, Srinivas Kandagatla wrote:
+Commit-ID:  61b229ce2c152e7700ca603c7b86cdd99619db01
+Gitweb:     https://git.kernel.org/tip/61b229ce2c152e7700ca603c7b86cdd99619db01
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 25 Jul 2018 14:24:02 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 31 Jul 2018 09:56:46 -0300
 
-> WCD9335 supports two lines of irqs INTR1 and INTR2.
-> Multiple interrupts are muxed via these lines.
-> INTR1 consists of all possible interrupt sources like:
-> Ear OCP, HPH OCP, MBHC, MAD, VBAT, and SVA
-> INTR2 is a subset of first interrupt sources like MAD, VBAT, and SVA
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/mfd/Makefile                |   2 +-
->  drivers/mfd/wcd9335-core.c          |   9 ++
->  drivers/mfd/wcd9335-irq.c           | 172 ++++++++++++++++++++++++++++++++++++
+perf trace beauty: Default header_dir to cwd to work without parms
 
-Any particular reason for separating out IRQ handling?
+Useful when checking the effects of header synchs for the files it uses
+as a input to generate string tables, in retrospect this is how it
+should've been done from day 1, not requiring the header_dir to be set
+on the Makefile, will change everything later, so that the only parm,
+common to all generators will be $(srctree) and $(beauty_outdir).
 
->  include/dt-bindings/mfd/wcd9335.h   |  43 +++++++++
->  include/linux/mfd/wcd9335/wcd9335.h |   3 +
->  5 files changed, 228 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/mfd/wcd9335-irq.c
->  create mode 100644 include/dt-bindings/mfd/wcd9335.h
-> 
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index a4697370640b..210875afe78a 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -58,7 +58,7 @@ obj-$(CONFIG_MFD_ARIZONA)	+= cs47l24-tables.o
->  endif
->  
->  obj-$(CONFIG_MFD_WCD9335)	+= wcd9335.o
-> -wcd9335-objs			:= wcd9335-core.o
-> +wcd9335-objs			:= wcd9335-core.o wcd9335-irq.o
->  
->  obj-$(CONFIG_MFD_WM8400)	+= wm8400-core.o
->  wm831x-objs			:= wm831x-core.o wm831x-irq.o wm831x-otp.o
-> diff --git a/drivers/mfd/wcd9335-core.c b/drivers/mfd/wcd9335-core.c
-> index 8f746901f4e9..6299dfb63aca 100644
-> --- a/drivers/mfd/wcd9335-core.c
-> +++ b/drivers/mfd/wcd9335-core.c
-> @@ -243,12 +243,20 @@ static int wcd9335_slim_status(struct slim_device *sdev,
->  		return ret;
->  	}
->  
-> +	wcd9335_irq_init(wcd);
+So, to see what it generates, just call it without any parameters:
 
-Why don't you check the return value?
+  $ tools/perf/trace/beauty/vhost_virtio_ioctl.sh
+  static const char *vhost_virtio_ioctl_cmds[] = {
+	[0x00] = "SET_FEATURES",
+	[0x01] = "SET_OWNER",
+	[0x02] = "RESET_OWNER",
+	[0x03] = "SET_MEM_TABLE",
+	[0x04] = "SET_LOG_BASE",
+	[0x07] = "SET_LOG_FD",
+	[0x10] = "SET_VRING_NUM",
+	[0x11] = "SET_VRING_ADDR",
+	[0x12] = "SET_VRING_BASE",
+	[0x13] = "SET_VRING_ENDIAN",
+	[0x14] = "GET_VRING_ENDIAN",
+	[0x20] = "SET_VRING_KICK",
+	[0x21] = "SET_VRING_CALL",
+	[0x22] = "SET_VRING_ERR",
+	[0x23] = "SET_VRING_BUSYLOOP_TIMEOUT",
+	[0x24] = "GET_VRING_BUSYLOOP_TIMEOUT",
+	[0x30] = "NET_SET_BACKEND",
+	[0x40] = "SCSI_SET_ENDPOINT",
+	[0x41] = "SCSI_CLEAR_ENDPOINT",
+	[0x42] = "SCSI_GET_ABI_VERSION",
+	[0x43] = "SCSI_SET_EVENTS_MISSED",
+	[0x44] = "SCSI_GET_EVENTS_MISSED",
+	[0x60] = "VSOCK_SET_GUEST_CID",
+	[0x61] = "VSOCK_SET_RUNNING",
+  };
+  static const char *vhost_virtio_ioctl_read_cmds[] = {
+	[0x00] = "GET_FEATURES",
+	[0x12] = "GET_VRING_BASE",
+  };
+  $
 
-What happens if it defers?
+Or:
 
->  	wcd->slim_ifd = wcd->slim_ifd;
->  
->  	return mfd_add_devices(wcd->dev, 0, wcd9335_devices,
->  			       ARRAY_SIZE(wcd9335_devices), NULL, 0, NULL);
->  }
->  
-> +static void wcd9335_slim_remove(struct slim_device *sdev)
-> +{
-> +	struct wcd9335 *wcd = dev_get_drvdata(&sdev->dev);
-> +
-> +	wcd9335_irq_exit(wcd);
-> +}
-> +
->  static const struct slim_device_id wcd9335_slim_id[] = {
->  	{0x217, 0x1a0, 0x1, 0x0},
->  	{}
-> @@ -259,6 +267,7 @@ static struct slim_driver wcd9335_slim_driver = {
->  		.name = "wcd9335-slim",
->  	},
->  	.probe = wcd9335_slim_probe,
-> +	.remove = wcd9335_slim_remove,
->  	.device_status = wcd9335_slim_status,
->  	.id_table = wcd9335_slim_id,
->  };
-> diff --git a/drivers/mfd/wcd9335-irq.c b/drivers/mfd/wcd9335-irq.c
-> new file mode 100644
-> index 000000000000..84098c89419b
-> --- /dev/null
-> +++ b/drivers/mfd/wcd9335-irq.c
-> @@ -0,0 +1,172 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2018, Linaro Limited
-> +//
+  $ tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
+  static const char *sndrv_pcm_ioctl_cmds[] = {
+	[0x00] = "PVERSION",
+	[0x01] = "INFO",
+	[0x02] = "TSTAMP",
+	[0x03] = "TTSTAMP",
+	[0x04] = "USER_PVERSION",
+	[0x10] = "HW_REFINE",
+	[0x11] = "HW_PARAMS",
+	[0x12] = "HW_FREE",
+	[0x13] = "SW_PARAMS",
+	[0x20] = "STATUS",
+	[0x21] = "DELAY",
+	[0x22] = "HWSYNC",
+	[0x23] = "SYNC_PTR",
+	[0x24] = "STATUS_EXT",
+	[0x32] = "CHANNEL_INFO",
+	[0x40] = "PREPARE",
+	[0x41] = "RESET",
+	[0x42] = "START",
+	[0x43] = "DROP",
+	[0x44] = "DRAIN",
+	[0x45] = "PAUSE",
+	[0x46] = "REWIND",
+	[0x47] = "RESUME",
+	[0x48] = "XRUN",
+	[0x49] = "FORWARD",
+	[0x50] = "WRITEI_FRAMES",
+	[0x51] = "READI_FRAMES",
+	[0x52] = "WRITEN_FRAMES",
+	[0x53] = "READN_FRAMES",
+	[0x60] = "LINK",
+	[0x61] = "UNLINK",
+  };
+  $
 
-Blank line?
+Etc.
 
-> +#include <linux/gpio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/regmap.h>
-> +#include <linux/of_irq.h>
-> +#include <dt-bindings/mfd/wcd9335.h>
-> +#include <linux/mfd/wcd9335/wcd9335.h>
-> +#include <linux/mfd/wcd9335/registers.h>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-90am4vm8hh1osms894dp2otr@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/drm_ioctl.sh                | 9 +++++----
+ tools/perf/trace/beauty/kcmp_type.sh                | 2 +-
+ tools/perf/trace/beauty/kvm_ioctl.sh                | 4 ++--
+ tools/perf/trace/beauty/madvise_behavior.sh         | 2 +-
+ tools/perf/trace/beauty/perf_ioctl.sh               | 2 +-
+ tools/perf/trace/beauty/pkey_alloc_access_rights.sh | 2 +-
+ tools/perf/trace/beauty/sndrv_ctl_ioctl.sh          | 4 ++--
+ tools/perf/trace/beauty/sndrv_pcm_ioctl.sh          | 4 ++--
+ tools/perf/trace/beauty/vhost_virtio_ioctl.sh       | 6 +++---
+ 9 files changed, 18 insertions(+), 17 deletions(-)
 
-Please place in alphabetical order.
-
-> +static const struct regmap_irq wcd9335_irqs[] = {
-> +	/* INTR_REG 0 */
-> +	[WCD9335_IRQ_SLIMBUS] = {
-> +		.reg_offset = 0,
-> +		.mask = BIT(0),
-> +	},
-
-[snipped approx 1,000,000 entries]
-
-> +	[WCD9335_IRQ_SVA_OUTBOX2] = {
-> +		.reg_offset = 3,
-> +		.mask = BIT(6),
-> +	},
-> +};
-
-Please use REGMAP_IRQ_REG() to significantly reduce the diff.
-
-> +static const struct regmap_irq_chip wcd9335_regmap_irq1_chip = {
-> +	.name = "wcd9335_pin1_irq",
-> +	.status_base = WCD9335_INTR_PIN1_STATUS0,
-> +	.mask_base = WCD9335_INTR_PIN1_MASK0,
-> +	.ack_base = WCD9335_INTR_PIN1_CLEAR0,
-> +	.type_base = WCD9335_INTR_LEVEL0,
-> +	.num_regs = 4,
-> +	.irqs = wcd9335_irqs,
-> +	.num_irqs = ARRAY_SIZE(wcd9335_irqs),
-> +};
-> +
-> +int wcd9335_irq_init(struct wcd9335 *wcd)
-> +{
-> +	int ret;
-
-'\n' here.
-
-> +	/*
-> +	 * INTR1 consists of all possible interrupt sources Ear OCP,
-> +	 * HPH OCP, MBHC, MAD, VBAT, and SVA
-> +	 * INTR2 is a subset of first interrupt sources MAD, VBAT, and SVA
-> +	 */
-> +	wcd->intr1 = of_irq_get_byname(wcd->dev->of_node, "intr1");
-> +	if (wcd->intr1 < 0 || wcd->intr1 == -EPROBE_DEFER) {
-> +		dev_err(wcd->dev, "Unable to configure irq\n");
-
-Nit: s/irq/IRQ/
-
-Do you really want to issue an error message for -EPROBE_DEFER?
-
-This maybe confusing if it is initiated later.
-
-> +		return wcd->intr1;
-> +	}
-> +
-> +	ret = regmap_add_irq_chip(wcd->regmap, wcd->intr1,
-> +				 IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
-> +				 0, &wcd9335_regmap_irq1_chip,
-> +				 &wcd->irq_data);
-> +	if (ret != 0) {
-
-"if (ret)"
-
-> +		dev_err(wcd->dev, "Failed to register IRQ chip: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int wcd9335_irq_exit(struct wcd9335 *wcd)
-> +{
-> +	regmap_del_irq_chip(wcd->intr1, wcd->irq_data);
-
-'\n' here.
-
-> +	return 0;
-> +}
-
-Or better still, make this a void and remove the superfluous return.
-
-> diff --git a/include/dt-bindings/mfd/wcd9335.h b/include/dt-bindings/mfd/wcd9335.h
-> new file mode 100644
-> index 000000000000..61b6a11da00d
-> --- /dev/null
-> +++ b/include/dt-bindings/mfd/wcd9335.h
-> @@ -0,0 +1,43 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * This header provides macros for WCD9335 device bindings.
-> + *
-> + * Copyright (c) 2018, Linaro Limited
-> + */
-> +
-> +#ifndef _DT_BINDINGS_MFD_WCD9335_H
-> +#define _DT_BINDINGS_MFD_WCD9335_H
-> +
-> +#define	WCD9335_IRQ_SLIMBUS			0
-> +#define	WCD9335_IRQ_FLL_LOCK_LOSS		1
-> +#define	WCD9335_IRQ_HPH_PA_OCPL_FAULT		2
-> +#define	WCD9335_IRQ_HPH_PA_OCPR_FAULT		3
-> +#define	WCD9335_IRQ_EAR_PA_OCP_FAULT		4
-> +#define	WCD9335_IRQ_HPH_PA_CNPL_COMPLETE	5
-> +#define	WCD9335_IRQ_HPH_PA_CNPR_COMPLETE	6
-> +#define	WCD9335_IRQ_EAR_PA_CNP_COMPLETE		7
-> +#define	WCD9335_IRQ_MBHC_SW_DET			8
-> +#define	WCD9335_IRQ_MBHC_ELECT_INS_REM_DET	9
-> +#define	WCD9335_IRQ_MBHC_BUTTON_PRESS_DET	10
-> +#define	WCD9335_IRQ_MBHC_BUTTON_RELEASE_DET	11
-> +#define	WCD9335_IRQ_MBHC_ELECT_INS_REM_LEG_DET	12
-> +#define	WCD9335_IRQ_RESERVED_0			13
-> +#define	WCD9335_IRQ_RESERVED_1			14
-> +#define	WCD9335_IRQ_RESERVED_2			15
-> +#define	WCD9335_IRQ_LINE_PA1_CNP_COMPLETE	16
-> +#define	WCD9335_IRQ_LINE_PA2_CNP_COMPLETE	17
-> +#define	WCD9335_IRQ_LINE_PA3_CNP_COMPLETE	18
-> +#define	WCD9335_IRQ_LINE_PA4_CNP_COMPLETE	19
-> +#define	WCD9335_IRQ_SOUNDWIRE			20
-> +#define	WCD9335_IRQ_VDD_DIG_RAMP_COMPLETE	21
-> +#define	WCD9335_IRQ_RCO_ERROR			22
-> +#define	WCD9335_IRQ_SVA_ERROR			23
-> +#define	WCD9335_IRQ_MAD_AUDIO			24
-> +#define	WCD9335_IRQ_MAD_BEACON			25
-> +#define	WCD9335_IRQ_MAD_ULTRASOUND		26
-> +#define	WCD9335_IRQ_VBAT_ATTACK			27
-> +#define	WCD9335_IRQ_VBAT_RESTORE		28
-> +#define	WCD9335_IRQ_SVA_OUTBOX1			29
-> +#define	WCD9335_IRQ_SVA_OUTBOX2			30
-> +
-> +#endif /* _DT_BINDINGS_MFD_WCD9335_H */
-> diff --git a/include/linux/mfd/wcd9335/wcd9335.h b/include/linux/mfd/wcd9335/wcd9335.h
-> index b9d2f7af243a..1479bfe75f23 100644
-> --- a/include/linux/mfd/wcd9335/wcd9335.h
-> +++ b/include/linux/mfd/wcd9335/wcd9335.h
-> @@ -39,4 +39,7 @@ struct wcd9335 {
->  	struct regulator_bulk_data supplies[WCD9335_MAX_SUPPLY];
->  };
->  
-> +extern int wcd9335_irq_init(struct wcd9335 *wcd);
-> +extern int wcd9335_irq_exit(struct wcd9335 *wcd);
-> +
->  #endif /* __WCD9335_H__ */
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+diff --git a/tools/perf/trace/beauty/drm_ioctl.sh b/tools/perf/trace/beauty/drm_ioctl.sh
+index 2149d3a98e42..9d3816815e60 100755
+--- a/tools/perf/trace/beauty/drm_ioctl.sh
++++ b/tools/perf/trace/beauty/drm_ioctl.sh
+@@ -1,13 +1,14 @@
+ #!/bin/sh
+ 
+-drm_header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/drm/
++
+ printf "#ifndef DRM_COMMAND_BASE\n"
+-grep "#define DRM_COMMAND_BASE" $drm_header_dir/drm.h
++grep "#define DRM_COMMAND_BASE" $header_dir/drm.h
+ printf "#endif\n"
+ 
+ printf "static const char *drm_ioctl_cmds[] = {\n"
+-grep "^#define DRM_IOCTL.*DRM_IO" $drm_header_dir/drm.h | \
++grep "^#define DRM_IOCTL.*DRM_IO" $header_dir/drm.h | \
+ 	sed -r 's/^#define +DRM_IOCTL_([A-Z0-9_]+)[	 ]+DRM_IO[A-Z]* *\( *(0x[[:xdigit:]]+),*.*/	[\2] = "\1",/g'
+-grep "^#define DRM_I915_[A-Z_0-9]\+[	 ]\+0x" $drm_header_dir/i915_drm.h | \
++grep "^#define DRM_I915_[A-Z_0-9]\+[	 ]\+0x" $header_dir/i915_drm.h | \
+ 	sed -r 's/^#define +DRM_I915_([A-Z0-9_]+)[	 ]+(0x[[:xdigit:]]+)/\t[DRM_COMMAND_BASE + \2] = "I915_\1",/g'
+ printf "};\n"
+diff --git a/tools/perf/trace/beauty/kcmp_type.sh b/tools/perf/trace/beauty/kcmp_type.sh
+index 40d063b8c082..a3c304caa336 100755
+--- a/tools/perf/trace/beauty/kcmp_type.sh
++++ b/tools/perf/trace/beauty/kcmp_type.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
+ printf "static const char *kcmp_types[] = {\n"
+ regex='^[[:space:]]+(KCMP_(\w+)),'
+diff --git a/tools/perf/trace/beauty/kvm_ioctl.sh b/tools/perf/trace/beauty/kvm_ioctl.sh
+index bd28817afced..c4699fd46bb6 100755
+--- a/tools/perf/trace/beauty/kvm_ioctl.sh
++++ b/tools/perf/trace/beauty/kvm_ioctl.sh
+@@ -1,10 +1,10 @@
+ #!/bin/sh
+ 
+-kvm_header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
+ printf "static const char *kvm_ioctl_cmds[] = {\n"
+ regex='^#[[:space:]]*define[[:space:]]+KVM_(\w+)[[:space:]]+_IO[RW]*\([[:space:]]*KVMIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
+-egrep $regex ${kvm_header_dir}/kvm.h	| \
++egrep $regex ${header_dir}/kvm.h	| \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	egrep -v " ((ARM|PPC|S390)_|[GS]ET_(DEBUGREGS|PIT2|XSAVE|TSC_KHZ)|CREATE_SPAPR_TCE_64)" | \
+ 	sort | xargs printf "\t[%s] = \"%s\",\n"
+diff --git a/tools/perf/trace/beauty/madvise_behavior.sh b/tools/perf/trace/beauty/madvise_behavior.sh
+index 60ef8640ee70..431639eb4d29 100755
+--- a/tools/perf/trace/beauty/madvise_behavior.sh
++++ b/tools/perf/trace/beauty/madvise_behavior.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/asm-generic/
+ 
+ printf "static const char *madvise_advices[] = {\n"
+ regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+MADV_([[:alnum:]_]+)[[:space:]]+([[:digit:]]+)[[:space:]]*.*'
+diff --git a/tools/perf/trace/beauty/perf_ioctl.sh b/tools/perf/trace/beauty/perf_ioctl.sh
+index faea4237c793..6492c74df928 100755
+--- a/tools/perf/trace/beauty/perf_ioctl.sh
++++ b/tools/perf/trace/beauty/perf_ioctl.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
+ printf "static const char *perf_ioctl_cmds[] = {\n"
+ regex='^#[[:space:]]*define[[:space:]]+PERF_EVENT_IOC_(\w+)[[:space:]]+_IO[RW]*[[:space:]]*\([[:space:]]*.\$.[[:space:]]*,[[:space:]]*([[:digit:]]+).*'
+diff --git a/tools/perf/trace/beauty/pkey_alloc_access_rights.sh b/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
+index 62e51a02b839..e0a51aeb20b2 100755
+--- a/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
++++ b/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/asm-generic/
+ 
+ printf "static const char *pkey_alloc_access_rights[] = {\n"
+ regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+PKEY_([[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*'
+diff --git a/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh b/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
+index aad5ab130539..eb511bb5fbd3 100755
+--- a/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
++++ b/tools/perf/trace/beauty/sndrv_ctl_ioctl.sh
+@@ -1,8 +1,8 @@
+ #!/bin/sh
+ 
+-sound_header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/sound/
+ 
+ printf "static const char *sndrv_ctl_ioctl_cmds[] = {\n"
+-grep "^#define[\t ]\+SNDRV_CTL_IOCTL_" $sound_header_dir/asound.h | \
++grep "^#define[\t ]\+SNDRV_CTL_IOCTL_" $header_dir/asound.h | \
+ 	sed -r 's/^#define +SNDRV_CTL_IOCTL_([A-Z0-9_]+)[\t ]+_IO[RW]*\( *.U., *(0x[[:xdigit:]]+),?.*/\t[\2] = \"\1\",/g'
+ printf "};\n"
+diff --git a/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh b/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
+index b7e9ef6b2f55..6818392968b2 100755
+--- a/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
++++ b/tools/perf/trace/beauty/sndrv_pcm_ioctl.sh
+@@ -1,8 +1,8 @@
+ #!/bin/sh
+ 
+-sound_header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/sound/
+ 
+ printf "static const char *sndrv_pcm_ioctl_cmds[] = {\n"
+-grep "^#define[\t ]\+SNDRV_PCM_IOCTL_" $sound_header_dir/asound.h | \
++grep "^#define[\t ]\+SNDRV_PCM_IOCTL_" $header_dir/asound.h | \
+ 	sed -r 's/^#define +SNDRV_PCM_IOCTL_([A-Z0-9_]+)[\t ]+_IO[RW]*\( *.A., *(0x[[:xdigit:]]+),?.*/\t[\2] = \"\1\",/g'
+ printf "};\n"
+diff --git a/tools/perf/trace/beauty/vhost_virtio_ioctl.sh b/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
+index 76f1de697787..0f6a5197d0be 100755
+--- a/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
++++ b/tools/perf/trace/beauty/vhost_virtio_ioctl.sh
+@@ -1,17 +1,17 @@
+ #!/bin/sh
+ 
+-vhost_virtio_header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
+ printf "static const char *vhost_virtio_ioctl_cmds[] = {\n"
+ regex='^#[[:space:]]*define[[:space:]]+VHOST_(\w+)[[:space:]]+_IOW?\([[:space:]]*VHOST_VIRTIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
+-egrep $regex ${vhost_virtio_header_dir}/vhost.h | \
++egrep $regex ${header_dir}/vhost.h | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	sort | xargs printf "\t[%s] = \"%s\",\n"
+ printf "};\n"
+ 
+ printf "static const char *vhost_virtio_ioctl_read_cmds[] = {\n"
+ regex='^#[[:space:]]*define[[:space:]]+VHOST_(\w+)[[:space:]]+_IOW?R\([[:space:]]*VHOST_VIRTIO[[:space:]]*,[[:space:]]*(0x[[:xdigit:]]+).*'
+-egrep $regex ${vhost_virtio_header_dir}/vhost.h | \
++egrep $regex ${header_dir}/vhost.h | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	sort | xargs printf "\t[%s] = \"%s\",\n"
+ printf "};\n"
