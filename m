@@ -2,91 +2,102 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7311BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64C2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3BA21525
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713E921501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:56:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="WG0iEYde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3BA21525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGTHXGU0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713E921501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387557AbeHBOpp (ORCPT
+        id S1732365AbeHBOrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:45:45 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.182]:17108 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387491AbeHBOpo (ORCPT
+        Thu, 2 Aug 2018 10:47:21 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:44888 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732110AbeHBOrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:45:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1533214479;
-        s=strato-dkim-0002; d=as-electronics.de;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Z+3vqqSZo8xz681gBxM4nJCvZiYwbbDIV18OBHmuLzM=;
-        b=WG0iEYdebqdbKaHv5sp87J2alnZKWH5FGGQvy6GvdzSLE7FJYaJAEo4DF9UvX6N6Ux
-        XBXkJKTk/YPLf0MH6R5wD8mFnu2knJdBrRW8z1Owdb95GD3Ypxv8Ql5xKGQcdg4CU74H
-        In7aWDKtLClqWBmq7HIBajq15ao7kEVmHPVGSU3pWiYrQy5gNI5B3+DukyNfFw2exiPJ
-        Eq7MuOw7ft67BxuhbdfBv2eY3MNdCxvWPH1HUqyhT+CZPXim7JWg3GGJmf4QEYBWRKpR
-        IA/zwFt6mlCQ5/cMmxMOwjeqD/vJz+5yqjRdsRBDKjCdpb4YhcYmBDquYyvohKXR3jR/
-        aILg==
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx22AatU+eLaHfutoZdl+X9BETxn4/4+IVqx+ReE5zXU1i255vGQvjM+ToVYx2MGL/3gV0P3t0="
-X-RZG-CLASS-ID: mo05
-Received: from fs-work.fritz.box
-        by smtp.strato.de (RZmta 43.14 AUTH)
-        with ESMTPSA id Z0998bu72CsU7Pf
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 2 Aug 2018 14:54:30 +0200 (CEST)
-From:   Frieder Schrempf <frieder.schrempf@exceet.de>
-To:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@bootlin.com, marek.vasut@gmail.com, richard@nod.at,
-        broonie@kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Cc:     cyrille.pitchen@wedev4u.fr, frieder.schrempf@exceet.de,
-        pp@emlix.com, Zhiqiang.Hou@nxp.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] mtd: m25p80: Call spi_mem_get_name() to let controller set a custom name
-Date:   Thu,  2 Aug 2018 14:53:54 +0200
-Message-Id: <1533214434-28761-4-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533214434-28761-1-git-send-email-frieder.schrempf@exceet.de>
-References: <1533214434-28761-1-git-send-email-frieder.schrempf@exceet.de>
+        Thu, 2 Aug 2018 10:47:21 -0400
+Received: by mail-qt0-f179.google.com with SMTP id b15-v6so2073601qtp.11
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 05:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=GLyB/82VIzTzdmHxzT2S/kEVm7jpJGLASkuCq657Awg=;
+        b=CGTHXGU02puxzzGUBuDIIREbNcbzEZSvx170/XibPIOATuZuv/2mqP9ZMCbNpYi9dU
+         IwKpiJY421HOswTMm4ycb4Zm1bHFsU8n8xNpWAteHzX9z/gLl/gBAaXd7wIQdjjGVPs5
+         4oDRIojCCNvkYUdaZCYKDMU2onIynmEtJeMnZowFZjeOKElDZQ7Tf+b9sW8IkegdREBs
+         Vk8zj9WYJ/fSmen3NDmhuQnwi2piIEykd53BIkaAH1QBsxVKZ2W7uP3GAZSa/F0etBQk
+         D/pOhnWD60Fjms4drSpUNge7wLsQN/Ugzc+iVUBheBWoSEZaEF8JRB7nece+Y4RX/7I9
+         c0Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=GLyB/82VIzTzdmHxzT2S/kEVm7jpJGLASkuCq657Awg=;
+        b=G7O/KzDH+op/nNNVbyERrwq9lkuyH7aSfZ0mvZK6uqr6mnqsT3kAGdPkw7l+jR6xHY
+         FRuLqO5b1I+KqWD9o30pAtFybd6TZiP3F018HHtsmn5DCpVbXjgs7kNxIV+DxVYuIUXc
+         toCgqTN0v6owTQsRIbmmUEDQfapTQ6bzsU5Woi3nmuua5qKvW0bxF11dLX2kbA6npFXK
+         BUbJCxHLVgHMWk5OUMwI8UoMumjrLKN9L29PoO3UwLzkXOND/uTcyl6B2wsBnWMAuYed
+         FsjrVtLjymKxy5kuSU2tVaj6bP/2NmzE7Z0igClE8dteYzAS9tf/G/230Hz04U0Sro4E
+         2v1w==
+X-Gm-Message-State: AOUpUlGsAQOeWUi0hUoTuVeSQ+qVc/cazXYAeiiu4mKeVV8IwR5XMPUi
+        1K4z3FFxxbnNYYVQb9eMetEDPcrA7ZXrSXdl3UY=
+X-Google-Smtp-Source: AAOMgpc+4X9Zc2zuKUw+du4bwVYSeON/igA/Z31gUx629xFc7hMQH+UaAweQ2abY5sjMlj73auv6kdl14CiHCXkYMgk=
+X-Received: by 2002:ac8:6055:: with SMTP id k21-v6mr2521553qtm.204.1533214576386;
+ Thu, 02 Aug 2018 05:56:16 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:c482:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 05:56:15 -0700 (PDT)
+In-Reply-To: <20180802132956.6b7110ed@alans-desktop>
+References: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
+ <CACVXFVPpSJDqR8ki2PiDBbU36KsGFMYsOEf_9bmN6Cpo3w_YoQ@mail.gmail.com>
+ <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
+ <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com> <20180802132956.6b7110ed@alans-desktop>
+From:   Jeff Chua <jeff.chua.linux@gmail.com>
+Date:   Thu, 2 Aug 2018 20:56:15 +0800
+Message-ID: <CAAJw_ZsAUstFKrMQCy5AguyXb9=oQVecN2+b5G8ubQqLUp1YTQ@mail.gmail.com>
+Subject: Re: How to secure erase PCI-E NVME SSD connected via USB3?
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By calling spi_mem_get_name(), the driver of the (Q)SPI controller can
-set a custom name for the memory device if necessary.
-This is useful to keep mtdparts compatible when controller drivers are
-ported from the MTD to the SPI layer.
+On Thu, Aug 2, 2018 at 8:29 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>> # hdparm --user-master u --security-erase p /dev/sda
+>> (returns immediately and does nothing).
+>>
+>> I've tried hdparm on an SSD connected via USB3 and it secure-erased ok.
+>>
+>> Anyone working on this?
+>
+> Sounds to me like you need to contact the vendor of the interface in
+> question. If it accepted a security erase command and didn't do it then
+> it's broken. It's at liberty to refuse it, or report it doesn't know what
+> you are talking about, but if it just returned and after re-plugging the
+> device its still using the old keys then it or the device is busted and
+> it's not something the OS can do much about.
 
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
----
- drivers/mtd/devices/m25p80.c | 3 +++
- 1 file changed, 3 insertions(+)
+Alan,
 
-diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-index e84563d..aac48800 100644
---- a/drivers/mtd/devices/m25p80.c
-+++ b/drivers/mtd/devices/m25p80.c
-@@ -202,6 +202,9 @@ static int m25p_probe(struct spi_mem *spimem)
- 	if (data && data->name)
- 		nor->mtd.name = data->name;
- 
-+	if (!nor->mtd.name)
-+		nor->mtd.name = spi_mem_get_name(spimem);
-+
- 	/* For some (historical?) reason many platforms provide two different
- 	 * names in flash_platform_data: "name" and "type". Quite often name is
- 	 * set to "m25p80" and then "type" provides a real chip name.
--- 
-2.7.4
+You're right. I wrote to JMicron, and they are kind to reply that
+"hdparm not support secure-erase feature with USB to NVMe device", and
+told me to plug the card into a PCI slot to perform the
+security-erase.
 
+I'm asking JMicron again if the JMS583 even support security-erase.
+
+Thanks,
+Jeff
