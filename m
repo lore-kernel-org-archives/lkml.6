@@ -2,114 +2,107 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4EBC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 820B9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50D5A208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alskDvbj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D5A208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 43155208DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43155208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbeHBIBc (ORCPT
+        id S1726654AbeHBIBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:01:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41363 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeHBIBc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:01:32 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z8-v6so609426pgu.8;
-        Wed, 01 Aug 2018 23:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mEGNsuTVA0iAVljYB6tgBqcEODMP9TVeo/NiEaNE184=;
-        b=alskDvbjcMxqFRFjhHc+0s/Detky02Kf/rz8xoqPmL9xlk3UDYwWNH1hwkhja9caTJ
-         a+rqsnWHZYbHb+MdIAZv6voMIpvseUE+Xk7Z7TWz9nFig63Bw2C3K3IDTczeI2ypumhb
-         O08ExoJtWx0tnggCZLVARh1gycpKzYGY2WpFKeQGCsDk6SgqniOrNr6xdIM9Ven+YB1C
-         P+oETFszJ8nomfpqsvrvrYCcjpn2XobtK3DmIemG4owNxbKMnVfHGLYOKbG7cqnWIbnN
-         4D+yqQLMmYiTi0CHbuui5KZroBElZwTTE+cRHyTAn9sV4ep3GY0XZPPh3SumefTUubuM
-         pOQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mEGNsuTVA0iAVljYB6tgBqcEODMP9TVeo/NiEaNE184=;
-        b=sxMaH73OJAmuvugbhEK9A1xwiK7s1ZYf9ZL5QLUoFXUqid9sgoamBD3k1uYPjxbyaQ
-         VhRmMe+8oDE3caqVLkrfpwXkCZ4fBhwMqSWmoJk0x6RAFu9V8m3viY1wnjUTh6aZh1B3
-         XQqmitng8FAl0fNB2e0DZ4TZ3eOhyKQtrihqwv++0UfmDAjzNuQp8lcd8HWjUjyw7vXr
-         xgCAjeg6U6+tdkA4z6CtSPHJsXXUYu7bciMRpzznIWcBuoSgVS/biytilb+I2dzdT5Zh
-         IiTIL+D8wSw3brftOd3GbDVhHY4JxEAmPKW3HT08epPrM9t1dQjYq0OCeRyijuIPmTW3
-         +fjw==
-X-Gm-Message-State: AOUpUlHxqG95bf939NJDobUYV4Te81zgGbkTDi+B6UWt4tVnWXuCzUCR
-        Ui8D7xWbci67YBUwxM60ca0=
-X-Google-Smtp-Source: AAOMgpf0wx05iTt8CEGmwd4kgbkqX8A3DO/8pDRnsfadtoSF5buzdEeJYB2oJ9YaeV03LlwKFyHGqw==
-X-Received: by 2002:a65:64c8:: with SMTP id t8-v6mr1405239pgv.110.1533190322292;
-        Wed, 01 Aug 2018 23:12:02 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:f9cc])
-        by smtp.gmail.com with ESMTPSA id r16-v6sm1597134pfe.173.2018.08.01.23.12.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 23:12:01 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 23:11:48 -0700
-From:   Dennis Zhou <dennisszhou@gmail.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <jbacik@fb.com>,
-        kernel-team@fb.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH v2] block: make iolatency avg_lat exponentially decay
-Message-ID: <20180802061146.GA48671@dennisz-mbp.dhcp.thefacebook.com>
-References: <20180801002559.36261-1-dennisszhou@gmail.com>
- <20180801154958.GP1206094@devbig004.ftw2.facebook.com>
- <20180801161011.GS1206094@devbig004.ftw2.facebook.com>
+        Thu, 2 Aug 2018 04:01:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:10609 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726145AbeHBIBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:01:45 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C434D3B7AB123;
+        Thu,  2 Aug 2018 14:12:07 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
+ 14:12:02 +0800
+Subject: Re: linux-next: build failure after merge of the staging tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Gao Xiang <gaoxiang25@huawei.com>, Greg KH <greg@kroah.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Linus <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180730161622.3837cb15@canb.auug.org.au>
+ <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+ <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
+ <20180802010705.24a72730@canb.auug.org.au>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <fb9fb971-c607-c93e-d16f-16534edb8224@huawei.com>
+Date:   Thu, 2 Aug 2018 14:12:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180801161011.GS1206094@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180802010705.24a72730@canb.auug.org.au>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
+Hi Stephen,
 
-On Wed, Aug 01, 2018 at 09:10:11AM -0700, Tejun Heo wrote:
-> On Wed, Aug 01, 2018 at 08:49:58AM -0700, Tejun Heo wrote:
-> > Hello,
-> > 
-> > On Tue, Jul 31, 2018 at 05:25:59PM -0700, Dennis Zhou wrote:
-> > ...
-> > > +	/*
-> > > +	 * CALC_LOAD takes in a number stored in fixed point representation.
-> > > +	 * Because we are using this for IO time in ns, the values stored
-> > > +	 * are significantly larger than the FIXED_1 denominator (2048).
-> > > +	 * Therefore, rounding errors in the calculation are negligible and
-> > > +	 * can be ignored.
-> > > +	 */
-> > > +	exp_idx = min_t(int, BLKIOLATENCY_NR_EXP_FACTORS - 1,
-> > > +			iolat->cur_win_nsec / BLKIOLATENCY_EXP_BUCKET_SIZE);
-> > 
-> > Build bot is complaining about naked 64bit div.  Should use one of the
-> > div64*() helpers.
-> > 
-> > Looks good to me.  Once Johannes's concerns are addressed, please feel
-> > free to add
-> 
-> Ooh, one nitpick.  total_lat_avg is a bit of a misnomer now.  Maybe
-> rename to lat_avg?
-> 
+Sorry, yesterday I missed this email due to my email filter.
 
-Yeah, that makes sense. I've renamed it to lat_avg and updated the
-Documentation file as well.
+On 2018/8/1 23:07, Stephen Rothwell wrote:
+> Hi Chao,
+> 
+> On Wed, 1 Aug 2018 17:09:13 +0800 Chao Yu <yuchao0@huawei.com> wrote:
+>>
+>> Xiang has submitted several patches as below to fix compiling error on -next
+>> tree, could you consider to merge those temporary fixes into -next after merging
+>> staging-next's updates, and reenable CONFIG_EROFS_FS for further integrity
+>> compiling and test?
+>>
+>> staging: erofs: fix superblock/inode flags (MS_RDONLY -> SB_RDONLY, S_NOATIME)
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
+>>
+>> staging: erofs: remove RADIX_TREE_EXCEPTIONAL_{ENTRY, SHIFT}
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000283.html
+>>
+>> staging: erofs: update .mount and .remount_sb
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000285.html
+> 
+> OK, I will apply those tomorrow (actually later today :-)) and and stop
+> disabling CONFIG_EROFS_FS.
+
+OK, thanks for doing that, I and Xiang will keep an eye on compile result.
+
+> 
+>> BTW, for this condition that erofs was not covered by some common vfs
+>> stuff changes in other one's tree, who should take care of those
+>> missing fixes during coming next merge window?
+> 
+> It might be easiest for Greg to add the disabling CONFIG_EROFS_FS patch
+> to the staging tree itself for his first pull request during the merge
+> window and then send a second pull request (after the vfs and maybe the
+> Xarray stuff has been merged by Linus) with these patches followed by a
+> revert of the disabling patch.
+
+Thanks for the advice, I think that's a good way to solve the issue, let me send
+a patch to disable erofs compiling temporarily to avoid conflict during merge
+window. :)
 
 Thanks,
-Dennis
+
+> 
+
