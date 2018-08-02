@@ -2,154 +2,111 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E098C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A772C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA7820862
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC1B8208A4
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Lh8ct7/m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA7820862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C8Cs7fbO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1B8208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732206AbeHBBvq (ORCPT
+        id S1731995AbeHBBx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 21:51:46 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:57060 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727006AbeHBBvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 21:51:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D374A8EE13D;
-        Wed,  1 Aug 2018 17:03:26 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0AadFO385JDD; Wed,  1 Aug 2018 17:03:26 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 1 Aug 2018 21:53:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:59547 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbeHBBx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 21:53:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4551B8EE079;
-        Wed,  1 Aug 2018 17:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1533168206;
-        bh=qHs+q+7TA9fsBoWZ1bi4xsUdUqAOiWKyGUUiuCBDld4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Lh8ct7/m0fhfMOx//84fowpSNv9EntSrZA80ICBa7MVEHuHkjA4JQ/arjNp3Hy/Nw
-         PEc4mIqTthoha5RX4D48w1MyWzVe2mWD0mlGvo/mCkvMr2LC0ilXD6zdiFEOlNrQhU
-         ZpasVgjAQM2Fc0UhEZ/IfqeY5gzlh3kSeHNVo0us=
-Message-ID: <1533168205.3158.12.camel@HansenPartnership.com>
-Subject: Re: linux-next: Tree for Aug 1
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Ming Lei <tom.leiming@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        by ozlabs.org (Postfix) with ESMTPSA id 41gr5s5Rq1z9s4c;
+        Thu,  2 Aug 2018 10:05:05 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533168305;
+        bh=za7DJLXg1Z6zw/26vzaRx/lqunlad2YyAVP3wiPB9Hg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=C8Cs7fbOd0CWZ+oKrIM/Uu9Hk6Xmv+AHpLaE4JN6h0QCqjB8y6kW0wR8bueHXzqD5
+         Dl+sSYopJ22Vl5Nsxb2VG6F1w25DKmcSpBKK0cAjxU8fhYw2D+g1bd3F8Eo8AWIHgH
+         qIwoQYEyyvwgK9Cba2rNXVWDi3T0JdW8YJQhxHKKhhfKWHSwpsnVKk4YBWXrzJWDVo
+         oaAXUWWNIzMlaDGhfCT3MK5qUsUYK9lP3/lga2fV6wJwBWWkrZa/geyTYVWaLkJVrA
+         yA3KjKAW8zpdCrUN/w2Qim8XFMqmJeXJZbUjbACTZlsz9xTUZ5DaBNaT0zsmQ+m03E
+         hLcDSB5ZVpGbw==
+Date:   Thu, 2 Aug 2018 10:05:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
         Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-scsi <linux-scsi@vger.kernel.org>
-Date:   Wed, 01 Aug 2018 17:03:25 -0700
-In-Reply-To: <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
+Subject: Re: linux-next: Tree for Aug 1
+Message-ID: <20180802100505.56e663cb@canb.auug.org.au>
+In-Reply-To: <1533164454.3158.3.camel@HansenPartnership.com>
 References: <20180801175852.36549130@canb.auug.org.au>
-         <20180801224813.GA13074@roeck-us.net>
-         <1533163965.3158.1.camel@HansenPartnership.com>
-         <20180801234727.GA3762@roeck-us.net>
-         <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        <20180801224813.GA13074@roeck-us.net>
+        <1533163965.3158.1.camel@HansenPartnership.com>
+        <1533164454.3158.3.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.Gc82QXuAsDKDAkLmVLH09."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 07:57 +0800, Ming Lei wrote:
-> On Thu, Aug 2, 2018 at 7:47 AM, Guenter Roeck <linux@roeck-us.net>
-> wrote:
-> > On Wed, Aug 01, 2018 at 03:52:45PM -0700, James Bottomley wrote:
-> > > On Wed, 2018-08-01 at 15:48 -0700, Guenter Roeck wrote:
-> > > > On Wed, Aug 01, 2018 at 05:58:52PM +1000, Stephen Rothwell
-> > > > wrote:
-> > > > > Hi all,
-> > > > > 
-> > > > > Changes since 20180731:
-> > > > > 
-> > > > > The pci tree gained a conflict against the pci-current tree.
-> > > > > 
-> > > > > The net-next tree gained a conflict against the bpf tree.
-> > > > > 
-> > > > > The block tree lost its build failure.
-> > > > > 
-> > > > > The staging tree still had its build failure due to an
-> > > > > interaction
-> > > > > with
-> > > > > the vfs tree for which I disabled CONFIG_EROFS_FS.
-> > > > > 
-> > > > > The kspp tree lost its build failure.
-> > > > > 
-> > > > > Non-merge commits (relative to Linus' tree): 10070
-> > > > >  9137 files changed, 417605 insertions(+), 179996 deletions(-
-> > > > > )
-> > > > > 
-> > > > > -----------------------------------------------------------
-> > > > > ------
-> > > > > -----------
-> > > > > 
-> > > > 
-> > > > The widespread kernel hang issues are still seen. I managed
-> > > > to bisect it after working around the transient build failures.
-> > > > Bisect log is attached below. Unfortunately, it doesn't help
-> > > > much.
-> > > > The culprit is reported as:
-> > > > 
-> > > > 2d542828c5e9 Merge remote-tracking branch 'scsi/for-next'
-> > > > 
-> > > > The preceding merge,
-> > > > 
-> > > > 453f1d821165 Merge remote-tracking branch 'cgroup/for-next'
-> > > > 
-> > > > checks out fine, as does the tip of scsi-next (commit
-> > > > 103c7b7e0184,
-> > > > "Merge branch 'misc' into for-next"). No idea how to proceed.
-> > > 
-> > > This sounds like you may have a problem with this patch:
-> > > 
-> > >     commit d5038a13eca72fb216c07eb717169092e92284f1
-> > >      Author: Johannes Thumshirn <jthumshirn@suse.de>
-> > >      Date:   Wed Jul 4 10:53:56 2018 +0200
-> > > 
-> > >          scsi: core: switch to scsi-mq by default
-> > > 
-> > > To verify, boot with the additional kernel parameter
-> > > 
-> > > scsi_mod.use_blk_mq=0
-> > > 
-> > > Which will reverse the effect of the above patch.
-> > > 
-> > 
-> > Yes, that fixes the problem.
-> 
-> That may not the root cause, given this issue is only started to
-> see from next-20180731, but d5038a13eca7 (scsi: core: switch to
-> scsi-mq by default)
-> has been in -next for quite a while.
-> 
-> Seems something new causes this issue.
+--Sig_/.Gc82QXuAsDKDAkLmVLH09.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Read my other email about how to find this.
+Hi all,
 
-https://marc.info/?l=linux-scsi&m=153316446223676
+On Wed, 01 Aug 2018 16:00:54 -0700 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> So what seems to be happening to cause this is that there's a patch
+> somewhere between the merge base of my scsi-next series and the next
+> tree and the patch just before scsi-next was actually merged that
+> actually causes a boot failure with blk-mq enabled.  Could you try to
+> find this patch?  I think the way to do it is to try to bisect this
+> range of linux-next using the command line
+>=20
+> scsi_mod.use_blk_mq=3D1
+>=20
+> Which forces block mq to be the default and seeing where the first boot
+> failure is (you don't need my scsi-next tree merged to do this because
+> all the offending patch does is flip the default state of the above
+> flag).
 
-Now that we've confirmed the issue, Gunter, could you attempt to bisect
-it as that email describes?
+So this means using v4.8-rc1 as the first good commit and 453f1d821165
+("Merge remote-tracking branch 'cgroup/for-next'") as the first bad
+(assuming that this latter fails to boot with "scsi_mod.use_blk_mq=3D1").
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell
 
-James
+--Sig_/.Gc82QXuAsDKDAkLmVLH09.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiSrEACgkQAVBC80lX
+0GxqyAf9GEnk3PtbKGKuCpu3gU6yYxkBLE3UQNOQ2NEa+W1HXoNRNU6zFlv6kc/A
+3iUTIpRY4YexnVw31f/qSVx/hbBjeslZ53zwAUL5bObMGMSxz5Ot+tvjH0It5Rwv
+HbJ0MhG4Zs5mybjTBFUupfqyx0V3ttS96UpcfXda6kV0AMFUhB1WAJchMwPpMVcb
+rbi++FUOSlrckC/pgND5IYXcXebBYZB/WDwaQA8Tt+ZfLLbEuMA0LEH55LIUU4KM
+ivzSwf6czB8dotUJQ1mfoPX1AijHWA6XrR+g871fjzvG4MJ3xNllqo8qzRDvFHmS
+Pd9ST22I2bmuMJIKZvbK2MvE/XUQaQ==
+=UEl/
+-----END PGP SIGNATURE-----
+
+--Sig_/.Gc82QXuAsDKDAkLmVLH09.--
