@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F35BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40002C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C0E2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C0E2146D
+	by mail.kernel.org (Postfix) with ESMTP id EDCE72145D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:08:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCE72145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbeHBJ6W (ORCPT
+        id S1731119AbeHBJ6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:58:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50971 "EHLO
+        Thu, 2 Aug 2018 05:58:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48159 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbeHBJ6W (ORCPT
+        with ESMTP id S1726735AbeHBJ6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:58:22 -0400
+        Thu, 2 Aug 2018 05:58:52 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72889aQ3430604
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7288hNZ3430643
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 2 Aug 2018 01:08:09 -0700
+        Thu, 2 Aug 2018 01:08:43 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72889bx3430601;
-        Thu, 2 Aug 2018 01:08:09 -0700
-Date:   Thu, 2 Aug 2018 01:08:09 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7288hcN3430640;
+        Thu, 2 Aug 2018 01:08:43 -0700
+Date:   Thu, 2 Aug 2018 01:08:43 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sandipan Das <tipbot@zytor.com>
-Message-ID: <tip-a6f39cecf71537d105f4bf87b8d4760851960838@git.kernel.org>
-Cc:     jolsa@redhat.com, acme@redhat.com, sandipan@linux.ibm.com,
-        hpa@zytor.com, mingo@kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        alexey.budankov@linux.intel.com, ravi.bangoria@linux.ibm.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: jolsa@redhat.com, acme@redhat.com, hpa@zytor.com,
-          mingo@kernel.org, sandipan@linux.ibm.com,
-          naveen.n.rao@linux.vnet.ibm.com, alexey.budankov@linux.intel.com,
-          ravi.bangoria@linux.ibm.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20180726105502.31670-1-sandipan@linux.ibm.com>
-References: <20180726105502.31670-1-sandipan@linux.ibm.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-2amnveu1ns4emjn70xuavpje@git.kernel.org>
+Cc:     jolsa@kernel.org, adrian.hunter@intel.com, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, mingo@kernel.org,
+        namhyung@kernel.org, hpa@zytor.com, acme@redhat.com,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
+          mingo@kernel.org, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, dsahern@gmail.com,
+          adrian.hunter@intel.com, wangnan0@huawei.com, jolsa@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests: Fix complex event name parsing
-Git-Commit-ID: a6f39cecf71537d105f4bf87b8d4760851960838
+Subject: [tip:perf/core] tools include uapi: Grab a copy of linux/in.h
+Git-Commit-ID: a4b2061242ecc024b1ee975e066b6e38db1c6b9e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,84 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a6f39cecf71537d105f4bf87b8d4760851960838
-Gitweb:     https://git.kernel.org/tip/a6f39cecf71537d105f4bf87b8d4760851960838
-Author:     Sandipan Das <sandipan@linux.ibm.com>
-AuthorDate: Thu, 26 Jul 2018 16:25:02 +0530
+Commit-ID:  a4b2061242ecc024b1ee975e066b6e38db1c6b9e
+Gitweb:     https://git.kernel.org/tip/a4b2061242ecc024b1ee975e066b6e38db1c6b9e
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 26 Jul 2018 09:26:13 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 31 Jul 2018 10:52:23 -0300
+CommitDate: Tue, 31 Jul 2018 10:52:37 -0300
 
-perf tests: Fix complex event name parsing
+tools include uapi: Grab a copy of linux/in.h
 
-The 'umask' event parameter is unsupported on some architectures like
-powerpc64.
+We'll use it to create tables for the 'protocol' argument to the
+socket syscall when the 'family' arg is one of AF_INET or AF_INET6.
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
+Add it to check_headers.sh so that when a new protocol gets added we get
+a notification during the build process.
 
-  # perf test "Parse event definition strings" -v
-   6: Parse event definition strings                        :
-  --- start ---
-  test child forked, pid 45915
-  ...
-  running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp'Invalid event/parameter 'umask'
-  Invalid event/parameter 'umask'
-  failed to parse event 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp', err 1, str 'unknown term'
-  event syntax error: '..,event=0x2,umask=0x3/ukp'
-                                    \___ unknown term
-
-  valid terms: event,mark,pmc,cache_sel,pmcxsel,unit,thresh_stop,thresh_start,combine,thresh_sel,thresh_cmp,sample_mode,config,config1,config2,name,period,freq,branch_type,time,call-graph,stack-size,no-inherit,inherit,max-stack,no-overwrite,overwrite,driver-config
-
-  mem_access -> cpu/event=0x10401e0/
-  running test 0 'config=10,config1,config2=3,umask=1'
-  test child finished with 1
-  ---- end ----
-  Parse event definition strings: FAILED!
-
-Committer testing:
-
-After applying the patch these test passes and in verbose mode we get:
-
-  # perf test -v "event definition"
-   6: Parse event definition strings:
-  --- start ---
-  test child forked, pid 11061
-  running test 0 'syscalls:sys_enter_openat'Using CPUID GenuineIntel-6-9E
-  <SNIP>
-  running test 53 'cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk'
-  running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
-  running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
-  running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
-  running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp'
-  <SNIP>
-  test child finished with 0
-  ---- end ----
-  Parse event definition strings: Ok
-  #
-
-Suggested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Fixes: 06dc5bf21f3f ("perf tests: Check that complex event name is parsed correctly")
-Link: http://lkml.kernel.org/r/20180726105502.31670-1-sandipan@linux.ibm.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2amnveu1ns4emjn70xuavpje@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ {include => tools/include}/uapi/linux/in.h | 0
+ tools/perf/check-headers.sh                | 1 +
+ 2 files changed, 1 insertion(+)
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index a36313daec4e..3b97ac018d5a 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1690,7 +1690,7 @@ static struct evlist_test test__events_pmu[] = {
- 		.id    = 2,
- 	},
- 	{
--		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp",
-+		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2/ukp",
- 		.check = test__checkevent_complex_name,
- 		.id    = 3,
- 	}
+diff --git a/include/uapi/linux/in.h b/tools/include/uapi/linux/in.h
+similarity index 100%
+copy from include/uapi/linux/in.h
+copy to tools/include/uapi/linux/in.h
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 814aaf269949..de28466c0186 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -7,6 +7,7 @@ include/uapi/drm/i915_drm.h
+ include/uapi/linux/fcntl.h
+ include/uapi/linux/kcmp.h
+ include/uapi/linux/kvm.h
++include/uapi/linux/in.h
+ include/uapi/linux/perf_event.h
+ include/uapi/linux/prctl.h
+ include/uapi/linux/sched.h
