@@ -2,129 +2,215 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2B0C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8B1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B75208DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10785208DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="SaqlbWDN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B75208DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pp4g9KuN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10785208DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbeHBJFe (ORCPT
+        id S1730841AbeHBJF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:05:34 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:46840 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbeHBJFe (ORCPT
+        Thu, 2 Aug 2018 05:05:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50716 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeHBJF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:05:34 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 664EF5C0D50;
-        Thu,  2 Aug 2018 09:15:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533194145;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ndCBKbFi02As1z9cJnhZCPC09j4d43MOIMjbHqr6E/g=;
-        b=SaqlbWDNJqms7SePRG390/qPmcYZaIyxaY1x7nc2URdSm8k6SXb9lORyARlCCgOBN6Eu9O
-        T/brapl3MeywlwyVeWRkHZ0MqfhV8Vvjvdph9N1bEDWQ0OWUhNxoG8UPw7ZvjCxYZk+CG6
-        75hG+sS/QWEs31LKkhzAPXwFaNpzrC4=
+        Thu, 2 Aug 2018 05:05:56 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w727EtKk172588;
+        Thu, 2 Aug 2018 07:16:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=XJGLfhDF/x1PdEfphU192OxjdgnDSm23kKxar9I2a2c=;
+ b=pp4g9KuN7f/ZhK2eExsy+Q6mggk0xZI8zqYEWF9VKEThU84C2iK2IVpBMmmFISBSeyOV
+ FITbjMP45mJxHreTScbjcQRJmet3q45h6BVBGJXsdpVemLWmkX8t6nnfulwZWfozEBpw
+ E1tNc5WI676Wra8ZnpBnZCmwntoyfEMfenezyqMDaeEpuFc/C/UNgyd8bpl16uRHP2mG
+ qWtDozZgxHMiREZM5s96E1BdspayGBIqqj0IXLcFQwVe98RsdmA1DQGloGsZBB+nOp/C
+ cL0UtA5/AGBLbUFDvtAFt/CwtumFERr9hEId6Bdzktiq3SL4sp7LcLSZIzDvQlIfWETG cQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2kggep9w37-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Aug 2018 07:16:07 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w727G5B0014562
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Aug 2018 07:16:06 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w727G573022280;
+        Thu, 2 Aug 2018 07:16:05 GMT
+Received: from kili.mountain (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Aug 2018 00:16:05 -0700
+Date:   Thu, 2 Aug 2018 10:15:58 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] uio: pruss: fix error handling in probe
+Message-ID: <20180802071558.p6p6pmzsrkz26rjr@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 02 Aug 2018 09:15:45 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Andy Duan <fugang.duan@nxp.com>
-Cc:     davem@davemloft.net, krzk@kernel.org, robin.murphy@arm.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: fec: check DMA addressing limitations
-In-Reply-To: <AM4PR0401MB22608258EB2B045E708A3779FF2C0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
-References: <20180801114449.21208-1-stefan@agner.ch>
- <AM4PR0401MB22608258EB2B045E708A3779FF2C0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
-Message-ID: <7d692e8aaefcfec15877a8cd340ee646@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8972 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808020078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.08.2018 04:00, Andy Duan wrote:
-> From: Stefan Agner <stefan@agner.ch> Sent: 2018年8月1日 19:45
->> Check DMA addressing limitations as suggested by the DMA API how-to.
->> This does not fix a particular issue seen but is considered good style.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/freescale/fec_main.c
->> b/drivers/net/ethernet/freescale/fec_main.c
->> index c729665107f5..af0fb200e936 100644
->> --- a/drivers/net/ethernet/freescale/fec_main.c
->> +++ b/drivers/net/ethernet/freescale/fec_main.c
->> @@ -3146,6 +3146,12 @@ static int fec_enet_init(struct net_device
->> *ndev)
->>  	fep->tx_align = 0x3;
->>  #endif
->>
->> +	/* Check mask of the streaming and coherent API */
->> +	if (dma_set_mask_and_coherent(&fep->pdev->dev,
->> DMA_BIT_MASK(32))) {
->> +		dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
->> +		return -ENODEV;
-> It is better:
-> 
-> ret = dma_set_mask_and_coherent(&fep->pdev->dev, DMA_BIT_MASK(32));
-> if (ret < 0) {
-> 	dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
-> 	return ret;
-> }
+There are two bugs here.  First the error codes weren't set on several
+paths.  And second, if the call to request_threaded_irq() inside
+uio_register_device() fails then it would lead to a double free when
+we call uio_unregister_device() inside pruss_cleanup().
 
-The code comes from the example in Documentation/DMA-API-HOWTO.txt.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I can rearrange if you prefer.
-
-> 
-> 
-> If the patch aim to "OF: Don't set default coherent DMA mask", I think
-> not only this driver need to add the DMA mask limitations,  many other
-> drivers also need.
-
-It doesn't exactly address the issue since with that patch DMA mask
-wasn't set at all. This code would just make the driver fail with
--ENODEV instead of -ENOMEM.
-
-To force a DMA mask I would have to set the DMA mask using
-dma_coerce_mask_and_coherent(). But as discussed with Robin it is safe
-to assume that an initial mask is set by the bus code:
-http://lkml.kernel.org/r/892f9d14-e6fd-7b1b-d07b-af0be6e623fa@arm.com
-
-Setting the DMA mask on DT buses has been addressed by Robin with
-"of/platform: Initialise default DMA masks". So everything should be
-fine again.
-
-I agree, other drivers need fixing too.
-
---
-Stefan
-
-> 
-> 
->> +	}
->> +
->>  	fec_enet_alloc_queue(ndev);
->>
->>  	bd_size = (fep->total_tx_ring_size + fep->total_rx_ring_size) * dsize;
->> --
->> 2.18.0
+diff --git a/drivers/uio/uio_pruss.c b/drivers/uio/uio_pruss.c
+index 91aea8823af5..1cc175d3c25c 100644
+--- a/drivers/uio/uio_pruss.c
++++ b/drivers/uio/uio_pruss.c
+@@ -122,7 +122,7 @@ static int pruss_probe(struct platform_device *pdev)
+ 	struct uio_pruss_dev *gdev;
+ 	struct resource *regs_prussio;
+ 	struct device *dev = &pdev->dev;
+-	int ret = -ENODEV, cnt = 0, len;
++	int ret, cnt, i, len;
+ 	struct uio_pruss_pdata *pdata = dev_get_platdata(dev);
+ 
+ 	gdev = kzalloc(sizeof(struct uio_pruss_dev), GFP_KERNEL);
+@@ -131,8 +131,8 @@ static int pruss_probe(struct platform_device *pdev)
+ 
+ 	gdev->info = kcalloc(MAX_PRUSS_EVT, sizeof(*p), GFP_KERNEL);
+ 	if (!gdev->info) {
+-		kfree(gdev);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err_free_gdev;
+ 	}
+ 
+ 	/* Power on PRU in case its not done as part of boot-loader */
+@@ -140,29 +140,26 @@ static int pruss_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gdev->pruss_clk)) {
+ 		dev_err(dev, "Failed to get clock\n");
+ 		ret = PTR_ERR(gdev->pruss_clk);
+-		kfree(gdev->info);
+-		kfree(gdev);
+-		return ret;
+-	} else {
+-		ret = clk_enable(gdev->pruss_clk);
+-		if (ret) {
+-			dev_err(dev, "Failed to enable clock\n");
+-			clk_put(gdev->pruss_clk);
+-			kfree(gdev->info);
+-			kfree(gdev);
+-			return ret;
+-		}
++		goto err_free_info;
++	}
++
++	ret = clk_enable(gdev->pruss_clk);
++	if (ret) {
++		dev_err(dev, "Failed to enable clock\n");
++		goto err_clk_put;
+ 	}
+ 
+ 	regs_prussio = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!regs_prussio) {
+ 		dev_err(dev, "No PRUSS I/O resource specified\n");
+-		goto out_free;
++		ret = -EIO;
++		goto err_clk_disable;
+ 	}
+ 
+ 	if (!regs_prussio->start) {
+ 		dev_err(dev, "Invalid memory resource\n");
+-		goto out_free;
++		ret = -EIO;
++		goto err_clk_disable;
+ 	}
+ 
+ 	if (pdata->sram_pool) {
+@@ -172,7 +169,8 @@ static int pruss_probe(struct platform_device *pdev)
+ 					sram_pool_sz, &gdev->sram_paddr);
+ 		if (!gdev->sram_vaddr) {
+ 			dev_err(dev, "Could not allocate SRAM pool\n");
+-			goto out_free;
++			ret = -ENOMEM;
++			goto err_clk_disable;
+ 		}
+ 	}
+ 
+@@ -180,14 +178,16 @@ static int pruss_probe(struct platform_device *pdev)
+ 				&(gdev->ddr_paddr), GFP_KERNEL | GFP_DMA);
+ 	if (!gdev->ddr_vaddr) {
+ 		dev_err(dev, "Could not allocate external memory\n");
+-		goto out_free;
++		ret = -ENOMEM;
++		goto err_free_sram;
+ 	}
+ 
+ 	len = resource_size(regs_prussio);
+ 	gdev->prussio_vaddr = ioremap(regs_prussio->start, len);
+ 	if (!gdev->prussio_vaddr) {
+ 		dev_err(dev, "Can't remap PRUSS I/O  address range\n");
+-		goto out_free;
++		ret = -ENOMEM;
++		goto err_free_ddr_vaddr;
+ 	}
+ 
+ 	gdev->pintc_base = pdata->pintc_base;
+@@ -215,15 +215,36 @@ static int pruss_probe(struct platform_device *pdev)
+ 		p->priv = gdev;
+ 
+ 		ret = uio_register_device(dev, p);
+-		if (ret < 0)
+-			goto out_free;
++		if (ret < 0) {
++			kfree(p->name);
++			goto err_unloop;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gdev);
+ 	return 0;
+ 
+-out_free:
+-	pruss_cleanup(dev, gdev);
++err_unloop:
++	for (i = 0, p = gdev->info; i < cnt; i++, p++) {
++		uio_unregister_device(p);
++		kfree(p->name);
++	}
++	iounmap(gdev->prussio_vaddr);
++err_free_ddr_vaddr:
++	dma_free_coherent(dev, extram_pool_sz, gdev->ddr_vaddr,
++			  gdev->ddr_paddr);
++err_free_sram:
++	if (pdata->sram_pool)
++		gen_pool_free(gdev->sram_pool, gdev->sram_vaddr, sram_pool_sz);
++err_clk_disable:
++	clk_disable(gdev->pruss_clk);
++err_clk_put:
++	clk_put(gdev->pruss_clk);
++err_free_info:
++	kfree(gdev->info);
++err_free_gdev:
++	kfree(gdev);
++
+ 	return ret;
+ }
+ 
