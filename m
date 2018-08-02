@@ -2,210 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27886C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3382C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C647921525
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9AC2151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXwr5WD0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C647921525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rjloKgKx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9AC2151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732501AbeHBQvk (ORCPT
+        id S1732567AbeHBQwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:51:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732416AbeHBQvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:51:40 -0400
-Received: from localhost.localdomain (unknown [121.229.118.135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E257C2151B;
-        Thu,  2 Aug 2018 15:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533222006;
-        bh=9/8RJ6NN+iRY/BIFRPwe7YPVG5MNYU9LGj8g99dxsz8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lXwr5WD0g/8Y23HfuYk0Kz1hawR/i4PEZWM+pWp42Jy1Cdwb3i2SXTptundzM40mH
-         YLtVkNCGEFh5bgS+JsP24Ox6Ulnp3P0eOibvuBmlr6/cqDMpxlGXqFZN2dNywBwpfz
-         vSHiUpaB2QXr66qZyaUGmFI9Nz1NeyR5hWSBXox0=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix invalid memory access
-Date:   Thu,  2 Aug 2018 22:59:12 +0800
-Message-Id: <20180802145912.10578-1-chao@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Thu, 2 Aug 2018 12:52:00 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36088 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732525AbeHBQwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:52:00 -0400
+Received: by mail-it0-f67.google.com with SMTP id p81-v6so3696782itp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 08:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+6+ZVXBDS+MdjbGlZis5tLN4pZnRxLkrlq2TxOkZY64=;
+        b=rjloKgKxvf6gtZAosHUG/a2cex4b8sIGoe/SPjdisBLSa/1LTwU8Pp7PEL9DZF12nm
+         5HsF5EEs4v+bGTtkTHd5mQLu81g9jhdIG9oKcqsYZQUtSMVeWYSFAieEeRF23qm1OFN8
+         QRE3VyiS596B35XT31EV27ODwX/ymugFpHYzQAAidCuYSDnlKa4CHRhcOy71BTE3dGoO
+         pvbvt5NBAnJVRkPqkB40LvmSv5UutT7QSPREXPL2V9jR9vOZyTjVNuaNGiWj0DFFcFRw
+         lBHq4k/9EmEIUgmaJI5WjPuLFDpZFLKUuC0YBjFtTpqcxcZVS7ELm21h/GsEIOoyrLm7
+         2iPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+6+ZVXBDS+MdjbGlZis5tLN4pZnRxLkrlq2TxOkZY64=;
+        b=PKb9DXWCheH3QKp9VGyVxsif0t336LdAhGdjyDt//IfsMcyE4JOmjm+PRcFPZ8mc8j
+         kRsGbAwhdQiK5lB++FpnXQELCmKejWCPJZIGWA2wP/8bwMzX7VWmMzaJfTrJko95CX0M
+         ++24glVqOaISHabMkbDdbvvf7AFHNK4zJDNy83bdYFUnqfkVKNDD/pzWJ4oxZep4g7Sw
+         evDtjHmcbIMrr/at88tfm/jKVutlfI7EH5xgchfNfXLj3jh0ttzF7Ok548VatKBvCc47
+         0U5XVXLzMZHYX5LT8aAyxmxyR/TIGVwH+Hqsx3ndk96xdedpe1xdTcabFxvhdU6nujuG
+         ib+g==
+X-Gm-Message-State: AOUpUlFrjqQIVRyp6T05gvNdjqrdrx4hQL+FAwqluSai+erx8K8NnevQ
+        hpWaMmlejYNVF4kzn9WzjfNZ4SpH/O58Wl4feUcZYA==
+X-Google-Smtp-Source: AAOMgpfVwDqyoEOewzkNDe3n/znU8SXglGI/4RhK+n/piEqUOJDiavwKUcdbki2OcbxRalg/vULNN+1Gwk4Hswp9IGU=
+X-Received: by 2002:a02:ac8f:: with SMTP id x15-v6mr2815342jan.132.1533222025880;
+ Thu, 02 Aug 2018 08:00:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:918c:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 08:00:25 -0700 (PDT)
+In-Reply-To: <20180801174256.5mbyf33eszml4nmu@armageddon.cambridge.arm.com>
+References: <cover.1529507994.git.andreyknvl@google.com> <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+ <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+ <CAAeHK+wJbbCZd+-X=9oeJgsqQJiq8h+Aagz3SQMPaAzCD+pvFw@mail.gmail.com>
+ <CAAeHK+yWF05XoU+0iuJoXAL3cWgdtxbeLoBz169yP12W4LkcQw@mail.gmail.com> <20180801174256.5mbyf33eszml4nmu@armageddon.cambridge.arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 2 Aug 2018 17:00:25 +0200
+Message-ID: <CAAeHK+zb7vcehuX9=oxLUJVJr1ZcgmRTODQz7wsPy+rJb=3kbQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        linux-kselftest@vger.kernel.org,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Wed, Aug 1, 2018 at 7:42 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> On Mon, Jul 16, 2018 at 01:25:59PM +0200, Andrey Konovalov wrote:
+>> On Thu, Jun 28, 2018 at 9:30 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>> So the checker reports ~100 different places where a __user pointer
+>> being casted. I've looked through them and found 3 places where we
+>> need to add untagging. Source code lines below come from 4.18-rc2+
+>> (6f0d349d).
+> [...]
+>> I'll add the 3 patches with fixes to v5 of this patchset.
+>
+> Thanks for investigating. You can fix those three places in your code
 
-syzbot found the following crash on:
+OK, will do.
 
-HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> but I was rather looking for a way to check such casting in the future
+> for newly added code. While for the khwasan we can assume it's a debug
+> option, the tagged user pointers are ABI and we need to keep it stable.
+>
+> We could we actually add some macros for explicit conversion between
+> __user ptr and long and silence the warning there (I guess this would
+> work better for sparse). We can then detect new ptr to long casts as
+> they appear. I just hope that's not too intrusive.
+>
+> (I haven't tried the sparse patch yet, hopefully sometime this week)
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
-
-loop7: rw=12288, want=8200, limit=20
-netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
-openvswitch: netlink: Message has 8 unknown bytes.
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
-RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
-RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
-RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
-Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
-RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
-RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
-RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
-R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
-R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
-FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
- f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
- mount_bdev+0x314/0x3e0 fs/super.c:1344
- f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
- legacy_get_tree+0x131/0x460 fs/fs_context.c:729
- vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
- do_new_mount fs/namespace.c:2603 [inline]
- do_mount+0x6f2/0x1e20 fs/namespace.c:2927
- ksys_mount+0x12d/0x140 fs/namespace.c:3143
- __do_sys_mount fs/namespace.c:3157 [inline]
- __se_sys_mount fs/namespace.c:3154 [inline]
- __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45943a
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
-RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
-RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
-R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
----[ end trace bd8550c129352286 ]---
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
-RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
-RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
-RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
-Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
-RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
-RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
-netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
-RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
-openvswitch: netlink: Message has 8 unknown bytes.
-R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
-R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
-FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
-will pass returned invalid page pointer into f2fs_put_page, cause accessing
-invalid memory, this patch tries to handle error path correctly to fix this
-issue.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix to release cp_page_2 in error path.
- fs/f2fs/checkpoint.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2cffc37e6c5b..00e03fa96526 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -780,6 +780,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 
- 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
- 	if (crc_offset > (blk_size - sizeof(__le32))) {
-+		f2fs_put_page(*cp_page, 1);
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 			"invalid crc_offset: %zu", crc_offset);
- 		return -EINVAL;
-@@ -787,6 +788,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 
- 	crc = cur_cp_crc(*cp_block);
- 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
-+		f2fs_put_page(*cp_page, 1);
- 		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
- 		return -EINVAL;
- 	}
-@@ -806,14 +808,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
- 					&cp_page_1, version);
- 	if (err)
--		goto invalid_cp1;
-+		return NULL;
- 
- 	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
- 					sbi->log_blocks_per_seg) {
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 			"invalid cp_pack_total_block_count:%u",
- 			le32_to_cpu(cp_block->cp_pack_total_block_count));
--		goto invalid_cp1;
-+		goto invalid_cp;
- 	}
- 	pre_version = *version;
- 
-@@ -821,7 +823,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
- 					&cp_page_2, version);
- 	if (err)
--		goto invalid_cp2;
-+		goto invalid_cp;
- 	cur_version = *version;
- 
- 	if (cur_version == pre_version) {
-@@ -829,9 +831,8 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 		f2fs_put_page(cp_page_2, 1);
- 		return cp_page_1;
- 	}
--invalid_cp2:
- 	f2fs_put_page(cp_page_2, 1);
--invalid_cp1:
-+invalid_cp:
- 	f2fs_put_page(cp_page_1, 1);
- 	return NULL;
- }
--- 
-2.18.0
-
+Haven't look at that sparse patch yet myself, but sounds doable.
+Should these macros go into this patchset or should they go
+separately?
