@@ -3,93 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F820C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40ADDC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5716021501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4D3214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZL2eHd1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5716021501
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rB6iNJiX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4D3214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbeHBN0k (ORCPT
+        id S1732285AbeHBN05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:26:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46392 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728767AbeHBN0k (ORCPT
+        Thu, 2 Aug 2018 09:26:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41796 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728767AbeHBN04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:26:40 -0400
+        Thu, 2 Aug 2018 09:26:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kSqoI4KQ+x3q0ZaH4XnaeOTRbStpd3VdlD+moV8a19Y=; b=ZL2eHd1X5G5cyjNYi3b3AnGWb
-        yuNW1m50yVSDUY9XHmjoZkCv/zqBo2pklFmUpwFqBbHoKAs6x3AMTjDgKGBjzOD1QnPdwgR00Q55B
-        bVtafYs+I+64AUCp8CBy3otM20pVPKQftLLxt1x9r276QN9CFMpTUEsy3qFoJooXh5HJjdO6MGbeO
-        YBMULPwOWdSNfwwro4TGmODW0Gcvsety8xcWX8VmsGwICunSGBCWpJNO+fzQttAeW4NKvLFkKaWxH
-        jBS8/Tf2N7pIAHRdbMIasH672Uuc065DxNquJq/8nHuSwOOp28joImxTw54MW50WDuLtpxv90EVfT
-        0a49XB4pQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flBtb-0005nt-7Z; Thu, 02 Aug 2018 11:35:55 +0000
-Date:   Thu, 2 Aug 2018 04:35:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alan Kao <alankao@andestech.com>
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Waterman <andrew@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Darius Rad <darius@bluespec.com>,
-        Vincent Chen <vincentc@andestech.com>,
-        Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <greentime@andestech.com>
-Subject: Re: [PATCH v3 1/4] Extract FPU context operations from entry.S
-Message-ID: <20180802113555.GA17108@infradead.org>
-References: <1533188391-5932-1-git-send-email-alankao@andestech.com>
- <1533188391-5932-2-git-send-email-alankao@andestech.com>
+         bh=PA318PA398RgiV1EN02U21BSIzEod9WStdClzGcN3U4=; b=rB6iNJiXdIAeqeuygeYTUPxi2
+        wlrtRej55WhzhL+2vfVmGQ/E+AM+0DoXt1l3GmS3otl+ue0kir1b+ClwLav0i1GS1MigIjYmku5Jj
+        5jNxJwOvzE+VTKG4jWhjqT4PdZ+PK5yKEoSf0q8XHOiWneEcruRToTMV+LYocyDVAQD7Q=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1flBtZ-0001zv-D0; Thu, 02 Aug 2018 11:35:53 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id D5CB611242E7; Thu,  2 Aug 2018 12:35:52 +0100 (BST)
+Date:   Thu, 2 Aug 2018 12:35:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180802113552.GJ9117@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
 Content-Disposition: inline
-In-Reply-To: <1533188391-5932-2-git-send-email-alankao@andestech.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+X-Cookie: BARBARA STANWYCK makes me nervous!!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/arch/riscv/kernel/fpu.S b/arch/riscv/kernel/fpu.S
-> new file mode 100644
-> index 000000000000..3210ef502e55
-> --- /dev/null
-> +++ b/arch/riscv/kernel/fpu.S
-> @@ -0,0 +1,105 @@
-> +/*
-> + * Copyright (C) 2012 Regents of the University of California
-> + * Copyright (C) 2017 SiFive
-> + *
-> + *   This program is free software; you can redistribute it and/or
-> + *   modify it under the terms of the GNU General Public License
-> + *   as published by the Free Software Foundation, version 2.
-> + *
-> + *   This program is distributed in the hope that it will be useful,
-> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *   GNU General Public License for more details.
-> + */
 
-It would be good to have SPDX headers fo every new file (and eventually
-switch the other RISC-V code over).
+--72k7VsmfIboquFwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Otherwise this looks good:
+On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
+> On 02.08.2018 12:44, Mark Brown wrote:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > I thought we'd got an ack for this from Raphael on a previous version or
+> > am I mistaken?
+
+> No, we got an:
+> "Anyway, I have no particular problems with exporting
+> pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+
+> Should i see it as ACK?
+
+It's probably good enough. =20
+
+--72k7VsmfIboquFwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti7JgACgkQJNaLcl1U
+h9AhdAf/TbZVRZ28YFMBoAatxLryUYP178QUB6AlI/U68p5IlMOnGK/xFGaPJ7G7
+bSyJWiVfHFTB2nKwoltQy219TQuUwr0c3RJ3t2kpFm06L5a/f9YyEZCndUxFOrgy
+dMSAeU5QaiOmQvGcWNrCmoIJ3K38xDm03FOLnzjUZ2Mk0WIyCuZkuacRDqHPRkgX
+t4WI4xTsEHJWybjs8fcfjmnyp8GAwAilOTGT0AeyuXJvTp4s629YzI7njDbcSqxS
+GLaE1Lrat9D/H6exC9UqfOSvP4OCjWCXYeSUPUUCgoMlWjYNtT0QVyM60tfizgtE
+4vMkCluS9U/eszAJV2Vchh0RIFiw/Q==
+=2d1o
+-----END PGP SIGNATURE-----
+
+--72k7VsmfIboquFwl--
