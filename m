@@ -2,176 +2,156 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16533C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AEEC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29652154B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:31:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpeY62Mj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C29652154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EA4D32154B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4D32154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbeHBTXR (ORCPT
+        id S1732257AbeHBTZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:23:17 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41289 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729788AbeHBTXR (ORCPT
+        Thu, 2 Aug 2018 15:25:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34448 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732049AbeHBTZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:23:17 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j5-v6so2915618wrr.8;
-        Thu, 02 Aug 2018 10:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=u29QTuzreazqEvKUYxZ+H8qJgLAYxZlOPdRo28Hek7U=;
-        b=HpeY62MjJpDxRt5kxqujRtvqlyuHCKGME1YbtbO/1S/BWhfoW8r7+ZtjEldpU8nL7c
-         iqaD3f07X/OMaOoq5TBJHQr7erFeQdvRh5180uiqgUVH8bNzhklK4MXD7xn+AG/Dqcsa
-         FholyZ3Pde7D4LUhJtHJ37epYoSFOaW+SQDutzGYBUDXFa2nHlN3pvLGWg0UxWb/9Ive
-         paEm2BBdqJ1LyyhrkQFu39obfFrbhTnvjdP4KSI5h5KwL0uQ2lZ3fbV2yx/FRlkVh3rI
-         ptAMkHp9e3fUndmgJ9hadVGR7/vnGqxbNm19gGadJWYJTTSoKe3EPPvnlNjMuiYffW3t
-         G4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=u29QTuzreazqEvKUYxZ+H8qJgLAYxZlOPdRo28Hek7U=;
-        b=PXUlbPGjAabIvoYNcBQ4CVLqzJbQeWR/HH9R+KkT9/6G1dzdzvlsoCyr164l3koh6G
-         mVvoMm09bWBFBAH4ZJZfMwfuhrZQFHtavzMqmcGaUxaoxBS5mSI1HyqhzmpZDaKLl2+d
-         7RkrESDxZsaHRC+gyPLAVpX1QzOUNZP1Up42u26hn7rJzaIv07gKHpZvwUN6UmEoREhm
-         trUyEsOBl1GHG40+QaRw4U88u4WCkD16w394AJQUKq0v3So+hfkhBxeKFlE21DvNJaVD
-         bPhhUWnygaltwFEFZYbl/bPykWBlIsk6T3p6KPsdLiQJSWziPJf7shQSF0VEgXz11Imi
-         WSLw==
-X-Gm-Message-State: AOUpUlF1qeu61YqT3wqDXCkyg4CAsKkNFsI1nMsdInzQ+DSOiswZRTtB
-        1GpnCN4KRwLvKxLbEMQYsvDk1TtS
-X-Google-Smtp-Source: AAOMgpcTVOIUr1G/DBVT1bfTN7GPya2hFmzJggULvP2v+KoS4C2AwZZLc1XbXkfOMb7mtWBLcRrAtg==
-X-Received: by 2002:a5d:4b90:: with SMTP id b16-v6mr264144wrt.168.1533231068795;
-        Thu, 02 Aug 2018 10:31:08 -0700 (PDT)
-Received: from [172.16.9.139] (host-78-151-217-159.as13285.net. [78.151.217.159])
-        by smtp.gmail.com with ESMTPSA id u71-v6sm3219168wmd.12.2018.08.02.10.31.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 10:31:08 -0700 (PDT)
-Subject: Re: [PATCH 01/33] vfs: syscall: Add open_tree(2) to reference or
- clone a mount [ver #11]
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
- <153313705165.13253.4602180607294286849.stgit@warthog.procyon.org.uk>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <7a292a44-7e17-572b-2d1e-0085ef400010@gmail.com>
-Date:   Thu, 2 Aug 2018 18:31:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 15:25:31 -0400
+Received: from localhost (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3080E0E;
+        Thu,  2 Aug 2018 17:33:22 +0000 (UTC)
+Date:   Thu, 2 Aug 2018 19:33:19 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     devel@driverdev.osuosl.org, Gao Xiang <gaoxiang25@huawei.com>,
+        sfr@canb.auug.org.au, Chao Yu <yuchao0@huawei.com>,
+        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] staging: erofs: disable compiling temporarile
+Message-ID: <20180802173319.GB24125@kroah.com>
+References: <20180802143455.9214-1-chao@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <153313705165.13253.4602180607294286849.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802143455.9214-1-chao@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Thu, Aug 02, 2018 at 10:34:55PM +0800, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
+> 
+> As Stephen Rothwell reported:
+> 
+> "After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/staging/erofs/super.c: In function 'erofs_read_super':
+> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>                  ^~~~~~~~~
+>                  IS_RDONLY
+> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
+>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>                              ^~~~~~~~~~
+>                              S_NOATIME
+> drivers/staging/erofs/super.c: In function 'erofs_mount':
+> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+>    &priv, erofs_fill_super);
+>           ^~~~~~~~~~~~~~~~
+> In file included from include/linux/buffer_head.h:12:0,
+>                  from drivers/staging/erofs/super.c:14:
+> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>                        ^~~~~~~~~~
+> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+>   return mount_bdev(fs_type, flags, dev_name,
+>          ^~~~~~~~~~
+> In file included from include/linux/buffer_head.h:12:0,
+>                  from drivers/staging/erofs/super.c:14:
+> include/linux/fs.h:2151:23: note: declared here
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>                        ^~~~~~~~~~
+> drivers/staging/erofs/super.c: At top level:
+> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .mount          = erofs_mount,
+>                     ^~~~~~~~~~~
+> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
+> drivers/staging/erofs/super.c: In function 'erofs_remount':
+> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>   *flags |= MS_RDONLY;
+>             ^~~~~~~~~
+>             IS_RDONLY
+> drivers/staging/erofs/super.c: At top level:
+> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .remount_fs = erofs_remount,
+>                 ^~~~~~~~~~~~~
+> 
+> Caused by various commits creating erofs in the staging tree interacting
+> with various commits redoing the mount infrastructure in the vfs tree.
+> 
+> I have disabed CONFIG_EROFS_FS for now:"
+> 
+> The reason of compiling error is:
+> 
+> Since -next collects and merges developing patches including common vfs
+> stuff from multi-trees, but those patches didn't cover erofs, such as:
+> 
+> ('vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
+> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=109b45090d7d3ce2797bb1ef7f70eead5bfe0ff3
+> 
+> ("vfs: Require specification of size of mount data for internal mounts")
+> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0a191e4505a4f255e6513b49426213da69bf0e80
+> 
+> Above vfs related patches has not been merged in staging tree, if we
+> submit those erofs patches to staging mailing list and after including
+> them in staging-{test,nexts} tree, it can easily cause compiling error.
+> 
+> We worked out some patches to adjust those vfs change, but now we just
+> submit them to -next tree temporarily to avoid compiling error.
+> 
+> For potentail conflict in between erofs and vfs changes in incoming
+> merge window, Stephen suggested that we can disable CONFIG_EROFS_FS
+> temporarily to pass merge window, and after that we can do restore by
+> reenabling CONFIG_EROFS_FS and applying those fixing patches. Also
+> Greg confirmed this solution.
+> 
+> So, let's disable compiling erofs for a while.
+> 
+> Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v3: remain "depends on BLOCK".
+>  drivers/staging/erofs/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
+> index 663b755bf2fb..b37d994aa687 100644
+> --- a/drivers/staging/erofs/Kconfig
+> +++ b/drivers/staging/erofs/Kconfig
+> @@ -3,6 +3,7 @@
+>  config EROFS_FS
+>  	tristate "EROFS filesystem support"
+>  	depends on BLOCK
+> +	depends on BROKEN
+>  	help
+>  	  EROFS(Enhanced Read-Only File System) is a lightweight
+>  	  read-only file system with modern designs (eg. page-sized
 
-I found this interesting, though I don't entirely follow the kernel 
-mount/unmount code.  I had one puzzle about the code, and two questions 
-which I was largely able to answer.
+Sorry, I already took the first version in my tree.  Don't worry about
+it for now you can fix this up after 4.19-rc1 is out when we enable the
+filesystem again.
 
-On 01/08/18 16:24, David Howells wrote:
-> +void dissolve_on_fput(struct vfsmount *mnt)
-> +{
-> +	namespace_lock();
-> +	lock_mount_hash();
-> +	mntget(mnt);
-> +	umount_tree(real_mount(mnt), UMOUNT_SYNC);
-> +	unlock_mount_hash();
-> +	namespace_unlock();
-> +}
+thanks,
 
-Can I ask why  UMOUNT_SYNC is used here?  I feel like I must have missed 
-something, but doesn't it skip the IS_MNT_LOCKED() check in 
-disconnect_mount() ?
-
-UMOUNT_SYNC seems used for non-lazy unmounts, and in internal cleanups 
-where userspace wouldn't be able to see.  But I think userspace can keep 
-watching in this case, e.g. by `fd2 = openat(fd, ".", O_PATH)` (or `fd2 
-= open_tree(fd, ".", 0)` ?).  I would think this function should avoid 
-using UMOUNT_SYNC, like lazy unmount avoids it.
-
-> From: Al Viro <viro@zeniv.linux.org.uk>
->
-> open_tree(dfd, pathname, flags)
->
-> Returns an O_PATH-opened file descriptor or an error.
-> dfd and pathname specify the location to open, in usual
-> fashion (see e.g. fstatat(2)).  flags should be an OR of
-> some of the following:
-> 	* AT_PATH_EMPTY, AT_NO_AUTOMOUNT, AT_SYMLINK_NOFOLLOW -
-> same meanings as usual
-> 	* OPEN_TREE_CLOEXEC - make the resulting descriptor
-> close-on-exec
-> 	* OPEN_TREE_CLONE or OPEN_TREE_CLONE | AT_RECURSIVE -
-> instead of opening the location in question, create a detached
-> mount tree matching the subtree rooted at location specified by
-> dfd/pathname.  With AT_RECURSIVE the entire subtree is cloned,
-> without it - only the part within in the mount containing the
-> location in question.  In other words, the same as mount --rbind
-> or mount --bind would've taken.
-
-One of the limitations documented for `mount --bind`, is that `mount -o 
-bind,ro` is not atomic.  There's a workaround if you need it, it's just 
-a bit clunky.  I wondered if it was possible to improve `mount` by 
-changing the mount flags between OPEN_TREE_CLONE and move_mount().
-
-     fd = open_tree(..., OPEN_TREE_CLONE);
-     fchdir(fd);
-     mount(NULL, ".", NULL, MS_REMOUNT | MS_BIND | newbindflags, NULL);
-     move_mount(fd, ...);
-
-Another closely-related limitation of `mount`, is that it can't 
-atomically set the propagation type at mount time.
-
-My conclusion was the above doesn't quite work yet.  do_remount() still 
-uses check_mnt(), so it doesn't accept detached mounts.  I wonder if it 
-can be changed in future.
-
->    The detached tree will be
-> dissolved on the final close of obtained file.
-
-My last question turned out very dull, feel free to ignore.
-
-It seems the only way to use MNT_FORCE[1], is to first attach the 
-filesystem somewhere (and close the file descriptor).  I wondered if 
-there was a way to make things more regular.  close_and_umount() feels 
-too obscure to live though...
-
-[1] "Ask the filesystem to abort pending requests before attempting 
-theunmount. This may allow the unmount to complete without waitingfor an 
-inaccessible server. If, after aborting requests, someprocesses still 
-have active references to the filesystem, theunmount will still fail."
-
-...and I suppose it's much less useful than I thought.  The point of 
-MNT_FORCE is to kick out processes that were blocked _trying to access a 
-file by name_, e.g. open() or stat().  But if we're considering a 
-detached mount, then it's impossible to access it by name alone.  You 
-need an fd (or cwd or root), which would stop the filesystem being 
-unmounted anyway. close_and_umount(fd, MNT_FORCE) is pointless unless 
-your process has other threads accessing the filesystem through the same 
-fd, but that's a really bad idea anyway.
-
-It could prevent someone else getting stuck indefinitely on 
-/proc/$PID/fd, but that's still very obscure.
-
-Regards
-Alan
+greg k-h
