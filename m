@@ -2,118 +2,97 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FDEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1083DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2802146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2802146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id B41222146F
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:27:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="45+2o02R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41222146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbeHBKQi (ORCPT
+        id S1732118AbeHBKRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:16:38 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:43099 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731951AbeHBKQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:16:37 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 41h3DR2XFMz9ttRp;
-        Thu,  2 Aug 2018 10:26:31 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id CjQTFQ7HN1GT; Thu,  2 Aug 2018 10:26:31 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 41h3DR22FNz9ttRc;
-        Thu,  2 Aug 2018 10:26:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 812E08B843;
-        Thu,  2 Aug 2018 10:26:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 4t-ZbpLPrzDK; Thu,  2 Aug 2018 10:26:32 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4026B8B842;
-        Thu,  2 Aug 2018 10:26:32 +0200 (CEST)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 181506F72F; Thu,  2 Aug 2018 08:26:32 +0000 (UTC)
-Message-Id: <3193a73d4b251d25e6c10cd1e875a450de50a7e6.1533198182.git.christophe.leroy@c-s.fr>
-In-Reply-To: <b3d7b6cdb89a48be06a2630bf0d762d9d17d931f.1533198182.git.christophe.leroy@c-s.fr>
-References: <b3d7b6cdb89a48be06a2630bf0d762d9d17d931f.1533198182.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v9 4/4] selftests/powerpc: update strlen() test to test the
- new assembly function for PPC32
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, wei.guo.simon@gmail.com,
-        segher@kernel.crashing.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu,  2 Aug 2018 08:26:32 +0000 (UTC)
+        Thu, 2 Aug 2018 06:17:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50874 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729764AbeHBKRp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 06:17:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w728NtSX187185;
+        Thu, 2 Aug 2018 08:27:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=xObK6CfFo+3BLrRth77DQqgoF22OgMEYF+hkyaMfHWA=;
+ b=45+2o02Rog4O2DeU4dfuucoLF80PAJ7trFAxroOyXfj2NVpPQtBrFCOdx9mBgbkYIMEg
+ TKtbUHRF3zmIlbMdwYllbKBY1nAECePg9odeXFVsLByoljy4erZHfUjeRHug2vRVpD/f
+ 2/NA6+imd7VUYAFKlTtAygnU89GjRSP7+eig/5nEFG0Tw6ao5jkIngbWbwzQAwcsN5iu
+ YzdHq+PBjAE5+qEN6DvGc492dczz3JXxhvWvSTDBjKc3PwHlL9pv5GSfNbZj5mNi08kg
+ JAkNfW3mHduNf46rdv5/Qu1nZoB130XV9tRPB+BSZo3VEuvxV+NkXPU9/nbVS+DLf/t4 jQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kgh4qa1xc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 02 Aug 2018 08:27:32 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w728RVob023016
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Aug 2018 08:27:31 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w728RSJW022061;
+        Thu, 2 Aug 2018 08:27:29 GMT
+Received: from kili.mountain (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 02 Aug 2018 01:27:28 -0700
+Date:   Thu, 2 Aug 2018 11:27:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Huy Duong <qhuyduong@hotmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] eeprom: idt_89hpesx: clean up an error pointer vs NULL
+ inconsistency
+Message-ID: <20180802082720.calhmn77gmkmcb2d@kili.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8972 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=961
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1808020090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a test for testing the new assembly strlen() for PPC32
+We check for IS_ERR_OR_NULL() here, but later we check the same thing
+for NULL only.  It turns out that it can only be NULL so we can make the
+checking consistent by removing the ERR_PTR stuff.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v9: fixed relevant checkpatch warnings
- v8: removed defines in ppc_asm.h that were added in v6 (not used anymore since v7) ; added missing link to strlen_32.S
- v7: reduced the scope to PPC32
- v6: added additional necessary defines in ppc_asm.h
- v5: no change
- v4: new
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- tools/testing/selftests/powerpc/stringloops/Makefile    | 5 ++++-
- tools/testing/selftests/powerpc/stringloops/asm/cache.h | 3 +++
- tools/testing/selftests/powerpc/stringloops/strlen_32.S | 1 +
- 3 files changed, 8 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/powerpc/stringloops/asm/cache.h
- create mode 120000 tools/testing/selftests/powerpc/stringloops/strlen_32.S
-
-diff --git a/tools/testing/selftests/powerpc/stringloops/Makefile b/tools/testing/selftests/powerpc/stringloops/Makefile
-index 779b644461c4..9e510de2c07d 100644
---- a/tools/testing/selftests/powerpc/stringloops/Makefile
-+++ b/tools/testing/selftests/powerpc/stringloops/Makefile
-@@ -13,9 +13,12 @@ $(OUTPUT)/memcmp_32: CFLAGS += -m32
- $(OUTPUT)/strlen: strlen.c string.o
- $(OUTPUT)/string.o: string.c
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 119eb05a5a91..8a4659518c33 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -1128,7 +1128,7 @@ static void idt_get_fw_data(struct idt_89hpesx_dev *pdev)
  
-+$(OUTPUT)/strlen_32: strlen.c
-+$(OUTPUT)/strlen_32: CFLAGS += -m32
-+
- ASFLAGS = $(CFLAGS)
- 
--TEST_GEN_PROGS := memcmp_32 memcmp_64 strlen
-+TEST_GEN_PROGS := memcmp_32 memcmp_64 strlen strlen_32
- 
- include ../../lib.mk
- 
-diff --git a/tools/testing/selftests/powerpc/stringloops/asm/cache.h b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
-new file mode 100644
-index 000000000000..38685554b6c1
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/asm/cache.h
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#define	IFETCH_ALIGN_BYTES 4
-diff --git a/tools/testing/selftests/powerpc/stringloops/strlen_32.S b/tools/testing/selftests/powerpc/stringloops/strlen_32.S
-new file mode 120000
-index 000000000000..72b13731b24c
---- /dev/null
-+++ b/tools/testing/selftests/powerpc/stringloops/strlen_32.S
-@@ -0,0 +1 @@
-+../../../../../arch/powerpc/lib/strlen_32.S
-\ No newline at end of file
--- 
-2.13.3
-
+ 	device_for_each_child_node(dev, fwnode) {
+ 		ee_id = idt_ee_match_id(fwnode);
+-		if (IS_ERR_OR_NULL(ee_id)) {
++		if (!ee_id) {
+ 			dev_warn(dev, "Skip unsupported EEPROM device");
+ 			continue;
+ 		} else
