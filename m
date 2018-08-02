@@ -3,141 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F142C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75D1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E97A821523
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:46:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E97A821523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 924942151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:54:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924942151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chelsio.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbeHBQiC (ORCPT
+        id S1732588AbeHBQpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:38:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60550 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732202AbeHBQiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:38:02 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF1DC818B107;
-        Thu,  2 Aug 2018 14:46:29 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DB54F2026D69;
-        Thu,  2 Aug 2018 14:46:28 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 10:46:27 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180802144627.GB3481@redhat.com>
-References: <20180801102221.5308-1-nek.in.cn@gmail.com>
- <20180801165644.GA3820@redhat.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
- <20180802111000.4649d9ed@alans-desktop>
+        Thu, 2 Aug 2018 12:45:31 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:4889 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732555AbeHBQpb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:45:31 -0400
+Received: from localhost (varun.asicdesigners.com [10.193.191.126])
+        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id w72Erfi7015319;
+        Thu, 2 Aug 2018 07:53:42 -0700
+Date:   Thu, 2 Aug 2018 20:23:41 +0530
+From:   Varun Prakash <varun@chelsio.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: csiostor: avoid null pointer dereference on
+ card_fw allocation failure
+Message-ID: <20180802145339.GA1671@chelsio.com>
+References: <20180801161743.22301-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180802111000.4649d9ed@alans-desktop>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 02 Aug 2018 14:46:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 02 Aug 2018 14:46:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+In-Reply-To: <20180801161743.22301-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 11:10:00AM +0100, Alan Cox wrote:
-> > One motivation I guess, is that most accelerators lack of a 
-> > well-abstracted high level APIs similar to GPU side (e.g. OpenCL 
-> > clearly defines Shared Virtual Memory models). VFIO mdev
-> > might be an alternative common interface to enable SVA usages 
-> > on various accelerators...
+On Wed, Aug 01, 2018 at 05:17:43PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> SVA is not IMHO the hard bit from a user level API perspective. The hard
-> bit is describing what you have and enumerating the contents of the device
-> especially when those can be quite dynamic and in the FPGA case can
-> change on the fly.
+> Currently if card_fw fails to be allocated then a null pointer
+> dereference occurs on card_fd when calling csio_hw_prep_fw. Fix this
+> by checking for a failed allocation and returning -ENOMEM.
 > 
-> Right now we've got
-> - FPGA manager
-> - Google's recently posted ASIC patches
-> - WarpDrive
+> Detected by CoverityScan, CID#1271213 ("Dereference null return value")
 > 
-> all trying to be bits of the same thing, and really there needs to be a
-> single solution that handles all of this stuff properly.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/scsi/csiostor/csio_hw.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> If we are going to have any kind of general purpose accelerator API then
-> it has to be able to implement things like
+> diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_hw.c
+> index a10cf25ee7f9..aa637e9ea9ba 100644
+> --- a/drivers/scsi/csiostor/csio_hw.c
+> +++ b/drivers/scsi/csiostor/csio_hw.c
+> @@ -2275,8 +2275,8 @@ static int csio_hw_prep_fw(struct csio_hw *hw, struct fw_info *fw_info,
+>  }
+>  
+>  /*
+> - * Returns -EINVAL if attempts to flash the firmware failed
+> - * else returns 0,
+> + * Returns -EINVAL if attempts to flash the firmware failed,
+> + * -ENOMEM if allocation failed, else returns 0,
+>   * if flashing was not attempted because the card had the
+>   * latest firmware ECANCELED is returned
+>   */
+> @@ -2321,6 +2321,8 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+>  	 * card
+>  	 */
+>  	card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
+> +	if (!card_fw)
+> +		return -ENOMEM;
+>  
+>  	/* upgrade FW logic */
+>  	ret = csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
 
-Why is the existing driver model not good enough ? So you want
-a device with function X you look into /dev/X (for instance
-for GPU you look in /dev/dri)
+There is a call to release_firmware() after csio_hw_prep_hw()
 
-Each of those device need a userspace driver and thus this
-user space driver can easily knows where to look. I do not
-expect that every application will reimplement those drivers
-but instead use some kind of library that provide a high
-level API for each of those devices.
+        /* upgrade FW logic */
+        ret = csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
+                         hw->fw_state, reset);
 
-> 	'find me an accelerator with function X that is nearest my memory'
-> 	'find me accelerator functions X and Y that share HBM'
-> 	'find me accelerator functions X and Y than can be chained'
-> 
-> If instead we have three API's depending upon whose accelerator you are
-> using and whether it's FPGA or ASIC this is going to be a mess on a grand
-> scale.
+        /* Cleaning up */
+        if (fw != NULL)
+                release_firmware(fw);
 
-I see the enumeration as an orthogonal problem. There have
-been talks within various circles about it because new system
-bus (CAPI, CCIX, ...) imply that things like NUMA topology
-you have in sysfs is not up to the task.
+In case of memory allocation failure csio_hw_flash_fw() will return without
+calling release_firmware() with this patch.
 
-Now you have a hierarchy of memory for the CPU (HBM, local
-node main memory aka you DDR dimm, persistent memory) each
-with different properties (bandwidth, latency, ...). But
-also for devices memory. Some device can have many types
-of memory too. For instance a GPU might have HBM, GDDR,
-persistant and multiple types of memory. Those device are
-on a given CPU node but can also have inter-connect of their
-own (AMD infinity, NVlink, ...).
+Following patch fixes this issue  
 
+csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+                return -EINVAL;
+        }
 
-You have HMAT which i was hopping would provide a new sysfs
-that supersede old numa but it seems it is going back to
-NUMA node for compatibilities reasons i guess (ccing Ross).
++       /* allocate memory to read the header of the firmware on the
++        * card
++        */
++       card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
++       if (!card_fw)
++               return -ENOMEM;
++
+        if (csio_is_t5(pci_dev->device & CSIO_HW_CHIP_MASK))
+                fw_bin_file = FW_FNAME_T5;
+        else
+csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+                fw_size = fw->size;
+        }
 
-
-Anyway i think finding devices and finding relation between
-devices and memory is 2 separate problems and as such should
-be handled separatly.
-
-
-Cheers,
-Jérôme
+-       /* allocate memory to read the header of the firmware on the
+-        * card
+-        */
+-       card_fw = kmalloc(sizeof(*card_fw), GFP_KERNEL);
+-
+        /* upgrade FW logic */
+        ret = csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
+                         hw->fw_state, reset);
