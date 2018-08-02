@@ -3,173 +3,237 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B957C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82310C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45D1E20C0B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DAB720C0E
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nSGCtDhs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D1E20C0B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ql2/yipC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DAB720C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbeHBJjF (ORCPT
+        id S1727302AbeHBJjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:39:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:45049 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbeHBJjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:39:05 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41h2PG4SG7z9s3q;
-        Thu,  2 Aug 2018 17:49:06 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533196147;
-        bh=DP6fAIlMLIjT3+2aczeCLDlCMp6kpR8mk4zXUQ+Jurk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nSGCtDhsHqo21hLvkbyyalpAcafpJE5d0caN9bQCOBsqzbwQy+FG63ez7X9Dbdr7x
-         ycT0Zs5yOwbIeFU18inr27s1r8YnlbD1xv0iQGziB9do5T87e8UOPf32yKldd/9r0h
-         s1cUAMR6ob4jQXMLuv0f1mpy9Mt1JPpzmbGe1I2ZJMt8sWqwZEk5u6QsnddtA9VoSi
-         Kx6CzXciSBDLRlTK0l2Nr8r1mCZD0ooGeI+xt6fpxDViEaBTUSzaaVONvxddMczb0o
-         IQXUt5Yu1c7jPUDe07SRvSkxLmhUt61OlM9Us4PzPENEBi/aT56g+ArtDJsRW6pNr7
-         Xg6RK6zXqiyCw==
-Date:   Thu, 2 Aug 2018 17:48:55 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: linux-next: manual merge of the xarray tree with the ext4 tree
-Message-ID: <20180802174855.4edeba34@canb.auug.org.au>
+        Thu, 2 Aug 2018 05:39:54 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38580 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeHBJjy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 05:39:54 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so1083320ljc.5;
+        Thu, 02 Aug 2018 00:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BVM00BBrzX1IXEr7fiozMAAk2XvQtvnL+B8elRKALmg=;
+        b=ql2/yipCU6X7IShNHQc5iV3h2JOMKBgOKaJL12fjgiwGTZoA5Xc9ysN8gVtWFdh7T9
+         kzvpGDVDuXmZLC5dWnzKhrGT5YpW82N33LznJiBYojE6KtyrMSD0vwATcUQL01XU5OpI
+         PV30MD/Xe8J8zUCywycs1N5H7Ff3jd/p+hEGXtMrn1BIUHXOnq7siKEACoUHAzW0PU/K
+         NZzu5LwhrFbzV9yVNTjt0EABgYoN07NDk5H7hLOb/C1JiVSu7b1Oo0XxiB3BAMMzXStf
+         OxUgnedHPiO68si38puhJ5RFSpOpA9aTygALPNXwTRCeE2/zbnY6+zk8QY8sOQRkKZUo
+         DCrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BVM00BBrzX1IXEr7fiozMAAk2XvQtvnL+B8elRKALmg=;
+        b=dbP65GQXCCI/duSJEnT8ohjuSq/uNRSI2Z4b4Pol8PrXiDN2My2H1PzE1lOyRH58A3
+         A4hbbD9NhAFlk1H7cIY2lUsAHqogpNSvo8c2xJluyCwWog7INqBSWwIwDZr0Al1NeKLE
+         5ilhVr4jC79JVFA+m8GurJ+V/7eXjquz2D6T3VKCUQU6h+JRLJ1sDx/+G7Odgatgi4ZY
+         cfihFcKETDFkwnZ6KaxolSVLqsDVcYcpbzZYBtDrBEDGdwylb9RMN/ebmIaiq31o9nNG
+         9j4efSSPtY98Tb0Wx3t6x8r6/0/FPMFiarrAs8S5kqhxrYODQahC97vL2gVFlQMObMZh
+         3KXg==
+X-Gm-Message-State: AOUpUlEMosKMw3qyNDzITls06f3kKgG36sRStq7xd2yH2EXyhGdolP2e
+        ndPL59Cfm4aPN+gyxsLDqeMRinSpTjmnwR4qZ7U=
+X-Google-Smtp-Source: AAOMgpdHGI+/LD7Ks2o0RkflpWjjyq/Fk7Tjrinqkp3uzXSpZJoSDjMFS4Btxj+9JfJRLzE0brvchsLmB+iWopdTGDc=
+X-Received: by 2002:a2e:4186:: with SMTP id d6-v6mr1224832ljf.36.1533196197402;
+ Thu, 02 Aug 2018 00:49:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/77PPRZipcHuIHOFwjMzZXOK"; protocol="application/pgp-signature"
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 00:49:56 -0700 (PDT)
+In-Reply-To: <20180802064714eucas1p12f3c32c453a49dc4e0d2785ff7fa72ec~G-mV4kIr70116001160eucas1p1P@eucas1p1.samsung.com>
+References: <20180726155459.GA30138@jordon-HP-15-Notebook-PC>
+ <CGME20180802062607epcas1p339ff6aeb0cbdc3b6ece2617be4aadb41@epcas1p3.samsung.com>
+ <CAFqt6zY6vcqrmztcEf9QYMXoHr08oTirSTNA7X6+5YvvoHRR4A@mail.gmail.com> <20180802064714eucas1p12f3c32c453a49dc4e0d2785ff7fa72ec~G-mV4kIr70116001160eucas1p1P@eucas1p1.samsung.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Thu, 2 Aug 2018 13:19:56 +0530
+Message-ID: <CAFqt6zaDfW7nvttcYN-Fr6pSCNPz9LGNWYND7PK5eMiR8bU6Zw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        airlied@linux.ie, kgene@kernel.org, krzk@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/77PPRZipcHuIHOFwjMzZXOK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 2, 2018 at 12:17 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi Souptick,
+>
+> On 2018-08-02 08:25, Souptick Joarder wrote:
+>> On Thu, Jul 26, 2018 at 9:24 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>>> convert drm_atomic_helper_suspend/resume() to use
+>>> drm_mode_config_helper_suspend/resume().
+>>>
+>>> exynos_drm_fbdev_suspend/resume can be removed
+>>> as drm_mode_config_helper_suspend/resume has
+>>> implement the same in generic way.
+>>>
+>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>> Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+>>> ---
+>>> v2: Address Inki Dae's comment. Remove
+>>>      ret variable from both suspend/resume
+>>>      function.
+>>>
+>> Any further comment on this patch ?
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> However you need to rebase onto current drm-next, because there have
+> been some changes, which prevent this patch from applying.
+>
+> pm_runtime_suspended(dev) checks were useless and have been removed,
+> what simplifies suspend/resume functions even more. Now it is too
+> late for v4.19 merge window, so this patch will have to wait for
+> v4.20.
 
-Hi all,
+Thanks, I will remove in v3 after rebase to drm-next.
 
-Today's linux-next merge of the xarray tree got a conflict in:
-
-  fs/dax.c
-
-between commit:
-
-  cdbf8897cb09 ("dax: dax_layout_busy_page() warn on !exceptional")
-
-from the ext4 tree and commits:
-
-  49520d317715 ("xarray: Replace exceptional entries")
-  cc9f1fb1672f ("dax: Convert dax_layout_busy_page to XArray")
-
-from the xarray tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/dax.c
-index f32d7125ad0f,1914e4e24615..000000000000
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@@ -662,44 -556,26 +556,26 @@@ struct page *dax_layout_busy_page(struc
-  	 */
-  	unmap_mapping_range(mapping, 0, 0, 1);
- =20
-- 	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
-- 				min(end - index, (pgoff_t)PAGEVEC_SIZE),
-- 				indices)) {
-- 		for (i =3D 0; i < pagevec_count(&pvec); i++) {
-- 			struct page *pvec_ent =3D pvec.pages[i];
-- 			void *entry;
--=20
-- 			index =3D indices[i];
-- 			if (index >=3D end)
-- 				break;
--=20
-- 			if (WARN_ON_ONCE(
-- 			     !radix_tree_exceptional_entry(pvec_ent)))
-- 				continue;
--=20
-- 			xa_lock_irq(&mapping->i_pages);
-- 			entry =3D get_unlocked_mapping_entry(mapping, index, NULL);
-- 			if (entry)
-- 				page =3D dax_busy_page(entry);
-- 			put_unlocked_mapping_entry(mapping, index, entry);
-- 			xa_unlock_irq(&mapping->i_pages);
-- 			if (page)
-- 				break;
-- 		}
--=20
-- 		/*
-- 		 * We don't expect normal struct page entries to exist in our
-- 		 * tree, but we keep these pagevec calls so that this code is
-- 		 * consistent with the common pattern for handling pagevecs
-- 		 * throughout the kernel.
-- 		 */
-- 		pagevec_remove_exceptionals(&pvec);
-- 		pagevec_release(&pvec);
-- 		index++;
--=20
-+ 	xas_lock_irq(&xas);
-+ 	xas_for_each(&xas, entry, ULONG_MAX) {
- -		if (!xa_is_value(entry))
-++		if (WARN_ON_ONCE(!xa_is_value(entry)))
-+ 			continue;
-+ 		if (unlikely(dax_is_locked(entry)))
-+ 			entry =3D get_unlocked_entry(&xas);
-+ 		if (entry)
-+ 			page =3D dax_busy_page(entry);
-+ 		put_unlocked_entry(&xas, entry);
-  		if (page)
-  			break;
-+ 		if (++scanned % XA_CHECK_SCHED)
-+ 			continue;
-+=20
-+ 		xas_pause(&xas);
-+ 		xas_unlock_irq(&xas);
-+ 		cond_resched();
-+ 		xas_lock_irq(&xas);
-  	}
-+ 	xas_unlock_irq(&xas);
-  	return page;
-  }
-  EXPORT_SYMBOL_GPL(dax_layout_busy_page);
-
---Sig_/77PPRZipcHuIHOFwjMzZXOK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltit2cACgkQAVBC80lX
-0GzQzQf7BdM89FtI6KLmCbbykC8IWxt4zP3u4pxz0ErdgZ4cpQF6/TiLHpOfTBFt
-XTT7HRkRuZG35zJ9zbUE00J7IaMFZ3/TBZBXrHly3KDCnMahrefFgJLKEZwbKwcU
-y9lTwroGav8WNqPfrW/2rdaDFB4ewlXPQJ9AIy+Udx1xwahnmHF7lpJMB1wR0ofJ
-SiSb6dzFak/BzRCp1mjex7uI1F8hGEFNzV+jXEs3sQ4a2yAreLp+4bE7BX8CsXb1
-8+Xy+hQyxqVG/EI4aUNhRARHpeeIMNi66hDHen6G4XL1PSK+N5dMlGzdT9kkwZUa
-o04GXBZx3VbTF+ic9qt5i4d4ItFqlg==
-=/wi1
------END PGP SIGNATURE-----
-
---Sig_/77PPRZipcHuIHOFwjMzZXOK--
+>>>   drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++++----------------------
+>>>   drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+>>>   drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+>>>   3 files changed, 4 insertions(+), 49 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> index a81b4a5..46d28cd 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> @@ -151,39 +151,21 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>>>   static int exynos_drm_suspend(struct device *dev)
+>>>   {
+>>>          struct drm_device *drm_dev = dev_get_drvdata(dev);
+>>> -       struct exynos_drm_private *private;
+>>>
+>>> -       if (pm_runtime_suspended(dev) || !drm_dev)
+>>> +       if (pm_runtime_suspended(dev))
+>>>                  return 0;
+>>>
+>>> -       private = drm_dev->dev_private;
+>>> -
+>>> -       drm_kms_helper_poll_disable(drm_dev);
+>>> -       exynos_drm_fbdev_suspend(drm_dev);
+>>> -       private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+>>> -       if (IS_ERR(private->suspend_state)) {
+>>> -               exynos_drm_fbdev_resume(drm_dev);
+>>> -               drm_kms_helper_poll_enable(drm_dev);
+>>> -               return PTR_ERR(private->suspend_state);
+>>> -       }
+>>> -
+>>> -       return 0;
+>>> +       return drm_mode_config_helper_suspend(drm_dev);
+>>>   }
+>>>
+>>>   static int exynos_drm_resume(struct device *dev)
+>>>   {
+>>>          struct drm_device *drm_dev = dev_get_drvdata(dev);
+>>> -       struct exynos_drm_private *private;
+>>>
+>>> -       if (pm_runtime_suspended(dev) || !drm_dev)
+>>> +       if (pm_runtime_suspended(dev))
+>>>                  return 0;
+>>>
+>>> -       private = drm_dev->dev_private;
+>>> -       drm_atomic_helper_resume(drm_dev, private->suspend_state);
+>>> -       exynos_drm_fbdev_resume(drm_dev);
+>>> -       drm_kms_helper_poll_enable(drm_dev);
+>>> -
+>>> -       return 0;
+>>> +       return drm_mode_config_helper_resume(drm_dev);
+>>>   }
+>>>   #endif
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>>> index 132dd52..918dd2c 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>>> @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+>>>          private->fb_helper = NULL;
+>>>   }
+>>>
+>>> -void exynos_drm_fbdev_suspend(struct drm_device *dev)
+>>> -{
+>>> -       struct exynos_drm_private *private = dev->dev_private;
+>>> -
+>>> -       console_lock();
+>>> -       drm_fb_helper_set_suspend(private->fb_helper, 1);
+>>> -       console_unlock();
+>>> -}
+>>> -
+>>> -void exynos_drm_fbdev_resume(struct drm_device *dev)
+>>> -{
+>>> -       struct exynos_drm_private *private = dev->dev_private;
+>>> -
+>>> -       console_lock();
+>>> -       drm_fb_helper_set_suspend(private->fb_helper, 0);
+>>> -       console_unlock();
+>>> -}
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+>>> index b338472..6840b6a 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+>>> @@ -19,8 +19,6 @@
+>>>
+>>>   int exynos_drm_fbdev_init(struct drm_device *dev);
+>>>   void exynos_drm_fbdev_fini(struct drm_device *dev);
+>>> -void exynos_drm_fbdev_suspend(struct drm_device *drm);
+>>> -void exynos_drm_fbdev_resume(struct drm_device *drm);
+>>>
+>>>   #else
+>>>
+>>> @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+>>>
+>>>   #define exynos_drm_output_poll_changed (NULL)
+>>>
+>>> -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+>>> -{
+>>> -}
+>>> -
+>>> -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+>>> -{
+>>> -}
+>>> -
+>>>   #endif
+>>>
+>>>   #endif
+>>> --
+>>> 1.9.1
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
