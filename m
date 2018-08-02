@@ -2,71 +2,88 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D745C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE699C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0013F214AB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0013F214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=isi.edu
+	by mail.kernel.org (Postfix) with ESMTP id 9803D214AB
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9803D214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732405AbeHBPvz (ORCPT
+        id S1732484AbeHBPwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:51:55 -0400
-Received: from mail-d.ads.isi.edu ([128.9.180.199]:15091 "EHLO
-        mail-d.ads.isi.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbeHBPvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:51:55 -0400
+        Thu, 2 Aug 2018 11:52:23 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9561 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732141AbeHBPwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:52:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 07:01:02 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,436,1526367600"; 
-   d="scan'208";a="2662692"
-Received: from guest228.east.isi.edu (HELO localhost) ([65.123.202.228])
-  by mail-d.ads.isi.edu with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 07:00:34 -0700
-Date:   Thu, 2 Aug 2018 10:00:33 -0400
-From:   Alexei Colin <acolin@isi.edu>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>, alex.bou9@gmail.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jwalters@isi.edu, Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RESEND PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-Message-ID: <20180802140033.GH38497@guest228.east.isi.edu>
-References: <20180731142954.30345-1-acolin@isi.edu>
- <20180731142954.30345-7-acolin@isi.edu>
- <20180801095404.GA17585@infradead.org>
- <fad8661c-cd8c-3a9c-ca03-5d2f63893a24@gmail.com>
- <CAMuHMdVDra1MKcuuD0SqEYXSggr0iVFcbcjL33z7JuiE1_y8yw@mail.gmail.com>
- <20180802134544.GG38497@guest228.east.isi.edu>
- <20180802135421.GA13512@infradead.org>
+   d="scan'208";a="61507134"
+Received: from mylly.fi.intel.com (HELO [10.237.72.153]) ([10.237.72.153])
+  by orsmga007.jf.intel.com with ESMTP; 02 Aug 2018 07:00:59 -0700
+Subject: Re: [PATCH 02/12] i2c: designware-master: use core to detect 'no zero
+ length' quirk
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20180723202617.15230-1-wsa+renesas@sang-engineering.com>
+ <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
+From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <db46f7ba-0627-eb0b-9a93-40f26a82b0bf@linux.intel.com>
+Date:   Thu, 2 Aug 2018 17:00:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180802135421.GA13512@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180723202617.15230-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 06:54:21AM -0700, Christoph Hellwig wrote:
-> On Thu, Aug 02, 2018 at 09:45:44AM -0400, Alexei Colin wrote:
-> > If I move RapidIO option to drivers/Kconfig, then it won't appear under
-> > the Bus Options/System Support menu, along with other choices for the
-> > system bus (PCI, PCMCIA, ISA, TC, ...).
+On 07/23/2018 11:26 PM, Wolfram Sang wrote:
+> And don't reimplement in the driver.
 > 
-> It's not like anyone cares.  And FYI, moving all those to
-> drivers/Kconfig is osmething I will submit for the next merge window.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Only build tested.
+> 
+>   drivers/i2c/busses/i2c-designware-master.c | 12 +++++-------
+>   1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+I tested this with patch 1 and I like it since with these patches the 
+test is done before firing up the HW, waiting for an interrupt and then 
+see the length is invalid for us.
 
-Ok, I would appreciate a CC on that patch. After it lands, if
-there is time, I'll resubmit a rebased version of this patch.
+i2ctransfer -f 8 r0@0x10
+
+Before (with i2c_designware debugging on):
+[   15.607283] i2c_designware i2c_designware.1: i2c_dw_xfer: msgs: 1
+[   15.711988] i2c_designware i2c_designware.1: enabled=0x1 stat=0x10
+[   15.712002] i2c_designware i2c_designware.1: i2c_dw_xfer_msg: invalid 
+message length
+Error: Sending messages failed: Invalid argument
+
+After:
+[   25.838661] i2c i2c-8: adapter quirk: no zero length (addr 0x0010, 
+size 0, read)
+Error: Sending messages failed: Operation not supported
+
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
