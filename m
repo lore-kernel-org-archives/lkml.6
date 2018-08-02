@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5F1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F86C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFC02146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFC02146D
+	by mail.kernel.org (Postfix) with ESMTP id 04F652145D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:17:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F652145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731812AbeHBKHN (ORCPT
+        id S1731955AbeHBKHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:07:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36647 "EHLO
+        Thu, 2 Aug 2018 06:07:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41627 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbeHBKHM (ORCPT
+        with ESMTP id S1726989AbeHBKHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:07:12 -0400
+        Thu, 2 Aug 2018 06:07:34 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w728Gn0s3431771
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w728HLVt3431799
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 2 Aug 2018 01:16:49 -0700
+        Thu, 2 Aug 2018 01:17:21 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w728Gnpu3431768;
-        Thu, 2 Aug 2018 01:16:49 -0700
-Date:   Thu, 2 Aug 2018 01:16:49 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w728HLPM3431796;
+        Thu, 2 Aug 2018 01:17:21 -0700
+Date:   Thu, 2 Aug 2018 01:17:21 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Christophe Leroy <tipbot@zytor.com>
-Message-ID: <tip-21b8732eb4479b579bda9ee38e62b2c312c2a0e5@git.kernel.org>
-Cc:     hpa@zytor.com, alexander.shishkin@linux.intel.com, acme@redhat.com,
-        tglx@linutronix.de, christophe.leroy@c-s.fr, peterz@infradead.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, alexander.shishkin@linux.intel.com,
-          acme@redhat.com, tglx@linutronix.de, christophe.leroy@c-s.fr,
-          peterz@infradead.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20170922112043.8349468C57@po15668-vm-win7.idsi0.si.c-s.fr>
-References: <20170922112043.8349468C57@po15668-vm-win7.idsi0.si.c-s.fr>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-zd8zeyhr2sappevojdem9xxt@git.kernel.org>
+Cc:     hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
+        wangnan0@huawei.com, adrian.hunter@intel.com, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        jolsa@kernel.org, mingo@kernel.org
+Reply-To: acme@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
+          wangnan0@huawei.com, tglx@linutronix.de, namhyung@kernel.org,
+          dsahern@gmail.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, jolsa@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Allow overriding MAX_NR_CPUS at compile
- time
-Git-Commit-ID: 21b8732eb4479b579bda9ee38e62b2c312c2a0e5
+Subject: [tip:perf/core] perf bpf: Include uapi/linux/bpf.h from the 'perf
+ trace' script's bpf.h
+Git-Commit-ID: 822c2621daadcf9e8fa8f11f7334e3c349434154
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,77 +59,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  21b8732eb4479b579bda9ee38e62b2c312c2a0e5
-Gitweb:     https://git.kernel.org/tip/21b8732eb4479b579bda9ee38e62b2c312c2a0e5
-Author:     Christophe Leroy <christophe.leroy@c-s.fr>
-AuthorDate: Fri, 22 Sep 2017 13:20:43 +0200
+Commit-ID:  822c2621daadcf9e8fa8f11f7334e3c349434154
+Gitweb:     https://git.kernel.org/tip/822c2621daadcf9e8fa8f11f7334e3c349434154
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 1 Aug 2018 10:50:51 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 1 Aug 2018 12:33:24 -0300
+CommitDate: Wed, 1 Aug 2018 12:34:06 -0300
 
-perf tools: Allow overriding MAX_NR_CPUS at compile time
+perf bpf: Include uapi/linux/bpf.h from the 'perf trace' script's bpf.h
 
-After update of kernel, the perf tool doesn't run anymore on my 32MB RAM
-powerpc board, but still runs on a 128MB RAM board:
+The next example scripts need the definition for the BPF functions, i.e.
+things like BPF_FUNC_probe_read, and in time will require lots of other
+definitions found in uapi/linux/bpf.h, so include it from the bpf.h file
+included from the eBPF scripts build with clang via '-e bpf_script.c'
+like in this example:
 
-  ~# strace perf
-  execve("/usr/sbin/perf", ["perf"], [/* 12 vars */]) = -1 ENOMEM (Cannot allocate memory)
-  --- SIGSEGV {si_signo=SIGSEGV, si_code=SI_KERNEL, si_addr=0} ---
-  +++ killed by SIGSEGV +++
-  Segmentation fault
+  $ tail -8 tools/perf/examples/bpf/5sec.c
+  #include <bpf.h>
 
-objdump -x shows that .bss section has a huge size of 24Mbytes:
+  int probe(hrtimer_nanosleep, rqtp->tv_sec)(void *ctx, int err, long sec)
+  {
+	return sec == 5;
+  }
 
- 27 .bss          016baca8  101cebb8  101cebb8  001cd988  2**3
+  license(GPL);
+  $
 
-With especially the following objects having quite big size:
+That 'bpf.h' include in the 5sec.c eBPF example will come from a set of
+header files crafted for building eBPF objects, that in a end-user
+system will come from:
 
-  10205f80 l     O .bss	00140000     runtime_cycles_stats
-  10345f80 l     O .bss	00140000     runtime_stalled_cycles_front_stats
-  10485f80 l     O .bss	00140000     runtime_stalled_cycles_back_stats
-  105c5f80 l     O .bss	00140000     runtime_branches_stats
-  10705f80 l     O .bss	00140000     runtime_cacherefs_stats
-  10845f80 l     O .bss	00140000     runtime_l1_dcache_stats
-  10985f80 l     O .bss	00140000     runtime_l1_icache_stats
-  10ac5f80 l     O .bss	00140000     runtime_ll_cache_stats
-  10c05f80 l     O .bss	00140000     runtime_itlb_cache_stats
-  10d45f80 l     O .bss	00140000     runtime_dtlb_cache_stats
-  10e85f80 l     O .bss	00140000     runtime_cycles_in_tx_stats
-  10fc5f80 l     O .bss	00140000     runtime_transaction_stats
-  11105f80 l     O .bss	00140000     runtime_elision_stats
-  11245f80 l     O .bss	00140000     runtime_topdown_total_slots
-  11385f80 l     O .bss	00140000     runtime_topdown_slots_retired
-  114c5f80 l     O .bss	00140000     runtime_topdown_slots_issued
-  11605f80 l     O .bss	00140000     runtime_topdown_fetch_bubbles
-  11745f80 l     O .bss	00140000     runtime_topdown_recovery_bubbles
+  /usr/lib/perf/include/bpf/bpf.h
 
-This is due to commit 4d255766d28b1 ("perf: Bump max number of cpus
-to 1024"), because many tables are sized with MAX_NR_CPUS
+And will include <uapi/linux/bpf.h> either from the place where the
+kernel was built, or from a kernel-devel rpm package like:
 
-This patch gives the opportunity to redefine MAX_NR_CPUS via
+  -working-directory /lib/modules/4.17.9-100.fc27.x86_64/build
 
-  $ make EXTRA_CFLAGS=-DMAX_NR_CPUS=1
+That is set up by tools/perf/util/llvm-utils.c, and can be overriden
+by setting the 'kbuild-dir' variable in the "llvm" ~/.perfconfig file,
+like:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Link: http://lkml.kernel.org/r/20170922112043.8349468C57@po15668-vm-win7.idsi0.si.c-s.fr
+  # cat ~/.perfconfig
+  [llvm]
+       kbuild-dir = /home/foo/git/build/linux
+
+This usually doesn't need any change, just documenting here my findings
+while working with this code.
+
+In the future we may want to instead just use what is in
+/usr/include/linux/bpf.h, that comes from the UAPI provided from the
+kernel sources, for now, to avoid getting the kernel's non-UAPI
+"linux/bpf.h" file, that will cause clang to fail and is not what we
+want anyway (no BPF function definitions, etc), do it explicitely by
+asking for "uapi/linux/bpf.h".
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-zd8zeyhr2sappevojdem9xxt@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/perf.h | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/include/bpf/bpf.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index d215714f48df..21bf7f5a3cf5 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -25,7 +25,9 @@ static inline unsigned long long rdclock(void)
- 	return ts.tv_sec * 1000000000ULL + ts.tv_nsec;
- }
+diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
+index dd764ad5efdf..a63aa6241b7f 100644
+--- a/tools/perf/include/bpf/bpf.h
++++ b/tools/perf/include/bpf/bpf.h
+@@ -1,6 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #ifndef _PERF_BPF_H
+ #define _PERF_BPF_H
++
++#include <uapi/linux/bpf.h>
++
+ #define SEC(NAME) __attribute__((section(NAME),  used))
  
-+#ifndef MAX_NR_CPUS
- #define MAX_NR_CPUS			1024
-+#endif
- 
- extern const char *input_name;
- extern bool perf_host, perf_guest;
+ #define probe(function, vars) \
