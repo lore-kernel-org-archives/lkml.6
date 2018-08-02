@@ -2,112 +2,133 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5099C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2695C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ECA1208DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ECA1208DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 81B47208DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B47208DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeHBIpi (ORCPT
+        id S1727067AbeHBIqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:45:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35711 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeHBIpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:45:38 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fl7WY-0008WJ-CP; Thu, 02 Aug 2018 08:55:50 +0200
-Date:   Thu, 2 Aug 2018 08:55:49 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-cc:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
- lines
-In-Reply-To: <86tvodw9wz.wl-marc.zyngier@arm.com>
-Message-ID: <alpine.DEB.2.21.1808020841200.1835@nanos.tec.linutronix.de>
-References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com> <1532430427-57151-2-git-send-email-julien.thierry@arm.com> <20180801030723.GA31383@voyager> <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com> <20180802020320.GC31758@voyager>
- <86tvodw9wz.wl-marc.zyngier@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 2 Aug 2018 04:46:30 -0400
+Received: from mout.gmx.net ([212.227.17.22]:40027 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726141AbeHBIqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:46:30 -0400
+Received: from homer.simpson.net ([185.191.216.67]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MYOCL-1fPRos0Dc9-00V8Vj; Thu, 02
+ Aug 2018 08:56:23 +0200
+Message-ID: <1533192980.11791.8.camel@gmx.de>
+Subject: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq context
+From:   Mike Galbraith <efault@gmx.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Thu, 02 Aug 2018 08:56:20 +0200
+In-Reply-To: <1532768853.9882.73.camel@gmx.de>
+References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:tRqZbZ4ii0YEQnFH5QzY4FnVNgN++R/6D/nfTMKEkbnhc3OPu8/
+ /Fkz/f+5HYLbXUXm1b4IO+hht/lszV0M8e2xWF8adP/80/B84YSkNY14DuuRjIINX655eVH
+ Go5CrphvmK28gVwFCu51PkZ/abwdAEkj1PT5y5dC/1zwjMjI387EG4nLyUVR8aXgxEOy5er
+ gniosEUxLpmJi+4OHDHTg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:muuBhGYaHD0=:aDOSoUtiUMHw8sSJXcVxL7
+ LsybNeHVQrdNc5kD0GtyZIQh/hTB6mOfsaFa77zI5Um0ROLumgAgcH7WPSo/7fkjzV/26nORc
+ lvkiE2hrksWlIfuPuzpLR83IsVwnY70DMPdc//M6eyW3WTDglDidAL5Te4ujMGisAyqNpI27E
+ h5bbpL9BDN/RyOCHkloqa/tJZ8YaZ7oasz0OoF5YUbCWm4xbF8TEu6h9B4WQIOSWsl3mzaW40
+ Hr1deI6cZPD+OChOUcnYXUfpHpBKMR8N63N/NAkwJDhYtlxYd10P3zVpfZ9FDgHLtfy+cytrT
+ P1GvH1NCau5UN6M3Ubqu/ROWOr76VpOS79q7edxkO1dwQHgn//bvDd5xCsqeyzsV1RtBj5qtB
+ aYeOQA2xc2t/SPwu04mrI+hfOTPBApnpKgPj1edfbfZGRazms8IsV1r/vYw2jYwO2Z9TtNTTQ
+ EmMAuHqv0qDTo7lb8v4GQy2AzBGMuQCUFufoQug6DUes9JGxzRuKV6Phv0UdlyKgfHB52XPJv
+ NJ/feoVjdzTGVjJVvrb8weeg3DTtCdGNE17uf2HKLLhS+50UCPOChJ0lCpiTmb4UfEkWPq0SS
+ 9IJv+gWRrET7VZbDKfQw0T1qnkM8VX6x0IfRaeFVGRg4wd/Xo/SLroxVhXRFYYSCTwULAv/Px
+ MiTt3XkDBofcWxHrn1AVUwIVIfUXxyp2j3Q5d00IAVEuiO5FsFxYa29U3hUMHZ5odL3259PB0
+ bXqWNK8hjOKCPNmLZpIiRZ7Nlwv3TbvqNGikCC6E0lGXdPU5BVpfFwREDVWiGeMtCB90oQiDL
+ CvA+ps3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018, Marc Zyngier wrote:
-> On Thu, 02 Aug 2018 03:03:20 +0100,
-> Ricardo Neri <ricardo.neri-calderon@linux.intel.com> wrote:
-> > On Wed, Aug 01, 2018 at 04:09:59PM +0100, Julien Thierry wrote:
-> > > >
-> > > >I don't think this works in x86 because the local APIC irq_chip is the
-> > > >root of the hierarchy; the rest of the irq_chips are children of it.
-> > > >Furthermore, the delivery mode (i.e., regular interrupt vs NMI) is set in
-> > > >these children controllers, either MSI or interrupt remapping.
-> > > >
-> > > >Instead, could it be possible to determine if NMI mode is supported by
-> > > >checking if any of the parents of the irq_data supports NMI mode? If it
-> > > >has to be the root, perhaps a flag can indicate irq_supports_nmi() about
-> > > >this restriction.
-> > > >
-> > > 
-> > > I see, I'm not very sure how to deal with the semantics here. Does it make
-> > > sense for an irqchip to be able to deliver NMIs if its parent doesn't?
-> > 
-> > I think it does not make sense. 
-> > 
-> > > 
-> > > If we want to handle NMI in and irqchip hierachy, shouldn't all irqchips
-> > > between the one delivering the NMI and the root irqchip also be able to
-> > > deliver NMIs? (Or is it the other way around and an irqchip can deliver an
-> > > NMI if all its children irqchip are also able to deliver an NMI?)
-> > 
-> > At least in APIC, all the irq_chips support NMI delivery. However only one
-> > of them will generate the NMI interrupt message, the rest (e.g., the local
-> > APIC) will only relay it to the CPU.
-> > 
-> > So yes, I agree that the whole hierarchy should support NMI delivery, but
-> > the chip generating the NMI is not necessarily the root chip.
-> > 
-> > One question that I have is that whether the new flag IRQCHIP_SUPPORTS_NMI
-> > should be added to irq_chips that only relay NMIs or only to those from
-> > which an NMI can be requested.
-> 
-> If we need to distinguish between the two, then we need two flags. One
-> that indicates the generation capability, and one that indicates the
-> forwarding capability.
+(arm-land adventures 1/3 take2 will have to wait, my cup runeth over) 
 
-There is absolutely no reason to expose this on x86, really.
+v4.14..v4.15 timer handling changes including calling kvm_timer_vcpu_load()
+during kvm_preempt_ops.sched_in and taking vgic_dist.lpi_list_lock in the
+timer interrupt handler required locks for which locking rules/context had
+been changed be converted to raw_spinlock_t...
 
-Why?
+Quoting virt/kvm/arm/vgic/vgic.c:
+ * Locking order is always:
+ * kvm->lock (mutex)
+ *   its->cmd_lock (mutex)
+ *     its->its_lock (mutex)
+ *       vgic_cpu->ap_list_lock         must be taken with IRQs disabled
+ *         kvm->lpi_list_lock           must be taken with IRQs disabled
+ *           vgic_irq->irq_lock         must be taken with IRQs disabled
+ *
+ * As the ap_list_lock might be taken from the timer interrupt handler,
+ * we have to disable IRQs before taking this lock and everything lower
+ * than it.
 
-Because NMI is an utter trainwreck on x86. It's a single entry point
-without the ability of differentiation from which source the NMI
-originated. So mapping it to anything generic is just not going to work.
+...and fixed the obvious bricking consequence of those changes for RT,
+but left an RT specific kvm unit test timer failure in its wake.  Handling
+phys_timer in hard interrupt context as expected cures that failure.
 
-It has absolutely nothing to do with the normal way of vector based
-interrupt operation and I don't see at all how adding this just because
-would improve anything on x86. In fact it would create more problems than
-it solves.
+Pre:
+PASS selftest-setup (2 tests)
+PASS selftest-vectors-kernel (2 tests)
+PASS selftest-vectors-user (2 tests)
+PASS selftest-smp (65 tests)
+PASS pci-test (1 tests)
+PASS pmu (3 tests)
+PASS gicv2-ipi (3 tests)
+PASS gicv3-ipi (3 tests)
+PASS gicv2-active (1 tests)
+PASS gicv3-active (1 tests)
+PASS psci (4 tests)
+FAIL timer (8 tests, 1 unexpected failures)
 
-Thanks,
+Post:
+PASS selftest-setup (2 tests)
+PASS selftest-vectors-kernel (2 tests)
+PASS selftest-vectors-user (2 tests)
+PASS selftest-smp (65 tests)
+PASS pci-test (1 tests)
+PASS pmu (3 tests)
+PASS gicv2-ipi (3 tests)
+PASS gicv3-ipi (3 tests)
+PASS gicv2-active (1 tests)
+PASS gicv3-active (1 tests)
+PASS psci (4 tests)
+PASS timer (8 tests)
 
-	tglx
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ virt/kvm/arm/arch_timer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+--- a/virt/kvm/arm/arch_timer.c
++++ b/virt/kvm/arm/arch_timer.c
+@@ -634,7 +634,7 @@ void kvm_timer_vcpu_init(struct kvm_vcpu
+ 	hrtimer_init(&timer->bg_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
+ 	timer->bg_timer.function = kvm_bg_timer_expire;
+ 
+-	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
+ 	timer->phys_timer.function = kvm_phys_timer_expire;
+ 
+ 	vtimer->irq.irq = default_vtimer_irq.irq;
