@@ -2,95 +2,122 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DC6C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F4CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B424214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:33:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k63QPiMy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B424214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C368E2150A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C368E2150A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387425AbeHBOY3 (ORCPT
+        id S2387447AbeHBOYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:24:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53972 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387404AbeHBOY3 (ORCPT
+        Thu, 2 Aug 2018 10:24:55 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60223 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387404AbeHBOYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:24:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rtLG8LyWp3jcSdlJk442aQS4kIsn3gdIQ5xZH7LPkwQ=; b=k63QPiMyTdoCbcpjabAEF2ajD
-        BARJDy3zSlxomFrCqYHric4W3Z7RXuFlZQJcKe+1fpfEDuzIqcwOU8X3GgdsQiEL6qTdC/lQKlM4R
-        Kik75RKov7D3lAM48sJ7LeHGoxBhW/sqMONdFv5Pl1pmzkJZcs3R60zvWHYkNSZdzaEWIPnNgTbBq
-        IPbXOJZCnRl/A3Xpf3eLKv3ajiGh6+snmj3PIRKXgYipg98MP8d9tmk1saiutmsie1Q5cOWGMLJwM
-        /VBmvu7LD88JNG8W+gcTQi40gAts7MqeHTjh3j+2FS447jxWqeV07C6th07+2yFkd9s65+g824M1G
-        FP86syhAw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flCn7-000412-1c; Thu, 02 Aug 2018 12:33:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69B7A20268263; Thu,  2 Aug 2018 14:33:15 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 14:33:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     skannan@codeaurora.org
-Cc:     Quentin Perret <quentin.perret@arm.com>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-Message-ID: <20180802123315.GV2476@hirez.programming.kicks-ass.net>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com>
- <331552975e858911db66bc78c2c8e720@codeaurora.org>
+        Thu, 2 Aug 2018 10:24:54 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72CXpV23500584
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Aug 2018 05:33:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72CXpV03500581;
+        Thu, 2 Aug 2018 05:33:51 -0700
+Date:   Thu, 2 Aug 2018 05:33:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Uros Bizjak <tipbot@zytor.com>
+Message-ID: <tip-216a37202f10b7d78f2f98e26a6681f367165f05@git.kernel.org>
+Cc:     tglx@linutronix.de, ubizjak@gmail.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          tglx@linutronix.de, ubizjak@gmail.com
+In-Reply-To: <20180629142844.15200-1-ubizjak@gmail.com>
+References: <20180629142844.15200-1-ubizjak@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Use CC_SET()/CC_OUT() instead of open
+ coding it
+Git-Commit-ID: 216a37202f10b7d78f2f98e26a6681f367165f05
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <331552975e858911db66bc78c2c8e720@codeaurora.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 12:35:27PM -0700, skannan@codeaurora.org wrote:
-> On 2018-07-24 05:25, Quentin Perret wrote:
-> If it's going to be a different aggregation from what's done for frequency
-> guidance, I don't see the point of having this inside schedutil. Why not
-> keep it inside the scheduler files? Also, it seems weird to use a governor's
-> code when it might not actually be in use. What if someone is using
-> ondemand, conservative, performance, etc?
+Commit-ID:  216a37202f10b7d78f2f98e26a6681f367165f05
+Gitweb:     https://git.kernel.org/tip/216a37202f10b7d78f2f98e26a6681f367165f05
+Author:     Uros Bizjak <ubizjak@gmail.com>
+AuthorDate: Fri, 29 Jun 2018 16:28:44 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 2 Aug 2018 14:30:42 +0200
 
-EAS hard relies on schedutil -- I suppose we need a check for that
-somewhere and maybe some infrastructure to pin the cpufreq governor.
+x86/boot: Use CC_SET()/CC_OUT() instead of open coding it
 
-We're simply not going to support it for anything else.
+Remove open-coded uses of set instructions with CC_SET()/CC_OUT().
 
-> > +enum schedutil_type {
-> > +	frequency_util,
-> > +	energy_util,
-> > +};
-> 
-> Please don't use lower case for enums. It's extremely confusing.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20180629142844.15200-1-ubizjak@gmail.com
 
-How is that confusing?
+---
+ arch/x86/boot/bitops.h | 3 ++-
+ arch/x86/boot/string.c | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/boot/bitops.h b/arch/x86/boot/bitops.h
+index 0d41d68131cc..2e1382486e91 100644
+--- a/arch/x86/boot/bitops.h
++++ b/arch/x86/boot/bitops.h
+@@ -17,6 +17,7 @@
+ #define _LINUX_BITOPS_H		/* Inhibit inclusion of <linux/bitops.h> */
+ 
+ #include <linux/types.h>
++#include <asm/asm.h>
+ 
+ static inline bool constant_test_bit(int nr, const void *addr)
+ {
+@@ -28,7 +29,7 @@ static inline bool variable_test_bit(int nr, const void *addr)
+ 	bool v;
+ 	const u32 *p = (const u32 *)addr;
+ 
+-	asm("btl %2,%1; setc %0" : "=qm" (v) : "m" (*p), "Ir" (nr));
++	asm("btl %2,%1" CC_SET(c) : CC_OUT(c) (v) : "m" (*p), "Ir" (nr));
+ 	return v;
+ }
+ 
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index 16f49123d747..c4428a176973 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/types.h>
++#include <asm/asm.h>
+ #include "ctype.h"
+ #include "string.h"
+ 
+@@ -28,8 +29,8 @@
+ int memcmp(const void *s1, const void *s2, size_t len)
+ {
+ 	bool diff;
+-	asm("repe; cmpsb; setnz %0"
+-	    : "=qm" (diff), "+D" (s1), "+S" (s2), "+c" (len));
++	asm("repe; cmpsb" CC_SET(nz)
++	    : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
+ 	return diff;
+ }
+ 
