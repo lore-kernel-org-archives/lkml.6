@@ -2,139 +2,139 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21352C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A5EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA36B21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:39:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA36B21501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 31BAB2150A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BdbruaX6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31BAB2150A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729899AbeHBMaD (ORCPT
+        id S1731885AbeHBMcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:30:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46810 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726739AbeHBMaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:30:03 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 122E97DAC9;
-        Thu,  2 Aug 2018 10:39:28 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-71.pek2.redhat.com [10.72.12.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 69E3F7C49;
-        Thu,  2 Aug 2018 10:39:21 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 18:39:17 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     axboe@kernel.dk, bart.vanassche@wdc.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] blk-mq: clean up the hctx restart
-Message-ID: <20180802103916.GB6520@ming.t460p>
-References: <1533009735-2221-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180731045805.GE15701@ming.t460p>
- <8a3383e6-2926-6858-d8f2-671f3cb9e460@oracle.com>
- <20180731061616.GF15701@ming.t460p>
- <42371198-2a4b-1062-3564-411645ffba98@oracle.com>
- <20180801085841.GA27962@ming.t460p>
- <dee91f9a-e681-b2d4-342b-5bf085464558@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dee91f9a-e681-b2d4-342b-5bf085464558@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 10:39:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 10:39:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        Thu, 2 Aug 2018 08:32:50 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:34111 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbeHBMct (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 08:32:49 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180802104213epoutp03b81e54e21983f106827bf446d85d4125~HCzglT2PZ2581325813epoutp03B
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 10:42:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180802104213epoutp03b81e54e21983f106827bf446d85d4125~HCzglT2PZ2581325813epoutp03B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1533206533;
+        bh=sLUXq53o9A5NmwTnlDAViIX1TekyJ+FxutbJx+U2ljM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=BdbruaX6wNE8xNrRceZkXDAp0KvodHQjNjo05yHcjzc88ca69xhmuYdJSIq4lC28o
+         4z6AWlMo0lWgB3faZlByX+ZaPXsJsf2G3WIr5Yk1TWyUO4RRcZwR2fOVba7t9W/Ewx
+         1HGCsqwNMqKuRkM168os37ogKy+YRsJlJyuHrhts=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.40.194]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20180802104213epcas5p318d54dfbbb020be4f7a77c6f1e6ac68b~HCzf-FiOS0726307263epcas5p3b;
+        Thu,  2 Aug 2018 10:42:13 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8E.B0.04304.500E26B5; Thu,  2 Aug 2018 19:42:13 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2~HCQZjTEZd0101301013epcas5p3C;
+        Thu,  2 Aug 2018 10:02:01 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180802100201epsmtrp18e84f8487533ad5aba8c0417a1a41484~HCQZhnMWY2448424484epsmtrp1L;
+        Thu,  2 Aug 2018 10:02:01 +0000 (GMT)
+X-AuditID: b6c32a4b-221ff700000010d0-30-5b62e0058ee7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        24.FA.03889.996D26B5; Thu,  2 Aug 2018 19:02:01 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.92.210]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20180802100159epsmtip1fede2a466d01be43b5dfbce890dfa7b7~HCQXv9T-d2866628666epsmtip15;
+        Thu,  2 Aug 2018 10:01:59 +0000 (GMT)
+From:   Maninder Singh <maninder1.s@samsung.com>
+To:     davem@davemloft.net, shuahkh@osg.samsung.com
+Cc:     netdev@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, edumazet@google.com,
+        pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        Maninder Singh <maninder1.s@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+Subject: [PATCH 1/1] selftest/net: fix protocol family to work for IPv4.
+Date:   Thu,  2 Aug 2018 15:27:27 +0530
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmli7rg6Rog7fX+Swu7k61mHO+hcXi
+        6bFH7Babv3ewWVzeNYfN4vD8NhaLYwvELO692cpkMfXLBxaLQyfnMjpweWxZeZPJY8GmUo8t
+        /XfZPfq2rGL0+LxJLoA1KtUmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE3
+        1VbJxSdA1y0zB+gkJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUrShoZGeoYG5npERkDaN
+        tTIyBSpJSM1YfUKlYBZbxZRV75gaGKezdjFyckgImEh0/XjFBmILCexmlNi4rKSLkQvI/sQo
+        8fDzKjYI5xujxLrt51m6GDnAOjZsNIOI7wVqmL2PEcL5wijRe+IZC8goNgE9iVW79oDZIgIG
+        EvdWzmEGKWIWeMMo8fz8PiaQhLCAh8TxR3PB7mARUJV40/uVDeImOYmTxyazgjRICMxgk9hx
+        bRtYEa9AmcTxpctZIIpcJJrXbmKCsIUlXh3fwg5hS0m87G9jh2huZ5S4PvMaC4QzhVGi8/1K
+        qCp7iQc3jrKDPMQsoCmxfpc+RFhWYuqpdWBDmQX4JHp/P4FawCuxYx6MrSrRcnMDNPSkJT5/
+        /Ah1kIfEi45d0JCMldh2aj77BEbZWQgbFjAyrmKUTC0ozk1PLTYtMM5LLdcrTswtLs1L10vO
+        z93ECE5kWt47GDed8znEKMDBqMTDe4MhKVqINbGsuDL3EKMEB7OSCG+zB1CINyWxsiq1KD++
+        qDQntfgQoykwCCcyS4km5wOTbF5JvKGpkZmZgaWBqbGFmaGSOO8Hv+BoIYH0xJLU7NTUgtQi
+        mD4mDk6pBkaGtftDHCaWTi911Ts2u3brt0yvn0LRqx/p/t/z4136p13vF0i92Vl6vSScVXGT
+        esScXeKSMmpL97m6LmxI3XljgV3+3PUn1fp8/7PMvflHSfqdTK17KUvHvJksc61WJp16Hn6j
+        v+601INfl7xyVKaGq96unH9hQsCiS1ILV96Oa9m/56tJ59ZLSizFGYmGWsxFxYkAIssn+HoD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGLMWRmVeSWpSXmKPExsWy7bCSnO7Ma0nRBjcOM1tc3J1qMed8C4vF
+        02OP2C02f+9gs7i8aw6bxeH5bSwWxxaIWdx7s5XJYuqXDywWh07OZXTg8tiy8iaTx4JNpR5b
+        +u+ye/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAlfG6hMqBbPYKqasesfUwDidtYuRg0NCwERi
+        w0azLkYuDiGB3YwSP08eZu9i5ASKS0v8/PeeBcIWllj57zk7RNEnRon9L/+ygiTYBPQkVu3a
+        A1YkImAk0XX1EBuIzSzwhVGitd0XxBYW8JA4/mguWD2LgKrEm96vYDW8Am4Sv472MkEskJM4
+        eWwy6wRGngWMDKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYJDS0trB+OJE/GHGAU4
+        GJV4eBv+JUYLsSaWFVfmHmKU4GBWEuFt9kiKFuJNSaysSi3Kjy8qzUktPsQozcGiJM4rn38s
+        UkggPbEkNTs1tSC1CCbLxMEp1cCYeNx+6QnWH26cv5p9T/S3za2/fXhW4qwv/0QWl83fYXJt
+        s8Xrz307F/+R2Vqx4sBbnv+Z68u0rt5dVdd2xnHqzK+9sbOPdxmnHJmU6tNou9ji8V5XC5b2
+        6LN1RSrdEeYy/WUMXmf65guJrjxhbjH5zxWVZYu255btjlVRknw0cXPOtcf/9pYsUmIpzkg0
+        1GIuKk4EADqP4q4pAgAA
+Message-Id: <20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2~HCQZjTEZd0101301013epcas5p3C@epcas5p3.samsung.com>
+X-CMS-MailID: 20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2
+References: <CGME20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 09:37:08PM +0800, jianchao.wang wrote:
-> Hi Ming
-> 
-> On 08/01/2018 04:58 PM, Ming Lei wrote:
-> > On Wed, Aug 01, 2018 at 10:17:30AM +0800, jianchao.wang wrote:
-> >> Hi Ming
-> >>
-> >> Thanks for your kindly response.
-> >>
-> >> On 07/31/2018 02:16 PM, Ming Lei wrote:
-> >>> On Tue, Jul 31, 2018 at 01:19:42PM +0800, jianchao.wang wrote:
-> >>>> Hi Ming
-> >>>>
-> >>>> On 07/31/2018 12:58 PM, Ming Lei wrote:
-> >>>>> On Tue, Jul 31, 2018 at 12:02:15PM +0800, Jianchao Wang wrote:
-> >>>>>> Currently, we will always set SCHED_RESTART whenever there are
-> >>>>>> requests in hctx->dispatch, then when request is completed and
-> >>>>>> freed the hctx queues will be restarted to avoid IO hang. This
-> >>>>>> is unnecessary most of time. Especially when there are lots of
-> >>>>>> LUNs attached to one host, the RR restart loop could be very
-> >>>>>> expensive.
-> >>>>>
-> >>>>> The big RR restart loop has been killed in the following commit:
-> >>>>>
-> >>>>> commit 97889f9ac24f8d2fc8e703ea7f80c162bab10d4d
-> >>>>> Author: Ming Lei <ming.lei@redhat.com>
-> >>>>> Date:   Mon Jun 25 19:31:48 2018 +0800
-> >>>>>
-> >>>>>     blk-mq: remove synchronize_rcu() from blk_mq_del_queue_tag_set()
-> >>>>>
-> >>>>>
-> >>>>
-> >>>> Oh, sorry, I didn't look into this patch due to its title when iterated the mail list,
-> >>>> therefore I didn't realize the RR restart loop has already been killed. :)
-> >>>>
-> >>>> The RR restart loop could ensure the fairness of sharing some LLDD resource,
-> >>>> not just avoid IO hung. Is it OK to kill it totally ?
-> >>>
-> >>> Yeah, it is, also the fairness might be improved a bit by the way in
-> >>> commit 97889f9ac24f8d2fc, especially inside driver tag allocation
-> >>> algorithem.
-> >>>
-> >>
-> >> Would you mind to detail more here ?
-> >>
-> >> Regarding the driver tag case:
-> >> For example:
-> >>
-> >> q_a         q_b        q_c       q_d
-> >> hctx0       hctx0      hctx0     hctx0
-> >>
-> >>                  tags
-> >>
-> >> Total number of tags is 32
-> >> All of these 4 q are active.
-> >>
-> >> So every q has 8 tags.
-> >>
-> >> If all of these 4 q have used up their 8 tags, they have to wait.
-> >>
-> >> When part of the in-flight requests q_a are completed, tags are freed.
-> >> but the __sbq_wake_up doesn't wake up the q_a, it may wake up q_b.
-> > 
-> > 1) in case of IO scheduler
-> > q_a should be waken up because q_a->hctx0 is added to one wq of the tags if
-> > no tag is available, see blk_mq_mark_tag_wait().
-> > 
-> > 2) in case of none scheduler
-> > q_a should be waken up too, see blk_mq_get_tag().
-> > 
-> > So I don't understand why you mentioned that q_a can't be waken up.
-> 
-> There are multiple sbq_wait_states in one sbitmap_queue and __sbq_wake_up
-> will only wake up the waiters on one of them one time. Please refer to __sbq_wake_up.
+use actual protocol family passed by user rather than hardcoded
+AF_INTE6 to cerate sockets.
+current code is not working for IPv4.
 
-Yes, the multiple wqs are waken up in RR style, which is still fair generally speaking.
-And there is no such issue of always not waking up 'q_a' when request is completed on
-this queue, is there?
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+---
+ tools/testing/selftests/net/tcp_mmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Ming
+diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
+index 77f7627..e8c5dff 100644
+--- a/tools/testing/selftests/net/tcp_mmap.c
++++ b/tools/testing/selftests/net/tcp_mmap.c
+@@ -402,7 +402,7 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
+-	fd = socket(AF_INET6, SOCK_STREAM, 0);
++	fd = socket(cfg_family, SOCK_STREAM, 0);
+ 	if (fd == -1) {
+ 		perror("socket");
+ 		exit(1);
+-- 
+1.9.1
+
