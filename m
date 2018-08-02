@@ -2,156 +2,62 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AEEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F0BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4D32154B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4D32154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C09421567
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:35:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C09421567
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732257AbeHBTZb (ORCPT
+        id S1732326AbeHBT1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:25:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34448 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732049AbeHBTZb (ORCPT
+        Thu, 2 Aug 2018 15:27:22 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:43418 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731202AbeHBT1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:25:31 -0400
-Received: from localhost (ip-213-127-46-170.ip.prioritytelecom.net [213.127.46.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3080E0E;
-        Thu,  2 Aug 2018 17:33:22 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 19:33:19 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     devel@driverdev.osuosl.org, Gao Xiang <gaoxiang25@huawei.com>,
-        sfr@canb.auug.org.au, Chao Yu <yuchao0@huawei.com>,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] staging: erofs: disable compiling temporarile
-Message-ID: <20180802173319.GB24125@kroah.com>
-References: <20180802143455.9214-1-chao@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180802143455.9214-1-chao@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 2 Aug 2018 15:27:21 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A36A31008D9E7;
+        Thu,  2 Aug 2018 10:35:14 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 10:35:14 -0700 (PDT)
+Message-Id: <20180802.103514.1528606164810044013.davem@davemloft.net>
+To:     maninder1.s@samsung.com
+Cc:     shuahkh@osg.samsung.com, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        edumazet@google.com, pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        v.narang@samsung.com
+Subject: Re: [PATCH 1/1] selftest/net: fix protocol family to work for IPv4.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2~HCQZjTEZd0101301013epcas5p3C@epcas5p3.samsung.com>
+References: <CGME20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2@epcas5p3.samsung.com>
+        <20180802100201epcas5p390bb362ccabaa99087eff88af37bffb2~HCQZjTEZd0101301013epcas5p3C@epcas5p3.samsung.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 02 Aug 2018 10:35:15 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 10:34:55PM +0800, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> As Stephen Rothwell reported:
-> 
-> "After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/staging/erofs/super.c: In function 'erofs_read_super':
-> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
->   sb->s_flags |= MS_RDONLY | MS_NOATIME;
->                  ^~~~~~~~~
->                  IS_RDONLY
-> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
->   sb->s_flags |= MS_RDONLY | MS_NOATIME;
->                              ^~~~~~~~~~
->                              S_NOATIME
-> drivers/staging/erofs/super.c: In function 'erofs_mount':
-> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
->    &priv, erofs_fill_super);
->           ^~~~~~~~~~~~~~~~
-> In file included from include/linux/buffer_head.h:12:0,
->                  from drivers/staging/erofs/super.c:14:
-> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->                        ^~~~~~~~~~
-> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
->   return mount_bdev(fs_type, flags, dev_name,
->          ^~~~~~~~~~
-> In file included from include/linux/buffer_head.h:12:0,
->                  from drivers/staging/erofs/super.c:14:
-> include/linux/fs.h:2151:23: note: declared here
->  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
->                        ^~~~~~~~~~
-> drivers/staging/erofs/super.c: At top level:
-> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .mount          = erofs_mount,
->                     ^~~~~~~~~~~
-> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
-> drivers/staging/erofs/super.c: In function 'erofs_remount':
-> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
->   *flags |= MS_RDONLY;
->             ^~~~~~~~~
->             IS_RDONLY
-> drivers/staging/erofs/super.c: At top level:
-> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .remount_fs = erofs_remount,
->                 ^~~~~~~~~~~~~
-> 
-> Caused by various commits creating erofs in the staging tree interacting
-> with various commits redoing the mount infrastructure in the vfs tree.
-> 
-> I have disabed CONFIG_EROFS_FS for now:"
-> 
-> The reason of compiling error is:
-> 
-> Since -next collects and merges developing patches including common vfs
-> stuff from multi-trees, but those patches didn't cover erofs, such as:
-> 
-> ('vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
-> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=109b45090d7d3ce2797bb1ef7f70eead5bfe0ff3
-> 
-> ("vfs: Require specification of size of mount data for internal mounts")
-> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0a191e4505a4f255e6513b49426213da69bf0e80
-> 
-> Above vfs related patches has not been merged in staging tree, if we
-> submit those erofs patches to staging mailing list and after including
-> them in staging-{test,nexts} tree, it can easily cause compiling error.
-> 
-> We worked out some patches to adjust those vfs change, but now we just
-> submit them to -next tree temporarily to avoid compiling error.
-> 
-> For potentail conflict in between erofs and vfs changes in incoming
-> merge window, Stephen suggested that we can disable CONFIG_EROFS_FS
-> temporarily to pass merge window, and after that we can do restore by
-> reenabling CONFIG_EROFS_FS and applying those fixing patches. Also
-> Greg confirmed this solution.
-> 
-> So, let's disable compiling erofs for a while.
-> 
-> Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v3: remain "depends on BLOCK".
->  drivers/staging/erofs/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
-> index 663b755bf2fb..b37d994aa687 100644
-> --- a/drivers/staging/erofs/Kconfig
-> +++ b/drivers/staging/erofs/Kconfig
-> @@ -3,6 +3,7 @@
->  config EROFS_FS
->  	tristate "EROFS filesystem support"
->  	depends on BLOCK
-> +	depends on BROKEN
->  	help
->  	  EROFS(Enhanced Read-Only File System) is a lightweight
->  	  read-only file system with modern designs (eg. page-sized
+From: Maninder Singh <maninder1.s@samsung.com>
+Date: Thu,  2 Aug 2018 15:27:27 +0530
 
-Sorry, I already took the first version in my tree.  Don't worry about
-it for now you can fix this up after 4.19-rc1 is out when we enable the
-filesystem again.
+> use actual protocol family passed by user rather than hardcoded
+> AF_INTE6 to cerate sockets.
+> current code is not working for IPv4.
+> 
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
 
-thanks,
-
-greg k-h
+Applied.
