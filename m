@@ -2,199 +2,105 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BB9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B90C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA00221564
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3E3621564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/tDZAJ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA00221564
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rUzhvcjb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E3621564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387422AbeHBUQc (ORCPT
+        id S2387551AbeHBURg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 16:16:32 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37392 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729034AbeHBUQc (ORCPT
+        Thu, 2 Aug 2018 16:17:36 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44993 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387441AbeHBURg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 16:16:32 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v9-v6so2758463ljk.4;
-        Thu, 02 Aug 2018 11:24:14 -0700 (PDT)
+        Thu, 2 Aug 2018 16:17:36 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k21-v6so1771776pff.11;
+        Thu, 02 Aug 2018 11:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SVi2zBiXpkY+KuHefWvqe7oKyknOVxBdMezVShZI1to=;
-        b=R/tDZAJ55Zbuw9JUvO/R1gkby5X/U0610ZcjW6OIUxENPWPUaQWOWixbFcSRqjib9w
-         13iO6Y48pmLoNz4pTKAiy+LaKl11swtFo+SaQest6NSP6cC+L33t7suB/na/Tlt/8tkC
-         /2TFnto22aADMP91Qm3yMLLTrOano4kIdMmYJrYe9mUw7Z/zmKlKyzKCdK6IL08AKdyn
-         iAw366mEolLWvGrFpwbFzB/U8O/w987d6xMoDHOuV1UPwCNGt36z3vW43OPu6KK2oATZ
-         XzPb4taabEbXmHP1N9/rIH56LZ6X7AlUfCpSd6l8aBirlK8ElsNDKe2DbEpk6mwwpuW8
-         LafA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lXk/BkwIVZIfA+Qxjlh2HBtk07O47Je0XVrYJbD31qA=;
+        b=rUzhvcjbFxrrninis9TlVS61GmYO5qPxbJey6qDQNmVK5sqXz+PQF40+JxshBBuctP
+         ee5uixRsl5Sql/0O6oWM8WHXVG1fgLWcqihse9PPhd6jPiq9e5wYkNXh8xUYpegCo7BF
+         pwoxb2btP93Y0RK49t38uDrycIwVJGAsMe8tZUCi1IfMyob/ZG2TsQyxhooLokvBVcEJ
+         nYaII9TOqS/nLp4SpAg2QZNPgLwSl2cMFYNA46fBZfCjOOWuREVpzMCYrktm28Hamhkj
+         /2RorLeDFIAsgJh4UiWw9+0n5wEyWj0wnNMufbBAJe+Lvo9DuLzJG95Bg3/kU+VBQonK
+         esIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SVi2zBiXpkY+KuHefWvqe7oKyknOVxBdMezVShZI1to=;
-        b=mUfNPVArBCQAO9tAUv3eKiyzNs70TGj8/rn0FlCmQerugCP49f8pZYV6wsDcqeafed
-         q7edUJoK/R3EDlPWTLKbPh/V6juOZHz3UMYK/xewmdExUicdBnnmECE5TuS8VDizWJLg
-         0lOsRpzzjEW4oRalgsZMc/75nRzkdPhCBwFecb5ffuIAzsiwyMnTeANgfMe9YdSJEW5Q
-         dn9Y8HspvJGgjc98FB2TcxHtstRWOyPwi0UKgenlsM6SBfj3VkqKTIyT0emCvCirG1zL
-         IeJfVOSQRmP4zmodUgFEh3EawXbk2pUmlto7VWhOD5plgwOvPqBjbUnh455+XQ8U53MU
-         HphA==
-X-Gm-Message-State: AOUpUlEhWmWyXB+yU5U/YVsZSPEu5oEpII4IacBnnWD3fpzn/jtFe96e
-        VyzCsIzo5D3UwredPzcVXf8=
-X-Google-Smtp-Source: AAOMgpc5dXYnKcYkn2pFaWYxt9MMnQ3nNohtpdk8JVjnVmC3+kQFjOs3B/ZIwvd5r8SqYZBE5omLMQ==
-X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr2908950ljj.139.1533234253850;
-        Thu, 02 Aug 2018 11:24:13 -0700 (PDT)
-Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id 196-v6sm409193lfa.25.2018.08.02.11.24.11
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lXk/BkwIVZIfA+Qxjlh2HBtk07O47Je0XVrYJbD31qA=;
+        b=JYaIVXfp7y+XkyWrJniEpPg8ke4cooVafXaXJhke0LoJXabE0P9NdE9YDsH2N0z5Gj
+         SRzmd57mafwGWrjKljR6vrtWwOn9h1lXRG6wfFMV7BypWFuZ1/vVBU0HHiUjqJLgVeQ4
+         M0PgBDlB415k2Cbqc4Q27W+EQSZffLEti+lRdwnSqBq0AKbNn1RDcD3Mlufsd2qZEylH
+         qJdUTO2Kd1GLshyj7BcC6d5Hj0NO18bYkj4h7KIlS1lp3PtpEiWdhztGIIBrrQCVbyae
+         ZWR5If9uwJBkL9CcsXiXLMoAlzKeHOVQEqqcoa1FyJunOgnnIdd2bSkMwV5JiEowQ5Ak
+         VCKQ==
+X-Gm-Message-State: AOUpUlEPDUKZ1sxv1uPOu0ot6xI1tKHCvDwmvmVkCLONC76sBHLZfD0z
+        L8x/1BIcv5QoEgo4NOjHvpP+M7py
+X-Google-Smtp-Source: AAOMgpen9Q9hooUqIb05lxYUGunzYg9weJCLCC2xMIdjTP67aU3QWQCiGZ5vDUcxPHbZsZ0WTURzuA==
+X-Received: by 2002:a63:5d58:: with SMTP id o24-v6mr525476pgm.349.1533234320094;
+        Thu, 02 Aug 2018 11:25:20 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm7160682pfg.25.2018.08.02.11.25.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 11:24:12 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     devicetree@vger.kernel.org, nouveau@lists.freedesktop.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
-Date:   Thu, 02 Aug 2018 21:24:10 +0300
-Message-ID: <2887450.sPhIOOMKZK@dimapc>
-In-Reply-To: <2402373.RyBdR7VSnO@dimapc>
-References: <20180726231624.21084-1-digetx@gmail.com> <20180727170326.GA21283@jcrouse-lnx.qualcomm.com> <2402373.RyBdR7VSnO@dimapc>
+        Thu, 02 Aug 2018 11:25:18 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 11:25:17 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/246] 4.14.60-stable review
+Message-ID: <20180802182517.GA24531@roeck-us.net>
+References: <20180801165011.700991984@linuxfoundation.org>
+ <20180802154325.GB5137@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802154325.GB5137@roeck-us.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 27 July 2018 20:16:53 MSK Dmitry Osipenko wrote:
-> On Friday, 27 July 2018 20:03:26 MSK Jordan Crouse wrote:
-> > On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
-> > > On 27/07/18 15:10, Dmitry Osipenko wrote:
-> > > >On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
-> > > >>On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
-> > > >>>On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
-> > > >>>>The proposed solution adds a new option to the base device driver
-> > > >>>>structure that allows device drivers to explicitly convey to the
-> > > >>>>drivers
-> > > >>>>core that the implicit IOMMU backing for devices must not happen.
-> > > >>>
-> > > >>>Why is IOMMU mapping a problem for the Tegra GPU driver?
-> > > >>>
-> > > >>>If we add something like this then it should not be the choice of the
-> > > >>>device driver, but of the user and/or the firmware.
-> > > >>
-> > > >>Agreed, and it would still need somebody to configure an identity
-> > > >>domain
-> > > >>so
-> > > >>that transactions aren't aborted immediately. We currently allow the
-> > > >>identity domain to be used by default via a command-line option, so I
-> > > >>guess
-> > > >>we'd need a way for firmware to request that on a per-device basis.
-> > > >
-> > > >The IOMMU mapping itself is not a problem, the problem is the
-> > > >management
-> > > >of
-> > > >the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
-> > > >activities because:
-> > > >
-> > > >1) GPU HW require additional configuration for the IOMMU usage and dumb
-> > > >mapping of the allocations simply doesn't work.
-> > > 
-> > > Generally, that's already handled by the DRM drivers allocating
-> > > their own unmanaged domains. The only problem we really need to
-> > > solve in that regard is that currently the device DMA ops don't get
-> > > updated when moving away from the managed domain. That's been OK for
-> > > the VFIO case where the device is bound to a different driver which
-> > > we know won't make any explicit DMA API calls, but for the more
-> > > general case of IOMMU-aware drivers we could certainly do with a bit
-> > > of cooperation between the IOMMU API, DMA API, and arch code to
-> > > update the DMA ops dynamically to cope with intermediate subsystems
-> > > making DMA API calls on behalf of devices they don't know the
-> > > intimate details of.
-> > > 
-> > > >2) Older Tegra generations have a limited resource and capabilities in
-> > > >regards to IOMMU usage, allocating IOMMU domain per-device is just
-> > > >impossible for example.
-> > > >
-> > > >3) HW performs context switches and so particular allocations have to
-> > > >be
-> > > >assigned to a particular contexts IOMMU domain.
-> > > 
-> > > I understand Qualcomm SoCs have a similar thing too, and AFAICS that
-> > > case just doesn't fit into the current API model at all. We need the
-> > > IOMMU driver to somehow know about the specific details of which
-> > > devices have magic associations with specific contexts, and we
-> > > almost certainly need a more expressive interface than
-> > > iommu_domain_alloc() to have any hope of reliable results.
+On Thu, Aug 02, 2018 at 08:43:25AM -0700, Guenter Roeck wrote:
+> On Wed, Aug 01, 2018 at 06:48:30PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.60 release.
+> > There are 246 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > This is correct for Qualcomm GPUs - The GPU hardware context switching
-> > requires a specific context and there are some restrictions around
-> > secure contexts as well.
+> > Responses should be made by Fri Aug  3 16:49:18 UTC 2018.
+> > Anything received after that time might be too late.
 > > 
-> > We don't really care if the DMA attaches to a context just as long as it
-> > doesn't attach to the one(s) we care about. Perhaps a "valid context" mask
-> > would work in from the DT or the device struct to give the subsystems a
-> > clue as to which domains they were allowed to use. I recognize that there
-> > isn't a one-size-fits-all solution to this problem so I'm open to
-> > different
-> > ideas.
 > 
-> Designating whether implicit IOMMU backing is appropriate for a device via
-> device-tree property sounds a bit awkward because that will be a kinda
-> software description (of a custom Linux driver model), while device-tree is
-> supposed to describe HW.
+> Build results:
+> 	total: 148 pass: 148 fail: 0
+> Qemu test results:
+> 	total: 198 pass: 198 fail: 0
 > 
-> What about to grant IOMMU drivers with ability to decide whether the
-> implicit backing for a device is appropriate? Like this:
+> Details are available at http://kerneltests.org/builders/.
 > 
-> bool implicit_iommu_for_dma_is_allowed(struct device *dev)
-> {
-> 	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> 	struct iommu_group *group;
-> 
-> 	group = iommu_group_get(dev);
-> 	if (!group)
-> 		return NULL;
-> 
-> 	iommu_group_put(group);
-> 
-> 	if (!ops->implicit_iommu_for_dma_is_allowed)
-> 		return true;
-> 
-> 	return ops->implicit_iommu_for_dma_is_allowed(dev);
-> }
-> 
-> Then arch_setup_dma_ops() could have a clue whether implicit IOMMU backing
-> for a device is appropriate.
 
-Guys, does it sound good to you or maybe you have something else on your mind? 
-Even if it's not an ideal solution, it fixes the immediate problem and should 
-be good enough for the starter.
+I spoke too early. parisc images crash after adding some configuration
+options. I don't see the crash with v4.14.59. I'll send another update
+later after figuring out what is going on.
 
-
-
+Guenter
