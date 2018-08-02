@@ -2,162 +2,141 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A072CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D01C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49DD82152B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E42132152B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="eUSgoABO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DD82152B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="cgkLUcpG";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="l3hQXNBJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42132152B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732219AbeHBTA1 (ORCPT
+        id S1732253AbeHBTA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:00:27 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40018 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732177AbeHBTA1 (ORCPT
+        Thu, 2 Aug 2018 15:00:58 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:33489 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeHBTA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:00:27 -0400
-Received: by mail-it0-f66.google.com with SMTP id h23-v6so4404347ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:08:26 -0700 (PDT)
+        Thu, 2 Aug 2018 15:00:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1533229738; x=1564765738;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=9rvpDryGlBo5U0R+HGb7QSWCjydlDHzzm5WUWgHMxPA=;
+  b=cgkLUcpGk3NM1MQO0MINrOkjfhDJexFPTD600RR1Ev7d//t4NFcrZGVq
+   iHZ3GC2VNG59eLbCn3ebG4dHKAakq6Ia9M+8XEUHFX2Hlqr8JWQ8QKuv2
+   2wpFImt92zfApmet1AqK8zq0LVa+eNoFc9YjXOtatKyDzi7GPd9zR57wQ
+   D8r4AXnVqdsQQO8FLgLB5GizpVpiaR8voTSr4DYCEwrAMn8gpXZ2KLWqS
+   gch/ylzUp+FomvsXWrG4uFoQK+ZPcyp+v7+hJUqlO3DaVvk4DID26/xxV
+   5AgpZ7ItZzGONyyLBr6CWxZ++fwyStQA+N7P8IWxS+8dzQ1pbM6WOS5fA
+   A==;
+X-IronPort-AV: E=Sophos;i="5.51,436,1526313600"; 
+   d="scan'208";a="89714299"
+Received: from mail-by2nam03lp0056.outbound.protection.outlook.com (HELO NAM03-BY2-obe.outbound.protection.outlook.com) ([216.32.180.56])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Aug 2018 01:08:57 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DWKPVMHB8HiQnQUpWWXzSJ+RkhD+9kIYuWUSuxWdg4E=;
-        b=eUSgoABOrtWPWnIxLMvKEJ1/KKcYwmMFxWc96b6wpSpM14GuW2f3jsF4xQr+lzYldE
-         cESFWuTZcdC1AcfjiJS6RL6+YgCdPsSXE5D68g/c150o4TtDocswu5IqenH4kyai8nwG
-         FPcXwB+h78sL8pqhi91M5qwyFnibTwaYmmzb1+0YvibE/ygM5/woNlx5v8sqg1ZjCEkP
-         2yBN72IPTTVUUl4WSZ7yZM8pNrro2a2l7M9WqWHRBjsXS1aD3sk7NAbYaROlD6ETGfkv
-         v7mxLaJ/Bd6fiIODZWrEfWaQeb8baCW66JJJ5gcEjM3dBE32LlhGI4XSUKgyPboP75MZ
-         kHdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DWKPVMHB8HiQnQUpWWXzSJ+RkhD+9kIYuWUSuxWdg4E=;
-        b=cxd2e6JPK+U+kGyM5Z49B3wO0haNx/ydlpeVAbMV04KwqYz6nhyKT7v3GgNddfOs/S
-         Ljd+hJGOE4ASOjcZUtBPyQrqaiTcS01mqLk9YOE4KmbxAfuGqY5E0LRHaeBYyqbWArM4
-         It1Si984VgfW3q84WK8Ns76+s0VNd1miZVbWinkBwmtUMUFlJj0aaA0/xmLxa3AfxerV
-         NEMKkhwvb23YUfxUI9qQ6KYZ5mqxurKN/CvW3jgZxhInIomesv7We9LymooMAxOnPWWq
-         8ILgtoXNr/3Ybz0eNMxgl1C8xGnQ7oxN1wa2an0QCmWCPk6RDWAaF7ohi4AQCB3EhN9x
-         pWtA==
-X-Gm-Message-State: AOUpUlEJZVGPBMctxBlDZ/or8qQO4WL2ocQ8UEuZ+Nwx+0zQtebW3fSH
-        1QYBjobWSQV5D5b+qQW/FAyXC2Si2LA=
-X-Google-Smtp-Source: AAOMgpetIRtiOPVS7TOlP/232jOLfQ4tVLhHmZ4t2Ck5kipgJDWkIHX4Cea9gxPYSraVmcyGbDgvVg==
-X-Received: by 2002:a24:54d:: with SMTP id 74-v6mr3241025itl.96.1533229705791;
-        Thu, 02 Aug 2018 10:08:25 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id g23-v6sm649248iob.88.2018.08.02.10.08.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 10:08:24 -0700 (PDT)
-Subject: Re: [PATCH] blk-mq: fix blk_mq_tagset_busy_iter
-To:     Ming Lei <ming.lei@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-block@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Brown <broonie@kernel.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180802164329.11900-1-ming.lei@redhat.com>
- <1533228846.3915.17.camel@HansenPartnership.com>
- <20180802170601.GC8928@ming.t460p>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <acd8de2a-4a24-385c-e76a-5f54c8dc09d7@kernel.dk>
-Date:   Thu, 2 Aug 2018 11:08:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180802170601.GC8928@ming.t460p>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9rvpDryGlBo5U0R+HGb7QSWCjydlDHzzm5WUWgHMxPA=;
+ b=l3hQXNBJAClxKC64yEB2nA0x09r+IiN/JEnMG46KiFMMHciYM0MYbA9w9OOmWI/i5Tya81ZiPVGzGJ2GsMEySf2Ly6gZzxdNwIOEjCYd9VSG/pln2vq5O2OxM5yMMWbrfYxIQyDpJ/8khqHNYehrJvl//1fkKJ42IgsGru0gEgk=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0752.namprd04.prod.outlook.com (10.172.168.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Thu, 2 Aug 2018 17:08:56 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee%8]) with mapi id 15.20.1017.010; Thu, 2 Aug 2018
+ 17:08:55 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "ming.lei@redhat.com" <ming.lei@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [RFC] blk-mq: clean up the hctx restart
+Thread-Topic: [RFC] blk-mq: clean up the hctx restart
+Thread-Index: AQHUKIMWxQ9ytKciREKo5HIno+xAH6SoxRwAgAAGCQCAAA/RAIABT5wAgABwGYCAAgXLAIAAEpkAgAAC5gA=
+Date:   Thu, 2 Aug 2018 17:08:55 +0000
+Message-ID: <7c933e7e60831f985297d8cc5a540171fc921f44.camel@wdc.com>
+References: <1533009735-2221-1-git-send-email-jianchao.w.wang@oracle.com>
+         <20180731045805.GE15701@ming.t460p>
+         <8a3383e6-2926-6858-d8f2-671f3cb9e460@oracle.com>
+         <20180731061616.GF15701@ming.t460p>
+         <42371198-2a4b-1062-3564-411645ffba98@oracle.com>
+         <20180801085841.GA27962@ming.t460p>
+         <9feaa41702ef6fcc00ce1b8aa19bbe179edf4e3f.camel@wdc.com>
+         <20180802165831.GB8928@ming.t460p>
+In-Reply-To: <20180802165831.GB8928@ming.t460p>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0752;20:kEob+adLDly8SW203SdEd2zCr+bx8/z/D0HXF9q4RDhsRxf+IFr6sjM8TILmAJxe3f1O+6eMoLFBqsYX8DvQ+bR/AaLyReL7GrzjT71FbSASlg7bJq9KsKlIt52poW/RK9sdvORZ9Za9496b14xbtKcVPo81M1YGELP1m0XuRb8=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 47652159-7683-4da4-b657-08d5f89aa16c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0752;
+x-ms-traffictypediagnostic: MWHPR04MB0752:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB07523C66D72FFCEAC287531E982C0@MWHPR04MB0752.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(17755550239193);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0752;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0752;
+x-forefront-prvs: 07521929C1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(376002)(396003)(136003)(189003)(199004)(54906003)(68736007)(316002)(229853002)(5250100002)(66066001)(2501003)(2351001)(118296001)(8676002)(2900100001)(6486002)(72206003)(106356001)(105586002)(14454004)(53936002)(2906002)(305945005)(478600001)(5640700003)(6436002)(93886005)(97736004)(476003)(2616005)(86362001)(25786009)(486006)(6506007)(14444005)(81166006)(26005)(256004)(102836004)(186003)(76176011)(81156014)(8936002)(6916009)(3846002)(5660300001)(36756003)(446003)(6512007)(11346002)(6116002)(6246003)(4326008)(7736002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0752;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: pgIvEi0WKIyC1Njqeq3BRoo2f50/lFmd1SdfybgYOaB8gRCW5f/cQokWJ/PSDe1Ud1Tq3Ea1WiKPK3lYgjCEZbSkdMjgzW5qw6tiAgjGyTwQx3pEUUpoKIb+tDfSzZeSAuAuR2Pqm8ACd9bo3EDSXygS7L/GMtbzJZOQUvyyd499IJiskCffQAODFDjg06pLaDY+UpL8nkSqZ4vodEkHiUG1u6NnPfbh/dtVlfltj462E+Nf5FlTXTbuqCoEnD2qR+i8QrUuSR9XG+duxqOj/SUFilhRB9yi2uSFMbI84q8odV+86g3FU8Ij2aRRpw6KTTbv0wSKcfELTLFZW+SD65gSfV0JuHdPtTkcdJPjPy4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <E6836B12A35F92499D4BCDE9ECD60913@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47652159-7683-4da4-b657-08d5f89aa16c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2018 17:08:55.7670
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0752
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/18 11:06 AM, Ming Lei wrote:
-> On Thu, Aug 02, 2018 at 09:54:06AM -0700, James Bottomley wrote:
->> On Fri, 2018-08-03 at 00:43 +0800, Ming Lei wrote:
->>> Commit d250bf4e776ff09d5("blk-mq: only iterate over inflight requests
->>> in blk_mq_tagset_busy_iter") uses 'blk_mq_rq_state(rq) ==
->>> MQ_RQ_IN_FLIGHT'
->>> to replace 'blk_mq_request_started(req)', this way is wrong, and
->>> causes
->>> lots of test system hang during booting.
->>>
->>> Fix the issue by using blk_mq_request_started(req) inside
->>> bt_tags_iter().
->>>
->>> Fixes: d250bf4e776ff09d5 ("blk-mq: only iterate over inflight
->>> requests in blk_mq_tagset_busy_iter")
->>> Cc: Josef Bacik <josef@toxicpanda.com>
->>> Cc: Christoph Hellwig <hch@lst.de>
->>> Cc: Guenter Roeck <linux@roeck-us.net>
->>> Cc: Mark Brown <broonie@kernel.org>
->>> Cc: Matt Hart <matthew.hart@linaro.org>
->>> Cc: Johannes Thumshirn <jthumshirn@suse.de>
->>> Cc: John Garry <john.garry@huawei.com>
->>> Cc: Hannes Reinecke <hare@suse.com>,
->>> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
->>> Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
->>> Cc: linux-scsi@vger.kernel.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
->>> ---
->>>  block/blk-mq-tag.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
->>> index 09b2ee6694fb..3de0836163c2 100644
->>> --- a/block/blk-mq-tag.c
->>> +++ b/block/blk-mq-tag.c
->>> @@ -271,7 +271,7 @@ static bool bt_tags_iter(struct sbitmap *bitmap,
->>> unsigned int bitnr, void *data)
->>>  	 * test and set the bit before assining ->rqs[].
->>>  	 */
->>>  	rq = tags->rqs[bitnr];
->>> -	if (rq && blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT)
->>> +	if (rq && blk_mq_request_started(rq))
->>
->> So now we have dueling versions of this patch:
->>
->> https://marc.info/?l=linux-scsi&m=153322802207688
->>
->> Can we at least make sure we've root caused the problem and confirmed
->> we've got it fixed before we start the formal patch process?  When we
-> 
-> EH uses scsi_host_busy to check if the error handler needs to be waken
-> up. And blk_mq_tagset_busy_iter() is used for implementing scsi_host_busy(),
-> so causes EH not waken up, then this timed-out request can't be handled.
-> 
->> do start the formal patch process, please give appropriate credit to
->> the reporter(s) since this has been a royal pain for them to help us
->> track down.
-> 
-> Sure.
-> 
-> Jens, could you add reported-by if you are fine with this version? Or please
-> just let me know if new version is needed, then I can add it.
+On Fri, 2018-08-03 at 00:58 +-0800, Ming Lei wrote:
++AD4- And about the situations you mentioned, no any special as normal case=
+s
++AD4- or thousands of LUNs. Just a batch of queues are waken up from one
++AD4- single wait queue(sbq+AF8-wait+AF8-state), and inside each wait queue=
+, queues
++AD4- are handled actually in FIFO order.
++AD4-=20
++AD4- Or what is your expected ideal behaviour about fairness?
 
-I'll add that, would also love a tested-by from the reporter. The patch
-looks good to me, however.
+Hello Ming,
 
--- 
-Jens Axboe
+What I expect is if the number of LUNs is really large that all LUNs are tr=
+eated
+equally. Unless someone can set up a test that demonstrates that this is st=
+ill
+the case for commit 97889f9ac24f (+ACI-blk-mq: remove synchronize+AF8-rcu()=
+ from
+blk+AF8-mq+AF8-del+AF8-queue+AF8-tag+AF8-set()+ACI-), I will assume that th=
+at commit breaks fairness.
+
+Bart.
 
