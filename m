@@ -2,319 +2,111 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0A1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5938C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB37215A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5099E215E5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TvhaBayd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB37215A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JG1ib+ua"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5099E215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbeHCBHG (ORCPT
+        id S1730028AbeHCBOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 21:07:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38876 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeHCBHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 21:07:05 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so1913319pgq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 16:13:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=zfgmmOn3uF8UYldvQIlMD7G4qbWp796jJrT2Ky2IqPo=;
-        b=TvhaBaydx+sxXrG1dVCxhpSOfoJRDFvPBmUztXvdDj5y1UG3yjQY/iH41XCS+/q34e
-         xGJ1xjUWDQaw/5MFkb0/tapiPkuoJxQhirxjUAps6A+rp1d7iXhvGvkMjq6Jc+CtxyUZ
-         fOMIoc403QH3MpzigCK4/hf3COGm7SZXr2OZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=zfgmmOn3uF8UYldvQIlMD7G4qbWp796jJrT2Ky2IqPo=;
-        b=VxJQgrffoq2ihg5Vp0hBfESUbMpBxkwtafMVFctrq+82lWUHaNHVfg+Zh49AKEa84t
-         l9uuZ7plhT4MLHV8XtsLDlwUib7g3pCsoS4/2l20cf96kYmZlxylAKBqYLaaruNo4gGl
-         2oiFrhbj9lGsVpoTI1EE7qbcTuJkoE31QbQGWAe3JaFYKNUpn5caQEVhbdnhxYP0xqmO
-         EzfIUgNQSMo42Qd11V1K7wxIjO+Tg1GK990aA6BeJ9Wb5CxmskCL2NFAQ1KLrNnI2U/K
-         4OSFb5lhuM59yhH8Rc8NiWw93phmSi4/+gtQn+RAtyMV8jwYnKau/ls6CToY8F/BoKTt
-         XN0g==
-X-Gm-Message-State: AOUpUlFviEDLWEROKAX4zLD0U5PlVFHlTV+EVvywPRqJv2Nz4YxBhc8k
-        VHikDtQw1X6kdfjvTY+1tD1Vzw==
-X-Google-Smtp-Source: AAOMgpc1ItH7jJtNtzSpFYGgjCSEHr4iwGGqFqsiDBxlD4Vd8hVf12GSPrsRCIx2Wm+Ozz8MYJOZSA==
-X-Received: by 2002:aa7:8118:: with SMTP id b24-v6mr1564972pfi.78.1533251624356;
-        Thu, 02 Aug 2018 16:13:44 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id s74-v6sm6003521pfe.53.2018.08.02.16.13.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 16:13:43 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 16:13:43 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
-Message-ID: <20180802231343.GS68975@google.com>
-References: <CGME20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36@epcas1p1.samsung.com>
- <20180703234705.227473-6-mka@chromium.org>
- <5B3C6C2A.1070205@samsung.com>
- <20180706175301.GG129942@google.com>
- <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
- <20180716175050.GZ129942@google.com>
- <20180731193953.GH68975@google.com>
- <5B610B48.4030802@samsung.com>
- <20180801170824.GJ68975@google.com>
- <5B626563.1090302@samsung.com>
+        Thu, 2 Aug 2018 21:14:31 -0400
+Received: from ozlabs.org ([203.11.71.1]:49703 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726949AbeHCBOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 21:14:31 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41hR4f678wz9ryn;
+        Fri,  3 Aug 2018 09:21:06 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533252067;
+        bh=pLpBH9ULz0g9CL5ewps1Zl6lEp64Df0JT6PyA/26x5Q=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JG1ib+ua++PtoYF8sjL6nFCxDZJ2JPPKe4V1tKW+64D+sjn1z7JE95MWBdkOjcKQT
+         B6G6x7wdJTBdoUaZf9s8k4RxsH9gGgqpmytyEGZ/EWYQM7oqkqEmEOt0MVH5w3KTGI
+         TnfYdqRWc6EFQhsTAjGLTOfudj0I+zJlEF2OpN7bURS1+uBFF5wh06AZs7prvZgRQ7
+         WmDbsWAO3FY4OFKzzJ+Sn5EqIIZSRd+jiJhwYYUj4KQZWl0a3qBMU3XlC1e82kZw5P
+         6bU64TkkjZXF8Rxq6/FsQQU5h0b4jM08mj8dmI7oYNPoH8eCr+cm8dF+JxfIrt+T44
+         4wY1yXHhEjafQ==
+Date:   Fri, 3 Aug 2018 09:21:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@imgtec.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the mips tree with the kbuild tree
+Message-ID: <20180803092100.7d0fda13@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5B626563.1090302@samsung.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PmmDsB5b_QxAFqt+v6nQgWg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+--Sig_/PmmDsB5b_QxAFqt+v6nQgWg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 02, 2018 at 10:58:59AM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
-> 
-> On 2018년 08월 02일 02:08, Matthias Kaehlcke wrote:
-> > Hi Chanwoo,
-> > 
-> > On Wed, Aug 01, 2018 at 10:22:16AM +0900, Chanwoo Choi wrote:
-> >> On 2018년 08월 01일 04:39, Matthias Kaehlcke wrote:
-> >>> On Mon, Jul 16, 2018 at 10:50:50AM -0700, Matthias Kaehlcke wrote:
-> >>>> On Thu, Jul 12, 2018 at 05:44:33PM +0900, Chanwoo Choi wrote:
-> >>>>> Hi Matthias,
-> >>>>>
-> >>>>> On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
-> >>>>>> Hi Chanwoo,
-> >>>>>>
-> >>>>>> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
-> >>>>>>
-> >>>>>>> Firstly,
-> >>>>>>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
-> >>>>>>>
-> >>>>>>> devfreq already used the OPP interface as default. It means that
-> >>>>>>> the outside of 'drivers/devfreq' can disable/enable the frequency
-> >>>>>>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
-> >>>>>>> drivers disable/enable the specific frequency, the devfreq core
-> >>>>>>> consider them.
-> >>>>>>>
-> >>>>>>> So, devfreq doesn't need to devfreq_verify_within_limits() because
-> >>>>>>> already support some interface to change the minimum/maximum frequency
-> >>>>>>> of devfreq device. 
-> >>>>>>>
-> >>>>>>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
-> >>>>>>> to change the minimum/maximum frequency of cpu. some device driver cannot
-> >>>>>>> change the minimum/maximum frequency through OPP interface.
-> >>>>>>>
-> >>>>>>> But, in case of devfreq subsystem, as I explained already, devfreq support
-> >>>>>>> the OPP interface as default way. devfreq subsystem doesn't need to add
-> >>>>>>> other way to change the minimum/maximum frequency.
-> >>>>>>
-> >>>>>> Using the OPP interface exclusively works as long as a
-> >>>>>> enabling/disabling of OPPs is limited to a single driver
-> >>>>>> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
-> >>>>>> involved you need a way to resolve conflicts, that's the purpose of
-> >>>>>> devfreq_verify_within_limits(). Please let me know if there are
-> >>>>>> existing mechanisms for conflict resolution that I overlooked.
-> >>>>>>
-> >>>>>> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
-> >>>>>> devfreq_verify_within_limits() instead of the OPP interface if
-> >>>>>> desired, however this seems beyond the scope of this series.
-> >>>>>
-> >>>>> Actually, if we uses this approach, it doesn't support the multiple drivers too.
-> >>>>> If non throttler drivers uses devfreq_verify_within_limits(), the conflict
-> >>>>> happen.
-> >>>>
-> >>>> As long as drivers limit the max freq there is no conflict, the lowest
-> >>>> max freq wins. I expect this to be the usual case, apparently it
-> >>>> worked for cpufreq for 10+ years.
-> >>>>
-> >>>> However it is correct that there would be a conflict if a driver
-> >>>> requests a min freq that is higher than the max freq requested by
-> >>>> another. In this case devfreq_verify_within_limits() resolves the
-> >>>> conflict by raising p->max to the min freq. Not sure if this is
-> >>>> something that would ever occur in practice though.
-> >>>>
-> >>>> If we are really concerned about this case it would also be an option
-> >>>> to limit the adjustment to the max frequency.
-> >>>>
-> >>>>> To resolve the conflict for multiple device driver, maybe OPP interface
-> >>>>> have to support 'usage_count' such as clk_enable/disable().
-> >>>>
-> >>>> This would require supporting negative usage count values, since a OPP
-> >>>> should not be enabled if e.g. thermal enables it but the throttler
-> >>>> disabled it or viceversa.
-> >>>>
-> >>>> Theoretically there could also be conflicts, like one driver disabling
-> >>>> the higher OPPs and another the lower ones, with the outcome of all
-> >>>> OPPs being disabled, which would be a more drastic conflict resolution
-> >>>> than that of devfreq_verify_within_limits().
-> >>>>
-> >>>> Viresh, what do you think about an OPP usage count?
-> >>>
-> >>> Ping, can we try to reach a conclusion on this or at least keep the
-> >>> discussion going?
-> >>>
-> >>> Not that it matters, but my preferred solution continues to be
-> >>> devfreq_verify_within_limits(). It solves conflicts in some way (which
-> >>> could be adjusted if needed) and has proven to work in practice for
-> >>> 10+ years in a very similar sub-system.
-> >>
-> >> It is not true. Current cpufreq subsystem doesn't support external OPP
-> >> control to enable/disable the OPP entry. If some device driver
-> >> controls the OPP entry of cpufreq driver with opp_disable/enable(),
-> >> the operation is not working. Because cpufreq considers the limit
-> >> through 'cpufreq_verify_with_limits()' only.
-> > 
-> > Ok, we can probably agree that using cpufreq_verify_with_limits()
-> > exclusively seems to have worked well for cpufreq, and that in their
-> > overall purpose cpufreq and devfreq are similar subsystems.
-> > 
-> > The current throttler series with devfreq_verify_within_limits() takes
-> > the enabled OPPs into account, the lowest and highest OPP are used as
-> > a starting point for the frequency adjustment and (in theory) the
-> > frequency range should only be narrowed by
-> > devfreq_verify_within_limits().
-> > 
-> >> As I already commented[1], there is different between cpufreq and devfreq.
-> >> [1] https://lkml.org/lkml/2018/7/4/80
-> >>
-> >> Already, subsystem already used OPP interface in order to control
-> >> specific OPP entry. I don't want to provide two outside method
-> >> to control the frequency of devfreq driver. It might make the confusion.
-> > 
-> > I understand your point, it would indeed be preferable to have a
-> > single method. However I'm not convinced that the OPP interface is
-> > a suitable solution, as I exposed earlier in this thread (quoted
-> > below).
-> > 
-> > I would like you to at least consider the possibility of changing
-> > drivers/thermal/devfreq_cooling.c to devfreq_verify_within_limits().
-> > Besides that it's not what is currently used, do you see any technical
-> > concerns that would make devfreq_verify_within_limits() an unsuitable
-> > or inferior solution?
-> 
-> As we already discussed, devfreq_verify_within_limits() doesn't support
-> the multiple outside controllers (e.g., devfreq-cooling.c).
+Hi all,
 
-That's incorrect, its purpose is precisely that.
+Today's linux-next merge of the mips tree got a conflict in:
 
-Are you suggesting that cpufreq with its use of
-cpufreq_verify_within_limits() (the inspiration for
-devfreq_verify_within_limits()) is broken? It is used by cpu_cooling.c
-and other drivers when receiving a CPUFREQ_ADJUST event, essentially
-what I am proposing with DEVFREQ_ADJUST.
+  arch/mips/Kconfig
 
-Could you elaborate why this model wouldn't work for devfreq? "OPP
-interface is mandatory for devfreq" isn't really a technical argument,
-is it mandatory for any other reason than that it is the interface
-that is currently used?
+between commit:
 
-> After you are suggesting the throttler core, there are at least two
-> outside controllers (e.g., devfreq-cooling.c and throttler driver).
-> As I knew the problem about conflict, I cannot agree the temporary
-> method. OPP interface is mandatory for devfreq in order to control
-> the OPP (frequency/voltage). In this situation, we have to try to
-> find the method through OPP interface.
+  1572497cb0e6 ("kconfig: include common Kconfig files from top-level Kconf=
+ig")
 
-What do you mean with "temporary method"?
+from the kbuild tree and commit:
 
-We can try to find a method through the OPP interface, but at this
-point I'm not convinced that it is technically necessary or even
-preferable.
+  6c359eb1dcdb ("MIPS: Allow auto-dection of ARCH_PFN_OFFSET & PHYS_OFFSET")
 
-Another inconvenient of the OPP approach for both devfreq-cooling.c
-and the throttler is that they have to bother with disabling all OPPs
-above/below the max/min (they don't/shouldn't have to care), instead
-of just telling devfreq the max/min.
+from the mips tree.
 
-> We can refer to regulator/clock. Multiple device driver can use
-> the regulator/clock without any problem. I think that usage of OPP
-> is similiar with regulator/clock. As you mentioned, maybe OPP
-> would handle the negative count. Although opp_enable/opp_disable()
-> have to handle the negative count and opp_enable/opp_disable()
-> can support the multiple usage from device drivers, I think that
-> this approach is right.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-The regulator/clock approach with the typical usage counts seems more
-intuitive to me, personally I wouldn't write an interface with
-negative usage count if I could reasonably avoid it.
 
-> >> I want to use only OPP interface to enable/disable frequency
-> >> even if we have to modify the OPP interface.
-> > 
-> > These are the concerns I raised earlier about a solution with OPP
-> > usage counts:
-> > 
-> > "This would require supporting negative usage count values, since a OPP
-> > should not be enabled if e.g. thermal enables it but the throttler
-> > disabled it or viceversa.
-> 
-> Already replied	about negative usage count. I think that negative usage count
-> is not problem if this approach could resolve the issue.
-> 
-> > 
-> > Theoretically there could also be conflicts, like one driver disabling
-> > the higher OPPs and another the lower ones, with the outcome of all
-> > OPPs being disabled, which would be a more drastic conflict resolution
-> > than that of devfreq_verify_within_limits()."
-> > 
-> > What do you think about these points?
-> 
-> It depends on how to use OPP interface on multiple device driver.
-> Even if devfreq/opp provides the control method, outside device driver
-> are misusing them. It is problem of user.
 
-I wouldn't call it misusing if two independent drivers take
-contradictory actions on an interface that doesn't provide
-arbitration. How can driver A know that it shouldn't disable OPPs a, b
-and c because driver B disabled d, e and f? Who is misusing the
-interface, driver A or driver B?
+--=20
+Cheers,
+Stephen Rothwell
 
-> Instead, if we use the OPP interface, we can check why OPP entry
-> is disabled or enabled through usage count.
-> 
-> > 
-> > The negative usage counts aren't necessarily a dealbreaker in a
-> > technical sense, though I'm not a friend of quirky interfaces that
-> > don't behave like a typical user would expect (e.g. an OPP isn't
-> > necessarily enabled after dev_pm_opp_enable()).
-> > 
-> > I can sent an RFC with OPP usage counts, though due to the above
-> > concerns I have doubts it will be well received.
-> 
-> Please add me to Cc list.
+--Sig_/PmmDsB5b_QxAFqt+v6nQgWg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Will do
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltjkdwACgkQAVBC80lX
+0Gw7mAf/bEpGIEqvEnMW6HacXt7rRsGKW3cvnV/Q9WlG4iHRx9rsWVpNzpO8DVMj
+hPXzuolrjYi22F+xBO8qgydJIln5kRSVGEWYfcxrBBLqIB8h0F6Le02Rqkezeme+
+V1ilhtLnrO2SH6le+4Hp6a617KTk6yFmqtW1TqCEI5A9MgiQBukht++01JU9Uj13
+c7oFJhmT2QxZfkqA5JRu+pPvNQan4Lh4n94ePJOy25kL/cjBwO+kApOtR4X1Y/eF
+sczQZyintbe9JxwXX6huwmiH9uBhowKdei+AiDWhKWYHXxuLMGbvGmhxYhyIU0uy
+g1sS2BCSsEDUOLZZISEhcFhRTaeTfA==
+=FGRC
+-----END PGP SIGNATURE-----
 
-Matthias
+--Sig_/PmmDsB5b_QxAFqt+v6nQgWg--
