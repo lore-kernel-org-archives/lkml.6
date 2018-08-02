@@ -6,105 +6,114 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4175C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626A9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D2E214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D2E214FB
+	by mail.kernel.org (Postfix) with ESMTP id 18E5F208B6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E5F208B6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbeHCAvu (ORCPT
+        id S1732196AbeHCAvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 20:51:50 -0400
-Received: from mga04.intel.com ([192.55.52.120]:44440 "EHLO mga04.intel.com"
+        Thu, 2 Aug 2018 20:51:54 -0400
+Received: from mga03.intel.com ([134.134.136.65]:15997 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbeHCAvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 20:51:50 -0400
+        id S1727262AbeHCAvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 20:51:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 15:58:32 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 15:58:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,437,1526367600"; 
-   d="scan'208";a="62903921"
+   d="scan'208";a="61951943"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga006.jf.intel.com with ESMTP; 02 Aug 2018 15:58:32 -0700
-Subject: [PATCH 0/7] [v2] x86/mm/pti: close two Meltdown leaks with Global kernel mapping
+  by orsmga008.jf.intel.com with ESMTP; 02 Aug 2018 15:58:34 -0700
+Subject: [PATCH 1/7] x86/mm/pti: clear Global bit more aggressively
 To:     linux-kernel@vger.kernel.org
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, keescook@google.com,
-        tglx@linutronix.de, mingo@kernel.org, aarcange@redhat.com,
-        jgross@suse.com, jpoimboe@redhat.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, hughd@google.com,
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, hughd@google.com,
+        keescook@google.com, tglx@linutronix.de, mingo@kernel.org,
+        aarcange@redhat.com, jgross@suse.com, jpoimboe@redhat.com,
+        gregkh@linuxfoundation.org, peterz@infradead.org,
         torvalds@linux-foundation.org, bp@alien8.de, luto@kernel.org,
         ak@linux.intel.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Thu, 02 Aug 2018 15:58:23 -0700
-Message-Id: <20180802225823.4711C55B@viggo.jf.intel.com>
+Date:   Thu, 02 Aug 2018 15:58:25 -0700
+References: <20180802225823.4711C55B@viggo.jf.intel.com>
+In-Reply-To: <20180802225823.4711C55B@viggo.jf.intel.com>
+Message-Id: <20180802225825.A100C071@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-The fixes for the problem Hugh reported took a bit more surgery
-than I would have liked, but they do appear to work.  Note that
-the last two patches are unnecessary cleanups that could be removed
-from backports.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Changes from v1:
- * Modify set_memory_np() to avoid messing with the direct map
-   by limiting its changes to the high kernel image map.
+The kernel image starts out with the Global bit set across the entire
+kernel image.  The bit is cleared with set_memory_nonglobal() in the
+configurations with PCIDs where we do not need the performance
+benefits of the Global bit.
 
---
+However, this is fragile.  It means that we are stuck opting *out* of
+the less-secure (Global bit set) configuration, which seems backwards.
+Let's start more secure (Global bit clear) and then let things opt
+back in if they want performance, or are truly mapping common data
+between kernel and userspace.
 
-This applies to 4.17 and 4.18.
+This fixes a bug.  Before this patch, there are areas that are
+unmapped from the user page tables (like like everything above
+0xffffffff82600000 in the example below).  These have the hallmark of
+being a wrong Global area: they are no identical in the
+'current_kernel' and 'current_user' page table dumps.  They are also
+read-write, which means they're much more likely to contain secrets.
 
-Thanks to Hugh Dickins for initially finding the r/w kernel text
-issue and coming up with an initial fix.  I found the "unused
-hole" part and came up with different approach for fixing the
-mess.
+Before this patch:
 
---
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                 GLB NX pte
+current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE     GLB NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                 GLB NX pte
+current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE     GLB NX pmd
+current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
 
-Background:
+ current_user:---[ High Kernel Mapping ]---
+ current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+ current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+ current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+ current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                 GLB NX pte
+ current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+ current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
 
-Process Context IDentifiers (PCIDs) are a hardware feature that
-allows TLB entries to survive page table switches (CR3 writes).
-As an optimization, the PTI code currently allows the kernel image
-to be Global when running on hardware without PCIDs.  This results
-in fewer TLB misses, especially upon entry.
+After this patch:
 
-The downside is that these Global areas are theoretically
-susceptible to Meltdown.  The logic is that there are no secrets
-in the kernel image, so why pay the cost of TLB misses.
+current_kernel:---[ High Kernel Mapping ]---
+current_kernel-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+current_kernel-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+current_kernel-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+current_kernel-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+current_kernel-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+current_kernel-0xffffffff82600000-0xffffffff82c00000           6M     RW         PSE         NX pmd
+current_kernel-0xffffffff82c00000-0xffffffff82e00000           2M     RW                     NX pte
+current_kernel-0xffffffff82e00000-0xffffffff83200000           4M     RW         PSE         NX pmd
+current_kernel-0xffffffff83200000-0xffffffffa0000000         462M                               pmd
 
-Problem:
+  current_user:---[ High Kernel Mapping ]---
+  current_user-0xffffffff80000000-0xffffffff81000000          16M                               pmd
+  current_user-0xffffffff81000000-0xffffffff81e00000          14M     ro         PSE     GLB x  pmd
+  current_user-0xffffffff81e00000-0xffffffff81e11000          68K     ro                 GLB x  pte
+  current_user-0xffffffff81e11000-0xffffffff82000000        1980K     RW                     NX pte
+  current_user-0xffffffff82000000-0xffffffff82600000           6M     ro         PSE     GLB NX pmd
+  current_user-0xffffffff82600000-0xffffffffa0000000         474M                               pmd
 
-The current PTI code leaves the entire area of the kernel binary
-between '_text' and '_end' as Global (on non-PCID hardware).
-However, that range contains both read-write kernel data, and two
-"unused" holes in addition to text.  The areas which are not text
-or read-only might contain secrets once they are freed back into
-the allocator.
-
-This issue affects systems which are susceptible to Meltdown, do not
-have PCIDs and which are using the default PTI_AUTO mode (no
-pti=on/off on the cmdline).
-
-PCIDs became generally available for servers in ~2010 (Westmere)
-and desktop (client) parts in roughly 2011 (Sandybridge).  This
-is not expected to affect anything newer than that.
-
-Solution:
-
-The solution for the read-write area is to clear the global bit
-for the area (patch #1).
-
-The "unused" holes need a bit more work since we free them in a
-bit of an ad-hoc way, but we fix this up in patches 2-5.
-
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reported-by: Hugh Dickins <hughd@google.com>
 Cc: Kees Cook <keescook@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -113,8 +122,97 @@ Cc: Juergen Gross <jgross@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
+---
+
+ b/arch/x86/mm/pageattr.c |    6 ++++++
+ b/arch/x86/mm/pti.c      |   34 ++++++++++++++++++++++++----------
+ 2 files changed, 30 insertions(+), 10 deletions(-)
+
+diff -puN arch/x86/mm/pageattr.c~pti-non-pcid-clear-more-global-in-kernel-mapping arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~pti-non-pcid-clear-more-global-in-kernel-mapping	2018-08-02 14:42:35.905479118 -0700
++++ b/arch/x86/mm/pageattr.c	2018-08-02 14:42:35.912479118 -0700
+@@ -1784,6 +1784,12 @@ int set_memory_nonglobal(unsigned long a
+ 				      __pgprot(_PAGE_GLOBAL), 0);
+ }
+ 
++int set_memory_global(unsigned long addr, int numpages)
++{
++	return change_page_attr_set(&addr, numpages,
++				    __pgprot(_PAGE_GLOBAL), 0);
++}
++
+ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+ {
+ 	struct cpa_data cpa;
+diff -puN arch/x86/mm/pti.c~pti-non-pcid-clear-more-global-in-kernel-mapping arch/x86/mm/pti.c
+--- a/arch/x86/mm/pti.c~pti-non-pcid-clear-more-global-in-kernel-mapping	2018-08-02 14:42:35.909479118 -0700
++++ b/arch/x86/mm/pti.c	2018-08-02 14:42:35.913479118 -0700
+@@ -435,6 +435,13 @@ static inline bool pti_kernel_image_glob
+ }
+ 
+ /*
++ * This is the only user for these and it is not arch-generic
++ * like the other set_memory.h functions.  Just extern them.
++ */
++extern int set_memory_nonglobal(unsigned long addr, int numpages);
++extern int set_memory_global(unsigned long addr, int numpages);
++
++/*
+  * For some configurations, map all of kernel text into the user page
+  * tables.  This reduces TLB misses, especially on non-PCID systems.
+  */
+@@ -446,7 +453,8 @@ void pti_clone_kernel_text(void)
+ 	 * clone the areas past rodata, they might contain secrets.
+ 	 */
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
++	unsigned long end_clone  = (unsigned long)__end_rodata_hpage_align;
++	unsigned long end_global = PFN_ALIGN((unsigned long)__stop___ex_table);
+ 
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
+@@ -458,14 +466,18 @@ void pti_clone_kernel_text(void)
+ 	 * pti_set_kernel_image_nonglobal() did to clear the
+ 	 * global bit.
+ 	 */
+-	pti_clone_pmds(start, end, _PAGE_RW);
++	pti_clone_pmds(start, end_clone, _PAGE_RW);
++
++	/*
++	 * pti_clone_pmds() will set the global bit in any PMDs
++	 * that it clones, but we also need to get any PTEs in
++	 * the last level for areas that are not huge-page-aligned.
++	 */
++
++	/* Set the global bit for normal non-__init kernel text: */
++	set_memory_global(start, (end_global - start) >> PAGE_SHIFT);
+ }
+ 
+-/*
+- * This is the only user for it and it is not arch-generic like
+- * the other set_memory.h functions.  Just extern it.
+- */
+-extern int set_memory_nonglobal(unsigned long addr, int numpages);
+ void pti_set_kernel_image_nonglobal(void)
+ {
+ 	/*
+@@ -477,9 +489,11 @@ void pti_set_kernel_image_nonglobal(void
+ 	unsigned long start = PFN_ALIGN(_text);
+ 	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
+ 
+-	if (pti_kernel_image_global_ok())
+-		return;
+-
++	/*
++	 * This clears _PAGE_GLOBAL from the entire kernel image.
++	 * pti_clone_kernel_text() map put _PAGE_GLOBAL back for
++	 * areas that are mapped to userspace.
++	 */
+ 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
+ }
+ 
+_
