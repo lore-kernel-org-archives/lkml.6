@@ -6,108 +6,130 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1157AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D8C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D75208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:05:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D75208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F3F4208DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3F4208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbeHBHzS (ORCPT
+        id S1726391AbeHBH60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 03:55:18 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:35501 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726083AbeHBHzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 03:55:18 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42971942"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 02 Aug 2018 14:05:44 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id CE29D4B66A09;
-        Thu,  2 Aug 2018 14:05:42 +0800 (CST)
-Received: from localhost.localdomain (10.167.226.106) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Thu, 2 Aug 2018 14:05:44 +0800
-Subject: Re: [PATCH v4 4/4] x86/boot/KASLR: Limit kaslr to choosing the
- immovable memory
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
-        <keescook@chromium.org>, <yasu.isimatu@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
- <20180723092908.32656-5-fanc.fnst@cn.fujitsu.com>
- <961acf17-c76f-1c51-f7e6-a7854a487a09@cn.fujitsu.com>
- <20180802060052.GD6723@localhost.localdomain>
-From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <4277708f-4c49-1141-e30a-190b3291f375@cn.fujitsu.com>
-Date:   Thu, 2 Aug 2018 14:05:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180802060052.GD6723@localhost.localdomain>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: CE29D4B66A09.AB125
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        Thu, 2 Aug 2018 03:58:26 -0400
+Received: from foss.arm.com ([217.140.101.70]:52602 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbeHBH60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 03:58:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD8A37A9;
+        Wed,  1 Aug 2018 23:08:56 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 581AF3F2EA;
+        Wed,  1 Aug 2018 23:08:51 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 07:08:45 +0100
+Message-ID: <86wot9wb9u.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     swboyd@chromium.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup capability to GPIO
+In-Reply-To: <20180801194538.GA6422@codeaurora.org>
+References: <20180801020021.9782-1-ilina@codeaurora.org>
+        <20180801020021.9782-2-ilina@codeaurora.org>
+        <86600uy4vh.wl-marc.zyngier@arm.com>
+        <20180801194538.GA6422@codeaurora.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lina,
 
-
-At 08/02/2018 02:00 PM, Chao Fan wrote:
-> On Thu, Aug 02, 2018 at 01:46:29PM +0800, Dou Liyang wrote:
->> Hi Fan,
->>
->> At 07/23/2018 05:29 PM, Chao Fan wrote:
->>> If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
->>> memory regions is not zero. Calculate the intersection between memory
->>> regions from e820/efi memory table and immovable memory regions.
->>> Or go on the old code.
->>>
->>> Rename process_mem_region to slots_count to match slots_fetch_random,
->>> and name new function as process_mem_region.
->>>
->>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->>> ---
->>>    arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
->>>    1 file changed, 55 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
->>> index 4705682caf1f..10bda3a1fcaa 100644
->>> --- a/arch/x86/boot/compressed/kaslr.c
->>> +++ b/arch/x86/boot/compressed/kaslr.c
->>> @@ -631,9 +631,9 @@ static unsigned long slots_fetch_random(void)
->>>    	return 0;
->>>    }
->>> -static void process_mem_region(struct mem_vector *entry,
->>> -			       unsigned long minimum,
->>> -			       unsigned long image_size)
->>> +static void slots_count(struct mem_vector *entry,
->>                ^^^^^^^^^^^
->>                           is not suitable.
->> IMO, how about process_mem_slots() or you may have a better name, it's
->> up to you.
+On Wed, 01 Aug 2018 20:45:38 +0100,
+Lina Iyer <ilina@codeaurora.org> wrote:
 > 
-> It's from Kees Cook's advise, he wants to ues slots_count() to match
-> slots_fetch_random() in my old PATCH long long ago.
-> Since the method of handling this part is not changed a lot, so I keep
-> this name.
+> Thanks for the feedback, Marc.
 > 
+> On Wed, Aug 01 2018 at 00:31 -0600, Marc Zyngier wrote:
+> > On Wed, 01 Aug 2018 03:00:18 +0100,
+> > Lina Iyer <ilina@codeaurora.org> wrote:
+> >> 
+> >> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+> >> +{
+> >> +	struct irq_data *irqd = data;
+> >> +	struct irq_desc *desc = irq_data_to_desc(irqd);
+> >> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> >> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+> >> +	int irq_pin = irq_find_mapping(gc->irq.domain, irqd->hwirq);
+> >> +
+> >> +	chained_irq_enter(chip, desc);
+> >> +	generic_handle_irq(irq_pin);
+> >> +	chained_irq_exit(chip, desc);
+> > 
+> > That's crazy. I'm not even commenting on the irq handler vs chained
+> > irqchip thing, but directly calling into a completely different part
+> > of the irq hierarchy makes me feel nauseous,
+> > 
+> I know the sentiment; I am not too happy about it myself. Explanation
+> below.
+> 
+> > Why isn't the interrupt still pending at the pinctrl level? Looking at
+> > the diagram in the cover letter, I'd have hoped that the signal routed
+> > to the PDC would wakeup the GIC, but that by virtue of being *also*
+> > wired to the TLMM, the interrupt would be handled via the normal path.
+> > 
+> The short answer: TLMM is not active to sense a wakeup interrupt.
 
-Okay! ;-)
+I get that bit. See below for the bit I don't get.
 
+> When we enter system sleep mode, the TLMM and the GIC are powered off
+> and the PDC is the only powered-on interrupt controller. The IRQs
+> configured at the PDC are the only ones capable of waking the system.
+> Upon sensing the interrupt, the PDC intiates a system wakeup and replays
+> the interrupt to the GIC. The GIC relays that to AP. Unfortunately, the
+> interrupts from the GPIO do not trigger the TLMM summary line. Therefore
+> this handler needs to figure out what GPIO caused the wakeup and notify
+> the corresponding driver.
 
-	dou
+That's most bizarre. What causes the TLMM output line not to reflect
+the fact that an input is asserted? I understand that it has been
+turned off, but surely the PDC wakes it up at the same time as the
+GIC, and it should realise that there is something pending...
 
+> 
+> > Why isn't that the case? And if that's because the HW is broken and
+> > doesn't buffer edge interrupts, why can't you use the resend mechanism
+> > instead?
+> > 
+> The PDC hardware can replay the interrupts accurately. However, it will
+> replay only the pin and its not the TLMM summary IRQ. The handler here,
+> needs to notify the driver that the wakeup interrupt happened and needs
+> to take action. If I could trip the summary IRQ in this handler that
+> would work too. Can it be done?
 
+So the TLMM has indeed noticed the interrupt and you can read the TLMM
+status registers to find out what fired? The question remains: why
+isn't it generating any output if it knows something as fired? The
+output line is level, right? What you describe would make sense if it
+was generating an edge, but that'd really be a terrible design...
+
+As for tripping the summary interrupt, see check_irq_resend(). This
+will only work if this summary interrupt is edge.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
