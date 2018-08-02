@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7577CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4050C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28DA4208B0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DA4208B0
+	by mail.kernel.org (Postfix) with ESMTP id 811AC208B0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 811AC208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeHBG3O (ORCPT
+        id S1726900AbeHBGcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 02:29:14 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10450 "EHLO mga01.intel.com"
+        Thu, 2 Aug 2018 02:32:04 -0400
+Received: from mga01.intel.com ([192.55.52.88]:10557 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeHBG3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 02:29:14 -0400
+        id S1725765AbeHBGcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 02:32:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 21:39:59 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 21:42:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,434,1526367600"; 
-   d="scan'208";a="71898448"
+   d="scan'208";a="59789913"
 Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga003.jf.intel.com with ESMTP; 01 Aug 2018 21:39:47 -0700
-Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+  by fmsmga008.fm.intel.com with ESMTP; 01 Aug 2018 21:41:35 -0700
+Received: from fmsmsx117.amr.corp.intel.com (10.18.116.17) by
  FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 1 Aug 2018 21:39:39 -0700
+ id 14.3.319.2; Wed, 1 Aug 2018 21:41:35 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx117.amr.corp.intel.com (10.18.116.17) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 1 Aug 2018 21:41:35 -0700
 Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
- SHSMSX103.ccr.corp.intel.com ([169.254.4.100]) with mapi id 14.03.0319.002;
- Thu, 2 Aug 2018 12:39:38 +0800
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.173]) with mapi id 14.03.0319.002;
+ Thu, 2 Aug 2018 12:41:33 +0800
 From:   "Tian, Kevin" <kevin.tian@intel.com>
 To:     Kenneth Lee <liguozhu@hisilicon.com>
 CC:     Kenneth Lee <nek.in.cn@gmail.com>,
@@ -61,24 +64,24 @@ CC:     Kenneth Lee <nek.in.cn@gmail.com>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
         "linuxarm@huawei.com" <linuxarm@huawei.com>
-Subject: RE: [RFC PATCH 2/7] iommu: Add share domain interface in iommu for
- spimdev
-Thread-Topic: [RFC PATCH 2/7] iommu: Add share domain interface in iommu for
- spimdev
-Thread-Index: AQHUKYHWQk1Lvdz7XEqv7xkSwudUdqSryvAw//+K6oCAAIwQgA==
-Date:   Thu, 2 Aug 2018 04:39:37 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19129107A@SHSMSX101.ccr.corp.intel.com>
+Subject: RE: [RFC PATCH 1/7] vfio/spimdev: Add documents for WarpDrive
+ framework
+Thread-Topic: [RFC PATCH 1/7] vfio/spimdev: Add documents for WarpDrive
+ framework
+Thread-Index: AQHUKYHXaS8CB/iapUSbwJgmaNts7qSrx2yw//+QVICAAIsL0A==
+Date:   Thu, 2 Aug 2018 04:41:32 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191291097@SHSMSX101.ccr.corp.intel.com>
 References: <20180801102221.5308-1-nek.in.cn@gmail.com>
- <20180801102221.5308-3-nek.in.cn@gmail.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191290F49@SHSMSX101.ccr.corp.intel.com>
- <20180802041547.GM160746@Turing-Arch-b>
-In-Reply-To: <20180802041547.GM160746@Turing-Arch-b>
+ <20180801102221.5308-2-nek.in.cn@gmail.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290F04@SHSMSX101.ccr.corp.intel.com>
+ <20180802042235.GN160746@Turing-Arch-b>
+In-Reply-To: <20180802042235.GN160746@Turing-Arch-b>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjkyNmExNzYtM2Q1OS00OTc5LTgxNzItYjE0NmIzMTQ2NjZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiM2t2Z0t3NGZ1K3ljcDIyT09Icjd0V0JvNzg1ckNxZmdMT2xkQk9nM2drQVV4NXpCTm80eDRsOHlSbXM4QkxoUiJ9
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjg4ZDc2OTctYjUyMy00YzRiLThlNjItM2M2YjcwNTVkZGY3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRlljNEUrcTBDSitvMDRhNmt5R3ZEc0dzYkhZbUw0NFJkREloZjhNakszTmxuWlUyZ0dDclwvdGNQWVwvRUdYWjhBIn0=
 dlp-product: dlpe-windows
 dlp-version: 11.0.400.15
 dlp-reaction: no-action
@@ -92,24 +95,22 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 PiBGcm9tOiBLZW5uZXRoIExlZQ0KPiBTZW50OiBUaHVyc2RheSwgQXVndXN0IDIsIDIwMTggMTI6
-MTYgUE0NCj4gDQo+IE9uIFRodSwgQXVnIDAyLCAyMDE4IGF0IDAzOjE3OjAzQU0gKzAwMDAsIFRp
-YW4sIEtldmluIHdyb3RlOg0KPiA+ID4gRnJvbTogS2VubmV0aCBMZWUNCj4gPiA+IFNlbnQ6IFdl
-ZG5lc2RheSwgQXVndXN0IDEsIDIwMTggNjoyMiBQTQ0KPiA+ID4NCj4gPiA+IEZyb206IEtlbm5l
-dGggTGVlIDxsaWd1b3podUBoaXNpbGljb24uY29tPg0KPiA+ID4NCj4gPiA+IFRoaXMgcGF0Y2gg
-YWRkIHNoYXJpbmcgaW50ZXJmYWNlIGZvciBhIGlvbW11X2dyb3VwLiBUaGUgbmV3IGludGVyZmFj
-ZToNCj4gPiA+DQo+ID4gPiAJaW9tbXVfZ3JvdXBfc2hhcmVfZG9tYWluKCkNCj4gPiA+IAlpb21t
-dV9ncm91cF91bnNoYXJlX2RvbWFpbigpDQo+ID4gPg0KPiA+ID4gY2FuIGJlIHVzZWQgYnkgc29t
-ZSB2aXJ0dWFsIGlvbW11X2dyb3VwIChzdWNoIGFzIGlvbW11X2dyb3VwIGZvcg0KPiA+ID4gc3Bp
-bWRldikNCj4gPiA+IHRvIHNoYXJlIHRoZWlyIHBhcmVudCdzIGlvbW11X2dyb3VwLg0KPiA+ID4N
-Cj4gPiA+IFdoZW4gdGhlIGRvbWFpbiBvZiB0aGUgZ3JvdXAgaXMgc2hhcmVkLCBpdCBjYW5ub3Qg
-YmUgY2hhbmdlZCBiZWZvcmUNCj4gPiA+IHVuc2hhcmVkLiAgSW4gdGhlIGZ1dHVyZSwgbm90aWZp
-Y2F0aW9uIGNhbiBiZSBhZGRlZCBpZiB1cGRhdGUgaXMgcmVxdWlyZWQuDQo+ID4NCj4gPiBJcyBp
-dCBuZWNlc3Nhcnkgb3IganVzdCBhc2tpbmcgVkZJTyB0byB1c2UgcGFyZW50IGRvbWFpbiBkaXJl
-Y3RseT8NCj4gPg0KPiBFdmVuIHdlIGFkZCB0byBWRklPLCB0aGUgaW9tbXUgc3RpbGwgbmVlZCB0
-byBiZSBjaGFuZ2VkLiBXZSBjYW4gbW92ZQ0KPiB0aGUgdHlwZTENCj4gcGFydCB0byBWRklPIGlm
-IHdlIGhhdmUgYWdyZWVtZW50IGluIFJGQyBzdGFnZS4NCg0KV2UgaGF2ZSBzaW1pbGFyIGNvbnNp
-ZGVyYXRpb24gaW4gSU9NTVUgYXdhcmUgbWRldiBzZXJpZXMuIE5vdw0Kd2UgYXJlIGluY2xpbmVk
-IHRvIGF2b2lkIGZha2VkIGVudGl0eSB3aXRoaW4gSU9NTVUgbGF5ZXIgLSBsZWF2ZSB0bw0KY2Fs
-bGVyIHRvIGZpZ3VyZSBvdXQgcmlnaHQgcGh5c2ljYWwgZW50aXR5IGZvciBhbnkgSU9NTVUgb3Bz
-LiBUaGF0IA0KbWlnaHQgYmUgbGV2ZXJhZ2VkIGhlcmUgdG9vIGFmdGVyIHdlIGdldCBhIG5ldyB2
-ZXJzaW9uLg0KDQpUaGFua3MNCktldmluDQo=
+MjMgUE0NCj4gDQo+IE9uIFRodSwgQXVnIDAyLCAyMDE4IGF0IDAzOjE0OjM4QU0gKzAwMDAsIFRp
+YW4sIEtldmluIHdyb3RlOg0KPiA+DQo+ID4gPiBGcm9tOiBLZW5uZXRoIExlZQ0KPiA+ID4gU2Vu
+dDogV2VkbmVzZGF5LCBBdWd1c3QgMSwgMjAxOCA2OjIyIFBNDQo+ID4gPg0KPiA+ID4gRnJvbTog
+S2VubmV0aCBMZWUgPGxpZ3Vvemh1QGhpc2lsaWNvbi5jb20+DQo+ID4gPg0KPiA+ID4gV2FycERy
+aXZlIGlzIGEgY29tbW9uIHVzZXIgc3BhY2UgYWNjZWxlcmF0b3IgZnJhbWV3b3JrLiAgSXRzIG1h
+aW4NCj4gPiA+IGNvbXBvbmVudA0KPiA+ID4gaW4gS2VybmVsIGlzIGNhbGxlZCBzcGltZGV2LCBT
+aGFyZSBQYXJlbnQgSU9NTVUgTWVkaWF0ZWQgRGV2aWNlLiBJdA0KPiA+DQo+ID4gTm90IHN1cmUg
+d2hldGhlciAic2hhcmUgcGFyZW50IElPTU1VIiBpcyBhIGdvb2QgdGVybSBoZXJlLiBiZXR0ZXIN
+Cj4gPiBzdGljayB0byB3aGF0IGNhcGFiaXR5IHlvdSBicmluZyB0byB1c2VyIHNwYWNlLCBpbnN0
+ZWFkIG9mIGRlc2NyaWJpbmcNCj4gPiBpbnRlcm5hbCB0cmljay4uLg0KPiBBZ3JlZS4gVGhlICJT
+UEkiIGlzIGFsc28gc3Ryb25nbHkgaGludCB0byAiU2hhcmUgUGVyaXBoZXJhbCBJbnRlcnJ1cHQi
+IG9yDQo+ICJTZXJpYWwNCj4gUGVyaXBoZXJhbCBJbnRlcmZhY2UiLiBQZXJzb25hbGx5IEkgaGF0
+ZSB0aGlzIG5hbWUuIEJ1dCBJIGNhbm5vdCBmaW5kIGEgYmV0dGVyDQo+IG9uZS4gSW4gdGhlIHVz
+ZXIgc3BhY2UsIHdlIGNhbiB1c2UgYSBpbXBhc3NpYmxlIG5hbWUgKFdhcnBEcml2ZSkuIEJ1dA0K
+PiBrZXJuZWwNCj4gcmVxdWlyZSBhIG5hbWUgcG9pbnQgdG8gaXRzIGZlYXR1cmUuLi4gbWF5YmUg
+SSBzaG91bGQgdXNlICJQcm9jZXNzLVNoYXJlZA0KPiBNZGV2Ig0KPiBpbiBuZXh0IHZlcnNpb24/
+DQoNCm9yIG1heWJlIG5vIG5ldyBuYW1lLiBKdXN0IHN0aWNrIHRvIG1kZXYgYnV0IGludHJvZHVj
+aW5nIHNvbWUNCm5ldyBhdHRyaWJ1dGUvY2FwYWJpbGl0eSB0byBpbmRpY2F0ZSBzdWNoIHB1cnBv
+c2UuDQoNClRoYW5rcw0KS2V2aW4NCg==
