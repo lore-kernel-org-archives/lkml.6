@@ -5,93 +5,153 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F15C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1432DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA38721581
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA38721581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
+	by mail.kernel.org (Postfix) with ESMTP id B652B21581
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:34:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B652B21581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbeHBXZX (ORCPT
+        id S1731977AbeHBX1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:25:23 -0400
-Received: from forward105j.mail.yandex.net ([5.45.198.248]:50565 "EHLO
-        forward105j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731946AbeHBXZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:25:22 -0400
-Received: from mxback13g.mail.yandex.net (mxback13g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:92])
-        by forward105j.mail.yandex.net (Yandex) with ESMTP id 588D1186079;
-        Fri,  3 Aug 2018 00:32:22 +0300 (MSK)
-Received: from smtp4p.mail.yandex.net (smtp4p.mail.yandex.net [2a02:6b8:0:1402::15:6])
-        by mxback13g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id cJsTVhmsOi-WL1SrXlm;
-        Fri, 03 Aug 2018 00:32:22 +0300
-Received: by smtp4p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id F6RQvjLbN1-WLOaOZJt;
-        Fri, 03 Aug 2018 00:32:21 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: Re: LVM snapshot broke between 4.14 and 4.16
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
- <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
- <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
- <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
- <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
- <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
-From:   WGH <wgh@torlan.ru>
-Openpgp: preference=signencrypt
-Message-ID: <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
-Date:   Fri, 3 Aug 2018 00:32:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 2 Aug 2018 19:27:42 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33962 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728799AbeHBX1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:27:42 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w72LD9tM004777;
+        Thu, 2 Aug 2018 16:13:10 -0500
+Message-ID: <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Date:   Thu, 02 Aug 2018 16:13:09 -0500
+In-Reply-To: <20180802225738-mutt-send-email-mst@kernel.org>
+References: <20180730155633-mutt-send-email-mst@kernel.org>
+         <20180731173052.GA17153@infradead.org>
+         <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+         <20180801081637.GA14438@arm.com> <20180801083639.GF26378@infradead.org>
+         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+         <20180802182959-mutt-send-email-mst@kernel.org>
+         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+         <20180802200646-mutt-send-email-mst@kernel.org>
+         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+         <20180802225738-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 09:32 PM, Linus Torvalds wrote:
-> WGH (sorry, no idea what your real name is) - what's the source of the
-> script that broke? Was it some system script you got from outside and
-> likely to affect others too?
->
-> Or was it just some local thing you wrote yourself and was
-> unintentionally buggy and nobody else is likely to hit this?
->
-> Because if the latter, if you can work around it and you're the only
-> user this hits, we might just be able to ignore it.
+On Thu, 2018-08-02 at 23:52 +0300, Michael S. Tsirkin wrote:
+> > Yes, this is the purpose of Anshuman original patch (I haven't looked
+> > at the details of the patch in a while but that's what I told him to
+> > implement ;-) :
+> > 
+> >   - Make virtio always use DMA ops to simplify the code path (with a set
+> > of "transparent" ops for legacy)
+> > 
+> >   and
+> > 
+> >   -  Provide an arch hook allowing us to "override" those "transparent"
+> > DMA ops with some custom ones that do the appropriate swiotlb gunk.
+> > 
+> > Cheers,
+> > Ben.
+> > 
+> 
+> Right but as I tried to say doing that brings us to a bunch of issues
+> with using DMA APIs in virtio. Put simply DMA APIs weren't designed for
+> guest to hypervisor communication.
 
-The script in question is written by me and contains literally two lines:
+I'm not sure I see the problem, see below
 
-    lvcreate --size 5G --snapshot --name snap0 --permission r
-/dev/mapper/vg0-lvol_rootfs
-    mount /dev/mapper/vg0-snap0 /mnt/rootfs_snapshot
+> When we do (as is the case with PLATFORM_IOMMU right now) this adds a
+> bunch of overhead which we need to get rid of if we are to switch to
+> PLATFORM_IOMMU by default.  We need to fix that.
 
-The script is not buggy (I think), it was written under simple
-assumption that --permission r works. And it does - unless you happen to
-have combination of kernel >=4.16 and lvm2 <2.02.178.
+So let's differenciate the two problems of having an IOMMU (real or
+emulated) which indeeds adds overhead etc... and using the DMA API.
 
-The commit in question appeared only in 4.16, and this kernel version is
-not widespread yet. You have to be running both recent kernel and
-not-so-recent lvm2 to be bitten by this. This probably explains why no
-one else reported this problem.
+At the moment, virtio does this all over the place:
 
-Workaround certainly exists: I can just create read-write snapshot, but
-mount it read-only. The reason why I didn't discover the workaround
-earlier is that after unsuccessful read-only snapshot creation system
-ends up in some weird state where read-write snapshots are also failing
-with the same error (until reboot). So I got a wrong impression that
-read-write snapshots were broken as well.
+	if (use_dma_api)
+		dma_map/alloc_something(...)
+	else
+		use_pa
+
+The idea of the patch set is to do two, somewhat orthogonal, changes
+that together achieve what we want. Let me know where you think there
+is "a bunch of issues" because I'm missing it:
+
+ 1- Replace the above if/else constructs with just calling the DMA API,
+and have virtio, at initialization, hookup its own dma_ops that just
+"return pa" (roughly) when the IOMMU stuff isn't used.
+
+This adds an indirect function call to the path that previously didn't
+have one (the else case above). Is that a significant/measurable
+overhead ?
+
+This change stands alone, and imho "cleans" up virtio by avoiding all
+that if/else "2 path" and unless it adds a measurable overhead, should
+probably be done.
+
+ 2- Make virtio use the DMA API with our custom platform-provided
+swiotlb callbacks when needed, that is when not using IOMMU *and*
+running on a secure VM in our case.
+
+This benefits from -1- by making us just plumb in a different set of
+DMA ops we would have cooked up specifically for virtio in our arch
+code (or in virtio itself but build arch-conditionally in a separate
+file). But it doesn't strictly need it -1-:
+
+Now, -2- doesn't strictly needs -1-. We could have just done another
+xen-like hack that forces the DMA API "ON" for virtio when running in a
+secure VM.
+
+The problem if we do that however is that we also then need the arch
+PCI code to make sure it hooks up the virtio PCI devices with the
+special "magic" DMA ops that avoid the iommu but still do swiotlb, ie,
+not the same as other PCI devices. So it will have to play games such
+as checking vendor/device IDs for virtio, checking the IOMMU flag,
+etc... from the arch code which really bloody sucks when assigning PCI
+DMA ops.
+
+However, if we do it the way we plan here, on top of -1-, with a hook
+called from virtio into the arch to "override" the virtio DMA ops, then
+we avoid the problem completely: The arch hook would only be called by
+virtio if the IOMMU flag is *not* set. IE only when using that special
+"hypervisor" iommu bypass. If the IOMMU flag is set, virtio uses normal
+PCI dma ops as usual.
+
+That way, we have a very clear semantic: This hook is purely about
+replacing those "null" DMA ops that just return PA introduced in -1-
+with some arch provided specially cooked up DMA ops for non-IOMMU
+virtio that know about the arch special requirements. For us bounce
+buffering.
+
+Is there something I'm missing ?
+
+Cheers,
+Ben.
+
+
+
 
