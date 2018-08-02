@@ -2,276 +2,203 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9767C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5F621582
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53E7D21581
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:30:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VdZ/fv3T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5F621582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ebt4d599";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="QamMpgLY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E7D21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732509AbeHBXXN (ORCPT
+        id S1732433AbeHBXWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:23:13 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:45458 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732274AbeHBXXL (ORCPT
+        Thu, 2 Aug 2018 19:22:53 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:49814 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727002AbeHBXWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:23:11 -0400
-Received: by mail-io0-f195.google.com with SMTP id k16-v6so3278850iom.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nNsUupPgfEFEQEmfLevE232v8jIARIdVM9lKn6mtW24=;
-        b=VdZ/fv3TE8biwwtlS+KP1FApzptqwpuucRXPk1DaRVxC/1cXuHYElaO8Y88Pu73CJV
-         a6mCpg1T5kgjGuRXaQfeF7K54aMKGtzYe3QfiNo7k+OexQBJh4r94+iSYAV1rDLra4N4
-         DLlLctp4fhi57QItiQkTWiCpWYN/6bPk87jGg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nNsUupPgfEFEQEmfLevE232v8jIARIdVM9lKn6mtW24=;
-        b=ryouZiZ3vJaHy3lQpzVB9g54bYoBVCp8BfE1UTgd71Y/Dp2yaTMuPGWq5NU1UJC36b
-         3yp7HSwIOxc2XjnKsNcZiBr21a4otTIyRHjlaM0Eu26RiXzx3OJKJ5y/dSKIWcZXpkTD
-         CC7ZjqDALFauw1M5rt+ZRizvVP7yBzcY2Y+EaZf5Q9K0HTyBclCQUA9F8XKBpLSLipKv
-         ktuRAruys41zNHHgE0xb1O3X88hmV9aa9xMODMwv30P0BhZteqNc89sMQXDB5qo7g9HC
-         VjbLSPMqFv6mvb2/YxqwK9fcB2jDxE78RFmLYN9Oo53VgUZLlje6c5XakfyvGuUISxKG
-         5nUQ==
-X-Gm-Message-State: AOUpUlGs2de2bmpQKI2ffK3a7kPzKHlJeKbH8KPWVbqucPbyWIIJKI5I
-        TSOFLQrpcb4s7JhKQ0MTSstpJQEGBTElR0FPqxQSdA==
-X-Google-Smtp-Source: AA+uWPzSzw2CkWEnmXXHqBM0Rolv5leXrNKH7gLK+AqEo1WEMWjzOT5xJwwu5j9iA5+80QptD/OB3lMX3SWxSo9moqs=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr3896729iof.304.1533245412925;
- Thu, 02 Aug 2018 14:30:12 -0700 (PDT)
+        Thu, 2 Aug 2018 19:22:53 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w72LSxYg015349;
+        Thu, 2 Aug 2018 14:29:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=sgGXbrdugL6eMOukXWx9gxCL3wfTYLV5Rg7NE3kE1z0=;
+ b=ebt4d59920SBKqe6jFkklMJ4b7k/E1lioPfKrVTrk2IY8MwANY0UMT/OfnDBFWtj6tcV
+ K7zllhHa2uYY8XS5KZsJ5lzsTswiyvafz+XrzfyWTbsyh0q/3/4Iz4E2pzL+qu2lcntb
+ a7O03o96FZjsVKgiCoiZ46rcQcbwWQif6t0= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2km91w0510-9
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 02 Aug 2018 14:29:35 -0700
+Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
+ PRN-CHUB15.TheFacebook.com (2620:10d:c081:35::27) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 2 Aug 2018 14:29:30 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.12) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Thu, 2 Aug 2018 14:28:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sgGXbrdugL6eMOukXWx9gxCL3wfTYLV5Rg7NE3kE1z0=;
+ b=QamMpgLY1fnQ8TbEeOlmUtY34mFeumymUHqc9L/eKLJaBtWKjRLLVfuzICZoMimS4GTAXMrsONEEPG9gkgeEvMAXWumB5/Byv68RPZkE42eUD/QpGKm9a2Jc2Q8HA9iZ6eNkB0aTErHWMRPA4p3Jfpn59dFaafEDxOmjhxmN96w=
+Received: from castle.thefacebook.com (2620:10d:c090:200::4:6653) by
+ BY2PR15MB0167.namprd15.prod.outlook.com (2a01:111:e400:58e0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Thu, 2 Aug
+ 2018 21:28:05 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     <netdev@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH v7 bpf-next 11/14] bpf/test_run: support cgroup local storage
+Date:   Thu, 2 Aug 2018 14:27:27 -0700
+Message-ID: <20180802212730.18579-12-guro@fb.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180802212730.18579-1-guro@fb.com>
+References: <20180802212730.18579-1-guro@fb.com>
 MIME-Version: 1.0
-References: <20180801111243.2848-1-fe@dev.tdt.de>
-In-Reply-To: <20180801111243.2848-1-fe@dev.tdt.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 2 Aug 2018 23:30:00 +0200
-Message-ID: <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-To:     fe@dev.tdt.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c090:200::4:6653]
+X-ClientProxiedBy: MWHPR19CA0058.namprd19.prod.outlook.com
+ (2603:10b6:300:94::20) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5194fd2c-69b3-458d-d409-08d5f8bed649
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0167;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;3:W1rYLl8X8yYZ5MiNDThU3ku0M7eLkSH2P37GRaohfy5OG6O4IOsBI52DaFGEhw3RDkmjmZI0J4SyIwJ1lKpCn2tG90kQNfiJ5d+ixZEXF+EcbdzxSdo9r0NhED0kV4DvemQZpYxsIMNFiOOC2FEEv6zDBFKutkWSNbrAgddNWFot9jaZPXfkLXBmrOmQRnJcsyrRMlYxTRLM3P9auUfnNfvuj4MxyH6bkWvaB8pn3pdMWxfR8BV15cwky23LAnM3;25:2GoGLnlJCfMP0xI7YTc6KBbLiZfc3IKsSUhoalXNKlsEo/CJFnqpGryx50Si8/RzF7BLgNBNj2k56ClB6rLKleJyDZAjxTPtW6JqLrUSlb3s7vSmPEgqG+B3XIhJXsC+YkKF7gmZzKaInlFxOjxFbtr65ohPnUELxyZ7+NBB37H76jPHCIEGZ2FqB5W76LZDMO4KBBkWwvMGkIaCUzY/qFkMFt+X+ZxA6h3KRW5GAKMKBpHTuH+9jTAHL4NS+oVB4E9WAWQLiMtk+KuPdcfs5rhg3zEyjwrkm3eMmKbkd082dGNn4utXsnbvKxSJaEIxQP4x0opSCDSokGBqnlSG/Q==;31:pbMsEMv+2Ms2vZ7JW+ynklRDHyXQgSt9xmDQk2L1IJmt+w70RfRhzaNFk2/5KhmK/JR+IJzE59UlUnBi2+P+7RUUdtb/RQ7d6vl2FDCN0Ztdd2uT5MYoCsHL1aJXLNlYEXAR5uM7vPFYxRLPDMp1KV+2GADpa5NXezXDWI6YA3zX7Dpb05ZDvX1MHtUy8Wtel1KPyHHFJed3lX6ND71ktolKCXxIpaVtAoXq3OLMbq0=
+X-MS-TrafficTypeDiagnostic: BY2PR15MB0167:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:7Yr2mVTd0i9m+1mHYhEpl6C8TJ/RBXDqVwNbs4Qp/yKYRgOFkxJ8eMpwlAEjtl9FP4Kx3A1OCxWTcGtthx/dzvea4AxfGSle2yYNFiAVxhEzXfTbpI7Ihdq9yGOvngrCZthLAdSY81r1sR09cWxzGyqrNOY1kEgj0ETjxmeRUkGbNE/4VltAUTDWZYLda9tJRHPoXg/RbIamLRvNRRpxyZrGW0XMh1wkBkj20GE35iD2GWGIgr/a/gLyF3oGYJZRKNuzLDm8IKMvvcP6xjaiD0E7/ptSvDT8LA+WUhuICntcBD68mWpP2J1a5WtoXorWdmpKZrfDQCJ2BbUU1aEAOFoBog9KV+HIYPjRo9cHRKXhYtTm8hMH0FTzOF0L6zWLC2AnGRlzC4+dgRa3oAnML1sf4BJ+EP8hD4i2CkSgp9NoShonKZsc2It3yL1ROhMdTSxGz1xiCTfSqgrm2UqOq7gLhHpu2seE4pj1RsaT99N2l7jSo8KhUrKokRgesOpU;4:k8ocBboPWicrYP7lcfJAkSVIlir/0qUGuctIoP+uMHppgBKb9y7qApch+JlR2y0U568qsVAhDLSa0x6Vr51KSqW9lI3GAV5ZQbb/9Xry8Mx64UjKhJC8wwMq4xUpAil2GS7hloQPEhBydqfEWD/hJsB+d4dMY7I9lih89550FfeMQYfdGNpQw/FuOaZRA759oNLE0QpyDfNWA/1jIKQTfkecsTeWdAEVYy00sPbHPqDK9vIV/DTa4DG6l4c2Cq4xe/8/1rxMjZ4kpKxEOOXS8c6wH7avAGzrf2P1q9WFXZeNOAQ9Tuibnf9hAW2egQC8
+X-Microsoft-Antispam-PRVS: <BY2PR15MB0167B73B9296AEC2EC63F56FBE2C0@BY2PR15MB0167.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(11241501184)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BY2PR15MB0167;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0167;
+X-Forefront-PRVS: 07521929C1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(446003)(48376002)(2906002)(97736004)(86362001)(1076002)(305945005)(8676002)(186003)(8936002)(11346002)(6916009)(6666003)(7736002)(486006)(6116002)(2351001)(476003)(14444005)(106356001)(5024004)(81156014)(2616005)(2361001)(105586002)(16526019)(478600001)(81166006)(69596002)(47776003)(46003)(53416004)(36756003)(316002)(53936002)(51416003)(4326008)(52116002)(50226002)(16586007)(68736007)(54906003)(50466002)(52396003)(386003)(6506007)(5660300001)(76176011)(6486002)(25786009)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0167;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR15MB0167;23:yLq94gcmrW23B04ZLvMkEAKLX8AgzJ7zE12S77iQ8?=
+ =?us-ascii?Q?mhP1M418fIe0MHrIZytp9jIt/NE/DKN40ARkK+Df9S/i+qRG0rgHg7lHT00+?=
+ =?us-ascii?Q?/LzJm4sNst9qrq5DpSrrySyyJh6iQBIzjoLzM9z8oATxXtBvj2UzkDrpJnzz?=
+ =?us-ascii?Q?E0QAePvTSqpzc1mCfihTA48xzEj/CXsrOdwhCejqNtqWAUysho4YgeAcaZu1?=
+ =?us-ascii?Q?BJo41hLeMTxo4fAZaSKqp9rMdo6JZ5mGeLvm22dbKgWBe+llCeT5pUZljsZL?=
+ =?us-ascii?Q?8jHRQqLGpewEoZ0hCFxFnzGcgo1BUX27QgCqSJ3AdUD6Y/QngVdGpqK6x8Kx?=
+ =?us-ascii?Q?aUyEDEUHAu3RWCQx/AMiR9QTdcfpee7f1kD79+KBME9g/h1rkEgOJReIfqOt?=
+ =?us-ascii?Q?RDiOF8NDM6acBEUC8QtNu2s8vMXawez0ilV5WKAZA9j+d+NbYNsP1I0EkKc0?=
+ =?us-ascii?Q?VKjeHhPg/O79E67LsbtMBQipEKDWtFEPCS+FwaeyYROa9j5X+vuuT1uUszGY?=
+ =?us-ascii?Q?EIDPAnrcB/jHMvphc3COUeREI7/PgQnvDgtysge6ATESdCdwZc6U3EeyyLIh?=
+ =?us-ascii?Q?ei5924OUEVS1xpx34vkZ3qPkMRt+BQUp2YSj/ppylzwn22z7n6gYbCll3P74?=
+ =?us-ascii?Q?1bP9xgBtiXO0L2bayOlJ9HvUj4daXAd+K4rkavVYuAvmG7wIRt4UgYFc5zpF?=
+ =?us-ascii?Q?Cxu7XFQAFVgsciMD1moTZRZ/wMYGUUvGXjYpNYov+eEFcjLxlrU7LSCuUY1D?=
+ =?us-ascii?Q?sDpjZOr0Kj4rmhMJxBy87Sy4QaMzi34cP/SbuN9Ru1x00U4WPV4NChPKrKZ6?=
+ =?us-ascii?Q?HQyKtKUZ3QFanDalJ80mDonvXRgXdYeqUc9BOKABRocjGZN++mgxoNuKxYzS?=
+ =?us-ascii?Q?3bevEjB34QladXw7ztbb/LYPVh4Cuabdl0x+iK6/DNMlfcQV6tXh0WD6EDEg?=
+ =?us-ascii?Q?QtKwCwmidGY+OScotLNRVSCnNuKbJL5+/x7R1essp+JIVdNrGUFmHhT9GF8r?=
+ =?us-ascii?Q?ZYACFejLqiPSBBtt4Z9a4JaKwlPJ9NlukgsyvNTwcSK9CGYRe7iggkf8r8pO?=
+ =?us-ascii?Q?lFuKs2WPfChmqZ7VYJi6LDn6bjmCco/Gj8EJfM/BkLbZrGF5mx5jI1rUV2W/?=
+ =?us-ascii?Q?DnwNDHx7xQynoF2c2piPRbd6c9t4NpaAS2EfL0damzCGVEoIAUi18pR9a7uX?=
+ =?us-ascii?Q?ifUx78TpTz4aZgIjIozZMmB2cEyf01J0BxAP96bsaUEr78HHp0SHa+O9vg4u?=
+ =?us-ascii?Q?8iACTLRg/v963Adn4iaYhjAUDQtVdGFlzEjy01mMYQQpQhVZmfKKhhVv58Q2?=
+ =?us-ascii?Q?Hhf6n6oz5YAfAp9tsm39JE=3D?=
+X-Microsoft-Antispam-Message-Info: sn9y6gKfdkZE5iiXaBBQcIxN7s5PLNI3LxUMePDHOReQgmDQFBB3DQ5IvT4Tmqva1049ikk0CqkaG+QXFfgUXhbduTxTHCObtlhQJC4FlYgbXtsgNpd/mjQcUDSVbbZ+59bvcL3k3j5qIaV8p61XkRLv0+fPovYxwylA9mHQwcMJBOQba7T+JbOO2VxoPw8BqQvv0+aAYGhMkNiuqgFMvOAcM/AXN67+gM6SMha09/lSoWvacmil+F+520Urar8/g6V9/rBHXAakygGHkRN8WQ4zeFIzJ1rJXEgkT1vW3+sNdZY+Jo/mB/4nFYa25MkP8He94bxteqKP9AOF7DsY/it8AE7/CxA6lO8ZAmvvG10=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;6:qrI7hCZdYDTtcpypU7zzXw7Exk+1XhGe+h2JCaG6r5YfTzg9yvYplFEaUmRdH3714YxlFQqmL1XLjQIvCEFpSreoMtDmQuwxwKxIzTFBevvyiXOPJOpMeIid2Jyujz9Y/27jOLbB08OT8rQWOd7EMkqN5fnivvA9wRMUd6Ydj/dpZEcMpgAUUuphtwEQFO1B9noJOn0sR08AJLGXoHxC/HKyTh+KpV6m3vPLcx3c2sMknDBVkUERnpguxj7EtqTfnNoAhdEjiVq8SaxTttXgjTHoewF159Q3jwpZHtDVNqS14lPTDWJg4brNPI8/65H3w8M+ziUR9tPK4frsQvBWgveO0WvEO5Qxs6WHuxFQIs9MpUwQE/+h5bCHGRsOTS2B7pqJmPg1m8/iZV82/hmvg4eDmr46BXO2DOeJG7sBwNX394dojINoWCdWUI5PU1WnqpS9Z6lYELCoOiunnAV4FQ==;5:AL0u/Y8xqRaNo7yt1MWVR+paGe5E5T/GsSXzo7ERjWFvX7U+YTfh05Wl4shoeLQwWj4KqcWXihqH26XDCKAzZxmmD1ZEU5VFI2vpqB1ybMtkyHOfXoFdCJmgtfBsUJWRS3UVe7SUShd1AoTuAFpGfRpPEYW56cMjoYG9BRbN4fs=;7:X32bhX51nlY6KMlszuo5f/I9MUOPSw5Wj3oxSoKL8To5axS044rWUVtokbUn4tp+yvtU1ubpQFF582PPVo9JrpbF0zj/WZd17RkEPasqgiik44IOIWRkyDfzm1C08tGQpEBZX3byAkm4Oj4xey3pNwClwNEnuJpF59LQ8aEVSFhOSE7j4fcC6XEpwJ2YnwmRMxs53OZJh3CNKefg8LoJEE8p8cQtXE92gtMx1zGJELaw8Iiqwmza6NVBOj4rvKLZ
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:zJth/R9y7wBnj3eoKs29oJLzDfuZeCDzlinq8Dc55d6XEOHKCvVXTUN1Z+oYq7ZkgRGhBEOicV5AtGUkaEoX1TLvxyONkXbJhzEqEtRc1v7rqXWr3vYUZ2m8H3DY1Y3rqKTv42p8wPQMeigMtKfQhG9z70uY6o+fjo5cYqqaG1U=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2018 21:28:05.8844 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5194fd2c-69b3-458d-d409-08d5f8bed649
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0167
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 1, 2018 at 1:12 PM Florian Eckert <fe@dev.tdt.de> wrote:
+Allocate a temporary cgroup storage to use for bpf program test runs.
 
-> Add a new device driver "gpio-apu" which will now handle the GPIOs on
-> APU2 and APU3 devices from PC Engines.
->
-> - APU2/APU3 -> front button reset support
-> - APU3 -> SIM switch support
->
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+Because the test program is not actually attached to a cgroup,
+the storage is allocated manually just for the execution
+of the bpf program.
 
-Hi Florian, thanks for the patch!
+If the program is executed multiple times, the storage is not zeroed
+on each run, emulating multiple runs of the program, attached to
+a real cgroup.
 
-I looped in Andy Schevchenko and Mika Westerberg who are authorities on
-x86 platform drivers in general and GPIO and pin control in particular so they
-can help out with the review.
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+---
+ net/bpf/test_run.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-I'm a bit confused whether these things are really GPIOs or just
-switches but since they can change direction they seem to be GPIOs.
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index 22a78eedf4b1..f4078830ea50 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -11,12 +11,14 @@
+ #include <linux/filter.h>
+ #include <linux/sched/signal.h>
+ 
+-static __always_inline u32 bpf_test_run_one(struct bpf_prog *prog, void *ctx)
++static __always_inline u32 bpf_test_run_one(struct bpf_prog *prog, void *ctx,
++					    struct bpf_cgroup_storage *storage)
+ {
+ 	u32 ret;
+ 
+ 	preempt_disable();
+ 	rcu_read_lock();
++	bpf_cgroup_storage_set(storage);
+ 	ret = BPF_PROG_RUN(prog, ctx);
+ 	rcu_read_unlock();
+ 	preempt_enable();
+@@ -26,14 +28,19 @@ static __always_inline u32 bpf_test_run_one(struct bpf_prog *prog, void *ctx)
+ 
+ static u32 bpf_test_run(struct bpf_prog *prog, void *ctx, u32 repeat, u32 *time)
+ {
++	struct bpf_cgroup_storage *storage = NULL;
+ 	u64 time_start, time_spent = 0;
+ 	u32 ret = 0, i;
+ 
++	storage = bpf_cgroup_storage_alloc(prog);
++	if (IS_ERR(storage))
++		return PTR_ERR(storage);
++
+ 	if (!repeat)
+ 		repeat = 1;
+ 	time_start = ktime_get_ns();
+ 	for (i = 0; i < repeat; i++) {
+-		ret = bpf_test_run_one(prog, ctx);
++		ret = bpf_test_run_one(prog, ctx, storage);
+ 		if (need_resched()) {
+ 			if (signal_pending(current))
+ 				break;
+@@ -46,6 +53,8 @@ static u32 bpf_test_run(struct bpf_prog *prog, void *ctx, u32 repeat, u32 *time)
+ 	do_div(time_spent, repeat);
+ 	*time = time_spent > U32_MAX ? U32_MAX : (u32)time_spent;
+ 
++	bpf_cgroup_storage_free(storage);
++
+ 	return ret;
+ }
+ 
+-- 
+2.14.4
 
-I don't know if the placement of the driver is right either: I was under
-the impression that this type of drivers should live under
-drivers/platform/x86 but Andy can surely tell.
-
-> +config GPIO_APU
-> +       tristate "PC Engines APU2/APU3 GPIO support"
-> +       depends on X86
-> +       select GPIO_GENERIC
-
-Thanks for activating the helpers! This makes everything simpler.
-But your driver should (and can) use them too, just make sure to
-call bgpio_init() with the right address offsets and everything should
-just work.
-
-> +       help
-> +         Say Y here to support GPIO functionality on APU2/APU3 boards
-> +         from PC Engines.
-> +         - APU2/APU3 -> front button reset support
-> +         - APU3 -> SIM switch support
-
-I don't know about the approach to bundle GPIO keys into a GPIO
-driver, but Andy will tell.
-
-> +/* PC Engines APU2/APU3 GPIO device driver
-> + *
-> + * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version
-> + *
-> + * This program is distributed in the hope that it will be useful
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program; if not, see <http://www.gnu.org/licenses/>
-
-Instead of the big bulk of license text, use the simple oneline SPDX identifier.
-In this case, at the top of the file:
-
-// SPDX-License-Identifier: GPL-2.0
-
-See Documentation/process/license-rules.rst for full info.
-
-> +#include <linux/dmi.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio.h>
-
-Use just <linux/driver.h> for GPIO drivers.
-
-> +#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
-
-Hm this looks hardcoded. Isn't ACPI giving you the base address?
-Not that I understand ACPI, but...
-
-> +#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
-> +#define APU_GPIO_BIT_WRITE     22
-> +#define APU_GPIO_BIT_READ      16
-> +#define APU_GPIO_BIT_DIR       23
-> +#define APU_IOSIZE             sizeof(u32)
-> +
-> +#define APU2_NUM_GPIO          1
-> +#define APU3_NUM_GPIO          2
-> +
-> +struct apu_gpio_pdata {
-> +       struct platform_device *pdev;
-> +       struct gpio_chip *chip;
-> +       unsigned long *offset;
-> +       void __iomem **addr;
-> +       int iosize; /* for devm_ioremap() */
-
-Can you keep this in a local variable? It doesn't seem like
-it needs to be in the state container.
-
-> +       spinlock_t lock;
-
-I think checkpatch now mandates that you put in a comment
-about what this lock is locking.
-
-> +static struct apu_gpio_pdata *apu_gpio;
-> +static struct platform_device *keydev;
-
-I don't know a about static singletons, but I guess this would
-only ever probe once, so it's probably OK, but Andy knows
-better.
-
-> +static int gpio_apu_get_dir (struct gpio_chip *chip, unsigned offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ~ioread32(apu_gpio->addr[offset]);
-
-Some comment on why this needs to be inversed?
-
-> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
-
-I would write:
-
-#include <linux/bitops.h>
-
-val = !!(val & BIT(APU_GPIO_BIT_DIR);
-
-or even fold into the read:
-
-val = !!(~ioreaad() & BIT(APU_GPIO_BIT_DIR));
-
-But this and all the other GPIO accessors go away if you use GPIO_GENERIC
-properly with bgpio_init() and the right addresses and flags.
-
-> +static struct gpio_chip gpio_apu_chip = {
-> +       .label = "gpio-apu",
-> +       .owner = THIS_MODULE,
-> +       .base = -1,
-> +       .get_direction = gpio_apu_get_dir,
-> +       .direction_input = gpio_apu_dir_in,
-> +       .direction_output = gpio_apu_dir_out,
-> +       .get = gpio_apu_get_data,
-> +       .set = gpio_apu_set_data,
-> +};
-
-So instead of a static GPIO chip leave the functions undefined
-and call bgpio_init() that will set them up for MMIO GPIO.
-
-> +static struct gpio_keys_button apu_gpio_keys[] = {
-> +       {
-> +               .desc           = "Reset button",
-> +               .type           = EV_KEY,
-> +               .code           = KEY_RESTART,
-> +               .debounce_interval = 60,
-> +               .gpio           = 510,
-> +               .active_low     = 1,
-> +       },
-> +};
-
-Andy has to tell whether he likes this idea.
-
-> +       apu_gpio->pdev = pdev;
-> +       apu_gpio->chip = &gpio_apu_chip;
-> +       spin_lock_init(&apu_gpio->lock);
-> +
-> +       if (dmi_match(DMI_PRODUCT_NAME, "APU3")) {
-> +               apu_gpio->offset = apu3_gpio_offset;
-> +               apu_gpio->addr = apu3_gpio_addr;
-> +               apu_gpio->iosize = APU_IOSIZE;
-> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu3_gpio_offset);
-> +               for( i = 0; i < ARRAY_SIZE(apu3_gpio_offset); i++) {
-> +                       apu3_gpio_addr[i] = devm_ioremap(&pdev->dev,
-> +                                       apu_gpio->offset[i], apu_gpio->iosize);
-> +                       if (!apu3_gpio_addr[i]) {
-> +                               return -ENOMEM;
-> +                       }
-> +               }
-> +       } else if (dmi_match(DMI_BOARD_NAME, "APU2") ||
-> +                  dmi_match(DMI_BOARD_NAME, "apu2") ||
-> +                  dmi_match(DMI_BOARD_NAME, "PC Engines apu2")) {
-> +               apu_gpio->offset = apu2_gpio_offset;
-> +               apu_gpio->addr = apu2_gpio_addr;
-> +               apu_gpio->iosize = APU_IOSIZE;
-> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu2_gpio_offset);
-> +               for( i = 0; i < ARRAY_SIZE(apu2_gpio_offset); i++) {
-> +                       apu2_gpio_addr[i] = devm_ioremap(&pdev->dev,
-> +                                       apu_gpio->offset[i], apu_gpio->iosize);
-> +                       if (!apu2_gpio_addr[i]) {
-> +                               return -ENOMEM;
-> +                       }
-> +               }
-> +       }
-
-So here, after figuring out the base addresses and all, call bgpio_init()
-before adding the gpio_chip, which will set up the desired access
-functions.
-
-> +       ret = gpiochip_add(&gpio_apu_chip);
-> +       if (ret) {
-> +               pr_err("Adding gpiochip failed\n");
-> +       }
-> +
-> +       register_gpio_keys_polled(-1, 20, ARRAY_SIZE(apu_gpio_keys), apu_gpio_keys);
-
-I don't know if this is a good idea?
-
-Yours,
-Linus Walleij
