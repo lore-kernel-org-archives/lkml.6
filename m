@@ -2,95 +2,78 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71502C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F153C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3127A2150D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3127A2150D
+	by mail.kernel.org (Postfix) with ESMTP id 11C8E21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C8E21501
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732400AbeHBOyx (ORCPT
+        id S1732433AbeHBOy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:54:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:57800 "EHLO foss.arm.com"
+        Thu, 2 Aug 2018 10:54:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:57840 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732267AbeHBOyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:54:53 -0400
+        id S1732267AbeHBOy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:54:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A53577A9;
-        Thu,  2 Aug 2018 06:03:46 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B08003F2EA;
-        Thu,  2 Aug 2018 06:03:42 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 14:03:38 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180802130337.uf6tlac2hg4nkbwr@queper01-lin>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-10-quentin.perret@arm.com>
- <20180802122629.GU2476@hirez.programming.kicks-ass.net>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E99E3ED1;
+        Thu,  2 Aug 2018 06:03:50 -0700 (PDT)
+Received: from [10.4.12.116] (e107155-lin.emea.arm.com [10.4.12.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97C9B3F2EA;
+        Thu,  2 Aug 2018 06:03:49 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [tip:timers/core] clocksource/drivers/arm_arch_timer: Fix bogus
+ cpu_all_mask usage
+To:     daniel.lezcano@linaro.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        linux-tip-commits@vger.kernel.org
+References: <tip-6777996d27dd4f0a569ed9593e78db68c6b659cd@git.kernel.org>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <3fc750c9-fd3d-3a0c-ee86-b893de9ecc77@arm.com>
+Date:   Thu, 2 Aug 2018 14:03:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180802122629.GU2476@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <tip-6777996d27dd4f0a569ed9593e78db68c6b659cd@git.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 02 Aug 2018 at 14:26:29 (+0200), Peter Zijlstra wrote:
-> On Tue, Jul 24, 2018 at 01:25:16PM +0100, Quentin Perret wrote:
-> > @@ -5100,8 +5118,17 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >  		update_cfs_group(se);
-> >  	}
-> >  
-> > -	if (!se)
-> > +	if (!se) {
-> >  		add_nr_running(rq, 1);
-> > +		/*
-> > +		 * The utilization of a new task is 'wrong' so wait for it
-> > +		 * to build some utilization history before trying to detect
-> > +		 * the overutilized flag.
-> > +		 */
-> > +		if (flags & ENQUEUE_WAKEUP)
-> > +			update_overutilized_status(rq);
-> > +
-> > +	}
-> >  
-> >  	hrtick_update(rq);
-> >  }
+
+
+On 02/08/18 13:57, tip-bot for Thomas Gleixner wrote:
+> Commit-ID:  6777996d27dd4f0a569ed9593e78db68c6b659cd
+> Gitweb:     https://git.kernel.org/tip/6777996d27dd4f0a569ed9593e78db68c6b659cd
+> Author:     Thomas Gleixner <tglx@linutronix.de>
+> AuthorDate: Thu, 2 Aug 2018 14:53:10 +0200
+> Committer:  Thomas Gleixner <tglx@linutronix.de>
+> CommitDate: Thu, 2 Aug 2018 14:55:52 +0200
 > 
-> That is a somewhat dodgy hack. There is no guarantee what so ever that
-> when the task wakes next its history is any better. The comment doesn't
-> reflect this I feel.
+> clocksource/drivers/arm_arch_timer: Fix bogus cpu_all_mask usage
+> 
+> Using cpu_all_mask as target mask for clockevents is wrong as it never can
+> actually target not possible CPUs. Use cpu_possible_mask instead
+> 
 
-AFAICT the main use-case here is to avoid re-enabling the load balance
-and ruining all the task placement because of a tiny task. I don't
-really see how we can do that differently ...
+I think this was already merged for v4.18 as:
+Commit 5e18e412973d ("clocksource: arm_arch_timer: Set arch_mem_timer
+cpumask to cpu_possible_mask")
 
-Or am I missing something Morten ?
+I assume you have earlier -rc as base for tip tree and you might have
+missed it.
 
-In the meantime, I can try to improve the comment at least :-)
-
-Thanks,
-Quentin
+-- 
+Regards,
+Sudeep
