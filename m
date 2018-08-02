@@ -2,123 +2,131 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3DFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E241EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B35D621566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B35D621566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 970CD21566
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2xUv1Rh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970CD21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732478AbeHBUKR (ORCPT
+        id S1732494AbeHBULM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 16:10:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:36725 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726850AbeHBUKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 16:10:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 11:18:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,436,1526367600"; 
-   d="scan'208";a="245494769"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga005.jf.intel.com with ESMTP; 02 Aug 2018 11:18:01 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Reinette Chatre <reinette.chatre@intel.com>
-References: <cover.1533064851.git.reinette.chatre@intel.com>
- <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
- <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
- <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
- <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
- <20180802173727.GP2494@hirez.programming.kicks-ass.net>
-Cc:     tglx@linutronix.de, mingo@redhat.com, fenghua.yu@intel.com,
-        tony.luck@intel.com, vikas.shivappa@linux.intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
-Date:   Thu, 2 Aug 2018 11:18:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 16:11:12 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52700 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeHBULL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 16:11:11 -0400
+Received: by mail-it0-f67.google.com with SMTP id d9-v6so4889039itf.2;
+        Thu, 02 Aug 2018 11:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PQhzsLQokyanw3VY71M9pyBKOUWZ1iBB2Il3h/g6KKQ=;
+        b=C2xUv1Rh6qMTXdnUCCVgLhkoLlNw94sno0ahbSCa8HJkDG2pjvDIiIIROeyaqyYm0X
+         tl/LjhgWWBC1e9Ln0UbDVKEllZhdJMQ1UMMWt73TTfPEVRlp1UE6PIVfDpP0uJu8YWIl
+         uif4WILm5PVjs0gO7We53QL9SzR87Gtfyz2QxPu+iwXPwuwyvjeSv7yqer0+tihXttRm
+         YaXZrfbOrk+GW6JyfEDAE/Z2s609OESWzTY7VnPQuy+qZJmhIMY+9K9WnJ/OzWB5qbLE
+         OW3OqoGFvXyricV6pKb6kSQ6YDqkqN1x8HEqlVvkJG9soeBzMcjHVDMrKY4+RCOGYLkN
+         ijTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PQhzsLQokyanw3VY71M9pyBKOUWZ1iBB2Il3h/g6KKQ=;
+        b=JLV5tith0vk5qry5DTzEgBso1gMkDOfkPcb+H1im0tUhgh9RJhfqn7OPACF13N37d8
+         wuzkOip127AglM+E93qHW0QX7WGZuXQnZCM/lsPZ8Z1Y++cjrn4aJ/Vw0a4eQnFtyIJQ
+         y6CgI0MgnUBP+NpyXDOMzibp11jD+YZ7OlvF+a4gpu4B6yOMjOla/XZfPnpQhx/HiN4I
+         ZHGKq8jNGCRYy/kvtmFzkM1v9X+9STeyWIGcny2r93bg7A4mkR8RIhHAiztEjL2458c/
+         xte/Qft/lW4HvjXL/3lvyIy4mwyuVqrzSIRnplzhwAsPYWpam9ugpOoSGpAfH9YRx/R1
+         50Ug==
+X-Gm-Message-State: AOUpUlGw4AuBx9x8SBQr1uWdKfrKXt17Uz9kM7wKPXbrdGN/5v2uxDmf
+        Fz6u3jeMehff/UxZyXTvEQ0rlRP2LJG1h/+6Zwk=
+X-Google-Smtp-Source: AAOMgpciJyBAFyJ37sPyZ5dV4uTD3aj/LtH20nGMDvazy0z+s52EzsyUvCiu3YbTgwiMA54gmgVVaq+yQh6QEZOX3wo=
+X-Received: by 2002:a24:68c2:: with SMTP id v185-v6mr3738815itb.128.1533233936128;
+ Thu, 02 Aug 2018 11:18:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180802173727.GP2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+In-Reply-To: <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 2 Aug 2018 20:18:44 +0200
+Message-ID: <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     wgh@torlan.ru, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2018 10:37 AM, Peter Zijlstra wrote:
->> I do not see how I can do so without incurring the cache hits and misses
->> from the data needed and instructions run by this interface. Could you
->> please share how I can do so and still obtain the accurate measurement
->> of cache residency of a specific memory region?
-> That's the best you're going to get. You do _NOT_ get to use raw PMU.
+On Thu, Aug 2, 2018 at 6:41 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, Aug 2, 2018 at 8:16 AM WGH <wgh@torlan.ru> wrote:
+> >
+> > On 08/02/2018 04:31 PM, Ilya Dryomov wrote:
+> > >
+> > > From a quick look, --permission r sets DM_READONLY_FLAG, which makes dm
+> > > mark the disk read-only with set_disk_ro(dm_disk(md), 1) in do_resume().
+> > > A bit later it tries to write to the disk from write_header():
+> > >
+> > >   return chunk_io(ps, ps->header_area, 0, REQ_OP_WRITE, 0, 1);
+> > >
+> > > Thanks,
+> > >
+> > >                 Ilya
+> >
+> > After further investigation, this was fixed on lvm2 side (userspace) in
+> > https://sourceware.org/git/?p=lvm2.git;a=commit;h=a6fdb9d9d70f51c49ad11a87ab4243344e6701a3
+> > (snapshot: keep COW writable for read-only volumes).
+> >
+> > So I guess that's it. Time to poke my distribution package maintainers
+> > to bump the package version.
+>
+> That is *not* how kernel development is supposed to work. If your
+> script used to work, it should continue to work.
+>
+> Why did it use to work despite that read-only flag? And what was it
+> that actually broke this?
 
-Hi Peter,
+I think it was my commit 721c7fc701c7 ("block: fail op_is_write()
+requests to read-only partitions").  The block layer was previously
+allowing non-blkdev_write_iter() writes to read-only disks and
+partitions.  dm's chunk_io() boils down to submit_bio(), so in 4.16
+it started to fail if the underlying device was marked read-only.
 
-This code is really fidgety.  It's really easily perturbed even by tiny
-things like implicit cache accesses from the page walker filling the TLB
-from the page tables.
+>
+> We remain bug-for-bug compatible with older kernel versions when
+> people depend on the bugs. Unless the old bugs are security issues,
+> and even then we try to make it _look_ like we work the same way.
+>
+> Or was it a user-space lvm tool that broke in the first place, and the
+> kernel release update was a red herring?
 
-Adding a bunch more code in the way is surely going to make it more
-fragile and imprecise.
+Apparently at least some versions of lvm(8) instruct dm to mark the COW
+device read-only even though it is always written to.  It comes up only
+if the user asks for a read-only snapshot (the default is writable).
 
-I totally understand not wanting to fill the tree with code hijacking
-the raw PMU.  Is your reaction to this really around not wanting to
-start down the slippery slope that ends up with lots of raw PMU "owners"?
+One option might be to ignore the supplied DM_READONLY_FLAG for COW
+devices.  Marking the COW device (i.e. the exception store) read-only
+is probably never sane...
+
+Thanks,
+
+                Ilya
