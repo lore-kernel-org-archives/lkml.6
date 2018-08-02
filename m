@@ -2,117 +2,95 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80220C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26B1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3960B214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:12:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Rezd0yaJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3960B214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 340F3214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340F3214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731982AbeHBMDC (ORCPT
+        id S1732088AbeHBMDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:03:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42692 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbeHBMDC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:03:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=HdNUifJ+JgZQDGvWEB+Jb+aSX8AiCGORbzUcXqO24SE=; b=Rezd0yaJN0lH
-        LtpMc2yTEpgNgFJokVx55wZkTNNBWK+1W5tLSkHSk+I2vveIPMGjHfNqzTB2oXMXeTa+n3M0pRavi
-        RSR+ELz4iNlVmMjDCvsunOO5xg5QItgs0Vpr3/EgQniHpJFifx0/NL5N5PrASwUi7qOlOjQVOTDYG
-        fZe3o=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1flAam-0001sL-Tu; Thu, 02 Aug 2018 10:12:24 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A50D71124241; Thu,  2 Aug 2018 11:12:24 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        masami.hiramatsu@linaro.org, jaswinder.singh@linaro.org,
-        linux-kernel@vger.kernel.org, hayashibara.keiji@socionext.com,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: uniphier: remove unnecessary include headers" to the spi tree
-In-Reply-To:  <1533184963-28508-1-git-send-email-hayashibara.keiji@socionext.com>
-Message-Id: <20180802101224.A50D71124241@debutante.sirena.org.uk>
-Date:   Thu,  2 Aug 2018 11:12:24 +0100 (BST)
+        Thu, 2 Aug 2018 08:03:23 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:45822 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726702AbeHBMDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 08:03:23 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w72AA0JR012178;
+        Thu, 2 Aug 2018 11:10:00 +0100
+Date:   Thu, 2 Aug 2018 11:10:00 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org\" <linux-accelerators@lists.ozlabs.org>"@fuzix.org
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180802111000.4649d9ed@alans-desktop>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+        <20180801165644.GA3820@redhat.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+> One motivation I guess, is that most accelerators lack of a 
+> well-abstracted high level APIs similar to GPU side (e.g. OpenCL 
+> clearly defines Shared Virtual Memory models). VFIO mdev
+> might be an alternative common interface to enable SVA usages 
+> on various accelerators...
 
-   spi: uniphier: remove unnecessary include headers
+SVA is not IMHO the hard bit from a user level API perspective. The hard
+bit is describing what you have and enumerating the contents of the device
+especially when those can be quite dynamic and in the FPGA case can
+change on the fly.
 
-has been applied to the spi tree at
+Right now we've got
+- FPGA manager
+- Google's recently posted ASIC patches
+- WarpDrive
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+all trying to be bits of the same thing, and really there needs to be a
+single solution that handles all of this stuff properly.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+If we are going to have any kind of general purpose accelerator API then
+it has to be able to implement things like
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+	'find me an accelerator with function X that is nearest my memory'
+	'find me accelerator functions X and Y that share HBM'
+	'find me accelerator functions X and Y than can be chained'
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+If instead we have three API's depending upon whose accelerator you are
+using and whether it's FPGA or ASIC this is going to be a mess on a grand
+scale.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 07ebbbe458790d3c75f4a2f3634d8e04f66b389b Mon Sep 17 00:00:00 2001
-From: Keiji Hayashibara <hayashibara.keiji@socionext.com>
-Date: Thu, 2 Aug 2018 13:42:43 +0900
-Subject: [PATCH] spi: uniphier: remove unnecessary include headers
-
-This commit removed include headers of linux/of.h and linux/of_platform.h,
-because they are not used.
-
-Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-uniphier.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/spi/spi-uniphier.c b/drivers/spi/spi-uniphier.c
-index 089985465890..5a6137fe172d 100644
---- a/drivers/spi/spi-uniphier.c
-+++ b/drivers/spi/spi-uniphier.c
-@@ -10,8 +10,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
--#include <linux/of.h>
--#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/spi/spi.h>
- 
--- 
-2.18.0
-
+Alan
