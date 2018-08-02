@@ -2,132 +2,153 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB49BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F26C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67224208D5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67224208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B59B4208DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:17:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulcmEJsJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59B4208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeHBHGA (ORCPT
+        id S1726828AbeHBHGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 03:06:00 -0400
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:10214 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726030AbeHBHF7 (ORCPT
+        Thu, 2 Aug 2018 03:06:45 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46323 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbeHBHGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 03:05:59 -0400
-X-IronPort-AV: E=Sophos;i="5.51,434,1526322600"; 
-   d="scan'208";a="127586"
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Aug 2018 10:45:06 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,8972"; a="833041"
-Received: from gkohli-linux.qualcomm.com ([10.204.78.26])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Aug 2018 10:45:06 +0530
-Received: by gkohli-linux.qualcomm.com (Postfix, from userid 427023)
-        id 6AA701C43; Thu,  2 Aug 2018 10:45:05 +0530 (IST)
-From:   Gaurav Kohli <gkohli@codeaurora.org>
-To:     tglx@linutronix.de, john.stultz@linaro.org, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Gaurav Kohli <gkohli@codeaurora.org>
-Subject: [PATCH v2] timers: Clear must_forward_clk inside base lock
-Date:   Thu,  2 Aug 2018 10:45:03 +0530
-Message-Id: <1533186903-28419-1-git-send-email-gkohli@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 2 Aug 2018 03:06:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u24-v6so585154pfn.13;
+        Wed, 01 Aug 2018 22:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KLlLk72lJLv56FhCDGbi1AQnEboRfjZnd6MpRmxNcIk=;
+        b=ulcmEJsJkc9gd2IfZkyIqrmYIpNlPeIUjbiS11yMTmami+Q/UCyTlmq8qoZnXHzy4a
+         c0/8pTdQlhRmEikk/HGGBI6QpiWyejuQkC3/BlcN7YYGAovtPIzGZnG+5l+1vU9gW7rr
+         7Yh3jCsA7/tFAemw3xZ6PPPCtbYOhesBt3Hu2M2UzdrPc5Eu8Q4ZT7kuW5+4ptSAfnA6
+         eRCf3R3j0sYxoiT+EBjWJBRUKIxQhTHYAWi228NTrC0i3QhZ8ZC0Vc2xb7cBqBmiotmp
+         B937nBAw+zDDdIrRP/2LrUjpExbWC2c9wnw3Gb1avOLhWfxmhFst+8vBJT1/mtxe9GyH
+         eNpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KLlLk72lJLv56FhCDGbi1AQnEboRfjZnd6MpRmxNcIk=;
+        b=m6JwJy1qmK1aO9K0Fp4QpDmYFWgNzsUY0snztzrIYAxiAtOvLQddTWxH0S1Wcu60bU
+         kxHjwzT0jVeEjUoih2tBf2eqR3P7Qyc0HeVEr76pQK4BU2T5yiHPJnzP1ZNSJXWC/d5Z
+         VvfM32dCCnL2aLEIxXMp3ZTH2MF56dVbgBRPeGjz2CGH7l7hb08aS5sRU+7H4YbH7lZP
+         vP/1uFEYTdVj73WSiHA0YTnYpg45yOHS1SwJ+SSOTee/jZF6bHWmzllqcvJxr6LrmlXW
+         xPkniue7pZjiMgfSeeFPI3zirSkHKAA/ZOzp6HhFd2DVLmHbxgFWU203/XBLm2QnGvZ2
+         bfiQ==
+X-Gm-Message-State: AOUpUlE/GIcvT1DU/HbohH1MARsmKAcNmqNlyD6Rl+P6sTQieespYYJW
+        qzBA1Ve8X6h6/7AwBLC5pa53Ef5tGpZfFgFzNywadQ==
+X-Google-Smtp-Source: AAOMgpd9GtwXczFVdJCTVSE28aTuezAu4Gy2Ipz30Hx+T1rOMrlfmiPzHWR2O8o95wyEyJBT/YetI+06vrf0VTigrBA=
+X-Received: by 2002:a65:5545:: with SMTP id t5-v6mr1237797pgr.157.1533187044841;
+ Wed, 01 Aug 2018 22:17:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000004fe2be05724ac084@google.com> <c8ffd001-8c67-19b9-7223-34ca8d436db2@gmail.com>
+ <20180731134014.GA32114@bistromath.localdomain> <CAM_iQpURKOMAaPfs9v7FzhqqQPzj71sQD2LS0eU8cuqTML-YoA@mail.gmail.com>
+ <20180801081537.GA31982@bistromath.localdomain>
+In-Reply-To: <20180801081537.GA31982@bistromath.localdomain>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Wed, 1 Aug 2018 22:23:42 -0700
+Message-ID: <CAM_iQpUN=1-b13OfHcuahPGw6kDMBhFHAqu70NJ7UvmQreM6LQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rtnetlink_put_metrics
+To:     Sabrina Dubroca <sd@queasysnail.net>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot+41f9c04b50ef70c66947@syzkaller.appspotmail.com,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        lucien xin <lucien.xin@gmail.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Timer wheel base->must_forward_clock is indicating that
-the base clock might be stale due to a long idle sleep.
-The forwarding of base clock takes place in softirq of timer
-or when a timer is enqueued to base which is idle. While migrate
-timer from remote CPU to the new base which is idle, then
-following race can happen:
+On Wed, Aug 1, 2018 at 1:15 AM Sabrina Dubroca <sd@queasysnail.net> wrote:
+>
+> 2018-07-31, 16:03:13 -0700, Cong Wang wrote:
+> > On Tue, Jul 31, 2018 at 6:41 AM Sabrina Dubroca <sd@queasysnail.net> wrote:
+> > >
+> > > 2018-07-31, 05:41:56 -0700, Eric Dumazet wrote:
+> > > >
+> > > >
+> > > > On 07/31/2018 05:31 AM, syzbot wrote:
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following crash on:
+> > > > >
+> > > > > HEAD commit:    61f4b23769f0 netlink: Don't shift with UB on nlk->ngroups
+> > > > > git tree:       net
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a9de58400000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=ffb4428fdc82f93b
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=41f9c04b50ef70c66947
+> > > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > >
+> > > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > [...]
+> > >
+> > > > Probably also caused by :
+> > > >
+> > > >
+> > > > commit df18b50448fab1dff093731dfd0e25e77e1afcd1
+> > > > Author: Sabrina Dubroca <sd@queasysnail.net>
+> > > > Date:   Mon Jul 30 16:23:10 2018 +0200
+> > > >
+> > > >     net/ipv6: fix metrics leak
+> > >
+> > > Yeah, I'm looking into both those reports :/
+> >
+> > Looks like this commit is completely unnecessary,
+> > fib6_drop_pcpu_from() calls fib6_info_release()
+> > which calls fib6_info_destroy_rcu(), so this metrics
+> > will be released twice...
+>
+> kmemleak disagrees:
 
-  CPU0                                  CPU1
-  run_timer_softirq                     timers_dead_cpu
 
-					base = lock_timer_base(timer);
-  base->must_forward_clk = false
-					if (base->must_forward_clk)
-				         forward(base); >>skip
+This information is missing from changelog. :)
 
-					migrate_timer_list
-					enqueue_timer(base, timer, idx);
-					>> idx is calculated high due to
-					>> stale base
-					unlock_timer_base(timer);
-  base = lock_timer_base(timer);
-  forward(base);
 
-The root cause is that base->must_forward_clk is cleared outside the
-base->lock held region, so the remote queuing CPU observes it as
-cleared, but the base clock is still stale. This can cause large
-granularity values for timers, i.e. the accuracy of the expiry time
-suffers.
+>
+> unreferenced object 0xffff88006b605080 (size 96):
+>   comm "ip", pid 433, jiffies 4294889793 (age 74.844s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 f4 01 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000002650e4e2>] ip6_route_info_create+0x770/0x4050
+>     [<000000000a8d4c52>] ip6_route_add+0x18/0x90
+>     [<00000000474d669c>] inet6_rtm_newroute+0xeb/0x100
+>     [<0000000019fb732d>] rtnetlink_rcv_msg+0x3b5/0xb40
+>     [<000000006f891e19>] netlink_rcv_skb+0x137/0x380
+>     [<0000000070451985>] netlink_unicast+0x47f/0x6e0
+>     [<000000004487d656>] netlink_sendmsg+0x7a7/0x10c0
+>     [<0000000089fdf5ae>] sock_sendmsg+0xac/0x160
+>     [<00000000aae19c54>] ___sys_sendmsg+0x6e0/0xbb0
+>     [<00000000a3906352>] __sys_sendmsg+0xdc/0x230
+>     [<00000000c7c8548a>] do_syscall_64+0x15d/0x740
+>     [<000000007dfdad73>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>     [<000000003adb705a>] 0xffffffffffffffff
 
-Prevent this by clearing the flag with base->lock held, so that the
-forwarding takes place before the cleared flag is observable by a remote
-CPU.
-Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
----
-Changes since v1:
- - Updated comment suggested by Thomas.
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index cc2d23e..8f61d45 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1657,6 +1657,22 @@ static inline void __run_timers(struct timer_base *base)
- 
- 	raw_spin_lock_irq(&base->lock);
- 
-+	/*
-+	 * Timer wheel base must_forward_clk must be cleared before running
-+	 * timers so that any timer functions that call mod_timer will not
-+	 * try to forward the base. idle tracking / clock forwarding logic
-+	 * is only used with BASE_STD timers.
-+	 *
-+	 * The must_forward_clk flag is cleared unconditionally also for
-+	 * the deferrable base. The deferrable base is not affected by idle
-+	 * tracking and never forwarded, so clearing the flag is a NOOP.
-+	 *
-+	 * The fact that the deferrable base is never forwarded can cause
-+	 * large variations in granularity for deferrable timers, but they
-+	 * can be deferred for long periods due to idle anyway.
-+	 */
-+	base->must_forward_clk = false;
-+
- 	while (time_after_eq(jiffies, base->clk)) {
- 
- 		levels = collect_expired_timers(base, heads);
-@@ -1676,19 +1692,6 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
- {
- 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
- 
--	/*
--	 * must_forward_clk must be cleared before running timers so that any
--	 * timer functions that call mod_timer will not try to forward the
--	 * base. idle trcking / clock forwarding logic is only used with
--	 * BASE_STD timers.
--	 *
--	 * The deferrable base does not do idle tracking at all, so we do
--	 * not forward it. This can result in very large variations in
--	 * granularity for deferrable timers, but they can be deferred for
--	 * long periods due to idle.
--	 */
--	base->must_forward_clk = false;
--
- 	__run_timers(base);
- 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
- 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
--- 
-1.9.1
+My kernel dev machine is broken now.
+I will take a look tomorrow after I fix my kernel dev machine.
 
+Thanks!
