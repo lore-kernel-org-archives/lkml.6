@@ -2,123 +2,90 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE318C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC70C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B784214ED
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B784214ED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E328214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:57:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E328214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbeHBKrY (ORCPT
+        id S1731606AbeHBKr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:47:24 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:42308 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbeHBKrY (ORCPT
+        Thu, 2 Aug 2018 06:47:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42292 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbeHBKr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:47:24 -0400
-Received: by mail-vk0-f66.google.com with SMTP id t4-v6so663192vke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:57:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xnfuOU09Jho7uAOPmUzxI27oipwwmBPhP36T/yBpbu4=;
-        b=IN+h6zW++P0mfTdrTdfslNE1D3If1vbHpSaG13MXxpUp1R58kswcRk8auyD7CoTmpz
-         7CWuTF0kMzOv20P3gQxs6DE6RRIoSZaYcEe4dUC0shR75RuR/VRI2MumIeg46RNWlGJt
-         Z/VRl/QP3JadkJvsf+bAvWOG2FpHGOwQme3mEbmzM3vZM/2KakjP1qb1+nhqDpPgtrV4
-         IBnCH8RtYN0dsd+a6o9CtkAJKqIKdgMDtGZ3e6YLvyrmMT4QUjeyqP1PCUGgvMaKVTtU
-         xvWViSo8JDu5e2yCnzsxowhxb5fAzAmMebZGbdySvGwmEukl37KnryRMzzqPnBQeaQ1n
-         Vxug==
-X-Gm-Message-State: AOUpUlH8DHQGHu49iuc3yj421YTar8qHIaNive3sc3Na6Cu3JiwLQNFo
-        JqX64vsT0TKYFHJme+ZXnYlLH7UPkB/K27bu+kY=
-X-Google-Smtp-Source: AAOMgpeBVICBroV+RVl/dyuHiz+z9TTLjsLkVu6TtZO+tq93OaASat77u+eAft1P+guYNvDJJTs0CVeXMakLX7HgX0I=
-X-Received: by 2002:a1f:8ad3:: with SMTP id m202-v6mr1093776vkd.9.1533200231711;
- Thu, 02 Aug 2018 01:57:11 -0700 (PDT)
+        Thu, 2 Aug 2018 06:47:28 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21BD574;
+        Thu,  2 Aug 2018 08:57:15 +0000 (UTC)
+Date:   Thu, 2 Aug 2018 10:57:06 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] staging: gasket: core: print driver version code at
+ registration time
+Message-ID: <20180802085706.GA23992@kroah.com>
+References: <20180802084245.239689-1-toddpoynor@gmail.com>
+ <20180802084245.239689-3-toddpoynor@gmail.com>
 MIME-Version: 1.0
-References: <20180731142954.30345-1-acolin@isi.edu> <20180731142954.30345-7-acolin@isi.edu>
- <20180801095404.GA17585@infradead.org> <fad8661c-cd8c-3a9c-ca03-5d2f63893a24@gmail.com>
-In-Reply-To: <fad8661c-cd8c-3a9c-ca03-5d2f63893a24@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 2 Aug 2018 10:57:00 +0200
-Message-ID: <CAMuHMdVDra1MKcuuD0SqEYXSggr0iVFcbcjL33z7JuiE1_y8yw@mail.gmail.com>
-Subject: Re: [RESEND PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-To:     alex.bou9@gmail.com
-Cc:     Christoph Hellwig <hch@infradead.org>, acolin@isi.edu,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jwalters@isi.edu, Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802084245.239689-3-toddpoynor@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Thu, Aug 02, 2018 at 01:42:39AM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> Print the driver version code in the kernel log at gasket driver
+> registration time for informational purposes.  Add "gasket:" prefix to
+> make clear it is the gasket framework logging this information.
+> 
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+> ---
+>  drivers/staging/gasket/gasket_core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> index f76f4a0ecbac6..e550c9060dcd2 100644
+> --- a/drivers/staging/gasket/gasket_core.c
+> +++ b/drivers/staging/gasket/gasket_core.c
+> @@ -1759,8 +1759,9 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
+>  	}
+>  	mutex_unlock(&g_mutex);
+>  
+> -	pr_info("Loaded %s driver, framework version %s\n",
+> -		driver_desc->name, GASKET_FRAMEWORK_VERSION);
+> +	pr_info("gasket: Loaded %s driver version %s, framework version %s\n",
+> +		driver_desc->name, driver_desc->driver_version,
+> +		GASKET_FRAMEWORK_VERSION);
 
-On Wed, Aug 1, 2018 at 3:16 PM Alex Bounine <alex.bou9@gmail.com> wrote:
-> On 2018-08-01 05:54 AM, Christoph Hellwig wrote:
-> > On Tue, Jul 31, 2018 at 10:29:54AM -0400, Alexei Colin wrote:
-> >> Platforms with a PCI bus will be offered the RapidIO menu since they may
-> >> be want support for a RapidIO PCI device. Platforms without a PCI bus
-> >> that might include a RapidIO IP block will need to "select HAS_RAPIDIO"
-> >> in the platform-/machine-specific "config ARCH_*" Kconfig entry.
-> >>
-> >> Tested that kernel builds for arm64 with RapidIO subsystem and
-> >> switch drivers enabled, also that the modules load successfully
-> >> on a custom Aarch64 Qemu model.
-> >
-> > As said before, please include it from drivers/Kconfig so that _all_
-> > architectures supporting PCI (or other Rapidio attachements) get it
-> > and not some arbitrary selection of architectures.
+This is what pr_fmt is for, please just set that properly and all will
+be fine.
 
-+1
+But really, just delete this line, drivers, if all is going well, should
+not emit any noise to the kernel log.  Especially for something like
+doing a 'modprobe', which is really what is happening here.  Just drop
+the noisy messages please.
 
-> As it was replied earlier this is not a random selection of
-> architectures but only ones that implement support for RapidIO as system
-> bus. If other architectures choose to adopt RapidIO we will include them
-> as well.
->
-> On some platforms RapidIO can be the only system bus available replacing
-> PCI/PCIe or RapidIO can coexist with PCIe.
->
-> As it is done now, RapidIO is configured in "Bus Options" (x86/PPC) or
-> "Bus Support" (ARMs) sub-menu and from system configuration option it
-> should be kept this way.
->
-> Current location of RAPIDIO configuration option is familiar to users of
-> PowerPC and x86 platforms, and is similarly available in some ARM
-> manufacturers kernel code trees.
->
-> drivers/Kconfig will be used for configuring drivers for peripheral
-> RapidIO devices if/when such device drivers will be published.
+Also, GASKET_FRAMEWORK_VERSION means nothing now, it needs to be dropped :)
 
-Everything in drivers/rapidio/Kconfig depends on RAPIDIO (probably it should
-use a big if RAPIDIO/endif instead), so it can just be included from
-drivers/Kconfig now.
+thanks,
 
-The sooner you do that, the less treewide changes are needed (currently
-limited to mips, powerpc, and x86; your patch adds arm64).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
