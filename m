@@ -2,141 +2,94 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0379C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 652E2208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:08:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vbE/zplH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652E2208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DABD214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DABD214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387583AbeHBO7p (ORCPT
+        id S2387587AbeHBPAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:59:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43190 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387421AbeHBO7p (ORCPT
+        Thu, 2 Aug 2018 11:00:14 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:21494 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387429AbeHBPAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:59:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d17-v6so1157798pgv.10;
-        Thu, 02 Aug 2018 06:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VuW86wa96t3ez7wcmNMogdD0V44YmRXIyDyX3komb7E=;
-        b=vbE/zplHti1cpSgLhG5Il5RhM4rKi/1gW+0HPsIIikvx/7+NPRu0sP3WXoKWRMB/bC
-         eDNOlpwy1ICtgVyfFpvE5K7YzkOHwbe2oR//NBmHbKO2Bx1WOfBvOnOBRyKsfBWVkm32
-         HbLOx3ZVVd0TDzd8gTSq0+20bUQsYA3lC4GObTFXysVPKNVlDawnn/go3HW2Hg5AvVGE
-         YOrPs5E5Eyj7ldCMtAyLxZ8xyUESkFJGK1s1GKN5uYrE03QblQrpd7YOe2JDrZfopi/u
-         VFqTTVJIci/BZN38IcPEtEWCCy9G/zkoo/9z97kFCFfsmTUDGvFzID67yGCapPBNUgOK
-         64mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VuW86wa96t3ez7wcmNMogdD0V44YmRXIyDyX3komb7E=;
-        b=SHKHpgBysyWR4XOLFfDneUzqXySMUB2boOKr/ZDQ3bj8hzqOjgxE1uf9OO2TfylNMn
-         JFhjcqLdZCSFZVzzd1RoqvsOp7SglLCm6Me21uNxLZIEjXOKSFAfl6YOii8hKiUISrc3
-         pVasLefhkjN2Bgo8tvRTxXa4ORhkiMyD7EeV3mr6jn2ktJN29ySGjToXyzreU0uzfZyh
-         eo58KfoY/Quz7AoMwM0djImTVCADvIMBhzo5ulPLC/seuHOe9vGxNJNueHFCrkUqPB7C
-         YVLIbDe95hcBAy0z2uiKmpeBwqu1a4c78VHvmL0llczAYmE80ZdgaNskTWa7Eg+ztBJc
-         vktQ==
-X-Gm-Message-State: AOUpUlEHEk8wO5rCdToaP9d9avWyhub9k4ME3tedfhT7amKY/X6TjGv/
-        kVaSkL+KNkvy/d5753Wn+uA=
-X-Google-Smtp-Source: AAOMgpeXhqHeEMghICKfHTkMTouL7boHint8U6UGm4luirzW6CsF0OyFEvmIy97WUJ6gYvZsy10G1w==
-X-Received: by 2002:a63:5025:: with SMTP id e37-v6mr2754096pgb.341.1533215316552;
-        Thu, 02 Aug 2018 06:08:36 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id z184-v6sm2605028pgd.83.2018.08.02.06.08.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 06:08:35 -0700 (PDT)
-Subject: Re: [PATCH 1/1] selftest/net: fix FILE_SIZE for 32 bit architecture.
-To:     Maninder Singh <maninder1.s@samsung.com>, davem@davemloft.net,
-        shuahkh@osg.samsung.com
-Cc:     netdev@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, edumazet@google.com,
-        pankaj.m@samsung.com, a.sahrawat@samsung.com,
-        Vaneet Narang <v.narang@samsung.com>
-References: <CGME20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0@epcas5p4.samsung.com>
- <20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0~HCuTv0d7l2131721317epcas5p4u@epcas5p4.samsung.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <4a412194-99aa-7969-54a4-727368fbf82c@gmail.com>
-Date:   Thu, 2 Aug 2018 06:08:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 2 Aug 2018 11:00:14 -0400
+Received: from mail-qk0-f172.google.com ([209.85.220.172])
+        by mwinf5d89 with ME
+        id JD941y0053jmVAh03D94gb; Thu, 02 Aug 2018 15:09:05 +0200
+X-ME-Helo: mail-qk0-f172.google.com
+X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
+X-ME-Date: Thu, 02 Aug 2018 15:09:05 +0200
+X-ME-IP: 209.85.220.172
+Received: by mail-qk0-f172.google.com with SMTP id v17-v6so1440565qkb.11;
+        Thu, 02 Aug 2018 06:09:04 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGZVd8RVkgZTYfrsCS8PZGB/a7zAqtgSs7SpAqHNEBCiAAS6E1X
+        Gl+mlkO/O6E/yPlnr7BqtVDiNnu5cdk9khMPp40=
+X-Google-Smtp-Source: AAOMgpcCwsdQgYf/qdvD5yQgUeHTjg1+v3SM0LsBtctJbD/Sr1UdyyE4p4vKzEJBEc4mClrBMBpin3Br7ENwiY22mPU=
+X-Received: by 2002:a37:5641:: with SMTP id k62-v6mr2535236qkb.40.1533215343764;
+ Thu, 02 Aug 2018 06:09:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180802103616epcas5p48ec1e2ea3568b11683aa7b55254dffb0~HCuTv0d7l2131721317epcas5p4u@epcas5p4.samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:aed:278a:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 06:09:03 -0700 (PDT)
+In-Reply-To: <843e41de9fa7d5f87309ff4e0db2ed84a1153a4c.camel@baylibre.com>
+References: <20180801185128.23440-1-maxi.jourdan@wanadoo.fr>
+ <20180801185128.23440-5-maxi.jourdan@wanadoo.fr> <744700e43aed3880807f86abde0caf3df1127e60.camel@baylibre.com>
+ <CAHStOZ6B-R7=5utGqb49OsFBsUsMVsn=WMrzNK8Wk-zcgbnPuA@mail.gmail.com> <843e41de9fa7d5f87309ff4e0db2ed84a1153a4c.camel@baylibre.com>
+From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date:   Thu, 2 Aug 2018 15:09:03 +0200
+X-Gmail-Original-Message-ID: <CAHStOZ6v1CAJ-7UVo6V3H0Eu3cYd8x7xSAx33EbO6Eptj0vgdw@mail.gmail.com>
+Message-ID: <CAHStOZ6v1CAJ-7UVo6V3H0Eu3cYd8x7xSAx33EbO6Eptj0vgdw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drm/meson: convert to the new canvas module
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-08-02 15:01 GMT+02:00 Jerome Brunet <jbrunet@baylibre.com>:
+> What I don't like is precisely that you need to expose this 'struct ops' to the
+> consumer. I would prefer an API for this (it can be a 1:1 mapping). The canvas
+> should remain some abstract object you get from DT.
+>
+> IMO, this is the same as a reset, a syscon or whatever other phandle you get
+> from DT. The consumer should not have to 'care' how it works (how data are
+> organized), it should just use it.
+>
+> Whatever you need to do to deal with your canvas phandle should (IMO) reside in
+> your soc/amlogic/meson-canvas.c, and not be spread in the consumers.
+>
+>>
+>> I agree that the "fetch the node" boilerplate code could be put behind
+>> a helper, but at the same time this code helps remind the developer
+>> that there needs to be a canvas node in the dts, and that it has to be
+>> linked in your own device node.
+>
+> This is why we have a DT documentation.
+>
+> And, as far as I understand amlogic's display and decoder stuff, you won't get
+> very far w/o a canvas, so 'the developer' will be reminded fairly quickly ;)
+>
+>>
+>> I would like to keep it that way if that is okay with you.
+>
+> It's just my opinion, I'm not the one merging it ... :P
+>
+>
 
-
-On 08/02/2018 03:31 AM, Maninder Singh wrote:
-> FILE_SZ is defined as (1UL << 35), it will overflow
-> for 32 bit system and logic will break.
-> 
-> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-> ---
->  tools/testing/selftests/net/tcp_mmap.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
-> index e8c5dff..1d6ca12 100644
-> --- a/tools/testing/selftests/net/tcp_mmap.c
-> +++ b/tools/testing/selftests/net/tcp_mmap.c
-> @@ -85,7 +85,7 @@
->  #define MSG_ZEROCOPY    0x4000000
->  #endif
->  
-> -#define FILE_SZ (1UL << 35)
-> +#define FILE_SZ (1ULL << 35)
->  static int cfg_family = AF_INET6;
->  static socklen_t cfg_alen = sizeof(struct sockaddr_in6);
->  static int cfg_port = 8787;
-> @@ -134,7 +134,7 @@ void hash_zone(void *zone, unsigned int length)
->  
->  void *child_thread(void *arg)
->  {
-> -	unsigned long total_mmap = 0, total = 0;
-> +	unsigned long long total_mmap = 0, total = 0;
->  	struct tcp_zerocopy_receive zc;
->  	unsigned long delta_usec;
->  	int flags = MAP_SHARED;
-> @@ -316,7 +316,7 @@ int main(int argc, char *argv[])
->  {
->  	struct sockaddr_storage listenaddr, addr;
->  	unsigned int max_pacing_rate = 0;
-> -	unsigned long total = 0;
-> +	unsigned long long total = 0;
->  	char *host = NULL;
->  	int fd, c, on = 1;
->  	char *buffer;
-> @@ -431,7 +431,7 @@ int main(int argc, char *argv[])
->  		zflg = 0;
->  	}
->  	while (total < FILE_SZ) {
-> -		long wr = FILE_SZ - total;
-> +		unsigned long long wr = FILE_SZ - total;
->  
->  		if (wr > chunk_size)
->  			wr = chunk_size;
-> 
-
-What about using more conventional size_t instead of "unsigned long long" ?
-
+Fair enough, I'll see to API-ize the module in v2 :).
