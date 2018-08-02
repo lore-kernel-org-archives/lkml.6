@@ -2,107 +2,126 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF093C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A6BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713DD21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:28:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713DD21501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A62A9214D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A62A9214D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731999AbeHBMSz (ORCPT
+        id S1732067AbeHBMZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:18:55 -0400
-Received: from mga17.intel.com ([192.55.52.151]:29589 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729580AbeHBMSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:18:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 03:28:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,435,1526367600"; 
-   d="scan'208";a="59861807"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Aug 2018 03:28:22 -0700
-Message-ID: <5B62DDCC.3030100@intel.com>
-Date:   Thu, 02 Aug 2018 18:32:44 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 2/2] virtio_balloon: replace oom notifier with shrinker
-References: <1532683495-31974-1-git-send-email-wei.w.wang@intel.com> <1532683495-31974-3-git-send-email-wei.w.wang@intel.com> <20180730090041.GC24267@dhcp22.suse.cz> <5B619599.1000307@intel.com> <20180801113444.GK16767@dhcp22.suse.cz>
-In-Reply-To: <20180801113444.GK16767@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 08:25:08 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36223 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731622AbeHBMZI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 08:25:08 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1flAw9-0004Zv-Mm; Thu, 02 Aug 2018 12:34:29 +0200
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <ore@pengutronix.de>)
+        id 1flAw6-0000oX-Rs; Thu, 02 Aug 2018 12:34:26 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v9 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
+Date:   Thu,  2 Aug 2018 12:34:21 +0200
+Message-Id: <20180802103425.3053-3-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2018 07:34 PM, Michal Hocko wrote:
-> On Wed 01-08-18 19:12:25, Wei Wang wrote:
->> On 07/30/2018 05:00 PM, Michal Hocko wrote:
->>> On Fri 27-07-18 17:24:55, Wei Wang wrote:
->>>> The OOM notifier is getting deprecated to use for the reasons mentioned
->>>> here by Michal Hocko: https://lkml.org/lkml/2018/7/12/314
->>>>
->>>> This patch replaces the virtio-balloon oom notifier with a shrinker
->>>> to release balloon pages on memory pressure.
->>> It would be great to document the replacement. This is not a small
->>> change...
->> OK. I plan to document the following to the commit log:
->>
->>    The OOM notifier is getting deprecated to use for the reasons:
->>      - As a callout from the oom context, it is too subtle and easy to
->>        generate bugs and corner cases which are hard to track;
->>      - It is called too late (after the reclaiming has been performed).
->>        Drivers with large amuont of reclaimable memory is expected to be
->>        released them at an early age of memory pressure;
->>      - The notifier callback isn't aware of the oom contrains;
->>      Link: https://lkml.org/lkml/2018/7/12/314
->>
->>      This patch replaces the virtio-balloon oom notifier with a shrinker
->>      to release balloon pages on memory pressure. Users can set the amount of
->>      memory pages to release each time a shrinker_scan is called via the
->>      module parameter balloon_pages_to_shrink, and the default amount is 256
->>      pages. Historically, the feature VIRTIO_BALLOON_F_DEFLATE_ON_OOM has
->>      been used to release balloon pages on OOM. We continue to use this
->>      feature bit for the shrinker, so the shrinker is only registered when
->>      this feature bit has been negotiated with host.
-> Do you have any numbers for how does this work in practice?
+One of the Freescale recommended sequences for power off with external
+PMIC is the following:
+...
+3.  SoC is programming PMIC for power off when standby is asserted.
+4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 
-It works in this way: for example, we can set the parameter, 
-balloon_pages_to_shrink, to shrink 1GB memory once shrink scan is 
-called. Now, we have a 8GB guest, and we balloon out 7GB. When shrink 
-scan is called, the balloon driver will get back 1GB memory and give 
-them back to mm, then the ballooned memory becomes 6GB.
+See:
+http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+page 5083
 
-When the shrinker scan is called the second time, another 1GB will be 
-given back to mm. So the ballooned pages are given back to mm gradually.
+This patch implements step 4. of this sequence.
 
-> Let's say
-> you have a medium page cache workload which triggers kswapd to do a
-> light reclaim? Hardcoded shrinking sounds quite dubious to me but I have
-> no idea how people expect this to work. Shouldn't this be more
-> adaptive? How precious are those pages anyway?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Those pages are given to host to use usually because the guest has 
-enough free memory, and host doesn't want to waste those pieces of 
-memory as they are not used by this guest. When the guest needs them, it 
-is reasonable that the guest has higher priority to take them back.
-But I'm not sure if there would be a more adaptive approach than 
-"gradually giving back as the guest wants more".
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index 017539dd712b..2f5c643f62fb 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -601,6 +601,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+ 				   IMX6Q_GPR1_GINT);
+ }
+ 
++static void imx6_pm_stby_poweroff(void)
++{
++	imx6_set_lpm(STOP_POWER_OFF);
++	imx6q_suspend_finish(0);
++
++	mdelay(1000);
++
++	pr_emerg("Unable to poweroff system\n");
++}
++
++static int imx6_pm_stby_poweroff_probe(void)
++{
++	if (pm_power_off) {
++		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
++			__func__, pm_power_off, pm_power_off);
++		return -EBUSY;
++	}
++
++	pm_power_off = imx6_pm_stby_poweroff;
++	return 0;
++}
++
+ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ {
+ 	struct device_node *np;
+@@ -617,6 +639,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
+ 	val = readl_relaxed(ccm_base + CLPCR);
+ 	val &= ~BM_CLPCR_LPM;
+ 	writel_relaxed(val, ccm_base + CLPCR);
++
++	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
++		imx6_pm_stby_poweroff_probe();
+ }
+ 
+ void __init imx6q_pm_init(void)
+-- 
+2.18.0
 
-Best,
-Wei
