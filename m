@@ -2,84 +2,106 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29066C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D386C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05B2214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA380214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="nI8788E/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05B2214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="BsoZgYsT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DmLYi6xA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA380214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731651AbeHCBRS (ORCPT
+        id S1732007AbeHCBRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 21:17:18 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34868 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726929AbeHCBRS (ORCPT
+        Thu, 2 Aug 2018 21:17:36 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45878 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbeHCBRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 21:17:18 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w72NNXtc030515;
-        Thu, 2 Aug 2018 16:23:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=RCtuSGlL/kSaQHW9BkCAZs3qniNHM5SlHpEw/Zdp01Q=;
- b=nI8788E/kJLqULKJM7Dthg290cmbA41gMgWKRq6O91WOwiQTw3vWT07FQz84pl7VkbpN
- GRLrWWBmlmyyK9HEWsZzyKp4ukXndVd+r0BegqbedTnv93uNoi/uw8YSjKj4ZrhH2Xku
- nWw/8yn3tkdlC2cozFUM64zhPDjErEOlVV4= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2kma09r8d5-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 02 Aug 2018 16:23:32 -0700
-Received: from kafai-mbp (192.168.52.123) by mail.thefacebook.com
- (192.168.16.20) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 2 Aug
- 2018 16:23:24 -0700
-Date:   Thu, 2 Aug 2018 16:23:20 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Roman Gushchin <guro@fb.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>, Arthur Fabre <afabre@cloudflare.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH bpf-next] selftests/bpf: fix a typo in map in map test
-Message-ID: <20180802232320.ad2az4baxindv3bv@kafai-mbp>
-References: <20180802224710.29662-1-guro@fb.com>
+        Thu, 2 Aug 2018 21:17:36 -0400
+Received: by mail-yw1-f68.google.com with SMTP id 139-v6so292434ywg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 16:24:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
+        b=BsoZgYsTUUFqqw5meFnPF+fx9O00JSTxZXDC2rqF5aJOfMSKE+/4I05h1BxcyX4ctJ
+         hVS57VqsnnveIR8hJLlxlUHNd8OLV7I+M/EZzRRi7gFei8QP73bPl6X4nbTi7Os02kvP
+         oxrhV5p7y6yr0/CyJ+F/n8MpzP7UCY25vTJU/xHMeQNSqJhId/p6hvW4nCsAnRLg92Rf
+         abqlxY2zgnquS7uBt5sORHJo84/F6Dbyf5aRWHXpTxAVFGMF+9pOdC/D7HZ2nNGxc5Ed
+         nhMzqV+Kc6nfyjJBmf/1OeLUcFwwjtQ11IjjhD8GvOHM/8W2ZQPJPlfGc5dErUVCXPuv
+         N2jg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
+        b=DmLYi6xAUGTv3MpdNHp1cOSm1Nd8LlNXC5gY9QXxHGiWQhJvDQDCiH5hFcFIYTaDRV
+         xeurzso7GdGDAgB4tn9bwTkxZtshr/GoyeqeYwUWRBH1SryLO56NWhE0WsXPUPTLZemd
+         u7nMiOk5+gLequ2ok8PonwM7O9f3KFx9XKO78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
+        b=FBiKQvoeoTUE33OtrrEYHNDV0NTtvlA6Pem+sCAOo0LYNea0VLFQx9f1eoPUi98IND
+         KBAFrJlvVk3njh0tgIiyfARk5hEP0IvxVt2BVkV4g0Q6kTroruiOGgs4pmONjxBYXukN
+         w+AMoVlfMPlra4RF9U98bLOARhn8pElPtnfx32APrpiFAUWhXtZByOLTtdNgkigI3lWW
+         zZyva46wH/7E/y9S1eXQ+hv6tME1TxHp08/W6VSfBn0B7waunrhv1H/DnoZN4UtkY314
+         baysHZYGGaOWwcajdqU2MbvivwFrDcK1OfQ4nLa+3+Bzrxwc0S72cX8DqolSQI4j60TQ
+         USLg==
+X-Gm-Message-State: AOUpUlFST1LHRtEjgb2VDNV3AZX/yhMjD09C4As7/PBhtab+P+0N1qtL
+        6ZDGUtpQdLciRufWKq5ZHbr1qjCIYKZoYTOJ+jA6bw==
+X-Google-Smtp-Source: AAOMgpcsNF4vMvElV/Y0F2+2yeNpsRd+oTigF0CPPPm6wRsPz7dRepZs6RTZufWnYo76BkvX0TzLg7R56PqalmWbtNQ=
+X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr945766ywe.116.1533252252924;
+ Thu, 02 Aug 2018 16:24:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180802224710.29662-1-guro@fb.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-02_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 16:24:12 -0700 (PDT)
+In-Reply-To: <20180629212047.GH24526@jcrouse-lnx.qualcomm.com>
+References: <20180629184818.GA37439@beast> <20180629212047.GH24526@jcrouse-lnx.qualcomm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 2 Aug 2018 16:24:12 -0700
+X-Google-Sender-Auth: g9iaRaNirCMtVUTJA-XsEdmgtmY
+Message-ID: <CAGXu5jJ+mZyqq0WoNNuw96X9ukOuaHaEqX4PJL31PuSecZZDwQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 03:47:10PM -0700, Roman Gushchin wrote:
-> Commit fbeb1603bf4e ("bpf: verifier: MOV64 don't mark dst reg unbounded")
-> revealed a typo in commit fb30d4b71214 ("bpf: Add tests for map-in-map"):
-> BPF_MOV64_REG(BPF_REG_0, 0) was used instead of
-> BPF_MOV64_IMM(BPF_REG_0, 0).
-> 
-> I've noticed the problem by running bpf kselftests.
-Thanks for the fix!
+On Fri, Jun 29, 2018 at 2:20 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> On Fri, Jun 29, 2018 at 11:48:18AM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> switches to using a kasprintf()ed buffer. Return paths are updated
+>> to free the allocation.
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+> Thanks for doing this.
+>
+> Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
 
-FWIW, here is the verifier log:
-11: (85) call bpf_map_lookup_elem#1
-12: (bf) r0 = r0
-13: (95) exit
-R0 leaks addr as return value
+Hi Rob,
 
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+Is this something you can take via your tree?
+
+Thanks,
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
