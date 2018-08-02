@@ -2,86 +2,91 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CC1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4503EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D9721564
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D9721564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id F258321564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:49:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F258321564
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387548AbeHBTgI (ORCPT
+        id S2387614AbeHBTl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:36:08 -0400
-Received: from mout.gmx.net ([212.227.17.21]:35105 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387423AbeHBTgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:36:08 -0400
-Received: from homer.simpson.net ([185.221.150.28]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MIQlv-1fnlo61n5T-004DZv; Thu, 02
- Aug 2018 19:43:37 +0200
-Message-ID: <1533231816.12550.54.camel@gmx.de>
-Subject: Re: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq
- context
-From:   Mike Galbraith <efault@gmx.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Thu, 02 Aug 2018 19:43:36 +0200
-In-Reply-To: <1533228650.12550.15.camel@gmx.de>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
-         <1533192980.11791.8.camel@gmx.de>
-         <20180802123104.7fed73b4@gandalf.local.home>
-         <1533228650.12550.15.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:85jmNUmV3Uh8zik6wlxYligp1ohTiMrkgUOylJoYgy5mu1j8Hfs
- KprBc36HZuJ2pBtu3ixB6+79+MVLCiLjxFsUwZ4RuW4LbuRU/c/+KUQbE0KOGHu5T0RmonE
- UtCNla46dYJ6hbmEA1D83o/HphhF+16KNRgUGGIpT/LQz+J1siKe1fU1AXDFuLxpS0gD2gg
- NCGHno83Ku3hC7tFoOeWw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0IC9WfFRl8s=:Rp81Tb4/rwaMU9L1fq5mny
- UnjJxfax4A07b5orC+NB0WtdBIw4HEMs4E/ItZcIIQbuO7H1n5EP73tSS1x+LJn5E5Vv1Hw4O
- pSqbEuUUBFbunsIxP8rbkPZwaEa0dBSAgHBt03mD6CsiXrj063asUnVJqWplMyn63wUzeojGR
- gXPGfTuipDNqbG0w0dmENjAdDGguOS/MbRxX6/Hb104mHIqaLY0RREHU5uvjzVDPkLTFKizJz
- efNb6VWUU6GGfuvJeYu76F4ipVLY1sUTRIC0EbNVaDskP3SqVSctcFMZupr8W+yHs7XJvcp8l
- vtmwUWbBzHq3O0LpwTRW3knaHwdPxXPY0LFjIM+FM+QTmUMatgAstOB66f9eDflt3VlhXiGez
- PLuN18KLDf14hI6VR3QBPRKXOCflFN6Sn6tUiSTzpOs4txT4BrKXUCfmjB2xkyTCk4+ImQtKh
- ErzgDWE/OrR9kSbFxguzxdZEtAslLKRkil0K5XTQdK0LlFEg8TrtKJLRf9+V4nYJBugAVlsSH
- iboutXUrexgB1XL7s5VUTQ2BelFpijgqcIIylEUNy91wILZV+lgAVwelq7CviC0ujPro/oQlJ
- E2mtNlZ7wavu/ePzKl/REQFrG9nsZGQs1ZDnHQDdgpe1fiQ8+huoPch1VKkyQ5wbE8xv4/a0/
- ZKQTNzp3SiA8eo2stWsRlhw3dZbwgY87O0U3i4i5udD0jwzoYscUmpwAkJf/OBAi0s5yLLSoT
- MArKGv1/wqYLoBQtsE3gItra4fEBJbEcGB//TV3Ayu2vyvgcMZVwwZIglbl8UUlM/fuB2UUJS
- VQ4EBax
+        Thu, 2 Aug 2018 15:41:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387422AbeHBTl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 15:41:59 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C58214012969;
+        Thu,  2 Aug 2018 17:49:48 +0000 (UTC)
+Received: from localhost (ovpn-12-120.pek2.redhat.com [10.72.12.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A2D90215670D;
+        Thu,  2 Aug 2018 17:49:43 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        John Garry <john.garry@huawei.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/2] blk-mq: fix fix blk_mq_tagset_busy_iter
+Date:   Fri,  3 Aug 2018 01:49:35 +0800
+Message-Id: <20180802174937.15444-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:49:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:49:48 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 18:50 +0200, Mike Galbraith wrote:
-> On Thu, 2018-08-02 at 12:31 -0400, Steven Rostedt wrote:
-> > On Thu, 02 Aug 2018 08:56:20 +0200
-> > Mike Galbraith <efault@gmx.de> wrote:
-> > 
-> > > (arm-land adventures 1/3 take2 will have to wait, my cup runeth over) 
-> > > 
-> > > v4.14..v4.15 timer handling changes including calling kvm_timer_vcpu_load()
-> > 
-> > I take it that this should be added to v4.16-rt and marked stable-rt?
-> 
-> Yeah, barring way sexier ideas of course.
+Hi Jens,
 
-Gah, wait.  WRT marking for stable-rt, only the pmu allocation splat
-fix is applicable to @stable-rt, kvm locking woes start at 4.15.
+The two patches fixes boot hang issue in lots of test vm system.
+And the cause is in blk_mq_tagset_busy_iter().
 
-	-Mike
+V2:
+	- move blk_mq_request_started() into header file as suggested by
+	  James
+
+Ming Lei (2):
+  blk-mq: move blk_mq_request_started() into header file
+  blk-mq: fix blk_mq_tagset_busy_iter
+
+ block/blk-mq-tag.c     |  2 +-
+ block/blk-mq.c         |  6 ------
+ block/blk-mq.h         |  9 ---------
+ include/linux/blk-mq.h | 15 ++++++++++++++-
+ 4 files changed, 15 insertions(+), 17 deletions(-)
+
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Matt Hart <matthew.hart@linaro.org>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Hannes Reinecke <hare@suse.com>,
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+-- 
+2.9.5
+
