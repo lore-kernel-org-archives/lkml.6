@@ -2,91 +2,83 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1BBC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86473C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CDB2208B6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CDB2208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
+	by mail.kernel.org (Postfix) with ESMTP id 45E1B208B6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E1B208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732480AbeHBPFn (ORCPT
+        id S1732503AbeHBPFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:05:43 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:36117 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732298AbeHBPFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:05:43 -0400
-Received: from mail-qk0-f173.google.com ([209.85.220.173])
-        by mwinf5d40 with ME
-        id JDEX1y00J3l49Wx03DEYPd; Thu, 02 Aug 2018 15:14:32 +0200
-X-ME-Helo: mail-qk0-f173.google.com
-X-ME-Auth: bWF4aS5qb3VyZGFuQHdhbmFkb28uZnI=
-X-ME-Date: Thu, 02 Aug 2018 15:14:32 +0200
-X-ME-IP: 209.85.220.173
-Received: by mail-qk0-f173.google.com with SMTP id b5-v6so1478277qkg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 06:14:32 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFf7XHf1mflMk/f8j25hAKoZbzouwkKWChD3A8Y28PXZheJfHh2
-        5LtdvFxRUf7WBEC8EBBRMlz04d+IxwYHpzRQzEs=
-X-Google-Smtp-Source: AAOMgpfBSszUSUshyxOU46kzVFyZUySQQ4E7qFTrQBiwd9Chiat9Bkkip1+GH3yMg2PdYsGMNgUW4QHEsqBbEbVdaOY=
-X-Received: by 2002:a37:5b47:: with SMTP id p68-v6mr2360912qkb.202.1533215671405;
- Thu, 02 Aug 2018 06:14:31 -0700 (PDT)
+        Thu, 2 Aug 2018 11:05:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49203 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732298AbeHBPFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:05:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B264520739; Thu,  2 Aug 2018 15:14:33 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 53FC0206A8;
+        Thu,  2 Aug 2018 15:14:33 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 15:14:34 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, richard@nod.at, broonie@kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        cyrille.pitchen@wedev4u.fr, pp@emlix.com, Zhiqiang.Hou@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] mtd: m25p80: Call spi_mem_get_name() to let
+ controller set a custom name
+Message-ID: <20180802151434.6c978937@bbrezillon>
+In-Reply-To: <1533214434-28761-4-git-send-email-frieder.schrempf@exceet.de>
+References: <1533214434-28761-1-git-send-email-frieder.schrempf@exceet.de>
+        <1533214434-28761-4-git-send-email-frieder.schrempf@exceet.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:aed:278a:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 06:14:30 -0700 (PDT)
-In-Reply-To: <36fcadd3-074d-7c11-6ca5-b44aecaa3639@baylibre.com>
-References: <20180801185128.23440-1-maxi.jourdan@wanadoo.fr>
- <20180801185128.23440-2-maxi.jourdan@wanadoo.fr> <36fcadd3-074d-7c11-6ca5-b44aecaa3639@baylibre.com>
-From:   Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Thu, 2 Aug 2018 15:14:30 +0200
-X-Gmail-Original-Message-ID: <CAHStOZ4DV8FbAgzMKhnbLOOPj7Gm8+5=KxMSGL6J1D00Ejk42g@mail.gmail.com>
-Message-ID: <CAHStOZ4DV8FbAgzMKhnbLOOPj7Gm8+5=KxMSGL6J1D00Ejk42g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] soc: amlogic: add meson-canvas driver
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Thu,  2 Aug 2018 14:53:54 +0200
+Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
 
-2018-08-02 10:38 GMT+02:00 Neil Armstrong <narmstrong@baylibre.com>:
-> Please switch to the spdx header format here and in the .h.
+> By calling spi_mem_get_name(), the driver of the (Q)SPI controller can
+> set a custom name for the memory device if necessary.
+> This is useful to keep mtdparts compatible when controller drivers are
+> ported from the MTD to the SPI layer.
+> 
+> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 
-> In the DRM driver these are updated in IRQ context, we should make sure we don't sleep
-> in interrupt context if IRQ occurs when the VDEC updates it's canvases.
->
-> Could you switch to spin_lock_irqsave() instead ?
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-Will do.
+> ---
+>  drivers/mtd/devices/m25p80.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+> index e84563d..aac48800 100644
+> --- a/drivers/mtd/devices/m25p80.c
+> +++ b/drivers/mtd/devices/m25p80.c
+> @@ -202,6 +202,9 @@ static int m25p_probe(struct spi_mem *spimem)
+>  	if (data && data->name)
+>  		nor->mtd.name = data->name;
+>  
+> +	if (!nor->mtd.name)
+> +		nor->mtd.name = spi_mem_get_name(spimem);
+> +
+>  	/* For some (historical?) reason many platforms provide two different
+>  	 * names in flash_platform_data: "name" and "type". Quite often name is
+>  	 * set to "m25p80" and then "type" provides a real chip name.
 
-> Can you add the endian defines ?
->
-> #define MESON_CANVAS_ENDIAN_SWAP16      0x1
-> #define MESON_CANVAS_ENDIAN_SWAP32      0x3
-> #define MESON_CANVAS_ENDIAN_SWAP64      0x7
-> #define MESON_CANVAS_ENDIAN_SWAP128     0xf
->
-> the SWAP64 is the one used in the VDEC and DRM Overlays.
-
-Sure. Maybe I should push the flags (0x1, 0x2, 0x4, 0x8) rather than
-the combinations?
-Or both, since the combinations are more likely to be used in practice
-more than the single flags.
-
-> I rebased my DRM Overlay patch on top of this and :
-> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
->
-> You can keep this tag on future versions.
-
-Thanks!
