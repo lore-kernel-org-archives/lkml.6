@@ -2,75 +2,109 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB616C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E540C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A05C214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A05C214FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 2E3A9214FB
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:49:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3A9214FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731609AbeHBLjI (ORCPT
+        id S1731911AbeHBLjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:39:08 -0400
-Received: from verein.lst.de ([213.95.11.211]:38865 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726702AbeHBLjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:39:08 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 8D07068D64; Thu,  2 Aug 2018 11:53:25 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 11:53:25 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
-Message-ID: <20180802095325.GC14203@lst.de>
-References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-8-hch@lst.de> <1b3f6066-0c7c-a5f5-75ad-559fe81091ee@wdc.com> <dc69d688-f765-74cc-3234-563fecff6002@wdc.com> <20180731165712.GA2521@lst.de> <dcb17e67-9f83-0ff5-a2c6-a6dd1b4d9c0d@wdc.com> <20180801121656.GA25806@lst.de> <1b380e3c-e137-ebe9-4528-852062d2192e@wdc.com>
+        Thu, 2 Aug 2018 07:39:24 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36240 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbeHBLjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 07:39:24 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1flAE3-0002t1-EJ; Thu, 02 Aug 2018 11:48:55 +0200
+Date:   Thu, 2 Aug 2018 11:48:55 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@lst.de>
+cc:     palmer@sifive.com, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, anup@brainfault.org,
+        atish.patra@wdc.com, devicetree@vger.kernel.org,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, shorne@gmail.com
+Subject: Re: [PATCH 5/9] RISC-V: implement low-level interrupt handling
+In-Reply-To: <20180726143723.16585-6-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1808021147540.2037@nanos.tec.linutronix.de>
+References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-6-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b380e3c-e137-ebe9-4528-852062d2192e@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 06:09:42PM -0700, Atish Patra wrote:
-> On 8/1/18 5:12 AM, Christoph Hellwig wrote:
->> On Tue, Jul 31, 2018 at 05:38:01PM -0700, Atish Patra wrote:
->>> crash details are at
->>> https://paste.debian.net/1036078/
->>
->> Is this running without kallsyms?  It seems to lack useful symbols
->> and a backtrace unfortunately.
->>
-> Yes. I checked the config. All KALLSYMS options and STACKTRACE are enabled
->
-> CONFIG_KALLSYMS=y
-> CONFIG_KALLSYMS_ALL=y
-> CONFIG_KALLSYMS_BASE_RELATIVE=y
->
-> CONFIG_STACKTRACE_SUPPORT=y
-> CONFIG_STACKTRACE=y
->
-> Not sure if I missed something.
+On Thu, 26 Jul 2018, Christoph Hellwig wrote:
+> Add support for a routine that dispatches exceptions with the interrupt
+> flags set to either the IPI or irqdomain code (and the clock source in the
+> future).
+> 
+> Loosely based on the irq-riscv-int.c irqchip driver from the RISC-V tree.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/riscv/kernel/entry.S |  4 +--
+>  arch/riscv/kernel/irq.c   | 52 ++++++++++++++++++++++++++++++++-------
+>  2 files changed, 45 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 9aaf6c986771..fa2c08e3c05e 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -168,8 +168,8 @@ ENTRY(handle_exception)
+>  
+>  	/* Handle interrupts */
+>  	move a0, sp /* pt_regs */
+> -	REG_L a1, handle_arch_irq
+> -	jr a1
+> +	move a1, s4 /* scause */
+> +	tail do_IRQ
 
-That should be all that is needed normally.
+What's the reason for doing the whole exception dance in ASM ?
+
+>  1:
+>  	/* Exceptions run with interrupts enabled */
+>  	csrs sstatus, SR_SIE
+
+> +asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs, unsigned long cause)
+> +{
+> +	struct pt_regs *old_regs = set_irq_regs(regs);
+> +
+> +	irq_enter();
+> +	switch (cause & ~INTERRUPT_CAUSE_FLAG) {
+> +#ifdef CONFIG_SMP
+> +	case INTERRUPT_CAUSE_SOFTWARE:
+> +		/*
+> +		 * We only use software interrupts to pass IPIs, so if a non-SMP
+> +		 * system gets one, then we don't know what to do.
+> +		 */
+> +		riscv_software_interrupt();
+> +		break;
+> +#endif
+> +	case INTERRUPT_CAUSE_EXTERNAL:
+> +		handle_arch_irq(regs);
+> +		break;
+> +	default:
+> +		panic("unexpected interrupt cause");
+> +	}
+> +	irq_exit();
+
+Looks about right.
+
+Thanks,
+
+	tglx
