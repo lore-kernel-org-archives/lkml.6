@@ -2,98 +2,75 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7084C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364B4C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741BA208A3
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:47:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741BA208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id C6BCA208A4
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6BCA208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bell.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbeHBCfp (ORCPT
+        id S1731689AbeHBCiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 22:35:45 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.252]:37253 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729751AbeHBCfn (ORCPT
+        Wed, 1 Aug 2018 22:38:21 -0400
+Received: from belmont80srvr.owm.bell.net ([184.150.200.80]:50517 "EHLO
+        mtlfep02.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729224AbeHBCiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 22:35:43 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id A820E7134
-        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 19:47:15 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id l1lrfII7SRPojl1lrfnV3f; Wed, 01 Aug 2018 19:47:15 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=43360 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fl1lq-001wh0-T5; Wed, 01 Aug 2018 19:47:14 -0500
-Date:   Wed, 1 Aug 2018 19:47:14 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] fs: buffer: use true and false for boolean values
-Message-ID: <20180802004714.GA25422@embeddedor.com>
+        Wed, 1 Aug 2018 22:38:21 -0400
+Received: from bell.net mtlfep02 184.150.200.30 by mtlfep02.bell.net
+          with ESMTP
+          id <20180802004951.HCPI26486.mtlfep02.bell.net@mtlspm01.bell.net>;
+          Wed, 1 Aug 2018 20:49:51 -0400
+Received: from [192.168.2.49] (really [70.53.62.189]) by mtlspm01.bell.net
+          with ESMTP
+          id <20180802004951.ELLY28394.mtlspm01.bell.net@[192.168.2.49]>;
+          Wed, 1 Aug 2018 20:49:51 -0400
+Subject: Re: [PATCH] parisc: prefer _THIS_IP_ and _RET_IP_ statement
+ expressions
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     deller@gmx.de, jejb@parisc-linux.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        pravin.shedge4linux@gmail.com,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-parisc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20180801182258.17834-1-ndesaulniers@google.com>
+ <78c667f9-5c8b-3835-83eb-4b59e27e4f7e@bell.net>
+ <CAKwvOdmdrA+UvAWyqe8sNJt5nxHXHsSwf5Yxih9HYgVL+kovxQ@mail.gmail.com>
+ <fe7b57d8-b586-a390-31d2-2274f69db3c0@bell.net>
+ <CAKwvOd=CLBFZRQ4HQb_+VCydDEvsbC2w2gD4hTwvp_jm1zqN9Q@mail.gmail.com>
+ <54b2139b-53d2-01c5-f240-93a692cdbc59@bell.net>
+ <CAKwvOdktvrZL8T_5K2VtQtgt_mscS7kzVXYVy0O7CSuGX53Y5A@mail.gmail.com>
+From:   John David Anglin <dave.anglin@bell.net>
+Message-ID: <536ef1b1-cfa2-f66d-4261-fb8405964632@bell.net>
+Date:   Wed, 1 Aug 2018 20:49:50 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.61.218
-X-Source-L: No
-X-Exim-ID: 1fl1lq-001wh0-T5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.61.218]:43360
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAKwvOdktvrZL8T_5K2VtQtgt_mscS7kzVXYVy0O7CSuGX53Y5A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Cloudmark-Analysis: v=2.2 cv=XaJm9Mx5 c=1 sm=0 tr=0 a=VCUqJnZSONuD0ISaPFNHjQ==:17 a=IkcTkHD0fZMA:10 a=dapMudl6Dx4A:10 a=FBHGMhGWAAAA:8 a=EeonsrSh77DfYk3c2y8A:9 a=QEXdDO2ut3YA:10 a=ATlVsGG5QSsA:10 a=9gvnlMMaQFpL9xblJ6ne:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return statements in functions returning bool should use true or false
-instead of an integer value.
+On 2018-08-01 6:18 PM, Nick Desaulniers wrote:
+>> What about the uses in the fs support, etc?
+> Sorry, I don't see it?
+I mean _THIS_IP_.
 
-This issue was detected with the help of Coccinelle.
+Dave
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/buffer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index ebf78ab..bef8ade 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1415,10 +1415,10 @@ static bool has_bh_in_lru(int cpu, void *dummy)
- 	
- 	for (i = 0; i < BH_LRU_SIZE; i++) {
- 		if (b->bhs[i])
--			return 1;
-+			return true;
- 	}
- 
--	return 0;
-+	return false;
- }
- 
- void invalidate_bh_lrus(void)
 -- 
-2.7.4
+John David Anglin  dave.anglin@bell.net
 
