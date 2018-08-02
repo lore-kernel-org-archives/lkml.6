@@ -3,84 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80129C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70583C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A2121509
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A2121509
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 293C421509
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:44:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 293C421509
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeHBLdM (ORCPT
+        id S1729735AbeHBLfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:33:12 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42117 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeHBLdL (ORCPT
+        Thu, 2 Aug 2018 07:35:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36222 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbeHBLfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:33:11 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1flA86-0007PB-MM; Thu, 02 Aug 2018 11:42:46 +0200
-Message-ID: <1533202966.3516.9.camel@pengutronix.de>
-Subject: Re: [PATCH v3 02/14] gpu: ipu-csi: Check for field type alternate
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Thu, 02 Aug 2018 11:42:46 +0200
-In-Reply-To: <1533150747-30677-3-git-send-email-steve_longerbeam@mentor.com>
-References: <1533150747-30677-1-git-send-email-steve_longerbeam@mentor.com>
-         <1533150747-30677-3-git-send-email-steve_longerbeam@mentor.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 2 Aug 2018 07:35:17 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1flAA6-0002oQ-Rd; Thu, 02 Aug 2018 11:44:51 +0200
+Date:   Thu, 2 Aug 2018 11:44:50 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@lst.de>
+cc:     Marc Zyngier <marc.zyngier@arm.com>, palmer@sifive.com,
+        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
+In-Reply-To: <20180802094300.GA14127@lst.de>
+Message-ID: <alpine.DEB.2.21.1808021142350.2037@nanos.tec.linutronix.de>
+References: <20180725093649.32332-1-hch@lst.de> <20180725093649.32332-4-hch@lst.de> <c3ccb953-cd75-4a37-636a-ca643602053a@arm.com> <20180725112457.GA24502@lst.de> <alpine.DEB.2.21.1808012049170.1835@nanos.tec.linutronix.de> <20180802073452.GA11693@lst.de>
+ <alpine.DEB.2.21.1808021038260.2037@nanos.tec.linutronix.de> <20180802094300.GA14127@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
-
-On Wed, 2018-08-01 at 12:12 -0700, Steve Longerbeam wrote:
-> When the CSI is receiving from a bt.656 bus, include a check for
-> field type 'alternate' when determining whether to set CSI clock
-> mode to CCIR656_INTERLACED or CCIR656_PROGRESSIVE.
+On Thu, 2 Aug 2018, Christoph Hellwig wrote:
+> On Thu, Aug 02, 2018 at 11:35:43AM +0200, Thomas Gleixner wrote:
+> > So that's the low level per cpu interrupt/exception distribution mechanism,
+> > i.e. a distinct per cpu 'vector' space with fixed functionality. It does
+> > not make sense to actually handle that as an irq chip. It has absolutely no
+> > relevance. The software interrupts are enabled when the CPU is started and
+> > the external ones as well as they are gated by the PLIC.
+> > 
+> > The only thing which might need to access the enable register is the local
+> > timer interrupt. That really does not require an extra irq chip as the
+> > enable/disable is really just at cpu up/down time and the magic happens on
+> > the local CPU so no smp functional call hackery is required.
+> > 
+> > The PLIC is the beast which wants a proper irqdomain/irqchip
+> > implementation.
 > 
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> ---
->  drivers/gpu/ipu-v3/ipu-csi.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
-> index caa05b0..5450a2d 100644
-> --- a/drivers/gpu/ipu-v3/ipu-csi.c
-> +++ b/drivers/gpu/ipu-v3/ipu-csi.c
-> @@ -339,7 +339,8 @@ static void fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
->  		break;
->  	case V4L2_MBUS_BT656:
->  		csicfg->ext_vsync = 0;
-> -		if (V4L2_FIELD_HAS_BOTH(mbus_fmt->field))
-> +		if (V4L2_FIELD_HAS_BOTH(mbus_fmt->field) ||
-> +		    mbus_fmt->field == V4L2_FIELD_ALTERNATE)
->  			csicfg->clk_mode = IPU_CSI_CLK_MODE_CCIR656_INTERLACED;
->  		else
->  			csicfg->clk_mode = IPU_CSI_CLK_MODE_CCIR656_PROGRESSIVE;
+> And that is exactly what I've done in the repost.
 
-this patch is already merged in v4.18-rc7.
+Ok.
 
-regards
-Philipp
+> I need to polish the DT binding a little more and will repost later today.
+
+Lemme go through that reposted series quickly.
+
+Thanks,
+
+	tglx
