@@ -2,300 +2,328 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB59C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FFDC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD922150C
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:48:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD922150C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B507D2154B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:49:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYBPj+MD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B507D2154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387451AbeHBOjF (ORCPT
+        id S1732392AbeHBOkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:39:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:37801 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387420AbeHBOjF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:39:05 -0400
-Received: by mail-io0-f199.google.com with SMTP id l5-v6so1497371ioh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 05:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=PqXnpheodYSkvQeAnSL/u1aGYPr5W4MMylDxRCEhHik=;
-        b=EFX4psgClnRVSVhOm53iGui8m2ynaVFR6eIEsON8/ySe+VH+UqrlDdovGiJOqcd3Uz
-         xfuJjkpoV9lQtApgQtjTbKwJNcutN0Hq5NsqpDOQVQ2KNiuvZ8n9TZKVGhX7Tj/ADeVI
-         gl3mZvGYoUNPqLo3mLooDZH5c+deXm8Wm9wdPxrW0sL4NDLXP5LLEzVRsRGRb0E0SoCJ
-         zoIFevGlOa3XLpjjIWcCrX3zlF8pUO5JCvk6f6xGlmI9jpGnNWzkiaOVW5gsxqECg47h
-         BShIZyomGh+XbP1xfzpYHYbxJRhh6n1hRNPzJbA2edVK4jbERggpcGq0+lfma30BZmef
-         BOLg==
-X-Gm-Message-State: AOUpUlG+4jGVWqQHeYRZaWga8yDpe/KrH0PWNCv3YsEHBh3Pmjxf+9u2
-        6BmP53WcDZOYLLBH6bc/5mYFv17fjsOucfd74X8TXfK/mBrm
-X-Google-Smtp-Source: AAOMgpetth3P4JWBuVkT3pSiw9XZO3CMLUBlDgjf3b0SODQDh92nbWs8FegEHTFAKlhKpuQVr/85ir5hORby0es03431k588xQ4k
+        Thu, 2 Aug 2018 10:40:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732267AbeHBOkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:40:16 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7899D21531;
+        Thu,  2 Aug 2018 12:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533214152;
+        bh=C4lgpSMMTl4O8EZfVAKzvmU8YfZ7tA1mEGSlA683HDI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dYBPj+MDzL+BSkRdknkApl59+vbnsSphZAvWkUknEIrLDAJdWJIS4+3/i9FF3YQl1
+         rQPMLm/W2e43OoKphyNKguzAgqOYksQbqDUG+0pJzjNEfF/w4K65bG/WcVcS7HiSPT
+         OPM9vJv5lXeIGlScUPKDP0E+m7d5GltCqPtSjtKU=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id E80AF140A1C; Thu,  2 Aug 2018 09:49:09 -0300 (-03)
+Date:   Thu, 2 Aug 2018 09:49:09 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Thomas Richter <tmricht@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH 1/3] perf auxtrace: Support for perf report -D for s390
+Message-ID: <20180802124909.GB7996@kernel.org>
+References: <20180802074622.13641-1-tmricht@linux.ibm.com>
+ <20180802074622.13641-2-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:2549:: with SMTP id g70-v6mr1154796jag.54.1533214082047;
- Thu, 02 Aug 2018 05:48:02 -0700 (PDT)
-Date:   Thu, 02 Aug 2018 05:48:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b9af090572733800@google.com>
-Subject: general protection fault in smc_tx_prepared_sends
-From:   syzbot <syzbot+5b2cece1a8ecb2ca77d8@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802074622.13641-2-tmricht@linux.ibm.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Em Thu, Aug 02, 2018 at 09:46:20AM +0200, Thomas Richter escreveu:
+> Add initial support for s390 auxiliary traces using the
+> CPU-Measurement Sampling Facility.
 
-syzbot found the following crash on:
+Could you please provide one or two paragraphs explaining what is this
+"CPU-Measurement Sampling Facility", in which hardware this is available
+(all s/390 hardware has it? Just the 64-bit model(s)?) and provide a
+public URL for people interested in further reading?
 
-HEAD commit:    6b4703768268 Merge branch 'fixes' of git://git.armlinux.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d53fc2400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2dc0cd7c2eefb46f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b2cece1a8ecb2ca77d8
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=119fea72400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1775828c400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5b2cece1a8ecb2ca77d8@syzkaller.appspotmail.com
-
-8021q: adding VLAN 0 to HW filter on device team0
-TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 6281 Comm: syz-executor186 Not tainted 4.18.0-rc7+ #173
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:smc_tx_prepared_sends+0x2c3/0x550 net/smc/smc_tx.h:27
-Code: 48 89 f8 48 c1 e8 03 80 3c 10 00 0f 85 11 02 00 00 48 b8 00 00 00 00  
-00 fc ff df 4d 8b 76 38 49 8d 7e 20 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
-c0 74 08 3c 03 0f 8e de 01 00 00 41 8b 46 20 49 8d
-RSP: 0018:ffff8801c8447560 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff10039088eae RCX: dffffc0000000000
-RDX: 0000000000000004 RSI: 1ffff10039088eba RDI: 0000000000000020
-RBP: ffff8801c8447738 R08: ffffed0039088ebb R09: ffffed0039088eba
-R10: ffffed0039088eba R11: ffff8801c84475d7 R12: ffff8801c8447710
-R13: ffff8801c84475d0 R14: 0000000000000000 R15: ffff8801c8447590
-FS:  00007fada0c46700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdba80dc7c CR3: 00000001ae829000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-TCP: request_sock_TCP: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-Call Trace:
-kasan: CONFIG_KASAN_INLINE enabled
-  smc_ioctl+0x36c/0xd90 net/smc/af_smc.c:1565
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-  sock_do_ioctl+0xe4/0x3e0 net/socket.c:970
-  sock_ioctl+0x30d/0x680 net/socket.c:1094
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a09
-Code: e8 4c e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fada0c45db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a09
-RDX: 0000000020000140 RSI: 000000000000894b RDI: 0000000000000004
-RBP: 00000000006dcc30 R08: 00007fada0c46700 R09: 0000000000000000
-R10: 00007fada0c46700 R11: 0000000000000246 R12: 00000000006dcc3c
-R13: 00007ffdba80e09f R14: 00007fada0c469c0 R15: 00000000006dcc30
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-general protection fault: 0000 [#2] SMP KASAN
----[ end trace 7a16431e05ebb360 ]---
-CPU: 1 PID: 6317 Comm: syz-executor186 Tainted: G      D            
-4.18.0-rc7+ #173
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:smc_tx_prepared_sends+0x2c3/0x550 net/smc/smc_tx.h:27
-RIP: 0010:smc_tx_prepared_sends+0x2c3/0x550 net/smc/smc_tx.h:27
-Code: 48 89 f8
-Code:
-48 c1 e8 03 80
-48
-3c 10 00 0f 85
-89
-11 02 00 00
-f8
-48 b8 00 00
-48
-00 00 00 fc ff
-c1
-df 4d 8b 76
-e8
-38 49 8d 7e 20
-03
-48 89 fa 48
-80
-c1 ea 03 <0f>
-3c
-b6 04 02 84
-10
-c0 74 08 3c 03
-00
-0f 8e de 01 00
-0f
-00 41 8b 46 20
-85
-49 8d
-RSP: 0018:ffff8801c4c0f560 EFLAGS: 00010202
-11
-RAX: dffffc0000000000 RBX: 1ffff10038981eae RCX: dffffc0000000000
-RDX: 0000000000000004 RSI: 1ffff10038981eba RDI: 0000000000000020
-RBP: ffff8801c4c0f738 R08: ffffed0038981ebb R09: ffffed0038981eba
-02
-R10: ffffed0038981eba R11: ffff8801c4c0f5d7 R12: ffff8801c4c0f710
-R13: ffff8801c4c0f5d0 R14: 0000000000000000 R15: ffff8801c4c0f590
-FS:  00007fada0c46700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f723479f9d4 CR3: 00000001b24d0000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-00
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-48
-b8
-00
-00
-00
-00
-00
-  smc_ioctl+0x36c/0xd90 net/smc/af_smc.c:1565
-fc
-  sock_do_ioctl+0xe4/0x3e0 net/socket.c:970
-ff
-df
-4d
-8b
-  sock_ioctl+0x30d/0x680 net/socket.c:1094
-76
-38
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
-49
-8d
-7e
-20
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-48
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-89
-fa
-48
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a09
-c1
-Code: e8 4c
-ea
-e7 ff ff 48
-03
-83 c4 18 c3 0f
-<0f>
-1f 80 00 00
-b6
-00 00 48 89
-04
-f8 48 89 f7
-02
-48 89 d6 48 89
-84
-ca 4d 89 c2
-c0
-4d 89 c8 4c 8b
-74
-4c 24 08 0f
-08
-05 <48> 3d 01
-3c
-f0 ff ff 0f
-03
-83 3b 08 fc
-0f
-ff c3 66 2e
-8e
-0f 1f 84 00 00
-de
-00 00
-RSP: 002b:00007fada0c45db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-01
-RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a09
-RDX: 0000000020000140 RSI: 000000000000894b RDI: 0000000000000004
-RBP: 00000000006dcc30 R08: 00007fada0c46700 R09: 0000000000000000
-00
-R10: 00007fada0c46700 R11: 0000000000000246 R12: 00000000006dcc3c
-R13: 00007ffdba80e09f R14: 00007fada0c469c0 R15: 00000000006dcc30
-Modules linked in:
-00
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-41
----[ end trace 7a16431e05ebb361 ]---
-8b
-RIP: 0010:smc_tx_prepared_sends+0x2c3/0x550 net/smc/smc_tx.h:27
-46 20
-Code:
-49 8d
-48
-RSP: 0018:ffff8801c8447560 EFLAGS: 00010202
-89
-RAX: dffffc0000000000 RBX: 1ffff10039088eae RCX: dffffc0000000000
-RDX: 0000000000000004 RSI: 1ffff10039088eba RDI: 0000000000000020
-f8
-RBP: ffff8801c8447738 R08: ffffed0039088ebb R09: ffffed0039088eba
-R10: ffffed0039088eba R11: ffff8801c84475d7 R12: ffff8801c8447710
-48
-R13: ffff8801c84475d0 R14: 0000000000000000 R15: ffff8801c8447590
-FS:  00007fada0c46700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-c1
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdba80dc7c CR3: 00000001ae829000 CR4: 00000000001406f0
-e8
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-03
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+- Arnaldo
+ 
+> Support and ignore PERF_REPORT_AUXTRACE_INFO records
+> in the perf data file. Later patches will show the contents
+> of the auxiliary traces.
+> 
+> Setup the auxtrace queues and data structures for s390.
+> A raw dump of the perf.data file now does not show
+> an error when an auxtrace event is encountered.
+> 
+> Output before:
+> [root@s35lp76 perf]# ./perf report -D -i perf.data.auxtrace
+> 0x128 [0x10]: failed to process type: 70
+> Error:
+> failed to process sample
+> 
+> 0x128 [0x10]: event: 70
+> .
+> . ... raw event: size 16 bytes
+> .  0000:  00 00 00 46 00 00 00 10 00 00 00 00 00 00 00 00  ...F............
+> 
+> 0x128 [0x10]: PERF_RECORD_AUXTRACE_INFO type: 0
+> [root@s35lp76 perf]#
+> 
+> Output after:
+>  # ./perf report -D -i perf.data.auxtrace |fgrep PERF_RECORD_AUXTRACE
+> 0 0 0x128 [0x10]: PERF_RECORD_AUXTRACE_INFO type: 5
+> 0 0 0x25a66 [0x30]: PERF_RECORD_AUXTRACE size: 0x40000
+> 	 offset: 0  ref: 0  idx: 4  tid: -1  cpu: 4
+> ....
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+> ---
+>  tools/perf/arch/s390/util/auxtrace.c |   1 +
+>  tools/perf/util/Build                |   1 +
+>  tools/perf/util/auxtrace.c           |   3 +
+>  tools/perf/util/auxtrace.h           |   1 +
+>  tools/perf/util/s390-cpumsf.c        | 123 +++++++++++++++++++++++++++
+>  tools/perf/util/s390-cpumsf.h        |  21 +++++
+>  6 files changed, 150 insertions(+)
+>  create mode 100644 tools/perf/util/s390-cpumsf.c
+>  create mode 100644 tools/perf/util/s390-cpumsf.h
+> 
+> diff --git a/tools/perf/arch/s390/util/auxtrace.c b/tools/perf/arch/s390/util/auxtrace.c
+> index 3afe8256eff2..44c857388897 100644
+> --- a/tools/perf/arch/s390/util/auxtrace.c
+> +++ b/tools/perf/arch/s390/util/auxtrace.c
+> @@ -30,6 +30,7 @@ cpumsf_info_fill(struct auxtrace_record *itr __maybe_unused,
+>  		 struct auxtrace_info_event *auxtrace_info __maybe_unused,
+>  		 size_t priv_size __maybe_unused)
+>  {
+> +	auxtrace_info->type = PERF_AUXTRACE_S390_CPUMSF;
+>  	return 0;
+>  }
+>  
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index b604ef334dc9..7efe15b9618d 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -87,6 +87,7 @@ libperf-$(CONFIG_AUXTRACE) += intel-pt.o
+>  libperf-$(CONFIG_AUXTRACE) += intel-bts.o
+>  libperf-$(CONFIG_AUXTRACE) += arm-spe.o
+>  libperf-$(CONFIG_AUXTRACE) += arm-spe-pkt-decoder.o
+> +libperf-$(CONFIG_AUXTRACE) += s390-cpumsf.o
+>  
+>  ifdef CONFIG_LIBOPENCSD
+>  libperf-$(CONFIG_AUXTRACE) += cs-etm.o
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index d056447520a2..ae8c37b219c9 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -56,6 +56,7 @@
+>  #include "intel-pt.h"
+>  #include "intel-bts.h"
+>  #include "arm-spe.h"
+> +#include "s390-cpumsf.h"
+>  
+>  #include "sane_ctype.h"
+>  #include "symbol/kallsyms.h"
+> @@ -920,6 +921,8 @@ int perf_event__process_auxtrace_info(struct perf_tool *tool __maybe_unused,
+>  		return arm_spe_process_auxtrace_info(event, session);
+>  	case PERF_AUXTRACE_CS_ETM:
+>  		return cs_etm__process_auxtrace_info(event, session);
+> +	case PERF_AUXTRACE_S390_CPUMSF:
+> +		return s390_cpumsf_process_auxtrace_info(event, session);
+>  	case PERF_AUXTRACE_UNKNOWN:
+>  	default:
+>  		return -EINVAL;
+> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+> index e731f55da072..71fc3bd74299 100644
+> --- a/tools/perf/util/auxtrace.h
+> +++ b/tools/perf/util/auxtrace.h
+> @@ -44,6 +44,7 @@ enum auxtrace_type {
+>  	PERF_AUXTRACE_INTEL_BTS,
+>  	PERF_AUXTRACE_CS_ETM,
+>  	PERF_AUXTRACE_ARM_SPE,
+> +	PERF_AUXTRACE_S390_CPUMSF,
+>  };
+>  
+>  enum itrace_period_type {
+> diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
+> new file mode 100644
+> index 000000000000..e9a5ea21dbbf
+> --- /dev/null
+> +++ b/tools/perf/util/s390-cpumsf.c
+> @@ -0,0 +1,123 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright IBM Corp. 2018
+> + * Auxtrace support for s390 CPU-Measurement Sampling Facility
+> + *
+> + * Author(s):  Thomas Richter <tmricht@linux.ibm.com>
+> + */
+> +
+> +#include <endian.h>
+> +#include <errno.h>
+> +#include <byteswap.h>
+> +#include <inttypes.h>
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +#include <linux/bitops.h>
+> +#include <linux/log2.h>
+> +
+> +#include "cpumap.h"
+> +#include "color.h"
+> +#include "evsel.h"
+> +#include "evlist.h"
+> +#include "machine.h"
+> +#include "session.h"
+> +#include "util.h"
+> +#include "thread.h"
+> +#include "debug.h"
+> +#include "auxtrace.h"
+> +#include "s390-cpumsf.h"
+> +
+> +struct s390_cpumsf {
+> +	struct auxtrace		auxtrace;
+> +	struct auxtrace_queues	queues;
+> +	struct auxtrace_heap	heap;
+> +	struct perf_session	*session;
+> +	struct machine		*machine;
+> +	u32			auxtrace_type;
+> +	u32			pmu_type;
+> +};
+> +
+> +static int
+> +s390_cpumsf_process_event(struct perf_session *session __maybe_unused,
+> +			  union perf_event *event __maybe_unused,
+> +			  struct perf_sample *sample __maybe_unused,
+> +			  struct perf_tool *tool __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int
+> +s390_cpumsf_process_auxtrace_event(struct perf_session *session __maybe_unused,
+> +				   union perf_event *event __maybe_unused,
+> +				   struct perf_tool *tool __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int s390_cpumsf_flush(struct perf_session *session __maybe_unused,
+> +			     struct perf_tool *tool __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void s390_cpumsf_free_events(struct perf_session *session)
+> +{
+> +	struct s390_cpumsf *sf = container_of(session->auxtrace,
+> +					      struct s390_cpumsf,
+> +					       auxtrace);
+> +	struct auxtrace_queues *queues = &sf->queues;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < queues->nr_queues; i++)
+> +		zfree(&queues->queue_array[i].priv);
+> +	auxtrace_queues__free(queues);
+> +}
+> +
+> +static void s390_cpumsf_free(struct perf_session *session)
+> +{
+> +	struct s390_cpumsf *sf = container_of(session->auxtrace,
+> +					      struct s390_cpumsf,
+> +					      auxtrace);
+> +
+> +	auxtrace_heap__free(&sf->heap);
+> +	s390_cpumsf_free_events(session);
+> +	session->auxtrace = NULL;
+> +	free(sf);
+> +}
+> +
+> +int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+> +				      struct perf_session *session)
+> +{
+> +	struct auxtrace_info_event *auxtrace_info = &event->auxtrace_info;
+> +	struct s390_cpumsf *sf;
+> +	int err;
+> +
+> +	if (auxtrace_info->header.size < sizeof(struct auxtrace_info_event))
+> +		return -EINVAL;
+> +
+> +	sf = zalloc(sizeof(struct s390_cpumsf));
+> +	if (sf == NULL)
+> +		return -ENOMEM;
+> +
+> +	err = auxtrace_queues__init(&sf->queues);
+> +	if (err)
+> +		goto err_free;
+> +
+> +	sf->session = session;
+> +	sf->machine = &session->machines.host; /* No kvm support */
+> +	sf->auxtrace_type = auxtrace_info->type;
+> +	sf->pmu_type = PERF_TYPE_RAW;
+> +
+> +	sf->auxtrace.process_event = s390_cpumsf_process_event;
+> +	sf->auxtrace.process_auxtrace_event = s390_cpumsf_process_auxtrace_event;
+> +	sf->auxtrace.flush_events = s390_cpumsf_flush;
+> +	sf->auxtrace.free_events = s390_cpumsf_free_events;
+> +	sf->auxtrace.free = s390_cpumsf_free;
+> +	session->auxtrace = &sf->auxtrace;
+> +
+> +	return 0;
+> +
+> +err_free:
+> +	free(sf);
+> +	return err;
+> +}
+> diff --git a/tools/perf/util/s390-cpumsf.h b/tools/perf/util/s390-cpumsf.h
+> new file mode 100644
+> index 000000000000..fb64d100555c
+> --- /dev/null
+> +++ b/tools/perf/util/s390-cpumsf.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright IBM Corp. 2018
+> + * Auxtrace support for s390 CPU-Measurement Sampling Facility
+> + *
+> + * Author(s):  Thomas Richter <tmricht@linux.ibm.com>
+> + */
+> +
+> +#ifndef INCLUDE__PERF_S390_CPUMSF_H
+> +#define INCLUDE__PERF_S390_CPUMSF_H
+> +
+> +union perf_event;
+> +struct perf_session;
+> +struct perf_pmu;
+> +
+> +struct auxtrace_record *
+> +s390_cpumsf_recording_init(int *err, struct perf_pmu *s390_cpumsf_pmu);
+> +
+> +int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+> +				      struct perf_session *session);
+> +#endif
+> -- 
+> 2.17.0
