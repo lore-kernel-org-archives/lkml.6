@@ -3,190 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF939C46463
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C97DC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B02B208A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B02B208A4
+	by mail.kernel.org (Postfix) with ESMTP id CC04420862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:09:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC04420862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeHBE60 (ORCPT
+        id S1726725AbeHBE6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 00:58:26 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:38590
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725926AbeHBE60 (ORCPT
+        Thu, 2 Aug 2018 00:58:25 -0400
+Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:33090
+        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725765AbeHBE6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 00:58:26 -0400
+        Thu, 2 Aug 2018 00:58:25 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with SMTP
-        id l3yUfHjc1q9i0l3yUfwUls; Wed, 01 Aug 2018 20:08:27 -0700
+        id l3yVff7QyVktnl3yVfqjC6; Wed, 01 Aug 2018 20:08:27 -0700
 x-originating-ip: 107.180.71.197
 Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fl3yU-0002oQ-Px; Wed, 01 Aug 2018 20:08:26 -0700
+        id 1fl3yV-0002oa-0k; Wed, 01 Aug 2018 20:08:27 -0700
 From:   kys@linuxonhyperv.com
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
         jasowang@redhat.com, sthemmin@microsoft.com,
         Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     Dexuan Cui <decui@microsoft.com>, stable@vger.kernel.org,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 1/3] Drivers: hv: vmbus: Reset the channel callback in vmbus_onoffer_rescind()
-Date:   Thu,  2 Aug 2018 03:08:23 +0000
-Message-Id: <20180802030825.10768-1-kys@linuxonhyperv.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 3/3] Drivers: hv: vmbus: Cleanup synic memory free path
+Date:   Thu,  2 Aug 2018 03:08:25 +0000
+Message-Id: <20180802030825.10768-3-kys@linuxonhyperv.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180802030718.10708-1-kys@linuxonhyperv.com>
+In-Reply-To: <20180802030825.10768-1-kys@linuxonhyperv.com>
 References: <20180802030718.10708-1-kys@linuxonhyperv.com>
+ <20180802030825.10768-1-kys@linuxonhyperv.com>
 Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfGj+5R+oLf1gbOIJZFqVo6xsg6hpzcDt0JrZA0mW8e9hFUk5dRuWaxwOpPtf+GVsjEcDf2OXxq0fg76qiXtijlZctLn2ogcIUaVgssfSnlMRe7uCN3sK
- jpuNgnsFe9bqAEk7yLo27EqJkU/OVNpPbnLwr7dy0SJZrqXfHGtjyJwC+nnSCF6AZ44JvEdyQt89GcMuGc1+OAtBJiSsRuatfPG7oZdlTxFCbp00Cj1F3WFP
- +/pe+GUwt+XVjWzL7Ss2NhfgHhBSTDRgz2BhmqV8xwH5AWxdI9L4ZzvOzKxlh4bk5dz7OqSycAGaN3xJ9W6CWYsqaUHBUy07Y8hRkT9DpQci2476vhpXHu4p
- kTPhU4yvtRv197Ht2U1tSAGj6gvoBPnXNn5EtqqdxuBO8a4MYL1g+vZFIMP+oZFPkf3MPCyqxactqJeMPyCDWLsxPBQzloeRm4+4JsMrTjuhx7L4h0Mrkn7M
- HTtDNKjt1+oQnE5Q6mQzvMq2ifN3BRr2qMghlRFWtKkbmqqtTJym9mw5YwT8kunzUERta9HtmxGso/qN3s3OskyC1oBShdlS3eC7BOZOzIlAhsLP1P/RTY53
- 8L4F+UwRx8GrjIgkpNyFnKyzoY11MTe5WXuaNn5+X8uRRw==
+X-CMAE-Envelope: MS4wfKalf1Z7/86rwi8RwAbtE3bypUiXrFSQlo27TIjpdmEUjcv0OZlBLEiS5CcIkeqnOmfsLFclXFUHpCi7byhf40IU7D1twRfuY6vVcdaJaX5IExDXRVpd
+ SX1p1qsU/ywnr9sOrgNZuZ4F2aJ+2jt5DUHtjc5NnW5f4idkBQ7Y+PXNJcfaGrv+d95NwJZ2FuGzmXnsjForpiT4n4MUjkuwM9zNMn8Hw56HXCntpsmKdOcT
+ O+cRv9e6/WHSLG8/y7i6MwpPxF69W/H9FfIf4H8px/VyLCqengb19M5IrbhLG7MuuEgd+PdPLdWA4KxgWk4BKhrFyLxXjrTNLJ5HzhAZ5zUvGhfbztXYgMza
+ eE/zrvEJ1f2AIysvLnxt6boTUCap0PVRLeipnX/reMoq5pcl81PbykP3ZQyEUqpMtcnLmeB1T9rCKxnOKV8oy3lutGB4/T13dRXZgdW2LXe3GBXXg2czCDa1
+ x3sdAEuuJduLWrZAa7R+NXr/G8feTtt5Es93UGkiVSu2dBIpqyaC/TA4jpwBd09trsPhrKTXNu8FAjBFNZ33VNbl7D9Tr1VZGtwCqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-Before setting channel->rescind in vmbus_rescind_cleanup(), we should make
-sure the channel callback won't run any more, otherwise a high-level
-driver like pci_hyperv, which may be infinitely waiting for the host VSP's
-response and notices the channel has been rescinded, can't safely give
-up: e.g., in hv_pci_protocol_negotiation() -> wait_for_response(), it's
-unsafe to exit from wait_for_response() and proceed with the on-stack
-variable "comp_pkt" popped. The issue was originally spotted by
-Michael Kelley <mikelley@microsoft.com>.
+clk_evt memory is not being freed when the synic is shutdown
+or when there is an allocation error.  Add the appropriate
+kfree() call, along with a comment to clarify how the memory
+gets freed after an allocation error.  Make the free path
+consistent by removing checks for NULL since kfree() and
+free_page() already do the check.
 
-In vmbus_close_internal(), the patch also minimizes the range protected by
-disabling/enabling channel->callback_event: we don't really need that for
-the whole function.
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- drivers/hv/channel.c      | 40 +++++++++++++++++++++++----------------
- drivers/hv/channel_mgmt.c |  6 ++++++
- include/linux/hyperv.h    |  2 ++
- 3 files changed, 32 insertions(+), 16 deletions(-)
+ drivers/hv/hv.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index ba0a092ae085..c3949220b770 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -558,11 +558,8 @@ static void reset_channel_cb(void *arg)
- 	channel->onchannel_callback = NULL;
- }
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index 312fe5ed7c40..748a1c4172a6 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -242,6 +242,10 @@ int hv_synic_alloc(void)
  
--static int vmbus_close_internal(struct vmbus_channel *channel)
-+void vmbus_reset_channel_cb(struct vmbus_channel *channel)
- {
--	struct vmbus_channel_close_channel *msg;
--	int ret;
--
- 	/*
- 	 * vmbus_on_event(), running in the per-channel tasklet, can race
- 	 * with vmbus_close_internal() in the case of SMP guest, e.g., when
-@@ -572,6 +569,29 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
- 	 */
- 	tasklet_disable(&channel->callback_event);
- 
-+	channel->sc_creation_callback = NULL;
-+
-+	/* Stop the callback asap */
-+	if (channel->target_cpu != get_cpu()) {
-+		put_cpu();
-+		smp_call_function_single(channel->target_cpu, reset_channel_cb,
-+					 channel, true);
-+	} else {
-+		reset_channel_cb(channel);
-+		put_cpu();
-+	}
-+
-+	/* Re-enable tasklet for use on re-open */
-+	tasklet_enable(&channel->callback_event);
-+}
-+
-+static int vmbus_close_internal(struct vmbus_channel *channel)
-+{
-+	struct vmbus_channel_close_channel *msg;
-+	int ret;
-+
-+	vmbus_reset_channel_cb(channel);
-+
- 	/*
- 	 * In case a device driver's probe() fails (e.g.,
- 	 * util_probe() -> vmbus_open() returns -ENOMEM) and the device is
-@@ -585,16 +605,6 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
- 	}
- 
- 	channel->state = CHANNEL_OPEN_STATE;
--	channel->sc_creation_callback = NULL;
--	/* Stop callback and cancel the timer asap */
--	if (channel->target_cpu != get_cpu()) {
--		put_cpu();
--		smp_call_function_single(channel->target_cpu, reset_channel_cb,
--					 channel, true);
--	} else {
--		reset_channel_cb(channel);
--		put_cpu();
--	}
- 
- 	/* Send a closing message */
- 
-@@ -639,8 +649,6 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
- 		get_order(channel->ringbuffer_pagecount * PAGE_SIZE));
- 
- out:
--	/* re-enable tasklet for use on re-open */
--	tasklet_enable(&channel->callback_event);
- 	return ret;
- }
- 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index f3b551a50653..0f0e091c117c 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -892,6 +892,12 @@ static void vmbus_onoffer_rescind(struct vmbus_channel_message_header *hdr)
- 		return;
- 	}
- 
+ 	return 0;
+ err:
 +	/*
-+	 * Before setting channel->rescind in vmbus_rescind_cleanup(), we
-+	 * should make sure the channel callback is not running any more.
++	 * Any memory allocations that succeeded will be freed when
++	 * the caller cleans up by calling hv_synic_free()
 +	 */
-+	vmbus_reset_channel_cb(channel);
-+
- 	/*
- 	 * Now wait for offer handling to complete.
- 	 */
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 2330f08062c7..efda23cf32c7 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1061,6 +1061,8 @@ extern int vmbus_establish_gpadl(struct vmbus_channel *channel,
- extern int vmbus_teardown_gpadl(struct vmbus_channel *channel,
- 				     u32 gpadl_handle);
+ 	return -ENOMEM;
+ }
  
-+void vmbus_reset_channel_cb(struct vmbus_channel *channel);
-+
- extern int vmbus_recvpacket(struct vmbus_channel *channel,
- 				  void *buffer,
- 				  u32 bufferlen,
+@@ -254,12 +258,10 @@ void hv_synic_free(void)
+ 		struct hv_per_cpu_context *hv_cpu
+ 			= per_cpu_ptr(hv_context.cpu_context, cpu);
+ 
+-		if (hv_cpu->synic_event_page)
+-			free_page((unsigned long)hv_cpu->synic_event_page);
+-		if (hv_cpu->synic_message_page)
+-			free_page((unsigned long)hv_cpu->synic_message_page);
+-		if (hv_cpu->post_msg_page)
+-			free_page((unsigned long)hv_cpu->post_msg_page);
++		kfree(hv_cpu->clk_evt);
++		free_page((unsigned long)hv_cpu->synic_event_page);
++		free_page((unsigned long)hv_cpu->synic_message_page);
++		free_page((unsigned long)hv_cpu->post_msg_page);
+ 	}
+ 
+ 	kfree(hv_context.hv_numa_map);
 -- 
 2.17.1
 
