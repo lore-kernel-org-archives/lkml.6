@@ -2,111 +2,220 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8A2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4485FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42BD12151B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42BD12151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EBD3D21527
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:42:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHNp8ihX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD3D21527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbeHBRdH (ORCPT
+        id S2387713AbeHBReQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:33:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387603AbeHBRdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:33:07 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 664EA40251CA;
-        Thu,  2 Aug 2018 15:41:23 +0000 (UTC)
-Received: from redhat.com (ovpn-117-57.ams2.redhat.com [10.36.117.57])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 485821C71B;
-        Thu,  2 Aug 2018 15:41:16 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 18:41:15 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180802182959-mutt-send-email-mst@kernel.org>
-References: <20180727095804.GA25592@arm.com>
- <20180730093414.GD26245@infradead.org>
- <20180730125100-mutt-send-email-mst@kernel.org>
- <20180730111802.GA9830@infradead.org>
- <20180730155633-mutt-send-email-mst@kernel.org>
- <20180731173052.GA17153@infradead.org>
- <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
- <20180801081637.GA14438@arm.com>
- <20180801083639.GF26378@infradead.org>
- <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+        Thu, 2 Aug 2018 13:34:16 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38113 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387649AbeHBReQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:34:16 -0400
+Received: by mail-pl0-f67.google.com with SMTP id u11-v6so1204804plq.5;
+        Thu, 02 Aug 2018 08:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=i26qRoRztjK7/bDF0wdcQSNKEOSb9rfFuQma4tN1EM8=;
+        b=CHNp8ihXZz0q5toujNHpgHBHFrdc/5D4iiuay5zNwbJhxGgta7Sdabta3WVlsHygP6
+         rTt3cq9fr7eRswBXNjojGSGM9vdCcMH7eWks8jJ2H4yjMBSO2tICNdzlJC1CdYeA953t
+         O/dcTxNJHkn3CVW8moSIi/Le3p5qUfRRmnjuR2Bh+qYqq/E22KJH+h5aRAUTvD6Wy0OL
+         zMNKuqOhFewoXhy/SL7UH139gP/uKOrynI7O0gco2hFE/q7Y/u7W2lICgiPUkczTI54K
+         vUCJStCTYQWN+2MVfg6chhREnbN3AmfnKfA+5Srs4SZraMAG6gRH5QNNj9RDgilGh9fb
+         brWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=i26qRoRztjK7/bDF0wdcQSNKEOSb9rfFuQma4tN1EM8=;
+        b=f+KCGj29V8xOW1IzdYwIqtYgnJB97nUFtTgwaM4yDzr9+ZJvhi9jn5Iwaj6doNCCr1
+         KhTI7tlTT8l/7iHZznJfIlGp22LG5eI/LZo/YKJVmrTcMny7Ewn6JQgM315RN+w2/aWW
+         hHD6zIWHffzGX0L2v8Qkkh0IxcRGLxB/SB1QRfpYgMO+/oMnAsoTCm+JEY/a29lJ96T/
+         od9aoWJjlve+IFrmqXp6Uk/Zzx5oZrbP0ktpGZxmefwM/NvdFKWaBPa/19gg66IATBd8
+         8QkqMcAZAYgEcF5ksw/GNvJ3J6IykttsCTRjmJnkxh/QdXuD/RC/ZGk9Yb1qZOwHPjE9
+         ZFSA==
+X-Gm-Message-State: AOUpUlEagde3Rz2vSSj5OUZ2uOWjLucrwofhWYnFuLev4oVx6mI0FtfD
+        3CaL9Ek9puqZNQaC/ORIhsPFlWVn
+X-Google-Smtp-Source: AAOMgpfid5sdap9FnX76Ie/MdUKzszK8zExlZxl/Q6BtpkBlpMgWg2YgWVez0xuEkSuZI/LlMXl6WQ==
+X-Received: by 2002:a17:902:342:: with SMTP id 60-v6mr2833201pld.15.1533224552399;
+        Thu, 02 Aug 2018 08:42:32 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.216.237])
+        by smtp.gmail.com with ESMTPSA id d19-v6sm5451301pfe.42.2018.08.02.08.42.29
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 02 Aug 2018 08:42:30 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 21:15:17 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, kgene@kernel.org, krzk@kernel.org,
+        ajitn.linux@gmail.com, m.szyprowski@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+Message-ID: <20180802154517.GA10593@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 15:41:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 15:41:23 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 10:24:57AM -0500, Benjamin Herrenschmidt wrote:
-> On Wed, 2018-08-01 at 01:36 -0700, Christoph Hellwig wrote:
-> > We just need to figure out how to deal with devices that deviate
-> > from the default.  One things is that VIRTIO_F_IOMMU_PLATFORM really
-> > should become VIRTIO_F_PLATFORM_DMA to cover the cases of non-iommu
-> > dma tweaks (offsets, cache flushing), which seems well in spirit of
-> > the original design. 
-> 
-> I don't completely agree:
-> 
-> 1 - VIRTIO_F_IOMMU_PLATFORM is a property of the "other side", ie qemu
-> for example. It indicates that the peer bypasses the normal platform
-> iommu. The platform code in the guest has no real way to know that this
-> is the case, this is a specific "feature" of the qemu implementation.
-> 
-> 2 - VIRTIO_F_PLATFORM_DMA (or whatever you want to call it), is a
-> property of the guest platform itself (not qemu), there's no way the
-> "peer" can advertize it via the virtio negociated flags. At least for
-> us. I don't know for sure whether that would be workable for the ARM
-> case. In our case, qemu has no idea at VM creation time that the VM
-> will turn itself into a secure VM and thus will require bounce
-> buffering for IOs (including virtio).
-> 
-> So unless we have another hook for the arch code to set
-> VIRTIO_F_PLATFORM_DMA on selected (or all) virtio devices from the
-> guest itself, I don't see that as a way to deal with it.
-> 
-> >  The other issue is VIRTIO_F_IO_BARRIER
-> > which is very vaguely defined, and which needs a better definition.
-> > And last but not least we'll need some text explaining the challenges
-> > of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
-> > is what would basically cover them, but a good description including
-> > an explanation of why these matter.
-> 
-> Ben.
-> 
+convert drm_atomic_helper_suspend/resume() to use
+drm_mode_config_helper_suspend/resume().
 
-So is it true that from qemu point of view there is nothing special
-going on?  You pass in a PA, host writes there.
+exynos_drm_fbdev_suspend/resume can be removed
+as drm_mode_config_helper_suspend/resume has
+implement the same in generic way.
 
+Remove suspend_state from exynos_drm_private
+struct as it is no more useful.
 
+Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2: Address Inki Dae's comment. Remove ret variable
+    from both suspend/resume function.
+
+v3: Tested by Marek. Updated the change log.
+
+v4: removing the return as exynos_drm_resume()
+    now returns void.
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++------------------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+ 4 files changed, 2 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index b599f74..6f76baf 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -149,37 +149,15 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+ static int exynos_drm_suspend(struct device *dev)
+ {
+ 	struct drm_device *drm_dev = dev_get_drvdata(dev);
+-	struct exynos_drm_private *private;
+-
+-	if (!drm_dev)
+-		return 0;
+-
+-	private = drm_dev->dev_private;
+-
+-	drm_kms_helper_poll_disable(drm_dev);
+-	exynos_drm_fbdev_suspend(drm_dev);
+-	private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+-	if (IS_ERR(private->suspend_state)) {
+-		exynos_drm_fbdev_resume(drm_dev);
+-		drm_kms_helper_poll_enable(drm_dev);
+-		return PTR_ERR(private->suspend_state);
+-	}
+ 
+-	return 0;
++	return  drm_mode_config_helper_suspend(drm_dev);
+ }
+ 
+ static void exynos_drm_resume(struct device *dev)
+ {
+ 	struct drm_device *drm_dev = dev_get_drvdata(dev);
+-	struct exynos_drm_private *private;
+-
+-	if (!drm_dev)
+-		return;
+ 
+-	private = drm_dev->dev_private;
+-	drm_atomic_helper_resume(drm_dev, private->suspend_state);
+-	exynos_drm_fbdev_resume(drm_dev);
+-	drm_kms_helper_poll_enable(drm_dev);
++	drm_mode_config_helper_resume(drm_dev);
+ }
+ 
+ static const struct dev_pm_ops exynos_drm_pm_ops = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index c737c4b..7349e7c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -195,7 +195,6 @@ struct drm_exynos_file_private {
+  */
+ struct exynos_drm_private {
+ 	struct drm_fb_helper *fb_helper;
+-	struct drm_atomic_state *suspend_state;
+ 
+ 	struct device *g2d_dev;
+ 	struct device *dma_dev;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 132dd52..918dd2c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+ 	private->fb_helper = NULL;
+ }
+ 
+-void exynos_drm_fbdev_suspend(struct drm_device *dev)
+-{
+-	struct exynos_drm_private *private = dev->dev_private;
+-
+-	console_lock();
+-	drm_fb_helper_set_suspend(private->fb_helper, 1);
+-	console_unlock();
+-}
+-
+-void exynos_drm_fbdev_resume(struct drm_device *dev)
+-{
+-	struct exynos_drm_private *private = dev->dev_private;
+-
+-	console_lock();
+-	drm_fb_helper_set_suspend(private->fb_helper, 0);
+-	console_unlock();
+-}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+index b338472..6840b6a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+@@ -19,8 +19,6 @@
+ 
+ int exynos_drm_fbdev_init(struct drm_device *dev);
+ void exynos_drm_fbdev_fini(struct drm_device *dev);
+-void exynos_drm_fbdev_suspend(struct drm_device *drm);
+-void exynos_drm_fbdev_resume(struct drm_device *drm);
+ 
+ #else
+ 
+@@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+ 
+ #define exynos_drm_output_poll_changed (NULL)
+ 
+-static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+-{
+-}
+-
+-static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+-{
+-}
+-
+ #endif
+ 
+ #endif
 -- 
-MST
+1.9.1
+
