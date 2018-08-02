@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842CBC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FF2C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B2420862
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D980F20862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:54:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Y1QhijyF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B2420862
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="J48J08jB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D980F20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732627AbeHBCmc (ORCPT
+        id S1732652AbeHBCmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 22:42:32 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45992 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732606AbeHBCmb (ORCPT
+        Wed, 1 Aug 2018 22:42:35 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46340 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732630AbeHBCme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 22:42:31 -0400
-Received: by mail-qt0-f194.google.com with SMTP id y5-v6so496358qti.12
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:54:01 -0700 (PDT)
+        Wed, 1 Aug 2018 22:42:34 -0400
+Received: by mail-qt0-f195.google.com with SMTP id d4-v6so490498qtn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8J6/E5DOdpzfUXnnAqdehMeunvpbQEWEvs4XzhoSLhM=;
-        b=Y1QhijyF/0FEGSt6ebXo51NoscfwxhPvmVEWW5QQtxiISUZ0Oo/P5BbdxNtiD5zjOj
-         b36E7rciHZuap/ewYq438GbxLqLGWS6GEoFHU8R6FLQsBf30U40FDSisJJ2A+9k5xgP3
-         bukJ2PFNcm8Jcfa9BpoSyJkfFTRMNpWEOsGS4=
+        bh=HOqtMPkRrllAA9/+1/Qd/9RyHYWH1PW90do0Y7O7k3s=;
+        b=J48J08jBgOnEIbwT8l0S0/82Ii1879zCV/9p5UpdQFlc43+A3FWHywZ9wQoyWKZPfA
+         RKn+abxX/Jz1nJpUcCt4ckHqBTeXKx3DOu4CoOsVKC96PZJYHG2lmaaa3aR3VEiwQVKh
+         xoa4hjSLtTrfau0si20EQZmyJF5r+HNoT9h+0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8J6/E5DOdpzfUXnnAqdehMeunvpbQEWEvs4XzhoSLhM=;
-        b=LrFCkI84KRJ59BlaPrJMVYUCjfpQC3Fz2CsX5tfhnXsxMIlKnaKebFL7kfw0iyJCJV
-         je111HRi/UAeBPiJ3Gzcd/rw0rsgFF/SS1VTxEXHDlWGYPH/799uY0LkDrKrsdqYgPTe
-         I9B2hPXM9OGJ9BtEFflZksM6y9H3INISsq/Hp1nJ9NnmZOjDeOewcSxVdJETE8d81Wv4
-         A3iGGcUk6EAMZWZ78bLoUOb9adLgHq2lxG0OI9GWDmLe/EtlSEamvAInJLsxjGXG+DBS
-         2kvKKGM/Yep2mkfSTCp6Gk0n3lKD0aQJnVFH8yphW+YbfK8s3X6f9IkCW/ICWuxEyzAq
-         zdTg==
-X-Gm-Message-State: AOUpUlF+EW58DCd0Z4er//L7YtrJLtozomG96Y359d7wYwngQSeeB3wE
-        in52gPt52CrF72QOoyR90Vh6pw==
-X-Google-Smtp-Source: AAOMgpetCaWDQ2/TePDuTSovLx1xa7fLg0A3hqouBZ5Q2w+h3/iYLsSLYwGuWXvtR2VPhe/1cunoNQ==
-X-Received: by 2002:ac8:37c2:: with SMTP id e2-v6mr593938qtc.417.1533171241252;
-        Wed, 01 Aug 2018 17:54:01 -0700 (PDT)
+        bh=HOqtMPkRrllAA9/+1/Qd/9RyHYWH1PW90do0Y7O7k3s=;
+        b=bv8udnw1YieyoQPezaxdps1WN8WcvDLG91oMWN1CfNUbWwoiDnb5OnMkGw4a2UH7jg
+         F7EvT52vHBXxQoOe5bqQTcnIemWRjsKhJ5gG2NeiQ4bddU5p20ue0Jc+vTeiliRSnShk
+         3yxtN8dlRcrinYvAAtHZ21G/Bgdpin+mPici+8lnp+lWlTUZYT1rDQLrqh+DyVZVDbp/
+         m256kESADI/VjzhcdUbl9HpElYxXqIVq6tqMpxxpiwZzPSqXSpLBDvCwFwkzXUj4MKih
+         3y6cp99nCINLY1chg6h693yfRkJAi90sbf4LAKz9YUzvuKW7XhqyMcBIMHf3CJWzautG
+         2rhA==
+X-Gm-Message-State: AOUpUlHF597DamSV7aRY0mhZDH7RDhJnHXJ7h/l46Rj/CzaqyPWL8GTL
+        giTETq0lMYoTqAXDBHTM8lg4yw==
+X-Google-Smtp-Source: AAOMgpd3V7XjdMbu7A+lB59HapT77cCdi4ISeBtIH9hK9rurnSlrysgteY308G4SOwHYL7NWB7KHPw==
+X-Received: by 2002:ac8:16ee:: with SMTP id y43-v6mr658592qtk.148.1533171244590;
+        Wed, 01 Aug 2018 17:54:04 -0700 (PDT)
 Received: from lbrmn-lnxub86.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id e81-v6sm325116qka.3.2018.08.01.17.53.58
+        by smtp.gmail.com with ESMTPSA id e81-v6sm325116qka.3.2018.08.01.17.54.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 17:54:00 -0700 (PDT)
+        Wed, 01 Aug 2018 17:54:04 -0700 (PDT)
 From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Arun Parameswaran <arun.parameswaran@broadcom.com>
-Subject: [PATCH v4 7/8] net: phy: Add support to configure clock in Broadcom iProc mdio mux
-Date:   Wed,  1 Aug 2018 17:53:52 -0700
-Message-Id: <1533171233-14557-8-git-send-email-arun.parameswaran@broadcom.com>
+Subject: [PATCH v4 8/8] net: phy: Add pm support to Broadcom iProc mdio mux driver
+Date:   Wed,  1 Aug 2018 17:53:53 -0700
+Message-Id: <1533171233-14557-9-git-send-email-arun.parameswaran@broadcom.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533171233-14557-1-git-send-email-arun.parameswaran@broadcom.com>
 References: <1533171233-14557-1-git-send-email-arun.parameswaran@broadcom.com>
@@ -78,130 +78,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to configure the internal rate adjust register based on the
-core clock supplied through device tree in the Broadcom iProc mdio mux.
-
-The operating frequency of the mdio mux block is 11MHz. This is derrived
-by dividing the clock to the mdio mux with the rate adjust register.
-
-In some SoC's the default values of the rate adjust register do not yield
-11MHz. These SoC's are required to specify the clock via the device tree
-for proper operation.
+Add support for suspend and resume to the Broadcom iProc mdio
+mux driver.
 
 Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/phy/mdio-mux-bcm-iproc.c | 41 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+ drivers/net/phy/mdio-mux-bcm-iproc.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
-index 3ba9616..c608e3c4 100644
+index c608e3c4..518f4c7 100644
 --- a/drivers/net/phy/mdio-mux-bcm-iproc.c
 +++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
-@@ -13,7 +13,7 @@
-  * You should have received a copy of the GNU General Public License
-  * version 2 (GPLv2) along with this source code.
-  */
--
-+#include <linux/clk.h>
- #include <linux/platform_device.h>
- #include <linux/device.h>
- #include <linux/of_mdio.h>
-@@ -22,6 +22,10 @@
- #include <linux/mdio-mux.h>
- #include <linux/delay.h>
- 
-+#define MDIO_RATE_ADJ_EXT_OFFSET	0x000
-+#define MDIO_RATE_ADJ_INT_OFFSET	0x004
-+#define MDIO_RATE_ADJ_DIVIDENT_SHIFT	16
-+
- #define MDIO_SCAN_CTRL_OFFSET		0x008
- #define MDIO_SCAN_CTRL_OVRIDE_EXT_MSTR	28
- 
-@@ -49,21 +53,38 @@
- 
- #define MDIO_REG_ADDR_SPACE_SIZE	0x250
- 
-+#define MDIO_OPERATING_FREQUENCY	11000000
-+#define MDIO_RATE_ADJ_DIVIDENT		1
-+
- struct iproc_mdiomux_desc {
- 	void *mux_handle;
- 	void __iomem *base;
- 	struct device *dev;
- 	struct mii_bus *mii_bus;
-+	struct clk *core_clk;
- };
- 
- static void mdio_mux_iproc_config(struct iproc_mdiomux_desc *md)
- {
-+	u32 divisor;
- 	u32 val;
- 
- 	/* Disable external mdio master access */
- 	val = readl(md->base + MDIO_SCAN_CTRL_OFFSET);
- 	val |= BIT(MDIO_SCAN_CTRL_OVRIDE_EXT_MSTR);
- 	writel(val, md->base + MDIO_SCAN_CTRL_OFFSET);
-+
-+	if (md->core_clk) {
-+		/* use rate adjust regs to derrive the mdio's operating
-+		 * frequency from the specified core clock
-+		 */
-+		divisor = clk_get_rate(md->core_clk) / MDIO_OPERATING_FREQUENCY;
-+		divisor = divisor / (MDIO_RATE_ADJ_DIVIDENT + 1);
-+		val = divisor;
-+		val |= MDIO_RATE_ADJ_DIVIDENT << MDIO_RATE_ADJ_DIVIDENT_SHIFT;
-+		writel(val, md->base + MDIO_RATE_ADJ_EXT_OFFSET);
-+		writel(val, md->base + MDIO_RATE_ADJ_INT_OFFSET);
-+	}
- }
- 
- static int iproc_mdio_wait_for_idle(void __iomem *base, bool result)
-@@ -204,6 +225,19 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	md->core_clk = devm_clk_get(&pdev->dev, NULL);
-+	if (md->core_clk == ERR_PTR(-ENOENT) ||
-+	    md->core_clk == ERR_PTR(-EINVAL))
-+		md->core_clk = NULL;
-+	else if (IS_ERR(md->core_clk))
-+		return PTR_ERR(md->core_clk);
-+
-+	rc = clk_prepare_enable(md->core_clk);
-+	if (rc) {
-+		dev_err(&pdev->dev, "failed to enable core clk\n");
-+		return rc;
-+	}
-+
- 	bus = md->mii_bus;
- 	bus->priv = md;
- 	bus->name = "iProc MDIO mux bus";
-@@ -217,7 +251,7 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
- 	rc = mdiobus_register(bus);
- 	if (rc) {
- 		dev_err(&pdev->dev, "mdiomux registration failed\n");
--		return rc;
-+		goto out_clk;
- 	}
- 
- 	platform_set_drvdata(pdev, md);
-@@ -236,6 +270,8 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
- 
- out_register:
- 	mdiobus_unregister(bus);
-+out_clk:
-+	clk_disable_unprepare(md->core_clk);
- 	return rc;
- }
- 
-@@ -245,6 +281,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
- 
- 	mdio_mux_uninit(md->mux_handle);
- 	mdiobus_unregister(md->mii_bus);
-+	clk_disable_unprepare(md->core_clk);
- 
+@@ -286,6 +286,32 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
  	return 0;
  }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int mdio_mux_iproc_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
++
++	clk_disable_unprepare(md->core_clk);
++
++	return 0;
++}
++
++static int mdio_mux_iproc_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct iproc_mdiomux_desc *md = platform_get_drvdata(pdev);
++
++	clk_prepare_enable(md->core_clk);
++	mdio_mux_iproc_config(md);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(mdio_mux_iproc_pm_ops,
++			 mdio_mux_iproc_suspend, mdio_mux_iproc_resume);
++
+ static const struct of_device_id mdio_mux_iproc_match[] = {
+ 	{
+ 		.compatible = "brcm,mdio-mux-iproc",
+@@ -298,6 +324,7 @@ static int mdio_mux_iproc_remove(struct platform_device *pdev)
+ 	.driver = {
+ 		.name		= "mdio-mux-iproc",
+ 		.of_match_table = mdio_mux_iproc_match,
++		.pm		= &mdio_mux_iproc_pm_ops,
+ 	},
+ 	.probe		= mdio_mux_iproc_probe,
+ 	.remove		= mdio_mux_iproc_remove,
 -- 
 1.9.1
 
