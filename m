@@ -6,146 +6,124 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41261C46467
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A5DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE94A21564
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B265421564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="U+JsPDr/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE94A21564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MwJe+2C8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B265421564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbeHBUXP (ORCPT
+        id S2387874AbeHBUZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 16:23:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41301 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387763AbeHBUXO (ORCPT
+        Thu, 2 Aug 2018 16:25:25 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:35549 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387512AbeHBUZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 16:23:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so1597921pgu.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 11:30:57 -0700 (PDT)
+        Thu, 2 Aug 2018 16:25:24 -0400
+Received: by mail-it0-f44.google.com with SMTP id q20-v6so4882111ith.0;
+        Thu, 02 Aug 2018 11:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id;
-        bh=cvEQXyPfaRgWVW4mwIGGXzyBUsZJw8cVJojplx3/jcg=;
-        b=U+JsPDr/ZNqAlimhcfN4voEVJi4MXHr2WdrTaNlM9wHTsSnxW9QWYwNVK0ZM9elmt0
-         WRQqEZQiPLDimwr1pLR1/LhZsTJko2gruCatWSPvrmKg/TVyD3v8IQL+/TsvzyI8oq8t
-         g0sV6Wv3T3DS9sXTu53qfSPUeXEfbklgEXjP6af4yaRoCPlxn9LIOLZbrr7EWx1tq9dd
-         bXmmTHxHrNm14L6777gdwppL38sGLGsEHYfWpQ0KFbnY9DwduK7m+kCfQbTa/6QM1O5t
-         U/AQe/SPExjXp6MXayIGL4sMsZpYbqbDQIJePD02Tpte+q4W6toQzKcyhKHVIpB0b1w+
-         W+Jg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qpMOWRt7le5biLh1CHAb4XmKD2c1UF2xEbHu3Kryc0o=;
+        b=MwJe+2C8SptE6g48pPjg/faV3cum+Wqbggs4vox3Y7/MZcTWx/XPR69P7VzhWleL6Y
+         HsQqPsMDEZeZAiGJ2Y3iMv7Q7YApNEp9NCtoxptrotwnfCnaUtjuGLEUxo9aADcYOBDJ
+         +P/5HqGq9cj9ilXjdCsLOlFpqmXaY6ZeaLdpY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id;
-        bh=cvEQXyPfaRgWVW4mwIGGXzyBUsZJw8cVJojplx3/jcg=;
-        b=BKG9BdSwhwiG+UbVltptQDpt6cgm/66aap8rlMD/PbOV7by/MzUTPmRrBTwtR28IBM
-         G2BsXl6RUUTLT76HYT2f75b1HwtBYfrqYLMjF9Yq69c/ymyQAvnJfFEyJ4Hs4RDf42Id
-         oO8cyIm7afDcIfYmX8ZYDHORnmMViY2P29Q5ZV+uwcwgGeAWvNzyhwh9HHxyIOl9hViP
-         P3ojgAJKvRV7RGo6p/pnGR74Tf2SYGT9YG6kL8WrMClFT6jxRBKpNmpaecufan2mubqI
-         3S21GdlEp/I4Xv7pdev17Gq/jHGYkDyNTgCj4pI/IyuKrh6ynpfFvv/RADHM2LaFLh0g
-         b3hw==
-X-Gm-Message-State: AOUpUlEDOgRXoArigD3O9Y9UbjYDaKTSinwjqUwDmb3cS97xbFMzti06
-        pZL+Nao0pCY9IB/SULc1DIOdLw==
-X-Google-Smtp-Source: AAOMgpeH7fURYHQAfb39YmY3/lJHH9P50P0KR4fkgYSobfvn6vHJfHB+5JxYixTTHKh9Q4/lH7ZAmg==
-X-Received: by 2002:a63:65c2:: with SMTP id z185-v6mr568803pgb.276.1533234656470;
-        Thu, 02 Aug 2018 11:30:56 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm2570596pge.29.2018.08.02.11.30.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 11:30:55 -0700 (PDT)
-Date:   Thu, 02 Aug 2018 11:30:55 -0700 (PDT)
-X-Google-Original-Date: Thu, 02 Aug 2018 11:30:28 PDT (-0700)
-Subject:     Re: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T config option
-In-Reply-To: <20180625061950.GB23998@yury-thinkpad>
-CC:     Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
-        szabolcs.nagy@arm.com, catalin.marinas@arm.com,
-        heiko.carstens@de.ibm.com, philipp.tomsich@theobroma-systems.com,
-        joseph@codesourcery.com, linux-arch@vger.kernel.org,
-        sellcey@caviumnetworks.com, Prasun.Kapoor@caviumnetworks.com,
-        schwab@suse.de, agraf@suse.de, geert@linux-m68k.org,
-        bamv2005@gmail.com, Dave.Martin@arm.com, kilobyte@angband.pl,
-        manuel.montezelo@gmail.com, james.hogan@imgtec.com,
-        cmetcalf@mellanox.com, pinskia@gmail.com, linyongting@huawei.com,
-        klimov.linux@gmail.com, broonie@kernel.org,
-        linux-arm-kernel@lists.infradead.org, maxim.kuvyrkov@linaro.org,
-        fweimer@redhat.com, linux-api@vger.kernel.org,
-        Nathan_Lynch@mentor.com, linux-kernel@vger.kernel.org,
-        james.morse@arm.com, ramana.gcc@googlemail.com,
-        schwidefsky@de.ibm.com, davem@davemloft.net,
-        christoph.muellner@theobroma-systems.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     ynorov@caviumnetworks.com
-Message-ID: <mhng-96b7425f-3358-4b26-bd80-2a8957100f9a@palmer-si-x1c4>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qpMOWRt7le5biLh1CHAb4XmKD2c1UF2xEbHu3Kryc0o=;
+        b=sAcla8G+/zhpf9HiYodionQCnrKbR6Kr4ccoXWwxZpNGOkqbExR90mrhsP9rAJEPo0
+         Iqb5512ejjDkfeWv1r6MxnzvfgJZmPx5uGbCHmkKlGxwOyJxBsJ4YUWqufrXsLT4oHox
+         BwLTmAI6YM04BcHOIphIjUe2MTHPpfd386wiAH3Z9gvRyDlFj+hklXZQRO5LbbbOyX84
+         mdZ9Fo2L4hhkgEjUW+/sOUDqOCzjYow5/3T7OynpKb02TIw6IR2VE9YUWrApnZfqE4oL
+         N32MCGKtWTB7ZC/Jtt58eEKSPUWosrqQDIMMGZPg5wk2ZXPtxEb3X9unVLsiHsrdr5Tq
+         tIkQ==
+X-Gm-Message-State: AOUpUlHeheuSbrz+fRlwpBaTAQ0KUf8C17oImdD1Rsfp5AJ/1346JUTw
+        8ETL83s7M+/xgOMsNnTW6tm9AdF6Gv5+LA6nUSM=
+X-Google-Smtp-Source: AAOMgpdrFYuU8IOqy9ZCS3XLVL74RdY7iuTBG3Wt7UbvKlIaqkx/KElkBTZgijol7KFEiHCXuo6C5vViP+N83Tf17k0=
+X-Received: by 2002:a24:94f:: with SMTP id 76-v6mr3619805itm.113.1533234785792;
+ Thu, 02 Aug 2018 11:33:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+In-Reply-To: <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 2 Aug 2018 11:32:54 -0700
+Message-ID: <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     wgh@torlan.ru, Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 24 Jun 2018 23:19:50 PDT (-0700), ynorov@caviumnetworks.com wrote:
-> On Mon, Jun 11, 2018 at 02:27:36PM +0300, Yury Norov wrote:
->> On Mon, Jun 11, 2018 at 09:48:02AM +0200, Arnd Bergmann wrote:
->> > On Sat, Jun 9, 2018 at 9:42 AM, Yury Norov <ynorov@caviumnetworks.com> wrote:
->> > > On Fri, Jun 08, 2018 at 06:32:07PM +0100, Catalin Marinas wrote:
->> > >> On Wed, May 16, 2018 at 11:18:49AM +0300, Yury Norov wrote:
->> > >> > diff --git a/arch/Kconfig b/arch/Kconfig
->> > >> > index 76c0b54443b1..ee079244dc3c 100644
->> > >> > --- a/arch/Kconfig
->> > >> > +++ b/arch/Kconfig
->> > >> > @@ -264,6 +264,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
->> > >> >  config ARCH_WANTS_DYNAMIC_TASK_STRUCT
->> > >> >     bool
->> > >> >
->> > >> > +config ARCH_32BIT_OFF_T
->> > >> > +   bool
->> > >> > +   depends on !64BIT
->> > >> > +   help
->> > >> > +     All new 32-bit architectures should have 64-bit off_t type on
->> > >> > +     userspace side which corresponds to the loff_t kernel type. This
->> > >> > +     is the requirement for modern ABIs. Some existing architectures
->> > >> > +     already have 32-bit off_t. This option is enabled for all such
->> > >> > +     architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
->> > >> > +     h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
->> > >> > +     nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
->> > >> > +     unicore32, x86_32 and xtensa. This is the complete list. Any
->> > >> > +     new 32-bit architecture should declare 64-bit off_t type on user
->> > >> > +     side and so should not enable this option.
->> > >>
->> > >> Do you know if this is the case for riscv and nds32, merged in the
->> > >> meantime? If not, I suggest you drop this patch altogether and just
->> > >> define force_o_largefile() for arm64/ilp32 as we don't seem to stick to
->> > >> "all new 32-bit architectures should have 64-bit off_t".
->> > >
->> > > I wrote this patch at request of Arnd Bergmann. This is actually his
->> > > words that all new 32-bit architectures should have 64-bit off_t. So
->> > > I was surprized when riscv was merged with 32-bit off_t (and I didn't
->> > > follow nds32).
->> > >
->> > > If this rule is still in force, we'd better add new exceptions to this
->> > > patch. Otherwise, we can drop it.
->> > >
->> > > Arnd, could you please comment it?
->> >
->> > I completely forgot about it and had assumed that it was merged long
->> > ago, sorry about that.
->>
->> Hi Arnd,
->>
->> There are 3 patches like this in ILP32 series that change ABI for new
->> targets. I've submitted them in separated series:
->> https://lkml.org/lkml/2017/9/25/574
->>
->> They all seems to be acked by you. If you ready to upstream the
->> series, I can rebase it and add riscv32 and nds32 exceptions.
->>
->> If Palmer and riscv people will decide to follow new rules, we can
->> easily drop the exception.
+On Thu, Aug 2, 2018 at 11:18 AM Ilya Dryomov <idryomov@gmail.com> wrote:
 >
-> Ping?
+> I think it was my commit 721c7fc701c7 ("block: fail op_is_write()
+> requests to read-only partitions").  The block layer was previously
+> allowing non-blkdev_write_iter() writes to read-only disks and
+> partitions.  dm's chunk_io() boils down to submit_bio(), so in 4.16
+> it started to fail if the underlying device was marked read-only.
 
-Sorry to be a bit slow, but we just decided to skip this current glibc release 
-for rv32i and instead focus on getting the 32-bit ABI nice and clean for the 
-next release.  Thus we in RISC-V land are OK with taking these changes to the 
-32-bit kernel ABI.
+Ugh. That commit does look like the obviously right thing to do, and
+our old behavior was obviously wrong.
+
+At the same time, we really really shouldn't break user flow, even if
+that flow was due to an obvious bug.
+
+Dang.
+
+> Apparently at least some versions of lvm(8) instruct dm to mark the COW
+> device read-only even though it is always written to.  It comes up only
+> if the user asks for a read-only snapshot (the default is writable).
+>
+> One option might be to ignore the supplied DM_READONLY_FLAG for COW
+> devices.  Marking the COW device (i.e. the exception store) read-only
+> is probably never sane...
+
+That sounds like possibly the sanest fixlet for this - perhaps
+together with a warning message saying "ignoring DM_READONLY_FLAG for
+COW device" so that people see that they are doing insane things.
+
+But some of our internal DM_READONLY_FLAG use obviously comes from
+other sources that we have to honor (ie some grepping shows me code
+like
+
+                if (get_disk_ro(disk))
+                        param->flags |= DM_READONLY_FLAG;
+
+where we obviously can *not* override the get_disk_ro() state. So it
+depends a lot on how this all happened. But it looks like in this
+particular case, it all came from one inconsistent lvmcreate command.
+
+Or - if there really is only _one_ user that noticed this, and a new
+lvm2 release fixes his problem, maybe we can say "we broke it, but the
+only person who reported it can work around it".
+
+WGH (sorry, no idea what your real name is) - what's the source of the
+script that broke? Was it some system script you got from outside and
+likely to affect others too?
+
+Or was it just some local thing you wrote yourself and was
+unintentionally buggy and nobody else is likely to hit this?
+
+Because if the latter, if you can work around it and you're the only
+user this hits, we might just be able to ignore it.
+
+                   Linus
