@@ -2,120 +2,147 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34464C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF63C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA012150E
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:10:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbFaVvW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA012150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E67CD2150E
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:14:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67CD2150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732614AbeHBQCO (ORCPT
+        id S1732517AbeHBQF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:02:14 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46032 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbeHBQBo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:01:44 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f12-v6so2258012wrv.12;
-        Thu, 02 Aug 2018 07:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nFjdJlN5uSi6gOX8L6ohs2T0Z1o07cnerZr+JKHCTXw=;
-        b=cbFaVvW0btnyTVvGDGO5bp7mlpsgQvWqMQH60G9TEgiorzDNv2PGcTGSf6ERmNxnBt
-         st+PU+gao6VD2Z6f0+7zGjwvj1lCDzk23p5lpRL9mCqH4D6YQDyzqi7heq/zKzMZcMdo
-         sQe5QX9u8qSPa5QWISzno5UbqOfyMCjFz4dhX1gI0w8E8otqmS/JCaWWREGib80vKG+3
-         2VCwBqRggxFLLEEyLLfMYP5Bglnc8EhvyAC9MO4ZALFQFRtaa7cKVmlD2Usnb5ebUu8m
-         CByk/QlxOgDiYLK08m+M+lC/ykxzKrbqHqLRtvpaNHSJ7xc/2+neCN2SFtdWJ1EmPkvb
-         7/Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nFjdJlN5uSi6gOX8L6ohs2T0Z1o07cnerZr+JKHCTXw=;
-        b=cy+JvX2I4lMzTnPWH5rXy0FvWicLAPISKvtfJN5/rxYgnka6mUVX11CbSaYJ0Q6kE7
-         SmC9efXupK1T8POIGM4Tc8VVe+TM5VlK5+OolVcn2ZBh7PQzfe2cA0BKNw31s6O1fl84
-         axpNI3oApNGKAJxWkYyr3ZUFLye59ZSYBiy1EegLa4V+NvEnSapPPpdfU0h+B7ak8oyu
-         9mhwVtI2JOgXcOXaKD/OFS30acnWkMzXFEV4gRFZMmLvfpuW4hACuJXDgMXQY3+ydA7P
-         VYSaDZYe7kA3A+a/5bwIrvtwgsqsIR835+kCClu1060OGg6U32ILRTuHjeBP0ZDlZsON
-         hviQ==
-X-Gm-Message-State: AOUpUlFXgcWrcSZ+B6USiyxn3ZrSEytQNF65QIcuutFbhbi+lkxh4woP
-        /6kdsEu0cZnxQFzJNyCqBMM=
-X-Google-Smtp-Source: AAOMgpdWXb+mP99MCpxjkJ1+8hOIjMSRbQSd5gFr/6NHTlLRQMe1w+wIJ5XC2oCtNBK1O7JsSmFM8A==
-X-Received: by 2002:adf:88e3:: with SMTP id g32-v6mr2015453wrg.62.1533219020734;
-        Thu, 02 Aug 2018 07:10:20 -0700 (PDT)
-Received: from NewMoon.iit.local ([90.147.180.254])
-        by smtp.gmail.com with ESMTPSA id d78-v6sm3392310wma.37.2018.08.02.07.10.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 07:10:19 -0700 (PDT)
-From:   Andrea Merello <andrea.merello@gmail.com>
-To:     vkoul@kernel.org, dan.j.williams@intel.com,
-        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
-        dmaengine@vger.kernel.org
-Cc:     v4-000linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        radhey.shyam.pandey@xilinx.com,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v4 3/7] dt-bindings: dmaengine: xilinx_dma: add optional xlnx,sg-length-width property
-Date:   Thu,  2 Aug 2018 16:10:08 +0200
-Message-Id: <20180802141012.19970-3-andrea.merello@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180802141012.19970-1-andrea.merello@gmail.com>
-References: <20180802141012.19970-1-andrea.merello@gmail.com>
+        Thu, 2 Aug 2018 12:05:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:58748 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732255AbeHBQF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:05:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F2327A9;
+        Thu,  2 Aug 2018 07:14:33 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37B3B3F5B3;
+        Thu,  2 Aug 2018 07:14:29 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 15:14:24 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
+ indicator
+Message-ID: <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-10-quentin.perret@arm.com>
+ <20180802122629.GU2476@hirez.programming.kicks-ass.net>
+ <20180802130337.uf6tlac2hg4nkbwr@queper01-lin>
+ <20180802130801.GL2494@hirez.programming.kicks-ass.net>
+ <20180802131849.mqpt5lbtcqrxbwig@queper01-lin>
+ <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The width of the "length register" cannot be autodetected, and it is now
-specified with a DT property. Add DOC for it.
+On Thursday 02 Aug 2018 at 15:48:01 (+0200), Vincent Guittot wrote:
+> On Thu, 2 Aug 2018 at 15:19, Quentin Perret <quentin.perret@arm.com> wrote:
+> >
+> > On Thursday 02 Aug 2018 at 15:08:01 (+0200), Peter Zijlstra wrote:
+> > > On Thu, Aug 02, 2018 at 02:03:38PM +0100, Quentin Perret wrote:
+> > > > On Thursday 02 Aug 2018 at 14:26:29 (+0200), Peter Zijlstra wrote:
+> > > > > On Tue, Jul 24, 2018 at 01:25:16PM +0100, Quentin Perret wrote:
+> > > > > > @@ -5100,8 +5118,17 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> > > > > >                 update_cfs_group(se);
+> > > > > >         }
+> > > > > >
+> > > > > > -       if (!se)
+> > > > > > +       if (!se) {
+> > > > > >                 add_nr_running(rq, 1);
+> > > > > > +               /*
+> > > > > > +                * The utilization of a new task is 'wrong' so wait for it
+> > > > > > +                * to build some utilization history before trying to detect
+> > > > > > +                * the overutilized flag.
+> > > > > > +                */
+> > > > > > +               if (flags & ENQUEUE_WAKEUP)
+> > > > > > +                       update_overutilized_status(rq);
+> > > > > > +
+> > > > > > +       }
+> > > > > >
+> > > > > >         hrtick_update(rq);
+> > > > > >  }
+> > > > >
+> > > > > That is a somewhat dodgy hack. There is no guarantee what so ever that
+> > > > > when the task wakes next its history is any better. The comment doesn't
+> > > > > reflect this I feel.
+> > > >
+> > > > AFAICT the main use-case here is to avoid re-enabling the load balance
+> > > > and ruining all the task placement because of a tiny task. I don't
+> > > > really see how we can do that differently ...
+> > >
+> > > Sure I realize that.. but it doesn't completely avoid it. Suppose this
+> > > new task instantly blocks and wakes up again. Then its util signal will
+> > > be exactly what you didn't want but we'll account it and cause the above
+> > > scenario you wanted to avoid.
+> >
+> > That is true. ... I also realize now that this patch was written long
+> > before util_est, and that also has an impact here, especially in the
+> > scenario you described where the task blocks. So any wake-up after the
+> > first enqueue will risk to overutilize the system, even if the task
+> > blocked for ages.
+> >
+> > Hmm ...
+> 
+> Does a init value set to 0 for util_avg for newly created task can
+> help in EAS in this case ?
+> Current initial value is computed to prevent packing newly created
+> tasks on same CPUs because it hurts performance of some benches. In
+> fact it somehow assumes that newly created task will use significant
+> part of the remaining capacity of a CPU and want to spread tasks. In
+> EAS case, it seems that it prefer to assume that  newly created task
+> are small and we can pack them and wait a bit to make sure the new
+> task will be a big task and will overload the CPU
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
----
-Changes in v2:
-	- change property name
-	- property is now optional
-	- cc DT maintainer
-Changes in v3:
-	- reword
-	- cc DT maintainerS and ML
-Changes in v4:
-	- specify the unit, the valid range and the default value
----
- Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Good point, setting the util_avg to 0 for new tasks should help
+filtering out those tiny tasks too. And that would match with the idea
+of letting tasks build their history before looking at their util_avg ...
 
-diff --git a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-index a2b8bfaec43c..aec4a41a03ae 100644
---- a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-+++ b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
-@@ -41,6 +41,10 @@ Optional properties:
- - xlnx,include-sg: Tells configured for Scatter-mode in
- 	the hardware.
- Optional properties for AXI DMA:
-+- xlnx,sg-length-width: Should be set to the width in bits of the length
-+  	register as configured in h/w. Takes values {8...26}. If the property
-+	is missing or invalid then the default value 23 is used. This is the
-+	maximum value that is supported by all IP versions.
- - xlnx,mcdma: Tells whether configured for multi-channel mode in the hardware.
- Optional properties for VDMA:
- - xlnx,flush-fsync: Tells which channel to Flush on Frame sync.
--- 
-2.17.1
+But there is one difference w.r.t frequency selection. The current code
+won't mark the system overutilized, but will let sugov raise the
+frequency when a new task is enqueued. So in case of a fork bomb, we
+sort of fallback on the existing mainline strategy for both task
+placement (because forkees don't go in find_energy_efficient_cpu) and
+frequency selection. And I would argue this is the right thing to do
+since EAS can't really help in this case.
 
+Thoughts ?
+
+Thanks,
+Quentin
