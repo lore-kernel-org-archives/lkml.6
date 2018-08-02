@@ -7,126 +7,194 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E241EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BB9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 970CD21566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA00221564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 18:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2xUv1Rh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970CD21566
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/tDZAJ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA00221564
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbeHBULM (ORCPT
+        id S2387422AbeHBUQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 16:11:12 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52700 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbeHBULL (ORCPT
+        Thu, 2 Aug 2018 16:16:32 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37392 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729034AbeHBUQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 16:11:11 -0400
-Received: by mail-it0-f67.google.com with SMTP id d9-v6so4889039itf.2;
-        Thu, 02 Aug 2018 11:18:56 -0700 (PDT)
+        Thu, 2 Aug 2018 16:16:32 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v9-v6so2758463ljk.4;
+        Thu, 02 Aug 2018 11:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PQhzsLQokyanw3VY71M9pyBKOUWZ1iBB2Il3h/g6KKQ=;
-        b=C2xUv1Rh6qMTXdnUCCVgLhkoLlNw94sno0ahbSCa8HJkDG2pjvDIiIIROeyaqyYm0X
-         tl/LjhgWWBC1e9Ln0UbDVKEllZhdJMQ1UMMWt73TTfPEVRlp1UE6PIVfDpP0uJu8YWIl
-         uif4WILm5PVjs0gO7We53QL9SzR87Gtfyz2QxPu+iwXPwuwyvjeSv7yqer0+tihXttRm
-         YaXZrfbOrk+GW6JyfEDAE/Z2s609OESWzTY7VnPQuy+qZJmhIMY+9K9WnJ/OzWB5qbLE
-         OW3OqoGFvXyricV6pKb6kSQ6YDqkqN1x8HEqlVvkJG9soeBzMcjHVDMrKY4+RCOGYLkN
-         ijTw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SVi2zBiXpkY+KuHefWvqe7oKyknOVxBdMezVShZI1to=;
+        b=R/tDZAJ55Zbuw9JUvO/R1gkby5X/U0610ZcjW6OIUxENPWPUaQWOWixbFcSRqjib9w
+         13iO6Y48pmLoNz4pTKAiy+LaKl11swtFo+SaQest6NSP6cC+L33t7suB/na/Tlt/8tkC
+         /2TFnto22aADMP91Qm3yMLLTrOano4kIdMmYJrYe9mUw7Z/zmKlKyzKCdK6IL08AKdyn
+         iAw366mEolLWvGrFpwbFzB/U8O/w987d6xMoDHOuV1UPwCNGt36z3vW43OPu6KK2oATZ
+         XzPb4taabEbXmHP1N9/rIH56LZ6X7AlUfCpSd6l8aBirlK8ElsNDKe2DbEpk6mwwpuW8
+         LafA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PQhzsLQokyanw3VY71M9pyBKOUWZ1iBB2Il3h/g6KKQ=;
-        b=JLV5tith0vk5qry5DTzEgBso1gMkDOfkPcb+H1im0tUhgh9RJhfqn7OPACF13N37d8
-         wuzkOip127AglM+E93qHW0QX7WGZuXQnZCM/lsPZ8Z1Y++cjrn4aJ/Vw0a4eQnFtyIJQ
-         y6CgI0MgnUBP+NpyXDOMzibp11jD+YZ7OlvF+a4gpu4B6yOMjOla/XZfPnpQhx/HiN4I
-         ZHGKq8jNGCRYy/kvtmFzkM1v9X+9STeyWIGcny2r93bg7A4mkR8RIhHAiztEjL2458c/
-         xte/Qft/lW4HvjXL/3lvyIy4mwyuVqrzSIRnplzhwAsPYWpam9ugpOoSGpAfH9YRx/R1
-         50Ug==
-X-Gm-Message-State: AOUpUlGw4AuBx9x8SBQr1uWdKfrKXt17Uz9kM7wKPXbrdGN/5v2uxDmf
-        Fz6u3jeMehff/UxZyXTvEQ0rlRP2LJG1h/+6Zwk=
-X-Google-Smtp-Source: AAOMgpciJyBAFyJ37sPyZ5dV4uTD3aj/LtH20nGMDvazy0z+s52EzsyUvCiu3YbTgwiMA54gmgVVaq+yQh6QEZOX3wo=
-X-Received: by 2002:a24:68c2:: with SMTP id v185-v6mr3738815itb.128.1533233936128;
- Thu, 02 Aug 2018 11:18:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SVi2zBiXpkY+KuHefWvqe7oKyknOVxBdMezVShZI1to=;
+        b=mUfNPVArBCQAO9tAUv3eKiyzNs70TGj8/rn0FlCmQerugCP49f8pZYV6wsDcqeafed
+         q7edUJoK/R3EDlPWTLKbPh/V6juOZHz3UMYK/xewmdExUicdBnnmECE5TuS8VDizWJLg
+         0lOsRpzzjEW4oRalgsZMc/75nRzkdPhCBwFecb5ffuIAzsiwyMnTeANgfMe9YdSJEW5Q
+         dn9Y8HspvJGgjc98FB2TcxHtstRWOyPwi0UKgenlsM6SBfj3VkqKTIyT0emCvCirG1zL
+         IeJfVOSQRmP4zmodUgFEh3EawXbk2pUmlto7VWhOD5plgwOvPqBjbUnh455+XQ8U53MU
+         HphA==
+X-Gm-Message-State: AOUpUlEhWmWyXB+yU5U/YVsZSPEu5oEpII4IacBnnWD3fpzn/jtFe96e
+        VyzCsIzo5D3UwredPzcVXf8=
+X-Google-Smtp-Source: AAOMgpc5dXYnKcYkn2pFaWYxt9MMnQ3nNohtpdk8JVjnVmC3+kQFjOs3B/ZIwvd5r8SqYZBE5omLMQ==
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr2908950ljj.139.1533234253850;
+        Thu, 02 Aug 2018 11:24:13 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id 196-v6sm409193lfa.25.2018.08.02.11.24.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 11:24:12 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Jordan Crouse <jcrouse@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     devicetree@vger.kernel.org, nouveau@lists.freedesktop.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-tegra@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/6] Resolve unwanted DMA backing with IOMMU
+Date:   Thu, 02 Aug 2018 21:24:10 +0300
+Message-ID: <2887450.sPhIOOMKZK@dimapc>
+In-Reply-To: <2402373.RyBdR7VSnO@dimapc>
+References: <20180726231624.21084-1-digetx@gmail.com> <20180727170326.GA21283@jcrouse-lnx.qualcomm.com> <2402373.RyBdR7VSnO@dimapc>
 MIME-Version: 1.0
-References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
- <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
- <93bff248-6897-4867-841b-2dace11597de@torlan.ru> <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
-In-Reply-To: <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 2 Aug 2018 20:18:44 +0200
-Message-ID: <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
-Subject: Re: LVM snapshot broke between 4.14 and 4.16
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     wgh@torlan.ru, Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 6:41 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, Aug 2, 2018 at 8:16 AM WGH <wgh@torlan.ru> wrote:
-> >
-> > On 08/02/2018 04:31 PM, Ilya Dryomov wrote:
-> > >
-> > > From a quick look, --permission r sets DM_READONLY_FLAG, which makes dm
-> > > mark the disk read-only with set_disk_ro(dm_disk(md), 1) in do_resume().
-> > > A bit later it tries to write to the disk from write_header():
-> > >
-> > >   return chunk_io(ps, ps->header_area, 0, REQ_OP_WRITE, 0, 1);
-> > >
-> > > Thanks,
-> > >
-> > >                 Ilya
-> >
-> > After further investigation, this was fixed on lvm2 side (userspace) in
-> > https://sourceware.org/git/?p=lvm2.git;a=commit;h=a6fdb9d9d70f51c49ad11a87ab4243344e6701a3
-> > (snapshot: keep COW writable for read-only volumes).
-> >
-> > So I guess that's it. Time to poke my distribution package maintainers
-> > to bump the package version.
->
-> That is *not* how kernel development is supposed to work. If your
-> script used to work, it should continue to work.
->
-> Why did it use to work despite that read-only flag? And what was it
-> that actually broke this?
+On Friday, 27 July 2018 20:16:53 MSK Dmitry Osipenko wrote:
+> On Friday, 27 July 2018 20:03:26 MSK Jordan Crouse wrote:
+> > On Fri, Jul 27, 2018 at 05:02:37PM +0100, Robin Murphy wrote:
+> > > On 27/07/18 15:10, Dmitry Osipenko wrote:
+> > > >On Friday, 27 July 2018 12:03:28 MSK Will Deacon wrote:
+> > > >>On Fri, Jul 27, 2018 at 10:25:13AM +0200, Joerg Roedel wrote:
+> > > >>>On Fri, Jul 27, 2018 at 02:16:18AM +0300, Dmitry Osipenko wrote:
+> > > >>>>The proposed solution adds a new option to the base device driver
+> > > >>>>structure that allows device drivers to explicitly convey to the
+> > > >>>>drivers
+> > > >>>>core that the implicit IOMMU backing for devices must not happen.
+> > > >>>
+> > > >>>Why is IOMMU mapping a problem for the Tegra GPU driver?
+> > > >>>
+> > > >>>If we add something like this then it should not be the choice of the
+> > > >>>device driver, but of the user and/or the firmware.
+> > > >>
+> > > >>Agreed, and it would still need somebody to configure an identity
+> > > >>domain
+> > > >>so
+> > > >>that transactions aren't aborted immediately. We currently allow the
+> > > >>identity domain to be used by default via a command-line option, so I
+> > > >>guess
+> > > >>we'd need a way for firmware to request that on a per-device basis.
+> > > >
+> > > >The IOMMU mapping itself is not a problem, the problem is the
+> > > >management
+> > > >of
+> > > >the IOMMU. For Tegra we don't want anything to intrude into the IOMMU
+> > > >activities because:
+> > > >
+> > > >1) GPU HW require additional configuration for the IOMMU usage and dumb
+> > > >mapping of the allocations simply doesn't work.
+> > > 
+> > > Generally, that's already handled by the DRM drivers allocating
+> > > their own unmanaged domains. The only problem we really need to
+> > > solve in that regard is that currently the device DMA ops don't get
+> > > updated when moving away from the managed domain. That's been OK for
+> > > the VFIO case where the device is bound to a different driver which
+> > > we know won't make any explicit DMA API calls, but for the more
+> > > general case of IOMMU-aware drivers we could certainly do with a bit
+> > > of cooperation between the IOMMU API, DMA API, and arch code to
+> > > update the DMA ops dynamically to cope with intermediate subsystems
+> > > making DMA API calls on behalf of devices they don't know the
+> > > intimate details of.
+> > > 
+> > > >2) Older Tegra generations have a limited resource and capabilities in
+> > > >regards to IOMMU usage, allocating IOMMU domain per-device is just
+> > > >impossible for example.
+> > > >
+> > > >3) HW performs context switches and so particular allocations have to
+> > > >be
+> > > >assigned to a particular contexts IOMMU domain.
+> > > 
+> > > I understand Qualcomm SoCs have a similar thing too, and AFAICS that
+> > > case just doesn't fit into the current API model at all. We need the
+> > > IOMMU driver to somehow know about the specific details of which
+> > > devices have magic associations with specific contexts, and we
+> > > almost certainly need a more expressive interface than
+> > > iommu_domain_alloc() to have any hope of reliable results.
+> > 
+> > This is correct for Qualcomm GPUs - The GPU hardware context switching
+> > requires a specific context and there are some restrictions around
+> > secure contexts as well.
+> > 
+> > We don't really care if the DMA attaches to a context just as long as it
+> > doesn't attach to the one(s) we care about. Perhaps a "valid context" mask
+> > would work in from the DT or the device struct to give the subsystems a
+> > clue as to which domains they were allowed to use. I recognize that there
+> > isn't a one-size-fits-all solution to this problem so I'm open to
+> > different
+> > ideas.
+> 
+> Designating whether implicit IOMMU backing is appropriate for a device via
+> device-tree property sounds a bit awkward because that will be a kinda
+> software description (of a custom Linux driver model), while device-tree is
+> supposed to describe HW.
+> 
+> What about to grant IOMMU drivers with ability to decide whether the
+> implicit backing for a device is appropriate? Like this:
+> 
+> bool implicit_iommu_for_dma_is_allowed(struct device *dev)
+> {
+> 	const struct iommu_ops *ops = dev->bus->iommu_ops;
+> 	struct iommu_group *group;
+> 
+> 	group = iommu_group_get(dev);
+> 	if (!group)
+> 		return NULL;
+> 
+> 	iommu_group_put(group);
+> 
+> 	if (!ops->implicit_iommu_for_dma_is_allowed)
+> 		return true;
+> 
+> 	return ops->implicit_iommu_for_dma_is_allowed(dev);
+> }
+> 
+> Then arch_setup_dma_ops() could have a clue whether implicit IOMMU backing
+> for a device is appropriate.
 
-I think it was my commit 721c7fc701c7 ("block: fail op_is_write()
-requests to read-only partitions").  The block layer was previously
-allowing non-blkdev_write_iter() writes to read-only disks and
-partitions.  dm's chunk_io() boils down to submit_bio(), so in 4.16
-it started to fail if the underlying device was marked read-only.
+Guys, does it sound good to you or maybe you have something else on your mind? 
+Even if it's not an ideal solution, it fixes the immediate problem and should 
+be good enough for the starter.
 
->
-> We remain bug-for-bug compatible with older kernel versions when
-> people depend on the bugs. Unless the old bugs are security issues,
-> and even then we try to make it _look_ like we work the same way.
->
-> Or was it a user-space lvm tool that broke in the first place, and the
-> kernel release update was a red herring?
 
-Apparently at least some versions of lvm(8) instruct dm to mark the COW
-device read-only even though it is always written to.  It comes up only
-if the user asks for a read-only snapshot (the default is writable).
 
-One option might be to ignore the supplied DM_READONLY_FLAG for COW
-devices.  Marking the COW device (i.e. the exception store) read-only
-is probably never sane...
-
-Thanks,
-
-                Ilya
