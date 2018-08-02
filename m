@@ -2,80 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E913CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE253C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A127E214D5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A127E214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A0D8E214D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:47:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZXfxPdd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D8E214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731639AbeHBSgJ (ORCPT
+        id S1731722AbeHBSjE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:36:09 -0400
-Received: from mga05.intel.com ([192.55.52.43]:30410 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726938AbeHBSgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:36:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 09:44:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,436,1526367600"; 
-   d="scan'208";a="72050155"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.122]) ([10.24.14.122])
-  by orsmga003.jf.intel.com with ESMTP; 02 Aug 2018 09:44:13 -0700
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, mingo@redhat.com, fenghua.yu@intel.com,
-        tony.luck@intel.com, vikas.shivappa@linux.intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1533064851.git.reinette.chatre@intel.com>
- <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
- <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
- <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
-Date:   Thu, 2 Aug 2018 09:44:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 2 Aug 2018 14:39:04 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40950 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729899AbeHBSjE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 14:39:04 -0400
+Received: by mail-qt0-f195.google.com with SMTP id h4-v6so3023932qtj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 09:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+1bFVqIigL6grvEE8uzmbx1Pl0c61nyJ7OmWMT7LtzE=;
+        b=GZXfxPdd1AwjvbC3MUZTtcSkyfwXWYoMEOYOMcmqlKYW0MSMmRBtynoT5c79bz5bIx
+         nHxxT1aH7WFiCnlLqZeDyUsixMscBgG0LSjQDl1QJTVQtauRg0jwY5AJCPfOEhh/IJya
+         1VaIRHF8EvRihNY8fh6P0h3ePGoTjwwtZkrJLCpVVhTNLXTK2Lk0OZKgPkm6SckRMBFb
+         E1xpGxZIXgIVUweSToc8u/zP7FTwlDYTMT5eAqeynyApms2qEtPu9ukIiJFD1KmarZsF
+         SwHsggc3hl39aK29rNCJ8jU1TsV4HgX13sPt1Ej4m7bkrj4FLDLy26/dhtVUNx6ZJKJn
+         EX6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+1bFVqIigL6grvEE8uzmbx1Pl0c61nyJ7OmWMT7LtzE=;
+        b=G/8GNhzMzwsbQOGNS6SnNuGwU8fhj7rJjg2mUvHUcyVA+aQPRoaFuSQClc3yWC+KnY
+         oAvzOhYdhN9ligsu4/HSE/3GCgoBBncFL5n234q5FQ34p5G+jXe6QDBZM/HWwATrHOTD
+         ryYiQ/tTQTnxZ+BqlrrIfG+DQz5by2khbEu0lG/t+druGM9DCA+Y3cszx6i+tTW1Gx1x
+         0rPkOVr1cQBlusdK86S9fGZgJxhL7CZEeAcnc3/RvlxFDRkuNfKdu8C2DHApRyNW7F5P
+         yPuBT3ePFTPZFIeAN5lR13ZMDJQguox8htdzPKrZMMFpHKnaURdX8oDiFvoAzGbDlQkA
+         0OvA==
+X-Gm-Message-State: AOUpUlHxg29giV9RZpEznun44aQpAtAE8QCxVLghdMvcKWtU8u7f10hT
+        UCCYrRQ3m/97LAWUCLrm0Gq2GJZn9AE5+4MvDZc=
+X-Google-Smtp-Source: AAOMgpcDxhOXjHRnElEgHUTtIKL3KxZ15eQWHAZAntoBwRoiSGEza8ssxir3c7exRPLj5GE3yQtCMSvUu9Hx3zr9uzw=
+X-Received: by 2002:aed:2418:: with SMTP id r24-v6mr223848qtc.407.1533228427592;
+ Thu, 02 Aug 2018 09:47:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:aed:2a83:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 09:47:06 -0700 (PDT)
+In-Reply-To: <153320759911.18959.8842396230157677671.stgit@localhost.localdomain>
+References: <153320759911.18959.8842396230157677671.stgit@localhost.localdomain>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 2 Aug 2018 09:47:06 -0700
+Message-ID: <CAHbLzkpBnNN4RBMHXzy09x1PZw4m5D99jANmjD=0GT=1tkxniQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: Move check for SHRINKER_NUMA_AWARE to do_shrink_slab()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, mhocko@suse.com,
+        aryabinin@virtuozzo.com, ying.huang@intel.com,
+        penguin-kernel@i-love.sakura.ne.jp, willy@infradead.org,
+        Shakeel Butt <shakeelb@google.com>, jbacik@fb.com,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/2018 9:18 AM, Peter Zijlstra wrote:
-> On Thu, Aug 02, 2018 at 09:14:10AM -0700, Reinette Chatre wrote:
-> 
->> The current implementation does not coordinate with perf and this is
->> what I am trying to fix in this series.
->>
->> I do respect your NAK but it is not clear to me how to proceed after
->> obtaining it. Could you please elaborate on what you would prefer as a
->> solution to ensure accurate measurement of cache-locked data that is
->> better integrated?
-> 
-> We have an in-kernel interface to perf, use that if you want access to
-> the PMU. You will not directly stomp on PMU registers.
+On Thu, Aug 2, 2018 at 4:00 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> In case of shrink_slab_memcg() we do not zero nid, when shrinker
+> is not numa-aware. This is not a real problem, since currently
+> all memcg-aware shrinkers are numa-aware too (we have two:
 
-I do not see how I can do so without incurring the cache hits and misses
-from the data needed and instructions run by this interface. Could you
-please share how I can do so and still obtain the accurate measurement
-of cache residency of a specific memory region?
+Actually, this is not true. huge_zero_page_shrinker is NOT numa-aware.
+deferred_split_shrinker is numa-aware.
 
-Reinette
+Thanks,
+Yang
 
 
+> super_block shrinker and workingset shrinker), but something may
+> change in the future.
+>
+> (Andrew, this may be merged to mm-iterate-only-over-charged-shrinkers-during-memcg-shrink_slab)
+>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  mm/vmscan.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index ea0a46166e8e..0d980e801b8a 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -455,6 +455,9 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>                                           : SHRINK_BATCH;
+>         long scanned = 0, next_deferred;
+>
+> +       if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> +               nid = 0;
+> +
+>         freeable = shrinker->count_objects(shrinker, shrinkctl);
+>         if (freeable == 0 || freeable == SHRINK_EMPTY)
+>                 return freeable;
+> @@ -680,9 +683,6 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>                         .memcg = memcg,
+>                 };
+>
+> -               if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+> -                       sc.nid = 0;
+> -
+>                 ret = do_shrink_slab(&sc, shrinker, priority);
+>                 if (ret == SHRINK_EMPTY)
+>                         ret = 0;
+>
