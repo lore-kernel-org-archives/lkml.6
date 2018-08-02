@@ -2,138 +2,161 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809D1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77945C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C05621528
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 191DD2152B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Goc33Pjh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C05621528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="XKkpikNl";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Xe9re7iD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191DD2152B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbeHBSaH (ORCPT
+        id S1730730AbeHBScK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:30:07 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40174 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbeHBSaG (ORCPT
+        Thu, 2 Aug 2018 14:32:10 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:46179 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbeHBScK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:30:06 -0400
-Received: by mail-it0-f67.google.com with SMTP id h23-v6so4235863ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 09:38:12 -0700 (PDT)
+        Thu, 2 Aug 2018 14:32:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1533228016; x=1564764016;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=aloWdAntXtub5tcAiv7A5jZeQglzWvn9NxYo3qyYg74=;
+  b=XKkpikNl1h+JFNhYiFfbzpCz1trbbGxF42IoxUenVKeOQjPhFhQsUCd4
+   LDEEyk7kNw5oZH2B/xK/RS5rADSRe1m3tdohha2dgIQvn/8GG/tF3CfXf
+   DV19MqAB6zHuAZ61NGdwZ1P/XbYC4EfDdiRXlrRVDv8OE0s1otvZ0m+oN
+   gu4U3FMyiG0H8LuhGbbl5gdlxfMz2Wm/v7lrz7whiiahdxWF8+YOBTDMb
+   1mI9NQDAiUk/hs/Az9h44Kvx5OEaZCHRziWTaCIwYW5g3LyhMxdOO+XFX
+   GXZ2J2AZTqngXR1SFn368EvmA70BrXgWb3XEQAy/LGO7eudMVNJdhHUZ9
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.51,436,1526313600"; 
+   d="scan'208";a="86110678"
+Received: from mail-bn3nam04lp0114.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([216.32.180.114])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Aug 2018 00:40:13 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Xf4M1f+A2HgS2NvVSCB0JIhKIPkk/45mqDi7uFQ+gI=;
-        b=Goc33PjheeoUX0zWYRWFC+1wvcUXD6ZoXEKXlLzF74Gocn8iT3cJNiMLvBfErVmH+t
-         Mz6DHhirTYve5E/SGMvrbGl3giHnx+eDwBs4NPyHU+LQ+0TgXDdIJVcG5GHBRwIDgxt+
-         koMx3RSEcnsesUmDrQDD05+ZWfv4NqUfW6Ugs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Xf4M1f+A2HgS2NvVSCB0JIhKIPkk/45mqDi7uFQ+gI=;
-        b=IsCkMhF378CmWng+FvnDmkXXI4yolZsOn+Ejn1J3+7raoN/waBn+zar8IzsLX0ZSO9
-         wrnPRs67hVdWMDrQMgSeaNC5gI2la7S1fgXDMjT+aei9zg7HvJVMqQg7ARF8Ft309wEv
-         DDKv3QV0q2HJNBleXZbbkeVaA9L1w01sD2LlG3oj5e0541lH3NrcM7qKUMrx76N1SHj0
-         nTnH4QdCUmgWoIGOe4Xw8f9qeE3C61os7YTzrXfXcFNPkfPTRgSwyNh9bZ38tY04opkx
-         e6TH3wBHxQf7h8Tc3SyIEeJLpfddiVDehwJC1wnPxWu7KoZTggDDQbi2rByirqA+6pgr
-         vxjA==
-X-Gm-Message-State: AOUpUlEgcvYy4PZt6IYTjU8MgogYafCqWqga6fZb3wbO3t3ArqOdsKpW
-        jciJP7W4qrlbDjiIwDk6ZaHlNst28/58eRAQGgKSnA==
-X-Google-Smtp-Source: AAOMgpcQZ6b12lscnSm5Q19vNVFcu1nGpW8gTs+elbAdYBCbgAA4D1ncLVLT9T7XEYPlveVjzVXWUYcvtd7N/HEAecw=
-X-Received: by 2002:a24:d0d1:: with SMTP id m200-v6mr3026997itg.89.1533227892148;
- Thu, 02 Aug 2018 09:38:12 -0700 (PDT)
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N6QR+MdbHVxByyETU4gOdA+3k6rsyrgpkoZa2lQvaLQ=;
+ b=Xe9re7iDL4VsCEL9b50Q0bM+4bs/aXuxpUD9xjVz1X848ttRKHP5RWLQoJjoYVDxHuKYvmpAHER6VelWTgdJxi93doAC8A/xi7cG/Es/n1/DZckUx6NuW7jBb8fd/iVzcfGMqErrCKA0SJDkK0x4efAoHNYec517PpGNrdApvZQ=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0606.namprd04.prod.outlook.com (10.173.49.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.17; Thu, 2 Aug 2018 16:40:10 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee%8]) with mapi id 15.20.1017.010; Thu, 2 Aug 2018
+ 16:40:10 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "linux@roeck-us.net" <linux@roeck-us.net>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>
+CC:     "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tom.leiming@gmail.com" <tom.leiming@gmail.com>,
+        "hch@lst.de" <hch@lst.de>, "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "tj@kernel.org" <tj@kernel.org>
+Subject: Re: linux-next: Tree for Aug 1
+Thread-Topic: linux-next: Tree for Aug 1
+Thread-Index: AQHUKeplC62Adp/s7EWpMcTZnFWHbKSrkCyAgAAC74CAAAGHgIAAUnqAgABuzgCAABkqAIAAOGGAgAADqYA=
+Date:   Thu, 2 Aug 2018 16:40:10 +0000
+Message-ID: <9329f50c734eec5fa994ea652890f017a88625c2.camel@wdc.com>
+References: <20180801175852.36549130@canb.auug.org.au>
+         <20180801224813.GA13074@roeck-us.net>
+         <1533163965.3158.1.camel@HansenPartnership.com>
+         <20180801234727.GA3762@roeck-us.net>
+         <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
+         <1533168205.3158.12.camel@HansenPartnership.com>
+         <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
+         <CACVXFVMT7UwWHPQ6K-eNWZJOoZ77==Ki7zmX5UtDz4ZQFFB0Jw@mail.gmail.com>
+         <a10a509a-7e5c-1706-52ee-79849cad4224@roeck-us.net>
+         <20180802162654.GA8928@ming.t460p>
+In-Reply-To: <20180802162654.GA8928@ming.t460p>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0606;20:zdXdr0FwCzwzlgLWTaS/5GoFcKUyqv2dgaHQj2FPv0H8g8PGHXcPHaUdam+P/aNz2gaROLRY9HAYtegID0zyGcfpWuWUHQmEEKZTQWJiCVeOHhcFTeaKPGMug8VTr95U/nt16+W8qQru2wRXkDjsC5T3xcWqvPFUQXDEKIu0R1k=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4b493f8f-e233-4c9d-9d9a-08d5f8969d36
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0606;
+x-ms-traffictypediagnostic: MWHPR04MB0606:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB06068569D83ED1A30437DF7F982C0@MWHPR04MB0606.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0606;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0606;
+x-forefront-prvs: 07521929C1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(346002)(376002)(136003)(199004)(189003)(2900100001)(36756003)(486006)(7736002)(81166006)(110136005)(54906003)(5250100002)(4326008)(446003)(93886005)(72206003)(5660300001)(316002)(305945005)(11346002)(186003)(68736007)(14444005)(8676002)(256004)(476003)(2616005)(81156014)(6512007)(26005)(7416002)(2501003)(25786009)(66066001)(2906002)(86362001)(53936002)(6486002)(6246003)(6506007)(102836004)(76176011)(118296001)(8936002)(39060400002)(3846002)(229853002)(6116002)(478600001)(105586002)(97736004)(14454004)(106356001)(6436002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0606;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: B9fTNet/LH1Cf2AeTBr2C7O0lILj+YsFLsBfjUL9AO3lVgelsFRrDKGGU64JFpzorWXh/Dq0k6zLZo3dEbSfVLCn+jNdWAQOIKhKOuXxzzhx1gygSpi//kwVwpbtJL/1M7YOrR4RbfIs6Lu8KN20Mr/JIfAjo4205CeijGUS6RzZHN4lrcalHPJ4pxmpyGhNeAKaa211KiZoInfh5K9kL956gwojo6Sx2IZgTeSkHgm6VIeHcYkm++RdEZWRm+jexGZ0lMgLPR5eWK3ASYdzR9WsOdOAfnYAHS/bSNsiAevdLFiAgI+3ksMICXx8/VIWIms/lN2vyh5VUIT2mJGb4VyHAsqHJx1A/3bPM3yqhzs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <F31844CD68AA864392DEFCF316450956@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20180802130337.uf6tlac2hg4nkbwr@queper01-lin> <20180802130801.GL2494@hirez.programming.kicks-ass.net>
- <20180802131849.mqpt5lbtcqrxbwig@queper01-lin> <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
- <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin> <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
- <20180802153035.vjtmqwdwujvt7ojs@queper01-lin> <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
- <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin> <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
- <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
-In-Reply-To: <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 2 Aug 2018 18:38:01 +0200
-Message-ID: <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point indicator
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
-        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b493f8f-e233-4c9d-9d9a-08d5f8969d36
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2018 16:40:10.7772
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0606
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018 at 18:10, Quentin Perret <quentin.perret@arm.com> wrote:
->
-> On Thursday 02 Aug 2018 at 18:07:49 (+0200), Vincent Guittot wrote:
-> > On Thu, 2 Aug 2018 at 18:00, Quentin Perret <quentin.perret@arm.com> wrote:
-> > >
-> > > On Thursday 02 Aug 2018 at 17:55:24 (+0200), Vincent Guittot wrote:
-> > > > On Thu, 2 Aug 2018 at 17:30, Quentin Perret <quentin.perret@arm.com> wrote:
-> > > > >
-> > > > > On Thursday 02 Aug 2018 at 17:14:15 (+0200), Vincent Guittot wrote:
-> > > > > > On Thu, 2 Aug 2018 at 16:14, Quentin Perret <quentin.perret@arm.com> wrote:
-> > > > > > > Good point, setting the util_avg to 0 for new tasks should help
-> > > > > > > filtering out those tiny tasks too. And that would match with the idea
-> > > > > > > of letting tasks build their history before looking at their util_avg ...
-> > > > > > >
-> > > > > > > But there is one difference w.r.t frequency selection. The current code
-> > > > > > > won't mark the system overutilized, but will let sugov raise the
-> > > > > > > frequency when a new task is enqueued. So in case of a fork bomb, we
-> > > > > >
-> > > > > > If the initial value of util_avg is 0, we should not have any impact
-> > > > > > on the util_avg of the cfs rq on which the task is attached, isn't it
-> > > > > > ? so this should not impact both the over utilization state and the
-> > > > > > frequency selected by sugov or I'm missing something ?
-> > > > >
-> > > > > What I tried to say is that setting util_avg to 0 for new tasks will
-> > > > > prevent schedutil from raising the frequency in case of a fork bomb, and
-> > > > > I think that could be an issue. And I think this isn't an issue with the
-> > > > > patch as-is ...
-> > > >
-> > > > ok. So you also want to deal with fork bomb
-> > > > Not sure that you don't have some problem with current proposal too
-> > > > because select_task_rq_fair will always return prev_cpu because
-> > > > util_avg and util_est are 0 at that time
-> > >
-> > > But find_idlest_cpu() should select a CPU using load in case of a forkee
-> > > no ?
-> >
-> > So you have to wait for the next tick that will set the overutilized
-> > and disable the want_energy. Until this point, all new tasks will be
-> > put on the current cpu
->
-> want_energy should always be false for forkees, because we set it only
-> for SD_BALANCE_WAKE.
+On Fri, 2018-08-03 at 00:27 +-0800, Ming Lei wrote:
++AD4- This issue can be fixed by reverting d250bf4e776ff09d5 (+ACI-blk-mq: =
+only iterate over
++AD4- inflight requests in blk+AF8-mq+AF8-tagset+AF8-busy+AF8-iter+ACI-).
++AD4-=20
++AD4- This patch looks wrong, because 'blk+AF8-mq+AF8-rq+AF8-state(rq) +AD0=
+APQ- MQ+AF8-RQ+AF8-IN+AF8-FLIGHT'
++AD4- isn't completely same with 'blk+AF8-mq+AF8-request+AF8-started(req)'.
 
-Ah yes I forgot that point.
-But doesn't this break the EAS policy ? I mean each time a new task is
-created, we use the load to select the best CPU
+Please test the following change instead of reverting the commit mentioned
+above:
+
+diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+index 09b2ee6694fb..25a0583d8b4c 100644
+--- a/block/blk-mq-tag.c
++-+-+- b/block/blk-mq-tag.c
++AEAAQA- -271,7 +-271,7 +AEAAQA- static bool bt+AF8-tags+AF8-iter(struct sb=
+itmap +ACo-bitmap, unsigned int bitnr, void +ACo-data)
+ 	 +ACo- test and set the bit before assining -+AD4-rqs+AFsAXQ-.
+ 	 +ACo-/
+ 	rq +AD0- tags-+AD4-rqs+AFs-bitnr+AF0AOw-
+-	if (rq +ACYAJg- blk+AF8-mq+AF8-rq+AF8-state(rq) +AD0APQ- MQ+AF8-RQ+AF8-IN=
++AF8-FLIGHT)
++-	if (rq +ACYAJg- blk+AF8-mq+AF8-rq+AF8-state(rq) +ACEAPQ- MQ+AF8-RQ+AF8-I=
+DLE)
+ 		iter+AF8-data-+AD4-fn(rq, iter+AF8-data-+AD4-data, reserved)+ADs-
+=20
+ 	return true+ADs-
+
+Thanks,
+
+Bart.
+
