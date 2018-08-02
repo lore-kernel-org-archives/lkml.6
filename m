@@ -6,83 +6,122 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B25C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2720F2151B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1987B2151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:54:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cuy+9xn2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2720F2151B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SVDNfpb8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1987B2151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732429AbeHBPpr (ORCPT
+        id S1732458AbeHBPqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:45:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53626 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731383AbeHBPpq (ORCPT
+        Thu, 2 Aug 2018 11:46:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59926 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731383AbeHBPqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:45:46 -0400
+        Thu, 2 Aug 2018 11:46:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ct+JzfM6bhDwHg8E6m9mKmvGxLELOEgOksF82AxYn+E=; b=Cuy+9xn2E5TqvLVr2fO6NeBmB
-        i5Ac1JkNa0ssox0VWawnWx7x59LVr7JnTh/Rikd+FFgif8XQcJjt1M4mtjszYAob+UrER2Uu7OdvM
-        CMhrLrSyOYs3BXswXKR8I4U12xc1N2TF0YCE35Q10m+YyRLUQGdG5UE3tkikrPFi0CnG4lL1Hx9q4
-        s9SFmkNv8mJJ/8ezobeSHv/dyijCHAt+xISwemH71yNYDoTCKMU13+pDHCIqRgDpLAfHhBsEch3WT
-        u1w0zikrMyw9HEU7C0tdKnE3mhsrmNMhRqLaO1KAvGxqcLZniQqDu8eCbul9goWBrzf8OrZA80y2Q
-        dtICiawng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flE3Z-0003a5-59; Thu, 02 Aug 2018 13:54:21 +0000
-Date:   Thu, 2 Aug 2018 06:54:21 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alexei Colin <acolin@isi.edu>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>, alex.bou9@gmail.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jwalters@isi.edu, Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RESEND PATCH 6/6] arm64: enable RapidIO menu in Kconfig
-Message-ID: <20180802135421.GA13512@infradead.org>
-References: <20180731142954.30345-1-acolin@isi.edu>
- <20180731142954.30345-7-acolin@isi.edu>
- <20180801095404.GA17585@infradead.org>
- <fad8661c-cd8c-3a9c-ca03-5d2f63893a24@gmail.com>
- <CAMuHMdVDra1MKcuuD0SqEYXSggr0iVFcbcjL33z7JuiE1_y8yw@mail.gmail.com>
- <20180802134544.GG38497@guest228.east.isi.edu>
+         bh=Mw2MSrlFc/rB+Yd2SR0XSXmUKcuCrMcUDCiTP7SUgm4=; b=SVDNfpb8hZI875Z5Ss2B8+5zr
+        Y8Zn6s0SLs1IkEJ6uUVrqbyahLlw/4Xq/IsjPYLIQaqdh7nemxAcrnvXbC9JWB4s5LeFKiYLDv7x9
+        2iW7/w85aUHGvkxqSAs5ye/dulxyZClmWpvgAwIsDPrvzOic0W1eRAFxKTUDLvSiyB+JJgodEBwmI
+        auCcjAj4IjgJ2CniHtjuUmxp/2jYXW626SdKJ8JgiqdjM0idSq+P6rXZp1VaJmpYZB3R+cjv50hnD
+        N8u+czPyH85njrkVg9GGvOnyLkd5MqAWCmg6gkgpQMwNeplwGE+htjGqCz+YJ47FQYRAAtCXVXeg4
+        tV3k3sG2A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flE3g-000674-78; Thu, 02 Aug 2018 13:54:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3AAF120268267; Thu,  2 Aug 2018 15:54:26 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 15:54:26 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v5 12/14] sched/fair: Select an energy-efficient CPU on
+ task wake-up
+Message-ID: <20180802135426.GX2476@hirez.programming.kicks-ass.net>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-13-quentin.perret@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180802134544.GG38497@guest228.east.isi.edu>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180724122521.22109-13-quentin.perret@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 09:45:44AM -0400, Alexei Colin wrote:
-> If I move RapidIO option to drivers/Kconfig, then it won't appear under
-> the Bus Options/System Support menu, along with other choices for the
-> system bus (PCI, PCMCIA, ISA, TC, ...).
+On Tue, Jul 24, 2018 at 01:25:19PM +0100, Quentin Perret wrote:
+> @@ -6385,18 +6492,26 @@ static int
+>  select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
+>  {
+>  	struct sched_domain *tmp, *sd = NULL;
+> +	struct freq_domain *fd;
+>  	int cpu = smp_processor_id();
+>  	int new_cpu = prev_cpu;
+> -	int want_affine = 0;
+> +	int want_affine = 0, want_energy = 0;
+>  	int sync = (wake_flags & WF_SYNC) && !(current->flags & PF_EXITING);
+>  
+> +	rcu_read_lock();
+>  	if (sd_flag & SD_BALANCE_WAKE) {
+>  		record_wakee(p);
+> -		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu)
+> -			      && cpumask_test_cpu(cpu, &p->cpus_allowed);
+> +		fd = rd_freq_domain(cpu_rq(cpu)->rd);
+> +		want_energy = fd && !READ_ONCE(cpu_rq(cpu)->rd->overutilized);
+> +		want_affine = !wake_wide(p) && !wake_cap(p, cpu, prev_cpu) &&
+> +			      cpumask_test_cpu(cpu, &p->cpus_allowed);
+> +	}
+> +
+> +	if (want_energy) {
+> +		new_cpu = find_energy_efficient_cpu(p, prev_cpu, fd);
+> +		goto unlock;
+>  	}
+>  
 
-It's not like anyone cares.  And FYI, moving all those to
-drivers/Kconfig is osmething I will submit for the next merge window.
+And I suppose you rely on the compiler to optimize that for the static
+key inside rd_freq_domain()... Does it do a good job of that?
 
-> Alex explains above that RapidIO
-> may be selected as a system bus on some architectures, and users expect
-> it to be in the menu in which it has been for some time now.  What
-> problem is the current organization causing?
+That is, would not something like:
 
-A "system bus" seems like a rather outdated concept to start with.
+
+	rcu_read_lock();
+	if (sd_flag & SD_BALANCE_WAKE) {
+		record_wakee(p);
+
+		if (static_branch_unlikely(&sched_energy_present)) {
+			struct root_domain *rd = cpu_rq(cpu)->rd;
+			struct freq_domain *fd = rd_freq_domain(rd);
+
+			if (fd && !READ_ONCE(rd->overutilized)) {
+				new_cpu = find_energy_efficient_cpu(p, prev_cpu, fd);
+				goto unlock;
+			}
+		}
+
+		/* ... */
+	}
+
+
+Be far more clear ?
