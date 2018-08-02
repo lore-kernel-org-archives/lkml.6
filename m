@@ -2,75 +2,100 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC827C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2042C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0DB2150A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:04:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0DB2150A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F8F721581
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:06:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8F721581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbeHBX5G (ORCPT
+        id S1731689AbeHBX7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:57:06 -0400
-Received: from nautica.notk.org ([91.121.71.147]:35840 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727122AbeHBX5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:57:06 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id B3098C009; Fri,  3 Aug 2018 00:03:58 +0200 (CEST)
-Date:   Fri, 3 Aug 2018 00:03:43 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Greg Kurz <groug@kaod.org>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jun Piao <piaojun@huawei.com>
-Subject: Re: [PATCH v2 1/2] net/9p: embed fcall in req to round down buffer
- allocs
-Message-ID: <20180802220343.GB14773@nautica>
-References: <1532943263-24378-1-git-send-email-asmadeus@codewreck.org>
- <1533177452-2165-1-git-send-email-asmadeus@codewreck.org>
- <20180802112301.6b581f1c@bahia.lan>
+        Thu, 2 Aug 2018 19:59:08 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:10370 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeHBX7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:59:08 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w72M60Ej075462;
+        Fri, 3 Aug 2018 07:06:00 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Fri, 03 Aug 2018 07:06:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w72M5tw6075441
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 3 Aug 2018 07:05:59 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <55c9da7f-e448-964a-5b50-47f89a24235b@i-love.sakura.ne.jp>
+ <20180730093257.GG24267@dhcp22.suse.cz>
+ <9158a23e-7793-7735-e35c-acd540ca59bf@i-love.sakura.ne.jp>
+ <20180730144647.GX24267@dhcp22.suse.cz>
+ <20180730145425.GE1206094@devbig004.ftw2.facebook.com>
+ <0018ac3b-94ee-5f09-e4e0-df53d2cbc925@i-love.sakura.ne.jp>
+ <20180730154424.GG1206094@devbig004.ftw2.facebook.com>
+ <20180730185110.GB24267@dhcp22.suse.cz>
+ <20180730191005.GC24267@dhcp22.suse.cz>
+ <6f433d59-4a56-b698-e119-682bb8bf6713@i-love.sakura.ne.jp>
+ <20180731050928.GA4557@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <d11c3aa2-0f14-d882-59c5-6634dc56eed1@i-love.sakura.ne.jp>
+Date:   Fri, 3 Aug 2018 07:05:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180731050928.GA4557@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180802112301.6b581f1c@bahia.lan>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kurz wrote on Thu, Aug 02, 2018:
-> > @@ -443,9 +444,9 @@ static int rdma_request(struct p9_client *client, struct p9_req_t *req)
-> >  	 **/
-> >  	if (unlikely(atomic_read(&rdma->excess_rc) > 0)) {
-> >  		if ((atomic_sub_return(1, &rdma->excess_rc) >= 0)) {
-> > -			/* Got one ! */
-> > -			kfree(req->rc);
-> > -			req->rc = NULL;
-> > +			/* Got one! */
-> > +			kfree(req->rc.sdata);
+On 2018/07/31 14:09, Michal Hocko wrote:
+> On Tue 31-07-18 06:01:48, Tetsuo Handa wrote:
+>> On 2018/07/31 4:10, Michal Hocko wrote:
+>>> Since should_reclaim_retry() should be a natural reschedule point,
+>>> let's do the short sleep for PF_WQ_WORKER threads unconditionally in
+>>> order to guarantee that other pending work items are started. This will
+>>> workaround this problem and it is less fragile than hunting down when
+>>> the sleep is missed. E.g. we used to have a sleeping point in the oom
+>>> path but this has been removed recently because it caused other issues.
+>>> Having a single sleeping point is more robust.
+>>
+>> linux.git has not removed the sleeping point in the OOM path yet. Since removing the
+>> sleeping point in the OOM path can mitigate CVE-2016-10723, please do so immediately.
 > 
-> Shouldn't this be p9_fcall_fini(&req->rc) ?
-
-Right, I failed at bookkeeping, I changed that in the next patch but it
-should have been done now.
-Will add p9_fcall_fini to headers/export in this patch instead of the
-next
-
-> The rest looks good, so, with that fixed, you can add:
+> is this an {Acked,Reviewed,Tested}-by?
 > 
-> Reviewed-by: Greg Kurz <groug@kaod.org>
+> I will send the patch to Andrew if the patch is ok. 
+> 
+>> (And that change will conflict with Roman's cgroup aware OOM killer patchset. But it
+>> should be easy to rebase.)
+> 
+> That is still a WIP so I would lose sleep over it.
+> 
 
-Thanks!
-
--- 
-Dominique
+Now that Roman's cgroup aware OOM killer patchset will be dropped from linux-next.git ,
+linux-next.git will get the sleeping point removed. Please send this patch to linux-next.git .
