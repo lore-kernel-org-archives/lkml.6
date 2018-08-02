@@ -6,176 +6,163 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0231AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9485C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0EE3208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0EE3208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D58D208DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:28:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D58D208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeHBJOV (ORCPT
+        id S1726933AbeHBJRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:14:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49000 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726631AbeHBJOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:14:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CFE31ADBF;
-        Thu,  2 Aug 2018 07:24:28 +0000 (UTC)
-Subject: Re: [PATCH 8/9] dt-bindings: interrupt-controller: RISC-V PLIC
- documentation
-To:     Christoph Hellwig <hch@lst.de>, tglx@linutronix.de,
-        palmer@sifive.com, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     anup@brainfault.org, atish.patra@wdc.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
-References: <20180726143723.16585-1-hch@lst.de>
- <20180726143723.16585-9-hch@lst.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8cbdbd76-c152-f7d6-9f65-96b433a3f4ae@suse.com>
-Date:   Thu, 2 Aug 2018 10:24:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180726143723.16585-9-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 05:17:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:53396 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbeHBJRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 05:17:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B05F880D;
+        Thu,  2 Aug 2018 00:27:57 -0700 (PDT)
+Received: from big-swifty.misterjones.org (big-swifty.copenhagen.arm.com [10.32.148.139])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD4B83F2EA;
+        Thu,  2 Aug 2018 00:27:49 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 08:27:42 +0100
+Message-ID: <86sh3xw7m9.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     swboyd@chromium.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup capability to GPIO
+In-Reply-To: <20180802065104.GA27850@codeaurora.org>
+References: <20180801020021.9782-1-ilina@codeaurora.org>
+        <20180801020021.9782-2-ilina@codeaurora.org>
+        <86600uy4vh.wl-marc.zyngier@arm.com>
+        <20180801194538.GA6422@codeaurora.org>
+        <86wot9wb9u.wl-marc.zyngier@arm.com>
+        <20180802065104.GA27850@codeaurora.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 02 Aug 2018 07:51:04 +0100,
+Lina Iyer <ilina@codeaurora.org> wrote:
+> 
+> On Thu, Aug 02 2018 at 00:08 -0600, Marc Zyngier wrote:
+> > Hi Lina,
+> > 
+> > On Wed, 01 Aug 2018 20:45:38 +0100,
+> > Lina Iyer <ilina@codeaurora.org> wrote:
+> >> 
+> >> Thanks for the feedback, Marc.
+> >> 
+> >> On Wed, Aug 01 2018 at 00:31 -0600, Marc Zyngier wrote:
+> >> > On Wed, 01 Aug 2018 03:00:18 +0100,
+> >> > Lina Iyer <ilina@codeaurora.org> wrote:
+> >> >>
+> >> >> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+> >> >> +{
+> >> >> +	struct irq_data *irqd = data;
+> >> >> +	struct irq_desc *desc = irq_data_to_desc(irqd);
+> >> >> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> >> >> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+> >> >> +	int irq_pin = irq_find_mapping(gc->irq.domain, irqd->hwirq);
+> >> >> +
+> >> >> +	chained_irq_enter(chip, desc);
+> >> >> +	generic_handle_irq(irq_pin);
+> >> >> +	chained_irq_exit(chip, desc);
+> >> >
+> >> > That's crazy. I'm not even commenting on the irq handler vs chained
+> >> > irqchip thing, but directly calling into a completely different part
+> >> > of the irq hierarchy makes me feel nauseous,
+> >> >
+> >> I know the sentiment; I am not too happy about it myself. Explanation
+> >> below.
+> >> 
+> >> > Why isn't the interrupt still pending at the pinctrl level? Looking at
+> >> > the diagram in the cover letter, I'd have hoped that the signal routed
+> >> > to the PDC would wakeup the GIC, but that by virtue of being *also*
+> >> > wired to the TLMM, the interrupt would be handled via the normal path.
+> >> >
+> >> The short answer: TLMM is not active to sense a wakeup interrupt.
+> > 
+> > I get that bit. See below for the bit I don't get.
+> > 
+> >> When we enter system sleep mode, the TLMM and the GIC are powered off
+> >> and the PDC is the only powered-on interrupt controller. The IRQs
+> >> configured at the PDC are the only ones capable of waking the system.
+> >> Upon sensing the interrupt, the PDC intiates a system wakeup and replays
+> >> the interrupt to the GIC. The GIC relays that to AP. Unfortunately, the
+> >> interrupts from the GPIO do not trigger the TLMM summary line. Therefore
+> >> this handler needs to figure out what GPIO caused the wakeup and notify
+> >> the corresponding driver.
+> > 
+> > That's most bizarre. What causes the TLMM output line not to reflect
+> > the fact that an input is asserted?
+> There is a parallel line that is directed from the PIN directly to the
+> PDC in addition to the TLMM. This line does not go through the TLMM.
 
+I got that from the cover letter.
 
-On 26.07.2018 17:37, Christoph Hellwig wrote:
-> From: Palmer Dabbelt <palmer@dabbelt.com>
 > 
-> This patch adds documentation for the platform-level interrupt
-> controller (PLIC) found in all RISC-V systems.  This interrupt
-> controller routes interrupts from all the devices in the system to each
-> hart-local interrupt controller.
+> Active path						_____
+>                 /-------------- > [ TLMM ] --------> |     |
+>            [ Device GPIO ]	   	     summary   | GIC | ==>
+> 		\				       |     |
+> 		  ----------------> [ PDC ] ---------> |_____|
+> Wakeup path	     GPIO as IRQ		IRQ
 > 
-> Note: the DTS bindings for the PLIC aren't set in stone yet, as we might
-> want to change how we're specifying holes in the hart list.
+> > I understand that it has been
+> > turned off, but surely the PDC wakes it up at the same time as the
+> > GIC, and it should realise that there is something pending...
+> > 
+> PDC is always-on and when it detects any interrupt, will wakeup the GIC
+> and then replay the interrupt line to the GIC. This interrupt line is
+> not the summary line, but a separate line from GPIO/PIN to the PDC.
 > 
-> Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
-> ---
->  .../interrupt-controller/riscv,plic0.txt      | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
+> Since the TLMM was also in low power mode, when the GIC was powered
+> down, the TLMM never sees the IRQ and therefore will not send the
+> summary line to GIC. The wakeup path is GPIO -> PDC -> GIC.
+
+Sure. But once woken up (GIC *and* TLMM), the gpio line (which I
+assume is level) is still high at the TLMM input. So why isn't it
+registering that state once it has been woken up?
+
+I can understand that it would be missing an edge. But that doesn't
+hold for level signalling.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
-> new file mode 100644
-> index 000000000000..99cd359dbd43
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,plic0.txt
-> @@ -0,0 +1,55 @@
-> +RISC-V Platform-Level Interrupt Controller (PLIC)
-> +-------------------------------------------------
-> +
-> +The RISC-V supervisor ISA specification allows for the presence of a
-> +platform-level interrupt controller (PLIC).   The PLIC connects all external
-> +interrupts in the system to all hart contexts in the system, via the external
-> +interrupt source in each hart's hart-local interrupt controller (HLIC).  A hart
-> +context is a privilege mode in a hardware execution thread.  For example, in
-> +an 4 core system with 2-way SMT, you have 8 harts and probably at least two
-> +privilege modes per hart; machine mode and supervisor mode.
-> +
-> +Each interrupt can be enabled on per-context basis. Any context can claim
-> +a pending enabled interrupt and then release it once it has been handled.
-> +
-> +Each interrupt has a configurable priority. Higher priority interrupts are
-> +serviced firs. Each context can specify a priority threshold. Interrupts
-                ^^ missing 't'
-> +with priority below this threshold will not cause the PLIC to raise its
-> +interrupt line leading to the context.
-> +
-> +While the PLIC supports both edge-triggered and level-triggered interrupts,
-> +interrupt handlers are oblivious to this distinction and therefor it is not
-                                                                    ^^
-missing 'e'
-> +specific in the PLIC device-tree binding.
-> +
-> +While the RISC-V ISA doesn't specify a memory layout for the PLIC, the
-> +"riscv,plic0" device is a concrete implementation of the PLIC that contains a
-> +specific memory layout.  More details about the memory layout of the
-> +"riscv,plic0" device can be found as a comment in the device driver, or as part
-> +of the SiFive U5 Coreplex Series Manual (page 22 of the PDF of version 1.0)
-> +<https://www.sifive.com/documentation/coreplex/u5-coreplex-series-manual/>
-> +
-> +Required properties:
-> +- compatible : "riscv,plic0"
-> +- #address-cells : should be <0>
-> +- #interrupt-cells : should be <1>
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +- reg : Should contain 1 register range (address and length)
-> +- interrupts-extended : Specifies which contexts are connected to the PLIC,
-> +  with "-1" specifying that a context is not present.
-> +
-> +Example:
-> +
-> +	plic: interrupt-controller@c000000 {
-> +		#address-cells = <0>;
-> +		#interrupt-cells = <1>;
-> +		compatible = "riscv,plic0";
-> +		interrupt-controller;
-> +		interrupts-extended = <
-> +			&cpu0-intc 11
-> +			&cpu1-intc 11 &cpu1-intc 9
-> +			&cpu2-intc 11 &cpu2-intc 9
-> +			&cpu3-intc 11 &cpu3-intc 9
-> +			&cpu4-intc 11 &cpu4-intc 9>;
-> +		reg = <0xc000000 0x4000000>;
-> +		riscv,ndev = <10>;
-> +	};
-> 
+> >> > Why isn't that the case? And if that's because the HW is broken and
+> >> > doesn't buffer edge interrupts, why can't you use the resend mechanism
+> >> > instead?
+> >> >
+> >> The PDC hardware can replay the interrupts accurately. However, it will
+> >> replay only the pin and its not the TLMM summary IRQ. The handler here,
+> >> needs to notify the driver that the wakeup interrupt happened and needs
+> >> to take action. If I could trip the summary IRQ in this handler that
+> >> would work too. Can it be done?
+> > 
+> > So the TLMM has indeed noticed the interrupt and you can read the TLMM
+> > status registers to find out what fired?
+> I think that's where it is probably confusing. The TLMM will not see the
+> interrupt because it was in low power mode.
+
+See above. I can buy that for edge, but not level.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
