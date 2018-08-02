@@ -6,101 +6,112 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D386C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA77C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA380214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF241214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="BsoZgYsT";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DmLYi6xA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA380214FF
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rPnKGZIY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UXGNHilG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF241214FF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732007AbeHCBRg (ORCPT
+        id S1731955AbeHCBU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 21:17:36 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45878 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726929AbeHCBRg (ORCPT
+        Thu, 2 Aug 2018 21:20:29 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37202 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbeHCBU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 21:17:36 -0400
-Received: by mail-yw1-f68.google.com with SMTP id 139-v6so292434ywg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 16:24:13 -0700 (PDT)
+        Thu, 2 Aug 2018 21:20:26 -0400
+Received: by mail-yb0-f193.google.com with SMTP id r3-v6so1995667ybo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 16:27:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
-        b=BsoZgYsTUUFqqw5meFnPF+fx9O00JSTxZXDC2rqF5aJOfMSKE+/4I05h1BxcyX4ctJ
-         hVS57VqsnnveIR8hJLlxlUHNd8OLV7I+M/EZzRRi7gFei8QP73bPl6X4nbTi7Os02kvP
-         oxrhV5p7y6yr0/CyJ+F/n8MpzP7UCY25vTJU/xHMeQNSqJhId/p6hvW4nCsAnRLg92Rf
-         abqlxY2zgnquS7uBt5sORHJo84/F6Dbyf5aRWHXpTxAVFGMF+9pOdC/D7HZ2nNGxc5Ed
-         nhMzqV+Kc6nfyjJBmf/1OeLUcFwwjtQ11IjjhD8GvOHM/8W2ZQPJPlfGc5dErUVCXPuv
-         N2jg==
+        bh=dp3PYwra6B5xcGz0gyjHd/0RAfX6wl1csAz/i93M4i8=;
+        b=rPnKGZIYDP75afzf3EQ46PlUSWcal0uBeu0+MtntIHJkTT3LOJkfIdycsWEoZpUPbo
+         ecEdCjndYvUcPPdXTuXFc33kFOt1ndoo+YVCYquOgQgG68xft7uKfLothGxkEX9YtEaP
+         324Qbql4R/a2VdjB25YSj63j/BZwNcCDuVTszaiyKFnYZ8yF6BBZR6DYF1AHcBFVIINx
+         Fitv55YJb025fywn8EbdlKh4nS3WM1N7Fx/8l6pyd1pKFqbQFPm5sbfnNwNkSAedAQXE
+         QFWD0Pzn6gFViVAzoONiMe5MUSCfa788ecyfwekjmut5ceDGcSFzWRi2WHMB2F2LJX/a
+         zNLQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
-        b=DmLYi6xAUGTv3MpdNHp1cOSm1Nd8LlNXC5gY9QXxHGiWQhJvDQDCiH5hFcFIYTaDRV
-         xeurzso7GdGDAgB4tn9bwTkxZtshr/GoyeqeYwUWRBH1SryLO56NWhE0WsXPUPTLZemd
-         u7nMiOk5+gLequ2ok8PonwM7O9f3KFx9XKO78=
+        bh=dp3PYwra6B5xcGz0gyjHd/0RAfX6wl1csAz/i93M4i8=;
+        b=UXGNHilGf7OptB0QStEfhQxEoDDQhsq4mx+ij0C418PLKGW5fuNl8cZiTuCa0WBeto
+         4HsAb26lWsEpSsv0hYvGYl1vV+OBNlRMY7+k/X0ozfxkPqDcKyNM7fT9lIPvWiqp7dCm
+         FmRNUAtL9/Pmv1NkYaXDFbrcIg7XDhu3W1HBA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=Bvup6mi8wiRtBQX5KgGj1+gKm5P9xft8H4Pwsbm6lBs=;
-        b=FBiKQvoeoTUE33OtrrEYHNDV0NTtvlA6Pem+sCAOo0LYNea0VLFQx9f1eoPUi98IND
-         KBAFrJlvVk3njh0tgIiyfARk5hEP0IvxVt2BVkV4g0Q6kTroruiOGgs4pmONjxBYXukN
-         w+AMoVlfMPlra4RF9U98bLOARhn8pElPtnfx32APrpiFAUWhXtZByOLTtdNgkigI3lWW
-         zZyva46wH/7E/y9S1eXQ+hv6tME1TxHp08/W6VSfBn0B7waunrhv1H/DnoZN4UtkY314
-         baysHZYGGaOWwcajdqU2MbvivwFrDcK1OfQ4nLa+3+Bzrxwc0S72cX8DqolSQI4j60TQ
-         USLg==
-X-Gm-Message-State: AOUpUlFST1LHRtEjgb2VDNV3AZX/yhMjD09C4As7/PBhtab+P+0N1qtL
-        6ZDGUtpQdLciRufWKq5ZHbr1qjCIYKZoYTOJ+jA6bw==
-X-Google-Smtp-Source: AAOMgpcsNF4vMvElV/Y0F2+2yeNpsRd+oTigF0CPPPm6wRsPz7dRepZs6RTZufWnYo76BkvX0TzLg7R56PqalmWbtNQ=
-X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr945766ywe.116.1533252252924;
- Thu, 02 Aug 2018 16:24:12 -0700 (PDT)
+        bh=dp3PYwra6B5xcGz0gyjHd/0RAfX6wl1csAz/i93M4i8=;
+        b=CK6xtVKHYALCrM0nPHh8hB1QY9xrG947nss0YXfFk4rh2GNuDaKk80JTWKBBgs5jZm
+         UvYk0lFd5TcSdO0a/kTmKowCd2V1x4MQ9IzOdQT31HsKOIUWeaIo0+NkoEajyk+pQxYX
+         Ub0nqOxKbodIF1Yy15S8/zKYSOBJ56u5oyoCJQQTyEcW6az9O9bin6iHY16vBRSQgZ0O
+         3QfP6AoCUdW9Ex0HhD9ieGQ8jgAAlgGi3xiZKffuqHzfuWCM6nrHH3i9/4AwZWQvsVrQ
+         4XA/hyoOsvvhcOdj6P6VbDoLPRtXFI/01OVbk3N8fbSAZ7kQ7o+tDNQr9SCeey9caZHc
+         8BBw==
+X-Gm-Message-State: AOUpUlGr075gt9QC/F8SsPtdK012/oU8dMmItZ6eIMBMjlyarVhuYU+V
+        J/j5Q1HxzDFJAHKKJNAZu+blqV9HpMA3vxM5UIPBDQ==
+X-Google-Smtp-Source: AAOMgpeGV5uC1fice/SE+GbIi2ERL76OCjm56SJ4ep0u5/OVx+AbgJHbosGuhjiUn1rSYefxPnxq3FZUwlRvCqmWV0s=
+X-Received: by 2002:a25:a302:: with SMTP id d2-v6mr887127ybi.193.1533252422189;
+ Thu, 02 Aug 2018 16:27:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 16:24:12 -0700 (PDT)
-In-Reply-To: <20180629212047.GH24526@jcrouse-lnx.qualcomm.com>
-References: <20180629184818.GA37439@beast> <20180629212047.GH24526@jcrouse-lnx.qualcomm.com>
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 16:27:01 -0700 (PDT)
+In-Reply-To: <CAK8P3a1tph9VPJnYYhBvH_1wZ79wXDvfnJt_CEruj3T-TBG1jg@mail.gmail.com>
+References: <20180716040516.GA32783@beast> <CAK8P3a1tph9VPJnYYhBvH_1wZ79wXDvfnJt_CEruj3T-TBG1jg@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 2 Aug 2018 16:24:12 -0700
-X-Google-Sender-Auth: g9iaRaNirCMtVUTJA-XsEdmgtmY
-Message-ID: <CAGXu5jJ+mZyqq0WoNNuw96X9ukOuaHaEqX4PJL31PuSecZZDwQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 2 Aug 2018 16:27:01 -0700
+X-Google-Sender-Auth: r0jhsDWeqEjhhZPHidDjvkETUXk
+Message-ID: <CAGXu5jKaNk8x9v+uVQ_O7gxr50s1-Q901JbQupnkBFYiUjd7UQ@mail.gmail.com>
+Subject: Re: [PATCH] ppp: mppe: Remove VLA usage
+To:     Paul Mackerras <paulus@samba.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-ppp@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 2:20 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
-> On Fri, Jun 29, 2018 at 11:48:18AM -0700, Kees Cook wrote:
+On Mon, Jul 16, 2018 at 4:01 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Jul 16, 2018 at 6:05 AM, Kees Cook <keescook@chromium.org> wrote:
 >> In the quest to remove all stack VLA usage from the kernel[1], this
->> switches to using a kasprintf()ed buffer. Return paths are updated
->> to free the allocation.
+>> removes the discouraged use of AHASH_REQUEST_ON_STACK (and associated
+>> VLA) by switching to shash directly and keeping the associated descriptor
+>> allocated with the regular state on the heap.
 >>
 >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
-> Thanks for doing this.
+> I had concerns at first that this approach might make it slower, but
+> upon reading through implementation of the shash_ahash_ implementation,
+> I concluded that it can only be better than before, improving both
+> performance and stack usage.
 >
-> Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Hi Rob,
+Paul,
 
 Is this something you can take via your tree?
 
 Thanks,
 
 -Kees
+
 
 -- 
 Kees Cook
