@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC42C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC3FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FE321476
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44A92147D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnThzByl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FE321476
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY0NsDaa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44A92147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731146AbeHBKdK (ORCPT
+        id S1731507AbeHBKdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:33:10 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41143 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726313AbeHBKdJ (ORCPT
+        Thu, 2 Aug 2018 06:33:12 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38664 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbeHBKdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:33:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z8-v6so812130pgu.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:01 -0700 (PDT)
+        Thu, 2 Aug 2018 06:33:11 -0400
+Received: by mail-pl0-f67.google.com with SMTP id u11-v6so706598plq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TF1DgZ7pY4LPbfrswnAT7Lt2fEXLPlNspSQ5l4KfkWk=;
-        b=lnThzByl/yyr7vUM2PjPX5wbMxag8KugK8xjAmjC0gLgXElNSf38mpvlvI4hxGN6hu
-         mOyHaqI59DJpItdoquC3x8ixiqXIUUCGYkwpE3dKYxBtZxIYvJYxDUUA3aStXcREW0hz
-         SD/bhChcHqfAkAwfr1/5amaJUXAkI6vlf5dSVyrSp6AzCL1eb18NqoUYDAr+/XflLXKa
-         mB5HhH/mdg5HjqyJAWtDJ8HcOyMvphXR+OomY2bXMAwL+D1skU4we5yivi60R+8R5rIG
-         Hfgrxgire1mlWIMnRHbc0NvJUzzSVokfbLiSJKmEppK0Cb74p4N/K/S6kZ2Nn4ZYr1yD
-         vJIQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yyQMtAoMyFTbUnnmKx/H1qCfjbw8TXHdQewZWzT6tww=;
+        b=iY0NsDaafuU7WI292yIdajxExqEezq6HqwrJ+l5ggyL782RNG6Xx3rmHMW38TrvrcU
+         vgdOsplk4phxH9q/cdkVdIFA1AHsynb5SBzLcXBZG+J2SdlcPFbj709ZnEBwZ0Z5GVJ4
+         yZhT4kbAznwzx7A7exSq5KUOp93xN+r5NvnAR4bFUV2AVd5EruXQ1rzH9HJygyy3FTTM
+         qtFD+w9jD5y8GMK//xfpDxe9gDl3HoNQrxEmWUZxeYiYzJUabJpGWYt4gxZu82BB4F7L
+         cqSH3WLrRk5HX1GKmURV5z5NqwaVxAxDk1CNPEa3Oa31x5G4wpLq92sRLRoARFgV4mfS
+         1/oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TF1DgZ7pY4LPbfrswnAT7Lt2fEXLPlNspSQ5l4KfkWk=;
-        b=BcoLU812iQfmLGyXYmvpHb97MsB8B205GifgtX799zOfgu8iPycQ6aPYC+ylH+mRxS
-         MUtnVeO4MlPLH6w2AmUpsGsHCa3oetu2ElGaXEMO5MuzYavFH/pxIb++Q+r1YCPXHPRw
-         Vs513PPn51Y4LIZq/dije59Tg5eMwSHyyseNLUko9k9PSB2L6bgR38EgDmQYDYA8nGpo
-         D6zEma/jxJRN1PPTgM05DTRIQarn2H8KWjtEr5Kzfaz9CXF2AoR+LJC676b4Ng6aKDx4
-         F3U4TCLU1qu4ViXxdGtlxQk0brCMb3/l3xWbGD2Xrjn38lgUEGdBrVuTdt0FBh7ka7q/
-         hPhQ==
-X-Gm-Message-State: AOUpUlHuUypU6aitBDy07kReaylVC4o0+GsHOhk3YaNWiPq+ocCqQJ0m
-        CfuKchexmacom0eVg5GIXVo=
-X-Google-Smtp-Source: AAOMgpcG4IBHlBJffVezwVWz3TgfyMGI/7OeEm/WDzwWaNx4BO9FkaGGsKQdigry/Ry2hgfpNVRtqQ==
-X-Received: by 2002:a63:c60:: with SMTP id 32-v6mr1827617pgm.155.1533199380828;
-        Thu, 02 Aug 2018 01:43:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yyQMtAoMyFTbUnnmKx/H1qCfjbw8TXHdQewZWzT6tww=;
+        b=rOvviI1/jHQkJpk1WVJvfEPn4lFXt8ygfTH3T91werKg/6D1FYr69OF9ECxy53AMlI
+         lptLcA6WBe9keTzF1YQ6daErLRrSxdFDSivqWmJk6p+hFZbYjbMkJ/AXoKe1H5V6HVnq
+         5Dh9IjqiDedhRe7oqCFJFVzfL5SdnBCbF0hm3Lc30yLYbQgm6v6MwxeeUqkqsof7yT3p
+         S/C85E82yz601Wc8pdEISXx75vGU/SRXGOokVujrrHgsEZSLVC2f531fGJpg11dl6C6p
+         6hh8fQMzDFUZap2D20HXPHkgP0egP6WnMiW32BoK5W8IvxnnaTzkmwn1ej918l05XADF
+         UbVQ==
+X-Gm-Message-State: AOUpUlGdVyOvnL9RuAbPylL+cB5032cIZ/j33yvPe6i6NhagTri+KPZv
+        IBN+T4x0OdIptpoS5qgsTKc=
+X-Google-Smtp-Source: AAOMgpchIqtX0iqmaxIOIQCaNV5sUnrqOwCtGgzKSBY9NImeq4GxluNyWPM1k89wePYPSrmT+N5ejQ==
+X-Received: by 2002:a17:902:7488:: with SMTP id h8-v6mr1556440pll.41.1533199382832;
+        Thu, 02 Aug 2018 01:43:02 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.42.59
+        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.43.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 01:42:59 -0700 (PDT)
+        Thu, 02 Aug 2018 01:43:02 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,10 +66,12 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 0/8] staging: gasket: cleanups du jour
-Date:   Thu,  2 Aug 2018 01:42:37 -0700
-Message-Id: <20180802084245.239689-1-toddpoynor@gmail.com>
+Subject: [PATCH 2/8] staging: gasket: core: print driver version code at registration time
+Date:   Thu,  2 Aug 2018 01:42:39 -0700
+Message-Id: <20180802084245.239689-3-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+In-Reply-To: <20180802084245.239689-1-toddpoynor@gmail.com>
+References: <20180802084245.239689-1-toddpoynor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,26 +81,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-More cleanups for the gasket+apex drivers.
+Print the driver version code in the kernel log at gasket driver
+registration time for informational purposes.  Add "gasket:" prefix to
+make clear it is the gasket framework logging this information.
 
-Todd Poynor (8):
-  staging: gasket: apex: enable power save mode by default
-  staging: gasket: core: print driver version code at registration time
-  staging: gasket: core: move driver loaded log after error cases
-  staging: gasket: core: device register debug log cleanups
-  staging: gasket: core: add subsystem and device info to error logs
-  staging: gasket: remove "reset type" param from framework
-  staging: gasket: apex: drop reset type param
-  Revert "staging: gasket: core: hold reference to pci_dev while used"
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/staging/gasket/gasket_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- drivers/staging/gasket/apex_driver.c      | 22 ++++-----
- drivers/staging/gasket/gasket.h           |  4 +-
- drivers/staging/gasket/gasket_constants.h |  2 +-
- drivers/staging/gasket/gasket_core.c      | 56 +++++++++++------------
- drivers/staging/gasket/gasket_core.h      | 13 ++----
- drivers/staging/gasket/gasket_ioctl.c     |  3 +-
- 6 files changed, 43 insertions(+), 57 deletions(-)
-
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index f76f4a0ecbac6..e550c9060dcd2 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1759,8 +1759,9 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
+ 	}
+ 	mutex_unlock(&g_mutex);
+ 
+-	pr_info("Loaded %s driver, framework version %s\n",
+-		driver_desc->name, GASKET_FRAMEWORK_VERSION);
++	pr_info("gasket: Loaded %s driver version %s, framework version %s\n",
++		driver_desc->name, driver_desc->driver_version,
++		GASKET_FRAMEWORK_VERSION);
+ 
+ 	if (desc_idx == -1) {
+ 		pr_err("Too many Gasket drivers loaded: %d\n",
 -- 
 2.18.0.597.ga71716f1ad-goog
 
