@@ -1,197 +1,136 @@
 Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C1DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0575C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A42F2150D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fQIYwZvw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CWQWKCnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A42F2150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 618B321501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618B321501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbeHBOtg (ORCPT
+        id S1732489AbeHBOtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:49:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58718 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732267AbeHBOtf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:49:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 22CCF60B1E; Thu,  2 Aug 2018 12:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533214709;
-        bh=WAsKDfsBlOdJAwSInHo48tckSb6q0dfL/wYoLwUcIaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fQIYwZvwmYHEeSXMR0CsVw9ogbJC9DqRXMtcO1ceEpuPTgJtferXsnKLmugWub57f
-         oJ7+9U9vSlLccFlmfGwUyq/S6ZRm4x3MXWtDlNbE3/8BZJ/FVd3PBTCPTaE3lc7Nb5
-         O/SJJGYnUCg0YjyOmr8XJaxJ/J0X2cPwVIOoLkR8=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 2 Aug 2018 10:49:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732267AbeHBOtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:49:39 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11EFB60AD9;
-        Thu,  2 Aug 2018 12:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533214708;
-        bh=WAsKDfsBlOdJAwSInHo48tckSb6q0dfL/wYoLwUcIaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CWQWKCnO8sfbf4kRAZrH2IcVYcok90MCfvs8Uhv5acpSlgAgC5+bmtnTGp3boE9Mp
-         KBn5NL5hZP7paI1XH1DK5EG52vMqTQWLqNXrE3dJxqsm3A1AtEkwyRmG+QK4RaVYZb
-         HvGWc1hSFH5LeiGQG7XuvmeSunSTRB/5fRQCvah8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11EFB60AD9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Thu, 2 Aug 2018 06:58:27 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     swboyd@chromium.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND RFC 1/4] drivers: pinctrl: qcom: add wakeup
- capability to GPIO
-Message-ID: <20180802125827.GB27850@codeaurora.org>
-References: <20180801020021.9782-1-ilina@codeaurora.org>
- <20180801020021.9782-2-ilina@codeaurora.org>
- <86600uy4vh.wl-marc.zyngier@arm.com>
- <20180801194538.GA6422@codeaurora.org>
- <86wot9wb9u.wl-marc.zyngier@arm.com>
- <20180802065104.GA27850@codeaurora.org>
- <86sh3xw7m9.wl-marc.zyngier@arm.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C4557A7EE;
+        Thu,  2 Aug 2018 12:58:33 +0000 (UTC)
+Received: from [10.36.117.197] (ovpn-117-197.ams2.redhat.com [10.36.117.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC9A72026D69;
+        Thu,  2 Aug 2018 12:58:31 +0000 (UTC)
+Subject: Re: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
+ kvm_valid_sregs()
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <2812c987-4e2b-e92a-8195-bef7ebd29318@redhat.com>
+Date:   Thu, 2 Aug 2018 14:58:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <86sh3xw7m9.wl-marc.zyngier@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 12:58:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 12:58:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02 2018 at 01:27 -0600, Marc Zyngier wrote:
->On Thu, 02 Aug 2018 07:51:04 +0100,
->Lina Iyer <ilina@codeaurora.org> wrote:
->>
->> On Thu, Aug 02 2018 at 00:08 -0600, Marc Zyngier wrote:
->> > Hi Lina,
->> >
->> > On Wed, 01 Aug 2018 20:45:38 +0100,
->> > Lina Iyer <ilina@codeaurora.org> wrote:
->> >>
->> >> Thanks for the feedback, Marc.
->> >>
->> >> On Wed, Aug 01 2018 at 00:31 -0600, Marc Zyngier wrote:
->> >> > On Wed, 01 Aug 2018 03:00:18 +0100,
->> >> > Lina Iyer <ilina@codeaurora.org> wrote:
->> >> >>
->> >> >> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
->> >> >> +{
->> >> >> +	struct irq_data *irqd = data;
->> >> >> +	struct irq_desc *desc = irq_data_to_desc(irqd);
->> >> >> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->> >> >> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
->> >> >> +	int irq_pin = irq_find_mapping(gc->irq.domain, irqd->hwirq);
->> >> >> +
->> >> >> +	chained_irq_enter(chip, desc);
->> >> >> +	generic_handle_irq(irq_pin);
->> >> >> +	chained_irq_exit(chip, desc);
->> >> >
->> >> > That's crazy. I'm not even commenting on the irq handler vs chained
->> >> > irqchip thing, but directly calling into a completely different part
->> >> > of the irq hierarchy makes me feel nauseous,
->> >> >
->> >> I know the sentiment; I am not too happy about it myself. Explanation
->> >> below.
->> >>
->> >> > Why isn't the interrupt still pending at the pinctrl level? Looking at
->> >> > the diagram in the cover letter, I'd have hoped that the signal routed
->> >> > to the PDC would wakeup the GIC, but that by virtue of being *also*
->> >> > wired to the TLMM, the interrupt would be handled via the normal path.
->> >> >
->> >> The short answer: TLMM is not active to sense a wakeup interrupt.
->> >
->> > I get that bit. See below for the bit I don't get.
->> >
->> >> When we enter system sleep mode, the TLMM and the GIC are powered off
->> >> and the PDC is the only powered-on interrupt controller. The IRQs
->> >> configured at the PDC are the only ones capable of waking the system.
->> >> Upon sensing the interrupt, the PDC intiates a system wakeup and replays
->> >> the interrupt to the GIC. The GIC relays that to AP. Unfortunately, the
->> >> interrupts from the GPIO do not trigger the TLMM summary line. Therefore
->> >> this handler needs to figure out what GPIO caused the wakeup and notify
->> >> the corresponding driver.
->> >
->> > That's most bizarre. What causes the TLMM output line not to reflect
->> > the fact that an input is asserted?
->> There is a parallel line that is directed from the PIN directly to the
->> PDC in addition to the TLMM. This line does not go through the TLMM.
->
->I got that from the cover letter.
->
->>
->> Active path						_____
->>                 /-------------- > [ TLMM ] --------> |     |
->>            [ Device GPIO ]	   	     summary   | GIC | ==>
->> 		\				       |     |
->> 		  ----------------> [ PDC ] ---------> |_____|
->> Wakeup path	     GPIO as IRQ		IRQ
->>
->> > I understand that it has been
->> > turned off, but surely the PDC wakes it up at the same time as the
->> > GIC, and it should realise that there is something pending...
->> >
->> PDC is always-on and when it detects any interrupt, will wakeup the GIC
->> and then replay the interrupt line to the GIC. This interrupt line is
->> not the summary line, but a separate line from GPIO/PIN to the PDC.
->>
->> Since the TLMM was also in low power mode, when the GIC was powered
->> down, the TLMM never sees the IRQ and therefore will not send the
->> summary line to GIC. The wakeup path is GPIO -> PDC -> GIC.
->
->Sure. But once woken up (GIC *and* TLMM), the gpio line (which I
->assume is level) is still high at the TLMM input. So why isn't it
->registering that state once it has been woken up?
->
->I can understand that it would be missing an edge. But that doesn't
->hold for level signalling.
->
-Sure, yes. Sorry for not registering your point in my response.
-Once woken up we should see the level interrupt in TLMM.
+On 23/07/2018 14:31, Tianyu Lan wrote:
+> X86_CR4_OSXSAVE check belongs to sregs check and so move into
+> kvm_valid_sregs().
+> 
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> ---
+>  arch/x86/kvm/x86.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 153564db7980..5c9acdbb2020 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -8045,6 +8045,10 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
+>  
+>  static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+>  {
+> +	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
+> +			(sregs->cr4 & X86_CR4_OSXSAVE))
+> +		return  -EINVAL;
+> +
+>  	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
+>  		/*
+>  		 * When EFER.LME and CR0.PG are set, the processor is in
+> @@ -8075,10 +8079,6 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+>  	struct desc_ptr dt;
+>  	int ret = -EINVAL;
+>  
+> -	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
+> -			(sregs->cr4 & X86_CR4_OSXSAVE))
+> -		goto out;
+> -
+>  	if (kvm_valid_sregs(vcpu, sregs))
+>  		goto out;
+>  
+> 
 
--- Lina
+Queued, thanks.
 
->>
->> >> > Why isn't that the case? And if that's because the HW is broken and
->> >> > doesn't buffer edge interrupts, why can't you use the resend mechanism
->> >> > instead?
->> >> >
->> >> The PDC hardware can replay the interrupts accurately. However, it will
->> >> replay only the pin and its not the TLMM summary IRQ. The handler here,
->> >> needs to notify the driver that the wakeup interrupt happened and needs
->> >> to take action. If I could trip the summary IRQ in this handler that
->> >> would work too. Can it be done?
->> >
->> > So the TLMM has indeed noticed the interrupt and you can read the TLMM
->> > status registers to find out what fired?
->> I think that's where it is probably confusing. The TLMM will not see the
->> interrupt because it was in low power mode.
->
->See above. I can buy that for edge, but not level.
->
->Thanks,
->
->	M.
->
->--
->Jazz is not dead, it just smell funny.
+Paolo
