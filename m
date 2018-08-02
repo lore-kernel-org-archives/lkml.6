@@ -2,429 +2,319 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5B6C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0A1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998D4215E5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB37215A4
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 23:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WxHN12u0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998D4215E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TvhaBayd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB37215A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731181AbeHCBGs (ORCPT
+        id S1731865AbeHCBHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 21:06:48 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:58343 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeHCBGr (ORCPT
+        Thu, 2 Aug 2018 21:07:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38876 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeHCBHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 21:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533251607; x=1564787607;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=6INDY9f8ttBYljExoNjPd3iTbcegvvf3gSjXEfr66dI=;
-  b=WxHN12u0PlnJzI3eRePAsx/tIzDpeJNnPHxfDfH2oyggDjlElkfd6Rl5
-   PiPbgQ4/kjUtfuks8rZkotkPw66pr5yCgLI4f9dKom6V2ZF9VmIseuhWi
-   G00ge+IOeOEwEAQsS5Z/61vuygbYiqS/1HE5YLUDIE56wu5F4cofxqdLY
-   k1yc4eODIhLAdbsnsIK2q/+O4yNICd6F1uqBel1ZPJE5aMHgKGfv9hoqH
-   tus83Q913oPzKSNJ4GrVfYp6h5OEkEU6aJ1Sb1OezcwqZS42jEuCOEH3R
-   ejpO6RscnU2Tm7GXakxVlBT1VHRULQw85bEJnwtuXLIN8IR8F+q6cLYLO
-   w==;
-X-IronPort-AV: E=Sophos;i="5.51,437,1526313600"; 
-   d="scan'208";a="86180096"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Aug 2018 07:13:26 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Aug 2018 16:01:13 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Aug 2018 16:13:27 -0700
-Subject: Re: [PATCH 10/11] irqchip: add a SiFive PLIC driver
-To:     Christoph Hellwig <hch@lst.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "anup@brainfault.org" <anup@brainfault.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "shorne@gmail.com" <shorne@gmail.com>
-References: <20180802115008.4031-1-hch@lst.de>
- <20180802115008.4031-11-hch@lst.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <2416469e-c39e-6481-f5e0-ad191b858d06@wdc.com>
-Date:   Thu, 2 Aug 2018 16:13:26 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Thu, 2 Aug 2018 21:07:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k3-v6so1913319pgq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 16:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zfgmmOn3uF8UYldvQIlMD7G4qbWp796jJrT2Ky2IqPo=;
+        b=TvhaBaydx+sxXrG1dVCxhpSOfoJRDFvPBmUztXvdDj5y1UG3yjQY/iH41XCS+/q34e
+         xGJ1xjUWDQaw/5MFkb0/tapiPkuoJxQhirxjUAps6A+rp1d7iXhvGvkMjq6Jc+CtxyUZ
+         fOMIoc403QH3MpzigCK4/hf3COGm7SZXr2OZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zfgmmOn3uF8UYldvQIlMD7G4qbWp796jJrT2Ky2IqPo=;
+        b=VxJQgrffoq2ihg5Vp0hBfESUbMpBxkwtafMVFctrq+82lWUHaNHVfg+Zh49AKEa84t
+         l9uuZ7plhT4MLHV8XtsLDlwUib7g3pCsoS4/2l20cf96kYmZlxylAKBqYLaaruNo4gGl
+         2oiFrhbj9lGsVpoTI1EE7qbcTuJkoE31QbQGWAe3JaFYKNUpn5caQEVhbdnhxYP0xqmO
+         EzfIUgNQSMo42Qd11V1K7wxIjO+Tg1GK990aA6BeJ9Wb5CxmskCL2NFAQ1KLrNnI2U/K
+         4OSFb5lhuM59yhH8Rc8NiWw93phmSi4/+gtQn+RAtyMV8jwYnKau/ls6CToY8F/BoKTt
+         XN0g==
+X-Gm-Message-State: AOUpUlFviEDLWEROKAX4zLD0U5PlVFHlTV+EVvywPRqJv2Nz4YxBhc8k
+        VHikDtQw1X6kdfjvTY+1tD1Vzw==
+X-Google-Smtp-Source: AAOMgpc1ItH7jJtNtzSpFYGgjCSEHr4iwGGqFqsiDBxlD4Vd8hVf12GSPrsRCIx2Wm+Ozz8MYJOZSA==
+X-Received: by 2002:aa7:8118:: with SMTP id b24-v6mr1564972pfi.78.1533251624356;
+        Thu, 02 Aug 2018 16:13:44 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id s74-v6sm6003521pfe.53.2018.08.02.16.13.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 16:13:43 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 16:13:43 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
+Message-ID: <20180802231343.GS68975@google.com>
+References: <CGME20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36@epcas1p1.samsung.com>
+ <20180703234705.227473-6-mka@chromium.org>
+ <5B3C6C2A.1070205@samsung.com>
+ <20180706175301.GG129942@google.com>
+ <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
+ <20180716175050.GZ129942@google.com>
+ <20180731193953.GH68975@google.com>
+ <5B610B48.4030802@samsung.com>
+ <20180801170824.GJ68975@google.com>
+ <5B626563.1090302@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20180802115008.4031-11-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5B626563.1090302@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/18 4:51 AM, Christoph Hellwig wrote:
-> Adds a driver for the SiFive implementation of the RISC-V Platform Level
-> Interrupt Controller (PLIC).  The PLIC connects global interrupt sources
-> to the local interrupt controller on each hart.
+Hi Chanwoo,
+
+On Thu, Aug 02, 2018 at 10:58:59AM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
 > 
-> This driver is based on the driver in the RISC-V tree from Palmer Dabbelt,
-> but has been almost entirely rewritten since, and includes many fixes
-> from Atish Patra.
+> On 2018년 08월 02일 02:08, Matthias Kaehlcke wrote:
+> > Hi Chanwoo,
+> > 
+> > On Wed, Aug 01, 2018 at 10:22:16AM +0900, Chanwoo Choi wrote:
+> >> On 2018년 08월 01일 04:39, Matthias Kaehlcke wrote:
+> >>> On Mon, Jul 16, 2018 at 10:50:50AM -0700, Matthias Kaehlcke wrote:
+> >>>> On Thu, Jul 12, 2018 at 05:44:33PM +0900, Chanwoo Choi wrote:
+> >>>>> Hi Matthias,
+> >>>>>
+> >>>>> On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
+> >>>>>> Hi Chanwoo,
+> >>>>>>
+> >>>>>> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
+> >>>>>>
+> >>>>>>> Firstly,
+> >>>>>>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
+> >>>>>>>
+> >>>>>>> devfreq already used the OPP interface as default. It means that
+> >>>>>>> the outside of 'drivers/devfreq' can disable/enable the frequency
+> >>>>>>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
+> >>>>>>> drivers disable/enable the specific frequency, the devfreq core
+> >>>>>>> consider them.
+> >>>>>>>
+> >>>>>>> So, devfreq doesn't need to devfreq_verify_within_limits() because
+> >>>>>>> already support some interface to change the minimum/maximum frequency
+> >>>>>>> of devfreq device. 
+> >>>>>>>
+> >>>>>>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
+> >>>>>>> to change the minimum/maximum frequency of cpu. some device driver cannot
+> >>>>>>> change the minimum/maximum frequency through OPP interface.
+> >>>>>>>
+> >>>>>>> But, in case of devfreq subsystem, as I explained already, devfreq support
+> >>>>>>> the OPP interface as default way. devfreq subsystem doesn't need to add
+> >>>>>>> other way to change the minimum/maximum frequency.
+> >>>>>>
+> >>>>>> Using the OPP interface exclusively works as long as a
+> >>>>>> enabling/disabling of OPPs is limited to a single driver
+> >>>>>> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
+> >>>>>> involved you need a way to resolve conflicts, that's the purpose of
+> >>>>>> devfreq_verify_within_limits(). Please let me know if there are
+> >>>>>> existing mechanisms for conflict resolution that I overlooked.
+> >>>>>>
+> >>>>>> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
+> >>>>>> devfreq_verify_within_limits() instead of the OPP interface if
+> >>>>>> desired, however this seems beyond the scope of this series.
+> >>>>>
+> >>>>> Actually, if we uses this approach, it doesn't support the multiple drivers too.
+> >>>>> If non throttler drivers uses devfreq_verify_within_limits(), the conflict
+> >>>>> happen.
+> >>>>
+> >>>> As long as drivers limit the max freq there is no conflict, the lowest
+> >>>> max freq wins. I expect this to be the usual case, apparently it
+> >>>> worked for cpufreq for 10+ years.
+> >>>>
+> >>>> However it is correct that there would be a conflict if a driver
+> >>>> requests a min freq that is higher than the max freq requested by
+> >>>> another. In this case devfreq_verify_within_limits() resolves the
+> >>>> conflict by raising p->max to the min freq. Not sure if this is
+> >>>> something that would ever occur in practice though.
+> >>>>
+> >>>> If we are really concerned about this case it would also be an option
+> >>>> to limit the adjustment to the max frequency.
+> >>>>
+> >>>>> To resolve the conflict for multiple device driver, maybe OPP interface
+> >>>>> have to support 'usage_count' such as clk_enable/disable().
+> >>>>
+> >>>> This would require supporting negative usage count values, since a OPP
+> >>>> should not be enabled if e.g. thermal enables it but the throttler
+> >>>> disabled it or viceversa.
+> >>>>
+> >>>> Theoretically there could also be conflicts, like one driver disabling
+> >>>> the higher OPPs and another the lower ones, with the outcome of all
+> >>>> OPPs being disabled, which would be a more drastic conflict resolution
+> >>>> than that of devfreq_verify_within_limits().
+> >>>>
+> >>>> Viresh, what do you think about an OPP usage count?
+> >>>
+> >>> Ping, can we try to reach a conclusion on this or at least keep the
+> >>> discussion going?
+> >>>
+> >>> Not that it matters, but my preferred solution continues to be
+> >>> devfreq_verify_within_limits(). It solves conflicts in some way (which
+> >>> could be adjusted if needed) and has proven to work in practice for
+> >>> 10+ years in a very similar sub-system.
+> >>
+> >> It is not true. Current cpufreq subsystem doesn't support external OPP
+> >> control to enable/disable the OPP entry. If some device driver
+> >> controls the OPP entry of cpufreq driver with opp_disable/enable(),
+> >> the operation is not working. Because cpufreq considers the limit
+> >> through 'cpufreq_verify_with_limits()' only.
+> > 
+> > Ok, we can probably agree that using cpufreq_verify_with_limits()
+> > exclusively seems to have worked well for cpufreq, and that in their
+> > overall purpose cpufreq and devfreq are similar subsystems.
+> > 
+> > The current throttler series with devfreq_verify_within_limits() takes
+> > the enabled OPPs into account, the lowest and highest OPP are used as
+> > a starting point for the frequency adjustment and (in theory) the
+> > frequency range should only be narrowed by
+> > devfreq_verify_within_limits().
+> > 
+> >> As I already commented[1], there is different between cpufreq and devfreq.
+> >> [1] https://lkml.org/lkml/2018/7/4/80
+> >>
+> >> Already, subsystem already used OPP interface in order to control
+> >> specific OPP entry. I don't want to provide two outside method
+> >> to control the frequency of devfreq driver. It might make the confusion.
+> > 
+> > I understand your point, it would indeed be preferable to have a
+> > single method. However I'm not convinced that the OPP interface is
+> > a suitable solution, as I exposed earlier in this thread (quoted
+> > below).
+> > 
+> > I would like you to at least consider the possibility of changing
+> > drivers/thermal/devfreq_cooling.c to devfreq_verify_within_limits().
+> > Besides that it's not what is currently used, do you see any technical
+> > concerns that would make devfreq_verify_within_limits() an unsuitable
+> > or inferior solution?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/riscv/configs/defconfig      |   1 +
->   drivers/irqchip/Kconfig           |  12 ++
->   drivers/irqchip/Makefile          |   1 +
->   drivers/irqchip/irq-sifive-plic.c | 259 ++++++++++++++++++++++++++++++
->   4 files changed, 273 insertions(+)
->   create mode 100644 drivers/irqchip/irq-sifive-plic.c
+> As we already discussed, devfreq_verify_within_limits() doesn't support
+> the multiple outside controllers (e.g., devfreq-cooling.c).
+
+That's incorrect, its purpose is precisely that.
+
+Are you suggesting that cpufreq with its use of
+cpufreq_verify_within_limits() (the inspiration for
+devfreq_verify_within_limits()) is broken? It is used by cpu_cooling.c
+and other drivers when receiving a CPUFREQ_ADJUST event, essentially
+what I am proposing with DEVFREQ_ADJUST.
+
+Could you elaborate why this model wouldn't work for devfreq? "OPP
+interface is mandatory for devfreq" isn't really a technical argument,
+is it mandatory for any other reason than that it is the interface
+that is currently used?
+
+> After you are suggesting the throttler core, there are at least two
+> outside controllers (e.g., devfreq-cooling.c and throttler driver).
+> As I knew the problem about conflict, I cannot agree the temporary
+> method. OPP interface is mandatory for devfreq in order to control
+> the OPP (frequency/voltage). In this situation, we have to try to
+> find the method through OPP interface.
+
+What do you mean with "temporary method"?
+
+We can try to find a method through the OPP interface, but at this
+point I'm not convinced that it is technically necessary or even
+preferable.
+
+Another inconvenient of the OPP approach for both devfreq-cooling.c
+and the throttler is that they have to bother with disabling all OPPs
+above/below the max/min (they don't/shouldn't have to care), instead
+of just telling devfreq the max/min.
+
+> We can refer to regulator/clock. Multiple device driver can use
+> the regulator/clock without any problem. I think that usage of OPP
+> is similiar with regulator/clock. As you mentioned, maybe OPP
+> would handle the negative count. Although opp_enable/opp_disable()
+> have to handle the negative count and opp_enable/opp_disable()
+> can support the multiple usage from device drivers, I think that
+> this approach is right.
+
+The regulator/clock approach with the typical usage counts seems more
+intuitive to me, personally I wouldn't write an interface with
+negative usage count if I could reasonably avoid it.
+
+> >> I want to use only OPP interface to enable/disable frequency
+> >> even if we have to modify the OPP interface.
+> > 
+> > These are the concerns I raised earlier about a solution with OPP
+> > usage counts:
+> > 
+> > "This would require supporting negative usage count values, since a OPP
+> > should not be enabled if e.g. thermal enables it but the throttler
+> > disabled it or viceversa.
 > 
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 07326466871b..36473d7dbaac 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -76,3 +76,4 @@ CONFIG_ROOT_NFS=y
->   CONFIG_CRYPTO_USER_API_HASH=y
->   CONFIG_MODULES=y
->   CONFIG_MODULE_UNLOAD=y
-> +CONFIG_SIFIVE_PLIC=y
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index e9233db16e03..df345b878ac2 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -372,3 +372,15 @@ config QCOM_PDC
->   	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
->   
->   endmenu
-> +
-> +config SIFIVE_PLIC
-> +	bool "SiFive Platform-Level Interrupt Controller"
-> +	depends on RISCV
-> +	help
-> +	   This enables support for the PLIC chip found in SiFive (and
-> +	   potentially other) RISC-V systems.  The PLIC controls devices
-> +	   interrupts and connects them to each core's local interrupt
-> +	   controller.  Aside from timer and software interrupts, all other
-> +	   interrupt sources are subordinate to the PLIC.
-> +
-> +	   If you don't know what to do here, say Y.
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 15f268f646bf..fbd1ec8070ef 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -87,3 +87,4 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
->   obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
->   obj-$(CONFIG_NDS32)			+= irq-ativic32.o
->   obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
-> +obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-> new file mode 100644
-> index 000000000000..d2fb8364dec5
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -0,0 +1,259 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2017 SiFive
-> + * Copyright (C) 2018 Christoph Hellwig
-> + */
-> +#define pr_fmt(fmt) "plic: " fmt
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +
-> +/*
-> + * This driver implements a version of the RISC-V PLIC with the actual layout
-> + * specified in chapter 8 of the SiFive U5 Coreplex Series Manual:
-> + *
-> + *     https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf
-> + *
-> + * The largest number supported by devices marked as 'riscv,plic0', is 1024, of
-> + * which device 0 is defined as non-existant by the RISC-V Priviledged Spec.
-/s/existant/existent
-
-/s/Priviledged/Privileged
-> + */
-> +
-> +#define MAX_DEVICES			1024
-> +#define MAX_CONTEXTS			15872
-> +
-> +/*
-> + * Each interrupt source has a priority register associated with it.
-> + * We always hardwire it to one in Linux.
-> + */
-> +#define PRIORITY_BASE			0
-> +#define     PRIORITY_PER_ID		4
-> +
-> +/*
-> + * Each hart context has a vector of interupt enable bits associated with it.
-/s/interupt/interrupt
-
-> + * There's one bit for each interrupt source.
-> + */
-> +#define ENABLE_BASE			0x2000
-> +#define     ENABLE_PER_HART		0x80
-> +
-> +/*
-> + * Each hart context has a set of control registers associated with it.  Right
-> + * now there's only two: a source priority threshold over which the hart will
-> + * take an interrupt, and a register to claim interrupts.
-> + */
-> +#define CONTEXT_BASE			0x200000
-> +#define     CONTEXT_PER_HART		0x1000
-> +#define     CONTEXT_THRESHOLD		0x00
-> +#define     CONTEXT_CLAIM		0x04
-> +
-> +static void __iomem *plic_regs;
-> +
-> +struct plic_handler {
-> +	bool			present;
-> +	int			ctxid;
-> +};
-> +static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
-> +
-> +static inline void __iomem *plic_hart_offset(int ctxid)
-> +{
-> +	return plic_regs + CONTEXT_BASE + ctxid * CONTEXT_PER_HART;
-> +}
-> +
-> +static inline u32 __iomem *plic_enable_base(int ctxid)
-> +{
-> +	return plic_regs + ENABLE_BASE + ctxid * ENABLE_PER_HART;
-> +}
-> +
-> +/*
-> + * Protect mask operations on the registers given that we can't assume that
-> + * atomic memory operations work on them.
-> + */
-> +static DEFINE_RAW_SPINLOCK(plic_toggle_lock);
-> +
-> +static inline void plic_toggle(int ctxid, int hwirq, int enable)
-> +{
-> +	u32 __iomem *reg = plic_enable_base(ctxid) + (hwirq / 32);
-> +	u32 hwirq_mask = 1 << (hwirq % 32);
-> +
-> +	raw_spin_lock(&plic_toggle_lock);
-> +	if (enable)
-> +		writel(readl(reg) | hwirq_mask, reg);
-> +	else
-> +		writel(readl(reg) & ~hwirq_mask, reg);
-> +	raw_spin_unlock(&plic_toggle_lock);
-> +}
-> +
-> +static inline void plic_irq_toggle(struct irq_data *d, int enable)
-> +{
-> +	int cpu;
-> +
-> +	writel(enable, plic_regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
-> +	for_each_cpu(cpu, irq_data_get_affinity_mask(d)) {
-> +		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
-> +
-> +		if (handler->present)
-> +			plic_toggle(handler->ctxid, d->hwirq, enable);
-> +	}
-> +}
-> +
-> +static void plic_irq_enable(struct irq_data *d)
-> +{
-> +	plic_irq_toggle(d, 1);
-> +}
-> +
-> +static void plic_irq_disable(struct irq_data *d)
-> +{
-> +	plic_irq_toggle(d, 0);
-> +}
-> +
-> +static struct irq_chip plic_chip = {
-> +	.name		= "SiFive PLIC",
-> +	/*
-> +	 * There is no need to mask/unmask PLIC interrupts.  They are "masked"
-> +	 * by reading claim and "unmasked" when writing it back.
-> +	 */
-> +	.irq_enable	= plic_irq_enable,
-> +	.irq_disable	= plic_irq_disable,
-> +};
-> +
-> +static int plic_irqdomain_map(struct irq_domain *d, unsigned int irq,
-> +			      irq_hw_number_t hwirq)
-> +{
-> +	irq_set_chip_and_handler(irq, &plic_chip, handle_simple_irq);
-> +	irq_set_chip_data(irq, NULL);
-> +	irq_set_noprobe(irq);
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops plic_irqdomain_ops = {
-> +	.map		= plic_irqdomain_map,
-> +	.xlate		= irq_domain_xlate_onecell,
-> +};
-> +
-> +static struct irq_domain *plic_irqdomain;
-> +
-> +/*
-> + * Handling an interrupt is a two-step process: first you claim the interrupt
-> + * by reading the claim register, then you complete the interrupt by writing
-> + * that source ID back to the same claim register.  This automatically enables
-> + * and disables the interrupt, so there's nothing else to do.
-> + */
-> +static void plic_handle_irq(struct pt_regs *regs)
-> +{
-> +	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-> +	void __iomem *claim = plic_hart_offset(handler->ctxid) + CONTEXT_CLAIM;
-> +	irq_hw_number_t hwirq;
-> +
-> +	WARN_ON_ONCE(!handler->present);
-> +
-> +	csr_clear(sie, SIE_STIE);
-
-We should clear the SIE_SEIE not SIE_STIE. Correct ?
-
-> +	while ((hwirq = readl(claim))) {
-> +		int irq = irq_find_mapping(plic_irqdomain, hwirq);
-> +
-> +		if (unlikely(irq <= 0))
-> +			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
-> +					hwirq);
-> +		else
-> +			generic_handle_irq(irq);
-> +		writel(hwirq, claim);
-> +	}
-> +	csr_set(sie, SIE_STIE);
-
-Same as above.
-> +}
-> +
-> +/*
-> + * Walk up the DT tree until we find a active RISC-V core (HART) node and
-> + * extract the cpuid from it.
-> + */
-> +static int plic_find_hart_id(struct device_node *node)
-> +{
-> +	for (; node; node = node->parent) {
-> +		if (of_device_is_compatible(node, "riscv"))
-> +			return riscv_of_processor_hart(node);
-> +	}
-> +
-> +	return -1;
-> +}
-> +
-> +static int __init plic_init(struct device_node *node,
-> +		struct device_node *parent)
-> +{
-> +	int error = 0, nr_handlers, nr_mapped = 0, i;
-> +	u32 nr_irqs;
-> +
-> +	if (plic_regs) {
-> +		pr_warning("PLIC already present.\n");
-
-Got a check-patch warning.
-
-WARNING: Prefer pr_warn(... to pr_warning(...
-#257: FILE: drivers/irqchip/irq-sifive-plic.c:191:
-+               pr_warning("PLIC already present.\n");
-
-> +		return -ENXIO;
-> +	}
-> +
-> +	plic_regs = of_iomap(node, 0);
-> +	if (WARN_ON(!plic_regs))
-> +		return -EIO;
-> +
-> +	error = -EINVAL;
-> +	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
-> +	if (WARN_ON(!nr_irqs))
-> +		goto out_iounmap;
-> +
-> +	nr_handlers = of_irq_count(node);
-> +	if (WARN_ON(!nr_handlers))
-> +		goto out_iounmap;
-> +	if (WARN_ON(nr_handlers < num_possible_cpus()))
-> +		goto out_iounmap;
-> +
-> +	error = -ENOMEM;
-> +	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
-> +			&plic_irqdomain_ops, NULL);
-> +	if (WARN_ON(!plic_irqdomain))
-> +		goto out_iounmap;
-> +
-> +	for (i = 0; i < nr_handlers; i++) {
-> +		struct of_phandle_args parent;
-> +		struct plic_handler *handler;
-> +		irq_hw_number_t hwirq;
-> +		int cpu;
-> +
-> +		if (of_irq_parse_one(node, i, &parent)) {
-> +			pr_err("failed to parse parent for contxt %d.\n", i);
-/s/contxt/context
-
-
-> +			continue;
-> +		}
-> +
-> +		/* skip context holes */
-> +		if (parent.args[0] == -1)
-> +			continue;
-> +
-> +		cpu = plic_find_hart_id(parent.np->parent);
-
-Since plic_find_hart_id() is going to walk up the DT, we can pass only 
-parent.np instead of parent.np->parent. It does not increase any 
-efficiency either way. So not very necessary. Just thought of taking the 
-advantage of plic_find_hart_id.
-
-Regards,
-Atish
-> +		if (cpu < 0) {
-> +			pr_warn("failed to parse hart ID for context %d.\n", i);
-> +			continue;
-> +		}
-> +
-> +		handler = per_cpu_ptr(&plic_handlers, cpu);
-> +		handler->present = true;
-> +		handler->ctxid = i;
-> +
-> +		/* priority must be > threshold to trigger an interrupt */
-> +		writel(0, plic_hart_offset(i) + CONTEXT_THRESHOLD);
-> +		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-> +			plic_toggle(i, hwirq, 0);
-> +		nr_mapped++;
-> +	}
-> +
-> +	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
-> +		nr_irqs, nr_mapped, nr_handlers);
-> +	set_handle_irq(plic_handle_irq);
-> +	return 0;
-> +
-> +out_iounmap:
-> +	iounmap(plic_regs);
-> +	return error;
-> +}
-> +
-> +IRQCHIP_DECLARE(sifive_plic0, "sifive,plic0", plic_init);
-> +IRQCHIP_DECLARE(riscv_plic0, "riscv,plic0", plic_init); /* for legacy systems */
+> Already replied	about negative usage count. I think that negative usage count
+> is not problem if this approach could resolve the issue.
 > 
+> > 
+> > Theoretically there could also be conflicts, like one driver disabling
+> > the higher OPPs and another the lower ones, with the outcome of all
+> > OPPs being disabled, which would be a more drastic conflict resolution
+> > than that of devfreq_verify_within_limits()."
+> > 
+> > What do you think about these points?
+> 
+> It depends on how to use OPP interface on multiple device driver.
+> Even if devfreq/opp provides the control method, outside device driver
+> are misusing them. It is problem of user.
 
+I wouldn't call it misusing if two independent drivers take
+contradictory actions on an interface that doesn't provide
+arbitration. How can driver A know that it shouldn't disable OPPs a, b
+and c because driver B disabled d, e and f? Who is misusing the
+interface, driver A or driver B?
+
+> Instead, if we use the OPP interface, we can check why OPP entry
+> is disabled or enabled through usage count.
+> 
+> > 
+> > The negative usage counts aren't necessarily a dealbreaker in a
+> > technical sense, though I'm not a friend of quirky interfaces that
+> > don't behave like a typical user would expect (e.g. an OPP isn't
+> > necessarily enabled after dev_pm_opp_enable()).
+> > 
+> > I can sent an RFC with OPP usage counts, though due to the above
+> > concerns I have doubts it will be well received.
+> 
+> Please add me to Cc list.
+
+Will do
+
+Thanks
+
+Matthias
