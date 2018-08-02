@@ -2,86 +2,119 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8BCC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB69CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE29C21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:51:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE29C21501
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 8A6622150D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:51:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6622150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387461AbeHBOmr (ORCPT
+        id S2387481AbeHBOmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:42:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60712 "EHLO mx1.suse.de"
+        Thu, 2 Aug 2018 10:42:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49199 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387420AbeHBOmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:42:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF4C0AF68;
-        Thu,  2 Aug 2018 12:51:42 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 14:51:41 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "tom.leiming@gmail.com" <tom.leiming@gmail.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Tree for Aug 1
-Message-ID: <20180802125141.jyb2zz75jgrzibaq@linux-x5ow.site>
-References: <20180801175852.36549130@canb.auug.org.au>
- <20180801224813.GA13074@roeck-us.net>
- <1533163965.3158.1.camel@HansenPartnership.com>
- <20180801234727.GA3762@roeck-us.net>
- <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
- <1533168205.3158.12.camel@HansenPartnership.com>
- <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
- <e3e32fd801cb1270cddec6fc1ea3dabad4473b64.camel@wdc.com>
- <93cbb876-3a25-482a-a5b4-6e13d42ee535@roeck-us.net>
+        id S2387418AbeHBOmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:42:54 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 49275A2744992;
+        Thu,  2 Aug 2018 20:51:46 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
+ 20:51:44 +0800
+Date:   Thu, 2 Aug 2018 13:51:31 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Parthiban Nallathambi <pn@denx.de>
+CC:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <robh+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <matthias.bgg@gmail.com>, <wd@denx.de>, <sbabic@denx.de>,
+        <hs@denx.de>
+Subject: Re: [PATCH v3 2/2] iio: light: Add device tree binding for vishay
+ vcnl4035
+Message-ID: <20180802135131.000037cb@huawei.com>
+In-Reply-To: <20180802095230.2049554-2-pn@denx.de>
+References: <20180629153802.1639514-1-pn@denx.de>
+        <20180802095230.2049554-1-pn@denx.de>
+        <20180802095230.2049554-2-pn@denx.de>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93cbb876-3a25-482a-a5b4-6e13d42ee535@roeck-us.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 05:46:19AM -0700, Guenter Roeck wrote:
-> This is consistent across multiple test runs. In summary,
-> 
-> - Boot from initrd fails
-> - Boot from SATA drive fails (this is with CONFIG_ATA)
-> - Boot from NVME fails
-> - Boot from USB drive fails
-> - Boot from MMC (SD) fails
-> - Boot from USB UAS drive passes
-> - Boot from various real SCSI drives passes
-> 
-> Platform (pc,q35), CPU type, or SMP/NOSMP does not seem to make a difference.
+On Thu, 2 Aug 2018 11:52:30 +0200
+Parthiban Nallathambi <pn@denx.de> wrote:
 
-OK. I try to bisect between next-20180727 (known good) and
-next-20180731 (known bad) with forced scsi_mod.use_blk_mq=1, but so
-far the only bad I've seen is next-20180731.
+> Adding device tree binding for vcnl4035 and vendor
+> prefix for Vishay Intertechnology
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> -------
+Generally don't add your own cut line, just use the one that is already there below.
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+One minor comment inline.
+> 
+> Changelog in v3:
+> - removed interrupt-parent property reference in documentation
+> - renamed vcnl4035 to light-sensor
+> ---
+>  .../devicetree/bindings/iio/light/vcnl4035.txt         | 18 ++++++++++++++++++
+>  Documentation/devicetree/bindings/vendor-prefixes.txt  |  1 +
+>  2 files changed, 19 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/vcnl4035.txt b/Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+> new file mode 100644
+> index 000000000000..871f995f7b35
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/light/vcnl4035.txt
+> @@ -0,0 +1,18 @@
+> +VISHAY VCNL4035 -  Ambient Light and proximity sensor
+> +
+> +Link to datasheet: https://www.vishay.com/docs/84251/vcnl4035x01.pdf
+> +
+> +Required properties:
+> +
+> +	-compatible: should be "vishay,vcnl4035"
+> +	-reg: I2C address of the sensor, should be 0x60
+
+Bit random on the spacing after -.
+
+> +	- interrupts: interrupt mapping for GPIO IRQ (level active low)
+> +
+> +Example:
+> +
+> +light-sensor@60 {
+> +	compatible = "vishay,vcnl4035";
+> +	reg = <0x60>;
+> +	interrupt-parent = <&gpio4>;
+> +	interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +};
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 7cad066191ee..3cc46d5735a9 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -395,6 +395,7 @@ v3	V3 Semiconductor
+>  variscite	Variscite Ltd.
+>  via	VIA Technologies, Inc.
+>  virtio	Virtual I/O Device Specification, developed by the OASIS consortium
+> +vishay	Vishay Intertechnology, Inc
+>  vivante	Vivante Corporation
+>  vocore VoCore Studio
+>  voipac	Voipac Technologies s.r.o.
+
+
