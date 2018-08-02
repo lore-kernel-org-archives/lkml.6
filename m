@@ -2,117 +2,66 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 566DFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5F0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BDE21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:20:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AhuqgETL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BDE21501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 21D5A21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:21:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D5A21501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbeHBTMt (ORCPT
+        id S2387529AbeHBTN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:12:49 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35608 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730217AbeHBTMs (ORCPT
+        Thu, 2 Aug 2018 15:13:58 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:43216 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeHBTN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:12:48 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w3-v6so1328228plq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tpwLYct0+MWD18FyQM7jT/SjZowFDF6mLriSb1GcqnI=;
-        b=AhuqgETLLND6yLsUh5Wbn30smwqrOBqpZQez5rMXoAqMqHqtMxTGq/MDNQLGuGxyvM
-         p0FP5tzOKsEudwm/pdRK/XJ0AnrWrbBF7KjsUcMLrZW9KUgZR/v2VqLc2OTIowJBLxtO
-         xG0FKlApoW73pigTaoI3yEzHyCY2IBZ64msSw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tpwLYct0+MWD18FyQM7jT/SjZowFDF6mLriSb1GcqnI=;
-        b=VdSl/h7I5FNO3JlPHp31JiFurAdic3azqEobWY8haLfc3Z/bmywc6eIIJ8l3UExJ/i
-         KzW2G/wGREDylMcMlgHBWeqsNrIBLCgrkwuCJ2iw6GOHhG4dnFH+U0hbHHLp5uPsJbcm
-         7DKM9tG3KP5w64LTwhmYwYgNQi9ymCUSKfxlwG24ZyDKAP097CGB21GWLG5tJ6n9mCIH
-         AMubGHVW/M7MEx0V45YdSTtM7jeNRG1eJ5wTQGjc1fpXD7ijQi5Tl7E+KCHxusI3MRFg
-         3P9o0IyikImSrWmLviKf5JVPaaumwSrZYX/Iy0Q+c+iBEWvnPGH4/SB+pgPzxKEYW22G
-         9dfQ==
-X-Gm-Message-State: AOUpUlGdSMWnMFsuh83ossIKc3QHAnRioWUqQdqEjiUeJecC6+aBuxnt
-        Wj2utqmDwqdHWg6/uOaMoqKXUQ==
-X-Google-Smtp-Source: AAOMgpdSQVODVigCeCJ0Q4nzEYzmLteJJe9mL16THeSpNUge3Wqh3Kcylrjp/vsoOP5HNuXEYNeTUw==
-X-Received: by 2002:a17:902:bd97:: with SMTP id q23-v6mr282545pls.311.1533230445005;
-        Thu, 02 Aug 2018 10:20:45 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id o84-v6sm4294981pfi.165.2018.08.02.10.20.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 10:20:44 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 10:20:43 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v12 1/7] dt-bindings: net: bluetooth: Add device tree
- bindings for QTI chip wcn3990
-Message-ID: <20180802172043.GN68975@google.com>
-References: <20180802132518.8680-1-bgodavar@codeaurora.org>
- <20180802132518.8680-2-bgodavar@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180802132518.8680-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 2 Aug 2018 15:13:58 -0400
+Received: from localhost (c-24-20-22-31.hsd1.or.comcast.net [24.20.22.31])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8F2AE1008E03A;
+        Thu,  2 Aug 2018 10:21:54 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 10:21:53 -0700 (PDT)
+Message-Id: <20180802.102153.321128130359100641.davem@davemloft.net>
+To:     dhowells@redhat.com
+Cc:     netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, weiyongjun1@huawei.com
+Subject: Re: [PATCH net-next] rxrpc: Remove set but not used variable 'nowj'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <153319761338.28801.14787677585388434259.stgit@warthog.procyon.org.uk>
+References: <153319761338.28801.14787677585388434259.stgit@warthog.procyon.org.uk>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 02 Aug 2018 10:21:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 06:55:12PM +0530, Balakrishna Godavarthi wrote:
-> This patch enables regulators for the Qualcomm Bluetooth wcn3990
-> controller.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/net/qualcomm-bluetooth.txt       | 26 +++++++++++++++++--
->  1 file changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> index 0ea18a53cc29..2175174415ee 100644
-> --- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
-> @@ -10,12 +10,22 @@ device the slave device is attached to.
->  Required properties:
->   - compatible: should contain one of the following:
->     * "qcom,qca6174-bt"
-> +   * "qcom,wcn3990-bt"
-> +
-> +Optional properties for compatible string qcom,qca6174-bt:
->  
-> -Optional properties:
->   - enable-gpios: gpio specifier used to enable chip
->   - clocks: clock provided to the controller (SUSCLK_32KHZ)
->  
-> -Example:
-> +Optional properties for compatible string qcom,wcn3990-bt:
-> +
-> + - vddio-supply: Bluetooth wcn3990 VDD_IO supply regulator handle.
-> + - vddxo-supply: Bluetooth wcn3990 VDD_XO supply regulator handle.
-> + - vddrf-supply: Bluetooth wcn3990 VDD_RF supply regulator handle.
-> + - vddch0-supply: Bluetooth wcn3990 VDD_CH0 supply regulator handle.
+From: David Howells <dhowells@redhat.com>
+Date: Thu, 02 Aug 2018 09:13:33 +0100
 
-Are these really optional? If I understand correctly the driver
-expects the regulators to be there. Even if it could do with only some
-regulators specified the devm_regulator_bulk_get() call would fail if
-not all requested regulators are available.
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> net/rxrpc/proc.c: In function 'rxrpc_call_seq_show':
+> net/rxrpc/proc.c:66:29: warning:
+>  variable 'nowj' set but not used [-Wunused-but-set-variable]
+>   unsigned long timeout = 0, nowj;
+>                              ^
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+
+Applied.
