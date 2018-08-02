@@ -2,116 +2,101 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8416C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B7AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80C42150A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:47:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80C42150A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 48E18214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E18214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbeHBNip (ORCPT
+        id S1732354AbeHBNiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:38:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36524 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728685AbeHBNip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:38:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0604AE56;
-        Thu,  2 Aug 2018 11:47:55 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 13:47:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        mst@redhat.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 2/2] virtio_balloon: replace oom notifier with shrinker
-Message-ID: <20180802114755.GI10808@dhcp22.suse.cz>
-References: <1532683495-31974-1-git-send-email-wei.w.wang@intel.com>
- <1532683495-31974-3-git-send-email-wei.w.wang@intel.com>
- <20180730090041.GC24267@dhcp22.suse.cz>
- <5B619599.1000307@intel.com>
- <20180801113444.GK16767@dhcp22.suse.cz>
- <5B62DDCC.3030100@intel.com>
+        Thu, 2 Aug 2018 09:38:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46246 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728685AbeHBNiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 09:38:55 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2632520756; Thu,  2 Aug 2018 13:48:04 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A594920717;
+        Thu,  2 Aug 2018 13:48:03 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 13:48:04 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Richard Weinberger <richard@nod.at>,
+        Piotr Bugalski <pbu@cryptera.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Piotr Bugalski <bugalski.piotr@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
+Message-ID: <20180802134804.2352ee89@bbrezillon>
+In-Reply-To: <6f9ca4f1-6809-2d7d-4d64-6869a4e413cb@exceet.de>
+References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
+        <20180627131609.13681-6-bugalski.piotr@gmail.com>
+        <20180801172747.GJ5509@sirena.org.uk>
+        <20180801215733.4dfa3a95@bbrezillon>
+        <20180802101742.GF9117@sirena.org.uk>
+        <6f9ca4f1-6809-2d7d-4d64-6869a4e413cb@exceet.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B62DDCC.3030100@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 02-08-18 18:32:44, Wei Wang wrote:
-> On 08/01/2018 07:34 PM, Michal Hocko wrote:
-> > On Wed 01-08-18 19:12:25, Wei Wang wrote:
-> > > On 07/30/2018 05:00 PM, Michal Hocko wrote:
-> > > > On Fri 27-07-18 17:24:55, Wei Wang wrote:
-> > > > > The OOM notifier is getting deprecated to use for the reasons mentioned
-> > > > > here by Michal Hocko: https://lkml.org/lkml/2018/7/12/314
-> > > > > 
-> > > > > This patch replaces the virtio-balloon oom notifier with a shrinker
-> > > > > to release balloon pages on memory pressure.
-> > > > It would be great to document the replacement. This is not a small
-> > > > change...
-> > > OK. I plan to document the following to the commit log:
-> > > 
-> > >    The OOM notifier is getting deprecated to use for the reasons:
-> > >      - As a callout from the oom context, it is too subtle and easy to
-> > >        generate bugs and corner cases which are hard to track;
-> > >      - It is called too late (after the reclaiming has been performed).
-> > >        Drivers with large amuont of reclaimable memory is expected to be
-> > >        released them at an early age of memory pressure;
-> > >      - The notifier callback isn't aware of the oom contrains;
-> > >      Link: https://lkml.org/lkml/2018/7/12/314
-> > > 
-> > >      This patch replaces the virtio-balloon oom notifier with a shrinker
-> > >      to release balloon pages on memory pressure. Users can set the amount of
-> > >      memory pages to release each time a shrinker_scan is called via the
-> > >      module parameter balloon_pages_to_shrink, and the default amount is 256
-> > >      pages. Historically, the feature VIRTIO_BALLOON_F_DEFLATE_ON_OOM has
-> > >      been used to release balloon pages on OOM. We continue to use this
-> > >      feature bit for the shrinker, so the shrinker is only registered when
-> > >      this feature bit has been negotiated with host.
-> > Do you have any numbers for how does this work in practice?
-> 
-> It works in this way: for example, we can set the parameter,
-> balloon_pages_to_shrink, to shrink 1GB memory once shrink scan is called.
-> Now, we have a 8GB guest, and we balloon out 7GB. When shrink scan is
-> called, the balloon driver will get back 1GB memory and give them back to
-> mm, then the ballooned memory becomes 6GB.
-> 
-> When the shrinker scan is called the second time, another 1GB will be given
-> back to mm. So the ballooned pages are given back to mm gradually.
-> 
-> > Let's say
-> > you have a medium page cache workload which triggers kswapd to do a
-> > light reclaim? Hardcoded shrinking sounds quite dubious to me but I have
-> > no idea how people expect this to work. Shouldn't this be more
-> > adaptive? How precious are those pages anyway?
-> 
-> Those pages are given to host to use usually because the guest has enough
-> free memory, and host doesn't want to waste those pieces of memory as they
-> are not used by this guest. When the guest needs them, it is reasonable that
-> the guest has higher priority to take them back.
-> But I'm not sure if there would be a more adaptive approach than "gradually
-> giving back as the guest wants more".
+On Thu, 2 Aug 2018 12:46:36 +0200
+Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
 
-I am not sure I follow. Let me be more specific. Say you have a trivial
-stream IO triggering reclaim to recycle clean page cache. This will
-invoke slab shrinkers as well. Do you really want to drop your batch of
-pages on each invocation? Doesn't that remove them very quickly? Just
-try to dd if=large_file of=/dev/null and see how your pages are
-disappearing. Shrinkers usually scale the number of objects they are
-going to reclaim based on the memory pressure (aka targer to be
-reclaimed).
--- 
-Michal Hocko
-SUSE Labs
+> Hi Mark,
+> 
+> On 02.08.2018 12:17, Mark Brown wrote:
+> > On Wed, Aug 01, 2018 at 09:57:33PM +0200, Boris Brezillon wrote:  
+> >> Mark Brown <broonie@kernel.org> wrote:  
+> >   
+> >> 2/ Getting this patch [1] merged and implementing the ->get_name() hook
+> >>     in this driver so that SPI NOR devs declared to the MTD layer keep
+> >>     the same name after the transition to spi-mem and mtdparts= passed on
+> >>     the cmdline keep working. Without this in place we're likely to
+> >>     break a few setups :-/.  
+> >   
+> >> [1]https://patchwork.kernel.org/patch/10508693/  
+> > 
+> > I don't seem to have a copy of this patch...  not sure it was sent to
+> > me?  
+> 
+> When I sent the patch I put you in cc. So if nothing went wrong you 
+> should have it.
+> It is part of the SPI MEM conversion series for the FSL QSPI driver [1].
+> 
+> Boris made some remarks on documentation in v2, that I have fixed, but 
+> not sent out yet, as we have some blocking issues with the driver itself.
+
+I don't remember where we were stuck. Are you still waiting answers
+from Yogesh? Probably a good time to ping him if that's the case ;-).
+
+> 
+> So if you want I could send the patch separately so it can be applied 
+> with the Atmel driver.
+
+Yes please, send a v3 for patch 1 and 2.
