@@ -2,102 +2,88 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21667C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B54C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C588F208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JKaNLHAh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VmJwcDiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C588F208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id EB8AF208DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB8AF208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeHBIX4 (ORCPT
+        id S1726964AbeHBIY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:23:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60474 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeHBIX4 (ORCPT
+        Thu, 2 Aug 2018 04:24:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35619 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeHBIY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:23:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 59D1C60B12; Thu,  2 Aug 2018 06:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533191657;
-        bh=YjzwDaVx+IdtJKLDRVPKQBG2mNSCiWNoILooSu3HrH0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JKaNLHAhTzafose24lzKkq5kLwWJCUXUd23sUVEDw6pPr9clSICJJNY2PK3PLI9bl
-         ME64ONwy3Fhw9rUca19DhKxZYWYVB8a+NTTdKY5Q6YbjEbPxhwbTfpWdPMphxy2sAh
-         0Nr2+RDVMdff3g7i1C98Qeif1F0L9krE22m/95bk=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id CEA276035F;
-        Thu,  2 Aug 2018 06:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533191656;
-        bh=YjzwDaVx+IdtJKLDRVPKQBG2mNSCiWNoILooSu3HrH0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VmJwcDiD1rJOaflt+eQrQnRo/BVT+xjKCOF65nUCJ0z5xH09Jgy/shBJBUQ+9Guz5
-         /UFm5DycSWxWW00zaqsNHl6PBbQf/UKG/gZc5MMh27FgGi/GzNANQrSC6y9OqfsN4D
-         ibc1izknU9OeY5y8vTjIvfCzpMS0eIqiYQBkxT1U=
+        Thu, 2 Aug 2018 04:24:26 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fl7C7-0008Hn-AY; Thu, 02 Aug 2018 08:34:43 +0200
+Date:   Thu, 2 Aug 2018 08:34:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Gaurav Kohli <gkohli@codeaurora.org>
+cc:     john.stultz@linaro.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2] timers: Clear must_forward_clk inside base lock
+In-Reply-To: <1533186903-28419-1-git-send-email-gkohli@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1808020826580.1835@nanos.tec.linutronix.de>
+References: <1533186903-28419-1-git-send-email-gkohli@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 02 Aug 2018 12:04:16 +0530
-From:   poza@codeaurora.org
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH] PCI/AER: Remove duplicate PCI_EXP_AER_FLAGS definition
-In-Reply-To: <153307741056.12895.16173953885240310937.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153307741056.12895.16173953885240310937.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <b26226ae6c1d0a78f2ab1fac9894df7a@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-01 04:20, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> PCI_EXP_AER_FLAGS was defined twice (with identical definitions), once
-> under #ifdef CONFIG_ACPI_APEI, and again at the top level.  This looks 
-> like
-> my merge error from these commits:
-> 
->   fd3362cb73de ("PCI/AER: Squash aerdrv_core.c into aerdrv.c")
->   41cbc9eb1a82 ("PCI/AER: Squash ecrc.c into aerdrv.c")
-> 
-> Remove the duplicate PCI_EXP_AER_FLAGS definition.
-> 
-> Fixes: 41cbc9eb1a82 ("PCI/AER: Squash ecrc.c into aerdrv.c")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pcie/aer.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 2b344c9e2d46..c6cc855bfa22 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -329,8 +329,6 @@ int pcie_aer_get_firmware_first(struct pci_dev 
-> *dev)
->  		aer_set_firmware_first(dev);
->  	return dev->__aer_firmware_first;
->  }
-> -#define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE 
-> | \
-> -				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
-> 
->  static bool aer_firmware_first;
+On Thu, 2 Aug 2018, Gaurav Kohli wrote:
+> Timer wheel base->must_forward_clock is indicating that
+> the base clock might be stale due to a long idle sleep.
+> The forwarding of base clock takes place in softirq of timer
 
+of the base clock takes place in the timer softirq ...
 
-Reviewed-by: Oza Pawandeep <poza@codeaurora.org>
+> or when a timer is enqueued to base which is idle. While migrate
+
+to a base ..
+
+> timer from remote CPU to the new base which is idle, then
+
+See below.
+
+> following race can happen:
+> 
+>   CPU0                                  CPU1
+>   run_timer_softirq                     timers_dead_cpu
+> 
+> 					base = lock_timer_base(timer);
+>   base->must_forward_clk = false
+> 					if (base->must_forward_clk)
+> 				         forward(base); >>skip
+> 
+> 					migrate_timer_list
+
+I don't know why you insist on migrate_timer_list() being part of the
+picture here.
+
+It's only _ONE_ particular way to observe that issue. But it's not the only
+way. ANY remote enqueue which hits the situation on the other CPU (CPU0 in
+the example) has this problem. Tying it to migrate_timer_list() just
+because you observed it that way is actively misleading. Surely you can add
+a sentence that you observed it in that case, but that's supplemental
+information.
+
+Thanks,
+
+	tglx
