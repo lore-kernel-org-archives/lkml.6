@@ -2,91 +2,96 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76030C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F15C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2770821582
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="tQX00zST"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2770821582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id EA38721581
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA38721581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbeHBXYx (ORCPT
+        id S1732209AbeHBXZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:24:53 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46712 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbeHBXYx (ORCPT
+        Thu, 2 Aug 2018 19:25:23 -0400
+Received: from forward105j.mail.yandex.net ([5.45.198.248]:50565 "EHLO
+        forward105j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731946AbeHBXZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:24:53 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t17-v6so1582182ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+oy7xt4EOZxLna0GRNMFqVzAPZjfYwD9K7nS7F5dpqk=;
-        b=tQX00zSTzD48AX8CXKkiFdulNAa0YbcxDhXBABV8e9jzhiOLm3TrSnpuUsC39bz2Ue
-         jK2K0s8hLi25AIN6i8ii5J0Lnk88mRSvQkdpWJns9wAUfPRJLjFrP9w3zkJs/Gu3pPYf
-         2+8ohmVQZXKgEKXv/hH04QpQitxq7wXdnLqAQchxeT0WLFBBaUNDP/htnB8X4zX62vMH
-         FH+MA15lWq+50acBsn17glnqecdSzd7SJdbFE4VxQPz+KqLqJ+MKizNCNZDQn0o9etmD
-         0YJUwl92BMdEuaALBIx5zieqYY+dFJCrkxlb50nEh4jI73H3UMfNaXFit3GkJXDSMcm+
-         +9fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+oy7xt4EOZxLna0GRNMFqVzAPZjfYwD9K7nS7F5dpqk=;
-        b=Rc1B8rAQRc+zJp14CrF+W+Mg/zmItZtMJ8/mXuZMg1fIBBFKC6fppgc7Vv10ihOdSG
-         onUQXlG0iKzDvJo5lYYPLr40tXTMYe2FchqLF6eEYqh6sGRD0caNkxd8HNkxG6wwEHdO
-         ID2jbbRc+LT9VW9sopP8GlTG6GZZJdp1F6oUy/FXJ/p4Cn5OvXbtvG+fDBbSZS7W8VuI
-         4kScZjnCGfMTP4k/Db3FUFtSnGoVg7IbjL2ZPbRmcW2Kde/HrHg1cGpkqEKohQqUTC5A
-         fqWTwnM6Kbj2pyGfLtR9PdPHYtOK3shGHphSaD951EenpdY2yZMBlbOXly0jX+zITK6R
-         U79A==
-X-Gm-Message-State: AOUpUlE/wxRdY8knH2wkvhXaFHUNAyBbJHw684h4xT0oYAKudB/O2iQB
-        RkPlOrzBc6lV1/4I9w7Xi2uiB2aOyOY=
-X-Google-Smtp-Source: AAOMgpcavrb9eZ4IoiOiGn4nR1dwU8awLoFNpc/RnjCVIAF/uKIqYgtf9LaDAAf0YCXwKkIN2DP0tQ==
-X-Received: by 2002:a17:902:8481:: with SMTP id c1-v6mr966817plo.177.1533245514619;
-        Thu, 02 Aug 2018 14:31:54 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id k64-v6sm6065219pfc.160.2018.08.02.14.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 14:31:53 -0700 (PDT)
-Subject: Re: [PATCH] block/compat_ioctl: fix range check in BLKGETSIZE
-To:     Khazhismel Kumykov <khazhy@google.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180406222350.174104-1-khazhy@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e40fc93d-ddb1-23a5-725c-e8ab613168cb@kernel.dk>
-Date:   Thu, 2 Aug 2018 15:31:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 2 Aug 2018 19:25:22 -0400
+Received: from mxback13g.mail.yandex.net (mxback13g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:92])
+        by forward105j.mail.yandex.net (Yandex) with ESMTP id 588D1186079;
+        Fri,  3 Aug 2018 00:32:22 +0300 (MSK)
+Received: from smtp4p.mail.yandex.net (smtp4p.mail.yandex.net [2a02:6b8:0:1402::15:6])
+        by mxback13g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id cJsTVhmsOi-WL1SrXlm;
+        Fri, 03 Aug 2018 00:32:22 +0300
+Received: by smtp4p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id F6RQvjLbN1-WLOaOZJt;
+        Fri, 03 Aug 2018 00:32:21 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+From:   WGH <wgh@torlan.ru>
+Openpgp: preference=signencrypt
+Message-ID: <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+Date:   Fri, 3 Aug 2018 00:32:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <20180406222350.174104-1-khazhy@google.com>
+In-Reply-To: <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/6/18 4:23 PM, Khazhismel Kumykov wrote:
-> kernel ulong and compat_ulong_t may not be same width. Use type directly
-> to eliminate mismatches.
-> 
-> This would result in truncation rather than EFBIG for 32bit mode for
-> large disks.
+On 08/02/2018 09:32 PM, Linus Torvalds wrote:
+> WGH (sorry, no idea what your real name is) - what's the source of the
+> script that broke? Was it some system script you got from outside and
+> likely to affect others too?
+>
+> Or was it just some local thing you wrote yourself and was
+> unintentionally buggy and nobody else is likely to hit this?
+>
+> Because if the latter, if you can work around it and you're the only
+> user this hits, we might just be able to ignore it.
 
-Sorry for not getting to this. Applied, thanks.
+The script in question is written by me and contains literally two lines:
 
--- 
-Jens Axboe
+    lvcreate --size 5G --snapshot --name snap0 --permission r
+/dev/mapper/vg0-lvol_rootfs
+    mount /dev/mapper/vg0-snap0 /mnt/rootfs_snapshot
+
+The script is not buggy (I think), it was written under simple
+assumption that --permission r works. And it does - unless you happen to
+have combination of kernel >=4.16 and lvm2 <2.02.178.
+
+The commit in question appeared only in 4.16, and this kernel version is
+not widespread yet. You have to be running both recent kernel and
+not-so-recent lvm2 to be bitten by this. This probably explains why no
+one else reported this problem.
+
+Workaround certainly exists: I can just create read-write snapshot, but
+mount it read-only. The reason why I didn't discover the workaround
+earlier is that after unsuccessful read-only snapshot creation system
+ends up in some weird state where read-write snapshots are also failing
+with the same error (until reboot). So I got a wrong impression that
+read-write snapshots were broken as well.
 
