@@ -2,149 +2,188 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6696DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA25C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185A421564
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39D6021564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:07:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fubUGFY3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TCFlWNIC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185A421564
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EL9L2Exe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="muDjEUb8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39D6021564
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeHBU7f (ORCPT
+        id S1727841AbeHBVAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 16:59:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40764 "EHLO
+        Thu, 2 Aug 2018 17:00:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41046 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeHBU7e (ORCPT
+        with ESMTP id S1726177AbeHBVAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 16:59:34 -0400
+        Thu, 2 Aug 2018 17:00:15 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 50EDA60AFF; Thu,  2 Aug 2018 19:07:08 +0000 (UTC)
+        id 52C0660714; Thu,  2 Aug 2018 19:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533236828;
-        bh=VArxtrapZOKxMGM7BQqMAckucFRHf6zVKZHq/vgEL1g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fubUGFY3lMPnd5UHbPKZr36/hBX29QuFk+RTbik1P+ABkOHnmsfzFRoAlOxolboim
-         jQ398fW9hwX3VPxi0BEt8CyEDQcjO3OIxe/WxGYdqOLl2zNVLp+mCiJ7MdTHLsOZoP
-         oqL/6Nkby+/9QriCtbE0x0raUnD+cmLxyAjibaqw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 74554602B7;
-        Thu,  2 Aug 2018 19:07:07 +0000 (UTC)
+        s=default; t=1533236868;
+        bh=Y11yW3i5Hw137HbM/Ofi6iUwnnVfA2NNl/mqItTKT8s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EL9L2ExevwTZGtxV/u0Z5D43QUDCQadipB2c+Cs6U7Cq/zVNJhCcPICJpqIOGG6ZM
+         8dIBf7iyOr66lnrUGScEZZJvc3PdXYL+Bvguol5VNRcSw1E1DfgCUl9NA8h+HPvWnk
+         49v69clRH1esDrXAQMGzxAYjll9jgCkVKNeKLuI8=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7525C60397;
+        Thu,  2 Aug 2018 19:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533236827;
-        bh=VArxtrapZOKxMGM7BQqMAckucFRHf6zVKZHq/vgEL1g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TCFlWNIC5fxLjZf4fjr/Ux4oyb/b4AoYEJl76aq340lq6kFUPRcv+uaRymim+WOU4
-         Qh0oJEYJeGKZ+qGlee7/hiYy2bdfADhQuKJS2j8qaEnZAzK7uRiR78OhWE0FcY2/qd
-         e5LfTNX/UliVXC14rz5CkF7c/kpW5vTPskloqCfI=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 02 Aug 2018 12:07:07 -0700
-From:   skannan@codeaurora.org
-To:     myungjoo.ham@samsung.com
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, georgi.djakov@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] PM / devfreq: Add devfreq driver for interconnect
- bandwidth voting
-In-Reply-To: <20180802101341epcms1p53ee79776dbcbeaf6f1e7910b20095220@epcms1p5>
-References: <1533171465-25508-2-git-send-email-skannan@codeaurora.org>
- <CGME20180802005759epcas4p4a68d50e61c8425124a993de1917021a2@epcms1p5>
- <20180802101341epcms1p53ee79776dbcbeaf6f1e7910b20095220@epcms1p5>
-Message-ID: <e7bd0cbc4131f597a1fb68af1cfd1a67@codeaurora.org>
-X-Sender: skannan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        s=default; t=1533236867;
+        bh=Y11yW3i5Hw137HbM/Ofi6iUwnnVfA2NNl/mqItTKT8s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=muDjEUb8CyZIFbK/lFWWFOx+mRsWQf4Kk4CGMmdgQ05N+ct9C+dHYkCtIv4iI+x7x
+         CMAJLjBZ90c279l7nTiExch6YdRtVFV78Im3N0V5pbmmQoXgW6dzmJFrqMaWVqKRay
+         zxOX5Gqvzu4Rd5rjHeppT3n1UVmAWQZcDWlyaN0M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7525C60397
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v13 0/7] 
+Date:   Fri,  3 Aug 2018 00:37:25 +0530
+Message-Id: <20180802190732.4811-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-02 03:13, MyungJoo Ham wrote:
->> This driver registers itself as a devfreq device that allows devfreq
->> governors to make bandwidth votes for an interconnect path. This 
->> allows
->> applying various policies for different interconnect paths using 
->> devfreq
->> governors.
->> 
-> 
-> First of all, the name, "devfreq_icbw", is not appropriate for a
-> devfreq device driver. It confuses; it looks like a part of the
-> framework itself.
-> 
->> diff --git a/drivers/devfreq/devfreq_icbw.c 
->> b/drivers/devfreq/devfreq_icbw.c
->> new file mode 100644
->> index 0000000..231fb21
->> --- /dev/null
->> +++ b/drivers/devfreq/devfreq_icbw.c
->> @@ -0,0 +1,116 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights 
->> reserved.
->> + */
->> +
->> +#define pr_fmt(fmt) "icbw: " fmt
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/err.h>
->> +#include <linux/errno.h>
->> +#include <linux/mutex.h>
->> +#include <linux/devfreq.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/of.h>
->> +#include <linux/interconnect.h>
-> 
-> Where can I find this file?
+These patches enables Bluetooth functinalties for new Qualcomm
+Bluetooth chip wnc3990. As this is latest chip with new features, 
+along with some common features to old chip "qcom,qca6174-bt".
+we have updated names of functions that are used for both the chips 
+to keep this generic and would help in future when we would have new 
+BT SoC.
 
-Sorry, meant to mention this in the email specific portion of the commit 
-text. This is on top of the interconnect framework series that Georgi 
-has been working on. linux-pm should have those patches.
+The below are difference between new and old chips.
 
+*Power:
+ *New chip: we use voltage regulators to turn on/off the chip and we 
+  must send a command on Tx line to turn on/off the chip completely.
+ *Old chip: We turn on/off by setting a GPIO.
 
->> +
->> +struct dev_data {
->> +	struct icc_path *path;
->> +	u32 cur_ab;
->> +	u32 cur_pb;
->> +	unsigned long gov_ab;
->> +	struct devfreq *df;
->> +	struct devfreq_dev_profile dp;
->> +};
->> +
->> +static int icbw_target(struct device *dev, unsigned long *freq, u32 
->> flags)
->> +{
->> +	struct dev_data *d = dev_get_drvdata(dev);
->> +	int ret;
->> +	u32 new_pb = *freq, new_ab = d->gov_ab;
->> +
->> +	if (d->cur_pb == new_pb && d->cur_ab == new_ab)
->> +		return 0;
->> +
->> +	dev_dbg(dev, "BW KBps: AB: %u PB: %u\n", new_ab, new_pb);
->> +
->> +	ret = icc_set(d->path, new_ab, new_pb);
-> 
-> I'm not sure if icc_set is available.
+ *Note: Turning on sequence differs between two chips.
 
-Yeah, it's available on that patch series.
+*Firmware download:
+  Only firmware file name differ from New and Old chip.
+  
+  So we reused some functions/structure/variables which are used for old 
+  chip to New chip by generic naming (may be future chips may use same functions).
 
--Saravana
+ * As we have multiple changes for functions names,we have tested these patches 
+   on both chips.
+
+v13:
+ * Segregated optional and required properties for wcn3990.
+
+v12:
+ * removed iteration loop in qca_init_wcn3990 
+ * updated review comments.
+
+v11:
+ * removed regulator current from dtbindings
+ * addressed review comments.
+
+v10:
+ * update current load with actual values of WCN3990.
+ * added support  for itterative connect with BT chip if it fails to respond to the HOST.
+ * Added regulator current dtbindings.
+ * addressed review comments.
+
+v9:
+ * removed smps regs.
+ * hidded flow control in respective functions.
+ * moved qca_soc_ver to qca_setup
+ * addressed review comments.
+ 
+v8:
+  * Squashed [v7 2/8] and [v7 3/8] to one patch.
+  * updated functions to set and get the UART speeds.
+  * addressed review comments.
+
+v7:
+  * Renamed all the possible function of ROME to generic.
+  * updated with review comments for hci_qca and btqca
+  * fixed kbuild errors.
+  * created wrapper functions for re-usable blocks.
+ 
+v6:
+  * Hooked up qca_power to qca_serdev.
+  * renamed all the naming inconsistency functions with qca_*
+  * leveraged common code of ROME for wcn3990.
+  * created wrapper functions for re-usable blocks.
+  * updated function of _*regulator_enable and _*regualtor_disable.  
+  * removed redundant comments and functions.
+  * add code to derive the firmware files based on ROM Version.
+  * created new patch for common function of ROME and wcn3990.
+  * enables Qualcomm chip to operate at 3.2Mbps.
+  * updated names of functions that are used for both the chips to keep this generic. 
+
+v5:
+  * updated with review comments for hci_qca and btqca
+ 
+v4:
+  * rebased all changes on top of bluetooth-next.
+  * addressed review comments.
+  * New patch created for firmware download.
+
+v3:
+  * Rebased all changes on top of bluetooth-next.
+  * dt-bindings: net: bluetooth: Add device tree bindings for QTI chip wcn3990
+    - added dt-binding snippet for bluetooth chip wcn3990.
+  * Bluetooth: Add support for wcn3990 soc.
+    - updated BT_INFO with bt_dev_info, where ever necessary.
+
+v2:
+   * Add support for wcn3990:
+    These changes are aligned as per serdev frame work.
+          We implemented these changes on top of https://patchwork.kernel.org/patch/10316093/
+        As this patch enable serdev for one of the Qualcomm BT chip.
+
+        The changes in the patch include.
+        - Adding support to voting up/down regulators for WCN3990.
+           - Bluetooth firmware download for wcn3990.
+
+  * Add device tree bindings for Atheros chips:
+          These changes are on top of https://patchwork.kernel.org/patch/10316097/.
+          - Description of device tree bindings.
+
+Balakrishna Godavarthi (7):
+  dt-bindings: net: bluetooth: Add device tree bindings for QTI chip
+    wcn3990
+  Bluetooth: btqca: Rename ROME specific functions to generic functions
+  Bluetooth: btqca: Redefine qca_uart_setup() to generic function.
+  Bluetooth: hci_qca: Add wrapper functions for setting UART speed
+  Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
+  Bluetooth: btqca: Add wcn3990 firmware download support.
+  Bluetooth: hci_qca: Add support for Qualcomm Bluetooth chip wcn3990
+
+ .../bindings/net/qualcomm-bluetooth.txt       |  29 +-
+ drivers/bluetooth/btqca.c                     | 117 +++--
+ drivers/bluetooth/btqca.h                     |  22 +-
+ drivers/bluetooth/hci_qca.c                   | 483 +++++++++++++++---
+ 4 files changed, 535 insertions(+), 116 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
