@@ -3,115 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078B4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D653FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1216821571
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82C2121571
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:23:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="fVh8X6ha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1216821571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqI1hw2X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C2121571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729987AbeHBXOs (ORCPT
+        id S1729924AbeHBXQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:14:48 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:56097 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbeHBXOr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:14:47 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id F31248365F
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 09:21:49 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1533244909;
-        bh=es7m7hBeR9zM8VkPM59bv4CYycDKenPnKx1IUESFQls=;
-        h=From:To:CC:Subject:Date:References;
-        b=fVh8X6haq4fVu85nMVSBKlBY141jAHxHn6SzNnAqRDvc8BJ6DTcQl9C3GsuHaDlfe
-         uHhwIsPCxesm/HhK4Ur+riNiZopV8o5iRYyJqhXa+LfohixkTwOR1WL/FfB6y8d3dN
-         uCvbmNwsSJd6TGY9CTelxxnqJ8s8gg3JUh7Z7ZUE=
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b6375ec0001>; Fri, 03 Aug 2018 09:21:48 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Fri, 3 Aug 2018 09:21:49 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Fri, 3 Aug 2018 09:21:49 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Will Deacon <will.deacon@arm.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm_pmu: fix compiler warning in arm_pmu_device_probe
-Thread-Topic: [PATCH] arm_pmu: fix compiler warning in arm_pmu_device_probe
-Thread-Index: AQHUKeD6fBh8YsNiHkuvjaW9n/Y1IA==
-Date:   Thu, 2 Aug 2018 21:21:49 +0000
-Message-ID: <31509165164e4e32af172a1857a2ab90@svr-chch-ex1.atlnz.lc>
-References: <20180801214526.24599-1-chris.packham@alliedtelesis.co.nz>
- <20180802105705.GB14312@arm.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 2 Aug 2018 19:16:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbeHBXQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:16:24 -0400
+Received: from mail-qt0-f173.google.com (mail-qt0-f173.google.com [209.85.216.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F3C21580;
+        Thu,  2 Aug 2018 21:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533245008;
+        bh=sxRFS/jSYoM8xa6jGIw+8CBgwiKawq0DKGUpEGNsjZA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tqI1hw2XnHDyYhbpDwXpHC6OHE7nMCawUZgLEuZf9CDMla2xpXCHXRwk+hn/josNo
+         5pZ8FBt/rukNFtpiIfsLkkHfZAVWopXcmBWDBSW7Msi5ZB9pCsrf0xM9QKcSFq/x/u
+         LK/AqD74xgpr3Bsmh61Mtd5Tde3md50ZdAjjIHVY=
+Received: by mail-qt0-f173.google.com with SMTP id n6-v6so4020222qtl.4;
+        Thu, 02 Aug 2018 14:23:28 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFEarNxKBsrZWM1p3+ssKZsANFxTpegBEVeeyD+Ozq3hs64b/pH
+        LzpqnvA8cmCPdwKGcO08z1R+QVzXavZ5BHHtQA==
+X-Google-Smtp-Source: AAOMgpcRGquUnVfZMkbCeU3Z6DnS9jD/7cu/HU4nj/8JgmAj2B9+eJRioJTd69jR9MACVvnY1KcfRh5O4LZACvk1aiA=
+X-Received: by 2002:a0c:98c1:: with SMTP id g1-v6mr1170898qvd.27.1533245007740;
+ Thu, 02 Aug 2018 14:23:27 -0700 (PDT)
 MIME-Version: 1.0
+References: <1533061333-7680-1-git-send-email-pheragu@codeaurora.org>
+ <1533061333-7680-2-git-send-email-pheragu@codeaurora.org> <CABGGiswcMicPypOz2eW01NosuAHUw2B3KVxzrOfanEfT=Srf9A@mail.gmail.com>
+ <4d6732e9172431bbf24ff470be345481@codeaurora.org>
+In-Reply-To: <4d6732e9172431bbf24ff470be345481@codeaurora.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 2 Aug 2018 15:23:16 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJMouUOpb-ZcBqydKCHuF5MmODSdGOoneO+w5oD5AaCZA@mail.gmail.com>
+Message-ID: <CAL_JsqJMouUOpb-ZcBqydKCHuF5MmODSdGOoneO+w5oD5AaCZA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: Documentation for qcom,eud
+To:     pheragu@codeaurora.org
+Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Trilok Soni <tsoni@codeaurora.org>, ckadabi@codeaurora.org,
+        bryanh@codeaurora.org, psodagud@codeaurora.org,
+        satyap@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/18 23:05, Will Deacon wrote:=0A=
-> On Thu, Aug 02, 2018 at 09:45:26AM +1200, Chris Packham wrote:=0A=
->> GCC warns=0A=
->>=0A=
->>    arm_pmu_platform.c:234:5: error: 'err' may be used uninitialized in t=
-his function [-Werror=3Dmaybe-uninitialized]=0A=
->>=0A=
->> This is because we rely on the for_each_cpu loop in armpmu_request_irqs=
-=0A=
->> to initialise err. The warning is a little bogus because we know if=0A=
->> there were 0 CPUs this code would not be running.=0A=
->>=0A=
->> Initialise err to 0 to avoid the warning.=0A=
->>=0A=
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->> ---=0A=
->> This has been reported before in https://lkml.org/lkml/2018/3/5/508 I'm =
-not=0A=
->> sure if it was dismmissed as "meh, gcc is wrong" or if it was just waint=
-ing for=0A=
->> someone with some round tuits.=0A=
-> =0A=
-> Which version of GCC are you using? I don't see this warning locally.=0A=
-> =0A=
-=0A=
-My local cross-compiler is=0A=
-=0A=
-$ arm-softfloat-linux-gnueabi-gcc --version=0A=
-arm-softfloat-linux-gnueabi-gcc (crosstool-NG crosstool-ng-1.22.0) 4.9.3=0A=
-=0A=
-Old-ish but as far as I was aware still supported for building the kernel.=
-=0A=
-=0A=
-I've just tried 7.3.0 and 8.1.0 neither of which complain.=0A=
-=0A=
-A quick look at the report linked to above seems they probably were =0A=
-using 4.6.3 and it still appears in current build reports=0A=
-=0A=
-http://kisskb.ellerman.id.au/kisskb/buildresult/13455291/=0A=
-=0A=
-=0A=
-=0A=
-=0A=
+On Thu, Aug 2, 2018 at 12:44 PM <pheragu@codeaurora.org> wrote:
+>
+> On 2018-08-01 07:04, Rob Herring wrote:
+> > On Tue, Jul 31, 2018 at 12:22 PM Prakruthi Deepak Heragu
+> > <pheragu@codeaurora.org> wrote:
+> >>
+> >> Documentation for Embedded USB Debugger (EUD) device tree bindings.
+> >
+> > If you want bindings reviewed, send them to the correct list and
+> > people (hint: run get_maintainers.pl).
+> >
+> > New bindings should not use extcon.
+> >
+> Why should we not use extcon?
+
+Because it is poorly designed and has things which are Linux specific.
+
+> Are there any alternatives which you
+> would suggest? We were looking at graphs instead of extcon.
+
+There's a usb-connector binding now which does use graphs.
+
+But I'm not really sure what this should look like given this appears
+to be both a USB device and a MMIO device.
+
+Rob
