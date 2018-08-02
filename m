@@ -2,95 +2,145 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8E2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652EDC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B6721534
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:58:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B6721534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 29BC721534
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BC721534
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732177AbeHBSuo (ORCPT
+        id S1732188AbeHBSva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:50:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726938AbeHBSuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:50:44 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 75F434075172;
-        Thu,  2 Aug 2018 16:58:45 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-120.pek2.redhat.com [10.72.12.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E523A213ED6A;
-        Thu,  2 Aug 2018 16:58:36 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 00:58:32 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc:     "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [RFC] blk-mq: clean up the hctx restart
-Message-ID: <20180802165831.GB8928@ming.t460p>
-References: <1533009735-2221-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180731045805.GE15701@ming.t460p>
- <8a3383e6-2926-6858-d8f2-671f3cb9e460@oracle.com>
- <20180731061616.GF15701@ming.t460p>
- <42371198-2a4b-1062-3564-411645ffba98@oracle.com>
- <20180801085841.GA27962@ming.t460p>
- <9feaa41702ef6fcc00ce1b8aa19bbe179edf4e3f.camel@wdc.com>
+        Thu, 2 Aug 2018 14:51:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:60786 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726938AbeHBSva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 14:51:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D817615A2;
+        Thu,  2 Aug 2018 09:59:31 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E29463F5D0;
+        Thu,  2 Aug 2018 09:59:27 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 17:59:26 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
+ indicator
+Message-ID: <20180802165924.7ywgoxj2jwftxycz@queper01-lin>
+References: <20180802131849.mqpt5lbtcqrxbwig@queper01-lin>
+ <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
+ <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin>
+ <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
+ <20180802153035.vjtmqwdwujvt7ojs@queper01-lin>
+ <CAKfTPtCGGqykN027kxK+chvKvCpNu4bYYdvfZJ+3_7YzT3Utfg@mail.gmail.com>
+ <20180802160009.uhwwj3tqrqmv7q5a@queper01-lin>
+ <CAKfTPtB_tWgOPCB3q2Q2rESKczTPGBDUojcXDY7uP8YTQddBMg@mail.gmail.com>
+ <20180802161027.v2ctgscuc4uxbb7u@queper01-lin>
+ <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9feaa41702ef6fcc00ce1b8aa19bbe179edf4e3f.camel@wdc.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 02 Aug 2018 16:58:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 02 Aug 2018 16:58:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+In-Reply-To: <CAKfTPtDtaF9Qs4NWkKWUSr8Ryi-ScYNmPyacocPQUPxT00XAYg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 03:52:00PM +0000, Bart Van Assche wrote:
-> On Wed, 2018-08-01 at 16:58 +0800, Ming Lei wrote:
-> > On Wed, Aug 01, 2018 at 10:17:30AM +0800, jianchao.wang wrote:
-> > > However, due to the limits in hctx_may_queue, q_b still cannot get the
-> > > tags. The RR restart also will not wake up q_a.
-> > > This is unfair for q_a.
-> > > 
-> > > When we remove RR restart fashion, at least, the q_a will be waked up by
-> > > the hctx restart.
-> > > Is this the improvement of fairness you said in driver tag allocation ?
-> > 
-> > I mean the fairness is totally covered by the general tag allocation
-> > algorithm now, which is sort of FIFO style because of waitqueue, but RR
-> > restart wakes up queue in the order of request queue.
+On Thursday 02 Aug 2018 at 18:38:01 (+0200), Vincent Guittot wrote:
+> On Thu, 2 Aug 2018 at 18:10, Quentin Perret <quentin.perret@arm.com> wrote:
+> >
+> > On Thursday 02 Aug 2018 at 18:07:49 (+0200), Vincent Guittot wrote:
+> > > On Thu, 2 Aug 2018 at 18:00, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > >
+> > > > On Thursday 02 Aug 2018 at 17:55:24 (+0200), Vincent Guittot wrote:
+> > > > > On Thu, 2 Aug 2018 at 17:30, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > > > >
+> > > > > > On Thursday 02 Aug 2018 at 17:14:15 (+0200), Vincent Guittot wrote:
+> > > > > > > On Thu, 2 Aug 2018 at 16:14, Quentin Perret <quentin.perret@arm.com> wrote:
+> > > > > > > > Good point, setting the util_avg to 0 for new tasks should help
+> > > > > > > > filtering out those tiny tasks too. And that would match with the idea
+> > > > > > > > of letting tasks build their history before looking at their util_avg ...
+> > > > > > > >
+> > > > > > > > But there is one difference w.r.t frequency selection. The current code
+> > > > > > > > won't mark the system overutilized, but will let sugov raise the
+> > > > > > > > frequency when a new task is enqueued. So in case of a fork bomb, we
+> > > > > > >
+> > > > > > > If the initial value of util_avg is 0, we should not have any impact
+> > > > > > > on the util_avg of the cfs rq on which the task is attached, isn't it
+> > > > > > > ? so this should not impact both the over utilization state and the
+> > > > > > > frequency selected by sugov or I'm missing something ?
+> > > > > >
+> > > > > > What I tried to say is that setting util_avg to 0 for new tasks will
+> > > > > > prevent schedutil from raising the frequency in case of a fork bomb, and
+> > > > > > I think that could be an issue. And I think this isn't an issue with the
+> > > > > > patch as-is ...
+> > > > >
+> > > > > ok. So you also want to deal with fork bomb
+> > > > > Not sure that you don't have some problem with current proposal too
+> > > > > because select_task_rq_fair will always return prev_cpu because
+> > > > > util_avg and util_est are 0 at that time
+> > > >
+> > > > But find_idlest_cpu() should select a CPU using load in case of a forkee
+> > > > no ?
+> > >
+> > > So you have to wait for the next tick that will set the overutilized
+> > > and disable the want_energy. Until this point, all new tasks will be
+> > > put on the current cpu
+> >
+> > want_energy should always be false for forkees, because we set it only
+> > for SD_BALANCE_WAKE.
 > 
-> From sbitmap.h:
-> 
-> #define SBQ_WAIT_QUEUES 8
-> 
-> What do you think is the effect of your patch if more than eight LUNs are
-> active and the SCSI queue is full?
+> Ah yes I forgot that point.
+> But doesn't this break the EAS policy ? I mean each time a new task is
+> created, we use the load to select the best CPU
 
-Jens introduces multiple wait queues for scattering atomic operation on
-multiple counters, in theory, the way is understood easily if you just
-treat it as one whole queue in concept.
+If you really keep spawning new tasks all the time, yes EAS won't help
+you, but there isn't a lot we can do :/. We need to have an idea of how
+big a task is for EAS, and we obviously don't know that for new tasks, so
+it's hard/dangerous to make assumptions.
 
-And about the situations you mentioned, no any special as normal cases
-or thousands of LUNs. Just a batch of queues are waken up from one
-single wait queue(sbq_wait_state), and inside each wait queue, queues
-are handled actually in FIFO order.
+So the proposal here is that if you only have forkees once in a while,
+then those new tasks (and those new tasks only) will be placed using load
+the first time, and then they'll fall under EAS control has soon as they
+have at least a little bit of history. This _should_ happen without
+re-enabling load balance spuriously too often, and that _should_ prevent
+it from ruining the placement of existing tasks ...
 
-Or what is your expected ideal behaviour about fairness?
+As Peter already mentioned, a better way of solving this issue would be
+to try to find the moment when the utilization signal has converged to
+something stable (assuming that it converges), but that, I think, isn't
+straightforward at all ...
 
-thanks, 
-Ming
+Does that make any sense ?
+
+Thanks,
+Quentin
