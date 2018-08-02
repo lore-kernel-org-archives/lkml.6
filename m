@@ -3,112 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091DFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03C7C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62FD214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9402151D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:07:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTOlH4HH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62FD214FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FE7aQpXI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9402151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732498AbeHBP5W (ORCPT
+        id S1732518AbeHBP7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:57:22 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44690 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732141AbeHBP5V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:57:21 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k21-v6so1373424pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 07:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gBRCGiBOBUU5hLfpePyfcLx7elxeb+CyoztPkEngAwU=;
-        b=HTOlH4HHt7iVHxT6sv8hFqcwbQ0gRNzMk/xHdfrg/PdWwxsEZRRH65phTVusAAXK3n
-         8RQYUwTrJgz+9673EUSsE9hORHG6rczRTC+ZmwqtKZ8SbPMdFEFqrUTCHIkob0MLvEG3
-         HJacLOUSEqfwTiMDoxL81a+Bk05Tns+fNdJuwtLZWsfl9mpV1Nfm4lW0HFTDmJJZvcO/
-         OB6FXO5Z4jIVxQVZFzzLqNtQ9RT1ZC8TgodRzhPcbyUbHRjQKSVKdQ4EE6aLRxgsRlkW
-         SZ54H6duEZD6ZFs6H/Q2vx1sO4XMBQMU4u0t8KD/N/iKVtYdZHfbh/XpsRHto0okYB3M
-         XCZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gBRCGiBOBUU5hLfpePyfcLx7elxeb+CyoztPkEngAwU=;
-        b=Npg+V9OYkYfd7z8mauYkEKfGI68keH1VLDbXtea6aihAEtToLhiOjk7W9EGWZt5Lnm
-         MFFrY9yIaiWwzgyhmJ1MfGQhDc0fvTymPsUHaSf0v9mmv3uE5Ue6Px53M03yQmOWN0GB
-         L189BiU30tbI/4qQtmmFbNzdTB2MrT8sQeob2miOqKhQaOvGniOEUJR19440d+R/qvSb
-         uj3ku7fpaJ5rU3HX4qqoV5CJUJfabeJdB78tQnyHcwHQz4RJ7VDjMvfXTrbpXDYAA4HZ
-         spmgupH2IKKIHPVHhdRgpuxLuozKdHkGRmZq87FBNee6+hdSkIHXMEnP+6lmvh61x6gq
-         +Msg==
-X-Gm-Message-State: AOUpUlFf5DeXQSDp/NwlWcEN/jsV6kvZAwqqL2s0yltn4MdujnwALcX3
-        97b9P9fNbKXz23CakuuUlL/jg94P
-X-Google-Smtp-Source: AAOMgpeGAdcsHRTj6X1YgdmSgCmNcwe3EYMPF4PkgUSD1xiwVhe99g4eG6etDdg22s9wjZYOPDFn5w==
-X-Received: by 2002:a62:ad1:: with SMTP id 78-v6mr3151978pfk.57.1533218759752;
-        Thu, 02 Aug 2018 07:05:59 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([61.69.188.107])
-        by smtp.gmail.com with ESMTPSA id u69-v6sm2910410pgd.43.2018.08.02.07.05.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 07:05:58 -0700 (PDT)
-Date:   Fri, 3 Aug 2018 00:05:47 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org,
-        ego@linux.vnet.ibm.com, huntbag@linux.vnet.ibm.com
-Subject: Re: [RFC PATCH 3/3] cpuidle/powernv: Conditionally save-restore
- sprs using opal
-Message-ID: <20180803000547.08a37175@roar.ozlabs.ibm.com>
-In-Reply-To: <20180802045132.12432-4-akshay.adiga@linux.vnet.ibm.com>
-References: <20180802045132.12432-1-akshay.adiga@linux.vnet.ibm.com>
-        <20180802045132.12432-4-akshay.adiga@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 2 Aug 2018 11:59:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732141AbeHBP7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:59:07 -0400
+Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B5A621523;
+        Thu,  2 Aug 2018 14:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533218865;
+        bh=cBv3OXnpORnSFCYXIej8OlPyAb+R5ul/5k09xIaxpD8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FE7aQpXImJ01lo83V7iAB8AD91m4BDN/PH9VfqM19KXIgRGjKwb8o453Vr+8c6+e9
+         /kWAnm1kUtQ2qvlByH0na8kq31OY7nT6Rl1g3raiCfltyMSfEo95elrfg6dy0Dr0ai
+         BgpfiC92aBwV8Bfu+JloJRA2IYpEd6xOXQVqQ8d0=
+Received: by mail-qt0-f178.google.com with SMTP id d4-v6so2345837qtn.13;
+        Thu, 02 Aug 2018 07:07:45 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFV9sdTQ3qxrk37pbkMpdvqt++/lrLefXKXi5MrxNTB2mVkWSWy
+        wnTlvrHLDG/WkVwu1O/chBQVwf2wU1k/LXpu7Q==
+X-Google-Smtp-Source: AAOMgpfd3r2DybMKHM9hYdDhvAB3JAS7x1n2gh3kzh0VmHE+TkC9ZPgTO31oYMoEkxf7N2smJcQDeSVB/N2+h4BcsAU=
+X-Received: by 2002:ac8:29a4:: with SMTP id 33-v6mr2854778qts.354.1533218864327;
+ Thu, 02 Aug 2018 07:07:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
+ <20180727121806.18209-2-srinivas.kandagatla@linaro.org> <20180731204315.GA5265@rob-hp-laptop>
+ <53a4e82c-7270-fdbd-a2ea-efbfc2d747a2@linaro.org> <CAL_JsqKcxB2NZR94BP9-Qc8AAFsySPoADm2UA_ZV8V7JdP8-wQ@mail.gmail.com>
+ <4c821ce9-6268-150f-2ab0-358f5b312ec0@linaro.org>
+In-Reply-To: <4c821ce9-6268-150f-2ab0-358f5b312ec0@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 2 Aug 2018 08:07:33 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJKXfnCggFK3QC4Q2+-ZCGKdASJ87e=s6AUq4kYA-GWjg@mail.gmail.com>
+Message-ID: <CAL_JsqJKXfnCggFK3QC4Q2+-ZCGKdASJ87e=s6AUq4kYA-GWjg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] ASoC: dt-bindings: add dt bindings for wcd9335
+ audio codec
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vinod <vkoul@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  2 Aug 2018 10:21:32 +0530
-Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> wrote:
+On Thu, Aug 2, 2018 at 1:33 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> Thanks for review,
+>
+> On 01/08/18 23:20, Rob Herring wrote:
+> >>>> +- qcom,ifd:
+> >>>> +    Usage: required
+> >>>> +    Value type: <phandle>
+> >>>> +    Definition: SLIM interface device
+> >>> Wouldn't this be the parent?
+> >>>
+> >> No, Interface device is just like other slim device and is part of
+> >> SLIMbus Component and has a unique address. Every SLIMbus component has
+> >> one interface device.
+> > I still don't understand what this means. If this is SLIMbus specific,
+> > then maybe it should be named that way? Or it is QCom specific?
+>
+> It is SLIMbus specific, I will rename this to "slim,ifd" in next version
+> which makes it clear!
 
-> From: Abhishek Goel <huntbag@linux.vnet.ibm.com>
-> 
-> If a state has "opal-supported" compat flag in device-tree, an opal call
-> needs to be made during the entry and exit of the stop state. This patch
-> passes a hint to the power9_idle_stop and power9_offline_stop.
-> 
-> This patch moves the saving and restoring of sprs for P9 cpuidle
-> from kernel to opal. This patch still uses existing code to detect
-> first thread in core.
-> In an attempt to make the powernv idle code backward compatible,
-> and to some extent forward compatible, add support for pre-stop entry
-> and post-stop exit actions in OPAL. If a kernel knows about this
-> opal call, then just a firmware supporting newer hardware is required,
-> instead of waiting for kernel updates.
+'slim' is not a vendor. So 'slim-ifc-dev' perhaps. Unless IFD is a
+well known acronym for someone familiar with SLIMbus.
 
-Still think we should make these do-everything calls. Including
-executing nap/stop instructions, restoring timebase, possibly even
-saving and restoring SLB (although a return code could be used to
-tell the kernel to do that maybe if performance advantage is enough).
-
-I haven't had a lot of time to go through it, I'm working on moving
-~all of idle_book3s.S to C code, I'd like to do that before this
-OPAL idle driver if possible.
-
-A minor thing I just noticed, you don't have to allocate the opal
-spr save space in Linux, just do it all in OPAL.
-
-Thanks,
-Nick
+Rob
