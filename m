@@ -2,125 +2,326 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD14C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0121AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7119720894
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:05:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o7D51I4p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7119720894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A697D20894
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:08:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A697D20894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732212AbeHBDxv (ORCPT
+        id S1732339AbeHBD5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 23:53:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:38927 "EHLO ozlabs.org"
+        Wed, 1 Aug 2018 23:57:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43108 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbeHBDxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 23:53:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41gtmJ35nsz9s3q;
-        Thu,  2 Aug 2018 12:05:04 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533175504;
-        bh=kIz9Dqw6Re7jPs5yMOLtIprOwp6nGCnMjZjwIEhGpNM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=o7D51I4pGM5DaLRu/AOK65sP3b3Blku+zIfJli+jvuW3CDCp5RSoe1vQYYTqAc8B/
-         6ID7lQ5/Bw4W3g0pu2tsTaqRi1Lha2Z2gPlNc3zqMPa9XnSVyoJugqx/PnQ0DTuo7M
-         DEDQ0G8foUBHqtJ6VR2h5OzyogV4EFoqSHO4VGajGR1yPP7GXSAPVwxyBO1c46W0j0
-         Hh4Wb0YHpBFhv0C6Gup5K07NrSetsDooKtz83VkwEoaHGUlhhypudSO31RCdgBfmER
-         4ER8FzsWtXrNHP0OTRRfcCn40QBT4JbEgUqBsyr2aUF72WYvQaE7/UJmhdqfcKQxJn
-         3qkfbcDYEK5DA==
-Date:   Thu, 2 Aug 2018 12:05:03 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Subject: linux-next: manual merge of the net-next tree with the rdma tree
-Message-ID: <20180802120503.7b7e116f@canb.auug.org.au>
+        id S1727517AbeHBD5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 23:57:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 19:08:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,434,1526367600"; 
+   d="scan'208";a="77569262"
+Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Aug 2018 19:08:30 -0700
+Date:   Wed, 1 Aug 2018 19:03:20 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, marc.zyngier@arm.com, mingo@kernel.org
+Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
+ lines
+Message-ID: <20180802020320.GC31758@voyager>
+References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
+ <1532430427-57151-2-git-send-email-julien.thierry@arm.com>
+ <20180801030723.GA31383@voyager>
+ <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fsXgdrzl56NJq_q07LgxuFO"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fsXgdrzl56NJq_q07LgxuFO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 01, 2018 at 04:09:59PM +0100, Julien Thierry wrote:
+> >>+static bool irq_supports_nmi(struct irq_desc *desc)
+> >>+{
+> >>+	struct irq_data *d = irq_desc_get_irq_data(desc);
+> >>+
+> >>+#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+> >>+	/* Only IRQs directly managed by the root irqchip can be set as NMI */
+> >>+	if (d->parent_data)
+> >>+		return false;
+> >>+#endif
+> >
+> >I don't think this works in x86 because the local APIC irq_chip is the
+> >root of the hierarchy; the rest of the irq_chips are children of it.
+> >Furthermore, the delivery mode (i.e., regular interrupt vs NMI) is set in
+> >these children controllers, either MSI or interrupt remapping.
+> >
+> >Instead, could it be possible to determine if NMI mode is supported by
+> >checking if any of the parents of the irq_data supports NMI mode? If it
+> >has to be the root, perhaps a flag can indicate irq_supports_nmi() about
+> >this restriction.
+> >
+> 
+> I see, I'm not very sure how to deal with the semantics here. Does it make
+> sense for an irqchip to be able to deliver NMIs if its parent doesn't?
 
-Hi all,
+I think it does not make sense. 
 
-Today's linux-next merge of the net-next tree got a conflict in:
+> 
+> If we want to handle NMI in and irqchip hierachy, shouldn't all irqchips
+> between the one delivering the NMI and the root irqchip also be able to
+> deliver NMIs? (Or is it the other way around and an irqchip can deliver an
+> NMI if all its children irqchip are also able to deliver an NMI?)
 
-  net/rds/ib_send.c
+At least in APIC, all the irq_chips support NMI delivery. However only one
+of them will generate the NMI interrupt message, the rest (e.g., the local
+APIC) will only relay it to the CPU.
 
-between commit:
+So yes, I agree that the whole hierarchy should support NMI delivery, but
+the chip generating the NMI is not necessarily the root chip.
 
-  d34ac5cd3a73 ("RDMA, core and ULPs: Declare ib_post_send() and ib_post_re=
-cv() arguments const")
+One question that I have is that whether the new flag IRQCHIP_SUPPORTS_NMI
+should be added to irq_chips that only relay NMIs or only to those from
+which an NMI can be requested.
 
-from the rdma tree and commit:
+> 
+> >>+	/* Don't support NMIs for chips behind a slow bus */
+> >>+	if (d->chip->irq_bus_lock || d->chip->irq_bus_sync_unlock)
+> >>+		return false;
+> >>+
+> >>+	return d->chip->flags & IRQCHIP_SUPPORTS_NMI;
+> >>+}
+> >>+
+> >>+static int irq_nmi_setup(struct irq_desc *desc)
+> >>+{
+> >>+	struct irq_data *d = irq_desc_get_irq_data(desc);
+> >>+	struct irq_chip *c = d->chip;
+> >>+
+> >>+	return c->irq_nmi_setup ? c->irq_nmi_setup(d) : -EINVAL;
+> >
+> >Continuing with my comment above, the child can decide whether to configure
+> >NMI mode by itself or let it be done by a chip located higher in the
+> >hierarchy. This is already done in other situations. For instance, in MSI
+> >interrupts with interrupt remapping: the message data is populated by the
+> >remapping controller.
+> >
+> 
+> Yes, if we want to handle the chip hierarchy, this will need modification.
+> 
+> >>+}
+> >>+
+> >>+static void irq_nmi_teardown(struct irq_desc *desc)
+> >>+{
+> >>+	struct irq_data *d = irq_desc_get_irq_data(desc);
+> >>+	struct irq_chip *c = d->chip;
+> >>+
+> >>+	if (c->irq_nmi_teardown)
+> >>+		c->irq_nmi_teardown(d);
+> >>+}
+> >>+
+> >>  static int
+> >>  setup_irq_thread(struct irqaction *new, unsigned int irq, bool secondary)
+> >>  {
+> >>@@ -1282,9 +1352,17 @@ static void irq_release_resources(struct irq_desc *desc)
+> >>  		 * fields must have IRQF_SHARED set and the bits which
+> >>  		 * set the trigger type must match. Also all must
+> >>  		 * agree on ONESHOT.
+> >>+		 * Interrupt lines used for NMIs cannot be shared.
+> >>  		 */
+> >>  		unsigned int oldtype;
+> >>+		if (desc->istate & IRQS_NMI) {
+> >>+			pr_err("Invalid attempt to share NMI for %s (irq %d) on irqchip %s.\n",
+> >>+				new->name, irq, desc->irq_data.chip->name);
+> >>+			ret = -EINVAL;
+> >>+			goto out_unlock;
+> >>+		}
+> >>+
+> >>  		/*
+> >>  		 * If nobody did set the configuration before, inherit
+> >>  		 * the one provided by the requester.
+> >>@@ -1733,6 +1811,59 @@ const void *free_irq(unsigned int irq, void *dev_id)
+> >>  }
+> >>  EXPORT_SYMBOL(free_irq);
+> >>+/* This function must be called with desc->lock held */
+> >>+static const void *__cleanup_nmi(unsigned int irq, struct irq_desc *desc)
+> >>+{
+> >>+	const char *devname = NULL;
+> >>+
+> >>+	desc->istate &= ~IRQS_NMI;
+> >>+
+> >>+	if (!WARN_ON(desc->action == NULL)) {
+> >>+		irq_pm_remove_action(desc, desc->action);
+> >>+		devname = desc->action->name;
+> >>+		unregister_handler_proc(irq, desc->action);
+> >>+
+> >>+		kfree(desc->action);
+> >>+		desc->action = NULL;
+> >>+	}
+> >>+
+> >>+	irq_settings_clr_disable_unlazy(desc);
+> >>+	irq_shutdown(desc);
+> >>+
+> >>+	irq_release_resources(desc);
+> >>+
+> >>+	irq_chip_pm_put(&desc->irq_data);
+> >>+	module_put(desc->owner);
+> >>+
+> >>+	return devname;
+> >>+}
+> >>+
+> >>+const void *free_nmi(unsigned int irq, void *dev_id)
+> >>+{
+> >>+	struct irq_desc *desc = irq_to_desc(irq);
+> >>+	unsigned long flags;
+> >>+	const void *devname;
+> >>+
+> >>+	if (!desc || WARN_ON(!(desc->istate & IRQS_NMI)))
+> >>+		return NULL;
+> >>+
+> >>+	if (WARN_ON(irq_settings_is_per_cpu_devid(desc)))
+> >>+		return NULL;
+> >>+
+> >>+	/* NMI still enabled */
+> >>+	if (WARN_ON(desc->depth == 0))
+> >>+		disable_nmi_nosync(irq);
+> >>+
+> >>+	raw_spin_lock_irqsave(&desc->lock, flags);
+> >>+
+> >>+	irq_nmi_teardown(desc);
+> >>+	devname = __cleanup_nmi(irq, desc);
+> >>+
+> >>+	raw_spin_unlock_irqrestore(&desc->lock, flags);
+> >>+
+> >>+	return devname;
+> >>+}
+> >>+
+> >>  /**
+> >>   *	request_threaded_irq - allocate an interrupt line
+> >>   *	@irq: Interrupt line to allocate
+> >>@@ -1902,6 +2033,101 @@ int request_any_context_irq(unsigned int irq, irq_handler_t handler,
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(request_any_context_irq);
+> >>+/**
+> >>+ *	request_nmi - allocate an interrupt line for NMI delivery
+> >>+ *	@irq: Interrupt line to allocate
+> >>+ *	@handler: Function to be called when the IRQ occurs.
+> >>+ *		  Threaded handler for threaded interrupts.
+> >>+ *	@flags: Interrupt type flags
+> >>+ *	@name: An ascii name for the claiming device
+> >>+ *	@dev_id: A cookie passed back to the handler function
+> >>+ *
+> >>+ *	This call allocates interrupt resources and enables the
+> >>+ *	interrupt line and IRQ handling. It sets up the IRQ line
+> >>+ *	to be handled as an NMI.
+> >>+ *
+> >>+ *	An interrupt line delivering NMIs cannot be shared and IRQ handling
+> >>+ *	cannot be threaded.
+> >>+ *
+> >>+ *	Interrupt lines requested for NMI delivering must produce per cpu
+> >>+ *	interrupts and have auto enabling setting disabled.
+> >>+ *
+> >>+ *	Dev_id must be globally unique. Normally the address of the
+> >>+ *	device data structure is used as the cookie. Since the handler
+> >>+ *	receives this value it makes sense to use it.
+> >>+ *
+> >>+ *	If the interrupt line cannot be used to deliver NMIs, function
+> >>+ *	will fail and return a negative value.
+> >>+ */
+> >>+int request_nmi(unsigned int irq, irq_handler_t handler,
+> >>+		unsigned long irqflags, const char *name, void *dev_id)
+> >>+{
+> >>+	struct irqaction *action;
+> >>+	struct irq_desc *desc;
+> >>+	unsigned long flags;
+> >>+	int retval;
+> >>+
+> >>+	if (irq == IRQ_NOTCONNECTED)
+> >>+		return -ENOTCONN;
+> >>+
+> >>+	/* NMI cannot be shared, used for Polling */
+> >>+	if (irqflags & (IRQF_SHARED | IRQF_COND_SUSPEND | IRQF_IRQPOLL))
+> >>+		return -EINVAL;
+> >>+
+> >>+	if (!(irqflags & IRQF_PERCPU))
+> >>+		return -EINVAL;
+> >>+
+> >>+	if (!handler)
+> >>+		return -EINVAL;
+> >
+> >It would not be possible to use this handler in x86. All the NMI handlers are
+> >put in a list populated by register_nmi_handler(). Could it be possible to
+> >have a wrapper function that does not take a handler?
+> >
+> 
+> If it is just a matter of having a dummy handler, x86 NMI requesters could
+> provide it (and you maintain your list on the side). I'm not sure there is a
+> necessity for it to be in the core code.
+> 
+> I guess the x86 flow handler for NMI simply doesn't make use of the action
+> structure.
+> 
+> I can add the dummy handler (and the request_nmi_no_handler) option, I'm
+> just unsure it makes sense to include it in the irq core code. (I can always
+> put it in a separate patch and see if it gets accepted).
 
-  87f70132b08e ("rds: remove redundant variable 'rds_ibdev'")
+Hmm, either alternatives would look ugly but I don't see a cleaner solution.
+My suggestion would be to keep the handler as an argument of request_nmi()
+and have callers to implement their dummy handlers. In this way, the core
+code can be kept clean. 
 
-from the net-next tree.
+> 
+> >>+
+> >>+	desc = irq_to_desc(irq);
+> >>+
+> >>+	if (!desc || irq_settings_can_autoenable(desc)
+> >>+	    || !irq_settings_can_request(desc)
+> >
+> >Is this a hard requirement for ARM? I guess it is, because you added
+> >enable_nmi() for this very purpose. I could not find any irq in the x86
+> >core code that uses the IRQ_NOAUTOEN flag.
+> >
+> 
+> On Arm64, we do use IRQ_NOAUTOEN and it is used for one of the interrupts
+> we'd like to handle as NMI. So we do need IRQ_NOAUTOEN to be supported for
+> NMIs.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I am not sure what would be the changes to add IRQ_NOAUTOEN to a specific
+interrupt in my use case and whether these changes would be regarded as a
+hack for a special case. I'll investigate and get back to you.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> However, the rationale for forcing it for NMIs was:
+> - I wanted to avoid too many things being done automatically for NMIs, this
+> way most of the responsability of managing the NMI is on the NMI requester
+> rather than the core code.
 
-diff --cc net/rds/ib_send.c
-index 8ac80c1b051e,c8dd3125d398..000000000000
---- a/net/rds/ib_send.c
-+++ b/net/rds/ib_send.c
-@@@ -758,8 -758,7 +758,7 @@@ int rds_ib_xmit_atomic(struct rds_conne
-  {
-  	struct rds_ib_connection *ic =3D conn->c_transport_data;
-  	struct rds_ib_send_work *send =3D NULL;
- -	struct ib_send_wr *failed_wr;
- +	const struct ib_send_wr *failed_wr;
-- 	struct rds_ib_device *rds_ibdev;
-  	u32 pos;
-  	u32 work_alloc;
-  	int ret;
+But doesn't the NMI requester already have some control? It can control at
+least the source of the NMIs (e.g., it can control when to start the timer
+that would generate the NMI).
 
---Sig_/fsXgdrzl56NJq_q07LgxuFO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+> - There would be a need to pass down the information that we are requesting
+> an NMI to __setup_irq and do the proper setup when enabling depending on
+> whether we have an NMI or not.
+> 
+> I'm not completely against supporting autoenable for NMIs, but I'd like to
+> have the opinion of others on the matter
 
------BEGIN PGP SIGNATURE-----
++1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiZs8ACgkQAVBC80lX
-0GzfcggAl3p9lIPkl54CfgTX65bIKbypibZIn0hBprPcjZfcbuZhmCpFcXuL4ZC8
-3m2N111XId66ttxwttmVdF2SEzhy0PfNiQsWMwa4rlS5nIlze0Sn00XQ9bD6A2xC
-6RYSgRs8D7yKyiglaIr2OVZrc/LnaOT+Ft8VzDf7SfVpZX+OGm0Vpp5UQYbotbe+
-uuiIN/mneecMulHfuC3p4MP8tsirQnWo3HhMeC2UGSPaosw3W8AZO4+AFmobfOyl
-xB4hBwsbt/nl+bH7J98z3jpOVH1brhqpkY1plKV1AZ+yXyb7K3e1A0u4aRtbGspA
-HFCChy+ry31mrjHiRV3IGMS4DgWbsQ==
-=UJDA
------END PGP SIGNATURE-----
-
---Sig_/fsXgdrzl56NJq_q07LgxuFO--
+Thanks and BR,
+Ricardo
