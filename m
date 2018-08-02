@@ -2,220 +2,120 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15F5C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C51C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545E0214D5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545E0214D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A9E6A214D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:35:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMF58R3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E6A214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbeHBMZJ (ORCPT
+        id S1732274AbeHBM0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:25:09 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39185 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731644AbeHBMZI (ORCPT
+        Thu, 2 Aug 2018 08:26:23 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35567 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbeHBM0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:25:08 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1flAw9-0004Zy-Mn; Thu, 02 Aug 2018 12:34:29 +0200
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <ore@pengutronix.de>)
-        id 1flAw6-0000oy-V7; Thu, 02 Aug 2018 12:34:26 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-Date:   Thu,  2 Aug 2018 12:34:24 +0200
-Message-Id: <20180802103425.3053-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 2 Aug 2018 08:26:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e6-v6so771631edr.2;
+        Thu, 02 Aug 2018 03:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NXN6oXRY6Z9sshk0JA7uw7aJElwuGvPnjrUMHUeJq6Y=;
+        b=CMF58R3tKCvr5BFvtMMDwhFmP9n+LCAjROykR8cJ3Mmay8dl1TvHnYtRhk/uohIQho
+         2PQeAxLTgyvOVuIXCk6iqJMHlPTwnvb+Ln/lAz+PLCQipTy/RFSEIRtChFm7eoUh4IJK
+         4kfIl9MTt1pdteh7uZ1rFIS50Tubve/3urz87bNx6Gjr/WtdDQY5M+Cg6JlyA14qe5ue
+         RBGf8OVkWWwELz9yJ7sMcuNLz97AY9NgQxI/a4+OfkJG/IdG7LO2o8NjPYqUInkcywMI
+         U8Wfg3Q1wTskuZyvf98j33HzQsqEHGe5RRzzxJHUrwvDViQAb5IkmTcZD61JoKbypBTI
+         pq6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NXN6oXRY6Z9sshk0JA7uw7aJElwuGvPnjrUMHUeJq6Y=;
+        b=Ms4r46/UpVxmxG7v0/lb4QCJKPE0LYynT4EXg3dmT4XvpRNihNVsFxdQmGgo+9VBOR
+         M9xV5ZlKQY3XXh9NWTkuaEYnwZgCTcAQbmnakBgS8W66kOC4K85t4u66PXI9YprnCGTw
+         ze0PyPJCoQrIEPGX55zsq0jG6wYhkmrw3wGqrpMiO85s4aOL6oozx9Lzg2NrHyNauYWS
+         X78n3I2E/gJvtpH1Ez8XBITsxPsRkUpYmFEhRSt7EN+kT4E3vYwga+t+w18AHR6TWMZW
+         AMwFi5VGW8iyephnPgYNPygeYqJJmdSpYAunXSAz9drg3WFu8Tywb56Ge2mqN44k8oFJ
+         OQKg==
+X-Gm-Message-State: AOUpUlFIu7Hq21+PsW7HT8XDTGyoPO98FUKNgYeQNgt66qdtq5boZNJ9
+        6A7FNjgtsdi+LqKul2C53M0=
+X-Google-Smtp-Source: AAOMgpdeX8LZlIzKMb+YpOcaiFhCqaDU2oyrMa4B7hu1tSz1skMg7WnMgSoe2ioRV9vN5CQB20HAUA==
+X-Received: by 2002:a50:fd93:: with SMTP id o19-v6mr2681507edt.73.1533206148973;
+        Thu, 02 Aug 2018 03:35:48 -0700 (PDT)
+Received: from dimapc.localnet (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id g1-v6sm670471edr.52.2018.08.02.03.35.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 03:35:48 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linus.walleij@linaro.org,
+        pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com
+Cc:     keescook@chromium.org, linux-tegra@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date:   Thu, 02 Aug 2018 13:35:46 +0300
+Message-ID: <2268060.eSddBDDeqC@dimapc>
+In-Reply-To: <2777476.ese58fB1FL@dimapc>
+References: <20180726154025.13173-1-stefan@agner.ch> <17f1c1b1c6d3a83dd1df130420057d3b@agner.ch> <2777476.ese58fB1FL@dimapc>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
-about state changes. In this case internal state of PMIC must be
-preconfigured for upcomming state change.
-It works fine with the current regulator framework, except with the
-power-off case.
+On Thursday, 2 August 2018 02:11:23 MSK Dmitry Osipenko wrote:
+> On Thursday, 2 August 2018 01:51:42 MSK Stefan Agner wrote:
+> > On 01.08.2018 22:51, Dmitry Osipenko wrote:
+> > > On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
+> > >> The properties have been commented out to prevent a regression a
+> > >> while ago. The first regression should be resolved by
+> > >> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
+> > >> 
+> > >> The second regression is probably addressed by
+> > >> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend
+> > >> resume
+> > >> order") and/or maybe others. Readd the gpio-ranges properties to see
+> > >> whether regressions still get reported.
+> > >> 
+> > >> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+> > >> ("ARM: tegra: Comment out gpio-ranges properties").
+> > >> 
+> > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > >> ---
+> > > 
+> > > Unfortunately the second regression hasn't been addressed yet, this
+> > > patch
+> > > still breaks wake-up using GPIO key. BTW, better to spell "readd" as
+> > > "re-add".
+> > 
+> > You do have the hardware and could test it?
+> 
+> Yes, I have.
+> 
+> > Hm, that is unfortunate. I think this was the patch which should address
+> > the issue:
+> > https://lkml.org/lkml/2015/9/10/218
+> 
+> I've tested the patch and it is still actual, i.e. it fixes the wake-up.
+> Welcome back to 2015 :-)
 
-This patch is providing an optional pm_power_off_prepare handler
-which will configure standby state of the PMIC to disable all power lines.
+Actually, the pinctrl-gpio probe order is easily fixable by reshuffling the 
+drivers registration order within the kernel. I'll send patches.
 
-In my power consumption test on RIoTBoard, I got the following results:
-power off without this patch:	320 mA
-power off with this patch:	2   mA
-suspend to ram:			40  mA
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/regulator/pfuze100-regulator.c | 91 ++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
-
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index 31c3a236120a..1e43a9de3bd5 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -31,11 +31,17 @@
- 
- #define PFUZE100_COINVOL	0x1a
- #define PFUZE100_SW1ABVOL	0x20
-+#define PFUZE100_SW1ABMODE	0x23
- #define PFUZE100_SW1CVOL	0x2e
-+#define PFUZE100_SW1CMODE	0x31
- #define PFUZE100_SW2VOL		0x35
-+#define PFUZE100_SW2MODE	0x38
- #define PFUZE100_SW3AVOL	0x3c
-+#define PFUZE100_SW3AMODE	0x3f
- #define PFUZE100_SW3BVOL	0x43
-+#define PFUZE100_SW3BMODE	0x46
- #define PFUZE100_SW4VOL		0x4a
-+#define PFUZE100_SW4MODE	0x4d
- #define PFUZE100_SWBSTCON1	0x66
- #define PFUZE100_VREFDDRCON	0x6a
- #define PFUZE100_VSNVSVOL	0x6b
-@@ -46,6 +52,13 @@
- #define PFUZE100_VGEN5VOL	0x70
- #define PFUZE100_VGEN6VOL	0x71
- 
-+#define PFUZE100_SWxMODE_MASK	0xf
-+#define PFUZE100_SWxMODE_APS_APS	0x8
-+#define PFUZE100_SWxMODE_APS_OFF	0x4
-+
-+#define PFUZE100_VGENxLPWR	BIT(6)
-+#define PFUZE100_VGENxSTBY	BIT(5)
-+
- enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3, PFUZE3001 = 0x31, };
- 
- struct pfuze_regulator {
-@@ -559,6 +572,69 @@ static inline struct device_node *match_of_node(int index)
- }
- #endif
- 
-+static struct pfuze_chip *syspm_pfuze_chip;
-+
-+static void pfuze_power_off_prepare(void)
-+{
-+	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
-+
-+	/* Switch from default mode: APS/APS to APS/Off */
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-+			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-+
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-+			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-+			   PFUZE100_VGENxSTBY);
-+}
-+
-+static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
-+{
-+	if (pfuze_chip->chip_id != PFUZE100) {
-+		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
-+		return -ENODEV;
-+	}
-+
-+	if (pm_power_off_prepare) {
-+		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
-+		return -EBUSY;
-+	}
-+
-+	if (syspm_pfuze_chip) {
-+		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-+		return -EBUSY;
-+	}
-+
-+	syspm_pfuze_chip = pfuze_chip;
-+	pm_power_off_prepare = pfuze_power_off_prepare;
-+
-+	return 0;
-+}
-+
- static int pfuze_identify(struct pfuze_chip *pfuze_chip)
- {
- 	unsigned int value;
-@@ -753,6 +829,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 		}
- 	}
- 
-+	if (of_property_read_bool(client->dev.of_node,
-+				  "fsl,pmic-stby-poweroff"))
-+		return pfuze_power_off_prepare_init(pfuze_chip);
-+
-+	return 0;
-+}
-+
-+static int pfuze100_regulator_remove(struct i2c_client *client)
-+{
-+	if (syspm_pfuze_chip) {
-+		syspm_pfuze_chip = NULL;
-+		pm_power_off_prepare = NULL;
-+	}
-+
- 	return 0;
- }
- 
-@@ -763,6 +853,7 @@ static struct i2c_driver pfuze_driver = {
- 		.of_match_table = pfuze_dt_ids,
- 	},
- 	.probe = pfuze100_regulator_probe,
-+	.remove = pfuze100_regulator_remove,
- };
- module_i2c_driver(pfuze_driver);
- 
--- 
-2.18.0
 
