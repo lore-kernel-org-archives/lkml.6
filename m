@@ -2,144 +2,111 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8F9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8A2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A618521527
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A618521527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 42BD12151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:41:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42BD12151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbeHBRbI (ORCPT
+        id S2387690AbeHBRdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:31:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:59624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387577AbeHBRbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:31:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA29C80D;
-        Thu,  2 Aug 2018 08:39:25 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B8743F5B3;
-        Thu,  2 Aug 2018 08:39:21 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 16:39:19 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@quicinc.com,
-        skannan@quicinc.com, Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-Message-ID: <20180802153917.cpvls5hxkvevjh6s@queper01-lin>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com>
- <331552975e858911db66bc78c2c8e720@codeaurora.org>
- <20180731075950.tfvxef6yuja3ad2k@queper01-lin>
- <75f415911ccdd02d6fd217ca1c7d8902@codeaurora.org>
- <CAJZ5v0j=EYnANGAj9bd44eeux1eCfeMtdn9npe5pSAzE8EVKaA@mail.gmail.com>
- <20180801082353.egym4tsbr7ppql27@queper01-lin>
- <CAJZ5v0joYFXkXxoV8odPtrCNW=jAw3RVv3rTzMoabeYWGDnREw@mail.gmail.com>
- <20180801092325.g2upcivcvdo62hub@queper01-ThinkPad-T460s>
- <20180802130440.GW2476@hirez.programming.kicks-ass.net>
+        Thu, 2 Aug 2018 13:33:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51034 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387603AbeHBRdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:33:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 664EA40251CA;
+        Thu,  2 Aug 2018 15:41:23 +0000 (UTC)
+Received: from redhat.com (ovpn-117-57.ams2.redhat.com [10.36.117.57])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 485821C71B;
+        Thu,  2 Aug 2018 15:41:16 +0000 (UTC)
+Date:   Thu, 2 Aug 2018 18:41:15 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180802182959-mutt-send-email-mst@kernel.org>
+References: <20180727095804.GA25592@arm.com>
+ <20180730093414.GD26245@infradead.org>
+ <20180730125100-mutt-send-email-mst@kernel.org>
+ <20180730111802.GA9830@infradead.org>
+ <20180730155633-mutt-send-email-mst@kernel.org>
+ <20180731173052.GA17153@infradead.org>
+ <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+ <20180801081637.GA14438@arm.com>
+ <20180801083639.GF26378@infradead.org>
+ <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180802130440.GW2476@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 15:41:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 15:41:23 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 02 Aug 2018 at 15:04:40 (+0200), Peter Zijlstra wrote:
-> On Wed, Aug 01, 2018 at 10:23:27AM +0100, Quentin Perret wrote:
-> > On Wednesday 01 Aug 2018 at 10:35:32 (+0200), Rafael J. Wysocki wrote:
-> > > On Wed, Aug 1, 2018 at 10:23 AM, Quentin Perret <quentin.perret@arm.com> wrote:
-> > > > On Wednesday 01 Aug 2018 at 09:32:49 (+0200), Rafael J. Wysocki wrote:
-> > > >> On Tue, Jul 31, 2018 at 9:31 PM,  <skannan@codeaurora.org> wrote:
-> > > >> >> On Monday 30 Jul 2018 at 12:35:27 (-0700), skannan@codeaurora.org wrote:
-> > > >> >>> If it's going to be a different aggregation from what's done for
-> > > >> >>> frequency
-> > > >> >>> guidance, I don't see the point of having this inside schedutil. Why not
-> > > >> >>> keep it inside the scheduler files?
-> > > >> >>
-> > > >> >> This code basically results from a discussion we had with Peter on v4.
-> > > >> >> Keeping everything centralized can make sense from a maintenance
-> > > >> >> perspective, I think. That makes it easy to see the impact of any change
-> > > >> >> to utilization signals for both EAS and schedutil.
-> > > >> >
-> > > >> > In that case, I'd argue it makes more sense to keep the code centralized in
-> > > >> > the scheduler. The scheduler can let schedutil know about the utilization
-> > > >> > after it aggregates them. There's no need for a cpufreq governor to know
-> > > >> > that there are scheduling classes or how many there are. And the scheduler
-> > > >> > can then choose to aggregate one way for task packing and another way for
-> > > >> > frequency guidance.
-> > > >>
-> > > >> Also the aggregate utilization may be used by cpuidle governors in
-> > > >> principle to decide how deep they can go with idle state selection.
-> > > >
-> > > > The only issue I see with this right now is that some of the things done
-> > > > in this function are policy decisions which really belong to the governor,
-> > > > I think.
-> > > 
-> > > Well, the scheduler makes policy decisions too, in quite a few places. :-)
-> > 
-> > That is true ... ;-) But not so much about frequency selection yet I guess
+On Thu, Aug 02, 2018 at 10:24:57AM -0500, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-08-01 at 01:36 -0700, Christoph Hellwig wrote:
+> > We just need to figure out how to deal with devices that deviate
+> > from the default.  One things is that VIRTIO_F_IOMMU_PLATFORM really
+> > should become VIRTIO_F_PLATFORM_DMA to cover the cases of non-iommu
+> > dma tweaks (offsets, cache flushing), which seems well in spirit of
+> > the original design. 
 > 
-> Well, sugov is part of the scheduler :-) It being so allows for the
-> co-ordinated decision making required for EAS.
+> I don't completely agree:
 > 
-> > > The really important consideration here is whether or not there may be
-> > > multiple governors making different policy decisions in that respect.
-> > > If not, then where exactly the single policy decision is made doesn't
-> > > particularly matter IMO.
-> > 
-> > I think some users of the aggregated utilization signal do want to make
-> > slightly different decisions (I'm thinking about the RT-go-to-max thing
-> > again which makes perfect sense in sugov, but could possibly hurt EAS).
-> > 
-> > So the "hard" part of this work is to figure out what really is a
-> > governor-specific policy decision, and what is common between all users.
-> > I put "hard" between quotes because I only see the case of RT as truly
-> > sugov-specific for now.
-> > 
-> > If we also want a special case for DL, Peter's enum should work OK, and
-> > enable to add more special cases for new users (cpuidle ?) if needed.
-> > But maybe that is something for later ?
+> 1 - VIRTIO_F_IOMMU_PLATFORM is a property of the "other side", ie qemu
+> for example. It indicates that the peer bypasses the normal platform
+> iommu. The platform code in the guest has no real way to know that this
+> is the case, this is a specific "feature" of the qemu implementation.
 > 
-> Right, I don't mind moving the function. What I do oppose is having two
-> very similar functions in different translation units -- because then
-> they _will_ diverge and result in 'funny' things.
+> 2 - VIRTIO_F_PLATFORM_DMA (or whatever you want to call it), is a
+> property of the guest platform itself (not qemu), there's no way the
+> "peer" can advertize it via the virtio negociated flags. At least for
+> us. I don't know for sure whether that would be workable for the ARM
+> case. In our case, qemu has no idea at VM creation time that the VM
+> will turn itself into a secure VM and thus will require bounce
+> buffering for IOs (including virtio).
+> 
+> So unless we have another hook for the arch code to set
+> VIRTIO_F_PLATFORM_DMA on selected (or all) virtio devices from the
+> guest itself, I don't see that as a way to deal with it.
+> 
+> >  The other issue is VIRTIO_F_IO_BARRIER
+> > which is very vaguely defined, and which needs a better definition.
+> > And last but not least we'll need some text explaining the challenges
+> > of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
+> > is what would basically cover them, but a good description including
+> > an explanation of why these matter.
+> 
+> Ben.
+> 
 
-Sounds good :-) Would kernel/sched/pelt.c be the right place then ? It's
-cross-class and kinda pelt-related I guess
+So is it true that from qemu point of view there is nothing special
+going on?  You pass in a PA, host writes there.
 
-Thanks,
-Quentin
+
+-- 
+MST
