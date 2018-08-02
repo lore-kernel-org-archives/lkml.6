@@ -1,37 +1,36 @@
 Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0575C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C6BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618B321501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618B321501
+	by mail.kernel.org (Postfix) with ESMTP id 82C2421501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C2421501
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbeHBOtk (ORCPT
+        id S1732505AbeHBOt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:49:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52642 "EHLO mx1.redhat.com"
+        Thu, 2 Aug 2018 10:49:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56968 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732267AbeHBOtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:49:39 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1732287AbeHBOt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:49:59 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C4557A7EE;
-        Thu,  2 Aug 2018 12:58:33 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7BA2640216F4;
+        Thu,  2 Aug 2018 12:58:53 +0000 (UTC)
 Received: from [10.36.117.197] (ovpn-117-197.ams2.redhat.com [10.36.117.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC9A72026D69;
-        Thu,  2 Aug 2018 12:58:31 +0000 (UTC)
-Subject: Re: [Resend PATCH] KVM/x86: Move X86_CR4_OSXSAVE check into
- kvm_valid_sregs()
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C580D213ED6A;
+        Thu,  2 Aug 2018 12:58:51 +0000 (UTC)
+Subject: Re: [PATCH] KVM: Compile hv_remote_flush_tlb() and
+ check_ept_pointer() when CONFIG_HYPERV is enabled.
 To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
 Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -39,7 +38,7 @@ Cc:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
         "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
+References: <20180723074747.14231-1-Tianyu.Lan@microsoft.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -77,58 +76,133 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <2812c987-4e2b-e92a-8195-bef7ebd29318@redhat.com>
-Date:   Thu, 2 Aug 2018 14:58:30 +0200
+Message-ID: <0d8c296e-561d-8b83-06cc-2a6359ed331e@redhat.com>
+Date:   Thu, 2 Aug 2018 14:58:47 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180723123108.15685-1-Tianyu.Lan@microsoft.com>
+In-Reply-To: <20180723074747.14231-1-Tianyu.Lan@microsoft.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 12:58:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 12:58:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 12:58:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 12:58:53 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/2018 14:31, Tianyu Lan wrote:
-> X86_CR4_OSXSAVE check belongs to sregs check and so move into
-> kvm_valid_sregs().
+On 23/07/2018 09:47, Tianyu Lan wrote:
+> This patch is to avoid compilation warning when CONFIG_HYPERV isn't enabled.
 > 
 > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 > ---
->  arch/x86/kvm/x86.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  arch/x86/kvm/vmx.c | 84 +++++++++++++++++++++++++++---------------------------
+>  1 file changed, 42 insertions(+), 42 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 153564db7980..5c9acdbb2020 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8045,6 +8045,10 @@ EXPORT_SYMBOL_GPL(kvm_task_switch);
->  
->  static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
->  {
-> +	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
-> +			(sregs->cr4 & X86_CR4_OSXSAVE))
-> +		return  -EINVAL;
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 16ea8b629416..2f379e575940 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -1367,6 +1367,48 @@ static void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
+>  	 *	GUEST_IA32_RTIT_CTL		= 0x00002814,
+>  	 */
+>  }
 > +
->  	if ((sregs->efer & EFER_LME) && (sregs->cr0 & X86_CR0_PG)) {
->  		/*
->  		 * When EFER.LME and CR0.PG are set, the processor is in
-> @@ -8075,10 +8079,6 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
->  	struct desc_ptr dt;
->  	int ret = -EINVAL;
+> +/* check_ept_pointer() should be under protection of ept_pointer_lock. */
+> +static void check_ept_pointer(struct kvm *kvm)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	u64 tmp_eptp = INVALID_PAGE;
+> +	int i;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		if (!VALID_PAGE(tmp_eptp)) {
+> +			tmp_eptp = to_vmx(vcpu)->ept_pointer;
+> +		} else if (tmp_eptp != to_vmx(vcpu)->ept_pointer) {
+> +			to_kvm_vmx(kvm)->ept_pointers_match
+> +				= EPT_POINTERS_MISMATCH;
+> +			return;
+> +		}
+> +	}
+> +
+> +	to_kvm_vmx(kvm)->ept_pointers_match = EPT_POINTERS_MATCH;
+> +}
+> +
+> +static int hv_remote_flush_tlb(struct kvm *kvm)
+> +{
+> +	int ret;
+> +
+> +	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +
+> +	if (to_kvm_vmx(kvm)->ept_pointers_match == EPT_POINTERS_CHECK)
+> +		check_ept_pointer(kvm);
+> +
+> +	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
+> +		ret = -ENOTSUPP;
+> +		goto out;
+> +	}
+> +
+> +	ret = hyperv_flush_guest_mapping(
+> +			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+> +
+> +out:
+> +	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +	return ret;
+> +}
+>  #else /* !IS_ENABLED(CONFIG_HYPERV) */
+>  static inline void evmcs_write64(unsigned long field, u64 value) {}
+>  static inline void evmcs_write32(unsigned long field, u32 value) {}
+> @@ -4827,48 +4869,6 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
+>  	}
+>  }
 >  
-> -	if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
-> -			(sregs->cr4 & X86_CR4_OSXSAVE))
-> -		goto out;
+> -/* check_ept_pointer() should be under protection of ept_pointer_lock. */
+> -static void check_ept_pointer(struct kvm *kvm)
+> -{
+> -	struct kvm_vcpu *vcpu;
+> -	u64 tmp_eptp = INVALID_PAGE;
+> -	int i;
 > -
->  	if (kvm_valid_sregs(vcpu, sregs))
->  		goto out;
->  
+> -	kvm_for_each_vcpu(i, vcpu, kvm) {
+> -		if (!VALID_PAGE(tmp_eptp)) {
+> -			tmp_eptp = to_vmx(vcpu)->ept_pointer;
+> -		} else if (tmp_eptp != to_vmx(vcpu)->ept_pointer) {
+> -			to_kvm_vmx(kvm)->ept_pointers_match
+> -				= EPT_POINTERS_MISMATCH;
+> -			return;
+> -		}
+> -	}
+> -
+> -	to_kvm_vmx(kvm)->ept_pointers_match = EPT_POINTERS_MATCH;
+> -}
+> -
+> -static int hv_remote_flush_tlb(struct kvm *kvm)
+> -{
+> -	int ret;
+> -
+> -	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> -
+> -	if (to_kvm_vmx(kvm)->ept_pointers_match == EPT_POINTERS_CHECK)
+> -		check_ept_pointer(kvm);
+> -
+> -	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
+> -		ret = -ENOTSUPP;
+> -		goto out;
+> -	}
+> -
+> -	ret = hyperv_flush_guest_mapping(
+> -			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+> -
+> -out:
+> -	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> -	return ret;
+> -}
+> -
+>  static void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
+>  {
+>  	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
 > 
 
 Queued, thanks.
