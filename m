@@ -6,85 +6,175 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14C4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0079DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96CC4214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CC4214FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A2777214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:26:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2777214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731868AbeHBLJp (ORCPT
+        id S1731564AbeHBLQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:09:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54618 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeHBLJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:09:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6A3E80D;
-        Thu,  2 Aug 2018 02:19:28 -0700 (PDT)
-Received: from [10.1.39.188] (desktop-vlo843j.cambridge.arm.com [10.1.39.188])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58C8C3F5D0;
-        Thu,  2 Aug 2018 02:19:27 -0700 (PDT)
-Subject: Re: [PATCH v2] net: fec: check DMA addressing limitations
-To:     Stefan Agner <stefan@agner.ch>, fugang.duan@nxp.com,
-        davem@davemloft.net
-Cc:     krzk@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180802084250.26489-1-stefan@agner.ch>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e03a908e-4c0d-a295-90a7-2da11c8fead5@arm.com>
-Date:   Thu, 2 Aug 2018 10:19:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180802084250.26489-1-stefan@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 07:16:15 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48808 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbeHBLQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 07:16:14 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41h4Xz5ngZz9ttgC;
+        Thu,  2 Aug 2018 11:25:55 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id pn9OtqHPQ3y0; Thu,  2 Aug 2018 11:25:55 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41h4Xz5Dq5z9ttfw;
+        Thu,  2 Aug 2018 11:25:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 10DDD8B845;
+        Thu,  2 Aug 2018 11:25:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id GCYcXJ5BZoaX; Thu,  2 Aug 2018 11:25:56 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AE62D8B843;
+        Thu,  2 Aug 2018 11:25:56 +0200 (CEST)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 1C6D66F72F; Thu,  2 Aug 2018 09:25:55 +0000 (UTC)
+Message-Id: <47f1cc02529bafe8ad258081784e44da188eed49.1533201696.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2] powerpc/mm: fix always true/false warning in slice.c
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, malat@debian.org,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu,  2 Aug 2018 09:25:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-02 9:42 AM, Stefan Agner wrote:
-> Check DMA addressing limitations as suggested by the DMA API
-> how-to. This does not fix a particular issue seen but is
-> considered good style.
+This patch fixes the following warnings (obtained with make W=1).
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+arch/powerpc/mm/slice.c: In function 'slice_range_to_mask':
+arch/powerpc/mm/slice.c:73:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
+  if (start < SLICE_LOW_TOP) {
+            ^
+arch/powerpc/mm/slice.c:81:20: error: comparison is always false due to limited range of data type [-Werror=type-limits]
+  if ((start + len) > SLICE_LOW_TOP) {
+                    ^
+arch/powerpc/mm/slice.c: In function 'slice_mask_for_free':
+arch/powerpc/mm/slice.c:136:17: error: comparison is always true due to limited range of data type [-Werror=type-limits]
+  if (high_limit <= SLICE_LOW_TOP)
+                 ^
+arch/powerpc/mm/slice.c: In function 'slice_check_range_fits':
+arch/powerpc/mm/slice.c:185:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
+  if (start < SLICE_LOW_TOP) {
+            ^
+arch/powerpc/mm/slice.c:195:39: error: comparison is always false due to limited range of data type [-Werror=type-limits]
+  if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
+                                       ^
+arch/powerpc/mm/slice.c: In function 'slice_scan_available':
+arch/powerpc/mm/slice.c:306:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
+  if (addr < SLICE_LOW_TOP) {
+           ^
+arch/powerpc/mm/slice.c: In function 'get_slice_psize':
+arch/powerpc/mm/slice.c:709:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
+  if (addr < SLICE_LOW_TOP) {
+           ^
 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->   drivers/net/ethernet/freescale/fec_main.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-> index c729665107f5..cdf2f5447910 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -3136,6 +3136,7 @@ static int fec_enet_init(struct net_device *ndev)
->   	unsigned dsize = fep->bufdesc_ex ? sizeof(struct bufdesc_ex) :
->   			sizeof(struct bufdesc);
->   	unsigned dsize_log2 = __fls(dsize);
-> +	int ret;
->   
->   	WARN_ON(dsize != (1 << dsize_log2));
->   #if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-> @@ -3146,6 +3147,13 @@ static int fec_enet_init(struct net_device *ndev)
->   	fep->tx_align = 0x3;
->   #endif
->   
-> +	/* Check mask of the streaming and coherent API */
-> +	ret = dma_set_mask_and_coherent(&fep->pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret < 0) {
-> +		dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
-> +		return ret;
-> +	}
-> +
->   	fec_enet_alloc_queue(ndev);
->   
->   	bd_size = (fep->total_tx_ring_size + fep->total_rx_ring_size) * dsize;
-> 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: fixed issue reported by Michael
+
+ arch/powerpc/mm/slice.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/arch/powerpc/mm/slice.c b/arch/powerpc/mm/slice.c
+index 9530c6db406a..c774d43e038c 100644
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -62,6 +62,13 @@ static void slice_print_mask(const char *label, const struct slice_mask *mask) {
+ 
+ #endif
+ 
++static inline bool slice_addr_is_low(unsigned long addr)
++{
++	u64 tmp = (u64)addr;
++
++	return tmp < SLICE_LOW_TOP;
++}
++
+ static void slice_range_to_mask(unsigned long start, unsigned long len,
+ 				struct slice_mask *ret)
+ {
+@@ -71,7 +78,7 @@ static void slice_range_to_mask(unsigned long start, unsigned long len,
+ 	if (SLICE_NUM_HIGH)
+ 		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+-	if (start < SLICE_LOW_TOP) {
++	if (slice_addr_is_low(start)) {
+ 		unsigned long mend = min(end,
+ 					 (unsigned long)(SLICE_LOW_TOP - 1));
+ 
+@@ -79,7 +86,7 @@ static void slice_range_to_mask(unsigned long start, unsigned long len,
+ 			- (1u << GET_LOW_SLICE_INDEX(start));
+ 	}
+ 
+-	if ((start + len) > SLICE_LOW_TOP) {
++	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
+ 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
+ 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
+ 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
+@@ -134,7 +141,7 @@ static void slice_mask_for_free(struct mm_struct *mm, struct slice_mask *ret,
+ 		if (!slice_low_has_vma(mm, i))
+ 			ret->low_slices |= 1u << i;
+ 
+-	if (high_limit <= SLICE_LOW_TOP)
++	if (slice_addr_is_low(high_limit - 1))
+ 		return;
+ 
+ 	for (i = 0; i < GET_HIGH_SLICE_INDEX(high_limit); i++)
+@@ -183,7 +190,7 @@ static bool slice_check_range_fits(struct mm_struct *mm,
+ 	unsigned long end = start + len - 1;
+ 	u64 low_slices = 0;
+ 
+-	if (start < SLICE_LOW_TOP) {
++	if (slice_addr_is_low(start)) {
+ 		unsigned long mend = min(end,
+ 					 (unsigned long)(SLICE_LOW_TOP - 1));
+ 
+@@ -193,7 +200,7 @@ static bool slice_check_range_fits(struct mm_struct *mm,
+ 	if ((low_slices & available->low_slices) != low_slices)
+ 		return false;
+ 
+-	if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
++	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
+ 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
+ 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
+ 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
+@@ -304,7 +311,7 @@ static bool slice_scan_available(unsigned long addr,
+ 				 int end, unsigned long *boundary_addr)
+ {
+ 	unsigned long slice;
+-	if (addr < SLICE_LOW_TOP) {
++	if (slice_addr_is_low(addr)) {
+ 		slice = GET_LOW_SLICE_INDEX(addr);
+ 		*boundary_addr = (slice + end) << SLICE_LOW_SHIFT;
+ 		return !!(available->low_slices & (1u << slice));
+@@ -707,7 +714,7 @@ unsigned int get_slice_psize(struct mm_struct *mm, unsigned long addr)
+ 
+ 	VM_BUG_ON(radix_enabled());
+ 
+-	if (addr < SLICE_LOW_TOP) {
++	if (slice_addr_is_low(addr)) {
+ 		psizes = mm->context.low_slices_psize;
+ 		index = GET_LOW_SLICE_INDEX(addr);
+ 	} else {
+-- 
+2.13.3
+
