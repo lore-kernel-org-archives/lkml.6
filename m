@@ -2,165 +2,217 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58547C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55290C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10123214AB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10123214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E9D90214AB
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:19:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OCk/B2fA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D90214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732542AbeHBPKP (ORCPT
+        id S1732563AbeHBPKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:10:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732419AbeHBPKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:10:15 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC7F172627;
-        Thu,  2 Aug 2018 13:19:02 +0000 (UTC)
-Received: from [10.36.117.197] (ovpn-117-197.ams2.redhat.com [10.36.117.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 08472213ED6A;
-        Thu,  2 Aug 2018 13:18:58 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-arm
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Christoffer Dall <cdall@cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>,
-        Janosch Frank <frankja@linux.ibm.com>
-References: <20180731142339.19b52ce0@canb.auug.org.au>
- <20180802111916.7435c0ac@canb.auug.org.au>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <632a8205-4344-3f6d-9216-ea623a32392a@redhat.com>
-Date:   Thu, 2 Aug 2018 15:18:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 11:10:25 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43075 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732419AbeHBPKZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:10:25 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j26-v6so1295906pfi.10;
+        Thu, 02 Aug 2018 06:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2vzQXCsiE8PuLnNZu34sY/6jMMftxW9L1acSr/qU3MU=;
+        b=OCk/B2fAjAVeKuVb2s+Q7x89M61yKgKHSjt/GrvAqZPmbYs2EB9crqH4SnzX1Z6qsT
+         47fGEVVPlpeUrOJ2+SOohaUDx1sia1G3O+85LpivUOl/z/SF8f4cR8eJqBM//aZAYKWW
+         Q2hdywTBoxlFcYZxmIRV4ObsHJvu7p4gSv7n6mObgH1BmzODqGK+TrH8tSg32TkbF3FZ
+         3K9cSIBq971zQk06Vwja725mtBbJ26c3B8oTMjA7GG1cl92dlLauyL5ClPjc1Cr+j4TU
+         XWe6lYWIpyxjV2p1tJqHprDN/ynlwquthr1qbLAQzT4ZFUjobHJm1wNOhgouxHyyFZcv
+         C0UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2vzQXCsiE8PuLnNZu34sY/6jMMftxW9L1acSr/qU3MU=;
+        b=WtfikJTFVmDt6WpI89XMNEWEydbyPOXBGeSnkIb9H/fOYPnB9bedouHI/dkXsP8WVw
+         Wu1d2boUSoLhj3SRRynteWoWDIbanBH/j8jEZl9pA3dlGxS+6rfUARenyiv1unxdeha6
+         IOAVUlO0VTvgXQh9hG66D0TU1tOsK+S1ipjR17yD1/a9XMMV0X5AwCWmTbMEn2Cy5c86
+         J4fQZNqzZr6jFfjRGhcalA2I/dgglxgogT1bX1XrYQwNmJme8COGiUFJBBXOsxeqphw8
+         bBzQLUv9Lpy8RRSCK3RIZ4jThOHPPwHbxmbsXvOGYx+QPSj65n9mVlw7Q95HSJJT6/3I
+         A67w==
+X-Gm-Message-State: AOUpUlHqrw1NypLoxxJLkaPRPVaqaq/DtEcp9hnnpOgzf16nvlWvU3U0
+        EMNGIsooZu8niWrjuvyU/1XFJjXT
+X-Google-Smtp-Source: AAOMgpenX6Y3ouzp5muve8RPf77iOaav6h/lalPdc5jMq6fNFf8JcZ0pJS/MGpeta9iUYGCvw7q/iA==
+X-Received: by 2002:a62:3b03:: with SMTP id i3-v6mr2963432pfa.197.1533215953543;
+        Thu, 02 Aug 2018 06:19:13 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.216.237])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm6723974pgk.25.2018.08.02.06.19.10
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 02 Aug 2018 06:19:11 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 18:51:53 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, kgene@kernel.org, krzk@kernel.org,
+        m.szyprowski@samsung.com, ajitn.linux@gmail.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+Message-ID: <20180802132152.GA2833@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20180802111916.7435c0ac@canb.auug.org.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j"
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 13:19:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 13:19:03 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j
-Content-Type: multipart/mixed; boundary="lYqxN6va8umhfdnZStraIvC2g8M3shP7Y";
- protected-headers="v1"
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Christian Borntraeger <borntraeger@de.ibm.com>,
- Cornelia Huck <cohuck@redhat.com>, Christoffer Dall <cdall@cs.columbia.edu>,
- Marc Zyngier <marc.zyngier@arm.com>,
- Martin Schwidefsky <schwidefsky@de.ibm.com>,
- Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
- KVM <kvm@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>,
- Janosch Frank <frankja@linux.ibm.com>
-Message-ID: <632a8205-4344-3f6d-9216-ea623a32392a@redhat.com>
-Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-arm
- tree
-References: <20180731142339.19b52ce0@canb.auug.org.au>
- <20180802111916.7435c0ac@canb.auug.org.au>
-In-Reply-To: <20180802111916.7435c0ac@canb.auug.org.au>
+convert drm_atomic_helper_suspend/resume() to use
+drm_mode_config_helper_suspend/resume().
 
---lYqxN6va8umhfdnZStraIvC2g8M3shP7Y
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+exynos_drm_fbdev_suspend/resume can be removed
+as drm_mode_config_helper_suspend/resume has
+implement the same in generic way.
 
-On 02/08/2018 03:19, Stephen Rothwell wrote:
->>  -#define KVM_CAP_S390_HPAGE_1M 156
->>  +#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
->> ++#define KVM_CAP_S390_HPAGE_1M 157
->>  =20
->>   #ifdef KVM_CAP_IRQ_ROUTING
->>  =20
-> This is now a conflict between the s390 and kvm-arm trees.
+Remove suspend_state from exynos_drm_private
+struct as it is no more useful.
 
-This will shortly move to the KVM tree.  The ARM capability will have to
-be bumped again since x86 "won" number 157.
+Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2: Address Inki Dae's comment. Remove ret variable
+    from both suspend/resume function.
 
-Thanks,
+v3: Tested by Marek. Updated the change log.
 
-Paolo
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++------------------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+ 4 files changed, 2 insertions(+), 52 deletions(-)
 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index b599f74..d86dd81 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -149,37 +149,15 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+ static int exynos_drm_suspend(struct device *dev)
+ {
+ 	struct drm_device *drm_dev = dev_get_drvdata(dev);
+-	struct exynos_drm_private *private;
+-
+-	if (!drm_dev)
+-		return 0;
+-
+-	private = drm_dev->dev_private;
+-
+-	drm_kms_helper_poll_disable(drm_dev);
+-	exynos_drm_fbdev_suspend(drm_dev);
+-	private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+-	if (IS_ERR(private->suspend_state)) {
+-		exynos_drm_fbdev_resume(drm_dev);
+-		drm_kms_helper_poll_enable(drm_dev);
+-		return PTR_ERR(private->suspend_state);
+-	}
+ 
+-	return 0;
++	return  drm_mode_config_helper_suspend(drm_dev);
+ }
+ 
+ static void exynos_drm_resume(struct device *dev)
+ {
+ 	struct drm_device *drm_dev = dev_get_drvdata(dev);
+-	struct exynos_drm_private *private;
+-
+-	if (!drm_dev)
+-		return;
+ 
+-	private = drm_dev->dev_private;
+-	drm_atomic_helper_resume(drm_dev, private->suspend_state);
+-	exynos_drm_fbdev_resume(drm_dev);
+-	drm_kms_helper_poll_enable(drm_dev);
++	return drm_mode_config_helper_resume(drm_dev);
+ }
+ 
+ static const struct dev_pm_ops exynos_drm_pm_ops = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index c737c4b..7349e7c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -195,7 +195,6 @@ struct drm_exynos_file_private {
+  */
+ struct exynos_drm_private {
+ 	struct drm_fb_helper *fb_helper;
+-	struct drm_atomic_state *suspend_state;
+ 
+ 	struct device *g2d_dev;
+ 	struct device *dma_dev;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 132dd52..918dd2c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+ 	private->fb_helper = NULL;
+ }
+ 
+-void exynos_drm_fbdev_suspend(struct drm_device *dev)
+-{
+-	struct exynos_drm_private *private = dev->dev_private;
+-
+-	console_lock();
+-	drm_fb_helper_set_suspend(private->fb_helper, 1);
+-	console_unlock();
+-}
+-
+-void exynos_drm_fbdev_resume(struct drm_device *dev)
+-{
+-	struct exynos_drm_private *private = dev->dev_private;
+-
+-	console_lock();
+-	drm_fb_helper_set_suspend(private->fb_helper, 0);
+-	console_unlock();
+-}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+index b338472..6840b6a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+@@ -19,8 +19,6 @@
+ 
+ int exynos_drm_fbdev_init(struct drm_device *dev);
+ void exynos_drm_fbdev_fini(struct drm_device *dev);
+-void exynos_drm_fbdev_suspend(struct drm_device *drm);
+-void exynos_drm_fbdev_resume(struct drm_device *drm);
+ 
+ #else
+ 
+@@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+ 
+ #define exynos_drm_output_poll_changed (NULL)
+ 
+-static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+-{
+-}
+-
+-static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+-{
+-}
+-
+ #endif
+ 
+ #endif
+-- 
+1.9.1
 
---lYqxN6va8umhfdnZStraIvC2g8M3shP7Y--
-
---0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8TM4V0tmI4mGbHaCv/vSX3jHroMFAltjBMEACgkQv/vSX3jH
-roP7Vgf+IBRqk3arxbU3ofr+qITSFzxxnJpC7y3+Jl19lJxfL3HOdKzyZuGyQg7T
-6U/7zvQCUHCEvt4k7hmTbWpaHL1dV5o53Y88JetSz9UECTOuQwLwDoaBAPtCwYh1
-aQyzLAj/FPTeLnrJ737W1edNGM95H5huPZO6VroPG7peJE0vb1Os2s32qlUiTDsB
-h8s2hl6hW71rtkCl36pGZmuaHa/fQirFHhufuUXJaIuF4WZEh1O2Uu2hk/Epp/XC
-JVyt6O4Fto329RHqwH+CE0Bw0wDrIiifX7yq2nBSeSdqnV4k1A9kDaKDVRSgyJA/
-9aJI8nfp1Wqrp7NGDLuWGQ4KrgSEhA==
-=U5X5
------END PGP SIGNATURE-----
-
---0Z64aBdyrr0ml6Pv42NtSeHVWocHBrj9j--
