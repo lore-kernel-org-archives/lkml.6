@@ -2,98 +2,169 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46731C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6391C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDEC20C09
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:59:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpIYcs0u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDEC20C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8203920C09
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8203920C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbeHBItk (ORCPT
+        id S1727134AbeHBIvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:49:40 -0400
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:45296 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbeHBItk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:49:40 -0400
-Received: by mail-lf1-f46.google.com with SMTP id j143-v6so747527lfj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 23:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GtNkRNAh6dvtg3WyBMJiLjaBMAgrxfJF3MmKf/gZxFs=;
-        b=hpIYcs0uVjiFK3yDPyceIM0WozaydW1JX46xjrkol1nh/uirEpxkgH+GbL5Vgtv+4D
-         1/pPFMTZn+Wkz25EX78jh6AeAGDowZrLR+H+zloUHIg7G6NSTmcAaCFevslZthj2NpfI
-         meh8zeXHS6meOUZKS7WjNpvdXwcIQOcrQdrM4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GtNkRNAh6dvtg3WyBMJiLjaBMAgrxfJF3MmKf/gZxFs=;
-        b=FEEFx0dgMOA3XBhk32XEMOIKhdr4ogi1W8wKtQXS24NYmA0Kuq+88Eh3fL4MRet9sK
-         +qzk2Rlor3gOKg8bF+vfB7Pw0PcatRvgigxnV35R/N9F8gzEKTdkR1lNOm09cNTdCyLT
-         f+AKgYAQVkP0uVxkyug/K8Fa90ObGQfHSsRWFM3u9OIbWYz2lMIiqp+zDUX0hd3qKH8/
-         iUYFnZ4yNcCrc/3l1sgLd70zXzAyiJIJebUIv1C/DouV3VN/rioGzkDx7YnbHXF9VGp4
-         YDocxR2jzcrAnOXQqKVMU8jCuZ/4Vkv5vkXWO5aFTmZYrNcSMkRd1yQ4anU8BpTGDLAW
-         c1Dg==
-X-Gm-Message-State: AOUpUlFm8DVMGSGtGTWSk64lhYWBDKiaWIA+N0gtS+UfTizM7Hlz+49F
-        u5mKiXES9SfTYOjohABDC5SGTEW1b1xHSmNz9DTxvw==
-X-Google-Smtp-Source: AAOMgpdNdUR3Me6sk9Szp/BS4GXcxbZ5owkeqW73zYufC/W4O59U2Kt7tZivT2ryL3mFhI2VoREcj5RSqZ3I6nO29+Q=
-X-Received: by 2002:a19:138b:: with SMTP id 11-v6mr955616lft.74.1533193194650;
- Wed, 01 Aug 2018 23:59:54 -0700 (PDT)
+        Thu, 2 Aug 2018 04:51:52 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10219 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726141AbeHBIvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:51:52 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7D264509E8F30;
+        Thu,  2 Aug 2018 15:02:01 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
+ 15:01:56 +0800
+Subject: Re: linux-next: build failure after merge of the staging tree
+To:     Greg KH <greg@kroah.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Linux-Next Mailing List" <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Miao Xie <miaoxie@huawei.com>, Chao Yu <chao@kernel.org>
+References: <20180730161622.3837cb15@canb.auug.org.au>
+ <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+ <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
+ <20180802061518.GD3272@kroah.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <78a6edc0-fd04-1750-d860-3c068fa1b67d@huawei.com>
+Date:   Thu, 2 Aug 2018 15:01:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CAMi1Hd0fJuAgP09_KkbjyGwszOXmxcPybKyBxP3U1y5JUqxxSw@mail.gmail.com>
- <20180730130134.yvn5tcmoavuxtwt5@kshutemo-mobl1> <CA+55aFwxwCPZs=h5wy-5PELwfBVuTETm+wuZB5cM2SDoXJi68g@mail.gmail.com>
- <alpine.LSU.2.11.1807301410470.4805@eggly.anvils> <CA+55aFx3qR1FW0T3na25NrwLZAvpOdUEUJa879CnaJT2ZPfhkg@mail.gmail.com>
- <alpine.LSU.2.11.1807301940460.5904@eggly.anvils> <CALAqxLU3cmu4g+HaB6A7=VhY-hW=d9e68EZ=_4JiwX_BigzjPQ@mail.gmail.com>
- <CAMi1Hd0-2eDod4HiBifKCxY0cUUEW_A-yv7sZ7GRgL0whWQt+w@mail.gmail.com>
- <CA+55aFx=-tHXjv3gv4W=xYwM+VOHJQE5q5VyihkPK7s560x-vQ@mail.gmail.com>
- <20180731170328.ocb5oikwhwtkyzrj@kshutemo-mobl1> <20180731174349.GA12944@agluck-desk>
- <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
-In-Reply-To: <CA+55aFxJpJvcYKos-sVTsn9q4wK0-m4up1SXrcqfbXHKxaKxjg@mail.gmail.com>
-From:   Amit Pundir <amit.pundir@linaro.org>
-Date:   Thu, 2 Aug 2018 12:29:18 +0530
-Message-ID: <CAMi1Hd14yYr+LXTwjexMfFue9=PwoC7L8oscZhGm_eZ_is+v1A@mail.gmail.com>
-Subject: Re: Linux 4.18-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     tony.luck@intel.com, kirill@shutemov.name,
-        John Stultz <john.stultz@linaro.org>,
-        Hugh Dickins <hughd@google.com>, willy@infradead.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>, aarcange@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mm@kvack.org, lkml <linux-kernel@vger.kernel.org>,
-        youling 257 <youling257@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180802061518.GD3272@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018 at 22:45, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I'd like to get this sorted out asap, although at this point I still
-> think that I'll have to do an rc8 even though I feel like we may have
-> caught everything.
+Hi Greg,
 
-No AOSP regressions in my limited smoke testing so far with
-current HEAD: 6b4703768268 ("Merge branch 'fixes' of
-git://git.armlinux.org.uk/~rmk/linux-arm"). Thanks.
+On 2018/8/2 14:15, Greg KH wrote:
+> On Wed, Aug 01, 2018 at 05:09:13PM +0800, Chao Yu wrote:
+>> Hi Stephen,
+>>
+>> On 2018/7/30 14:31, Gao Xiang wrote:
+>>> Hi Stephen,
+>>>
+>>> On 2018/7/30 14:16, Stephen Rothwell wrote:
+>>>> Hi Greg,
+>>>>
+>>>> After merging the staging tree, today's linux-next build (x86_64
+>>>> allmodconfig) failed like this:
+>>>>
+>>>> drivers/staging/erofs/super.c: In function 'erofs_read_super':
+>>>> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>>>>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>>>>                  ^~~~~~~~~
+>>>>                  IS_RDONLY
+>>>> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
+>>>> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
+>>>>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+>>>>                              ^~~~~~~~~~
+>>>>                              S_NOATIME
+>>>> drivers/staging/erofs/super.c: In function 'erofs_mount':
+>>>> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+>>>>    &priv, erofs_fill_super);
+>>>>           ^~~~~~~~~~~~~~~~
+>>>> In file included from include/linux/buffer_head.h:12:0,
+>>>>                  from drivers/staging/erofs/super.c:14:
+>>>> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+>>>>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>>>>                        ^~~~~~~~~~
+>>>> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+>>>>   return mount_bdev(fs_type, flags, dev_name,
+>>>>          ^~~~~~~~~~
+>>>> In file included from include/linux/buffer_head.h:12:0,
+>>>>                  from drivers/staging/erofs/super.c:14:
+>>>> include/linux/fs.h:2151:23: note: declared here
+>>>>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>>>>                        ^~~~~~~~~~
+>>>> drivers/staging/erofs/super.c: At top level:
+>>>> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>>>   .mount          = erofs_mount,
+>>>>                     ^~~~~~~~~~~
+>>>> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
+>>>> drivers/staging/erofs/super.c: In function 'erofs_remount':
+>>>> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+>>>>   *flags |= MS_RDONLY;
+>>>>             ^~~~~~~~~
+>>>>             IS_RDONLY
+>>>> drivers/staging/erofs/super.c: At top level:
+>>>> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>>>   .remount_fs = erofs_remount,
+>>>>                 ^~~~~~~~~~~~~
+>>>>
+>>>> Caused by various commits creating erofs in the staging tree interacting
+>>>> with various commits redoing the mount infrastructure in the vfs tree.
+>>>>
+>>>> I have disabed CONFIG_EROFS_FS for now:
+>>
+>> Xiang has submitted several patches as below to fix compiling error on -next
+>> tree, could you consider to merge those temporary fixes into -next after merging
+>> staging-next's updates, and reenable CONFIG_EROFS_FS for further integrity
+>> compiling and test?
+>>
+>> staging: erofs: fix superblock/inode flags (MS_RDONLY -> SB_RDONLY, S_NOATIME)
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
+>>
+>> staging: erofs: remove RADIX_TREE_EXCEPTIONAL_{ENTRY, SHIFT}
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000283.html
+>>
+>> staging: erofs: update .mount and .remount_sb
+>> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000285.html
+> 
+> Why have these not been submitted to me for inclusion in my tree?
+Oh, let me explain, that is because the compiling error only occurs in -next
+tree, since -next collects and merges developing patches including common vfs
+stuff from multi-trees, but those patches didn't cover erofs, such as:
 
-Regards,
-Amit Pundir
+('vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=109b45090d7d3ce2797bb1ef7f70eead5bfe0ff3
+
+("vfs: Require specification of size of mount data for internal mounts")
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0a191e4505a4f255e6513b49426213da69bf0e80
+
+As I checked, above vfs related patches has not been merged in staging tree, if
+I submit those erofs patches to you and after including them in
+staging-{test,nexts} tree, it can easily cause compiling error. So I just send
+them to Stephen first for fixing integrity compiling error.
+
+Then I'd like to ask how to handle this condition to avoid potential conflict in
+between erofs and vfs changes during merging window. As Stephen suggested, we
+can disabling CONFIG_EROFS_FS temporarily to pass merge window, and after that
+we reenable CONFIG_EROFS_FS and apply those fixing patches.
+
+I'd like to ask and make sure, do you agree that we can handle the condition by
+this way? or do you have any suggestion about solving this issue?
+
+Thanks,
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> .
+> 
+
