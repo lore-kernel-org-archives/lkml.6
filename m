@@ -2,149 +2,91 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD8CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9903C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D6F21502
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:40:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D6F21502
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B0362150A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:41:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0362150A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeHBLaz (ORCPT
+        id S1729987AbeHBLbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:30:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10220 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726238AbeHBLaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:30:55 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1115757F38EE7;
-        Thu,  2 Aug 2018 17:40:32 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 2 Aug 2018 17:39:20 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <devel@driverdev.osuosl.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        <gaoxiang25@huawei.com>, <sfr@canb.auug.org.au>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] staging: erofs: disable compiling temporarile
-Date:   Thu, 2 Aug 2018 17:39:17 +0800
-Message-ID: <20180802093917.4796-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Thu, 2 Aug 2018 07:31:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36208 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbeHBLbW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 07:31:22 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1flA6J-0002kT-Uz; Thu, 02 Aug 2018 11:40:56 +0200
+Date:   Thu, 2 Aug 2018 11:40:55 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+cc:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt
+ lines
+In-Reply-To: <86r2jhw7a1.wl-marc.zyngier@arm.com>
+Message-ID: <alpine.DEB.2.21.1808021137400.2037@nanos.tec.linutronix.de>
+References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com> <1532430427-57151-2-git-send-email-julien.thierry@arm.com> <20180801030723.GA31383@voyager> <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com> <20180802020320.GC31758@voyager>
+ <86tvodw9wz.wl-marc.zyngier@arm.com> <alpine.DEB.2.21.1808020841200.1835@nanos.tec.linutronix.de> <86r2jhw7a1.wl-marc.zyngier@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Stephen Rothwell reported:
+On Thu, 2 Aug 2018, Marc Zyngier wrote:
+> On Thu, 02 Aug 2018 07:55:49 +0100,
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> > 
+> > On Thu, 2 Aug 2018, Marc Zyngier wrote:
+> > > 
+> > > If we need to distinguish between the two, then we need two flags. One
+> > > that indicates the generation capability, and one that indicates the
+> > > forwarding capability.
+> > 
+> > There is absolutely no reason to expose this on x86, really.
+> > 
+> > Why?
+> > 
+> > Because NMI is an utter trainwreck on x86. It's a single entry point
+> > without the ability of differentiation from which source the NMI
+> > originated. So mapping it to anything generic is just not going to work.
+> > 
+> > It has absolutely nothing to do with the normal way of vector based
+> > interrupt operation and I don't see at all how adding this just because
+> > would improve anything on x86. In fact it would create more problems than
+> > it solves.
+> 
+> Fair enough. Does it mean Julien can completely ignore the x86
+> requirements for this and focus on something that fit the need of
+> architectures where (pseudo-)NMIs can be managed similarly to normal
+> interrupts (arm, arm64, sparc...)?
 
-"After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Yes, focussing on "sane" architectures (by some definition of sane) where
+the NMI mode is just changing the delivery restrictions allows to still
+differentiate from which source the NMI originates.
 
-drivers/staging/erofs/super.c: In function 'erofs_read_super':
-drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
-  sb->s_flags |= MS_RDONLY | MS_NOATIME;
-                 ^~~~~~~~~
-                 IS_RDONLY
-drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
-drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
-  sb->s_flags |= MS_RDONLY | MS_NOATIME;
-                             ^~~~~~~~~~
-                             S_NOATIME
-drivers/staging/erofs/super.c: In function 'erofs_mount':
-drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
-   &priv, erofs_fill_super);
-          ^~~~~~~~~~~~~~~~
-In file included from include/linux/buffer_head.h:12:0,
-                 from drivers/staging/erofs/super.c:14:
-include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
- extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-                       ^~~~~~~~~~
-drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
-  return mount_bdev(fs_type, flags, dev_name,
-         ^~~~~~~~~~
-In file included from include/linux/buffer_head.h:12:0,
-                 from drivers/staging/erofs/super.c:14:
-include/linux/fs.h:2151:23: note: declared here
- extern struct dentry *mount_bdev(struct file_system_type *fs_type,
-                       ^~~~~~~~~~
-drivers/staging/erofs/super.c: At top level:
-drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .mount          = erofs_mount,
-                    ^~~~~~~~~~~
-drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
-drivers/staging/erofs/super.c: In function 'erofs_remount':
-drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
-  *flags |= MS_RDONLY;
-            ^~~~~~~~~
-            IS_RDONLY
-drivers/staging/erofs/super.c: At top level:
-drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .remount_fs = erofs_remount,
-                ^~~~~~~~~~~~~
+There is no way to make this work on x86 unless they fundamentally change
+the low level exception mechanics. Not going to happen anytime soon. And if
+it ever happens then they better implement it in a way which is usable by
+software sanely.
 
-Caused by various commits creating erofs in the staging tree interacting
-with various commits redoing the mount infrastructure in the vfs tree.
+Thanks,
 
-I have disabed CONFIG_EROFS_FS for now:"
-
-The reason of compiling error is:
-
-Since -next collects and merges developing patches including common vfs
-stuff from multi-trees, but those patches didn't cover erofs, such as:
-
-('vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=109b45090d7d3ce2797bb1ef7f70eead5bfe0ff3
-
-("vfs: Require specification of size of mount data for internal mounts")
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0a191e4505a4f255e6513b49426213da69bf0e80
-
-Above vfs related patches has not been merged in staging tree, if we
-submit those erofs patches to staging mailing list and after including
-them in staging-{test,nexts} tree, it can easily cause compiling error.
-
-We worked out some patches to adjust those vfs change, but now we just
-submit them to -next tree temporarily to avoid compiling error.
-
-For potentail conflict in between erofs and vfs changes in incoming
-merge window, Stephen suggested that we can disable CONFIG_EROFS_FS
-temporarily to pass merge window, and after that we can do restore by
-reenabling CONFIG_EROFS_FS and applying those fixing patches. Also
-Greg confirmed this solution.
-
-So, let's disable compiling erofs for a while.
-
-Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- drivers/staging/erofs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
-index 663b755bf2fb..96f614934df1 100644
---- a/drivers/staging/erofs/Kconfig
-+++ b/drivers/staging/erofs/Kconfig
-@@ -2,7 +2,7 @@
- 
- config EROFS_FS
- 	tristate "EROFS filesystem support"
--	depends on BLOCK
-+	depends on BROKEN
- 	help
- 	  EROFS(Enhanced Read-Only File System) is a lightweight
- 	  read-only file system with modern designs (eg. page-sized
--- 
-2.18.0.rc1
-
+	tglx
