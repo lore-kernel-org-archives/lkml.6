@@ -6,353 +6,107 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88CEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4A9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED632145D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:16:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED632145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E597A2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E597A2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeHBKGP (ORCPT
+        id S1732037AbeHBKGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:06:15 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42911 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeHBKGP (ORCPT
+        Thu, 2 Aug 2018 06:06:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36775 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeHBKGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:06:15 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1fl8mC-0006xr-HS; Thu, 02 Aug 2018 10:16:04 +0200
-Subject: Re: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-To:     Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-6-o.rempel@pengutronix.de>
- <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <403db02e-9c91-5080-ee9c-7a44716e64b2@pengutronix.de>
-Date:   Thu, 2 Aug 2018 10:16:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 06:06:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w728GHCk3431735
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Aug 2018 01:16:17 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w728GHn93431731;
+        Thu, 2 Aug 2018 01:16:17 -0700
+Date:   Thu, 2 Aug 2018 01:16:17 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-wi44iid0yjfht3lcvplc75fm@git.kernel.org>
+Cc:     namhyung@kernel.org, wangnan0@huawei.com, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        acme@redhat.com, dsahern@gmail.com, adrian.hunter@intel.com,
+        jolsa@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, wangnan0@huawei.com,
+          namhyung@kernel.org, hpa@zytor.com, dsahern@gmail.com,
+          acme@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          adrian.hunter@intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf bpf: Show better message when failing to load
+ an object
+Git-Commit-ID: 739e2edc848af30fefa66d6c422c00ca9a701c06
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="UhqsxUSXFGrrRBGuuTxAxJcdNTcYUhHQ2"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---UhqsxUSXFGrrRBGuuTxAxJcdNTcYUhHQ2
-Content-Type: multipart/mixed; boundary="wTQfzCZEaH9cLMGMfipz7eVubsnh9GVcQ";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
- "A.s. Dong" <aisheng.dong@nxp.com>
-Message-ID: <403db02e-9c91-5080-ee9c-7a44716e64b2@pengutronix.de>
-Subject: Re: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-6-o.rempel@pengutronix.de>
- <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Commit-ID:  739e2edc848af30fefa66d6c422c00ca9a701c06
+Gitweb:     https://git.kernel.org/tip/739e2edc848af30fefa66d6c422c00ca9a701c06
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 31 Jul 2018 11:58:57 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 31 Jul 2018 11:58:57 -0300
 
---wTQfzCZEaH9cLMGMfipz7eVubsnh9GVcQ
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+perf bpf: Show better message when failing to load an object
 
+Before:
 
+  libbpf: license of tools/perf/examples/bpf/etcsnoop.c is GPL
+  libbpf: section(6) version, size 4, link 0, flags 3, type=1
+  libbpf: kernel version of tools/perf/examples/bpf/etcsnoop.c is 41200
+  libbpf: section(7) .symtab, size 120, link 1, flags 0, type=2
+  bpf: config program 'syscalls:sys_enter_openat'
+  libbpf: load bpf program failed: Operation not permitted
+  libbpf: failed to load program 'syscalls:sys_enter_openat'
+  libbpf: failed to load object 'tools/perf/examples/bpf/etcsnoop.c'
+  bpf: load objects failed
 
-On 27.07.2018 11:32, Robin Gong wrote:
->=20
->=20
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
->> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
->> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
+After: (just the last line changes)
 
->> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
->> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
->> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
->> Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
+  bpf: load objects failed: err=-4009: (Incorrect kernel version)
 
->> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
-Gong
->> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
->> Subject: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
->> pm_power_off_prepare handler
->>
->> On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PM=
-IC
->> about state changes. In this case internal state of PMIC must be preco=
-nfigured
->> for upcomming state change.
->> It works fine with the current regulator framework, except with the po=
-wer-off
->> case.
->>
->> This patch is providing an optional pm_power_off_prepare handler which=
- will
->> configure standby state of the PMIC to disable all power lines.
->>
->> In my power consumption test on RIoTBoard, I got the following results=
-:
->> power off without this patch:	320 mA
->> power off with this patch:	2   mA
->> suspend to ram:			40  mA
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  drivers/regulator/pfuze100-regulator.c | 92 +++++++++++++++++++++++++=
-+
->>  1 file changed, 92 insertions(+)
->>
->> diff --git a/drivers/regulator/pfuze100-regulator.c
->> b/drivers/regulator/pfuze100-regulator.c
->> index 8d9dbcc775ea..e386e9acb3f7 100644
->> --- a/drivers/regulator/pfuze100-regulator.c
->> +++ b/drivers/regulator/pfuze100-regulator.c
->> @@ -15,6 +15,7 @@
->>  #include <linux/regulator/pfuze100.h>
->>  #include <linux/i2c.h>
->>  #include <linux/slab.h>
->> +#include <linux/kallsyms.h>
-> Is it necessary?
->>  #include <linux/regmap.h>
->>
->>  #define PFUZE_NUMREGS		128
->> @@ -29,11 +30,17 @@
->>
->>  #define PFUZE100_COINVOL	0x1a
->>  #define PFUZE100_SW1ABVOL	0x20
->> +#define PFUZE100_SW1ABMODE	0x23
->>  #define PFUZE100_SW1CVOL	0x2e
->> +#define PFUZE100_SW1CMODE	0x31
->>  #define PFUZE100_SW2VOL		0x35
->> +#define PFUZE100_SW2MODE	0x38
->>  #define PFUZE100_SW3AVOL	0x3c
->> +#define PFUZE100_SW3AMODE	0x3f
->>  #define PFUZE100_SW3BVOL	0x43
->> +#define PFUZE100_SW3BMODE	0x46
->>  #define PFUZE100_SW4VOL		0x4a
->> +#define PFUZE100_SW4MODE	0x4d
->>  #define PFUZE100_SWBSTCON1	0x66
->>  #define PFUZE100_VREFDDRCON	0x6a
->>  #define PFUZE100_VSNVSVOL	0x6b
->> @@ -44,6 +51,13 @@
->>  #define PFUZE100_VGEN5VOL	0x70
->>  #define PFUZE100_VGEN6VOL	0x71
->>
->> +#define PFUZE100_SWxMODE_MASK	0xf
->> +#define PFUZE100_SWxMODE_APS_APS	0x8
->> +#define PFUZE100_SWxMODE_APS_OFF	0x4
->> +
->> +#define PFUZE100_VGENxLPWR	BIT(6)
->> +#define PFUZE100_VGENxSTBY	BIT(5)
->> +
->>  enum chips { PFUZE100, PFUZE200, PFUZE3000 =3D 3 };
->>
->>  struct pfuze_regulator {
->> @@ -492,6 +506,69 @@ static inline struct device_node *match_of_node(i=
-nt
->> index)  }  #endif
->>
->> +static struct pfuze_chip *syspm_pfuze_chip;
->> +
->> +static void pfuze_power_off_prepare(void)=20
->> +	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power
->> +off");
-> Add 'if (syspm_pfuze_chip ->chip_id =3D=3D PFUZE100))' here is easy for=
- extend=20
-> Support on pfuze200/3000.. in the feature.
-There is already:
-static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
-{
-        if (pfuze_chip->chip_id !=3D PFUZE100) {
-                dev_warn(pfuze_chip->dev, "Requested
-pm_power_off_prepare handler for not supported chip\n");
-                return -ENODEV;
-        }
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-wi44iid0yjfht3lcvplc75fm@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/bpf-loader.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-No need to add it in pfuze_power_off_prepare()
-
->> +
->> +	/* Switch from default mode: APS/APS to APS/Off */
->> +	regmap_update_bits(syspm_pfuze_chip->regmap,
->> PFUZE100_SW1ABMODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap,
->> PFUZE100_SW1CMODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap,
->> PFUZE100_SW3AMODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap,
->> PFUZE100_SW3BMODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
->> +			   PFUZE100_SWxMODE_MASK,
->> PFUZE100_SWxMODE_APS_OFF);
->> +
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
->> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
->> +			   PFUZE100_VGENxSTBY);
->> +}
->> +
->> +static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip=
-)
->> +{
->> +	if (pfuze_chip->chip_id !=3D PFUZE100) {
->> +		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare
->> handler for not supported chip\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	if (pm_power_off_prepare) {
->> +		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already
->> registered.\n");
->> +		return -EBUSY;
->> +	}
->> +
->> +	if (syspm_pfuze_chip) {
->> +		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
->> +		return -EBUSY;
->> +	}
->> +
->> +	syspm_pfuze_chip =3D pfuze_chip;
->> +	pm_power_off_prepare =3D pfuze_power_off_prepare;
->> +
->> +	return 0;
->> +}
->> +
->>  static int pfuze_identify(struct pfuze_chip *pfuze_chip)  {
->>  	unsigned int value;
->> @@ -661,6 +738,20 @@ static int pfuze100_regulator_probe(struct i2c_cl=
-ient
->> *client,
->>  		}
->>  	}
->>
->> +	if (of_property_read_bool(client->dev.of_node,
->> +				  "fsl,pmic-stby-poweroff"))
->> +		return pfuze_power_off_prepare_init(pfuze_chip);
->> +
->> +	return 0;
->> +}
->> +
->> +static int pfuze100_regulator_remove(struct i2c_client *client) {
->> +	if (syspm_pfuze_chip) {
->> +		syspm_pfuze_chip =3D NULL;
->> +		pm_power_off_prepare =3D NULL;
->> +	}
->> +
->>  	return 0;
->>  }
->>
->> @@ -671,6 +762,7 @@ static struct i2c_driver pfuze_driver =3D {
->>  		.of_match_table =3D pfuze_dt_ids,
->>  	},
->>  	.probe =3D pfuze100_regulator_probe,
->> +	.remove =3D pfuze100_regulator_remove,
->>  };
->>  module_i2c_driver(pfuze_driver);
->>
->> --
->> 2.18.0
->=20
-
-
---wTQfzCZEaH9cLMGMfipz7eVubsnh9GVcQ--
-
---UhqsxUSXFGrrRBGuuTxAxJcdNTcYUhHQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltivcMACgkQdQOiSHVI
-77TZqwgAofbGPSc8Xzuafl9A5262Yjfl+aiCSmngdfWG8Z4XFsNQ12P7XkoQErUJ
-qRW+8IeCe/VoJtcM+A2Z6wBepKVRBndNF6CbHimGmTSefdNz4CHCpQvPuu0apZTB
-BPwutMwLbk9/zSMfRYyImr4vGDe/E0Uab2SRqzXBweslkTTBDbDM6YUw/p7pKhB4
-/3wFvin873aCAQT6us8fQBNu4qpO3Y/I+luvEIND5MAEpZfSfdw9GItSEz0aaS5A
-+3RnxNFC1nungbmXHJrD+Lvu3TVe3TszZS0RQ4MasRcN29k3+Q33z4Eg4r9/HH3B
-KccJ7JmXvfH5zTqVCGBW+BOsnd94zA==
-=pRcc
------END PGP SIGNATURE-----
-
---UhqsxUSXFGrrRBGuuTxAxJcdNTcYUhHQ2--
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index cee658733e2c..3d02ae38ec56 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -747,7 +747,9 @@ int bpf__load(struct bpf_object *obj)
+ 
+ 	err = bpf_object__load(obj);
+ 	if (err) {
+-		pr_debug("bpf: load objects failed\n");
++		char bf[128];
++		libbpf_strerror(err, bf, sizeof(bf));
++		pr_debug("bpf: load objects failed: err=%d: (%s)\n", err, bf);
+ 		return err;
+ 	}
+ 	return 0;
