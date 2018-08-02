@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E8BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A3FC46467
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB502150B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB502150B
+	by mail.kernel.org (Postfix) with ESMTP id 96CB12150A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CB12150A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732212AbeHBMZK (ORCPT
+        id S1732243AbeHBMZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:25:10 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54715 "EHLO
+        Thu, 2 Aug 2018 08:25:11 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51573 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731622AbeHBMZJ (ORCPT
+        with ESMTP id S1732074AbeHBMZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:25:09 -0400
+        Thu, 2 Aug 2018 08:25:10 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ore@pengutronix.de>)
-        id 1flAw9-0004Zu-Mj; Thu, 02 Aug 2018 12:34:29 +0200
+        id 1flAw9-0004Zx-Mm; Thu, 02 Aug 2018 12:34:29 +0200
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <ore@pengutronix.de>)
-        id 1flAw6-0000oO-Qn; Thu, 02 Aug 2018 12:34:26 +0200
+        id 1flAw6-0000op-Ty; Thu, 02 Aug 2018 12:34:26 +0200
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
@@ -47,9 +47,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
         yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
-Date:   Thu,  2 Aug 2018 12:34:20 +0200
-Message-Id: <20180802103425.3053-2-o.rempel@pengutronix.de>
+Subject: [PATCH v9 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
+Date:   Thu,  2 Aug 2018 12:34:23 +0200
+Message-Id: <20180802103425.3053-5-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
 References: <20180802103425.3053-1-o.rempel@pengutronix.de>
@@ -62,31 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Document the new optional "fsl,pmic-stby-poweroff" property.
+
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index a45ca67a9d5f..e1308346e00d 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,14 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index c7610718adff..f9be1acf891c 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -12,6 +12,11 @@ Optional properties:
+   disabled. This binding is a workaround to keep backward compatibility with
+   old dtb's which rely on the fact that the switched regulators are always on
+   and don't mark them explicit as "regulator-always-on".
++- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
++  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
++  Use this option if the SoC should be powered off by external power
++  management IC (PMIC) on PMIC_STBY_REQ signal.
++  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
  
-+Optional properties:
-+- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
-+  on power off.
-+  Use this property if the SoC should be powered off by external power
-+  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-+  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
-+  be using "syscon-poweroff" driver instead.
-+
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
+ Required child node:
+ - regulators: This is the list of child nodes that specify the regulator
 -- 
 2.18.0
 
