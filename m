@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A234C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB06C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74C022156B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 963D021566
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:46:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qHmwc3Xi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C022156B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s5v+cTiA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963D021566
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbeHBVi2 (ORCPT
+        id S1731699AbeHBVie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:38:28 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45278 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeHBVi1 (ORCPT
+        Thu, 2 Aug 2018 17:38:34 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39564 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729772AbeHBVid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:38:27 -0400
-Received: by mail-ed1-f66.google.com with SMTP id s16-v6so1328312edq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:45:50 -0700 (PDT)
+        Thu, 2 Aug 2018 17:38:33 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h4-v6so1340846edi.6
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W+QhGKv63Bkgx9akWAUZspgZxiyfH0Fd3o7TmCLCC2o=;
-        b=qHmwc3Xiz7ZJFGNtXVCZSmFC7nDO99Ht3WcTkRgqo31uQn6KL3Ltyx1J/Dh7S2uhL+
-         RSzpnagKGgb6qOYbkL9H/j1rEo5PCxImwrxoBa7JpPoUK0zvesGCN6717Vxy6EjWBCh5
-         gwpB5/LV5HEktFv1QaEomW3U687CZIBk/xsAvjTFF+rGJsyPlnGRM8tesUr/ZGy27ANG
-         98YsNyRN9x4mKfzoOitLFMMplyJEq2UekZqFmsIn44MFcW3jzND88icS2WM0c2dF1GxM
-         zVlyRnD4dUKTh1MtHxBH1iqNfszpcbNd21JRYi2dTxce7l79qhthSA2RcBzhrmJNOY/a
-         ykBA==
+        bh=qlp/yvroyvV5fqwp5a4gJoO/6mmWbq2pzsE8ATWcghc=;
+        b=s5v+cTiAEz+AyIrpbmibeXHeX6TlJ/8vECjj+qNpy2KqcBTOIzXFJg8LMEgoY5+gjL
+         Vg14WV0JyktNaN72SBT3ajknO7qOegAIaLvv/5WwF/Juu1bwMUskIla75+YneZvIYuFX
+         nQuWFREwtUgZaEY7C03m1ptoENjMODLOAZ19mLf8xPmqOcMzUKlITOyT0/XQ/3auaAHW
+         TNwJ1p31JFjUZ0K6UM1Ohm0FYT/d72xwrCF6q1w9OmID9J4/SSWEuOvbc4Sc0Ch7bSWU
+         awPRjevtucF+Orqc3g63w+KoD7OREXrGW/I3+0hA1Du3i4MM6A363g4crbdv0lJlxfXK
+         hung==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=W+QhGKv63Bkgx9akWAUZspgZxiyfH0Fd3o7TmCLCC2o=;
-        b=nIj0zRR6t+4VWpLqk2uqP5tUw1I0/4NEd45m5YHPPuNw+CBAAneUmyKT9Ev3xpyoEo
-         xe5YXNaZFgM4gS4qKUnlbAxKk78WdP+9EzYPq9gsg4mDG7YfnHfRRlu/Bjrj9k4t8Bnl
-         sB0uqNsdAcRlIrvd/Qqzz90jzyoZteSApPOgz4JUgF9Jqsmej+iRuJlQr5n5FrZwUw4V
-         Tm7Ba6JlBxTsOrUT36QbtBgm6T9cFjyb2OMmmE8zkeZbIu48XIx/RNMnLCC/n3YA+qLd
-         KF2kJr72ThFiMbHEo7Q4192gF/l7skggOw/ve8Fuiz35odZJXCSGV+w9wAgh17nRECwt
-         giQQ==
-X-Gm-Message-State: AOUpUlEKxbU0xaq0UUlOzv3OsEpFOIm2ZvbRj8nB/EnLu7iPvXZcZLyC
-        ObsEBsCPeuGTbSmY5k1Dzzo=
-X-Google-Smtp-Source: AAOMgpdN5bfm2kAfg6E/VQZ69SwSYXR2b4sW5fty/L0z2r5yneAImxQ9yCe29PnFjEhPWmYKoyahew==
-X-Received: by 2002:a50:fd93:: with SMTP id o19-v6mr4496083edt.73.1533239150136;
-        Thu, 02 Aug 2018 12:45:50 -0700 (PDT)
+        bh=qlp/yvroyvV5fqwp5a4gJoO/6mmWbq2pzsE8ATWcghc=;
+        b=awfRzyk8ql8Z1/TyXAcLkg/seSus5D2VGmEi7nzGNi/ytC8pfRyDnGsnWJpb6Zu+Tc
+         7yntODxI7xL2UYLCkdl8miXSHhn3f/Gjw+N2+V0i++RUhrQY91jb0XZNMJciiqlRFR5C
+         9BDvNuv5B/t6nccj6Mnu/U4trIuurFQHljaOtzjSqLS7GlJb+vXA7nzHo8o17itq2du8
+         BkjncsCD47sl3U0nR87bssIJrQnUzM2eNbjZXcoIalw0ntMrtfB97k1GwBmXi4S1VrA6
+         jf22TQ3r5W6xn1G5xWi0P4lj/lcOtrJ+6T1o3NGFCBGE3sZ0D6B+KbiuhwJU44c5u3h3
+         udJQ==
+X-Gm-Message-State: AOUpUlGQrPfr2rpcAJcvN81evIYDFxb+kkrd80oc6oMV3ZhSSMfKipnK
+        z74Zn7nLNdvn4MSW5iQT/a87TtNk
+X-Google-Smtp-Source: AAOMgpf+nitEWDdiNLY0lJJZo4QIdpxsEXrNNBSe+oQPuuRtPNnIha8tiqFsJbtuM051Vk98WP4R9g==
+X-Received: by 2002:a50:a804:: with SMTP id j4-v6mr4781364edc.61.1533239154678;
+        Thu, 02 Aug 2018 12:45:54 -0700 (PDT)
 Received: from jupiter.lan (126.158-248-196.customer.lyse.net. [158.248.196.126])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm1219655edn.28.2018.08.02.12.45.49
+        by smtp.gmail.com with ESMTPSA id g6-v6sm1219655edn.28.2018.08.02.12.45.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 12:45:49 -0700 (PDT)
+        Thu, 02 Aug 2018 12:45:54 -0700 (PDT)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Noralf T <noralf@tronnes.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 2/5] pardata: new bus for parallel data access
-Date:   Thu,  2 Aug 2018 21:45:33 +0200
-Message-Id: <20180802194536.10820-2-sam@ravnborg.org>
+Subject: [PATCH v1 3/5] tinydrm: add support for parallel data displays
+Date:   Thu,  2 Aug 2018 21:45:34 +0200
+Message-Id: <20180802194536.10820-3-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20180802193909.GA11443@ravnborg.org>
 References: <20180802193909.GA11443@ravnborg.org>
@@ -73,622 +73,736 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pardata supports implement a simple bus for devices
-that are connected using a parallel bus driven by GPIOs.
-The is often used in combination with simple displays
-that is often seen in older embedded designs.
-There is a demand for this support also in the linux
-kernel for HW designs that uses these kind of displays.
+Utilising the pardata bus/driver add support for
+displays connected to a parallel data bus.
+There is no specific protocol implemented,
+but the display is tied to the tinydrm pipe.
 
-The pardata bus uses a platfrom_driver that when probed
-creates devices for all child nodes in the DT,
-which are then supposed to be handled by pardata_drivers.
+Only monochrome displays supported using the
+XRGB8888 format.
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- Documentation/driver-api/index.rst   |   1 +
- Documentation/driver-api/pardata.rst |  60 ++++++++
- MAINTAINERS                          |   9 ++
- drivers/Kconfig                      |   2 +
- drivers/Makefile                     |   1 +
- drivers/pardata/Kconfig              |  17 +++
- drivers/pardata/Makefile             |   5 +
- drivers/pardata/pardata.c            | 282 +++++++++++++++++++++++++++++++++++
- include/linux/pardata.h              | 138 +++++++++++++++++
- 9 files changed, 515 insertions(+)
- create mode 100644 Documentation/driver-api/pardata.rst
- create mode 100644 drivers/pardata/Kconfig
- create mode 100644 drivers/pardata/Makefile
- create mode 100644 drivers/pardata/pardata.c
- create mode 100644 include/linux/pardata.h
+ drivers/gpu/drm/tinydrm/Kconfig       |   3 +
+ drivers/gpu/drm/tinydrm/Makefile      |   1 +
+ drivers/gpu/drm/tinydrm/pardata-dbi.c | 417 ++++++++++++++++++++++++++++++++++
+ include/drm/tinydrm/pardata-dbi.h     | 257 +++++++++++++++++++++
+ 4 files changed, 678 insertions(+)
+ create mode 100644 drivers/gpu/drm/tinydrm/pardata-dbi.c
+ create mode 100644 include/drm/tinydrm/pardata-dbi.h
 
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 6d9f2f9fe20e..1808fca406ae 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -41,6 +41,7 @@ available subsections can be seen below.
-    miscellaneous
-    w1
-    rapidio
-+   pardata
-    s390-drivers
-    vme
-    80211/index
-diff --git a/Documentation/driver-api/pardata.rst b/Documentation/driver-api/pardata.rst
-new file mode 100644
-index 000000000000..a811f024a0fe
---- /dev/null
-+++ b/Documentation/driver-api/pardata.rst
-@@ -0,0 +1,60 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=========================
-+Parallel Data Bus/Drivers
-+=========================
-+
-+Displays may be connected using a simple parallel bus.
-+This is often seen in embedded systems with a simple MCU, but is also
-+used in Linux based systems to a small extent.
-+
-+The bus looks like this:
-+
-+.. code-block:: none
-+
-+       ----+
-+           |  DB0-DB7 or DB4-DB7      +----
-+           ===/========================
-+           |  E - enable              |  D
-+           ----------------------------  I
-+        C  |  Reset                   |  S
-+        P  ----------------------------  P
-+        U  |  Read/Write (one or two) |  L
-+           ----------------------------  A
-+           |  RS - instruction/data   |  Y
-+           ----------------------------
-+           |                          +----
-+       ----+
-+
-+There may be several devices connected to the bus with individual
-+reset and read/write signals.
-+Two types of interfaces are supported. 8800 with a single read/write signal,
-+and 6800 with individual read/write signals.
-+
-+Display supported by the parallel data bus: `<https://www.sparkfun.com/products/710>`_
-+
-+The overall code structure is
-+
-+.. code-block:: none
-+
-+  platform_device [pardata bus]   <--- pardatabus [driver]
-+       |
-+       +-> device
-+             |
-+             +-> pardata_bus_data
-+
-+  pardata_device
-+      |
-+      +-> device
-+            |
-+            +->
-+
-+  pardatabus_bus
-+
-+
-+API documentation
-+=================
-+.. kernel-doc:: include/linux/pardata.h
-+   :internal:
-+.. kernel-doc:: drivers/pardata/pardata.c
-+   :internal:
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96e98e206b0d..4ba7ff7c3e46 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10727,6 +10727,15 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	drivers/platform/x86/panasonic-laptop.c
+diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+index 4592a5e3f20b..435de2f8d8f5 100644
+--- a/drivers/gpu/drm/tinydrm/Kconfig
++++ b/drivers/gpu/drm/tinydrm/Kconfig
+@@ -10,6 +10,9 @@ menuconfig DRM_TINYDRM
+ config TINYDRM_MIPI_DBI
+ 	tristate
  
-+PARALLEL DATA SUBSYSTEM
-+M:	Sam Ravnborg <sam@ravnborg.org>
-+S:	Maintained
-+F:	drivers/pardata/
-+F:	include/linux/pardata.h
-+F:	drivers/gpu/drm/tinydrm/pardata-dbi.c
-+F:	include/drm/pardata-dbi.h
-+F:	Documentation/driver-api/pardata.rst
++config TINYDRM_PARDATA_DBI
++	tristate
 +
- PARALLEL LCD/KEYPAD PANEL DRIVER
- M:	Willy Tarreau <willy@haproxy.com>
- M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 95b9ccc08165..b51b25aae9a5 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -217,4 +217,6 @@ source "drivers/siox/Kconfig"
+ config TINYDRM_ILI9225
+ 	tristate "DRM support for ILI9225 display panels"
+ 	depends on DRM_TINYDRM && SPI
+diff --git a/drivers/gpu/drm/tinydrm/Makefile b/drivers/gpu/drm/tinydrm/Makefile
+index 49a111929724..0b52df08b0a4 100644
+--- a/drivers/gpu/drm/tinydrm/Makefile
++++ b/drivers/gpu/drm/tinydrm/Makefile
+@@ -2,6 +2,7 @@ obj-$(CONFIG_DRM_TINYDRM)		+= core/
  
- source "drivers/slimbus/Kconfig"
+ # Controllers
+ obj-$(CONFIG_TINYDRM_MIPI_DBI)		+= mipi-dbi.o
++obj-$(CONFIG_TINYDRM_PARDATA_DBI)	+= pardata-dbi.o
  
-+source "drivers/pardata/Kconfig"
-+
- endmenu
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 24cd47014657..cfe7945f2f6b 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -67,6 +67,7 @@ obj-$(CONFIG_CONNECTOR)		+= connector/
- obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
- obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
- 
-+obj-$(CONFIG_PARDATA)		+= pardata/
- obj-$(CONFIG_PARPORT)		+= parport/
- obj-$(CONFIG_NVM)		+= lightnvm/
- obj-y				+= base/ block/ misc/ mfd/ nfc/
-diff --git a/drivers/pardata/Kconfig b/drivers/pardata/Kconfig
+ # Displays
+ obj-$(CONFIG_TINYDRM_ILI9225)		+= ili9225.o
+diff --git a/drivers/gpu/drm/tinydrm/pardata-dbi.c b/drivers/gpu/drm/tinydrm/pardata-dbi.c
 new file mode 100644
-index 000000000000..5a4280a3f85a
+index 000000000000..09bdfdba6291
 --- /dev/null
-+++ b/drivers/pardata/Kconfig
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Parallel Data Bus framework
-+#
-+menuconfig PARDATA
-+	tristate "Parallel Data support"
-+	help
-+	  The parallel data framework is used for devices communicating
-+	  with a simple parallel interface.
-+	  The interface include 8 data pins, one register select,
-+	  one enable pin, a chip select and a reset pin.
-+	  The read/write may be 8080 style (one r/w pin) or 6800 style
-+	  with separate read and write pins.
-+	  The parallel data bus is often used for displays in embedded
-+	  systems.
-+
-+	  If unsure, choose N.
-diff --git a/drivers/pardata/Makefile b/drivers/pardata/Makefile
-new file mode 100644
-index 000000000000..0e48bd648879
---- /dev/null
-+++ b/drivers/pardata/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for kernel Parallel Data subsystem
-+#
-+obj-$(CONFIG_PARDATA) += pardata.o
-diff --git a/drivers/pardata/pardata.c b/drivers/pardata/pardata.c
-new file mode 100644
-index 000000000000..985d692c116a
---- /dev/null
-+++ b/drivers/pardata/pardata.c
-@@ -0,0 +1,282 @@
++++ b/drivers/gpu/drm/tinydrm/pardata-dbi.c
+@@ -0,0 +1,417 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2018, Sam Ravnborg
-+ *
-+ * Author: Sam Ravnborg <sam@ravnborg.org>
++ * Parallel Data Display Bus Interface LCD controller support
 + */
 +
-+/**
-+ * DOC: Bus driver for parallel data bus
-+ *
-+ * The parallel data bus is often used for displays
-+ * in embedded designs and is sometimes also used
-+ * in designs supporting Linux.
-+ */
-+
-+#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
 +#include <linux/gpio/consumer.h>
-+#include <linux/of_device.h>
++#include <linux/dma-buf.h>
 +#include <linux/pardata.h>
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/slab.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
++#include <linux/module.h>
 +
-+static struct pardata_device *
-+pardata_device_create(struct pardatabus_data *pdbus)
++#include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/tinydrm/tinydrm-helpers.h>
++#include <drm/tinydrm/pardata-dbi.h>
++
++/**
++ * pardata_strobe_8080_write - using the 8080 interface create
++ *			     an enable strobe
++ *
++ * The interface requires that readwrite and chipselect are
++ * setup before the strobe of "e".
++ * There are timings constraints that is handled using udelay().
++ * Drivers can use this for the strobe_write callback.
++ *
++ * @pdd: pardata data
++ */
++void pardata_strobe_8080_write(struct pardata_data *pdd)
 +{
-+	struct pardata_device *pddev;
++	gpiod_set_value_cansleep(pdd->bus->pin_readwrite, 0);
 +
-+	/* We allocate the device, and initialize the default values */
-+	pddev = kzalloc(sizeof(*pddev), GFP_KERNEL);
-+	if (!pddev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pddev->dev.parent = pdbus->dev;
-+	pddev->dev.bus = &pardata_bus;
-+
-+	dev_set_name(&pddev->dev, "pardata");
-+
-+	device_initialize(&pddev->dev);
-+
-+	return pddev;
++	if (pdd->pin_cs)
++		gpiod_set_value_cansleep(pdd->pin_cs, 0);
++	/* min 90 nsec from cs/rs/rw to e */
++	udelay(1);
++	gpiod_set_value_cansleep(pdd->bus->pin_enable, 1);
++	/* data setup time 220 ns*/
++	udelay(2);
++	gpiod_set_value_cansleep(pdd->bus->pin_enable, 0);
++	/* data hold time 20 ns */
++	udelay(1);
++	if (pdd->pin_cs)
++		gpiod_set_value_cansleep(pdd->pin_cs, 1);
 +}
++EXPORT_SYMBOL_GPL(pardata_strobe_8080_write);
 +
-+static void pardata_device_release(struct pardata_device *ppdev)
++/**
++ * pardata_strobe_6800_write - using the 6800 interface create
++ *			     an enable strobe
++ *
++ * The interface requires that read + write and chipselect are
++ * setup before the strobe of "e".
++ * There are timings constraints that is handled using udelay()
++ * Drivers can use this for the strobe_write callback.
++ *
++ * @pdd: pardata data
++ */
++
++void pardata_strobe_6800_write(struct pardata_data *pdd)
 +{
-+	kfree(ppdev);
++	gpiod_set_value_cansleep(pdd->bus->pin_read, 0);
++	gpiod_set_value_cansleep(pdd->bus->pin_write, 1);
++
++	if (pdd->pin_cs)
++		gpiod_set_value_cansleep(pdd->pin_cs, 0);
++	/* min 90 nsec from cs/rs/rw to e */
++	udelay(1);
++	gpiod_set_value_cansleep(pdd->bus->pin_enable, 1);
++	/* data setup time 220 ns*/
++	udelay(2);
++	gpiod_set_value_cansleep(pdd->bus->pin_enable, 0);
++	/* data hold time 20 ns */
++	udelay(1);
++	if (pdd->pin_cs)
++		gpiod_set_value_cansleep(pdd->pin_cs, 1);
 +}
++EXPORT_SYMBOL_GPL(pardata_strobe_6800_write);
 +
-+int pardata_device_register(struct pardata_device *pddev)
++
++static int pardata_write_clip(struct pardata_data *pdd,
++			      struct drm_framebuffer *fb,
++			      u8 *data,
++			      struct drm_clip_rect *clip)
 +{
-+	return device_add(&pddev->dev);
-+}
++	bool line_by_line;
++	size_t linelen;
++	size_t len;
++	int x, y;
++	u8 *buf;
 +
-+static int of_pdbus_register_device(struct pardatabus_data *pdbus,
-+				    struct device_node *np)
-+{
-+	struct pardata_device *pddev;
-+	int ret;
-+	u32 id;
-+
-+	pddev = pardata_device_create(pdbus);
-+	if (IS_ERR(pddev))
-+		return PTR_ERR(pddev);
-+
-+	/* The reg property is used as id */
-+	ret = of_property_read_u32(np, "reg", &id);
-+	if (ret) {
-+		dev_err(pdbus->dev, "Failed to read the 'reg' property");
-+		pardata_device_release(pddev);
-+		return ret;
-+	}
-+	pddev->id = id;
++	linelen = clip->x2 - clip->x1;
++	len = linelen * (clip->y2 - clip->y1) / 8;
++	buf = kzalloc(len, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
 +
 +	/*
-+	 *  Associate the OF node with the device structure so it
-+	 * can be looked up later.
++	 * If the clip is the full width then we need only one
++	 * write operation.
 +	 */
-+	of_node_get(np);
-+	pddev->dev.of_node = np;
++	line_by_line = (clip->x2 - clip->x1) != fb->width;
 +
-+	/* All data is now stored in the pardata_device struct; register it. */
-+	ret = pardata_device_register(pddev);
-+	if (ret) {
-+		pardata_device_release(pddev);
-+		of_node_put(np);
-+		return ret;
++	for (y = clip->y1; y < clip->y2; y++) {
++		for (x = clip->x1; x < clip->x2; x++) {
++			unsigned int index;
++			u8 cc;
++
++			index = x + y * linelen;
++			cc = data[index];
++
++			/* Most significant bit determine bit on/off */
++			if (cc & 0x80)
++				buf[index / 8] |= BIT(index % 8);
++		}
++		if (line_by_line) {
++			int offset;
++
++			offset = y * fb->width + clip->x1;
++			pardata_write_buf(pdd, offset, &buf[offset], linelen);
++		}
++	}
++	if (!line_by_line) {
++		int offset;
++
++		offset = clip->y1 * fb->width;
++		pardata_write_buf(pdd, offset, &buf[offset], len);
 +	}
 +
-+	dev_dbg(&pddev->dev, "registered pardata device %s with id %i\n",
-+		np->name, id);
-+	return 0;
-+}
++	kfree(buf);
 +
-+static void pdbus_unregister(void)
-+{
-+	bus_unregister(&pardata_bus);
++	return 0;
 +}
 +
 +/**
-+ * of_pardata_register - Register pardatabus and create devices from DT
++ * pardata_buf_copy - Copy a framebuffer, transforming it if necessary
 + *
-+ * @pdbus: pointer to pardatabus_data structure
++ * @dst: The destination buffer
++ * @fb: The source framebuffer
++ * @clip: Clipping rectangle of the area to be copied
 + *
-+ * This function registers the pardatabus_data structure and registers
-+ * a pardata_device for each child node of @np.
++ * Returns:
++ * Zero on success, negative error code on failure.
 + */
-+int of_pardata_register(struct pardatabus_data *pdbus)
++static int pardata_buf_copy(void *dst, struct drm_framebuffer *fb,
++			    struct drm_clip_rect *clip)
 +{
-+	struct device_node *child;
-+	struct device_node *np;
++	struct dma_buf_attachment *import_attach;
++	struct drm_gem_cma_object *cma_obj;
++	void *src;
 +	int ret;
 +
-+	np = pdbus->dev->of_node;
++	cma_obj = drm_fb_cma_get_gem_obj(fb, 0);
++	import_attach = cma_obj->base.import_attach;
++	src = cma_obj->vaddr;
++	ret = 0;
 +
-+	/* Do not continue if the node is not available or disabled */
-+	if (!np || !of_device_is_available(np))
-+		return -ENODEV;
-+
-+	/* Register the parallel data bus */
-+	ret = bus_register(&pardata_bus);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Loop over the child nodes and register a
-+	 * pardata_device for each node
-+	 */
-+	for_each_available_child_of_node(np, child) {
-+		ret = of_pdbus_register_device(pdbus, child);
-+
-+		if (ret == -ENODEV)
-+			dev_err(pdbus->dev, "pardata device missing.\n");
-+		else if (ret)
-+			goto unregister;
++	if (import_attach) {
++		ret = dma_buf_begin_cpu_access(import_attach->dmabuf,
++					       DMA_FROM_DEVICE);
++		if (ret)
++			return ret;
 +	}
-+	return 0;
 +
-+unregister:
-+	pdbus_unregister();
++	tinydrm_xrgb8888_to_gray8(dst, src, fb, clip);
++
++	if (import_attach)
++		ret = dma_buf_end_cpu_access(import_attach->dmabuf,
++					     DMA_FROM_DEVICE);
 +	return ret;
 +}
 +
-+static int pardata_device_match(struct device *dev, struct device_driver *drv)
++static int pardata_fb_dirty(struct drm_framebuffer *fb,
++			    struct drm_file *file_priv,
++			    unsigned int flags,
++			    unsigned int color,
++			    struct drm_clip_rect *clips,
++			    unsigned int num_clips)
 +{
-+	/* OF style match */
-+	if (of_match_device(drv->of_match_table, dev) != NULL)
-+		return 1;
++	struct drm_format_name_buf format_name;
++	struct drm_gem_cma_object *cma_obj;
++	struct tinydrm_device *tdev;
++	struct drm_clip_rect clip;
++	struct pardata_data *pdd;
++	bool full;
++	int ret;
++
++	cma_obj = drm_fb_cma_get_gem_obj(fb, 0);
++	tdev = fb->dev->dev_private;
++	pdd = pardata_from_tinydrm(tdev);
++	ret = 0;
++
++	if (!pdd->enabled)
++		return 0;
++
++	if (fb->format->format != DRM_FORMAT_XRGB8888) {
++		dev_err_once(fb->dev->dev, "Format is not supported: %s\n",
++			     drm_get_format_name(fb->format->format,
++						 &format_name));
++		return -EINVAL;
++	}
++
++	full = tinydrm_merge_clips(&clip, clips, num_clips, flags,
++				   fb->width, fb->height);
++
++	DRM_DEV_DEBUG(&pdd->pddev->dev,
++		      "Flushing [FB:%d] x1=%u, x2=%u, y1=%u, y2=%u\n",
++		      fb->base.id, clip.x1, clip.x2, clip.y1, clip.y2);
++
++	if (!full) {
++		ret = pardata_buf_copy(pdd->tx_buf, fb, &clip);
++		if (!ret)
++			ret = pardata_write_clip(pdd, fb, pdd->tx_buf, &clip);
++	} else {
++		size_t len;
++
++		len = fb->width * fb->height;
++		ret = pardata_write_buf(pdd, 0, cma_obj->vaddr, len);
++	}
++
++	return ret;
++}
++
++static const struct drm_framebuffer_funcs mipi_dbi_fb_funcs = {
++	.destroy	= drm_gem_fb_destroy,
++	.create_handle	= drm_gem_fb_create_handle,
++	.dirty		= tinydrm_fb_dirty,
++};
++
++/**
++ * pardata_enable_flush -  enable helper
++ *
++ * @pdd: pardata data
++ * @crtc_state: crtc state
++ * @plane_state: plane state
++ *
++ * This function sets &pdd->enabled, flushes the whole framebuffer and
++ * enables the backlight. Drivers can use this in their
++ * &drm_simple_display_pipe_funcs->enable callback.
++ */
++void pardata_enable_flush(struct pardata_data *pdd,
++			  struct drm_crtc_state *crtc_state,
++			  struct drm_plane_state *plane_state)
++{
++	struct tinydrm_device *tdev;
++	struct drm_framebuffer *fb;
++
++	tdev = &pdd->tinydrm;
++	fb = plane_state->fb;
++	pdd->enabled = true;
++
++	if (fb)
++		tdev->fb_dirty(fb, NULL, 0, 0, NULL, 0);
++
++	backlight_enable(pdd->backlight);
++}
++EXPORT_SYMBOL_GPL(pardata_enable_flush);
++
++static void pardata_blank(struct pardata_data *pdd)
++{
++	struct drm_device *drm;
++	u16 height, width;
++	size_t len;
++
++	drm = pdd->tinydrm.drm;
++	height = drm->mode_config.min_height;
++	width = drm->mode_config.min_width;
++
++	len = width * height;
++
++	memset(pdd->tx_buf, 0, len);
++	pardata_write_buf(pdd, 0, pdd->tx_buf, len);
++}
++
++/**
++ * pardata_pipe_disable - pipe disable helper
++ *
++ * @pipe: Display pipe
++ *
++ * This function disables backlight if present, if not the display memory is
++ * blanked. The regulator is disabled if in use. Drivers can use this as their
++ * &drm_simple_display_pipe_funcs->disable callback.
++ */
++void pardata_pipe_disable(struct drm_simple_display_pipe *pipe)
++{
++	struct tinydrm_device *tdev;
++	struct pardata_data *pdd;
++
++	tdev = pipe_to_tinydrm(pipe);
++	pdd = pardata_from_tinydrm(tdev);
++
++	pdd->enabled = false;
++
++	if (pdd->backlight)
++		backlight_disable(pdd->backlight);
++	else
++		pardata_blank(pdd);
++
++	if (pdd->regulator)
++		regulator_disable(pdd->regulator);
++}
++EXPORT_SYMBOL_GPL(pardata_pipe_disable);
++
++static const uint32_t pardata_formats[] = {
++	DRM_FORMAT_XRGB8888,
++};
++
++/**
++ * pardata_init - initialization
++ * @dev: Parent device
++ * @pdd: pardata data to initialize
++ * @pipe_funcs: Display pipe functions
++ * @driver: DRM driver
++ * @mode: Display mode
++ *
++ * This function initializes a &pardata data structure and it's underlying
++ * @tinydrm_device. It also sets up the display pipeline.
++ *
++ * Supported formats: Emulated XRGB8888.
++ *
++ * Objects created by this function will be automatically freed on driver
++ * detach (devres).
++ *
++ * Returns:
++ * Zero on success, negative error code on failure.
++ */
++int pardata_init(struct device *dev,
++		 struct pardata_data *pdd,
++		 const struct drm_simple_display_pipe_funcs *pipe_funcs,
++		 struct drm_driver *driver,
++		 const struct drm_display_mode *mode)
++{
++	struct tinydrm_device *tdev;
++	size_t bufsize;
++	int ret;
++
++	/* shortcut to pardatabus_data */
++	pdd->bus = dev_get_drvdata(dev->parent);
++
++	tdev = &pdd->tinydrm;
++	bufsize = mode->vdisplay * mode->hdisplay * sizeof(u16);
++
++	pdd->tx_buf = devm_kmalloc(dev, bufsize, GFP_KERNEL);
++	if (!pdd->tx_buf)
++		return -ENOMEM;
++
++	ret = devm_tinydrm_init(dev, tdev, &mipi_dbi_fb_funcs, driver);
++	if (ret)
++		return ret;
++
++	tdev->fb_dirty = pardata_fb_dirty;
++
++	ret = tinydrm_display_pipe_init(tdev, pipe_funcs,
++					DRM_MODE_CONNECTOR_VIRTUAL,
++					pardata_formats,
++					ARRAY_SIZE(pardata_formats),
++					mode,
++					0);
++	if (ret)
++		return ret;
++
++	tdev->drm->mode_config.preferred_depth = 16;
++
++	drm_mode_config_reset(tdev->drm);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pardata_init);
++
++/**
++ * pardata_hw_reset - Hardware reset of controller
++ *
++ * @pdd: pardata data
++ *
++ * Reset controller if the &pardata->pin_reset gpio is set.
++ */
++void pardata_hw_reset(struct pardata_data *pdd)
++{
++	if (!pdd->pin_reset)
++		return;
++
++	gpiod_set_value_cansleep(pdd->pin_reset, 0);
++	usleep_range(20, 1000);
++	gpiod_set_value_cansleep(pdd->pin_reset, 1);
++	msleep(120);
++}
++EXPORT_SYMBOL_GPL(pardata_hw_reset);
++
++/**
++ * pardata_poweron_reset - poweron and reset
++ * @pdd: pardata data
++ *
++ * This function enables the regulator if used and does a hardware reset.
++ *
++ * Returns:
++ * Zero on success, or a negative error code.
++ */
++int pardata_poweron_reset(struct pardata_data *pdd)
++{
++	int ret;
++
++
++	if (pdd->regulator) {
++		ret = regulator_enable(pdd->regulator);
++		if (ret) {
++			DRM_DEV_ERROR(&pdd->pddev->dev,
++				      "Failed to enable regulator (%d)\n",
++				      ret);
++			return ret;
++		}
++	}
++
++	pardata_hw_reset(pdd);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pardata_poweron_reset);
++
++MODULE_LICENSE("GPL v2");
+diff --git a/include/drm/tinydrm/pardata-dbi.h b/include/drm/tinydrm/pardata-dbi.h
+new file mode 100644
+index 000000000000..d72d9a1dff27
+--- /dev/null
++++ b/include/drm/tinydrm/pardata-dbi.h
+@@ -0,0 +1,257 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Parallel Data Display Bus Interface LCD controller support
++ */
++
++#include <linux/pardata.h>
++
++#include <drm/tinydrm/tinydrm.h>
++
++/**
++ * pardata_pins - the data pins
++ *
++ * The order is important due to use of writing to gpio arrays.
++ * The first four pins (PIN_DB0 to PIN_DB3) are not used for
++ * interfaces using only four data bits.
++ */
++enum pardata_pins {
++	PIN_DB0,
++	PIN_DB1,
++	PIN_DB2,
++	PIN_DB3,
++	PIN_DB4,
++	PIN_DB5,
++	PIN_DB6,
++	PIN_DB7,
++	PIN_NUM,	/* Number of pins */
++};
++
++struct pardata_data {
++	/**
++	 * @tinydrm - tinydrm base
++	 */
++	struct tinydrm_device tinydrm;
++
++	/**
++	 * dev - pardata device
++	 */
++	struct pardata_device *pddev;
++
++	/**
++	 * @busdata - data for the bus
++	 */
++	struct pardatabus_data *bus;
++
++	/**
++	 * @pin_reset: Optional GPIO reset pin
++	 */
++	struct gpio_desc *pin_reset;
++
++	/**
++	 * @pin_cs: Optional chip select pin
++	 */
++	struct gpio_desc *pin_cs;
++
++	/**
++	 * @tx_buf: Poitner to buffer to transer to display RAM
++	 */
++	u8 *tx_buf;
++
++	/**
++	 * @backlight - backlight device (optional)
++	 */
++	struct backlight_device *backlight;
++
++	/**
++	 * @regulator - power regulator (optional)
++	 */
++	struct regulator *regulator;
++
++	/**
++	 * @strobe_write - activate chip select to move data to controller
++	 *
++	 * This callback is used to set read/write and activate
++	 * pin_e and pin_cs - with respect to the timing required by
++	 * the controller.
++	 *
++	 * Use pardata_strobe_8080_write() for 8080 style interface or
++	 * pardata_strobe_6800_write() for 6800 style interface.
++	 * has individual pins for read and write.
++	 *
++	 * Parameters:
++	 *
++	 * pdd: pardata data
++	 */
++	void (*strobe_write)(struct pardata_data *pdd);
++
++	/**
++	 * write_reg - write value to register
++	 *
++	 * This callback is used to write the value to the register.
++	 *
++	 * Parameters:
++	 *
++	 * pdd: pardata data
++	 * reg: The register to write
++	 * value: The value to write to the register
++	 *
++	 * Returns:
++	 * 0 on success, negative value on error
++	 */
++	int (*write_reg)(struct pardata_data *pdd,
++			unsigned int reg, unsigned int value);
++
++	/**
++	 * write_buf - write content of buffer to controller
++	 *
++	 * This callback writes the data to the controller at offset
++	 * and forward. The write operation shall be as efficient as
++	 * possible as this will be called every time the content on
++	 * the display changes
++	 *
++	 * Parameters:
++	 *
++	 * pdd: pardata data
++	 * offset: The offset into the display memory of the controller where
++	 *	 the data shall be written.
++	 * data: Pointer to the data to write to display memory
++	 * len: Number of bytes to write to the display memory
++	 *
++	 * Returns:
++	 * 0 on success, negative value on error
++	 */
++	int (*write_buf)(struct pardata_data *pdd,
++			 u8 offset,
++			 u8 *data,
++			 size_t len);
++
++	/**
++	 * @enabled: Pipeline is enabled (internal)
++	 */
++	bool enabled;
++};
++
++static inline struct pardata_data *
++pardata_from_tinydrm(struct tinydrm_device *tdev)
++{
++	return container_of(tdev, struct pardata_data, tinydrm);
++}
++
++static inline void pardata_strobe_write(struct pardata_data *pdd)
++{
++	if (pdd && pdd->strobe_write)
++		pdd->strobe_write(pdd);
++	else
++		DRM_DEV_ERROR(&pdd->pddev->dev, "No strobe_write callback");
++}
++
++static inline int pardata_write_reg(struct pardata_data *pdd,
++				    unsigned int reg, unsigned int value)
++{
++	if (pdd && pdd->write_reg)
++		pdd->write_reg(pdd, reg, value);
++	else
++		DRM_DEV_ERROR(&pdd->pddev->dev, "No write_reg callback");
 +
 +	return 0;
 +}
 +
-+static int pardata_device_probe(struct device *dev)
++static inline int pardata_write_buf(struct pardata_data *pdd,
++				    u8 offset, u8 *data, size_t len)
 +{
-+	struct pardata_device *pddev;
-+	struct pardata_driver *pddrv;
++	if (pdd && pdd->write_buf)
++		pdd->write_buf(pdd, offset, data, len);
++	else
++		DRM_DEV_ERROR(&pdd->pddev->dev, "No write_buf callback");
 +
-+	pddev = to_pardata_device(dev);
-+	pddrv = to_pardata_driver(dev->driver);
-+
-+	return pddrv->probe(pddev);
-+}
-+
-+struct bus_type pardata_bus = {
-+	.name		= "pardata",
-+	.match		= pardata_device_match,
-+	.probe		= pardata_device_probe,
-+};
-+EXPORT_SYMBOL_GPL(pardata_bus);
-+
-+/*
-+ * __pardata_driver_register() - Client driver registration
-+ *
-+ * @drv:Client driver to be associated with client-device.
-+ * @owner: owning module/driver
-+ *
-+ * Do not call this direct, use pardata_driver_register()
-+ */
-+int __pardata_driver_register(struct pardata_driver *drv, struct module *owner)
-+{
-+	/* probe is mandatory */
-+	if (!drv->probe)
-+		return -EINVAL;
-+
-+	drv->driver.bus = &pardata_bus;
-+	drv->driver.owner = owner;
-+
-+	return driver_register(&drv->driver);
-+}
-+EXPORT_SYMBOL_GPL(__pardata_driver_register);
-+
-+/*
-+ * Use a simple pardatabus driver to create the pardata
-+ * devices from child nodes in DT.
-+ *
-+ * The pardatabus driver parses the properties in the
-+ * device tree that will be used by the pardata drivers.
-+ */
-+static int pardatabus_probe(struct platform_device *pdev)
-+{
-+	struct pardatabus_data *pdbus;
-+	struct gpio_descs *pins;
-+	struct gpio_desc *pin;
-+	struct device *dev;
-+
-+	dev = &pdev->dev;
-+
-+	pdbus = devm_kzalloc(dev, sizeof(*pdbus), GFP_KERNEL);
-+	if (!pdbus)
-+		return -ENOMEM;
-+
-+	pdbus->dev = &pdev->dev;
-+	dev_set_drvdata(dev, pdbus);
-+
-+	/* Get the mandatory bus details from DT */
-+	pins = devm_gpiod_get_array(dev, "data-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(pins)) {
-+		dev_err(dev, "Failed to get gpio 'data-gpios'");
-+		return PTR_ERR(pins);
-+	}
-+	if (pins->ndescs != 4 && pins->ndescs != 8) {
-+		dev_err(dev, "Invalid number of data-gpios %d - expected 4 or 8\n",
-+			    pins->ndescs);
-+		return -EINVAL;
-+	}
-+	pdbus->data_pins = pins;
-+
-+	pin = devm_gpiod_get(dev, "enable-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(pin)) {
-+		dev_err(dev, "Failed to get gpio 'enable-gpios'\n");
-+		return PTR_ERR(pin);
-+	}
-+	pdbus->pin_enable = pin;
-+
-+	pin = devm_gpiod_get(dev, "rs-gpios", GPIOD_OUT_HIGH);
-+	if (IS_ERR(pin)) {
-+		dev_err(dev, "Failed to get gpio 'rs-gpios'\n");
-+		return PTR_ERR(pin);
-+	}
-+	pdbus->pin_rs = pin;
-+
-+	pin = devm_gpiod_get(dev, "rw-gpios", GPIOD_OUT_HIGH);
-+	if (IS_ERR(pin)) {
-+		dev_err(dev, "Failed to get gpio 'rw-gpios'\n");
-+		return PTR_ERR(pin);
-+	}
-+	pdbus->pin_readwrite = pin;
-+
-+	pin = devm_gpiod_get(dev, "read-gpios", GPIOD_OUT_HIGH);
-+	if (IS_ERR(pin)) {
-+		dev_err(dev, "Failed to get gpio 'read-gpios'\n");
-+		return PTR_ERR(pin);
-+	}
-+	pdbus->pin_read = pin;
-+
-+	pin = devm_gpiod_get(dev, "write-gpios", GPIOD_OUT_HIGH);
-+	if (IS_ERR(pin)) {
-+		dev_err(dev, "Failed to get gpio 'write-gpios'\n");
-+		return PTR_ERR(pin);
-+	}
-+	pdbus->pin_write = pin;
-+
-+	return of_pardata_register(pdbus);
-+}
-+
-+static const struct of_device_id pardata_bus_dt_ids[] = {
-+	{ .compatible = "parallel-data-bus", },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver pardatabus_driver = {
-+	.driver	 = {
-+		.name   = "pardatabus",
-+		.of_match_table = pardata_bus_dt_ids,
-+	},
-+	.probe = pardatabus_probe,
-+};
-+module_platform_driver(pardatabus_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Parallel Data Bus");
-diff --git a/include/linux/pardata.h b/include/linux/pardata.h
-new file mode 100644
-index 000000000000..888a1c88176e
---- /dev/null
-+++ b/include/linux/pardata.h
-@@ -0,0 +1,138 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 Sam Ravnborg
-+ */
-+
-+#ifndef _LINUX_PARDATA_H
-+#define _LINUX_PARDATA_H
-+
-+#include <linux/device.h>
-+#include <linux/module.h>
-+
-+extern struct bus_type pardata_bus;
-+
-+/**
-+ * struct pardatabus_data - private data for the pardata bus
-+ *
-+ * Drivers uses these data when usung the pins that are part of
-+ * the bus.
-+ */
-+struct pardatabus_data {
-+	/**
-+	 * @dev: device node that represent the DT node of the bus
-+	 */
-+	struct device *dev;
-+
-+	/**
-+	 * @data_pins: The 8 or 4 GPIOs used for data
-+	 */
-+	struct gpio_descs *data_pins;
-+
-+	/**
-+	 * @pin_enable: The enable pin (mandatory)
-+	 */
-+	struct gpio_desc *pin_enable;
-+
-+	/**
-+	 * @pin_rs: register select (0: instruction 1: data)
-+	 */
-+	struct gpio_desc *pin_rs;
-+
-+	/**
-+	 * @pin_readwrite: readwrite pin for 8080 style interface
-+	 */
-+	struct gpio_desc *pin_readwrite;
-+
-+	/**
-+	 * @pin_read: read pin for 6800 style interface
-+	 */
-+	struct gpio_desc *pin_read;
-+
-+	/**
-+	 * @pin_write: write pin for 6800 style interface
-+	 */
-+	struct gpio_desc *pin_write;
-+};
-+
-+static inline struct pardatabus_data *to_pardatabus_data(struct device *d)
-+{
-+	return container_of(d, struct pardatabus_data, dev);
++	return 0;
 +}
 +
 +/**
-+ * struct pardata_device - pardata device handle.
-+ * @dev: Driver model representation of the device.
++ * pardata_strobe_8080_write - using the 8080 interface create
++ *                             an enable strobe
 + *
-+ * This is the device handle returned when a pardata
-+ * device is registered.
-+ * The id comes from the DT
++ * The interface requires that readwrite and chipselect are
++ * setup before the strobe of "e".
++ * There are timings constraints that is handled using udelay().
++ * Drivers can use this for the strobe_write callback.
 + *
-+ * @dev: The device
-+ * @id: Id of the device (from DT)
++ * @pdd: pardata data
 + */
-+struct pardata_device {
-+	struct device dev;
-+	u32	   id;
-+};
-+
-+static inline struct pardata_device *to_pardata_device(struct device *d)
-+{
-+	return container_of(d, struct pardata_device, dev);
-+}
-+
-+static inline void *pardata_dev_get_drvdata(const struct pardata_device *pdd)
-+{
-+	return dev_get_drvdata(&pdd->dev);
-+}
-+
-+static inline void pardata_dev_set_drvdata(struct pardata_device *pdd,
-+					    void *data)
-+{
-+	dev_set_drvdata(&pdd->dev, data);
-+}
++void pardata_strobe_8080_write(struct pardata_data *pdd);
 +
 +/**
-+ * struct pardata_driver - pardata 'generic device'
-+ *			(similar to 'spi_device' on SPI)
++ * pardata_strobe_6800_write - using the 6800 interface create
++ *                             an enable strobe
 + *
-+ * @driver: generic device driver
-+ *	  pardata drivers must initialize name, owner and of_match_table
-+ *	  of this structure
-+ * @probe: Binds this driver to a pardata bus.
-+ * @shutdown: Standard shutdown callback used during powerdown/halt.
++ * The interface requires that read + write and chipselect are
++ * setup before the strobe of "e".
++ * There are timings constraints that is handled using udelay()
++ * Drivers can use this for the strobe_write callback.
++ *
++ * @pdd: pardata data
 + */
-+struct pardata_driver {
-+	struct device_driver driver;
-+	int   (*probe)(struct pardata_device *pdd);
-+	void  (*shutdown)(struct pardata_device *pdd);
-+};
-+
-+static inline struct pardata_driver *to_pardata_driver(struct device_driver *d)
-+{
-+	return container_of(d, struct pardata_driver, driver);
-+}
-+
-+/* Use macro for driver registering to get simple access to THIS_MODULE */
-+#define pardata_driver_register(drv) \
-+	__pardata_driver_register(drv, THIS_MODULE)
-+int __pardata_driver_register(struct pardata_driver *drv, struct module *owner);
-+
-+static inline void pardata_driver_unregister(struct pardata_driver *drv)
-+{
-+	return driver_unregister(&drv->driver);
-+}
++void pardata_strobe_6800_write(struct pardata_data *pdd);
 +
 +/**
-+ * module_pardata_driver() - Helper macro for registering a parallel data driver
-+ * @__pardata_driver: pardatabus_driver struct
++ * pardata_poweron_reset - poweron and reset display
 + *
-+ * Helper macro for parallel data drivers which do not do anything special in
-+ * module init/exit. This eliminates a lot of boilerplate. Each module may
-+ * only use this macro once, and calling it replaces module_init() and
-+ * module_exit()
++ * @pdd: pardata data
++ *
++ * This function enables the regulator if used and does a hardware reset.
++ * Returns:
++ * Zero on success, or a negative error code.
 + */
-+#define module_pardata_driver(__pardata_driver) \
-+	module_driver(__pardata_driver, pardata_driver_register, \
-+			pardata_driver_unregister)
++int pardata_poweron_reset(struct pardata_data *pdd);
 +
-+#endif /* _LINUX_PARDATA_H */
++/**
++ * pardata_enable_flush - enable helper
++ *
++ * @pdd: parDATA DATA
++ * @crtc_state: crtc state
++ * @plane_state: plane state
++ *
++ * This function sets &pardata->enabled, flushes the whole framebuffer and
++ * enables the backlight. Drivers can use this in their
++ * &drm_simple_display_pipe_funcs->enable callback.
++ */
++void pardata_enable_flush(struct pardata_data *pdd,
++			  struct drm_crtc_state *crtc_state,
++			  struct drm_plane_state *plane_state);
++
++/**
++ * pardata_pipe_disable - pipe disable helper
++ *
++ * @pipe: Display pipe
++ *
++ * This function disables backlight if present, if not the display memory is
++ * blanked. The regulator is disabled if in use. Drivers can use this as their
++ * &drm_simple_display_pipe_funcs->disable callback.
++ */
++void pardata_pipe_disable(struct drm_simple_display_pipe *pipe);
++
++/**
++ * pardata_init - initialization
++ *
++ * @dev: Parent device
++ * @pdd: pardata data to initialize
++ * @pipe_funcs: Display pipe functions
++ * @driver: DRM driver
++ * @mode: Display mode
++ *
++ * This function initializes a &pardata data structure and it's underlying
++ * @tinydrm_device. It also sets up the display pipeline.
++ *
++ * Supported formats: Emulated XRGB8888.
++ *
++ * Objects created by this function will be automatically freed on driver
++ * detach (devres).
++ *
++ * Returns:
++ * Zero on success, negative error code on failure.
++ */
++int pardata_init(struct device *dev,
++		 struct pardata_data *pdd,
++		 const struct drm_simple_display_pipe_funcs *pipe_funcs,
++		 struct drm_driver *driver,
++		 const struct drm_display_mode *mode);
 -- 
 2.12.0
 
