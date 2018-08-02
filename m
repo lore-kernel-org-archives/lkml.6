@@ -2,101 +2,100 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B7AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6918CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E18214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:48:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E18214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 133E421501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:50:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P27TN4r6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133E421501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732354AbeHBNiz (ORCPT
+        id S1732242AbeHBNlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:38:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46246 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728685AbeHBNiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:38:55 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2632520756; Thu,  2 Aug 2018 13:48:04 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A594920717;
-        Thu,  2 Aug 2018 13:48:03 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 13:48:04 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        Piotr Bugalski <pbu@cryptera.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mtd@lists.infradead.org,
-        Piotr Bugalski <bugalski.piotr@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>
-Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
-Message-ID: <20180802134804.2352ee89@bbrezillon>
-In-Reply-To: <6f9ca4f1-6809-2d7d-4d64-6869a4e413cb@exceet.de>
-References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
-        <20180627131609.13681-6-bugalski.piotr@gmail.com>
-        <20180801172747.GJ5509@sirena.org.uk>
-        <20180801215733.4dfa3a95@bbrezillon>
-        <20180802101742.GF9117@sirena.org.uk>
-        <6f9ca4f1-6809-2d7d-4d64-6869a4e413cb@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 09:41:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728685AbeHBNlG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 09:41:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aHA6gJ2FWuxiQmv0T16TWa0X7hNjZi/xh46U2dJbhrw=; b=P27TN4r60CRdLHz7woEZ/Am3+
+        CIyMkLiHptF7sC/zSR8nk3CYYBREtgBug3QwTNL9FJ5gZRZZwalofN+kqUxUBo0OcboDF/DCqy1bR
+        4Ke+54FYnDgcUKGPiFDmOn7/ZtkZ3TrS5JHsUmPWEiwtHLp7aRyd8OLTXbRhJPCNPXfxk+NtlX/ct
+        oPBAKtEtspA/HV896MgJ7R3xRkADl1i+UvfRFQzYkc0iXl1utNRsZ7P+ZJgwMYZ3xyII+jQhwtlWs
+        QS3fCL8vApjag/5No6Jq8yHGqHQtGstJp7yc2+fZne+JtjcQxAIWAamB8MSOkRpQC5IoQjfsDnPe4
+        DZH8YBRVQ==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flC7P-00058M-Gt; Thu, 02 Aug 2018 11:50:12 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     tglx@linutronix.de, palmer@sifive.com, jason@lakedaemon.net,
+        marc.zyngier@arm.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     anup@brainfault.org, atish.patra@wdc.com,
+        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        shorne@gmail.com
+Subject: simplified RISC-V interrupt and clocksource handling v2
+Date:   Thu,  2 Aug 2018 13:49:57 +0200
+Message-Id: <20180802115008.4031-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018 12:46:36 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+This series tries adds support for interrupt handling and timers
+for the RISC-V architecture.
 
-> Hi Mark,
-> 
-> On 02.08.2018 12:17, Mark Brown wrote:
-> > On Wed, Aug 01, 2018 at 09:57:33PM +0200, Boris Brezillon wrote:  
-> >> Mark Brown <broonie@kernel.org> wrote:  
-> >   
-> >> 2/ Getting this patch [1] merged and implementing the ->get_name() hook
-> >>     in this driver so that SPI NOR devs declared to the MTD layer keep
-> >>     the same name after the transition to spi-mem and mtdparts= passed on
-> >>     the cmdline keep working. Without this in place we're likely to
-> >>     break a few setups :-/.  
-> >   
-> >> [1]https://patchwork.kernel.org/patch/10508693/  
-> > 
-> > I don't seem to have a copy of this patch...  not sure it was sent to
-> > me?  
-> 
-> When I sent the patch I put you in cc. So if nothing went wrong you 
-> should have it.
-> It is part of the SPI MEM conversion series for the FSL QSPI driver [1].
-> 
-> Boris made some remarks on documentation in v2, that I have fixed, but 
-> not sent out yet, as we have some blocking issues with the driver itself.
+The basic per-hart interrupt handling implemented by the scause
+and sie CSRs is extremely simple and implemented directly in
+arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
+for the PLIC external interrupt controller, which is called through
+the set_handle_irq API, and a clocksource driver that gets its
+timer interrupt directly from the low-level interrupt handling.
 
-I don't remember where we were stuck. Are you still waiting answers
-from Yogesh? Probably a good time to ping him if that's the case ;-).
+Compared to previous iterations this version does not try to use an
+irqchip driver for the low-level interrupt handling.  This saves
+a couple indirect calls and an additional read of the scause CSR
+in the hot path, makes the code much simpler and last but not least
+avoid the dependency on a device tree for a mandatory architectural
+feature.
 
-> 
-> So if you want I could send the patch separately so it can be applied 
-> with the Atmel driver.
+A git tree is available here (contains a few more patches before
+the ones in this series)
 
-Yes please, send a v3 for patch 1 and 2.
+    git://git.infradead.org/users/hch/riscv.git riscv-irq-simple.2
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple.2
+
+Changes since v1:
+ - rename the plic driver to irq-sifive-plic
+ - switch to a default compatible of sifive,plic0 (still supporting the
+   riscv,plic0 name for compatibility)
+ - add a reference for the SiFive PLIC register layout
+ - fix plic_toggle addressing for large numbers of hwirqs
+ - remove the call to ack_bad_irq
+ - use a raw spinlock for plic_toggle_lock
+ - use the irq_desc cpumask in the plic enable/disable methods
+ - add back OF contexid parsing in the plic driver
+ - don't allow COMPILE_TEST builds of the clocksource driver, as it
+   depends on <asm/sbi.h>
+ - default the clocksource driver to y
+ - clean up naming in the clocksource driver
+ - remove the MINDELTA and MAXDELTA #defines
+ - various DT binding fixes
