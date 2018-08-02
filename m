@@ -2,113 +2,136 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40ADDC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E408C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB4D3214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rB6iNJiX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4D3214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F158214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F158214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732285AbeHBN05 (ORCPT
+        id S1732295AbeHBN1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:26:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41796 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728767AbeHBN04 (ORCPT
+        Thu, 2 Aug 2018 09:27:18 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33029 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728767AbeHBN1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:26:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PA318PA398RgiV1EN02U21BSIzEod9WStdClzGcN3U4=; b=rB6iNJiXdIAeqeuygeYTUPxi2
-        wlrtRej55WhzhL+2vfVmGQ/E+AM+0DoXt1l3GmS3otl+ue0kir1b+ClwLav0i1GS1MigIjYmku5Jj
-        5jNxJwOvzE+VTKG4jWhjqT4PdZ+PK5yKEoSf0q8XHOiWneEcruRToTMV+LYocyDVAQD7Q=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1flBtZ-0001zv-D0; Thu, 02 Aug 2018 11:35:53 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D5CB611242E7; Thu,  2 Aug 2018 12:35:52 +0100 (BST)
-Date:   Thu, 2 Aug 2018 12:35:52 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180802113552.GJ9117@sirena.org.uk>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+        Thu, 2 Aug 2018 09:27:18 -0400
+X-UUID: 73e2cb4ec47b468bbc38be9bf13ab8a2-20180802
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1083127647; Thu, 02 Aug 2018 19:36:27 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 2 Aug 2018 19:36:26 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 2 Aug 2018 19:36:26 +0800
+Message-ID: <1533209786.11190.60.camel@mtksdccf07>
+Subject: Re: [PATCH v1 06/15] drm/mediatek: add memory mode for RDMA
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Date:   Thu, 2 Aug 2018 19:36:26 +0800
+In-Reply-To: <1532486454.9280.12.camel@mtksdaap41>
+References: <1532420235-22268-1-git-send-email-stu.hsieh@mediatek.com>
+         <1532420235-22268-7-git-send-email-stu.hsieh@mediatek.com>
+         <1532486454.9280.12.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
-Content-Disposition: inline
-In-Reply-To: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
-X-Cookie: BARBARA STANWYCK makes me nervous!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, CK:
 
---72k7VsmfIboquFwl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2018-07-25 at 10:40 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Tue, 2018-07-24 at 16:17 +0800, Stu Hsieh wrote:
+> > This patch add memory mode for RDMA
+> > 
+> > If use RDMA to read data from memory, it should set memory mode to RDMA
+> > 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_disp_rdma.c | 16 +++++++++++++++-
+> >  1 file changed, 15 insertions(+), 1 deletion(-)
+> > 
+> 
+> [...]
+> 
+> >  static inline struct mtk_disp_rdma *comp_to_rdma(struct mtk_ddp_comp *comp)
+> > @@ -111,7 +116,8 @@ static void mtk_rdma_start(struct mtk_ddp_comp *comp)
+> >  
+> >  static void mtk_rdma_stop(struct mtk_ddp_comp *comp)
+> >  {
+> > -	rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON, RDMA_ENGINE_EN, 0);
+> > +	writel(RDMA_SOFT_RESET, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
+> > +	writel(0, comp->regs + DISP_REG_RDMA_GLOBAL_CON);
+> 
+> Without reset, what happen to dram mode? Why direct link mode need not
+> this reset?
+> 
 
-On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
-> On 02.08.2018 12:44, Mark Brown wrote:
+There is nothing to happen, I would remove it.
 
-> > I thought we'd got an ack for this from Raphael on a previous version or
-> > am I mistaken?
+> >  }
+> >  
+> >  static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
+> > @@ -121,10 +127,18 @@ static void mtk_rdma_config(struct mtk_ddp_comp *comp, unsigned int width,
+> >  	unsigned int threshold;
+> >  	unsigned int reg;
+> >  	struct mtk_disp_rdma *rdma = comp_to_rdma(comp);
+> > +	bool *rdma_memory_mode = comp->comp_mode;
+> >  
+> >  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xfff, width);
+> >  	rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_1, 0xfffff, height);
+> >  
+> > +	if (*rdma_memory_mode == true) {
+> > +		rdma_update_bits(comp, DISP_REG_RDMA_SIZE_CON_0, 0xff0000,
+> > +				 MATRIX_INT_MTX_SEL_DEFAULT);
+> > +		rdma_update_bits(comp, DISP_REG_RDMA_GLOBAL_CON,
+> > +				 RDMA_MODE_MEMORY, RDMA_MODE_MEMORY);
+> > +	}
+> > +
+> 
+> I would like this to be a kind of 'layer' config. In some SoC, one layer
+> of OVL could switch to direct link input or dram input. So I think it's
+> better to move this setting into some layer interface.
+> 
+> Regards,
+> CK
+> 
 
-> No, we got an:
-> "Anyway, I have no particular problems with exporting
-> pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+If move it to layer_config, RDMA would not trigger interrupt.
+In the future, when cmdq patch upstream and accepted, this part can move
+to layer_config. 
 
-> Should i see it as ACK?
+Regard,
+Stu
 
-It's probably good enough. =20
+> >  	/*
+> >  	 * Enable FIFO underflow since DSI and DPI can't be blocked.
+> >  	 * Keep the FIFO pseudo size reset default of 8 KiB. Set the
+> 
+> 
 
---72k7VsmfIboquFwl
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti7JgACgkQJNaLcl1U
-h9AhdAf/TbZVRZ28YFMBoAatxLryUYP178QUB6AlI/U68p5IlMOnGK/xFGaPJ7G7
-bSyJWiVfHFTB2nKwoltQy219TQuUwr0c3RJ3t2kpFm06L5a/f9YyEZCndUxFOrgy
-dMSAeU5QaiOmQvGcWNrCmoIJ3K38xDm03FOLnzjUZ2Mk0WIyCuZkuacRDqHPRkgX
-t4WI4xTsEHJWybjs8fcfjmnyp8GAwAilOTGT0AeyuXJvTp4s629YzI7njDbcSqxS
-GLaE1Lrat9D/H6exC9UqfOSvP4OCjWCXYeSUPUUCgoMlWjYNtT0QVyM60tfizgtE
-4vMkCluS9U/eszAJV2Vchh0RIFiw/Q==
-=2d1o
------END PGP SIGNATURE-----
-
---72k7VsmfIboquFwl--
