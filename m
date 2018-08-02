@@ -2,126 +2,132 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C4C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ED0C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50BE120894
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="FEaOHIFV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BE120894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id D8324208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:39:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8324208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732177AbeHBC02 (ORCPT
+        id S1732255AbeHBC1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 22:26:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40758 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbeHBC02 (ORCPT
+        Wed, 1 Aug 2018 22:27:34 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.101]:42560 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726192AbeHBC1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 22:26:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x5-v6so232683pgp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0+TPvcvDj4OiH5wST27toS9K/GzrzrQvBGoLJ6UyD+4=;
-        b=FEaOHIFVG+wxPu2F9Bgxu4fQHhK++yZKjLUavWR7ytogk40rJJGEc73W2kjLirHkZS
-         vZzuhGmUZDJge2N57cGFcpF1Z4EVivl8amE/tdksWDfEdI5ZELdnPtMn/WzEf4zbXW1e
-         LF7N3tA6ZePA4Ys96IFwOzyYFQcuCidZfpn/uxVzs4/lp7mypmW/y9xUtcggy2AMj4t2
-         rQO+FF+45freFlbQcp9YkmN+/OLBxQiCFfIe+CwP+ns5tmE6oAtc9HACZxQS6p1/8ka8
-         lGFE3nGNMm+EF/cPxyfGRMmrW+Flr2GYoUxP20dsMazjmqKUYGO5PEV+UKCD16cYLnFB
-         n06A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=0+TPvcvDj4OiH5wST27toS9K/GzrzrQvBGoLJ6UyD+4=;
-        b=MzzF0P29+dYPfqLiEWNWZEccGPYczcb07l9kFgp/voqMe2xIOqBnbLchMh1b8DbqTa
-         4Q7DXScye/BiFxIx1BwPUWwo8QGB87/xM0atOslQYlwqgLTmjGfyc4WgGzK/xr9w34xY
-         cOa0Cyq85pNGrEXLNRrt+FPccztTN8NWh0aH4pZSRvw49gb42nKLP8PVZQ+eaMPFrSvD
-         yQ3YvWRB2ux63U6VBWGF4d9ImWxgMXPlulz4Tq6qzaP+dKs6bYQJ9XJ3PmDBeEu5rj8Z
-         dKjwuaS9n1xKquOA2JFWG8CgeC+ZiRwRkrne1Imt+VvwoqDFiTY+huvPqyAr5Zl3Fu9y
-         v75g==
-X-Gm-Message-State: AOUpUlF8TRuCOETMMfttexy8BWA2Z88Oq77qkGx+zkPk7NcC+h2q1+FI
-        GagDmavRIxubz+b9U9YMaik1Jg==
-X-Google-Smtp-Source: AAOMgpfnzh73RPvnekBP1E9qNQLxwNDsAEPW/URrQlHpok4/mFgbJ8WvJxiLNT+aCNNOdq/H24EswQ==
-X-Received: by 2002:a65:4384:: with SMTP id m4-v6mr509314pgp.265.1533170281309;
-        Wed, 01 Aug 2018 17:38:01 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id c85-v6sm426975pfd.110.2018.08.01.17.37.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 17:38:00 -0700 (PDT)
-Date:   Wed, 01 Aug 2018 17:38:00 -0700 (PDT)
-X-Google-Original-Date: Wed, 01 Aug 2018 17:37:47 PDT (-0700)
-Subject:     Re: [PATCH] RISC-V: Add the directive for alignment of stvec's value
-In-Reply-To: <1529545207-26999-1-git-send-email-zong@andestech.com>
-CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, zong@andestech.com,
-        greentime@adnestech.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     zong@andestech.com
-Message-ID: <mhng-38cc8366-10dd-4ea1-993f-bd453640aa66@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 1 Aug 2018 22:27:33 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id E58DB1DC5CD
+        for <linux-kernel@vger.kernel.org>; Wed,  1 Aug 2018 19:39:06 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id l1dyf2apCbXuJl1dyfSble; Wed, 01 Aug 2018 19:39:06 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.61.218] (port=43304 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fl1dy-001tM9-EH; Wed, 01 Aug 2018 19:39:06 -0500
+Date:   Wed, 1 Aug 2018 19:39:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] fs: dcache: Use true and false for boolean values
+Message-ID: <20180802003905.GA21639@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.61.218
+X-Source-L: No
+X-Exim-ID: 1fl1dy-001tM9-EH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.61.218]:43304
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 18:40:07 PDT (-0700), zong@andestech.com wrote:
-> The stvec's value must be 4 byte alignment by specification definition.
-> This directive avoids to stvec be set the non-alignment value by the
-> following code in head.S
->
->  /* Point stvec to virtual address of intruction after satp write */
-> la a0, 1f
-> add a0, a0, a1
-> csrw stvec, a0
->
-> Signed-off-by: Zong Li <zong@andestech.com>
-> ---
->  arch/riscv/kernel/head.S | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 396ec7b349ce..ae7b204f531c 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -94,6 +94,7 @@ relocate:
->  	or a0, a0, a1
->  	sfence.vma
->  	csrw sptbr, a0
-> +.align 2
->  1:
->  	/* Set trap vector to spin forever to help debug */
->  	la a0, .Lsecondary_park
+Return statements in functions returning bool should use true or false
+instead of an integer value.
 
-I don't think this is actually correct: you shouldn't be aligning the address 
-at which stvec is set, but the address that stvec is set to.  If this is fixing 
-anything then it's probably just by coincidence as it's causing 
-.Lsecondary_park to be aligned.
+This issue was detected with the help of Coccinelle.
 
-I think this patch is the correct fix
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/dcache.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-    diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-    index 6e07ed37bbff..d1beecf1d060 100644
-    --- a/arch/riscv/kernel/head.S
-    +++ b/arch/riscv/kernel/head.S
-    @@ -143,6 +143,7 @@ relocate:
-     	tail smp_callin
-     #endif
+diff --git a/fs/dcache.c b/fs/dcache.c
+index b928915..8c07ab1 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -733,16 +733,16 @@ static inline bool fast_dput(struct dentry *dentry)
+ 		if (dentry->d_lockref.count > 1) {
+ 			dentry->d_lockref.count--;
+ 			spin_unlock(&dentry->d_lock);
+-			return 1;
++			return true;
+ 		}
+-		return 0;
++		return false;
+ 	}
+ 
+ 	/*
+ 	 * If we weren't the last ref, we're done.
+ 	 */
+ 	if (ret)
+-		return 1;
++		return true;
+ 
+ 	/*
+ 	 * Careful, careful. The reference count went down
+@@ -771,7 +771,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 
+ 	/* Nothing to do? Dropping the reference was all we needed? */
+ 	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
+-		return 1;
++		return true;
+ 
+ 	/*
+ 	 * Not the fast normal case? Get the lock. We've already decremented
+@@ -788,7 +788,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 */
+ 	if (dentry->d_lockref.count) {
+ 		spin_unlock(&dentry->d_lock);
+-		return 1;
++		return true;
+ 	}
+ 
+ 	/*
+@@ -797,7 +797,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 * set it to 1.
+ 	 */
+ 	dentry->d_lockref.count = 1;
+-	return 0;
++	return false;
+ }
+ 
+ 
+-- 
+2.7.4
 
-    +.align 2
-     .Lsecondary_park:
-     	/* We lack SMP support or have too many harts, so park this hart */
-     	wfi
-
-Thanks for pointing this out!
