@@ -5,72 +5,141 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61170C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B72C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFA42150A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFA42150A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id C019E214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:45:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C019E214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732399AbeHBOeQ (ORCPT
+        id S1732394AbeHBOgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:34:16 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:42288 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732130AbeHBOeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:34:15 -0400
-Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1flCwY-0001r7-Rx; Thu, 02 Aug 2018 14:43:02 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     cl@rock-chips.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        klaus.goger@theobroma-systems.com, hjc@rock-chips.com,
-        jagan@amarulasolutions.com, djw@t-chip.com.cn,
-        jacob-chen@iotwrt.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        frank.wang@rock-chips.com, lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, arnd@arndb.de,
-        zhangqing@rock-chips.com, shawn.lin@rock-chips.com,
-        kever.yang@rock-chips.com, david.wu@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com,
-        sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
-        william.wu@rock-chips.com, sandy.huang@rock-chips.com
-Subject: Re: [PATCH v3 2/4] dt-bindings: rockchip: grf: add grf and pmugrf description for px30
-Date:   Thu, 02 Aug 2018 14:43:00 +0200
-Message-ID: <4382913.ZrggMOPMn4@phil>
-In-Reply-To: <1533113116-8820-3-git-send-email-cl@rock-chips.com>
-References: <1533113116-8820-1-git-send-email-cl@rock-chips.com> <1533113116-8820-3-git-send-email-cl@rock-chips.com>
+        Thu, 2 Aug 2018 10:36:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44480 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732130AbeHBOgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:36:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59AA3402242D;
+        Thu,  2 Aug 2018 12:45:20 +0000 (UTC)
+Received: from [10.36.117.197] (ovpn-117-197.ams2.redhat.com [10.36.117.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0949D2026D69;
+        Thu,  2 Aug 2018 12:45:11 +0000 (UTC)
+Subject: Re: [PATCH v3 0/6] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>
+References: <20180725163057.13948-1-vkuznets@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4c221ed3-5de8-b9cf-663b-d31ce0834c12@redhat.com>
+Date:   Thu, 2 Aug 2018 14:45:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180725163057.13948-1-vkuznets@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 12:45:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 12:45:20 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 25/07/2018 18:30, Vitaly Kuznetsov wrote:
+> Changes since v2:
+> - Rebase to the current kvm/queue.
+> - Simplify clean fields check in prepare_vmcs02{,_full} and
+>   copy_enlightened_to_vmcs12() by resetting the clean fields mask in
+>   nested_vmx_handle_enlightened_vmptrld() when we switch from one L2 guest
+>   to another [Paolo Bonzini]
+> - Cope with the newly introduced vmx_get_nested_state() by returning
+>   -ENOTSUPP when eVMCS is in use. We'll do proper nested state save/restore
+>   later.
 
-Am Mittwoch, 1. August 2018, 10:45:14 CEST schrieb cl@rock-chips.com:
-> From: Liang Chen <cl@rock-chips.com>
+Looks good, but we have to do something about live migration.  Perhaps
+you can write a testcase analogous to the new state_test, that tests
+eVMCS in general before we have support in QEMU.
+
+Thanks,
+
+Paolo
+
+> Description:
 > 
-> This patch adds the compatible of GRF and PMUGRF for PX30 SoCs.
+> This is an initial implementation of Enlightened VMCS for nested Hyper-V on
+> KVM. Using it helps to spare 1500 cpu cycles for nested vmexit (tight cpuid
+> loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 13700 cycles).
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
-
-applied together with the px30 dts patches
-
-
-Thanks
-Heiko
-
+> Ladi Prosek (1):
+>   KVM: hyperv: define VP assist page helpers
+> 
+> Vitaly Kuznetsov (5):
+>   KVM: VMX: refactor evmcs_sanitize_exec_ctrls()
+>   KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
+>   KVM: nVMX: add enlightened VMCS state
+>   KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+>   KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
+> 
+>  arch/x86/include/asm/kvm_host.h |   3 +
+>  arch/x86/kvm/hyperv.c           |  23 +-
+>  arch/x86/kvm/hyperv.h           |   4 +
+>  arch/x86/kvm/lapic.c            |   4 +-
+>  arch/x86/kvm/lapic.h            |   2 +-
+>  arch/x86/kvm/svm.c              |   9 +
+>  arch/x86/kvm/vmx.c              | 824 +++++++++++++++++++++++++++++++++-------
+>  arch/x86/kvm/x86.c              |  17 +-
+>  include/uapi/linux/kvm.h        |   1 +
+>  9 files changed, 737 insertions(+), 150 deletions(-)
+> 
 
