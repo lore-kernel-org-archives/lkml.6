@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CCFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573CAC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F31621564
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BFC221569
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:08:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Lr6hJVSc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UIrlxMod"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F31621564
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BaR/pP7d";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ucq5Hc5Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BFC221569
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731994AbeHBVAe (ORCPT
+        id S1732078AbeHBVAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:00:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41572 "EHLO
+        Thu, 2 Aug 2018 17:00:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41696 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeHBVAd (ORCPT
+        with ESMTP id S1732001AbeHBVAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:00:33 -0400
+        Thu, 2 Aug 2018 17:00:38 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3B8D560B62; Thu,  2 Aug 2018 19:08:07 +0000 (UTC)
+        id 5F01060AD9; Thu,  2 Aug 2018 19:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533236887;
-        bh=1Jdp7Zlr0OEA1yU9+iwqVJNjFakj/qigqjjsA79r2uU=;
+        s=default; t=1533236891;
+        bh=AG4B2NW23/TwoMGK86L9kgbiKZ7kdcNiIeEd0e/Hs14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lr6hJVScEpPHljcIOMi9GL3vCH1TooI8OcPCWXnRPTTh9X56FlFcnPFCFaA2rXlGq
-         3zagfwTXGdP7lDv5syApz2jAEaZC9zu6wQi28iyKiy0bTJ0VOq1QQNj2B46raNzVeG
-         MpA2zuK2Nqw2tDLVwLbwpQTFpUb2hTrweZFkpDCw=
+        b=BaR/pP7dwgHqlRWSKIDvk9zKY4EYRxKoPtWYTakz/oY9IB5paP1dIg11Jv8NSDRs9
+         oOZ7nvbdT8hpd7ZuZ9LqSqrlizOZCUwQ6dVcO9lRRuer5ku4cANQ/xVA1T5qxZjlxO
+         4069n2pLgWVhbYuJ/LHN1isG/QUO+sio8kVLthjc=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 62A4160B72;
-        Thu,  2 Aug 2018 19:08:03 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3647D60B19;
+        Thu,  2 Aug 2018 19:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533236886;
-        bh=1Jdp7Zlr0OEA1yU9+iwqVJNjFakj/qigqjjsA79r2uU=;
+        s=default; t=1533236890;
+        bh=AG4B2NW23/TwoMGK86L9kgbiKZ7kdcNiIeEd0e/Hs14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UIrlxModRDaiE0jqGFxN78hc1vnZCvF6RH0ZV4QKg03DOEg2nX30X3Bb9BTBbimUu
-         jagrvWYgbBZttCDb7Wg+KkqCY+mf28O0CfdIZMkMMOUpqN/73+TUsXoVm+JfZzqXIs
-         /t+yfuM1xDcOFCU50SK4kZjYgy6V+ezUe0nBZHIE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62A4160B72
+        b=Ucq5Hc5YAohhos1fA1G75DTKZFVeLkHZmMolH1CfA+meLv0lsfdTGtqUKB+2/+OFo
+         RjSANOJryaAPY5BfAJB/aC/jxXxd7y1L88pBODEGoxWO4xWljJ1FC/59R22fZjQIOr
+         /GKV2KvidwocdGdcAYM544rzxCQ1ccspy7nmE8zs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3647D60B19
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -58,9 +58,9 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         rtatiya@codeaurora.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v13 5/7] Bluetooth: hci_qca: Enable 3.2 Mbps operating speed.
-Date:   Fri,  3 Aug 2018 00:37:30 +0530
-Message-Id: <20180802190732.4811-6-bgodavar@codeaurora.org>
+Subject: [PATCH v13 6/7] Bluetooth: btqca: Add wcn3990 firmware download support.
+Date:   Fri,  3 Aug 2018 00:37:31 +0530
+Message-Id: <20180802190732.4811-7-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180802190732.4811-1-bgodavar@codeaurora.org>
 References: <20180802190732.4811-1-bgodavar@codeaurora.org>
@@ -69,36 +69,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable Qualcomm chips to operate at 3.2Mbps.
+This patch enables the RAM and NV patch download for wcn3990.
 
 Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/bluetooth/hci_qca.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btqca.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 5f8a74d65bec..a6e7d38ef931 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -877,6 +877,8 @@ static uint8_t qca_get_baudrate_value(int speed)
- 		return QCA_BAUDRATE_2000000;
- 	case 3000000:
- 		return QCA_BAUDRATE_3000000;
-+	case 3200000:
-+		return QCA_BAUDRATE_3200000;
- 	case 3500000:
- 		return QCA_BAUDRATE_3500000;
- 	default:
-@@ -891,7 +893,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 	struct sk_buff *skb;
- 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index 479179c54dcf..488f5e7521dd 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -336,6 +336,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ {
+ 	struct rome_config config;
+ 	int err;
++	u8 rom_ver;
  
--	if (baudrate > QCA_BAUDRATE_3000000)
-+	if (baudrate > QCA_BAUDRATE_3200000)
- 		return -EINVAL;
+ 	bt_dev_dbg(hdev, "QCA setup on UART");
  
- 	cmd[4] = baudrate;
+@@ -343,8 +344,19 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 
+ 	/* Download rampatch file */
+ 	config.type = TLV_TYPE_PATCH;
+-	snprintf(config.fwname, sizeof(config.fwname), "qca/rampatch_%08x.bin",
+-		 soc_ver);
++	if (soc_type == QCA_WCN3990) {
++		/* Firmware files to download are based on ROM version.
++		 * ROM version is derived from last two bytes of soc_ver.
++		 */
++		rom_ver = ((soc_ver & 0x00000f00) >> 0x04) |
++			    (soc_ver & 0x0000000f);
++		snprintf(config.fwname, sizeof(config.fwname),
++			 "qca/crbtfw%02x.tlv", rom_ver);
++	} else {
++		snprintf(config.fwname, sizeof(config.fwname),
++			 "qca/rampatch_%08x.bin", soc_ver);
++	}
++
+ 	err = qca_download_firmware(hdev, &config);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "QCA Failed to download patch (%d)", err);
+@@ -353,8 +365,13 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+-	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
+-		 soc_ver);
++	if (soc_type == QCA_WCN3990)
++		snprintf(config.fwname, sizeof(config.fwname),
++			 "qca/crnv%02x.bin", rom_ver);
++	else
++		snprintf(config.fwname, sizeof(config.fwname),
++			 "qca/nvm_%08x.bin", soc_ver);
++
+ 	err = qca_download_firmware(hdev, &config);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "QCA Failed to download NVM (%d)", err);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
