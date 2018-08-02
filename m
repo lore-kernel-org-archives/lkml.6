@@ -3,77 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584D2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF696C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1094620BED
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:05:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1094620BED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6AB8820C0B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB8820C0B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbeHBIzC (ORCPT
+        id S1729589AbeHBIzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:55:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35742 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeHBIzC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:55:02 -0400
-Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fl7fd-0000Fb-E2; Thu, 02 Aug 2018 09:05:13 +0200
-Date:   Thu, 2 Aug 2018 09:05:12 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-cc:     Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        mingo@redhat.com, bhe@redhat.com, keescook@chromium.org,
-        yasu.isimatu@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v4 3/4] x86/boot/KASLR: Walk srat tables to filter
- immovable memory
-In-Reply-To: <20180802035413.GC6723@localhost.localdomain>
-Message-ID: <alpine.DEB.2.21.1808020857130.1835@nanos.tec.linutronix.de>
-References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com> <20180723092908.32656-4-fanc.fnst@cn.fujitsu.com> <18d27595-43d8-d2a0-bfdf-bd731b77d1b9@cn.fujitsu.com> <20180802035413.GC6723@localhost.localdomain>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 2 Aug 2018 04:55:36 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33090 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726141AbeHBIzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:55:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 00:05:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,434,1526367600"; 
+   d="scan'208";a="78047090"
+Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.250.45])
+  by orsmga001.jf.intel.com with SMTP; 02 Aug 2018 00:05:47 -0700
+Received: by ubuntu (sSMTP sendmail emulation); Thu, 02 Aug 2018 15:05:46 +0800
+Message-ID: <1533193546.23760.0.camel@intel.com>
+Subject: Re: [PATCH 3/3] nios2: switch to NO_BOOTMEM
+From:   Ley Foon Tan <ley.foon.tan@intel.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Ley Foon Tan <lftan@altera.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        nios2-dev@lists.rocketboards.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 02 Aug 2018 15:05:46 +0800
+In-Reply-To: <1530710295-10774-4-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1530710295-10774-1-git-send-email-rppt@linux.vnet.ibm.com>
+         <1530710295-10774-4-git-send-email-rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2 Aug 2018, Chao Fan wrote:
-> On Thu, Aug 02, 2018 at 11:47:13AM +0800, Dou Liyang wrote:
-
-Removed 70 lines of complete useless information....
-
-> >> +	table = (struct acpi_subtable_header *)
-> >> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
-> >> +
-> >> +	table_size = sizeof(struct acpi_subtable_header);
-> >
-> >table_size isn't used, can be remove.
-> >
-> 
-> Thank you very much, will update in next version.
-
-And yet another 40 lines.
-
-> 
-
-Folks. Can you please both stop this annoying habit of keeping the full
-context of the mail and then sprinkling a random sentence into the middle?
-
-Thanks,
-
-	tglx
+T24gV2VkLCAyMDE4LTA3LTA0IGF0IDE2OjE4ICswMzAwLCBNaWtlIFJhcG9wb3J0IHdyb3RlOgo+
+IFJlbW92ZSBib290bWVtIGJpdG1hcCBpbml0aWFsaXphdGlvbiBhbmQgcmVwbGFjZSByZXNlcnZl
+X2Jvb3RtZW0oKQo+IHdpdGgKPiBtZW1ibG9ja19yZXNlcnZlKCkuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogTWlrZSBSYXBvcG9ydCA8cnBwdEBsaW51eC52bmV0LmlibS5jb20+Cj4gLS0tCj4gwqBhcmNo
+L25pb3MyL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgfMKgwqAyICsrCj4gwqBhcmNoL25pb3MyL2tl
+cm5lbC9wcm9tLmPCoMKgfMKgwqA3IC0tLS0tLS0KPiDCoGFyY2gvbmlvczIva2VybmVsL3NldHVw
+LmMgfCAzNyArKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gwqAzIGZpbGVz
+IGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMzkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdp
+dCBhL2FyY2gvbmlvczIvS2NvbmZpZyBiL2FyY2gvbmlvczIvS2NvbmZpZwo+IGluZGV4IDVkYjhm
+YTEuLjY2MWY3ZjkgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9uaW9zMi9LY29uZmlnCj4gKysrIGIvYXJj
+aC9uaW9zMi9LY29uZmlnCj4gQEAgLTIwLDYgKzIwLDggQEAgY29uZmlnIE5JT1MyCj4gwqDCoMKg
+wqDCoMKgwqDCoHNlbGVjdCBVU0JfQVJDSF9IQVNfSENEIGlmIFVTQl9TVVBQT1JUCj4gwqDCoMKg
+wqDCoMKgwqDCoHNlbGVjdCBDUFVfTk9fRUZGSUNJRU5UX0ZGUwo+IMKgwqDCoMKgwqDCoMKgwqBz
+ZWxlY3QgSEFWRV9NRU1CTE9DSwo+ICvCoMKgwqDCoMKgwqDCoHNlbGVjdCBBUkNIX0RJU0NBUkRf
+TUVNQkxPQ0sKPiArwqDCoMKgwqDCoMKgwqBzZWxlY3QgTk9fQk9PVE1FTQo+IAo+IMKgY29uZmln
+IEdFTkVSSUNfQ1NVTQo+IMKgwqDCoMKgwqDCoMKgwqBkZWZfYm9vbCB5Cj4gZGlmZiAtLWdpdCBh
+L2FyY2gvbmlvczIva2VybmVsL3Byb20uYyBiL2FyY2gvbmlvczIva2VybmVsL3Byb20uYwo+IGlu
+ZGV4IGJhOTZhNDkuLmE2ZDRmNzUgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9uaW9zMi9rZXJuZWwvcHJv
+bS5jCj4gKysrIGIvYXJjaC9uaW9zMi9rZXJuZWwvcHJvbS5jCj4gQEAgLTMyLDEzICszMiw2IEBA
+Cj4gCj4gwqAjaW5jbHVkZSA8YXNtL3NlY3Rpb25zLmg+Cj4gCj4gLWludCBfX2luaXQgZWFybHlf
+aW5pdF9kdF9yZXNlcnZlX21lbW9yeV9hcmNoKHBoeXNfYWRkcl90IGJhc2UsCj4gcGh5c19hZGRy
+X3Qgc2l6ZSwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJvb2wgbm9tYXApCj4g
+LXsKPiAtwqDCoMKgwqDCoMKgwqByZXNlcnZlX2Jvb3RtZW0oYmFzZSwgc2l6ZSwgQk9PVE1FTV9E
+RUZBVUxUKTsKPiAtwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsKPiAtfQo+IC0KPiDCoHZvaWQgX19p
+bml0IGVhcmx5X2luaXRfZGV2dHJlZSh2b2lkICpwYXJhbXMpCj4gwqB7Cj4gwqDCoMKgwqDCoMKg
+wqDCoF9fYmUzMiAqZHRiID0gKHUzMiAqKV9fZHRiX3N0YXJ0Owo+IGRpZmYgLS1naXQgYS9hcmNo
+L25pb3MyL2tlcm5lbC9zZXR1cC5jIGIvYXJjaC9uaW9zMi9rZXJuZWwvc2V0dXAuYwo+IGluZGV4
+IDA5NDY4NDAuLjJkMDAxMWQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9uaW9zMi9rZXJuZWwvc2V0dXAu
+Ywo+ICsrKyBiL2FyY2gvbmlvczIva2VybmVsL3NldHVwLmMKPiBAQCAtMTQ0LDEwICsxNDQsMTEg
+QEAgYXNtbGlua2FnZSB2b2lkIF9faW5pdCBuaW9zMl9ib290X2luaXQodW5zaWduZWQKPiByNCwg
+dW5zaWduZWQgcjUsIHVuc2lnbmVkIHI2LAo+IAo+IMKgdm9pZCBfX2luaXQgc2V0dXBfYXJjaChj
+aGFyICoqY21kbGluZV9wKQo+IMKgewo+IC3CoMKgwqDCoMKgwqDCoGludCBib290bWFwX3NpemU7
+Cj4gK8KgwqDCoMKgwqDCoMKgaW50IGRyYW1fc3RhcnQ7Cj4gCj4gwqDCoMKgwqDCoMKgwqDCoGNv
+bnNvbGVfdmVyYm9zZSgpOwo+IAo+ICvCoMKgwqDCoMKgwqDCoGRyYW1fc3RhcnQgPSBtZW1ibG9j
+a19zdGFydF9vZl9EUkFNKCk7Cj4gwqDCoMKgwqDCoMKgwqDCoG1lbW9yeV9zaXplID0gbWVtYmxv
+Y2tfcGh5c19tZW1fc2l6ZSgpOwo+IMKgwqDCoMKgwqDCoMKgwqBtZW1vcnlfc3RhcnQgPSBQQUdF
+X0FMSUdOKCh1bnNpZ25lZCBsb25nKV9fcGEoX2VuZCkpOwo+IMKgwqDCoMKgwqDCoMKgwqBtZW1v
+cnlfZW5kID0gKHVuc2lnbmVkIGxvbmcpIENPTkZJR19OSU9TMl9NRU1fQkFTRSArCj4gbWVtb3J5
+X3NpemU7Cj4gQEAgLTE2NSwzOSArMTY2LDExIEBAIHZvaWQgX19pbml0IHNldHVwX2FyY2goY2hh
+ciAqKmNtZGxpbmVfcCkKPiDCoMKgwqDCoMKgwqDCoMKgbWF4X2xvd19wZm4gPSBQRk5fRE9XTiht
+ZW1vcnlfZW5kKTsKPiDCoMKgwqDCoMKgwqDCoMKgbWF4X21hcG5yID0gbWF4X2xvd19wZm47Cj4g
+Cj4gLcKgwqDCoMKgwqDCoMKgLyoKPiAtwqDCoMKgwqDCoMKgwqDCoCogZ2l2ZSBhbGwgdGhlIG1l
+bW9yeSB0byB0aGUgYm9vdG1hcCBhbGxvY2F0b3IswqDCoHRlbGwgaXQgdG8KPiBwdXQgdGhlCj4g
+LcKgwqDCoMKgwqDCoMKgwqAqIGJvb3QgbWVtX21hcCBhdCB0aGUgc3RhcnQgb2YgbWVtb3J5Cj4g
+LcKgwqDCoMKgwqDCoMKgwqAqLwo+IC3CoMKgwqDCoMKgwqDCoHByX2RlYnVnKCJpbml0X2Jvb3Rt
+ZW1fbm9kZSg/LCUjbHgsICUjeCwgJSNseClcbiIsCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoG1pbl9sb3dfcGZuLCBQRk5fRE9XTihQSFlTX09GRlNFVCksIG1heF9sb3dfcGZuKTsK
+PiAtwqDCoMKgwqDCoMKgwqBib290bWFwX3NpemUgPSBpbml0X2Jvb3RtZW1fbm9kZShOT0RFX0RB
+VEEoMCksCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG1pbl9sb3dfcGZuLAo+IFBGTl9ET1dOKFBI
+WVNfT0ZGU0VUKSwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgbWF4X2xvd19wZm4pOwo+IC0KPiAt
+wqDCoMKgwqDCoMKgwqAvKgo+IC3CoMKgwqDCoMKgwqDCoMKgKiBmcmVlIHRoZSB1c2FibGUgbWVt
+b3J5LMKgwqB3ZSBoYXZlIHRvIG1ha2Ugc3VyZSB3ZSBkbyBub3QKPiBmcmVlCj4gLcKgwqDCoMKg
+wqDCoMKgwqAqIHRoZSBib290bWVtIGJpdG1hcCBzbyB3ZSB0aGVuIHJlc2VydmUgaXQgYWZ0ZXIg
+ZnJlZWluZyBpdAo+IDotKQo+IC3CoMKgwqDCoMKgwqDCoMKgKi8KPiAtwqDCoMKgwqDCoMKgwqBw
+cl9kZWJ1ZygiZnJlZV9ib290bWVtKCUjbHgsICUjbHgpXG4iLAo+IC3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBtZW1vcnlfc3RhcnQsIG1lbW9yeV9lbmQgLSBtZW1vcnlfc3RhcnQpOwo+
+IC3CoMKgwqDCoMKgwqDCoGZyZWVfYm9vdG1lbShtZW1vcnlfc3RhcnQsIG1lbW9yeV9lbmQgLSBt
+ZW1vcnlfc3RhcnQpOwo+IC0KPiAtwqDCoMKgwqDCoMKgwqAvKgo+IC3CoMKgwqDCoMKgwqDCoMKg
+KiBSZXNlcnZlIHRoZSBib290bWVtIGJpdG1hcCBpdHNlbGYgYXMgd2VsbC4gV2UgZG8gdGhpcyBp
+bgo+IHR3bwo+IC3CoMKgwqDCoMKgwqDCoMKgKiBzdGVwcyAoZmlyc3Qgc3RlcCB3YXMgaW5pdF9i
+b290bWVtKCkpIGJlY2F1c2UgdGhpcyBjYXRjaGVzCj4gLcKgwqDCoMKgwqDCoMKgwqAqIHRoZSAo
+dmVyeSB1bmxpa2VseSkgY2FzZSBvZiB1cyBhY2NpZGVudGFsbHkgaW5pdGlhbGl6aW5nCj4gdGhl
+Cj4gLcKgwqDCoMKgwqDCoMKgwqAqIGJvb3RtZW0gYWxsb2NhdG9yIHdpdGggYW4gaW52YWxpZCBS
+QU0gYXJlYS4KPiAtwqDCoMKgwqDCoMKgwqDCoCoKPiAtwqDCoMKgwqDCoMKgwqDCoCogQXJndW1l
+bnRzIGFyZSBzdGFydCwgc2l6ZQo+IC3CoMKgwqDCoMKgwqDCoMKgKi8KPiAtwqDCoMKgwqDCoMKg
+wqBwcl9kZWJ1ZygicmVzZXJ2ZV9ib290bWVtKCUjbHgsICUjeClcbiIsIG1lbW9yeV9zdGFydCwK
+PiBib290bWFwX3NpemUpOwo+IC3CoMKgwqDCoMKgwqDCoHJlc2VydmVfYm9vdG1lbShtZW1vcnlf
+c3RhcnQsIGJvb3RtYXBfc2l6ZSwgQk9PVE1FTV9ERUZBVUxUKTsKPiAtCj4gK8KgwqDCoMKgwqDC
+oMKgbWVtYmxvY2tfcmVzZXJ2ZShkcmFtX3N0YXJ0LCBtZW1vcnlfc3RhcnQgLSBkcmFtX3N0YXJ0
+KTsKPiDCoCNpZmRlZiBDT05GSUdfQkxLX0RFVl9JTklUUkQKPiDCoMKgwqDCoMKgwqDCoMKgaWYg
+KGluaXRyZF9zdGFydCkgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXNlcnZl
+X2Jvb3RtZW0odmlydF90b19waHlzKCh2b2lkICopaW5pdHJkX3N0YXJ0KSwKPiAtwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpbml0
+cmRfZW5kIC0gaW5pdHJkX3N0YXJ0LAo+IEJPT1RNRU1fREVGQVVMVCk7Cj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoG1lbWJsb2NrX3Jlc2VydmUodmlydF90b19waHlzKCh2b2lkICop
+aW5pdHJkX3N0YXJ0KSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpbml0cmRfZW5kIC0gaW5pdHJkX3N0YXJ0KTsKPiDCoMKg
+wqDCoMKgwqDCoMKgfQo+IMKgI2VuZGlmIC8qIENPTkZJR19CTEtfREVWX0lOSVRSRCAqLwo+IAo+
+IC0tCj4gMi43LjQKCkFja2VkLWJ5OiBMZXkgRm9vbiBUYW4gPGxleS5mb29uLnRhbkBpbnRlbC5j
+b20+
 
