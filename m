@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63209C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A5AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E834721571
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8038E21571
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="YzbupWVD";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="V8uuVres"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E834721571
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Q2Aepiv0";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="So8tzMwx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8038E21571
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732341AbeHBXVo (ORCPT
+        id S1732359AbeHBXV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:21:44 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59168 "EHLO
+        Thu, 2 Aug 2018 19:21:58 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59156 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732190AbeHBXV1 (ORCPT
+        by vger.kernel.org with ESMTP id S1732033AbeHBXV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:21:27 -0400
+        Thu, 2 Aug 2018 19:21:26 -0400
 Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w72LROUj012185;
-        Thu, 2 Aug 2018 14:28:08 -0700
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w72LROUe012185;
+        Thu, 2 Aug 2018 14:28:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=HkjTY9917jaa5vJngEByKtiskZT7PS+Gpyf3N6mx0yI=;
- b=YzbupWVD5sxuQoh7q4flRllpIVGv2iRPlc2MgGIoEhXHxLyG0JVJS1KhraOz8oX0Jv1q
- vdsXQpfNaERPo9JZGVZGhlp3Ka9FpgkTPbnTvHv9dTjHxmwWaqMkGWLkR0L0GWKgdjMM
- d2VH3Df/zLaWCbu9X/Mnz7AwiiKm49INiyU= 
+ content-type; s=facebook; bh=G36NWQ4d7yccF4eIsCkNlqW0mu4uqv5ySe5S+f6doAs=;
+ b=Q2Aepiv0b972JQQN870/GfWoOo2v3nwxcgCnP329rmSVVI8AajYtUiLgbhdT/gaIznf9
+ 6ahnzz81WaEYT7PHShw5p9/yJnIw5qdTkDPUGsxesrUEDaSyn+LFUNyv2Dd6CVPwEAdq
+ 7wG4PQT2xE1VYOVEPh5EMDvuyHuK7XpYgkw= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2km6jy8nt5-9
+        by mx0b-00082601.pphosted.com with ESMTP id 2km6jy8nt5-6
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 02 Aug 2018 14:28:08 -0700
+        Thu, 02 Aug 2018 14:28:07 -0700
 Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
  by o365-in.thefacebook.com (192.168.16.20) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Thu, 2 Aug 2018 14:28:05 -0700
+ id 14.3.361.1; Thu, 2 Aug 2018 14:28:03 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HkjTY9917jaa5vJngEByKtiskZT7PS+Gpyf3N6mx0yI=;
- b=V8uuVressughEmM6cW/amrYclGkcWcAKCKaBmZLb043HpmBU8bo4GXhXBOvUQwQlIOjnlitSMWS0JIcwW+mZ/Xrjwkxp0D0wlWsH0AFpKPGsdLXKAiqxC4OCuYc2DJM/y+2qdF2hq595bfjTNPJ0tfxWdJnBiqSkNG0Ax/TU0Ug=
+ bh=G36NWQ4d7yccF4eIsCkNlqW0mu4uqv5ySe5S+f6doAs=;
+ b=So8tzMwxzkxhgscVi7PUEV4Ox27JcC++AMBWyBdNad/M6DFAIQtTycW+KcXMo1XOaFkqdzxl6s22ERw3PUwlPF5n/W+Y+tPFVG/FOsfnfzSwymVrEEPA+0uTbisE/M1sVswxqc6yEQ63619b8q0fets1IjcUC1KDsXlsTpwWK9g=
 Received: from castle.thefacebook.com (2620:10d:c090:200::4:6653) by
  BY2PR15MB0167.namprd15.prod.outlook.com (2a01:111:e400:58e0::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.995.19; Thu, 2 Aug
- 2018 21:28:01 +0000
+ 2018 21:27:57 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     <netdev@vger.kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH v7 bpf-next 08/14] bpf: introduce the bpf_get_local_storage() helper function
-Date:   Thu, 2 Aug 2018 14:27:24 -0700
-Message-ID: <20180802212730.18579-9-guro@fb.com>
+Subject: [PATCH v7 bpf-next 05/14] bpf: extend bpf_prog_array to store pointers to the cgroup storage
+Date:   Thu, 2 Aug 2018 14:27:21 -0700
+Message-ID: <20180802212730.18579-6-guro@fb.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180802212730.18579-1-guro@fb.com>
 References: <20180802212730.18579-1-guro@fb.com>
@@ -72,49 +72,49 @@ X-ClientProxiedBy: MWHPR19CA0058.namprd19.prod.outlook.com
  (2603:10b6:300:94::20) To BY2PR15MB0167.namprd15.prod.outlook.com
  (2a01:111:e400:58e0::13)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: af3314d3-63fe-4e52-aaf3-08d5f8bed395
+X-MS-Office365-Filtering-Correlation-Id: a63d4e0d-c51c-41e1-8b27-08d5f8bed199
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0167;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;3:gexw/ak/C60HvcKBium6x4nlGKAAK6VHXFQp3rrGE/il8Db488Tv9SpjeyJjPt2Gaeiyh6O4fVRDYDct+UHX91GbHDUrc/jtesLRt1FPkhO1NmuqgGjVUlkdebD32bpfbJ9pPN3LkHimz9wj8pTdu5OrR8XoPX3kMIaFVHXuywN7jdpxVNLF6sbloOJDdBNSMCQxz7nW1pcyLVHYfXWFc9M0Xo7TvK99L099Rx37sxonW53qZtm4/C3yd9ug6Sv/;25:/7PKNn/fX9Prm+5usYkrAPSj1rT9f+nnz/8RihurdSt+u2tEnLiS+9us2bldHUsMCVuyI4ukzEvBlx5KZF6tEDeA8J+HKW2MDHCyXnZKyXMpsOWsJgcFjRgmrPPJohUqBzttKlpHnFcqnbZ/2wRfmk3AtXO/L5NIP+PwBrgI1WF23ImkgUM5ylcWnOnuOAXIUweG23cwEkOZUmUNcGitcQtabwvcFe61z43UMMlFN0PkNvpXgAxBHq24oG2dBbzoAecNJz6i5Umb4dvgycmtPSBB1BiQ/iGlTi8GzaNhLfnDd/0vFQrbCHniOhH1tNO/oSUg51ycPz5VL5H7x5Wo0A==;31:GjMFAcjPSSn9IdhKMmGCbpg/Mt3fTXz559IjpOS/GEA9EN4OlIALB+z01SZwrCT7qpwxnbiwtTbmY4AX67RcOXHQRirlo/kaOR7SCJVItuWMcSzyWqonqZpdhYX7p+f1dRueJAdPBw9y1akhH1vgld/nKqaPafFvQS0+1AbhDFa4p54sa+sXwaoOffNQ4Rh4B2BsYViSMMYu4oxY9dpi+RdIOwUKd+IiFFDAqyk5wl4=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;3:8egvWGkBH5LryoloywcStfFl4QEnBLiUyKTaEC2KbrejPyjwFAuMDMgLWRf0A6T/OdYIwMW6CJuSURd4H/RR3ZFKBph44l1LYXFKkLgWjjjMCj9foLpvYq1uq57UoqI24ZrOdydYYYhdTkjgc2LfVrU5XQlF8jB+Bmse3kbHh8LANp/IzNRmxSQA3eYoiBicchRcWt76D4uPIGvALzt6S7pJHTaJ5aF6m7/wAPTBmYanTSrkiSOjiX1JV9ilRGFq;25:yFDGreduOGu5l4Rtw3l4f0HOXhNHmHZRcZC6yRLJbBBJAzBm6H1ct5n4YsBR4m1DobqVIQxXKRpOIm4RlDs1dWDg004Y1qvSE5eWWjNsxWKRSzR8uwpnkG3uqq6Ieyj7i15fDNr9ExEPRAKRs/S9/4LpMTx3d4OrPmpV5VLzlzsVVfV/EtOyBG+Qv/HOb3UDOaNZ3UObz4Xld2PP/vPGP9rQxAbqhykLFSxKd63kSuZU2FFZ7qyjQbm09dUoDUeey3a5UEC9gkihe7WpkS31Uklqt2ey5ycDcXeDITKp6xqxy5r/4j+mxNNxIr93le4X36N1SYGLny8sgqhMD26E3g==;31:blO01auZjsFyquMDAzNzVimqt1Au2Z811bKUxHk6GaNmjSvqueE0RecwzmuQyaaJBLEzKULwzQcGBeJF9hHT76UoNVHpmvArrKHHpDSvpIKvQ8DkYWJGqDXOn9yvXGNnuucgBU6UYL7YSrGI3bDYNdzPbA017K3gWzZh1X8W4oRF9CH8xVD62pKgwrBdryDPlsA4AbqxDrUnJUmhj822MyRhpVIyYS1z/+X//nx8DmE=
 X-MS-TrafficTypeDiagnostic: BY2PR15MB0167:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:OkcjnixXSqtw5cMKLumrW/s6n+WoqRSFTIcpRJ+V6OVlE6KoFPvgJqQoBeEu7h+WnvLpVTSKrcoiWX87ALyyp0SneTgZd2yFfSD1Jl3DycEWN0s6WvUfNdVeq4FSB8cOtiLMjBOCOiag/fMFQk4xveDOtGu0ehcUatA5AnukG+lCtnrni8pVt3M5JaBu/15YIBfyvOBJk6nHzTiaOu9Wh23xNlSEjsQgr8aD73VylqosrfAXLHyMvXnLa27269EFbh63S9HzU/XnU/sOUy/H4YWch6l0Wg2tlEy5vk8Xi6JXh+SNJP1BqEl66ZTknlJhWZ2DSS+KyYSyalynKcU+TDC5+l+FDMqJKwkCAXOXnaWlV/OPbYGzVaLDyP64NC99tLp5aLE8qmS5YE9qgIVEdG3HftpYuhNLPuOftvG9cqN6gigb13pudAvQPYnT0Oq8kdDDmtjnHHIBNYcNy4WlIOoO3DMU7r7ztqokFv2P57t8GWdDP1rAoqQyaxEAsYzU;4:/U/wEDMVFAMQAXGafDXL2pRybS5lwpwJqs6JPTPrsjCTydzazELVGBzdotYZ8/RIWNYgbWh7R8+WdI9sGIVt00PjYlywclpgqbAPgFmYPI2ZzJi1Sh+khs0fN0LhJniwsamDrdScRHCGhxLTOyUPazlwsAD11nZwcUrubdJAMJJXnnbVPjK5JSGsWiOuDXofFv5+/mkZdlxGaVP//4oCffXnRKGWjy5/5kO75G7csaZpJNJwHJSjaLwF4zgXOGEaqXvkIK0IvKxI4TJ9k/4AgwmOEIPEMA9E6pv30Sh3zZ6/ve5uK1/+YZ6774aUX9H6ENvhy+WBOhf4uLHRR0sbKfMzULc+eKM/iKVNPO1z+xQ=
-X-Microsoft-Antispam-PRVS: <BY2PR15MB0167A1FFA286123E00D60CC5BE2C0@BY2PR15MB0167.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(67672495146484);
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:hlhovaWQmb4fi3eRjXEVpuUIz4+9hFGOsy5Z7jx6zkHsc7UPBHrOm/dXLtKsaIgkAwIeP73jUMzfYmA2imBLZcauWuuoBtVS4ukQysM0XFU0TLe/cw6rzmSdcWLKg1zfKEEEO2tx9y68NP8LtkiBxjlbCVyZsJBAYSFgR1kjOm0IzKRri3alB44eRry1tK8zK0TWfSc/WD9AJuIKa++qz3ARItgjCwKpVkvZYmOVYNSbEE2/0XKlgSLjkfKmZqX8nKvGA60PHB1u/Byp9zx0537b91cnJDxmayvV12wUQoiBQYhrVBT9xlhGypaNY2/IU4A2WZZ2c66jbGpCzQyJ8tEEPU/dln95SmbbjkHNVTA+k0yn4os3/PWoc+6ewKHRSmlbYICgOY/bRtYoA4TERuTcTKHUxBfWVGlkZLTZ9v/QqY/8ZoF91Pfgj6kDGNPjDvtrfelTfA9fpJahQPH5EV71l21Ipk/VoB+dqJasKqsCspGMQgEfy9rjeW1EWS4y;4:BtA4A2m/UlBVughq0G+JF07ZXt0pCzSW5Y62PkF8gDazMtFCMmQWYbtJiDVuOjV9z0ni3JzJKRFCDrwWqqvPdUAEypTQBhCMaHge+kl68WQHE6xCrN7AnpC0AJF3j6WGZsO8qABjEVNOzhzTfIop7goVymnxPZg8qqDdD6WrZK2SzmpPTvyPeT0DT6k9N0dSc69D5MdE7o2z6QwRes7dxstWeaNtcN+9704NA5XRZ6hiooax5TFltB0rc5eL4Ds0DZc+oy4PTzyympA1EGeViF+1XuFzmnbDBNA7+Cdo3ED06hDOnSxt7g3/5I+zpj63
+X-Microsoft-Antispam-PRVS: <BY2PR15MB0167680DD34FE2FA99A1A256BE2C0@BY2PR15MB0167.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(11241501184)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BY2PR15MB0167;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0167;
 X-Forefront-PRVS: 07521929C1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(446003)(48376002)(2906002)(97736004)(86362001)(1076002)(305945005)(8676002)(186003)(8936002)(11346002)(6916009)(6666003)(7736002)(486006)(6116002)(2351001)(476003)(14444005)(106356001)(81156014)(2616005)(2361001)(105586002)(16526019)(478600001)(81166006)(69596002)(47776003)(46003)(53416004)(36756003)(316002)(53936002)(51416003)(4326008)(52116002)(50226002)(16586007)(68736007)(54906003)(50466002)(52396003)(386003)(6506007)(5660300001)(76176011)(6486002)(25786009)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0167;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(446003)(48376002)(2906002)(97736004)(86362001)(1076002)(305945005)(8676002)(186003)(8936002)(11346002)(6916009)(6666003)(7736002)(486006)(6116002)(2351001)(476003)(14444005)(106356001)(5024004)(81156014)(2616005)(2361001)(105586002)(16526019)(478600001)(81166006)(69596002)(47776003)(46003)(53416004)(36756003)(316002)(53936002)(51416003)(4326008)(52116002)(50226002)(16586007)(68736007)(54906003)(50466002)(52396003)(386003)(6506007)(5660300001)(76176011)(6486002)(25786009)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0167;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR15MB0167;23:LTW3dam3hvizhUjKDP4IgutAneov0fb94uNDjtzN4?=
- =?us-ascii?Q?us1dfQdcskCxCsmYd3hoACbz+N4cC5KrEyTlL5proMB6wzZezRsk37AKglH6?=
- =?us-ascii?Q?JLIrHZfpoV8xldvO8jahVmVxmH32X7naX2tu2MYUDpejtv9TUSQR5t4Cl6L6?=
- =?us-ascii?Q?5eVmk6hWKcQQ3Cm6tiJ8RI/k2dIWcKy5qqrODP5EVqE1ZQCFiYUQgBWJJr8O?=
- =?us-ascii?Q?xGrEVquL4vvZ5dlr3lUsInSaefPFWhRG7x/0s5QZ0S8cOLisqnKf1ZVMHQ2J?=
- =?us-ascii?Q?7WDGyZTsA2i7CHKgSC3L0k49lrVJUDvqssoEgLMqX6qgsXIYxMAkz0rYpNY1?=
- =?us-ascii?Q?JUvNuDZGcRjKojso9u00nHepVCTg2JfNqivyV7j3XvWA6Ekc3U8Zww7QbhIq?=
- =?us-ascii?Q?55JGPvvuIWjgDEeqsN+8B2i1PxEOWikoOpImFMj7QBEu/kw6LCH9LCmZ1dPj?=
- =?us-ascii?Q?q3T/1nP87NJ4zXggpJYfQjWc3DDFh/JhWkfcEhKE7LPScbViOY0ptJLh5UyL?=
- =?us-ascii?Q?EHAIapO8LFDv1WpCpXLyrq1fQnrE8yEHxQih1UfhdflnzwHoIa2gcXXTC9C9?=
- =?us-ascii?Q?75QnzGm5kviZ+W9NcZmDujd8NGnJH8QE9OsWWimLE+CkQHBAu4ytCIPfPGLU?=
- =?us-ascii?Q?O62UpG6EFvsBHDCnE8HB03SJPvyeQEm7hagUAhFZl9F5GFpebp04KkMdK71z?=
- =?us-ascii?Q?oBffoD31MRYVcdlWOdIuR0zzQ4imxjfvQLyJud46yR4/p6T/mBNSV/K28cGv?=
- =?us-ascii?Q?7Ve9N0VWknpRKZ+kwl8UMta9WAs652NNJuU6tRAMnNXeXh7VncaVfVaOAnbg?=
- =?us-ascii?Q?9hCR2uTkzn7KpKUACjqUlMQcZulS77shaBiFF4d88f3PgFcM9Tc9/0bfIuRt?=
- =?us-ascii?Q?Qi3qrAJw2iy7zk3ohYNtDLoMCw5lbImMfk8wHMo94hAGMMW0ld3irvinIsyk?=
- =?us-ascii?Q?ymgmTYfeonKGkKl4efXbuOJ40kNqOK8EptQPFGeyF12cWx5nfrZvodTsA0om?=
- =?us-ascii?Q?zv7iO266PKhcEwdoem/MD4d4t8LqUq9myXYPKsYRaiV8JIUJuCMqiP9abmX+?=
- =?us-ascii?Q?Ke3u99do5KpxpL6Dn57kXe5hIBCWA3ODlF/Xw2C9POpBjszeOYERFIpT96hL?=
- =?us-ascii?Q?lz7ZarKR99vpp+ZBA5ITlzcMi0F0ZRcrJlquwhlgYQz0G389bg48bd2e3it6?=
- =?us-ascii?Q?gMJKwt+0b+NK3xm3mJWizc8HhOMwHQBrw5KaAXBt+KugjV5XKSHQaeDmmo16?=
- =?us-ascii?Q?qwtKtZdrT6nRb/GS0XXeytC9sPR50l9ZEqs6YdAxYbQfx/8CRjK+jghvwat9?=
- =?us-ascii?B?QT09?=
-X-Microsoft-Antispam-Message-Info: J898rNSVi8kSUtmaOQvoTrMCY7xGRwEkFhLZ7fHuI7wwj/LE2uajjKgYICzzSE+cWnHJ71EQBq2rGWMWKALmaQfL3Bd1V0CnkUHONOAJ0G4rqucQ1HMjAKPRsakhnElEd9n4jKEyZDMns12ZWSVVMPR8EzU7SYDGNtR6l++5/z0qz/SHgou7kZnWEUvQDUwQvyUo4d2dOeqgEgmBaXJqOI8CBBElazD/8g4/olafqz1nSYAMKKMS6g295jteCw0uc1hlst+1w8O1BS8KAdYUyXC1LOVUEuxt+Hd1pfsCXdK34nuA/+fjZPglx7XJlKEz3j8foeOQHT6K1Z461iQmgOzzpVwecsjIjmlJOGlaEUA=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;6:qjDYFcIZ2AnNQepGNAy7LuziTS6GnA6DkA4QI95pTN0LfysXpS2I03zJei6drBJB5ezHt4372Qcumz1lCzkEbIfnhghJBCFE9esdpv1HLjrMygDTqUQxqdkIzBD5YbXzu3AKqyLvn2XFss14Bc5WX8OjI1oCKr5yD+uwagsrwbxc2Upj7/Tb45kcOJpUQUMWiF4cjwQwXid13OoCqpVfFfbkzWgABioqMcxzPN60OGGzFfGBK/Kuo00XUisQr+HQacUAjxvlolKhqjX+x0Nm7VPjC2Zdq8xAyxMOvqpVRUGnFlsmTrH+f7fYXvAomdFXSEuXEXi+0Dp2e6Uu7EgCAVraWgcdujd/xXouL9QygyVkMNS2fexhaZ/cvTYfYunl41YFj3hoPlX0AHg4OWSnKZQuLG17qssFWiCVEZHN8X+GDCLSssSEErQA49gH63yYjvrZnvn/DaATSKOtPBQr6w==;5:0/MbLhktja9vY7/qPzmkwLC/pTSCU1cx99fdqK5ZHpfmrxjpDRO/4Y47qeZzKMwRnM6X1O2hSMD3QiOzoUeIbb9siuMKmJgkK/fjXQDrWkUbre8UJPQX0THqQaFE3qQk86hsvMnL9j6S5NMkoLWxcmk6oE+cSZGO1Ni23sQZW84=;7:kSb1yOVPIgjU5F6Ng5TIHzNlW7sS7ZZVrfYL5L5x7SNulvyY1Kp64qmT7WF3JIugms4DGposmJDYsPxkBBKnqGg+J6b0PbfZrBmnbKg/DjrhCmHxuDs2zvW99l2BnTkZxM/ofB0LMq4JcqC4r5yApjjhVvn9FXTeS7rOKzuFFULD58A1w4L1+KebMzBUduedEimeERVlZOnGThOtQae5mWnc2YlfNc3clqB+9zcq+/3W622wBPR4vug3fy8UC682
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR15MB0167;23:yI1vaNKExIRD9Ag8hF4Uvwi5IcuIZlL3a3zUpfr4r?=
+ =?us-ascii?Q?6cXbo09gJ0UhL021Pn6vhEnsm4Gi+rjdQ6FlXSrvfOEVnXuh3LLvAko/s8eO?=
+ =?us-ascii?Q?f+ONoMnkHqkE8XpE2V1lhiWindqKBAgjsvMqIY/T1mTy/0GHu1cd/ZvXCs7x?=
+ =?us-ascii?Q?STIU4iz35t/q63JR85FwZYoT65qylUOlJIqma3vLmIRHal9iSp/SAVGciBLZ?=
+ =?us-ascii?Q?YByGqfZC72yq7k2iVJBPYjF6kW8g2Num0AATHLJGjbVIYbsiBFUaGhnrLBr+?=
+ =?us-ascii?Q?JlZUkIvNCFRDsu0g/6Faw4WQts443VYJleEpX2BW6iSTyITTgsS811/Nl51F?=
+ =?us-ascii?Q?M2BPmxdvFuAS+JSboii10aamGFNLrlrImGipX4iigWNVcvQU9u6sLsVHK5S/?=
+ =?us-ascii?Q?kVapVjE+i7mA+BWT0AVsdsSEwsgYxW8dPug+CpnQf0jZ+SrObxoCFUdJi8ki?=
+ =?us-ascii?Q?R0xVk77+QoC6wWUcs01/py5D86coSQXp6r6yo5aMNgUGjr3j0oVL6XoWe0vu?=
+ =?us-ascii?Q?CgOkYUaWQ6jct03GVTCd6lhHiOe6BLM9EY7NiZTTYTQHLrVNqt0zO5uRATol?=
+ =?us-ascii?Q?+QGFMKACqiD3KckC32sbZao2lVwDRjJMWwWjyXW/aO21hb2fiBcZzL7fTEnG?=
+ =?us-ascii?Q?K4piSdWaW2W2msKH9zeYQABRUTvvvEyqxvAzA9soX9HNuUHvHxafrvehm/xB?=
+ =?us-ascii?Q?e5z5Dj1+EpoRvzhHPWsuEQM7cci+VS+vYD12ltCWbyAPgGD6GH/VqKURin+W?=
+ =?us-ascii?Q?lWZ8HSsorI7TKmK8zSSGZcXGheKgC8WzUqL6toyay9+IctBmuofvffAym4pb?=
+ =?us-ascii?Q?5VUmpytnRI1zDu6z4sm2XiNTEgmcOo8rJwTSSfNZLqnQJ45sYok2rSTnLUkF?=
+ =?us-ascii?Q?pbvoBppPez3JtHH7xZsRgGAXZF5fgv9IieI/jwcIAUfSqYQYZGBZTgdGsY0x?=
+ =?us-ascii?Q?3eJPZvThTQcoCx3z/OyyIDTkpuCvfRvh6Q1IMxLOMBbfZOvoyLnEoe70DNL1?=
+ =?us-ascii?Q?4Xo2BtXVWflDoTJ3X/+s+wzl4YQj9MFc5K3rtsil78mMD+9mGgFeUNiuGFhw?=
+ =?us-ascii?Q?Gn3Bb8kB0TPUMYGB20oIG/6LYf5vlaLwBLAUV4YGC19lvLHMRGIoGJhsBRG7?=
+ =?us-ascii?Q?8DSJkc4cmTxj8XxtGf+lVFZ78tqPneNcf3wfZzrfNSrupoUn1DiWv5zEM2Fy?=
+ =?us-ascii?Q?vEa4ywYtIbBQEPV8tPHY6w9+jzI4OXgkHfJ9uUHslwyGVbc3r+/yrkJV3fOU?=
+ =?us-ascii?Q?LhgjgrMl3Hf9npCIJLDcR213AK9h/VXCrxPSWhUc0IinhJakRzW74D9PVv/O?=
+ =?us-ascii?Q?5alsuLret1Lf5ID35rl35M=3D?=
+X-Microsoft-Antispam-Message-Info: rk0HkMQJbUi9JcYa+kE3jeXcfMtqukD9zaBZ0D79D7NSIbvhmcXZtcy/1EufjyDd1baVJNitj9Vzf+0msCWqvhK6btyDXxpWe6unnrjXVjPO8HCv2/gcdQCbaCP7vM3ngroqkGSysnE/jBG6v7AQ8B9NUvWBAQ5r3QbkowvKBFupEKAXpdB035T0LNSUiYIn/jcB3YHKuzBbGBbUHxSp8gArvFnTG1yHCSGlNB1M+4INcsacSKfQXTPrXPCGMkz+aS6yMFgP/lxA4tLF8VRThljCIR1GtIn+d1OuDm7aFfGL2ysXrRCJbGhyMGX1Z1tNK/mm2uWX0PaBk3zUq9BuSl1j3+uCIyd3z6gCurAzhBU=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;6:jYwiuUDHYQCCIPUHQMLpprz91FO0rGOtf2CBxtB+rnYsIY0xNjrjEYQlElzwu8Q8khUn9lv/l82Mk154y50Lzsl1kSnUf1BcB2hkq2ChRQp86njYOcVv4vxO8fSEtEP6tDYTrVTiiHEhbfekDSqlyQ6gTGMaB1EICysiBKUOFP/ey3uuCzlCjeRoCbIRL6IY7VGdylVjTymElGf9xT5/SfZvKTtt53A8IiYDwMDZ7UYPNB7c291v0PKjy+fgmsQ60dCqvMKvK5D+QTHGuK3X/BHFJE422vcic5QL/jBlWeVVAnDdwSOmAaRkARy5JUmM7Z+BANFfX7MpbpGRg+gdg0iBt+fWuss4quaM8++05QBGA4S4DDuv9yXIa5UXuUPQwYQi64eU6aV3PVKxI/5fRvsEpa3nosAWMPIrPC6HRUcMvSrzAiMTJ58m7n9TS2/mMYe8sl/bJr8euw95jqKUTg==;5:/1XozYsTK0r6SW4Jm/CSexPpb6J1rgh0FzidXGZ3/HNeQDE1w8/3t76ABIgIGTN8qy/15FA+nDfDwpjFswsGOWa9k56TjFLSHrlPeQQmNhPZevUsyB2Tn2waEPZNuKi/NeMo5YKmSdnu5UdN9b90xN0ro2kAqbwoRgt+X/Qxs14=;7:Tkmmhp5czXdAS8IrqbzKyVemT4ssGPHdVT6sU2RFO60+GphtsLeBOB13aT6IM8t3y1MoxLhU+s6jbqpSiGgPJZyosX3pmWpLYYJ30rg0XO9PMfzy5XSuDA/JXhGxXdT1kNHlj9PUGAp/8poa3qiNhR0nSDpe6hiWtkU7oxbQy3W8exAMpDo4b8lYHWJq8KphfBoaqp0vivzWEVcu4wqXfAtzV/nHthul6ls8symqDiz7+ITd0oUEmmrglLnv1kMi
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:WUiPd2OyqnGK1rMeSMPtzK78nV0E5IkiW1kZqPLuOFIZ7uro2nKgLN8Hi1HO4NUWjn5lkjtoj+BohE7f8QyD2GZltTxiAhMoF6QG+L+dGNrH83ZiiWO3YymI/FGO2M9H9j21JrH1EUUaE1YdVdSVjrEvXru6u+ZFqd9xs3Zolx4=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2018 21:28:01.3092 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: af3314d3-63fe-4e52-aaf3-08d5f8bed395
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR15MB0167;20:gx7L1QS9G6alcrt14UJ0iaiX1jDdPr9V/ZDH5EsGusurpkGl2WBMjokXKocWQc5g5uRHDXXJFYYtag9ho8J/4fmRisgmXb0F+Tf80en+WMcdjsGiaA1ZVQYl9uIHNTb6DmUorozQ+DqyNdGGaBqsKSNDrzF2F1eLTeo89S08Ltc=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2018 21:27:57.9792 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a63d4e0d-c51c-41e1-8b27-08d5f8bed199
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0167
@@ -128,253 +128,302 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bpf_get_local_storage() helper function is used
-to get a pointer to the bpf local storage from a bpf program.
+This patch converts bpf_prog_array from an array of prog pointers
+to the array of struct bpf_prog_array_item elements.
 
-It takes a pointer to a storage map and flags as arguments.
-Right now it accepts only cgroup storage maps, and flags
-argument has to be 0. Further it can be extended to support
-other types of local storage: e.g. thread local storage etc.
+This allows to save a cgroup storage pointer for each bpf program
+efficiently attached to a cgroup.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Daniel Borkmann <daniel@iogearbox.net>
 Acked-by: Martin KaFai Lau <kafai@fb.com>
 ---
- include/linux/bpf.h      |  2 ++
- include/uapi/linux/bpf.h | 21 ++++++++++++++++++++-
- kernel/bpf/cgroup.c      |  2 ++
- kernel/bpf/core.c        |  1 +
- kernel/bpf/helpers.c     | 20 ++++++++++++++++++++
- kernel/bpf/verifier.c    | 18 ++++++++++++++++++
- net/core/filter.c        | 23 ++++++++++++++++++++++-
- 7 files changed, 85 insertions(+), 2 deletions(-)
+ drivers/media/rc/bpf-lirc.c | 10 +++---
+ include/linux/bpf.h         | 19 ++++++++----
+ kernel/bpf/cgroup.c         | 21 +++++++------
+ kernel/bpf/core.c           | 76 +++++++++++++++++++++++----------------------
+ 4 files changed, 70 insertions(+), 56 deletions(-)
 
+diff --git a/drivers/media/rc/bpf-lirc.c b/drivers/media/rc/bpf-lirc.c
+index fcfab6635f9c..8c26df9b96c1 100644
+--- a/drivers/media/rc/bpf-lirc.c
++++ b/drivers/media/rc/bpf-lirc.c
+@@ -195,14 +195,16 @@ void lirc_bpf_run(struct rc_dev *rcdev, u32 sample)
+  */
+ void lirc_bpf_free(struct rc_dev *rcdev)
+ {
+-	struct bpf_prog **progs;
++	struct bpf_prog_array_item *item;
+ 
+ 	if (!rcdev->raw->progs)
+ 		return;
+ 
+-	progs = rcu_dereference(rcdev->raw->progs)->progs;
+-	while (*progs)
+-		bpf_prog_put(*progs++);
++	item = rcu_dereference(rcdev->raw->progs)->items;
++	while (item->prog) {
++		bpf_prog_put(item->prog);
++		item++;
++	}
+ 
+ 	bpf_prog_array_free(rcdev->raw->progs);
+ }
 diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index ca4ac2a39def..cd8790d2c6ed 100644
+index 9d1e4727495e..16be67888c30 100644
 --- a/include/linux/bpf.h
 +++ b/include/linux/bpf.h
-@@ -788,6 +788,8 @@ extern const struct bpf_func_proto bpf_sock_map_update_proto;
- extern const struct bpf_func_proto bpf_sock_hash_update_proto;
- extern const struct bpf_func_proto bpf_get_current_cgroup_id_proto;
- 
-+extern const struct bpf_func_proto bpf_get_local_storage_proto;
-+
- /* Shared helpers among cBPF and eBPF. */
- void bpf_user_rnd_init_once(void);
- u64 bpf_user_rnd_u32(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index b10118ee5afe..dd5758dc35d3 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -2095,6 +2095,24 @@ union bpf_attr {
-  * 	Return
-  * 		A 64-bit integer containing the current cgroup id based
-  * 		on the cgroup within which the current task is running.
-+ *
-+ * void* get_local_storage(void *map, u64 flags)
-+ *	Description
-+ *		Get the pointer to the local storage area.
-+ *		The type and the size of the local storage is defined
-+ *		by the *map* argument.
-+ *		The *flags* meaning is specific for each map type,
-+ *		and has to be 0 for cgroup local storage.
-+ *
-+ *		Depending on the bpf program type, a local storage area
-+ *		can be shared between multiple instances of the bpf program,
-+ *		running simultaneously.
-+ *
-+ *		A user should care about the synchronization by himself.
-+ *		For example, by using the BPF_STX_XADD instruction to alter
-+ *		the shared data.
-+ *	Return
-+ *		Pointer to the local storage area.
+@@ -349,9 +349,14 @@ int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *kattr,
+  * The 'struct bpf_prog_array *' should only be replaced with xchg()
+  * since other cpus are walking the array of pointers in parallel.
   */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -2177,7 +2195,8 @@ union bpf_attr {
- 	FN(rc_repeat),			\
- 	FN(rc_keydown),			\
- 	FN(skb_cgroup_id),		\
--	FN(get_current_cgroup_id),
-+	FN(get_current_cgroup_id),	\
-+	FN(get_local_storage),
++struct bpf_prog_array_item {
++	struct bpf_prog *prog;
++	struct bpf_cgroup_storage *cgroup_storage;
++};
++
+ struct bpf_prog_array {
+ 	struct rcu_head rcu;
+-	struct bpf_prog *progs[0];
++	struct bpf_prog_array_item items[0];
+ };
  
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-  * function eBPF program intends to call
+ struct bpf_prog_array *bpf_prog_array_alloc(u32 prog_cnt, gfp_t flags);
+@@ -372,7 +377,8 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 
+ #define __BPF_PROG_RUN_ARRAY(array, ctx, func, check_non_null)	\
+ 	({						\
+-		struct bpf_prog **_prog, *__prog;	\
++		struct bpf_prog_array_item *_item;	\
++		struct bpf_prog *_prog;			\
+ 		struct bpf_prog_array *_array;		\
+ 		u32 _ret = 1;				\
+ 		preempt_disable();			\
+@@ -380,10 +386,11 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 		_array = rcu_dereference(array);	\
+ 		if (unlikely(check_non_null && !_array))\
+ 			goto _out;			\
+-		_prog = _array->progs;			\
+-		while ((__prog = READ_ONCE(*_prog))) {	\
+-			_ret &= func(__prog, ctx);	\
+-			_prog++;			\
++		_item = &_array->items[0];		\
++		while ((_prog = READ_ONCE(_item->prog))) {		\
++			bpf_cgroup_storage_set(_item->cgroup_storage);	\
++			_ret &= func(_prog, ctx);	\
++			_item++;			\
+ 		}					\
+ _out:							\
+ 		rcu_read_unlock();			\
 diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index ddfa6cc13e57..0a4fe5a7dc91 100644
+index 935274c86bfe..ddfa6cc13e57 100644
 --- a/kernel/bpf/cgroup.c
 +++ b/kernel/bpf/cgroup.c
-@@ -684,6 +684,8 @@ cgroup_dev_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_map_delete_elem_proto;
- 	case BPF_FUNC_get_current_uid_gid:
- 		return &bpf_get_current_uid_gid_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	case BPF_FUNC_trace_printk:
- 		if (capable(CAP_SYS_ADMIN))
- 			return bpf_get_trace_printk_proto();
+@@ -117,15 +117,18 @@ static int compute_effective_progs(struct cgroup *cgrp,
+ 	cnt = 0;
+ 	p = cgrp;
+ 	do {
+-		if (cnt == 0 || (p->bpf.flags[type] & BPF_F_ALLOW_MULTI))
+-			list_for_each_entry(pl,
+-					    &p->bpf.progs[type], node) {
+-				if (!pl->prog)
+-					continue;
+-				progs->progs[cnt++] = pl->prog;
+-			}
+-		p = cgroup_parent(p);
+-	} while (p);
++		if (cnt > 0 && !(p->bpf.flags[type] & BPF_F_ALLOW_MULTI))
++			continue;
++
++		list_for_each_entry(pl, &p->bpf.progs[type], node) {
++			if (!pl->prog)
++				continue;
++
++			progs->items[cnt].prog = pl->prog;
++			progs->items[cnt].cgroup_storage = pl->storage;
++			cnt++;
++		}
++	} while ((p = cgroup_parent(p)));
+ 
+ 	rcu_assign_pointer(*array, progs);
+ 	return 0;
 diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 9abcf25ebf9f..4d09e610777f 100644
+index 253aa8e79c7b..9abcf25ebf9f 100644
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
-@@ -1795,6 +1795,7 @@ const struct bpf_func_proto bpf_get_current_comm_proto __weak;
- const struct bpf_func_proto bpf_sock_map_update_proto __weak;
- const struct bpf_func_proto bpf_sock_hash_update_proto __weak;
- const struct bpf_func_proto bpf_get_current_cgroup_id_proto __weak;
-+const struct bpf_func_proto bpf_get_local_storage_proto __weak;
- 
- const struct bpf_func_proto * __weak bpf_get_trace_printk_proto(void)
+@@ -1542,7 +1542,8 @@ struct bpf_prog_array *bpf_prog_array_alloc(u32 prog_cnt, gfp_t flags)
  {
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 73065e2d23c2..1991466b8327 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -193,4 +193,24 @@ const struct bpf_func_proto bpf_get_current_cgroup_id_proto = {
- 	.gpl_only	= false,
- 	.ret_type	= RET_INTEGER,
- };
-+
-+DECLARE_PER_CPU(void*, bpf_cgroup_storage);
-+
-+BPF_CALL_2(bpf_get_local_storage, struct bpf_map *, map, u64, flags)
-+{
-+	/* map and flags arguments are not used now,
-+	 * but provide an ability to extend the API
-+	 * for other types of local storages.
-+	 * verifier checks that their values are correct.
-+	 */
-+	return (unsigned long) this_cpu_read(bpf_cgroup_storage);
-+}
-+
-+const struct bpf_func_proto bpf_get_local_storage_proto = {
-+	.func		= bpf_get_local_storage,
-+	.gpl_only	= false,
-+	.ret_type	= RET_PTR_TO_MAP_VALUE,
-+	.arg1_type	= ARG_CONST_MAP_PTR,
-+	.arg2_type	= ARG_ANYTHING,
-+};
- #endif
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 1ede16c8bb40..587468a9c37d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2127,6 +2127,10 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
- 		    func_id != BPF_FUNC_current_task_under_cgroup)
- 			goto error;
- 		break;
-+	case BPF_MAP_TYPE_CGROUP_STORAGE:
-+		if (func_id != BPF_FUNC_get_local_storage)
-+			goto error;
-+		break;
- 	/* devmap returns a pointer to a live net_device ifindex that we cannot
- 	 * allow to be modified from bpf side. So do not allow lookup elements
- 	 * for now.
-@@ -2209,6 +2213,10 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
- 		if (map->map_type != BPF_MAP_TYPE_SOCKHASH)
- 			goto error;
- 		break;
-+	case BPF_FUNC_get_local_storage:
-+		if (map->map_type != BPF_MAP_TYPE_CGROUP_STORAGE)
-+			goto error;
-+		break;
- 	default:
- 		break;
- 	}
-@@ -2533,6 +2541,16 @@ static int check_helper_call(struct bpf_verifier_env *env, int func_id, int insn
- 	}
+ 	if (prog_cnt)
+ 		return kzalloc(sizeof(struct bpf_prog_array) +
+-			       sizeof(struct bpf_prog *) * (prog_cnt + 1),
++			       sizeof(struct bpf_prog_array_item) *
++			       (prog_cnt + 1),
+ 			       flags);
  
- 	regs = cur_regs(env);
-+
-+	/* check that flags argument in get_local_storage(map, flags) is 0,
-+	 * this is required because get_local_storage() can't return an error.
-+	 */
-+	if (func_id == BPF_FUNC_get_local_storage &&
-+	    !register_is_null(&regs[BPF_REG_2])) {
-+		verbose(env, "get_local_storage() doesn't support non-zero flags\n");
-+		return -EINVAL;
-+	}
-+
- 	/* reset caller saved regs */
- 	for (i = 0; i < CALLER_SAVED_REGS; i++) {
- 		mark_reg_not_init(env, regs, caller_saved[i]);
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 9bb9a4488e25..9f73aae2f089 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -4820,6 +4820,8 @@ sock_filter_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	 */
- 	case BPF_FUNC_get_current_uid_gid:
- 		return &bpf_get_current_uid_gid_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -4844,6 +4846,8 @@ sock_addr_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		}
- 	case BPF_FUNC_get_socket_cookie:
- 		return &bpf_get_socket_cookie_sock_addr_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -4866,6 +4870,17 @@ sk_filter_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	}
+ 	return &empty_prog_array.hdr;
+@@ -1556,43 +1557,45 @@ void bpf_prog_array_free(struct bpf_prog_array __rcu *progs)
+ 	kfree_rcu(progs, rcu);
  }
  
-+static const struct bpf_func_proto *
-+cg_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-+{
-+	switch (func_id) {
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
-+	default:
-+		return sk_filter_func_proto(func_id, prog);
-+	}
-+}
-+
- static const struct bpf_func_proto *
- tc_cls_act_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+-int bpf_prog_array_length(struct bpf_prog_array __rcu *progs)
++int bpf_prog_array_length(struct bpf_prog_array __rcu *array)
  {
-@@ -4988,6 +5003,8 @@ sock_ops_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_sock_hash_update_proto;
- 	case BPF_FUNC_get_socket_cookie:
- 		return &bpf_get_socket_cookie_sock_ops_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -5007,6 +5024,8 @@ sk_msg_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_msg_cork_bytes_proto;
- 	case BPF_FUNC_msg_pull_data:
- 		return &bpf_msg_pull_data_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -5034,6 +5053,8 @@ sk_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_sk_redirect_map_proto;
- 	case BPF_FUNC_sk_redirect_hash:
- 		return &bpf_sk_redirect_hash_proto;
-+	case BPF_FUNC_get_local_storage:
-+		return &bpf_get_local_storage_proto;
- 	default:
- 		return bpf_base_func_proto(func_id);
- 	}
-@@ -6838,7 +6859,7 @@ const struct bpf_prog_ops xdp_prog_ops = {
- };
+-	struct bpf_prog **prog;
++	struct bpf_prog_array_item *item;
+ 	u32 cnt = 0;
  
- const struct bpf_verifier_ops cg_skb_verifier_ops = {
--	.get_func_proto		= sk_filter_func_proto,
-+	.get_func_proto		= cg_skb_func_proto,
- 	.is_valid_access	= sk_filter_is_valid_access,
- 	.convert_ctx_access	= bpf_convert_ctx_access,
- };
+ 	rcu_read_lock();
+-	prog = rcu_dereference(progs)->progs;
+-	for (; *prog; prog++)
+-		if (*prog != &dummy_bpf_prog.prog)
++	item = rcu_dereference(array)->items;
++	for (; item->prog; item++)
++		if (item->prog != &dummy_bpf_prog.prog)
+ 			cnt++;
+ 	rcu_read_unlock();
+ 	return cnt;
+ }
+ 
+-static bool bpf_prog_array_copy_core(struct bpf_prog **prog,
++
++static bool bpf_prog_array_copy_core(struct bpf_prog_array __rcu *array,
+ 				     u32 *prog_ids,
+ 				     u32 request_cnt)
+ {
++	struct bpf_prog_array_item *item;
+ 	int i = 0;
+ 
+-	for (; *prog; prog++) {
+-		if (*prog == &dummy_bpf_prog.prog)
++	item = rcu_dereference(array)->items;
++	for (; item->prog; item++) {
++		if (item->prog == &dummy_bpf_prog.prog)
+ 			continue;
+-		prog_ids[i] = (*prog)->aux->id;
++		prog_ids[i] = item->prog->aux->id;
+ 		if (++i == request_cnt) {
+-			prog++;
++			item++;
+ 			break;
+ 		}
+ 	}
+ 
+-	return !!(*prog);
++	return !!(item->prog);
+ }
+ 
+-int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *progs,
++int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *array,
+ 				__u32 __user *prog_ids, u32 cnt)
+ {
+-	struct bpf_prog **prog;
+ 	unsigned long err = 0;
+ 	bool nospc;
+ 	u32 *ids;
+@@ -1611,8 +1614,7 @@ int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *progs,
+ 	if (!ids)
+ 		return -ENOMEM;
+ 	rcu_read_lock();
+-	prog = rcu_dereference(progs)->progs;
+-	nospc = bpf_prog_array_copy_core(prog, ids, cnt);
++	nospc = bpf_prog_array_copy_core(array, ids, cnt);
+ 	rcu_read_unlock();
+ 	err = copy_to_user(prog_ids, ids, cnt * sizeof(u32));
+ 	kfree(ids);
+@@ -1623,14 +1625,14 @@ int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *progs,
+ 	return 0;
+ }
+ 
+-void bpf_prog_array_delete_safe(struct bpf_prog_array __rcu *progs,
++void bpf_prog_array_delete_safe(struct bpf_prog_array __rcu *array,
+ 				struct bpf_prog *old_prog)
+ {
+-	struct bpf_prog **prog = progs->progs;
++	struct bpf_prog_array_item *item = array->items;
+ 
+-	for (; *prog; prog++)
+-		if (*prog == old_prog) {
+-			WRITE_ONCE(*prog, &dummy_bpf_prog.prog);
++	for (; item->prog; item++)
++		if (item->prog == old_prog) {
++			WRITE_ONCE(item->prog, &dummy_bpf_prog.prog);
+ 			break;
+ 		}
+ }
+@@ -1641,7 +1643,7 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 			struct bpf_prog_array **new_array)
+ {
+ 	int new_prog_cnt, carry_prog_cnt = 0;
+-	struct bpf_prog **existing_prog;
++	struct bpf_prog_array_item *existing;
+ 	struct bpf_prog_array *array;
+ 	bool found_exclude = false;
+ 	int new_prog_idx = 0;
+@@ -1650,15 +1652,15 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 	 * the new array.
+ 	 */
+ 	if (old_array) {
+-		existing_prog = old_array->progs;
+-		for (; *existing_prog; existing_prog++) {
+-			if (*existing_prog == exclude_prog) {
++		existing = old_array->items;
++		for (; existing->prog; existing++) {
++			if (existing->prog == exclude_prog) {
+ 				found_exclude = true;
+ 				continue;
+ 			}
+-			if (*existing_prog != &dummy_bpf_prog.prog)
++			if (existing->prog != &dummy_bpf_prog.prog)
+ 				carry_prog_cnt++;
+-			if (*existing_prog == include_prog)
++			if (existing->prog == include_prog)
+ 				return -EEXIST;
+ 		}
+ 	}
+@@ -1684,15 +1686,17 @@ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 
+ 	/* Fill in the new prog array */
+ 	if (carry_prog_cnt) {
+-		existing_prog = old_array->progs;
+-		for (; *existing_prog; existing_prog++)
+-			if (*existing_prog != exclude_prog &&
+-			    *existing_prog != &dummy_bpf_prog.prog)
+-				array->progs[new_prog_idx++] = *existing_prog;
++		existing = old_array->items;
++		for (; existing->prog; existing++)
++			if (existing->prog != exclude_prog &&
++			    existing->prog != &dummy_bpf_prog.prog) {
++				array->items[new_prog_idx++].prog =
++					existing->prog;
++			}
+ 	}
+ 	if (include_prog)
+-		array->progs[new_prog_idx++] = include_prog;
+-	array->progs[new_prog_idx] = NULL;
++		array->items[new_prog_idx++].prog = include_prog;
++	array->items[new_prog_idx].prog = NULL;
+ 	*new_array = array;
+ 	return 0;
+ }
+@@ -1701,7 +1705,6 @@ int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
+ 			     u32 *prog_ids, u32 request_cnt,
+ 			     u32 *prog_cnt)
+ {
+-	struct bpf_prog **prog;
+ 	u32 cnt = 0;
+ 
+ 	if (array)
+@@ -1714,8 +1717,7 @@ int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
+ 		return 0;
+ 
+ 	/* this function is called under trace/bpf_trace.c: bpf_event_mutex */
+-	prog = rcu_dereference_check(array, 1)->progs;
+-	return bpf_prog_array_copy_core(prog, prog_ids, request_cnt) ? -ENOSPC
++	return bpf_prog_array_copy_core(array, prog_ids, request_cnt) ? -ENOSPC
+ 								     : 0;
+ }
+ 
 -- 
 2.14.4
 
