@@ -2,196 +2,108 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F276AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1121C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BB8208DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:40:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB8208DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 84035208D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:48:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84035208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbeHBH36 (ORCPT
+        id S1726147AbeHBHgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 03:29:58 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:24436 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbeHBH35 (ORCPT
+        Thu, 2 Aug 2018 03:36:07 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:33941 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726018AbeHBHgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 03:29:57 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w725e5x4008571;
-        Thu, 2 Aug 2018 13:40:05 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 2 Aug 2018
- 13:40:26 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        "Palmer Dabbelt" <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Waterman <andrew@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>, Darius Rad <darius@bluespec.com>
-CC:     Alan Kao <alankao@andestech.com>,
-        Greentime Hu <greentime@andestech.com>,
-        Vincent Chen <vincentc@andestech.com>,
-        Zong Li <zong@andestech.com>, Nick Hu <nickhu@andestech.com>
-Subject: [PATCH v3 4/4] Add an option to support no-FPU systems
-Date:   Thu, 2 Aug 2018 13:39:51 +0800
-Message-ID: <1533188391-5932-5-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1533188391-5932-1-git-send-email-alankao@andestech.com>
-References: <1533188391-5932-1-git-send-email-alankao@andestech.com>
+        Thu, 2 Aug 2018 03:36:07 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42971092"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 02 Aug 2018 13:46:31 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id 617754B66A09;
+        Thu,  2 Aug 2018 13:46:31 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Thu, 2 Aug 2018 13:46:33 +0800
+Subject: Re: [PATCH v4 4/4] x86/boot/KASLR: Limit kaslr to choosing the
+ immovable memory
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
+ <20180723092908.32656-5-fanc.fnst@cn.fujitsu.com>
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <961acf17-c76f-1c51-f7e6-a7854a487a09@cn.fujitsu.com>
+Date:   Thu, 2 Aug 2018 13:46:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w725e5x4008571
+In-Reply-To: <20180723092908.32656-5-fanc.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 617754B66A09.A975E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FP codes have been separated from common part in previous patches.
-This patch add the CONFIG_FPU option and some stubs to support
-no-FPU systems.
+Hi Fan,
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Vincent Chen <vincentc@andestech.com>
-Cc: Zong Li <zong@andestech.com>
-Cc: Nick Hu <nickhu@andestech.com>
----
- arch/riscv/Kconfig                 |  9 +++++++++
- arch/riscv/include/asm/switch_to.h | 12 ++++++++++++
- arch/riscv/kernel/Makefile         |  2 +-
- arch/riscv/kernel/process.c        |  4 +++-
- arch/riscv/kernel/signal.c         |  2 ++
- 5 files changed, 27 insertions(+), 2 deletions(-)
+At 07/23/2018 05:29 PM, Chao Fan wrote:
+> If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
+> memory regions is not zero. Calculate the intersection between memory
+> regions from e820/efi memory table and immovable memory regions.
+> Or go on the old code.
+> 
+> Rename process_mem_region to slots_count to match slots_fetch_random,
+> and name new function as process_mem_region.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>   arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
+>   1 file changed, 55 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 4705682caf1f..10bda3a1fcaa 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -631,9 +631,9 @@ static unsigned long slots_fetch_random(void)
+>   	return 0;
+>   }
+>   
+> -static void process_mem_region(struct mem_vector *entry,
+> -			       unsigned long minimum,
+> -			       unsigned long image_size)
+> +static void slots_count(struct mem_vector *entry,
+                ^^^^^^^^^^^
+                           is not suitable.
+IMO, how about process_mem_slots() or you may have a better name, it's
+up to you.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 6debcc4afc72..6069597ba73f 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -232,6 +232,15 @@ config RISCV_BASE_PMU
- 
- endmenu
- 
-+config FPU
-+	bool "FPU support"
-+	default y
-+	help
-+	  Say N here if you want to disable all floating-point related procedure
-+	  in the kernel.
-+
-+	  If you don't know what to do here, say Y.
-+
- endmenu
- 
- menu "Kernel type"
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index dd6b05bff75b..94a08d28ccf5 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -18,6 +18,7 @@
- #include <asm/ptrace.h>
- #include <asm/csr.h>
- 
-+#ifdef CONFIG_FPU
- extern void __fstate_save(struct task_struct *save_to);
- extern void __fstate_restore(struct task_struct *restore_from);
- 
-@@ -55,6 +56,17 @@ static inline void __switch_to_aux(struct task_struct *prev,
- 	fstate_restore(next, task_pt_regs(next));
- }
- 
-+#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_INITIAL)
-+
-+#else
-+#define save_fp_state(task, regs) (0)
-+#define restore_fp_state(task, regs) (0)
-+#define fstate_save(task, regs) do { } while (0)
-+#define fstate_restore(task, regs) do { } while (0)
-+#define __switch_to_aux(__prev, __next) do { } while (0)
-+#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_OFF)
-+#endif
-+
- extern struct task_struct *__switch_to(struct task_struct *,
- 				       struct task_struct *);
- 
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index bd433efd915e..f13f7f276639 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -13,7 +13,6 @@ extra-y += vmlinux.lds
- obj-y	+= cpu.o
- obj-y	+= cpufeature.o
- obj-y	+= entry.o
--obj-y	+= fpu.o
- obj-y	+= irq.o
- obj-y	+= process.o
- obj-y	+= ptrace.o
-@@ -32,6 +31,7 @@ obj-y	+= vdso/
- 
- CFLAGS_setup.o := -mcmodel=medany
- 
-+obj-$(CONFIG_FPU)		+= fpu.o
- obj-$(CONFIG_SMP)		+= smpboot.o
- obj-$(CONFIG_SMP)		+= smp.o
- obj-$(CONFIG_MODULES)		+= module.o
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index cb209139ba53..3820d89e2db9 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -83,7 +83,7 @@ void show_regs(struct pt_regs *regs)
- void start_thread(struct pt_regs *regs, unsigned long pc,
- 	unsigned long sp)
- {
--	regs->sstatus = SR_SPIE /* User mode, irqs on */ | SR_FS_INITIAL;
-+	regs->sstatus = DEFAULT_SSTATUS;
- 	regs->sepc = pc;
- 	regs->sp = sp;
- 	set_fs(USER_DS);
-@@ -91,12 +91,14 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
- 
- void flush_thread(void)
- {
-+#ifdef CONFIG_FPU
- 	/*
- 	 * Reset FPU context
- 	 *	frm: round to nearest, ties to even (IEEE default)
- 	 *	fflags: accrued exceptions cleared
- 	 */
- 	memset(&current->thread.fstate, 0, sizeof(current->thread.fstate));
-+#endif
- }
- 
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index bfce852d5ddc..b7bbb5c33594 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -37,6 +37,7 @@ struct rt_sigframe {
- 	struct ucontext uc;
- };
- 
-+#ifdef CONFIG_FPU
- static long restore_fp_state(struct pt_regs *regs,
- 	union __riscv_fp_state *sc_fpregs)
- {
-@@ -85,6 +86,7 @@ static long save_fp_state(struct pt_regs *regs,
- 
- 	return err;
- }
-+#endif
- 
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
--- 
-2.18.0
+> +			unsigned long minimum,
+> +			unsigned long image_size)
+>   {
+>   	struct mem_vector region, overlap;
+>   	struct slot_area slot_area;
+
+slot_area is also unused.
+
+Thanks,
+	dou
+
+
 
