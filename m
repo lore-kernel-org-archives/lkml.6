@@ -2,99 +2,114 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA244C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D807C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DBC9214F1
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBC9214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 23E892150E
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:31:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMYiAP5e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E892150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387536AbeHBPVb (ORCPT
+        id S2387601AbeHBPWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:21:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387426AbeHBPVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:21:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9CE74402242D;
-        Thu,  2 Aug 2018 13:30:17 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 860C9213ED6A;
-        Thu,  2 Aug 2018 13:30:16 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Jim Mattson <jmattson@google.com>, kvm list <kvm@vger.kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-References: <20180727144448.9606-1-vkuznets@redhat.com>
-        <CALMp9eSaiw7wMMhzKZQpM141h6zEz=shu5P++BerbQBTVyFdYA@mail.gmail.com>
-        <e3b7080f-b788-048b-6f3a-e1a90e4206b7@redhat.com>
-        <87sh41nkz5.fsf@vitty.brq.redhat.com>
-        <ee1f404c-75d5-eee2-d2fc-014df3a7d01d@redhat.com>
-Date:   Thu, 02 Aug 2018 15:30:15 +0200
-In-Reply-To: <ee1f404c-75d5-eee2-d2fc-014df3a7d01d@redhat.com> (Paolo
-        Bonzini's message of "Thu, 2 Aug 2018 13:54:51 +0200")
-Message-ID: <87wot899qw.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 2 Aug 2018 11:22:30 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43923 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387569AbeHBPWa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:22:30 -0400
+Received: by mail-io0-f194.google.com with SMTP id y10-v6so1777460ioa.10;
+        Thu, 02 Aug 2018 06:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0pHMjIl6Vb3EaDIrGcHCh8h5y95IxbFQUCGvk51MQuA=;
+        b=aMYiAP5eD+YvuS/s6Mym/DoyDbW7LlcDVkyKTegf6Tzbj/iPz7LOL9tAzeVlz30inR
+         itdAbYPaQxOTlS4LjdLg/Agrd8eykgpe2xsUVPBo/VBmsGeLADPwvK85DkAoLnBaFIf4
+         lFZVIcjOjlq3XOA2q13xHqKGzRnW9n/Q+m37/YVQheljeN9uYAljq+qvmVX6Flfg4Pzf
+         ndbyw6Z0YwyWK7xprvxxkXkWqMfPoKCX/Dqn0Fek0RGdG7MZk1hBEZsYu4RXZrQU9WBt
+         8+NDF1tNyb7MtLuze0ElJFg8hSOO1JBO0e0hKIrkCvp9R7IzuCi4qrJ6JrRVtNOOJAYI
+         PIaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0pHMjIl6Vb3EaDIrGcHCh8h5y95IxbFQUCGvk51MQuA=;
+        b=VMxrF/yWeJdBCwk6bQa9Y0dQ7CT3R+busCXMZSEzyYsBT+JUsa4QY9lAsRndtnWk+n
+         EPHNXW6kEPEUAET5mCzxTIoKHVhekNiBQJkyI4A0Mr2TbbTk/Lj6WsGZfeNKg6mNxJql
+         CO8Xmie88soD7gy9k0HU+BOFuuPzirr5Ma/mDsn6o11DZrXt62wWZP2vmOppuua0qZpB
+         /CNZNMV9ba/jL7UEhTIgKgsxWBl7kE3ppKy/qXaOhSouiv1sx0TzHWuSJ5j9jkyaqiHJ
+         viO+HThzf0hUJgg18ilK6UUEYsQxq9Qi3F4aLTfb6hQclsN2c10s/Um31wduqBC1C/mC
+         xROQ==
+X-Gm-Message-State: AOUpUlEw/4V3t7+KJWwAeQJdvn3nDxsBjWVigvYGqU5C3NjFAPNz3XeY
+        uZg0lmBzRfG8WhB+nTmocWMzadEt+wfczih+RiY=
+X-Google-Smtp-Source: AA+uWPwD1Y8d67O6AK1SPI4au+aKG/ADzPy2RwHC5UpDNFEGHljRv7C4bgYSQ56GfI1T2atrwaSIts7rlgl0XFJkI+8=
+X-Received: by 2002:a6b:b5ca:: with SMTP id e193-v6mr2332128iof.153.1533216676133;
+ Thu, 02 Aug 2018 06:31:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 13:30:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 13:30:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+In-Reply-To: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 2 Aug 2018 15:31:05 +0200
+Message-ID: <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+To:     wgh@torlan.ru
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
-> On 30/07/2018 11:14, Vitaly Kuznetsov wrote:
->> Paolo Bonzini <pbonzini@redhat.com> writes:
->> 
->>> On 27/07/2018 18:48, Jim Mattson wrote:
->>>> On a physical machine, I would expect the default local APIC page to
->>>> fall in the PCI hole, so it would be correct to sink writes and to
->>>> return all ones for reads. Does qemu implement a PCI hole, and does
->>>> this address fall into it?
->>>
->>> It does implement a PCI hole, but when using the kernel LAPIC it expects
->>> that only devices write to that range; therefore that address doesn't
->>> fall into the PCI hole, and instead it generates an MSIs.
->> 
->> Yes, and that's why I believe it's correct to never forward lapic
->> reads/writes from KVM to userspace when lapic is in kernel.
->> 
->> "RFC" was mostly about the inconsistency with the case when APIC access
->> page is in use. To be 100% correct I would suggest to somehow make it
->> behave like MMIO hole in case we're in x2APIC/disabled mode too.
->> 
+On Thu, Aug 2, 2018 at 2:26 PM WGH <wgh@torlan.ru> wrote:
 >
-> FWIW it is possible to move the MSI memory region from system memory to
-> the PCI address space in QEMU, however I'm worried about backwards
-> compatibility.
+> (I originally reported this problem here:
+> https://bugzilla.kernel.org/show_bug.cgi?id=200439)
 >
+> When I updated from 4.14 to 4.16, my LVM snapshotting script broke for
+> no apparent reason.
+>
+> My script has the following line, and it fails like this:
+> + lvcreate --size 5G --snapshot --name snap0 --permission r
+> /dev/mapper/vg0-lvol_rootfs
+>   device-mapper: create ioctl on
+> vg0-snap0-cowLVM-sDdIeh9cecWdaNyRfZC31mxgfwTa4sOeHMJXVOykGVRtfP6Aii7IHvwS066AOLOM-cow
+> failed: Device or resource busy
+>   Failed to lock logical volume vg0/lvol_rootfs.
+>   Aborting. Manual intervention required.
+>
+> At the same time, some errors appear in dmesg as well:
+> [   26.145279] generic_make_request: Trying to write to read-only
+> block-device dm-3 (partno 0)
+> [   26.145288] device-mapper: persistent snapshot: write_header failed
+> [   26.145847] device-mapper: table: 253:4: snapshot: Failed to read
+> snapshot metadata
+> [   26.145851] device-mapper: ioctl: error adding target to table
+>
+> I bisected the vanilla kernel, and the first bad commit is
+> [721c7fc701c71f693307d274d2b346a1ecd4a534] block: fail op_is_write()
+> requests to read-only partitions
 
-You know better :-)
+Adding Mike and dm-devel.
 
-> Vitaly, perhaps you could resubmit this patch, and provide a
-> KVM_CAP_DISABLE_QUIRKS switch that would make apic_mmio_{read,write}
-> return -EOPNOTSUPP in this case?
+From a quick look, --permission r sets DM_READONLY_FLAG, which makes dm
+mark the disk read-only with set_disk_ro(dm_disk(md), 1) in do_resume().
+A bit later it tries to write to the disk from write_header():
 
-Just to make sure I understand,
+  return chunk_io(ps, ps->header_area, 0, REQ_OP_WRITE, 0, 1);
 
-we introduce a KVM_QUIRK_LAPIC_DISABLED_MMIO bit and will be emulating
-MMIO hole in KVM till Qemu is able to deal with reads/writes passed to
-it correctly?
+Thanks,
 
--- 
-  Vitaly
+                Ilya
