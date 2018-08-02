@@ -2,91 +2,262 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAFDC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B42BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE8E214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:22:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE8E214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E763214F1
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:24:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="F2nBrbWC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E763214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbeHBPOA (ORCPT
+        id S2387513AbeHBPPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:14:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57430 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387426AbeHBPN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:13:59 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 974019D92;
-        Thu,  2 Aug 2018 13:22:47 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D973213ED6A;
-        Thu,  2 Aug 2018 13:22:45 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v3 0/6] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
-References: <20180725163057.13948-1-vkuznets@redhat.com>
-        <4c221ed3-5de8-b9cf-663b-d31ce0834c12@redhat.com>
-Date:   Thu, 02 Aug 2018 15:22:44 +0200
-In-Reply-To: <4c221ed3-5de8-b9cf-663b-d31ce0834c12@redhat.com> (Paolo
-        Bonzini's message of "Thu, 2 Aug 2018 14:45:10 +0200")
-Message-ID: <871sbgaonv.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 2 Aug 2018 11:15:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50772 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732270AbeHBPPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:15:43 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w72DOR8A042985;
+        Thu, 2 Aug 2018 08:24:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1533216267;
+        bh=E7lm9e3z4wgOvAgoz0h4TVxVFAvbGGjAg3VtJk+6hRo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=F2nBrbWCSo9nxFxlfC6/svSYkyKUVtEc8Pkh70T8oTFoAkL+ZqsrasosIScaScykC
+         /32LOwPjRzm0arFLZvaKnsiDuidbp7BmJzTe3pyfAfvbXM/w0JbI9chY9cf8cGCenz
+         F/9j4kD/xa3DCAcWq5H4GQ+9AsAKP2KFMW1FuRvc=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w72DORBo006143;
+        Thu, 2 Aug 2018 08:24:27 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 2 Aug
+ 2018 08:24:26 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 2 Aug 2018 08:24:26 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w72DOOV5020440;
+        Thu, 2 Aug 2018 08:24:25 -0500
+Subject: Re: [PATCH 00/31] Introduced new Cadence USBSSP DRD Driver
+To:     Pawel Laszczak <pawell@cadence.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lukasz Tyrala <ltyrala@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>
+References: <1532023084-28083-1-git-send-email-pawell@cadence.com>
+ <82e8093d-eb6b-ea04-7d36-54ee27df3e06@ti.com>
+ <BYAPR07MB4709106F8160EBF0F3B5DBB4DD2C0@BYAPR07MB4709.namprd07.prod.outlook.com>
+From:   Roger Quadros <rogerq@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+ IwrfNkJOLj3CvocMIw==
+Message-ID: <9bc72745-9c19-1522-ab90-ef8a4ef29917@ti.com>
+Date:   Thu, 2 Aug 2018 16:24:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 02 Aug 2018 13:22:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 02 Aug 2018 13:22:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+In-Reply-To: <BYAPR07MB4709106F8160EBF0F3B5DBB4DD2C0@BYAPR07MB4709.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
+On 02/08/18 07:26, Pawel Laszczak wrote:
+>>> This patch set introduce new Cadence USBSSP DRD driver to linux
+>>> kernel.
+>>>
+>>> The Cadence USBSSP DRD Driver s a highly configurable IP Core which
+>>> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
+>>> Host Only (XHCI) configurations.
+>>>
+>>> The current driver has been validated with FPGA burned. We have
+>>> support for PCIe bus, which is used on FPGA prototyping.
+>>>
+>>> The host site of USBSSP controller is compliance with XHCI
+>>> specification, so it works with standard XHCI linux driver.
+>>>
+>>> Also, device side of USBSSP controller was designed in such way to
+>>> looks like XHCI. It means that most of logic of USBSSP controller is
+>>> also compliance with XHCI specification.
+>>>
+>>> Consequently, the USBSSP driver for peripheral mode is very similar to
+>>> XHCI driver.
+>>>
+>>> This version of driver supports only Device mode but DRD and Host mode
+>>> will be added in the future.
+>>>
+>>
+>> Based on the posting date this series looks like v3.
+>>
+>> You should add the version prefix to the patches next time.
+>> e.g. [PATCH v4 ...]
+>>
+> I wanted to start versioning driver after this set patch will be approved. 
+> Also I have plan to add change-log after approval this patch set. 
+> I now treat this patch set as Initial version of driver. 
+> If my approach  is incorrect please correct me ??
+> Maybe before approval  the better versioning will be [PATCH vrc4] ?
 
-> On 25/07/2018 18:30, Vitaly Kuznetsov wrote:
->> Changes since v2:
->> - Rebase to the current kvm/queue.
->> - Simplify clean fields check in prepare_vmcs02{,_full} and
->>   copy_enlightened_to_vmcs12() by resetting the clean fields mask in
->>   nested_vmx_handle_enlightened_vmptrld() when we switch from one L2 guest
->>   to another [Paolo Bonzini]
->> - Cope with the newly introduced vmx_get_nested_state() by returning
->>   -ENOTSUPP when eVMCS is in use. We'll do proper nested state save/restore
->>   later.
->
-> Looks good, but we have to do something about live migration.
+You should prefix patch with RFC.
 
-Sure,
+[RFC PATCH v4]
 
-I don't actually see any fundumental problems when eVMCS is in use,
-however, I'd like to enable migration when we know that it works so I
-was going to wait for your nested virtualization state migration series
-to land and gain Qemu support before starting to experiment. "One bite
-at a time".
+Drop the RFC and reset version to 1 when things are ready for integration.
 
-> Perhaps you can write a testcase analogous to the new state_test, that
-> tests eVMCS in general before we have support in QEMU.
+>  
+>> It is also recommended to add a Change-log in the cover letter explaining
+>> what changes were made in each revision.
+>>
+> I
+> 
+>> There are a bunch of checkpatch warnings in this series.
+>> You can use ./scripts/checkpatch.pl on the patches and fix the issues.
+> Yes I know, but most of them are related to "line over 80 characters" 
+> and " quoted string split across lines" warnings. The first group I could correct
+> but then I will make readability worse. 
+> To eliminate the second group I will have to enlarge the first group of warnings and 
+> the number of  characters in single line will be bigger than 100.  
 
-I'll take a look, thanks for the pointer!
+Readability is preferred over getting rid of "line over 80 char" warning.
+But it is maintainer's call here.
+
+>>> ---
+>>>
+>>> Pawel Laszczak (31):
+>>>   usb: usbssp: Defined register maps and other useful structures.
+>>>   usb: usbssp: Added some decoding functions.
+>>>   usb: usbssp: Add trace events used in driver
+>>>   usb: usbssp: Added USBSSP platform driver
+>>>   usb: usbssp: Added first part of initialization sequence.
+>>>   usb: usbssp: added template functions used by upper layer.
+>>>   usb: usbssp: Initialization - added usbssp_mem_init
+>>>   usb: usbssp: Added ring and segment handling functions.
+>>>   usb: usbssp: add implementation of usbssp_mem_cleanup
+>>>   usb: usbssp: added usbssp_trb_in_td function.
+>>>   usb: usbssp: added function for stopping driver.
+>>>   usb: usbssp: added functions for queuing commands.
+>>>   usb: usbssp: addec procedure for handlin Port Status Change events.
+>>>   usb: usbssp: added procedure handling command completion events.
+>>>   usb: usbssp: added device controller error, transfer and SETUP
+>>>     completion event.
+>>>   usb: usbssp: added connect/disconnect procedures.
+>>>   usb: usbssp: added implementation of usbssp_halt_endpoint function.
+>>>   usb: usbssp: added handling of Port Reset event.
+>>>   usb: usbssp: added support for USB enumeration process.
+>>>   usb: usbssp: added queuing procedure for control transfer.
+>>>   usb: usbssp: added queuing procedure for BULK and INT transfer.
+>>>   usb: usbssp: added procedure removing request from transfer ring
+>>>   usb: usbssp: added implementation of transfer events.
+>>>   usb: usbssp: added detecting command timeout.
+>>>   usb: usbssp: added implementation of usbssp interface.
+>>>   usb: usbssp: added endpoint configuration functionality.
+>>>   usb: usbssp: implements usbssp_gadget_ep_enable function
+>>>   usb: usbssp: implemented usbssp_gadget_ep_disable function.
+>>>   usb: usbssp: added support for LPM.
+>>>   usb: usbssp: added support for TEST_MODE.
+>>>   usb: usbssp: add pci to platform driver wrapper.
+>>>
+>>>  drivers/usb/Kconfig                  |    2 +
+>>>  drivers/usb/Makefile                 |    2 +
+>>>  drivers/usb/usbssp/Kconfig           |   29 +
+>>>  drivers/usb/usbssp/Makefile          |   15 +
+>>>  drivers/usb/usbssp/gadget-dbg.c      |   39 +
+>>>  drivers/usb/usbssp/gadget-ep0.c      |  571 +++++
+>>>  drivers/usb/usbssp/gadget-ext-caps.h |  102 +
+>>>  drivers/usb/usbssp/gadget-if.c       |  569 +++++
+>>>  drivers/usb/usbssp/gadget-mem.c      | 1938 +++++++++++++++
+>>>  drivers/usb/usbssp/gadget-port.c     |  287 +++
+>>>  drivers/usb/usbssp/gadget-ring.c     | 3452 ++++++++++++++++++++++++++
+>>>  drivers/usb/usbssp/gadget-trace.c    |   13 +
+>>>  drivers/usb/usbssp/gadget-trace.h    |  482 ++++
+>>>  drivers/usb/usbssp/gadget.c          | 1909 ++++++++++++++
+>>>  drivers/usb/usbssp/gadget.h          | 2373 ++++++++++++++++++
+>>>  drivers/usb/usbssp/usbssp-pci-wrap.c |  226 ++
+>>>  drivers/usb/usbssp/usbssp-plat.c     |  186 ++
+>>>  17 files changed, 12195 insertions(+)  create mode 100644
+>>> drivers/usb/usbssp/Kconfig  create mode 100644
+>>> drivers/usb/usbssp/Makefile  create mode 100644
+>>> drivers/usb/usbssp/gadget-dbg.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-ep0.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-ext-caps.h
+>>>  create mode 100644 drivers/usb/usbssp/gadget-if.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-mem.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-port.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-ring.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-trace.c  create mode 100644
+>>> drivers/usb/usbssp/gadget-trace.h  create mode 100644
+>>> drivers/usb/usbssp/gadget.c  create mode 100644
+>>> drivers/usb/usbssp/gadget.h  create mode 100644
+>>> drivers/usb/usbssp/usbssp-pci-wrap.c
+>>>  create mode 100644 drivers/usb/usbssp/usbssp-plat.c
+>>>
+>>
+>> --
+> cheers,
+> Pawel
+> 
 
 -- 
-  Vitaly
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
