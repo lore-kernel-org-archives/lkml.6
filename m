@@ -2,61 +2,106 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBFFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E054C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 509A321501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509A321501
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A2B821501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:16:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2B821501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732607AbeHBRGq (ORCPT
+        id S1732623AbeHBRHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:06:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:59350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732500AbeHBRGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:06:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2EBC80D;
-        Thu,  2 Aug 2018 08:15:09 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D53A3F5B3;
-        Thu,  2 Aug 2018 08:15:08 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 16:15:05 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, valentin.schneider@arm.com,
-        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
-        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 01/12] sched: Add static_key for asymmetric cpu
- capacity optimizations
-Message-ID: <20180802151505.GD29978@e105550-lin.cambridge.arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
- <1530699470-29808-2-git-send-email-morten.rasmussen@arm.com>
- <20180731105916.GR2476@hirez.programming.kicks-ass.net>
+        Thu, 2 Aug 2018 13:07:37 -0400
+Received: from forward100j.mail.yandex.net ([5.45.198.240]:42991 "EHLO
+        forward100j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732436AbeHBRHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:07:37 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Aug 2018 13:07:35 EDT
+Received: from mxback3o.mail.yandex.net (mxback3o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::1d])
+        by forward100j.mail.yandex.net (Yandex) with ESMTP id 3D6DE5D86A19;
+        Thu,  2 Aug 2018 18:10:56 +0300 (MSK)
+Received: from smtp2o.mail.yandex.net (smtp2o.mail.yandex.net [2a02:6b8:0:1a2d::26])
+        by mxback3o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 7LqZQCLByp-Atp4Clje;
+        Thu, 02 Aug 2018 18:10:56 +0300
+Received: by smtp2o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id kcj9uGicm6-AtTmC9ON;
+        Thu, 02 Aug 2018 18:10:55 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   WGH <wgh@torlan.ru>
+Subject: LVM snapshot broke between 4.14 and 4.16
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+Date:   Thu, 2 Aug 2018 18:10:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731105916.GR2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 12:59:16PM +0200, Peter Zijlstra wrote:
-> 
-> Combined with that SD_ASYM.. rework I ended up with the below.
-> 
-> Holler if you want it changed :-)
+On 08/02/2018 04:31 PM, Ilya Dryomov wrote:
+> On Thu, Aug 2, 2018 at 2:26 PM WGH <wgh@torlan.ru> wrote:
+>> (I originally reported this problem here:
+>> https://bugzilla.kernel.org/show_bug.cgi?id=200439)
+>>
+>> When I updated from 4.14 to 4.16, my LVM snapshotting script broke for
+>> no apparent reason.
+>>
+>> My script has the following line, and it fails like this:
+>> + lvcreate --size 5G --snapshot --name snap0 --permission r
+>> /dev/mapper/vg0-lvol_rootfs
+>>   device-mapper: create ioctl on
+>> vg0-snap0-cowLVM-sDdIeh9cecWdaNyRfZC31mxgfwTa4sOeHMJXVOykGVRtfP6Aii7IHvwS066AOLOM-cow
+>> failed: Device or resource busy
+>>   Failed to lock logical volume vg0/lvol_rootfs.
+>>   Aborting. Manual intervention required.
+>>
+>> At the same time, some errors appear in dmesg as well:
+>> [   26.145279] generic_make_request: Trying to write to read-only
+>> block-device dm-3 (partno 0)
+>> [   26.145288] device-mapper: persistent snapshot: write_header failed
+>> [   26.145847] device-mapper: table: 253:4: snapshot: Failed to read
+>> snapshot metadata
+>> [   26.145851] device-mapper: ioctl: error adding target to table
+>>
+>> I bisected the vanilla kernel, and the first bad commit is
+>> [721c7fc701c71f693307d274d2b346a1ecd4a534] block: fail op_is_write()
+>> requests to read-only partitions
+> Adding Mike and dm-devel.
+>
+> From a quick look, --permission r sets DM_READONLY_FLAG, which makes dm
+> mark the disk read-only with set_disk_ro(dm_disk(md), 1) in do_resume().
+> A bit later it tries to write to the disk from write_header():
+>
+>   return chunk_io(ps, ps->header_area, 0, REQ_OP_WRITE, 0, 1);
+>
+> Thanks,
+>
+>                 Ilya
 
-Looks good to me.
+After further investigation, this was fixed on lvm2 side (userspace) in
+https://sourceware.org/git/?p=lvm2.git;a=commit;h=a6fdb9d9d70f51c49ad11a87ab4243344e6701a3
+(snapshot: keep COW writable for read-only volumes).
 
-Thanks,
-Morten
+So I guess that's it. Time to poke my distribution package maintainers
+to bump the package version.
+
