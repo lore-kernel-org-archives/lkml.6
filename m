@@ -2,103 +2,263 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CE6C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A370DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CAAE2151B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAAE2151B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 4B0562151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:27:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0562151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeHBSQn (ORCPT
+        id S1727369AbeHBSTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:16:43 -0400
-Received: from gate.crashing.org ([63.228.1.57]:43891 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726828AbeHBSQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:16:42 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w72G1R2g017630;
-        Thu, 2 Aug 2018 11:01:27 -0500
-Message-ID: <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Thu, 02 Aug 2018 11:01:26 -0500
-In-Reply-To: <20180802182959-mutt-send-email-mst@kernel.org>
-References: <20180727095804.GA25592@arm.com>
-         <20180730093414.GD26245@infradead.org>
-         <20180730125100-mutt-send-email-mst@kernel.org>
-         <20180730111802.GA9830@infradead.org>
-         <20180730155633-mutt-send-email-mst@kernel.org>
-         <20180731173052.GA17153@infradead.org>
-         <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
-         <20180801081637.GA14438@arm.com> <20180801083639.GF26378@infradead.org>
-         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
-         <20180802182959-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 14:19:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726221AbeHBSTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 14:19:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5F0DE8197005;
+        Thu,  2 Aug 2018 16:27:22 +0000 (UTC)
+Received: from ming.t460p (ovpn-12-120.pek2.redhat.com [10.72.12.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7DF6920389E0;
+        Thu,  2 Aug 2018 16:27:08 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 00:27:03 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Ming Lei <tom.leiming@gmail.com>, linux-ide@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Tree for Aug 1
+Message-ID: <20180802162654.GA8928@ming.t460p>
+References: <20180801175852.36549130@canb.auug.org.au>
+ <20180801224813.GA13074@roeck-us.net>
+ <1533163965.3158.1.camel@HansenPartnership.com>
+ <20180801234727.GA3762@roeck-us.net>
+ <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
+ <1533168205.3158.12.camel@HansenPartnership.com>
+ <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
+ <CACVXFVMT7UwWHPQ6K-eNWZJOoZ77==Ki7zmX5UtDz4ZQFFB0Jw@mail.gmail.com>
+ <a10a509a-7e5c-1706-52ee-79849cad4224@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a10a509a-7e5c-1706-52ee-79849cad4224@roeck-us.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 02 Aug 2018 16:27:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 02 Aug 2018 16:27:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 18:41 +0300, Michael S. Tsirkin wrote:
+On Thu, Aug 02, 2018 at 06:05:16AM -0700, Guenter Roeck wrote:
+> On 08/02/2018 04:35 AM, Ming Lei wrote:
+> > On Thu, Aug 2, 2018 at 12:58 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > > On 08/01/2018 05:03 PM, James Bottomley wrote:
+> > > > 
+> > > > On Thu, 2018-08-02 at 07:57 +0800, Ming Lei wrote:
+> > > > > 
+> > > > > On Thu, Aug 2, 2018 at 7:47 AM, Guenter Roeck <linux@roeck-us.net>
+> > > > > wrote:
+> > > > > > 
+> > > > > > On Wed, Aug 01, 2018 at 03:52:45PM -0700, James Bottomley wrote:
+> > > > > > > 
+> > > > > > > On Wed, 2018-08-01 at 15:48 -0700, Guenter Roeck wrote:
+> > > > > > > > 
+> > > > > > > > On Wed, Aug 01, 2018 at 05:58:52PM +1000, Stephen Rothwell
+> > > > > > > > wrote:
+> > > > > > > > > 
+> > > > > > > > > Hi all,
+> > > > > > > > > 
+> > > > > > > > > Changes since 20180731:
+> > > > > > > > > 
+> > > > > > > > > The pci tree gained a conflict against the pci-current tree.
+> > > > > > > > > 
+> > > > > > > > > The net-next tree gained a conflict against the bpf tree.
+> > > > > > > > > 
+> > > > > > > > > The block tree lost its build failure.
+> > > > > > > > > 
+> > > > > > > > > The staging tree still had its build failure due to an
+> > > > > > > > > interaction
+> > > > > > > > > with
+> > > > > > > > > the vfs tree for which I disabled CONFIG_EROFS_FS.
+> > > > > > > > > 
+> > > > > > > > > The kspp tree lost its build failure.
+> > > > > > > > > 
+> > > > > > > > > Non-merge commits (relative to Linus' tree): 10070
+> > > > > > > > >    9137 files changed, 417605 insertions(+), 179996 deletions(-
+> > > > > > > > > )
+> > > > > > > > > 
+> > > > > > > > > -----------------------------------------------------------
+> > > > > > > > > ------
+> > > > > > > > > -----------
+> > > > > > > > > 
+> > > > > > > > 
+> > > > > > > > The widespread kernel hang issues are still seen. I managed
+> > > > > > > > to bisect it after working around the transient build failures.
+> > > > > > > > Bisect log is attached below. Unfortunately, it doesn't help
+> > > > > > > > much.
+> > > > > > > > The culprit is reported as:
+> > > > > > > > 
+> > > > > > > > 2d542828c5e9 Merge remote-tracking branch 'scsi/for-next'
+> > > > > > > > 
+> > > > > > > > The preceding merge,
+> > > > > > > > 
+> > > > > > > > 453f1d821165 Merge remote-tracking branch 'cgroup/for-next'
+> > > > > > > > 
+> > > > > > > > checks out fine, as does the tip of scsi-next (commit
+> > > > > > > > 103c7b7e0184,
+> > > > > > > > "Merge branch 'misc' into for-next"). No idea how to proceed.
+> > > > > > > 
+> > > > > > > 
+> > > > > > > This sounds like you may have a problem with this patch:
+> > > > > > > 
+> > > > > > >       commit d5038a13eca72fb216c07eb717169092e92284f1
+> > > > > > >        Author: Johannes Thumshirn <jthumshirn@suse.de>
+> > > > > > >        Date:   Wed Jul 4 10:53:56 2018 +0200
+> > > > > > > 
+> > > > > > >            scsi: core: switch to scsi-mq by default
+> > > > > > > 
+> > > > > > > To verify, boot with the additional kernel parameter
+> > > > > > > 
+> > > > > > > scsi_mod.use_blk_mq=0
+> > > > > > > 
+> > > > > > > Which will reverse the effect of the above patch.
+> > > > > > > 
+> > > > > > 
+> > > > > > Yes, that fixes the problem.
+> > > > > 
+> > > > > 
+> > > > > That may not the root cause, given this issue is only started to
+> > > > > see from next-20180731, but d5038a13eca7 (scsi: core: switch to
+> > > > > scsi-mq by default)
+> > > > > has been in -next for quite a while.
+> > > > > 
+> > > > > Seems something new causes this issue.
+> > > > 
+> > > > 
+> > > > Read my other email about how to find this.
+> > > > 
+> > > > https://marc.info/?l=linux-scsi&m=153316446223676
+> > > > 
+> > > > Now that we've confirmed the issue, Gunter, could you attempt to bisect
+> > > > it as that email describes?
+> > > > 
+> > > 
+> > > So, I am more and more baffled.
+> > > 
+> > > I ran another round of bisect, this time each test executing twice,
+> > > once with "scsi_mod.use_blk_mq=1" and once with "scsi_mod.use_blk_mq=0",
+> > > requiring both to pass. Bisect still points to the merge as culprit.
+> > > 
+> > > Ok, one step further: Actually _revert_ commit d5038a13eca72 before running
+> > > each test, meaning the default is use_blk_mq=0. Still run both tests.
+> > > Bisect _still_ points to the merge of scsi-next as culprit.
+> > > 
+> > > So, to me it looks like the problem is triggered by _something_ in
+> > > scsi-next, combined with _something_ in -next prior to the merge,
+> > > not specifically associated with use_blk_mq=[0|1] or d5038a13eca72,
+> > > but to a combination of some patch in scsi-next and some other patch.
+> > 
+> > Today I am a bit busy, and not trace it much.
+> > 
+> > So far, I found the code hangs in scsi_test_unit_ready()
+> > <-get_capabilities()<-sr_probe(), and scsi_queue_rq()/ata_scsi_queuecmd()
+> > has queued the command successfully, but never completed.
+> > 
+> > Also tried to revert commits merged to ata tree on 30th, 31th,
+> > but no difference.
+> > 
 > 
-> > I don't completely agree:
-> > 
-> > 1 - VIRTIO_F_IOMMU_PLATFORM is a property of the "other side", ie qemu
-> > for example. It indicates that the peer bypasses the normal platform
-> > iommu. The platform code in the guest has no real way to know that this
-> > is the case, this is a specific "feature" of the qemu implementation.
-> > 
-> > 2 - VIRTIO_F_PLATFORM_DMA (or whatever you want to call it), is a
-> > property of the guest platform itself (not qemu), there's no way the
-> > "peer" can advertize it via the virtio negociated flags. At least for
-> > us. I don't know for sure whether that would be workable for the ARM
-> > case. In our case, qemu has no idea at VM creation time that the VM
-> > will turn itself into a secure VM and thus will require bounce
-> > buffering for IOs (including virtio).
-> > 
-> > So unless we have another hook for the arch code to set
-> > VIRTIO_F_PLATFORM_DMA on selected (or all) virtio devices from the
-> > guest itself, I don't see that as a way to deal with it.
-> > 
-> > >  The other issue is VIRTIO_F_IO_BARRIER
-> > > which is very vaguely defined, and which needs a better definition.
-> > > And last but not least we'll need some text explaining the challenges
-> > > of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
-> > > is what would basically cover them, but a good description including
-> > > an explanation of why these matter.
-> > 
-> > Ben.
-> > 
+> Looking at my commit logs, the problem started to happen after various DMA
+> changes were introduced. The boot tests fail on ppc (few), mips (all 32 bit,
+> most 64 bit), i386 (all), x86_64 (most). All other platform pass, even with
+> the same type of boot tests. Here is an example from alpha:
 > 
-> So is it true that from qemu point of view there is nothing special
-> going on?  You pass in a PA, host writes there.
+> Building alpha:defconfig:initrd ... running .... passed
+> Building alpha:defconfig:sata:rootfs ... running ..... passed
+> Building alpha:defconfig:usb:rootfs ... running ..... passed
+> Building alpha:defconfig:usb-uas:rootfs ... running ...... passed
+> Building alpha:defconfig:scsi[AM53C974]:rootfs ... running ....... passed
+> Building alpha:defconfig:scsi[DC395]:rootfs ... running ....... passed
+> Building alpha:defconfig:scsi[MEGASAS]:rootfs ... running ...... passed
+> Building alpha:defconfig:scsi[MEGASAS2]:rootfs ... running ...... passed
+> Building alpha:defconfig:scsi[FUSION]:rootfs ... running ...... passed
+> Building alpha:defconfig:nvme:rootfs ... running ..... passed
+> 
+> arm64:
+> 
+> Building arm64:virt:defconfig:smp:initrd ... running ..... passed
+> Building arm64:virt:defconfig:smp:usb:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:usb-uas:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:virtio:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:nvme:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:mmc:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:scsi[DC395]:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:scsi[AM53C974]:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:scsi[MEGASAS]:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:scsi[MEGASAS2]:rootfs ... running ..... passed
+> Building arm64:virt:defconfig:smp:scsi[53C810]:rootfs ... running ...... passed
+> Building arm64:virt:defconfig:smp:scsi[53C895A]:rootfs ... running ...... passed
+> Building arm64:virt:defconfig:smp:scsi[FUSION]:rootfs ... running ...... passed
+> Skipping arm64:xlnx-zcu102:defconfig:smp:initrd:xilinx/zynqmp-ep108 ...
+> Skipping arm64:xlnx-zcu102:defconfig:smp:sd:rootfs:xilinx/zynqmp-ep108 ...
+> Skipping arm64:xlnx-zcu102:defconfig:smp:sata:rootfs:xilinx/zynqmp-ep108 ...
+> Building arm64:xlnx-zcu102:defconfig:smp:initrd:xilinx/zynqmp-zcu102-rev1.0 ... running ....... passed
+> Building arm64:xlnx-zcu102:defconfig:smp:sd1:rootfs:xilinx/zynqmp-zcu102-rev1.0 ... running ......... passed
+> Building arm64:xlnx-zcu102:defconfig:smp:sata:rootfs:xilinx/zynqmp-zcu102-rev1.0 ... running ...... passed
+> Building arm64:raspi3:defconfig:smp:initrd:broadcom/bcm2837-rpi-3-b ... running ..... passed
+> Building arm64:raspi3:defconfig:smp:sd:rootfs:broadcom/bcm2837-rpi-3-b ... running ........ passed
+> Building arm64:virt:defconfig:nosmp:initrd ... running ..... passed
+> Skipping arm64:xlnx-zcu102:defconfig:nosmp:initrd:xilinx/zynqmp-ep108 ...
+> Skipping arm64:xlnx-zcu102:defconfig:nosmp:sd:rootfs:xilinx/zynqmp-ep108 ...
+> Building arm64:xlnx-zcu102:defconfig:nosmp:initrd:xilinx/zynqmp-zcu102-rev1.0 ... running ......... passed
+> Building arm64:xlnx-zcu102:defconfig:nosmp:sd1:rootfs:xilinx/zynqmp-zcu102-rev1.0 ... running ......... passed
+> 
+> ppc:
+> 
+> Building powerpc:mac99:qemu_ppc_book3s_defconfig:nosmp:rootfs ... running ....... passed
+> Building powerpc:g3beige:qemu_ppc_book3s_defconfig:nosmp:rootfs ... running ...... passed
+> Building powerpc:mac99:qemu_ppc_book3s_defconfig:smp:rootfs ... running ....... passed
+> Building powerpc:virtex-ml507:44x/virtex5_defconfig:devtmpfs:initrd ... running .... passed
+> Building powerpc:mpc8544ds:mpc85xx_defconfig:initrd ... running .... passed
+> Building powerpc:mpc8544ds:mpc85xx_defconfig:scsi:rootfs ... running ..... passed
+> Building powerpc:mpc8544ds:mpc85xx_defconfig:sata:rootfs ... running .... passed
+> Building powerpc:mpc8544ds:mpc85xx_smp_defconfig:initrd ... running .... passed
+> Building powerpc:mpc8544ds:mpc85xx_smp_defconfig:scsi:rootfs ... running ..... passed
+> Building powerpc:mpc8544ds:mpc85xx_smp_defconfig:sata:rootfs ... running .... passed
+> Building powerpc:bamboo:44x/bamboo_defconfig:devtmpfs:initrd ... running .... passed
+> Building powerpc:bamboo:44x/bamboo_defconfig:devtmpfs:scsi[AM53C974]:rootfs ... running ..... passed
+> Building powerpc:bamboo:44x/bamboo_defconfig:devtmpfs:smp:initrd ... running .... passed
+> Building powerpc:bamboo:44x/bamboo_defconfig:devtmpfs:smp:scsi[AM53C974]:rootfs ... running ..... passed
+> Building powerpc:sam460ex:44x/canyonlands_defconfig:devtmpfs:initrd ... running ..... passed
+> Building powerpc:sam460ex:44x/canyonlands_defconfig:devtmpfs:usbdisk:rootfs ... running ...... passed
+> Building powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:initrd ... running .................................. failed (timeout)
+> Building powerpc:mac99:pmac32_defconfig:devtmpfs:zilog:rootfs ... running .................................. failed (timeout)
+> 
+> Maybe that is a coincidence, but it is at least suspicious.
 
-Yes, qemu doesn't see a different. It's the guest that will bounce the
-pages via a pool of "insecure" pages that qemu can access. Normal pages
-in a secure VM come from PAs that qemu cannot physically access.
+This issue can be fixed by reverting d250bf4e776ff09d5 ("blk-mq: only iterate over
+inflight requests in blk_mq_tagset_busy_iter").
 
-Cheers,
-Ben.
+This patch looks wrong, because 'blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT'
+isn't completely same with 'blk_mq_request_started(req)'.
 
-
+Thanks,
+Ming
