@@ -2,149 +2,194 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70D2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19AFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8974F208D5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2EE208D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:11:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXj4s4kM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8974F208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAzVbmvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2EE208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726148AbeHBG5k (ORCPT
+        id S1726129AbeHBHAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 02:57:40 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34649 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbeHBG5k (ORCPT
+        Thu, 2 Aug 2018 03:00:41 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39588 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbeHBHAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 02:57:40 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c13-v6so766471wrt.1;
-        Wed, 01 Aug 2018 22:08:21 -0700 (PDT)
+        Thu, 2 Aug 2018 03:00:41 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m1-v6so467581plt.6;
+        Wed, 01 Aug 2018 22:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YiYSk5IQhAcSZUy8aWzLiQuUe14Rnzc05Q1tVhlQ0dk=;
-        b=cXj4s4kMbGF7lmOXTG+oftzvrzWZUZhx4FK2qD5FlZuoYiChQIaM2HwBLyCkHgKfee
-         nlf1IkGMkBLfDMqb+kk5yGr0i1mFKLfoTk7Es8tZJKAVvzrAVZ5Yns9NfiFLrU0cw9m+
-         PyQH6sM9DzlNAqvFwD6IGAcveikq3OAs1rO1uXpVqgy8GAJWrZQQuVC5kmJEcPMCneGO
-         7auyPSCZg904BFSHtjHFDMOiIJPlS68cobBOhDHIWelAUtXUUhp7X7we/ZyiswgXNgWg
-         sULXHwRhsUAD7GXAZ3nBK6sBsuh1s0B/gUPgjasLW6PpUcRzrd2FVp2sScHBMt89meCI
-         Y/Jw==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZDwPFPLsY8Cd2x10c5rl3c3AFUviyADbqUMVEqUIris=;
+        b=KAzVbmvBDvbZPFjwsA8oWxDqdGIEqrKAa/szk0fpuO4bTlzaDXrrDaO5F/DcIX0UZV
+         j9uMFKKFDxpt5sQD8bRfARGQ90fL/8FHT6611Qq1kojf1ne+Q2HgskT3eAdLv3w56ek4
+         alanyz2MpGQ77eCh3dvJo1VMP2xNpKNxX8Ev7KC4jTc7UWz0Z8XfPi8HdxNAFAeC4b0T
+         PoNMldYJc63KWnuhbNFiqgEnepSKVUGYQiKCO3lZkus+CLWNPEEbwgilxJkP2pXtoj2Y
+         7/HnEpMszsXiw/VSZIi00tadudldzkjcQB2pyMZE0zTDSRoU1gg5LbAvoXBalcwNG1/L
+         VBZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YiYSk5IQhAcSZUy8aWzLiQuUe14Rnzc05Q1tVhlQ0dk=;
-        b=bY0fOUIgUU77cn7KVtd5/H4jSXZB8FR9tUXL4vBIv642MaBIO28esqhTcOntB9kf7e
-         hhtnGB/1LFmzOQCbeeqJYGQz4NsBj6JhrgyUApJCo/oarAKgAYR72G+XVAQOtiHRNAt1
-         AZyHmCUsLWwj8b0OMSSf4oBdeRpckXwYA7wHJL5pQUDpMz1reNB1YPQtxtUbnb8gnB95
-         Agk9GRrJOa4Vk9R+gii60/JSLAYPe5e62w0d+/GqroLiMukUgsPkUMqdWgZTaGtCe5tN
-         Z3dJFoIOv98cDU+5dpwRBMqzWNMJvo28xJTWd+hQDZJuPj7GvLOCk78+T6DTQWaMuJM6
-         MpNQ==
-X-Gm-Message-State: AOUpUlGnAgNjjIn0CgX1AoCvZKgFGgJsMYqmGDkkZyVHPEAFZfeZR8XQ
-        yWT/HlVYrpNLwsAPDo62LYs=
-X-Google-Smtp-Source: AAOMgpfE7aR9UwAuIm5BBru+g3OJyq8lQGPuDrgSGuH8rPUfApJBuS0eLCppw/vrKH2ID37/ugBMXg==
-X-Received: by 2002:adf:8103:: with SMTP id 3-v6mr725701wrm.213.1533186500652;
-        Wed, 01 Aug 2018 22:08:20 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm802494wrn.83.2018.08.01.22.08.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 22:08:19 -0700 (PDT)
-Date:   Wed, 1 Aug 2018 22:08:18 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     ndesaulniers@google.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] inet/connection_sock: prefer _THIS_IP_ to
- current_text_addr
-Message-ID: <20180802050818.GA18742@flashbox>
-References: <20180801215759.103758-1-ndesaulniers@google.com>
- <20180801.184208.776886134692058469.davem@davemloft.net>
- <20180802045825.GA16769@flashbox>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZDwPFPLsY8Cd2x10c5rl3c3AFUviyADbqUMVEqUIris=;
+        b=IIUX2xbfrO+IOOWaClUjBn/ujPUIVYdQd5BKwzpxZL9gF2CBI0hHzOjO7K1gnGWf3L
+         lXyo/+lMRjjdw7pinEQepGyhlDwUBVGeDF/4MOzekQPEwtTyOI/L2LnXvTIZqG5oNKYV
+         lsU0bOFtebsZLubHCzvNwGfiqXkQyohuyg1SH4Uv9CqarErirr/tGpCnugn3dQdcihnp
+         5ypvAzdLaauKpC3SXciFe8qukrxo16hboWdfOp//Fz9gvYMZtcY0ntjVudJS1SxDZ7Yb
+         rSgyyAiKXTcabClJq05oPlxqNwAsBj1uckUrZWw0KRVhRrn8cCOWJ25k1/IDW6GDMzbB
+         qX/Q==
+X-Gm-Message-State: AOUpUlEzgBE8KUNhBX7KzopNHtAGBvOtZVa/cklhf2WiG2Ges2ChYQTU
+        PiFn7JvuJF/y2A1ZOdsfU+Y=
+X-Google-Smtp-Source: AAOMgpeRCi3OYacQL2nMwX+H0PelvG9RSOsKxlSzqNDf4bE/f/dGB2W2atMpLvSGDTrblUDZ6D9o9w==
+X-Received: by 2002:a17:902:530a:: with SMTP id b10-v6mr467905pli.101.1533186681684;
+        Wed, 01 Aug 2018 22:11:21 -0700 (PDT)
+Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:10:affa:813f:5380:6613])
+        by smtp.gmail.com with ESMTPSA id e17-v6sm687516pgo.92.2018.08.01.22.11.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 22:11:19 -0700 (PDT)
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tino Lehnig <tino.lehnig@contabo.de>, stable@vger.kernel.org
+Subject: [PATCH 1/2] zram: remove BD_CAP_SYNCHRONOUS_IO with writeback feature
+Date:   Thu,  2 Aug 2018 14:11:12 +0900
+Message-Id: <20180802051112.86174-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180802045825.GA16769@flashbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 09:58:25PM -0700, Nathan Chancellor wrote:
-> On Wed, Aug 01, 2018 at 06:42:08PM -0700, David Miller wrote:
-> > From: Nick Desaulniers <ndesaulniers@google.com>
-> > Date: Wed,  1 Aug 2018 14:57:59 -0700
-> > 
-> > > -			 sk, what, when, current_text_addr());
-> > > +			 sk, what, when, (void *)_THIS_IP_);
-> > 
-> > Is a fugly macro in all caps really better than a function()?
-> > 
-> > I'm really surprised that _THIS_IP_ is being chosen over
-> > current_text_addr(), seriously.
-> 
-> Hi Dave,
+If zram supports writeback feature, it's no more syncrhonous
+device beause zram does synchronous IO opeation for
+incompressible page.
 
-Sorry for the second email so quick after the first, needed to clarify
-two things.
+Do not pretend to be syncrhonous IO device. It makes system
+very sluggish as waiting IO completion from upper layer.
 
-> 
-> current_text_addr is only used in five places in the entire kernel and
-> this is the only non-architecture specific use.
-> 
-> include/net/inet_connection_sock.h:227:			 sk, what, when, current_text_addr());
-> arch/sh/include/asm/kexec.h:64:		newregs->pc = (unsigned long)current_text_addr();
-> arch/sh/kernel/dwarf.c:602:		pc = (unsigned long)current_text_addr();
-> arch/x86/include/asm/kexec.h:135:		newregs->ip = (unsigned long)current_text_addr();
-> arch/parisc/kernel/unwind.c:442:	r.iaoq[0] = (unsigned long) current_text_addr();
-> 
-> We're trying to merge it with _THIS_IP_ before for most architectures,
+Furthermore, it makes user-after-free problem because swap
+think the opearion is done when the IO functions returns so
+it could free page by will(e.g., lock_page_or_retry and
+goto out_release in do_swap_page) but in fact, IO is
+asynchrnous so driver could access just freed page afterward.
 
-because for most...
+This patch fixes the problem.
 
-> it is defined nearly identically to _THIS_IP_:
-> 
-> #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
-> 
-> #define current_text_addr() ({ __label__ _l; _l: &&_l; })
-> 
-> * arc
-> * arm
-> * arm64
-> * h8300
-> * hexagon
-> * m68k
-> * mips
-> * nds32
-> * nios2
-> * openrisc
-> * powerpc
-> * riscv
-> * unicore32
-> * xtensa
-> 
-> Ultimately, we're trying to turn off a new Clang warning in _THIS_IP_
-> which requires some changes to work around what is believed to be a GCC
-> bug (see https://lore.kernel.org/patchwork/patch/969101/).
+BUG: Bad page state in process qemu-system-x86  pfn:3dfab21
+page:ffffdfb137eac840 count:0 mapcount:0 mapping:0000000000000000 index:0x1
+flags: 0x17fffc000000008(uptodate)
+raw: 017fffc000000008 dead000000000100 dead000000000200 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: PAGE_FLAGS_CHECK_AT_PREP flag set
+bad because of flags: 0x8(uptodate)
+Modules linked in: lz4 lz4_compress zram zsmalloc intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel bin
+fmt_misc pcbc aesni_intel aes_x86_64 crypto_simd cryptd iTCO_wdt glue_helper iTCO_vendor_support intel_cstate lpc_ich mei_me intel_uncore intel_rapl_perf pcspkr joydev sg mfd_core ioatdma mei wmi evdev ipmi_si ipmi_devintf ipmi_msghandler
+acpi_power_meter acpi_pad button ip_tables x_tables autofs4 ext4 crc32c_generic crc16 mbcache jbd2 fscrypto hid_generic usbhid hid sd_mod xhci_pci ehci_pci ahci libahci xhci_hcd ehci_hcd libata igb i2c_algo_bit crc32c_intel scsi_mod i2c_i8
+01 dca usbcore
+CPU: 4 PID: 1039 Comm: qemu-system-x86 Tainted: G    B 4.18.0-rc5+ #1
+Hardware name: Supermicro Super Server/X10SRL-F, BIOS 2.0b 05/02/2017
+Call Trace:
+ dump_stack+0x5c/0x7b
+ bad_page+0xba/0x120
+ get_page_from_freelist+0x1016/0x1250
+ __alloc_pages_nodemask+0xfa/0x250
+ alloc_pages_vma+0x7c/0x1c0
+ do_swap_page+0x347/0x920
+ ? __update_load_avg_se.isra.38+0x1eb/0x1f0
+ ? cpumask_next_wrap+0x3d/0x60
+ __handle_mm_fault+0x7b4/0x1110
+ ? update_load_avg+0x5ea/0x720
+ handle_mm_fault+0xfc/0x1f0
+ __get_user_pages+0x12f/0x690
+ get_user_pages_unlocked+0x148/0x1f0
+ __gfn_to_pfn_memslot+0xff/0x3c0 [kvm]
+ try_async_pf+0x87/0x230 [kvm]
+ tdp_page_fault+0x132/0x290 [kvm]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ kvm_mmu_page_fault+0x74/0x570 [kvm]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0x18/0x30 [kvm_intel]
+ ? vmexit_fill_RSB+0xc/0x30 [kvm_intel]
+ ? vmx_vcpu_run+0x375/0x620 [kvm_intel]
+ kvm_arch_vcpu_ioctl_run+0x9b3/0x1990 [kvm]
+ ? __update_load_avg_se.isra.38+0x1eb/0x1f0
+ ? kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
+ kvm_vcpu_ioctl+0x388/0x5d0 [kvm]
+ ? __switch_to+0x395/0x450
+ ? __switch_to+0x395/0x450
+ do_vfs_ioctl+0xa2/0x630
+ ? __schedule+0x3fd/0x890
+ ksys_ioctl+0x70/0x80
+ ? exit_to_usermode_loop+0xca/0xf0
+ __x64_sys_ioctl+0x16/0x20
+ do_syscall_64+0x55/0x100
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fb30361add7
+Code: 00 00 00 48 8b 05 c1 80 2b 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 91 80 2b 00 f7 d8 64 89 01 48
+RSP: 002b:00007fb2e97f98b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 000000000000ae80 RCX: 00007fb30361add7
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000015
+RBP: 00005652b984e0f0 R08: 00005652b7d513d0 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fb308c66000 R14: 0000000000000000 R15: 00005652b984e0f0
 
-and I should have mentioned that current_text_addr suffers from the
-exact same issue so we're trying not to duplicate it 14 times across
-the kernel.
+Link: https://lore.kernel.org/lkml/0516ae2d-b0fd-92c5-aa92-112ba7bd32fc@contabo.de/
+Reported-by: Tino Lehnig <tino.lehnig@contabo.de>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Tino Lehnig <tino.lehnig@contabo.de>
+Cc: <stable@vger.kernel.org> # v4.15+
+Tested-by: Tino Lehnig <tino.lehnig@contabo.de>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ drivers/block/zram/zram_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> I guess the alternative to this patch is to just define current_text_addr
-> as _THIS_IP_ for all of those architectures, I am not sure how that
-> filters into Nick's plan (I think the goal of this was to try and avoid
-> getting all of the architecture folks involved).
-> 
-> Thanks for your time!
-> Nathan
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 7436b2d27fa3..0b6eda1bd77a 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -298,7 +298,8 @@ static void reset_bdev(struct zram *zram)
+ 	zram->backing_dev = NULL;
+ 	zram->old_block_size = 0;
+ 	zram->bdev = NULL;
+-
++	zram->disk->queue->backing_dev_info->capabilities |=
++				BDI_CAP_SYNCHRONOUS_IO;
+ 	kvfree(zram->bitmap);
+ 	zram->bitmap = NULL;
+ }
+@@ -400,6 +401,8 @@ static ssize_t backing_dev_store(struct device *dev,
+ 	zram->backing_dev = backing_dev;
+ 	zram->bitmap = bitmap;
+ 	zram->nr_pages = nr_pages;
++	zram->disk->queue->backing_dev_info->capabilities &=
++			~BDI_CAP_SYNCHRONOUS_IO;
+ 	up_write(&zram->init_lock);
+ 
+ 	pr_info("setup backing device %s\n", file_name);
+-- 
+2.18.0.597.ga71716f1ad-goog
+
