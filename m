@@ -1,150 +1,151 @@
 Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4226CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3680C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBAD2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBAD2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A256A2145D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A256A2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbeHBKEF (ORCPT
+        id S1732124AbeHBKEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:04:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:43496 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729926AbeHBKED (ORCPT
+        Thu, 2 Aug 2018 06:04:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50941 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeHBKEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:04:03 -0400
-Received: by mail-it0-f69.google.com with SMTP id n68-v6so1472265ite.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:14:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VRU9bPV6JKrEHGjtJBYGbGNeCy2fEKGMGH0VJREb54I=;
-        b=awjp21RrmYhRIYzAvdYxfA31PntNq9VJtmsJA01QRaHU9638WvFMv6aD+4UNAt+tY4
-         8lI5fqEIiFgLXYzQQlup+RBZ7RVviG1r9c+j9LpmwIdok8/fwFBGik2lisE8Rg3vvmDK
-         m1F3fNlfueNbAUwCUuLbPM6prC8Rrh+mDSNzsi3fvS8rlnRdUmDJDxc0IOm5QrvzRBjE
-         hsU2DXyKpyCy/3JNYMn58Xq9Ee10wEX4IqBrr1S9YkC/WLkPodQlZQfY59+KNwE7iqvl
-         VPKteZeLWQR2WF00dlCqiOWXKte6m++2DZ2I0/D5025kI536Xd6nucjzUZmHY+Uymv8d
-         1swQ==
-X-Gm-Message-State: AOUpUlF6GSYr4TFk+Ivp+orf5Pd4YG8WJFxfORoNXhRGPqLWnmn1Sf8E
-        fZM9PyMEpmcjraZTAyu+zqnCGwaJPlVGRhWkM53YXM697wZi
-X-Google-Smtp-Source: AAOMgpdoLomxTxjareN4qGLvZvtQM6EF5QZnPfAy7kW+zZMPKTBTHOrfYrHAwUkahB+XcuuK+ZhpJyQ9++dqYOB2TxOkrpAD9+gF
+        Thu, 2 Aug 2018 06:04:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w728Da4A3431350
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 2 Aug 2018 01:13:36 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w728DZLj3431346;
+        Thu, 2 Aug 2018 01:13:35 -0700
+Date:   Thu, 2 Aug 2018 01:13:35 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Leo Yan <tipbot@zytor.com>
+Message-ID: <tip-6035b6804bdfd662c8ee6226dc90f3764060ec73@git.kernel.org>
+Cc:     kim.phillips@arm.com, mike.leach@linaro.org, jolsa@redhat.com,
+        mingo@kernel.org, tglx@linutronix.de, robert.walker@arm.com,
+        peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        mathieu.poirier@linaro.org, namhyung@kernel.org, leo.yan@linaro.org
+Reply-To: linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+          mathieu.poirier@linaro.org, leo.yan@linaro.org,
+          namhyung@kernel.org, acme@redhat.com, kim.phillips@arm.com,
+          mike.leach@linaro.org, jolsa@redhat.com, mingo@kernel.org,
+          tglx@linutronix.de, robert.walker@arm.com, peterz@infradead.org,
+          hpa@zytor.com
+In-Reply-To: <1531295145-596-5-git-send-email-leo.yan@linaro.org>
+References: <1531295145-596-5-git-send-email-leo.yan@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cs-etm: Support dummy address value for
+ CS_ETM_TRACE_ON packet
+Git-Commit-ID: 6035b6804bdfd662c8ee6226dc90f3764060ec73
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Received: by 2002:a24:294d:: with SMTP id p74-v6mr843833itp.36.1533197642562;
- Thu, 02 Aug 2018 01:14:02 -0700 (PDT)
-Date:   Thu, 02 Aug 2018 01:14:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000db041505726f64d5@google.com>
-Subject: kernel panic: corrupted stack end detected inside scheduler (3)
-From:   syzbot <syzbot+05b2210c521c829a20f5@syzkaller.appspotmail.com>
-To:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Commit-ID:  6035b6804bdfd662c8ee6226dc90f3764060ec73
+Gitweb:     https://git.kernel.org/tip/6035b6804bdfd662c8ee6226dc90f3764060ec73
+Author:     Leo Yan <leo.yan@linaro.org>
+AuthorDate: Wed, 11 Jul 2018 15:45:43 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 31 Jul 2018 10:58:29 -0300
 
-syzbot found the following crash on:
+perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
 
-HEAD commit:    fea49f60c9b7 net: ethernet: ti: cpsw: replace unnecessaril..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d5fae8400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6a9eba95cc5dd8e
-dashboard link: https://syzkaller.appspot.com/bug?extid=05b2210c521c829a20f5
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=108ef064400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1022672c400000
+For CS_ETM_TRACE_ON packet, its fields 'packet->start_addr' and
+'packet->end_addr' equal to 0xdeadbeefdeadbeefUL which are emitted in
+the decoder layer as dummy value, but the dummy value is pointless for
+branch sample when we use 'perf script' command to check program flow.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+05b2210c521c829a20f5@syzkaller.appspotmail.com
+This patch is a preparation to support CS_ETM_TRACE_ON packet for branch
+sample, it converts the dummy address value to zero for more readable;
+this is accomplished by cs_etm__last_executed_instr() and
+cs_etm__first_executed_instr().  The later one is a new function
+introduced by this patch.
 
-RBP: 00007ffdbb414a40 R08: 0000000020000000 R09: 000000000000001c
-R10: 0000000000000040 R11: 0000000000000216 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-Kernel panic - not syncing: corrupted stack end detected inside scheduler
-
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 6188 Comm: syz-executor748 Not tainted 4.18.0-rc6+ #165
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
-RIP: 0010:put_page include/linux/mm.h:913 [inline]
-RIP: 0010:tls_push_sg+0x2a3/0x880 net/tls/tls_main.c:133
-Code: fb 4d 39 e5 75 a2 e8 4c 5f d6 fb 48 8b 85 08 ff ff ff 49 8d 7f 08 48  
-b9 00 00 00 00 00 fc ff df c6 00 00 48 89 f8 48 c1 e8 03 <80> 3c 08 00 0f  
-85 50 05 00 00 48 8b 85 08 ff ff ff 49 8b 5f 08 80
-RSP: 0018:ffff8801c9f1f7b8 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff85a5b634 RDI: 0000000000000008
-RBP: ffff8801c9f1f8d8 R08: ffff8801c7d88340 R09: 0000000000000000
-R10: fffff94000e38bc6 R11: ffffea00071c5e37 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  000000000119b880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8c0bf4a000 CR3: 00000001c777e000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  tls_push_record+0xaf3/0x1400 net/tls/tls_sw.c:247
-  tls_sw_push_pending_record+0x22/0x30 net/tls/tls_sw.c:259
-  tls_handle_open_record net/tls/tls_main.c:155 [inline]
-  tls_sk_proto_close+0x759/0xb90 net/tls/tls_main.c:255
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-  __sock_release+0xd7/0x250 net/socket.c:597
-  sock_close+0x19/0x20 net/socket.c:1157
-  __fput+0x355/0x8b0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4017f0
-Code: 01 f0 ff ff 0f 83 d0 0a 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
-44 00 00 83 3d 3d 30 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 a4 0a 00 00 c3 48 83 ec 08 e8 5a 01 00 00
-RSP: 002b:00007ffdbb414a28 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00000000004017f0
-RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000003
-RBP: 00007ffdbb414a40 R08: 0000000020000000 R09: 000000000000001c
-R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Walker <robert.walker@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1531295145-596-5-git-send-email-leo.yan@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ tools/perf/util/cs-etm.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index ae7c9c880cb2..976db8483478 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -494,6 +494,10 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
+ 
+ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+ {
++	/* Returns 0 for the CS_ETM_TRACE_ON packet */
++	if (packet->sample_type == CS_ETM_TRACE_ON)
++		return 0;
++
+ 	/*
+ 	 * The packet records the execution range with an exclusive end address
+ 	 *
+@@ -505,6 +509,15 @@ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
+ 	return packet->end_addr - A64_INSTR_SIZE;
+ }
+ 
++static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
++{
++	/* Returns 0 for the CS_ETM_TRACE_ON packet */
++	if (packet->sample_type == CS_ETM_TRACE_ON)
++		return 0;
++
++	return packet->start_addr;
++}
++
+ static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
+ {
+ 	/*
+@@ -546,7 +559,7 @@ static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
+ 
+ 	be       = &bs->entries[etmq->last_branch_pos];
+ 	be->from = cs_etm__last_executed_instr(etmq->prev_packet);
+-	be->to	 = etmq->packet->start_addr;
++	be->to	 = cs_etm__first_executed_instr(etmq->packet);
+ 	/* No support for mispredict */
+ 	be->flags.mispred = 0;
+ 	be->flags.predicted = 1;
+@@ -701,7 +714,7 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq)
+ 	sample.ip = cs_etm__last_executed_instr(etmq->prev_packet);
+ 	sample.pid = etmq->pid;
+ 	sample.tid = etmq->tid;
+-	sample.addr = etmq->packet->start_addr;
++	sample.addr = cs_etm__first_executed_instr(etmq->packet);
+ 	sample.id = etmq->etm->branches_id;
+ 	sample.stream_id = etmq->etm->branches_id;
+ 	sample.period = 1;
