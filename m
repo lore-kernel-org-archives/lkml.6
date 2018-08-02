@@ -2,91 +2,108 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B920BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127A2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6458521526
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:30:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qz4RvL02"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6458521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C78F021526
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78F021526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbeHBRVi (ORCPT
+        id S2387688AbeHBRW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:21:38 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:39536 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387579AbeHBRVh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:21:37 -0400
-Received: by mail-pl0-f43.google.com with SMTP id m1-v6so1191281plt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 08:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=q5PD7HSby0seK+k6ExMq+JG69qB3cBtIQvcloSWWDSI=;
-        b=Qz4RvL02B/iC1S3TBqiRU4/7YzgXjbXUdu++PP/1VHv1nU19celKl9IsrfE7IkEgGP
-         InZstdgR80E4IOlHEwnfKACq4bLua+hZ+7OvfNo0mI45NpppIFX9iy3tFT0nVRnoSxnq
-         Hiq5NxDc1XTk4MnKuvJ8AYeAzW9lwEKDm60wM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=q5PD7HSby0seK+k6ExMq+JG69qB3cBtIQvcloSWWDSI=;
-        b=rMIji+d4qtbWcawteLaHH9zcZeB1c+cmobqNJOqi7EzHidQDhPWmvZWMX3UK6EHwkE
-         trwgIvh0wKEGRUTGuGcPBLLyo1QztZgUZNNAvPPtccz8JZiv6Mzs1GyCxurmzUIAmAeg
-         qtTZwcIcdRcpiOsAmwX9rRfieGYCCektDRIseI3H6OoHzp6q6jaOk8c0IkIfm2W+gVt6
-         dQ/LM2RLGQI4ZVGnzFumFxPsnozyYT3jbIKxuuwAkdU8UQPAMjmvI2hD7CIM1oPY1xXM
-         fMS29S/wOkdtYdJQcAex6eneGPa3K82TXVH5UjPIAEADnBHG1ddTPxJhPFbGJcua71Y3
-         QiJA==
-X-Gm-Message-State: AOUpUlFFbCrsVK7qB34WljNJbmVM3Zt9orVe+Is4BlBGZ5dGc8c4/b3m
-        pkxfzvgQoe/+qmFNFiH/jFAVLg==
-X-Google-Smtp-Source: AAOMgpdUkmLAwE1U4E10nfVvbYW6JgqMpPHhZo44mX+xKvUp1rWMCF5loThGUqr5XWFhtKjCURti2A==
-X-Received: by 2002:a17:902:8697:: with SMTP id g23-v6mr2814660plo.292.1533223797383;
-        Thu, 02 Aug 2018 08:29:57 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id l27-v6sm5244796pfi.180.2018.08.02.08.29.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 08:29:56 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 2 Aug 2018 13:22:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:59514 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387508AbeHBRW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:22:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DE5880D;
+        Thu,  2 Aug 2018 08:30:46 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 592BF3F5B3;
+        Thu,  2 Aug 2018 08:30:42 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 16:30:37 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Steve Muckle" <smuckle@google.com>, adharmap@quicinc.com,
+        "Kannan, Saravana" <skannan@quicinc.com>, pkondeti@codeaurora.org,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
+ indicator
+Message-ID: <20180802153035.vjtmqwdwujvt7ojs@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-10-quentin.perret@arm.com>
+ <20180802122629.GU2476@hirez.programming.kicks-ass.net>
+ <20180802130337.uf6tlac2hg4nkbwr@queper01-lin>
+ <20180802130801.GL2494@hirez.programming.kicks-ass.net>
+ <20180802131849.mqpt5lbtcqrxbwig@queper01-lin>
+ <CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com>
+ <20180802141424.ju4jxxbk6pxw3kyq@queper01-lin>
+ <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        johan.hedberg@gmail.com, marcel@holtmann.org, mka@chromium.org
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180802132518.8680-2-bgodavar@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-References: <20180802132518.8680-1-bgodavar@codeaurora.org>
- <20180802132518.8680-2-bgodavar@codeaurora.org>
-Message-ID: <153322379586.17365.15809720177631480146@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v12 1/7] dt-bindings: net: bluetooth: Add device tree bindings
- for QTI chip wcn3990
-Date:   Thu, 02 Aug 2018 08:29:55 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCzQZotmpt40X6uN9O0yAerq6c6bFgiFfqhhcbKsm7k4w@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Balakrishna Godavarthi (2018-08-02 06:25:12)
-> This patch enables regulators for the Qualcomm Bluetooth wcn3990
-> controller.
-> =
+On Thursday 02 Aug 2018 at 17:14:15 (+0200), Vincent Guittot wrote:
+> On Thu, 2 Aug 2018 at 16:14, Quentin Perret <quentin.perret@arm.com> wrote:
+> > Good point, setting the util_avg to 0 for new tasks should help
+> > filtering out those tiny tasks too. And that would match with the idea
+> > of letting tasks build their history before looking at their util_avg ...
+> >
+> > But there is one difference w.r.t frequency selection. The current code
+> > won't mark the system overutilized, but will let sugov raise the
+> > frequency when a new task is enqueued. So in case of a fork bomb, we
+> 
+> If the initial value of util_avg is 0, we should not have any impact
+> on the util_avg of the cfs rq on which the task is attached, isn't it
+> ? so this should not impact both the over utilization state and the
+> frequency selected by sugov or I'm missing something ?
 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+What I tried to say is that setting util_avg to 0 for new tasks will
+prevent schedutil from raising the frequency in case of a fork bomb, and
+I think that could be an issue. And I think this isn't an issue with the
+patch as-is ...
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Sorry if that wasn't clear
 
+> Then, select_task_rq_fair is called for a new task but util_avg is
+> still 0 at that time in the current code so you will have consistent
+> util_avg of the new task before and after calling
+> find_energy_efficient_cpu
+
+New tasks don't go in find_energy_efficient_cpu(), because, as you said,
+they have no consistent util_avg yet when select_task_rq_fair() is called
+for the first time.
+
+Thanks,
+Quentin
