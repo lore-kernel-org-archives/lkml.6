@@ -2,149 +2,180 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD3EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F34FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F8E21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:08:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F8E21501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EEC521501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:11:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YT43JfBN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEC521501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387664AbeHBQ74 (ORCPT
+        id S2387634AbeHBRDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:59:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33572 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387579AbeHBQ7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:59:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4FAC340216F7;
-        Thu,  2 Aug 2018 15:08:19 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2499B213ED6A;
-        Thu,  2 Aug 2018 15:08:18 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
-Subject: [PATCH] x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-Date:   Thu,  2 Aug 2018 17:08:16 +0200
-Message-Id: <20180802150816.18374-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 15:08:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 15:08:19 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        Thu, 2 Aug 2018 13:03:30 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:17029 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387456AbeHBRDa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 13:03:30 -0400
+Received: from mail-vk0-f43.google.com (mail-vk0-f43.google.com [209.85.213.43]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w72FBj21026266;
+        Fri, 3 Aug 2018 00:11:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w72FBj21026266
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1533222706;
+        bh=v9ag9jPJSLb0UDeYHR5VLj2sQh8th2PgAZa7ob104TY=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=YT43JfBN93shGJ1wQOT/YZwYZO45U2vnCObFrRwHJ1bDiyKAr/Ey/PNih1+OT2qz9
+         QKXLtAA5/bL+bRw3hI6jb1N2TB6TJO5kewlikLijkkS6vNzuxpk6I9wTZbF0Wn5Qfl
+         bx4FYKulNRU890sl9tSLM1SQC0c+CUXIBkGk/9swiWCHX3p0gsWA8Qw/OG7NGOezwo
+         Do/UkhQayIT/5KAp3yk/5y8Bvt8EU9iW3AD+Ka5yeImQWugU6smdwMSVQVQd13GzXS
+         KuDAIKrTqPkbDnc+6ITa2Jbh5OD15Ll7KwRQSzaD4rosjDz94lLIjqzn5Yz8SvEaXf
+         TiXQVlizuZpXw==
+X-Nifty-SrcIP: [209.85.213.43]
+Received: by mail-vk0-f43.google.com with SMTP id v72-v6so1215859vkd.4;
+        Thu, 02 Aug 2018 08:11:46 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG4pagmPeNc0QQ7yfpl7ROQWC9RBqX0XNbYC4P6CPiDLQy/7+bC
+        IXghOOmH4Mv433MdcEUtU2DQsHGhnFeCnoO3LuU=
+X-Google-Smtp-Source: AAOMgpcnKX7UgYHXcKO/VIkwzGvkw/sGQRoAW8Gk4fGxmUr1Dlk8DQcldlZ6femIjHiJ9T5I+MQquOdWJI3YRCGF1Ww=
+X-Received: by 2002:a1f:2cce:: with SMTP id s197-v6mr1856916vks.106.1533222705137;
+ Thu, 02 Aug 2018 08:11:45 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 08:11:04 -0700 (PDT)
+In-Reply-To: <31061.1533131891@warthog.procyon.org.uk>
+References: <31061.1533131891@warthog.procyon.org.uk>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 3 Aug 2018 00:11:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT2_eaGbd04y1b=rfYhabiTpbEqYO+fznJrFOdzzmQ9Kw@mail.gmail.com>
+Message-ID: <CAK7LNAT2_eaGbd04y1b=rfYhabiTpbEqYO+fznJrFOdzzmQ9Kw@mail.gmail.com>
+Subject: Re: Can we fix samples/ dependency on headers please?
+To:     David Howells <dhowells@redhat.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Nicolas Pitre <nico@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When VMX is used with flexpriority disabled (because of no support or
-if disabled with module parameter) MMIO interface to lAPIC is still
-available in x2APIC mode while it shouldn't be (kvm-unit-tests):
+Hi.
 
-PASS: apic_disable: Local apic enabled in x2APIC mode
-PASS: apic_disable: CPUID.1H:EDX.APIC[bit 9] is set
-FAIL: apic_disable: *0xfee00030: 50014
 
-The issue appears because we basically do nothing while switching to
-x2APIC mode when APIC access page is not used. apic_mmio_{read,write}
-only check if lAPIC is disabled before proceeding to actual write.
 
-When APIC access is virtualized we correctly manipulate with VMX controls
-in vmx_set_virtual_apic_mode() and we don't get vmexits from memory writes
-in x2APIC mode so there's no issue.
+2018-08-01 22:58 GMT+09:00 David Howells <dhowells@redhat.com>:
+> Hi,
+>
+> I'm currently having to mark various userspace programs I've added to the
+> samples/ directory as BROKEN in samples/Kconfig because the root Makefile
+> mucks up the dependencies between building samples and headers_install.
+>
+> The main culprit seems to be:
+>
+>         commit dd92478a15fa3bfd746ee08b4ef59401c1537804
+>         Author: Nicolas Pitre <nicolas.pitre@linaro.org>
+>         Date:   Sun Feb 28 22:00:00 2016 -0500
+>         kbuild: build sample modules along with the rest of the kernel
+>
+> which make the samples build in parallel with the build, thereby voiding the
+> explicit dependency:
+>
+>         Documentation/ samples/: headers_install
+>
+> and thereby breaking:
+>
+>         commit ddea05fa148b4d8e66498e522a616d87f9cf81e3
+>         Author: Arnd Bergmann <arnd@arndb.de>
+>         Date:   Mon Jul 4 16:39:35 2016 +0200
+>         kbuild: make samples depend on headers_install
+>
+> The obvious fix is to revert commit dd92478a15fa3bfd746ee08b4ef59401c1537804
+> (see attached patch).
+>
+> David
+> ---
+> commit 5c186b58db93e2644012e2fcb4c6ca2e74c6754b
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Wed Aug 1 14:48:22 2018 +0100
+>
+>     Revert "kbuild: build sample modules along with the rest of the kernel"
+>
+>     This reverts commit dd92478a15fa3bfd746ee08b4ef59401c1537804.
+>
+>     The problem with this commit is that some of the samples require the header
+>     installation to occur first, but building them in parallel with the rest of
+>     the build breaks that requirement.
+>
+>     Signed-off-by: David Howells <dhowells@redhat.com>
+>
+> diff --git a/Makefile b/Makefile
+> index ca2af1ab91eb..30fc0a37ad41 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1009,16 +1009,14 @@ vmlinux: scripts/link-vmlinux.sh autoksyms_recursive $(vmlinux-deps) FORCE
+>  ifdef CONFIG_HEADERS_CHECK
+>         $(Q)$(MAKE) -f $(srctree)/Makefile headers_check
+>  endif
+> +ifdef CONFIG_SAMPLES
+> +       $(Q)$(MAKE) $(build)=samples
+> +endif
+>  ifdef CONFIG_GDB_SCRIPTS
+>         $(Q)ln -fsn $(abspath $(srctree)/scripts/gdb/vmlinux-gdb.py)
+>  endif
+>         +$(call if_changed,link-vmlinux)
+>
+> -# Build samples along the rest of the kernel
+> -ifdef CONFIG_SAMPLES
+> -vmlinux-dirs += samples
+> -endif
+> -
+>  # The actual objects are generated when descending,
+>  # make sure no implicit rule kicks in
+>  $(sort $(vmlinux-deps)): $(vmlinux-dirs) ;
+> --
 
-Disabling MMIO interface seems to be easy. The question is: what do we
-do with these reads and writes? If we add apic_x2apic_mode() check to
-apic_mmio_in_range() and return -EOPNOTSUPP these reads and writes will
-go to userspace. When lAPIC is in kernel, Qemu uses this interface to
-inject MSIs only (see kvm_apic_mem_write() in hw/i386/kvm/apic.c). This
-somehow works with disabled lAPIC but when we're in xAPIC mode we will
-get a real injected MSI from every write to lAPIC. Not good.
 
-The simplest solution seems to be to just ignore writes to the region
-and return ~0 for all reads when we're in x2APIC mode. This is what this
-patch does. However, this approach is inconsistent with what currently
-happens when flexpriority is enabled: we allocate APIC access page and
-create KVM memory region so in x2APIC modes all reads and writes go to
-this pre-allocated page which is, btw, the same for all vCPUs.
+I dot not understand why this would fix your problem.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since RFC:
-- add KVM_X86_QUIRK_LAPIC_MMIO_HOLE disabling the newly introduced
-  'MMIO hole' behavior [Paolo Bonzini]
----
- arch/x86/include/uapi/asm/kvm.h |  1 +
- arch/x86/kvm/lapic.c            | 22 +++++++++++++++++++---
- 2 files changed, 20 insertions(+), 3 deletions(-)
+Does the combination of CONFIG_SAMPLES=y and CONFIG_HEADERS_CHECK=n
+still fail to build?
 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 86299efa804a..fd23d5778ea1 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -377,6 +377,7 @@ struct kvm_sync_regs {
- 
- #define KVM_X86_QUIRK_LINT0_REENABLED	(1 << 0)
- #define KVM_X86_QUIRK_CD_NW_CLEARED	(1 << 1)
-+#define KVM_X86_QUIRK_LAPIC_MMIO_HOLE	(1 << 2)
- 
- #define KVM_STATE_NESTED_GUEST_MODE	0x00000001
- #define KVM_STATE_NESTED_RUN_PENDING	0x00000002
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index b5cd8465d44f..83c4e8cc7eb9 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1291,9 +1291,8 @@ EXPORT_SYMBOL_GPL(kvm_lapic_reg_read);
- 
- static int apic_mmio_in_range(struct kvm_lapic *apic, gpa_t addr)
- {
--	return kvm_apic_hw_enabled(apic) &&
--	    addr >= apic->base_address &&
--	    addr < apic->base_address + LAPIC_MMIO_LENGTH;
-+	return addr >= apic->base_address &&
-+		addr < apic->base_address + LAPIC_MMIO_LENGTH;
- }
- 
- static int apic_mmio_read(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
-@@ -1305,6 +1304,15 @@ static int apic_mmio_read(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
- 	if (!apic_mmio_in_range(apic, address))
- 		return -EOPNOTSUPP;
- 
-+	if (!kvm_apic_hw_enabled(apic) || apic_x2apic_mode(apic)) {
-+		if (!kvm_check_has_quirk(vcpu->kvm,
-+					 KVM_X86_QUIRK_LAPIC_MMIO_HOLE))
-+			return -EOPNOTSUPP;
-+
-+		memset(data, 0xff, len);
-+		return 0;
-+	}
-+
- 	kvm_lapic_reg_read(apic, offset, len, data);
- 
- 	return 0;
-@@ -1864,6 +1872,14 @@ static int apic_mmio_write(struct kvm_vcpu *vcpu, struct kvm_io_device *this,
- 	if (!apic_mmio_in_range(apic, address))
- 		return -EOPNOTSUPP;
- 
-+	if (!kvm_apic_hw_enabled(apic) || apic_x2apic_mode(apic)) {
-+		if (!kvm_check_has_quirk(vcpu->kvm,
-+					 KVM_X86_QUIRK_LAPIC_MMIO_HOLE))
-+			return -EOPNOTSUPP;
-+
-+		return 0;
-+	}
-+
- 	/*
- 	 * APIC register must be aligned on 128-bits boundary.
- 	 * 32/64/128 bits registers must be accessed thru 32 bits.
+
+If you need to install headers before building samples,
+this should work:
+
+
+diff --git a/Makefile b/Makefile
+index b47af5a..555ee84 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1023,6 +1023,7 @@ endif
+ # Build samples along the rest of the kernel
+ ifdef CONFIG_SAMPLES
+ vmlinux-dirs += samples
++samples: headers_install
+ endif
+
+ # The actual objects are generated when descending,
+
+
+
+
+Please note Arnd's patch only works for single targets.
+'samples/' and 'samples' are different targets.
+
+
 -- 
-2.14.4
-
+Best Regards
+Masahiro Yamada
