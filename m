@@ -2,112 +2,148 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E7AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069DBC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B04E21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0ACD21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="vohUJHGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B04E21501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QXgYpf50"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0ACD21501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbeHBMIg (ORCPT
+        id S1732065AbeHBMKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 08:08:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52024 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeHBMIg (ORCPT
+        Thu, 2 Aug 2018 08:10:13 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:32778 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbeHBMKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 08:08:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=r8FOyH64w9ZNYWywPsjFBJhYLx3765SYJttn3f+ph3g=; b=vohUJHGeang+hnjD/mpKoWHV0
-        mWmMyqSwpn4gqgIm1rXoB4XDugL2uNLkbb60UwRsjHjGiGvCGGiUWUvj7LPXxlYuow9voTvgQJavQ
-        gsBzlwtJJ7Xjs/Z5FU9zggrp/F9+la5f0HlG1qF5Fdw3GHirsGUYmh75MRICWw5MnOr9k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1flAfu-0001sw-R7; Thu, 02 Aug 2018 10:17:42 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8A3C911242E7; Thu,  2 Aug 2018 11:17:42 +0100 (BST)
-Date:   Thu, 2 Aug 2018 11:17:42 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Piotr Bugalski <bugalski.piotr@gmail.com>,
-        linux-spi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Piotr Bugalski <pbu@cryptera.com>
-Subject: Re: [RFC PATCH v2 5/6] spi: Add QuadSPI driver for Atmel SAMA5D2
-Message-ID: <20180802101742.GF9117@sirena.org.uk>
-References: <20180627131609.13681-1-bugalski.piotr@gmail.com>
- <20180627131609.13681-6-bugalski.piotr@gmail.com>
- <20180801172747.GJ5509@sirena.org.uk>
- <20180801215733.4dfa3a95@bbrezillon>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0hHDr/TIsw4o3iPK"
-Content-Disposition: inline
-In-Reply-To: <20180801215733.4dfa3a95@bbrezillon>
-X-Cookie: BARBARA STANWYCK makes me nervous!!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 2 Aug 2018 08:10:13 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B975D10C0C34;
+        Thu,  2 Aug 2018 03:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1533205183; bh=MxLrjxLdjniRNVpEie01yY2O1D7wG5DUvthm5o1rnGY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QXgYpf50pnu0nrFYhmueBTNx0qPGeTCY2hdkS+D6Oq1LbLzQ9PgjfHJbbxKwzJh5S
+         MS7KFZORd2TmmvF0xhU/U5iOd6A9Wnw+3B4cv7L41vOnFySonOt7a1eCMVi88id9Ed
+         GwlPrQoOxHGH8GVqO5Y76L27hTx4jyFz5WIjHRvBXBepjnU+YjMcpN6ufplzzXRzlX
+         GXj3XiG78ZsWBQllKEfy0nswHU/eW3ceYYzK9qwOjnMOKGSTudmw6vT3hfQm8nwT8P
+         b6KJe9X4scg8Tc3NC6yduxtTtmeA9ypdUxM7RzGS1toSBdAXWYFj+2/f3CoqD0GZeP
+         BPBkkRvQ02qCQ==
+Received: from abrodkin-7480l.internal.synopsys.com (abrodkin-7480l.internal.synopsys.com [10.121.8.87])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DA3623BF7;
+        Thu,  2 Aug 2018 03:19:41 -0700 (PDT)
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>, stable@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH] ARC: AXS10x/HSDK: Allow U-Boot to pass MAC-address to the kernel
+Date:   Thu,  2 Aug 2018 13:19:37 +0300
+Message-Id: <20180802101937.6202-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Otherwise kernel uses random MAC which is not very conveniet.
+With that change in place use might set desired MAC in U-Boot
+with "setenv ethaddr 11:22:33:44:55:66", save environment and
+then from boot to boot the same MAC will be used by the kernel.
 
---0hHDr/TIsw4o3iPK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+One other note for this to happen it's required to pass
+board's .dtb in U-Boot's "bootm" command like that:
+------------------->8-----------------
+bootm 0x82000000 - 0x84000000
+------------------->8-----------------
 
-On Wed, Aug 01, 2018 at 09:57:33PM +0200, Boris Brezillon wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Here 0x82000000 is location of uImage while
+0x80000000 is location of either axs10x.dtb or hsdk.dtb
+previously loaded from SD-card, USB storage or TFTP server.
 
-> 2/ Getting this patch [1] merged and implementing the ->get_name() hook
->    in this driver so that SPI NOR devs declared to the MTD layer keep
->    the same name after the transition to spi-mem and mtdparts=3D passed on
->    the cmdline keep working. Without this in place we're likely to
->    break a few setups :-/.
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: stable@vger.kernel.org # 4.14
+Cc: devicetree@vger.kernel.org
+---
+ arch/arc/boot/dts/axs10x_mb.dtsi | 7 ++++++-
+ arch/arc/boot/dts/hsdk.dts       | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-> [1]https://patchwork.kernel.org/patch/10508693/=20
+diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
+index 47b74fbc403c..37bafd44e36d 100644
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -9,6 +9,10 @@
+  */
+ 
+ / {
++	aliases {
++		ethernet = &gmac;
++	};
++
+ 	axs10x_mb {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -68,7 +72,7 @@
+ 			};
+ 		};
+ 
+-		ethernet@0x18000 {
++		gmac: ethernet@0x18000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = < 0x18000 0x2000 >;
+@@ -81,6 +85,7 @@
+ 			max-speed = <100>;
+ 			resets = <&creg_rst 5>;
+ 			reset-names = "stmmaceth";
++			mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
+ 		};
+ 
+ 		ehci@0x40000 {
+diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
+index 006aa3de5348..d00f283094d3 100644
+--- a/arch/arc/boot/dts/hsdk.dts
++++ b/arch/arc/boot/dts/hsdk.dts
+@@ -25,6 +25,10 @@
+ 		bootargs = "earlycon=uart8250,mmio32,0xf0005000,115200n8 console=ttyS0,115200n8 debug print-fatal-signals=1";
+ 	};
+ 
++	aliases {
++		ethernet = &gmac;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -163,7 +167,7 @@
+ 			#clock-cells = <0>;
+ 		};
+ 
+-		ethernet@8000 {
++		gmac: ethernet@8000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = <0x8000 0x2000>;
+@@ -176,6 +180,7 @@
+ 			phy-handle = <&phy0>;
+ 			resets = <&cgu_rst HSDK_ETH_RESET>;
+ 			reset-names = "stmmaceth";
++			mac-address = [00 00 00 00 00 00]; /* Filled in by U-Boot */
+ 
+ 			mdio {
+ 				#address-cells = <1>;
+-- 
+2.17.1
 
-I don't seem to have a copy of this patch...  not sure it was sent to
-me?
-
---0hHDr/TIsw4o3iPK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti2kUACgkQJNaLcl1U
-h9BcOAgAgAz5lMpc2flvBJhdnlT29tzROXqSpM6wz1kpJM0vXKIBnD1f+CVqWg5x
-isd9zCSCYinC8A8qNtC8KeRZNWDWsuSc0oiizuFp8G5Nf/ep6iIoxlKV8FMwmOVm
-DITz7SZUqd/Ej1peuGNsE3/3dGd2sT0TKnjrrJT7ZjAjfH4OwfWkUS9lshgp0H+y
-l7HDz5Z5JAmEkkCbe97AHnZQv0jths9imXVpaAJJl6uYRkxM3zIAp6vRKf71MSSz
-ubaV2h3gejoYUviXa6zp4+o373AwNwSV/2JSV93wt4ogLkuECl3PMTzm74d+jlJq
-vRr2BQqeV9RkMdcDJmrV27AxH4TvsA==
-=R9Tx
------END PGP SIGNATURE-----
-
---0hHDr/TIsw4o3iPK--
