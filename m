@@ -5,73 +5,117 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAD8C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE61C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 147C0214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147C0214FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BF2A214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:04:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF2A214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732326AbeHBLxC (ORCPT
+        id S1732091AbeHBLyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:53:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50360 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731895AbeHBLwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:52:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E0E140216F4;
-        Thu,  2 Aug 2018 10:01:38 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F0F4A213ED6A;
-        Thu,  2 Aug 2018 10:01:36 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH 2/9] x86/kvm/mmu.c: set get_pdptr hook in kvm_init_shadow_ept_mmu()
-Date:   Thu,  2 Aug 2018 12:01:25 +0200
-Message-Id: <20180802100132.5249-3-vkuznets@redhat.com>
-In-Reply-To: <20180802100132.5249-1-vkuznets@redhat.com>
-References: <20180802100132.5249-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 10:01:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 02 Aug 2018 10:01:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        Thu, 2 Aug 2018 07:54:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36299 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbeHBLyk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 07:54:40 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1flASi-0003G4-Ff; Thu, 02 Aug 2018 12:04:04 +0200
+Date:   Thu, 2 Aug 2018 12:04:04 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Christoph Hellwig <hch@lst.de>
+cc:     palmer@sifive.com, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, anup@brainfault.org,
+        atish.patra@wdc.com, devicetree@vger.kernel.org,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, shorne@gmail.com
+Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
+In-Reply-To: <20180726143723.16585-8-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1808021149470.2037@nanos.tec.linutronix.de>
+References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-8-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kvm_init_shadow_ept_mmu() doesn't set get_pdptr() hook and is this
-not a problem just because MMU context is already initialized and this
-hook points to kvm_pdptr_read(). As we're intended to use a dedicated
-MMU for shadow EPT MMU set this hook explicitly.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/mmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, 26 Jul 2018, Christoph Hellwig wrote:
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 0a40afd71d74..b013aec73d46 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4816,6 +4816,8 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
- 	context->root_level = PT64_ROOT_4LEVEL;
- 	context->direct_map = false;
- 	context->base_role.word = root_page_role.word & mmu_base_role_mask.word;
-+	context->get_pdptr = kvm_pdptr_read;
-+
- 	update_permission_bitmask(vcpu, context, true);
- 	update_pkru_bitmask(vcpu, context, true);
- 	update_last_nonleaf_level(vcpu, context);
--- 
-2.14.4
+> This patch adds a driver for the Platform Level Interrupt Controller (PLIC)
 
+See Documentation/process/submitting-patches.rst and search for 'This patch'
+
+> +static inline void __iomem *plic_hart_offset(int ctxid)
+> +{
+> +	return plic_regs + CONTEXT_BASE + ctxid * CONTEXT_PER_HART;
+> +}
+> +
+> +/*
+> + * Protect mask operations on the registers given that we can't assume that
+> + * atomic memory operations work on them.
+> + */
+> +static DEFINE_SPINLOCK(plic_toggle_lock);
+
+RAW_SPINLOCK please.
+
+> +
+> +static inline void plic_toggle(int ctxid, int hwirq, int enable)
+> +{
+> +	u32 __iomem *reg = plic_regs + ENABLE_BASE + ctxid * ENABLE_PER_HART;
+> +	u32 hwirq_mask = 1 << (hwirq % 32);
+> +
+> +	spin_lock(&plic_toggle_lock);
+> +	if (enable)
+> +		writel(readl(reg) | hwirq_mask, reg);
+> +	else
+> +		writel(readl(reg) & ~hwirq_mask, reg);
+> +	spin_unlock(&plic_toggle_lock);
+> +}
+> +
+> +static inline void plic_irq_toggle(struct irq_data *d, int enable)
+> +{
+> +	int cpu;
+> +
+> +	writel(enable, plic_regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+> +	for_each_present_cpu(cpu)
+> +		plic_toggle(cpu, d->hwirq, enable);
+
+I suggest to make that:
+
+	for_each_cpu(cpu, irq_data_get_affinity_mask(d))
+		plic_toggle(cpu, d->hwirq, enable);
+       
+That gives you immediately support for interrupt affinity. And then it's
+trivial to do the actual irq_chip::irq_set_affinity() magic as well.
+
+> +/*
+> + * Handling an interrupt is a two-step process: first you claim the interrupt
+> + * by reading the claim register, then you complete the interrupt by writing
+> + * that source ID back to the same claim register.  This automatically enables
+> + * and disables the interrupt, so there's nothing else to do.
+> + */
+> +static void plic_handle_irq(struct pt_regs *regs)
+> +{
+> +	void __iomem *claim =
+> +		plic_hart_offset(smp_processor_id()) + CONTEXT_CLAIM;
+
+Either ignore the 80 char thing or just move the assignment into the code
+section please. That line break is horrible to read.
+
+> +	irq_hw_number_t hwirq;
+> +
+
+Other than that this looks halfways sane.
+
+Thanks,
+
+	tglx
