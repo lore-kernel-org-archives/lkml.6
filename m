@@ -2,92 +2,99 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E72DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35695C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFAD2208C3
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0009208C3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CoSs6Q4V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAD2208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L823Nhq5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0009208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbeHBFzV (ORCPT
+        id S1726403AbeHBFzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 01:55:21 -0400
-Received: from imap.thunk.org ([74.207.234.97]:56434 "EHLO imap.thunk.org"
+        Thu, 2 Aug 2018 01:55:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:37635 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbeHBFzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 01:55:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=LCCfssrd3CeWdkpKxHDAHOJ6cjkdIVLcqZC2rT8pLYA=; b=CoSs6Q4VFm+I0zPZq/XSxi7mO+
-        l3TIHw+uUIA8ZSW76AmcaSozIE5Reo4dSlu9lfvCQrT5aNrevnnW9Kdf/myzCwAgmwXboTKCorwp6
-        SESzKpko+yj1YZMxBqy0oPqEAnH4Z04cMigGv5Ns9lY0yHM8TkmAMxNj3rorbD1hcLGA=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fl4sM-0001vS-G9; Thu, 02 Aug 2018 04:06:10 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 5F2607A614F; Thu,  2 Aug 2018 00:06:09 -0400 (EDT)
-Date:   Thu, 2 Aug 2018 00:06:09 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Jeremy Cline <jcline@redhat.com>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: mballoc: Fix spectre gadget in
- ext4_mb_regular_allocator
-Message-ID: <20180802040609.GD9187@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jeremy Cline <jcline@redhat.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
-References: <20180730180747.25200-1-jcline@redhat.com>
+        id S1725942AbeHBFzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 01:55:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41gxSR6MlFz9s0R;
+        Thu,  2 Aug 2018 14:06:31 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1533182791;
+        bh=rZLbmbanPbXVV6eTPyKNSrO4Uu2s4JWT+kV30ESK2Z8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=L823Nhq5cj7jmOPUW9HkPSrgjsEhrKebJdp+gDAn3ysooD7Zjqm/ZTJO4y48q8KiB
+         4ScBrFVzJEr2m52Hj2Fyr7VHv3GVLxq1z9Oege18lzCvuiORa5hoEwslXTxFafKWGi
+         zha+2kK0sJurZvQtJp8cCKnInbrRGho9n55D7Ov50dgO9GNX/zHyqBrENiRntS0gVy
+         wKp4y8DSLdGB/yMR+BzzMWjtaYnEyW6x98ir7gzboOv94Pd6yfqkO26/NOTrT4JvEg
+         SprdGPtJVPP1G17ahpLBgefDFWS58xQlWxDIWUCOkUzqHpvEdXW7PdHVPoGkvcNIG+
+         umktc0kYWrxzA==
+Date:   Thu, 2 Aug 2018 14:06:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rohit kumar <rohitkr@codeaurora.org>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Message-ID: <20180802140630.7618b9d1@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180730180747.25200-1-jcline@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 06:07:47PM +0000, Jeremy Cline wrote:
-> 'ac->ac_g_ex.fe_len' is a user-controlled value which is used in the
-> derivation of 'ac->ac_2order'. 'ac->ac_2order', in turn, is used to
-> index arrays which makes it a potential spectre gadget. Fix this by
-> sanitizing the value assigned to 'ac->ac2_order'.  This covers the
-> following accesses found with the help of smatch:
-> 
-> * fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
->   spectre issue 'grp->bb_counters' [w] (local cap)
-> 
-> * fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
->   'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
-> 
-> * fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
->   'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
-> 
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: stable@vger.kernel.org
-> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Jeremy Cline <jcline@redhat.com>
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied.
+Hi all,
 
-					- Ted
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+WARNING: unmet direct dependencies detected for SND_SOC_QDSP6
+  Depends on [n]: SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC [=3Dm] && Q=
+COM_APR [=3Dn] && HAS_DMA [=3Dy]
+  Selected by [m]:
+  - SND_SOC_SDM845 [=3Dm] && SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC =
+[=3Dm]
+
+Introduced by commit
+
+  6b1687bf76ef ("ASoC: qcom: add sdm845 sound card support")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltig0YACgkQAVBC80lX
+0Gwr2Qf/YzcvpELTqK+2twSOMiBXWDwoVM1JdWi6sUFm99u31dwPVzTm0dZLm8t5
+lLkx0lJ88XYDvi/cIEOTgrG2SZuouBNQaNEkCGJOy1g/QALZu+t4KKWCkt3e8UiJ
+S2TvfdTmFUmhOA+23SrBnUixIlWQvVrBS+vQZKVS/6zr5SJAYammtQEAo4ntlTCU
+mqYyKGf+G/JMo5kmZzSKtUIVgM+9odQxzxBiDuKjMplaHsLWGEeM8fj1LbHUWAtv
+v5aeNZeEoFzO4WOau16DAi/HAgAaVAN4MyRNsG4xcyZ7KekMtOezvbfAvmZHDwR0
+kfgu0rNsDJcmAucm9b0hnCH8xNJbIQ==
+=R9UE
+-----END PGP SIGNATURE-----
+
+--Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ--
