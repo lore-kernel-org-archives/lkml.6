@@ -2,99 +2,194 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35695C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0082CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0009208C3
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L823Nhq5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0009208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A90AF208D4
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90AF208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbeHBFzm (ORCPT
+        id S1726967AbeHBF4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 01:55:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:37635 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbeHBFzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 01:55:41 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41gxSR6MlFz9s0R;
-        Thu,  2 Aug 2018 14:06:31 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533182791;
-        bh=rZLbmbanPbXVV6eTPyKNSrO4Uu2s4JWT+kV30ESK2Z8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=L823Nhq5cj7jmOPUW9HkPSrgjsEhrKebJdp+gDAn3ysooD7Zjqm/ZTJO4y48q8KiB
-         4ScBrFVzJEr2m52Hj2Fyr7VHv3GVLxq1z9Oege18lzCvuiORa5hoEwslXTxFafKWGi
-         zha+2kK0sJurZvQtJp8cCKnInbrRGho9n55D7Ov50dgO9GNX/zHyqBrENiRntS0gVy
-         wKp4y8DSLdGB/yMR+BzzMWjtaYnEyW6x98ir7gzboOv94Pd6yfqkO26/NOTrT4JvEg
-         SprdGPtJVPP1G17ahpLBgefDFWS58xQlWxDIWUCOkUzqHpvEdXW7PdHVPoGkvcNIG+
-         umktc0kYWrxzA==
-Date:   Thu, 2 Aug 2018 14:06:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rohit kumar <rohitkr@codeaurora.org>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Message-ID: <20180802140630.7618b9d1@canb.auug.org.au>
+        Thu, 2 Aug 2018 01:56:34 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59105 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725765AbeHBF4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 01:56:34 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A15245EE55BE4;
+        Thu,  2 Aug 2018 12:07:21 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 2 Aug 2018
+ 12:07:15 +0800
+Date:   Thu, 2 Aug 2018 12:05:57 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        "Hao Fang" <fanghao11@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180802040557.GL160746@Turing-Arch-b>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801165644.GA3820@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 02, 2018 at 02:33:12AM +0000, Tian, Kevin wrote:
+> Date: Thu, 2 Aug 2018 02:33:12 +0000
+> From: "Tian, Kevin" <kevin.tian@intel.com>
+> To: Jerome Glisse <jglisse@redhat.com>, Kenneth Lee <nek.in.cn@gmail.com>
+> CC: Hao Fang <fanghao11@huawei.com>, Herbert Xu
+>  <herbert@gondor.apana.org.au>, "kvm@vger.kernel.org"
+>  <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-doc@vger.kernel.org"
+>  <linux-doc@vger.kernel.org>, "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+>  "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+>  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+>  "linuxarm@huawei.com" <linuxarm@huawei.com>, Alex Williamson
+>  <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+>  "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Philippe
+>  Ombredanne <pombredanne@nexb.com>, Zaibo Xu <xuzaibo@huawei.com>, Kenneth
+>  Lee <liguozhu@hisilicon.com>, "David S . Miller" <davem@davemloft.net>,
+>  "linux-accelerators@lists.ozlabs.org"
+>  <linux-accelerators@lists.ozlabs.org>
+> Subject: RE: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+> Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+> 
+> > From: Jerome Glisse
+> > Sent: Thursday, August 2, 2018 12:57 AM
+> > 
+> > On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
+> > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > >
+> > > WarpDrive is an accelerator framework to expose the hardware
+> > capabilities
+> > > directly to the user space. It makes use of the exist vfio and vfio-mdev
+> > > facilities. So the user application can send request and DMA to the
+> > > hardware without interaction with the kernel. This remove the latency
+> > > of syscall and context switch.
+> > >
+> > > The patchset contains documents for the detail. Please refer to it for
+> > more
+> > > information.
+> > >
+> > > This patchset is intended to be used with Jean Philippe Brucker's SVA
+> > > patch [1] (Which is also in RFC stage). But it is not mandatory. This
+> > > patchset is tested in the latest mainline kernel without the SVA patches.
+> > > So it support only one process for each accelerator.
+> > >
+> > > With SVA support, WarpDrive can support multi-process in the same
+> > > accelerator device.  We tested it in our SoC integrated Accelerator (board
+> > > ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
+> > 
+> > I have not fully inspected things nor do i know enough about
+> > this Hisilicon ZIP accelerator to ascertain, but from glimpsing
+> > at the code it seems that it is unsafe to use even with SVA due
+> > to the doorbell. There is a comment talking about safetyness
+> > in patch 7.
+> > 
+> > Exposing thing to userspace is always enticing, but if it is
+> > a security risk then it should clearly say so and maybe a
+> > kernel boot flag should be necessary to allow such device to
+> > be use.
+> > 
 
-Hi all,
+But doorbell is just a notification. Except for DOS (to make hardware busy) it
+cannot actually take or change anything from the kernel space. And the DOS
+problem can be always taken as the problem that a group of processes share the
+same kernel entity.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+In the coming HIP09 hardware, the doorbell will come with a random number so
+only the process who allocated the queue can knock it correctly.
+> > 
+> > My more general question is do we want to grow VFIO to become
+> > a more generic device driver API. This patchset adds a command
+> > queue concept to it (i don't think it exist today but i have
+> > not follow VFIO closely).
+> > 
 
-WARNING: unmet direct dependencies detected for SND_SOC_QDSP6
-  Depends on [n]: SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC [=3Dm] && Q=
-COM_APR [=3Dn] && HAS_DMA [=3Dy]
-  Selected by [m]:
-  - SND_SOC_SDM845 [=3Dm] && SOUND [=3Dm] && !UML && SND [=3Dm] && SND_SOC =
-[=3Dm]
+The thing is, VFIO is the only place to support DMA from user land. If we don't
+put it here, we have to create another similar facility to support the same.
 
-Introduced by commit
+> > Why is that any better that existing driver model ? Where a
+> > device create a device file (can be character device, block
+> > device, ...). Such models also allow for direct hardware
+> > access from userspace. For instance see the AMD KFD driver
+> > inside drivers/gpu/drm/amd
+> 
+> One motivation I guess, is that most accelerators lack of a 
+> well-abstracted high level APIs similar to GPU side (e.g. OpenCL 
+> clearly defines Shared Virtual Memory models). VFIO mdev
+> might be an alternative common interface to enable SVA usages 
+> on various accelerators...
+> 
+Yes.
+> > 
+> > So you can already do what you are doing with the Hisilicon
+> > driver today without this new infrastructure. This only need
+> > hardware that have command queue and doorbell like mechanisms.
+> > 
+> > 
+> > Unlike mdev which unify a very high level concept, it seems
+> > to me spimdev just introduce low level concept (namely command
+> > queue) and i don't see the intrinsic value here.
+> > 
+As I have said, VFIO is the only place support DMA from user space now.
+> > 
+> > Cheers,
+> > Jérôme
+> > _______________________________________________
+> > iommu mailing list
+> > iommu@lists.linux-foundation.org
+> > https://lists.linuxfoundation.org/mailman/listinfo/iommu
 
-  6b1687bf76ef ("ASoC: qcom: add sdm845 sound card support")
+-- 
+			-Kenneth(Hisilicon)
 
---=20
-Cheers,
-Stephen Rothwell
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
 
---Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltig0YACgkQAVBC80lX
-0Gwr2Qf/YzcvpELTqK+2twSOMiBXWDwoVM1JdWi6sUFm99u31dwPVzTm0dZLm8t5
-lLkx0lJ88XYDvi/cIEOTgrG2SZuouBNQaNEkCGJOy1g/QALZu+t4KKWCkt3e8UiJ
-S2TvfdTmFUmhOA+23SrBnUixIlWQvVrBS+vQZKVS/6zr5SJAYammtQEAo4ntlTCU
-mqYyKGf+G/JMo5kmZzSKtUIVgM+9odQxzxBiDuKjMplaHsLWGEeM8fj1LbHUWAtv
-v5aeNZeEoFzO4WOau16DAi/HAgAaVAN4MyRNsG4xcyZ7KekMtOezvbfAvmZHDwR0
-kfgu0rNsDJcmAucm9b0hnCH8xNJbIQ==
-=R9UE
------END PGP SIGNATURE-----
-
---Sig_/fu4qPo_36Zq/xl/Y6r3sLCJ--
