@@ -2,138 +2,415 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5B8C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8DEC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF632156B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF632156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id D6ABF2156B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:57:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fqPg0SQj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6ABF2156B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeHBVr2 (ORCPT
+        id S1731202AbeHBVuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:47:28 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:23093 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726268AbeHBVr2 (ORCPT
+        Thu, 2 Aug 2018 17:50:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38348 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeHBVuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:47:28 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id EE6E5EA7
-        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 14:54:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id lJfkfoAk8bXuJlJg8fE3u8; Thu, 02 Aug 2018 14:54:49 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=56556 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1flJfj-002FlC-T2; Thu, 02 Aug 2018 14:54:08 -0500
-Subject: Re: [PATCH] ALSA: usb-audio: Fix wrong sizeof argument
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20180802141723.GA7258@embeddedor.com>
- <s5hbmakluin.wl-tiwai@suse.de>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <23ef19da-3c37-4902-62e9-c1042d9e178e@embeddedor.com>
-Date:   Thu, 2 Aug 2018 14:54:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 17:50:12 -0400
+Received: by mail-pl0-f66.google.com with SMTP id u11-v6so1499237plq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n5lAZgnQJy/l73Vw7NitXKbX0yVWSpbXr4IAGPW7w0Q=;
+        b=fqPg0SQj73ZfX80td8pBTPoX750ikleQ1XJO1BMlPKoFeEwxN4y8qeZyNh5vt4C6BJ
+         Ktvv4u/2qm4hj2lBdYkuhLCd9THngdcJNocjlfZyH0dyrsf7VjKN/AeOuKQslkxTZwSM
+         vLh4zNVai6rZIz8Jsbc2XF6ExYHoml78l6AIc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n5lAZgnQJy/l73Vw7NitXKbX0yVWSpbXr4IAGPW7w0Q=;
+        b=fCJaoDnoDzQxZL6N3kZS0IYZH7P9Gtbxdvo2vR/GW+mzTj5MbevrwkM98pC/PJdU7y
+         b+3EWnelIZHuy6CtkYvpiwWzJS5lDB4eRBvUREguI+Jiyt2kTSv3Kvf/8pwXQgDSM/7+
+         GUAbR51Sj/aY+I2PrN1ZslZrpz52cxf96a4XEaHhOPG1wp+5EDaG5tqnnaYf5QcYRlDb
+         mBub5Sa76n7fZey+EGuH8GxO7ls32o7hrAUGh1fBO/GCvfvRZ0pTncM4QDHoyHMkEwKN
+         7cKVPTZhGPea8HD9VduNTpZzPVEDNvB3mCBuiiFhwdC+YO/NWTh8BodFzPEn2Wy8OQ0f
+         P4Dw==
+X-Gm-Message-State: AOUpUlHxGyoo9k+9a0FcOlJKegXE5mehYcWw1xrMEX6IiX+TkXqCLKHq
+        oE+QwpJ6+zslFVuv0Vxbc+1T6w==
+X-Google-Smtp-Source: AAOMgpdcKyY8BOLL7FUKW8Oba6/sUrBh5xy5O/MUGW4EqBXaF6Bo5pkII76JPdrIHS2tdooBTkxg+w==
+X-Received: by 2002:a17:902:44a4:: with SMTP id l33-v6mr772919pld.134.1533239854506;
+        Thu, 02 Aug 2018 12:57:34 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id q140-v6sm3691555pgq.11.2018.08.02.12.57.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 12:57:33 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 12:57:33 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v13 7/7] Bluetooth: hci_qca: Add support for Qualcomm
+ Bluetooth chip wcn3990
+Message-ID: <20180802195733.GQ68975@google.com>
+References: <20180802190732.4811-1-bgodavar@codeaurora.org>
+ <20180802190732.4811-8-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <s5hbmakluin.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.61.218
-X-Source-L: No
-X-Exim-ID: 1flJfj-002FlC-T2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.61.218]:56556
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Disposition: inline
+In-Reply-To: <20180802190732.4811-8-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/02/2018 09:20 AM, Takashi Iwai wrote:
-> On Thu, 02 Aug 2018 16:17:23 +0200,
->  Gustavo A. R. Silva  wrote:
->>
->> The correct argument to be passed to kzalloc is sizeof(*pd)
->>
->> Addresses-Coverity-ID: 1472224 ("Wrong sizeof argument")
->> Fixes: 7edf3b5e6a45 ("ALSA: usb-audio: AudioStreaming Power Domain parsing")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Fri, Aug 03, 2018 at 12:37:32AM +0530, Balakrishna Godavarthi wrote:
+> Add support to set voltage/current of various regulators
+> to power up/down Bluetooth chip wcn3990.
 > 
-> It's already fixed, thanks.
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v13:
+>    * updated review comments.
 > 
+> Changes in v12:
+>     * removed retrying iteration loop in qca_wcn3990_init.
+>  
+> Changes in v11:
+>     * removed support to read regulator currents from dts.
+>     * updated review comments.
+> 
+> Changes in v10:
+>     * added support to read regulator currents from dts.
+>     * added support to try to connect with chip if it fails to respond to initial commands
+>     * updated review comments.
+> 
+> changes in v9:
+>     * moved flow control to vendor and set_baudarte functions.
+>     * removed parent regs.
+> 
+> changes in v8:
+>     * closing qca buffer, if qca_power_setup fails
+>     * chnaged ibs start timer function call location.
+>     * updated review comments.
+>   
+> changes in v7:
+>     * addressed review comments.
+> 
+> changes in v6:
+>     * Hooked up qca_power to qca_serdev.
+>     * renamed all the naming inconsistency functions with qca_*
+>     * leveraged common code of ROME for wcn3990.
+>     * created wrapper functions for re-usable blocks.
+>     * updated function of _*regulator_enable and _*regualtor_disable.  
+>     * removed redundant comments and functions.
+>     * addressed review comments.
+> 
+> Changes in v5:
+>     * updated regulator vddpa min_uV to 1304000.
+>       * addressed review comments.
+>  
+> Changes in v4:
+>     * Segregated the changes of btqca from hci_qca
+>     * rebased all changes on top of bluetooth-next.
+>     * addressed review comments.
+> ---
+>  drivers/bluetooth/btqca.h   |   3 +
+>  drivers/bluetooth/hci_qca.c | 402 +++++++++++++++++++++++++++++++-----
+>  2 files changed, 358 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+> index a9c2779f3e07..0c01f375fe83 100644
+> --- a/drivers/bluetooth/btqca.h
+> +++ b/drivers/bluetooth/btqca.h
+> @@ -37,6 +37,9 @@
+>  #define EDL_TAG_ID_HCI			(17)
+>  #define EDL_TAG_ID_DEEP_SLEEP		(27)
+>  
+> +#define QCA_WCN3990_POWERON_PULSE	0xFC
+> +#define QCA_WCN3990_POWEROFF_PULSE	0xC0
+> +
+>  enum qca_bardrate {
+>  	QCA_BAUDRATE_115200 	= 0,
+>  	QCA_BAUDRATE_57600,
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index a6e7d38ef931..66f36527e4dd 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -5,7 +5,7 @@
+>   *  protocol extension to H4.
+>   *
+>   *  Copyright (C) 2007 Texas Instruments, Inc.
+> - *  Copyright (c) 2010, 2012 The Linux Foundation. All rights reserved.
+> + *  Copyright (c) 2010, 2012, 2018 The Linux Foundation. All rights reserved.
+>   *
+>   *  Acknowledgements:
+>   *  This file is based on hci_ll.c, which was...
+> @@ -31,9 +31,14 @@
+>  #include <linux/kernel.h>
+>  #include <linux/clk.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/serdev.h>
+>  
+>  #include <net/bluetooth/bluetooth.h>
+> @@ -124,12 +129,46 @@ enum qca_speed_type {
+>  	QCA_OPER_SPEED
+>  };
+>  
+> +/*
+> + * Voltage regulator information required for configuring the
+> + * QCA Bluetooth chipset
+> + */
+> +struct qca_vreg {
+> +	const char *name;
+> +	unsigned int min_uV;
+> +	unsigned int max_uV;
+> +	unsigned int load_uA;
+> +};
+> +
+> +struct qca_vreg_data {
+> +	enum qca_btsoc_type soc_type;
+> +	struct qca_vreg *vregs;
+> +	size_t num_vregs;
+> +};
+> +
+> +/*
+> + * Platform data for the QCA Bluetooth power driver.
+> + */
+> +struct qca_power {
+> +	struct device *dev;
+> +	const struct qca_vreg_data *vreg_data;
+> +	struct regulator_bulk_data *vreg_bulk;
+> +	bool vregs_on;
+> +};
+> +
+>  struct qca_serdev {
+>  	struct hci_uart	 serdev_hu;
+>  	struct gpio_desc *bt_en;
+>  	struct clk	 *susclk;
+> +	enum qca_btsoc_type btsoc_type;
+> +	struct qca_power *bt_power;
+> +	u32 init_speed;
+> +	u32 oper_speed;
+>  };
+>  
+> +static int qca_power_setup(struct hci_uart *hu, bool on);
+> +static void qca_power_shutdown(struct hci_dev *hdev);
+> +
+>  static void __serial_clock_on(struct tty_struct *tty)
+>  {
+>  	/* TODO: Some chipset requires to enable UART clock on client
+> @@ -407,6 +446,7 @@ static int qca_open(struct hci_uart *hu)
+>  {
+>  	struct qca_serdev *qcadev;
+>  	struct qca_data *qca;
+> +	int ret;
+>  
+>  	BT_DBG("hu %p qca_open", hu);
+>  
+> @@ -458,19 +498,32 @@ static int qca_open(struct hci_uart *hu)
+>  
+>  	hu->priv = qca;
+>  
+> -	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 0);
+> -	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
+> -
+> -	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+> -	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+> -
+>  	if (hu->serdev) {
+>  		serdev_device_open(hu->serdev);
+>  
+>  		qcadev = serdev_device_get_drvdata(hu->serdev);
+> -		gpiod_set_value_cansleep(qcadev->bt_en, 1);
+> +		if (qcadev->btsoc_type != QCA_WCN3990) {
+> +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
+> +		} else {
+> +			hu->init_speed = qcadev->init_speed;
+> +			hu->oper_speed = qcadev->oper_speed;
+> +			ret = qca_power_setup(hu, true);
+> +			if (ret) {
+> +				destroy_workqueue(qca->workqueue);
+> +				kfree_skb(qca->rx_skb);
+> +				hu->priv = NULL;
+> +				kfree(qca);
+> +				return ret;
+> +			}
+> +		}
+>  	}
+>  
+> +	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 0);
+> +	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
+> +
+> +	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+> +	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+> +
+>  	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
+>  	       qca->tx_idle_delay, qca->wake_retrans);
+>  
+> @@ -554,10 +607,13 @@ static int qca_close(struct hci_uart *hu)
+>  	qca->hu = NULL;
+>  
+>  	if (hu->serdev) {
+> -		serdev_device_close(hu->serdev);
+> -
+>  		qcadev = serdev_device_get_drvdata(hu->serdev);
+> -		gpiod_set_value_cansleep(qcadev->bt_en, 0);
+> +		if (qcadev->btsoc_type == QCA_WCN3990)
+> +			qca_power_shutdown(hu->hdev);
+> +		else
+> +			gpiod_set_value_cansleep(qcadev->bt_en, 0);
+> +
+> +		serdev_device_close(hu->serdev);
+>  	}
+>  
+>  	kfree_skb(qca->rx_skb);
+> @@ -891,6 +947,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>  	struct qca_data *qca = hu->priv;
+>  	struct sk_buff *skb;
+> +	struct qca_serdev *qcadev;
+>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>  
+>  	if (baudrate > QCA_BAUDRATE_3200000)
+> @@ -904,6 +961,13 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  		return -ENOMEM;
+>  	}
+>  
+> +	/* Disabling hardware flow control is mandatory while
+> +	 * sending change baudrate request to wcn3990 SoC.
+> +	 */
+> +	qcadev = serdev_device_get_drvdata(hu->serdev);
+> +	if (qcadev->btsoc_type == QCA_WCN3990)
+> +		hci_uart_set_flow_control(hu, true);
+> +
+>  	/* Assign commands to change baudrate and packet type. */
+>  	skb_put_data(skb, cmd, sizeof(cmd));
+>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> @@ -919,6 +983,9 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>  	set_current_state(TASK_RUNNING);
+>  
+> +	if (qcadev->btsoc_type == QCA_WCN3990)
+> +		hci_uart_set_flow_control(hu, false);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -930,6 +997,43 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  		hci_uart_set_baudrate(hu, speed);
+>  }
+>  
+> +static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+> +{
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	struct qca_data *qca = hu->priv;
+> +	struct sk_buff *skb;
+> +
+> +	/* These power pulses are single byte command which are sent
+> +	 * at required baudrate to wcn3990. On wcn3990, we have an external
+> +	 * circuit at Tx pin which decodes the pulse sent at specific baudrate.
+> +	 * For example, wcn3990 supports RF COEX antenna for both Wi-Fi/BT
+> +	 * and also we use the same power inputs to turn on and off for
+> +	 * Wi-Fi/BT. Powering up the power sources will not enable BT, until
+> +	 * we send a power on pulse at 115200 bps. This algorithm will help to
+> +	 * save power. Disabling hardware flow control is mandatory while
+> +	 * sending power pulses to SoC.
+> +	 */
+> +	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+> +
+> +	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> +	if (!skb)
+> +		return -ENOMEM;
+> +
+> +	hci_uart_set_flow_control(hu, true);
+> +
+> +	skb_put_u8(skb, cmd);
+> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> +
+> +	skb_queue_tail(&qca->txq, skb);
+> +	hci_uart_tx_wakeup(hu);
+> +
+> +	/* Wait for 100 uS for SoC to settle down */
+> +	usleep_range(100, 200);
+> +	hci_uart_set_flow_control(hu, false);
+> +
+> +	return 0;
+> +}
+> +
+>  static unsigned int qca_get_speed(struct hci_uart *hu,
+>  				  enum qca_speed_type speed_type)
+>  {
+> @@ -952,9 +1056,18 @@ static unsigned int qca_get_speed(struct hci_uart *hu,
+>  
+>  static int qca_check_speeds(struct hci_uart *hu)
+>  {
+> -	if (!qca_get_speed(hu, QCA_INIT_SPEED) ||
+> -	    !qca_get_speed(hu, QCA_OPER_SPEED))
+> -		return -EINVAL;
+> +	struct qca_serdev *qcadev;
+> +
+> +	qcadev = serdev_device_get_drvdata(hu->serdev);
+> +	if (qcadev->btsoc_type == QCA_WCN3990) {
+> +		if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
+> +		    !qca_get_speed(hu, QCA_OPER_SPEED))
+> +			return -EINVAL;
+> +	} else {
+> +		if (!qca_get_speed(hu, QCA_INIT_SPEED) ||
+> +		    !qca_get_speed(hu, QCA_OPER_SPEED))
+> +			return -EINVAL;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -974,7 +1087,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  			return 0;
+>  
+>  		qca_baudrate = qca_get_baudrate_value(speed);
+> -		bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+> +		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+>  		if (ret)
+>  			return ret;
+> @@ -985,15 +1098,51 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  	return 0;
+>  }
+>  
+> +static int qca_wcn3990_init(struct hci_uart *hu, u32 *soc_ver)
+> +{
 
-Good to know. :)
+I focussed more on other things in the last review rounds and
+overlooked that qca_read_soc_version() and the soc_ver pointer slipped
+in here with v10 (v9: https://patchwork.kernel.org/patch/10510029/).
 
-Thanks
---
-Gustavo
+In a similar line as in an earlier discussion about reading the SoC
+version in qca_uart_setup() (https://patchwork.kernel.org/patch/10467903/)
+I don't think the init function is the right place and it shouldn't
+receive this soc_ver parameter about which it doesn't really
+care. Please switch back as it was in v9 and read the SoC version in
+qca_setup() (like it is done for Rome).
+
+Then we should be done from my side.
