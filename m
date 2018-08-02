@@ -2,129 +2,117 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B14C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566DFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA32121501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:19:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA32121501
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 11BDE21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:20:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AhuqgETL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BDE21501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732261AbeHBTLv (ORCPT
+        id S1732094AbeHBTMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:11:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726938AbeHBTLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:11:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0442B40287F6;
-        Thu,  2 Aug 2018 17:19:47 +0000 (UTC)
-Received: from redhat.com (ovpn-117-57.ams2.redhat.com [10.36.117.57])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 443AE10CD7D5;
-        Thu,  2 Aug 2018 17:19:42 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 20:19:41 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-Message-ID: <20180802200646-mutt-send-email-mst@kernel.org>
-References: <20180730125100-mutt-send-email-mst@kernel.org>
- <20180730111802.GA9830@infradead.org>
- <20180730155633-mutt-send-email-mst@kernel.org>
- <20180731173052.GA17153@infradead.org>
- <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
- <20180801081637.GA14438@arm.com>
- <20180801083639.GF26378@infradead.org>
- <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
- <20180802182959-mutt-send-email-mst@kernel.org>
- <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+        Thu, 2 Aug 2018 15:12:49 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35608 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730217AbeHBTMs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 15:12:48 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w3-v6so1328228plq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tpwLYct0+MWD18FyQM7jT/SjZowFDF6mLriSb1GcqnI=;
+        b=AhuqgETLLND6yLsUh5Wbn30smwqrOBqpZQez5rMXoAqMqHqtMxTGq/MDNQLGuGxyvM
+         p0FP5tzOKsEudwm/pdRK/XJ0AnrWrbBF7KjsUcMLrZW9KUgZR/v2VqLc2OTIowJBLxtO
+         xG0FKlApoW73pigTaoI3yEzHyCY2IBZ64msSw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tpwLYct0+MWD18FyQM7jT/SjZowFDF6mLriSb1GcqnI=;
+        b=VdSl/h7I5FNO3JlPHp31JiFurAdic3azqEobWY8haLfc3Z/bmywc6eIIJ8l3UExJ/i
+         KzW2G/wGREDylMcMlgHBWeqsNrIBLCgrkwuCJ2iw6GOHhG4dnFH+U0hbHHLp5uPsJbcm
+         7DKM9tG3KP5w64LTwhmYwYgNQi9ymCUSKfxlwG24ZyDKAP097CGB21GWLG5tJ6n9mCIH
+         AMubGHVW/M7MEx0V45YdSTtM7jeNRG1eJ5wTQGjc1fpXD7ijQi5Tl7E+KCHxusI3MRFg
+         3P9o0IyikImSrWmLviKf5JVPaaumwSrZYX/Iy0Q+c+iBEWvnPGH4/SB+pgPzxKEYW22G
+         9dfQ==
+X-Gm-Message-State: AOUpUlGdSMWnMFsuh83ossIKc3QHAnRioWUqQdqEjiUeJecC6+aBuxnt
+        Wj2utqmDwqdHWg6/uOaMoqKXUQ==
+X-Google-Smtp-Source: AAOMgpdSQVODVigCeCJ0Q4nzEYzmLteJJe9mL16THeSpNUge3Wqh3Kcylrjp/vsoOP5HNuXEYNeTUw==
+X-Received: by 2002:a17:902:bd97:: with SMTP id q23-v6mr282545pls.311.1533230445005;
+        Thu, 02 Aug 2018 10:20:45 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id o84-v6sm4294981pfi.165.2018.08.02.10.20.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Aug 2018 10:20:44 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 10:20:43 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v12 1/7] dt-bindings: net: bluetooth: Add device tree
+ bindings for QTI chip wcn3990
+Message-ID: <20180802172043.GN68975@google.com>
+References: <20180802132518.8680-1-bgodavar@codeaurora.org>
+ <20180802132518.8680-2-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:19:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 17:19:47 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180802132518.8680-2-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 11:01:26AM -0500, Benjamin Herrenschmidt wrote:
-> On Thu, 2018-08-02 at 18:41 +0300, Michael S. Tsirkin wrote:
-> > 
-> > > I don't completely agree:
-> > > 
-> > > 1 - VIRTIO_F_IOMMU_PLATFORM is a property of the "other side", ie qemu
-> > > for example. It indicates that the peer bypasses the normal platform
-> > > iommu. The platform code in the guest has no real way to know that this
-> > > is the case, this is a specific "feature" of the qemu implementation.
-> > > 
-> > > 2 - VIRTIO_F_PLATFORM_DMA (or whatever you want to call it), is a
-> > > property of the guest platform itself (not qemu), there's no way the
-> > > "peer" can advertize it via the virtio negociated flags. At least for
-> > > us. I don't know for sure whether that would be workable for the ARM
-> > > case. In our case, qemu has no idea at VM creation time that the VM
-> > > will turn itself into a secure VM and thus will require bounce
-> > > buffering for IOs (including virtio).
-> > > 
-> > > So unless we have another hook for the arch code to set
-> > > VIRTIO_F_PLATFORM_DMA on selected (or all) virtio devices from the
-> > > guest itself, I don't see that as a way to deal with it.
-> > > 
-> > > >  The other issue is VIRTIO_F_IO_BARRIER
-> > > > which is very vaguely defined, and which needs a better definition.
-> > > > And last but not least we'll need some text explaining the challenges
-> > > > of hardware devices - I think VIRTIO_F_PLATFORM_DMA + VIRTIO_F_IO_BARRIER
-> > > > is what would basically cover them, but a good description including
-> > > > an explanation of why these matter.
-> > > 
-> > > Ben.
-> > > 
-> > 
-> > So is it true that from qemu point of view there is nothing special
-> > going on?  You pass in a PA, host writes there.
+On Thu, Aug 02, 2018 at 06:55:12PM +0530, Balakrishna Godavarthi wrote:
+> This patch enables regulators for the Qualcomm Bluetooth wcn3990
+> controller.
 > 
-> Yes, qemu doesn't see a different. It's the guest that will bounce the
-> pages via a pool of "insecure" pages that qemu can access. Normal pages
-> in a secure VM come from PAs that qemu cannot physically access.
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/net/qualcomm-bluetooth.txt       | 26 +++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
 > 
-> Cheers,
-> Ben.
-> 
+> diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> index 0ea18a53cc29..2175174415ee 100644
+> --- a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> @@ -10,12 +10,22 @@ device the slave device is attached to.
+>  Required properties:
+>   - compatible: should contain one of the following:
+>     * "qcom,qca6174-bt"
+> +   * "qcom,wcn3990-bt"
+> +
+> +Optional properties for compatible string qcom,qca6174-bt:
+>  
+> -Optional properties:
+>   - enable-gpios: gpio specifier used to enable chip
+>   - clocks: clock provided to the controller (SUSCLK_32KHZ)
+>  
+> -Example:
+> +Optional properties for compatible string qcom,wcn3990-bt:
+> +
+> + - vddio-supply: Bluetooth wcn3990 VDD_IO supply regulator handle.
+> + - vddxo-supply: Bluetooth wcn3990 VDD_XO supply regulator handle.
+> + - vddrf-supply: Bluetooth wcn3990 VDD_RF supply regulator handle.
+> + - vddch0-supply: Bluetooth wcn3990 VDD_CH0 supply regulator handle.
 
-I see. So yes, given that device does not know or care, using
-virtio features is an awkward fit.
-
-So let's say as a quick fix for you maybe we could generalize the
-xen_domain hack, instead of just checking xen_domain check some static
-branch.  Then teach xen and others to enable that.
-OK but problem then becomes this: if you do this and virtio device appears
-behind a vIOMMU and it does not advertize the IOMMU flag, the
-code will try to use the vIOMMU mappings and fail.
-
-It does look like even with trick above, you need a special version of
-DMA ops that does just swiotlb but not any of the other things DMA API
-might do.
-
-Thoughts?
-
--- 
-MST
+Are these really optional? If I understand correctly the driver
+expects the regulators to be there. Even if it could do with only some
+regulators specified the devm_regulator_bulk_get() call would fail if
+not all requested regulators are available.
