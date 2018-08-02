@@ -2,702 +2,89 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B84C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB30C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FDD221566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:25:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDD221566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id E640221566
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:28:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OLTj+P2g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E640221566
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbeHBWSj (ORCPT
+        id S1731578AbeHBWVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 18:18:39 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39395 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727349AbeHBWS1 (ORCPT
+        Thu, 2 Aug 2018 18:21:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727302AbeHBWVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 18:18:27 -0400
-X-UUID: 7c51dfdbeb6e4d599127a53fe5664469-20180803
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2001522682; Fri, 03 Aug 2018 04:25:35 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 3 Aug 2018 04:25:33 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 3 Aug 2018 04:25:34 +0800
-From:   <sean.wang@mediatek.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v8 2/3] Bluetooth: mediatek: Add protocol support for MediaTek serial devices
-Date:   Fri, 3 Aug 2018 04:25:31 +0800
-Message-ID: <5ebf5cdd646ced8388d5914ac6626f417284ef30.1533241009.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1533241009.git.sean.wang@mediatek.com>
-References: <cover.1533241009.git.sean.wang@mediatek.com>
+        Thu, 2 Aug 2018 18:21:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OopUoc9Oo3QAeBLMiNvjTdoE6BnD12rp59cBD1G4PIA=; b=OLTj+P2gkf43DP/fhCwMN90sU
+        71WAmb1q7m3lMADGVBsoUBDdEZHiFxc7XnlW7q1vpx9lY7O2TyLle+crkaF2l7JFYoxxyZrTDPBWt
+        TVYe2AfaTDNGriM2bqqP4P5BqaekQ3fXsQ9RWm6cjocuMJM/aIacYNDPo/VwLupvCZ81aMnJ4UEIU
+        FFF3pKbHBcd/WadHTlyGG7Fxsr3JIVFyOcDx8sxlJRqwoYhe24/cwqnYXGSwe2HKMJ/UmuRN26wDd
+        xWlfvSNErF5J6HInwFFVYasOcd9I2eV8bGOQokJYiBibtfXPVYx7p+xuEkqvw9erHGOSJL17WMACB
+        1rbH9PimA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flJyD-0000kJ-Va; Thu, 02 Aug 2018 20:13:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5297F20268267; Thu,  2 Aug 2018 22:13:12 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 22:13:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+Message-ID: <20180802201312.GS2494@hirez.programming.kicks-ass.net>
+References: <cover.1533064851.git.reinette.chatre@intel.com>
+ <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
+ <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
+ <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+ <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+ <20180802173727.GP2494@hirez.programming.kicks-ass.net>
+ <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
+ <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+ <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Thu, Aug 02, 2018 at 01:06:19PM -0700, Dave Hansen wrote:
+> On 08/02/2018 12:54 PM, Peter Zijlstra wrote:
+> >> I totally understand not wanting to fill the tree with code hijacking
+> >> the raw PMU.  Is your reaction to this really around not wanting to
+> >> start down the slippery slope that ends up with lots of raw PMU "owners"?
+> > That and the fact that multiple owner directly contradicts what perf set
+> > out to do, provide resource arbitration for the PMU.
+> > 
+> > Not being able to use both perf and this resctl thing at the same time
+> > is utter crap. You will not get special dispensation.
+> 
+> Is there something we could do in the middle, like have perf itself be
+> in charge of doing all the programming, but the psuedo-locking could
+> still _read_ the counters?
 
-This adds a driver based on serdev driver for the MediaTek serial protocol
-based on running H:4, which can enable the built-in Bluetooth device inside
-MT7622 SoC.
-
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/bluetooth/Kconfig     |  11 +
- drivers/bluetooth/Makefile    |   2 +
- drivers/bluetooth/btmtkuart.c | 588 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 601 insertions(+)
- create mode 100644 drivers/bluetooth/btmtkuart.c
-
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index f3c643a..5ace676 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -74,6 +74,17 @@ config BT_HCIBTSDIO
- 	  Say Y here to compile support for Bluetooth SDIO devices into the
- 	  kernel or say M to compile it as module (btsdio).
- 
-+config BT_MTKUART
-+	tristate "MediaTek HCI UART driver"
-+	depends on SERIAL_DEV_BUS
-+	help
-+	  MediaTek Bluetooth HCI UART driver.
-+	  This driver is required if you want to use MediaTek Bluetooth
-+	  with serial interface.
-+
-+	  Say Y here to compile support for MediaTek Bluetooth UART devices
-+	  into the kernel or say M to compile it as module (btmtkuart).
-+
- config BT_HCIUART
- 	tristate "HCI UART driver"
- 	depends on SERIAL_DEV_BUS || !SERIAL_DEV_BUS
-diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
-index ec16c55..12ad6e9 100644
---- a/drivers/bluetooth/Makefile
-+++ b/drivers/bluetooth/Makefile
-@@ -25,6 +25,8 @@ obj-$(CONFIG_BT_BCM)		+= btbcm.o
- obj-$(CONFIG_BT_RTL)		+= btrtl.o
- obj-$(CONFIG_BT_QCA)		+= btqca.o
- 
-+obj-$(CONFIG_BT_MTKUART)	+= btmtkuart.o
-+
- obj-$(CONFIG_BT_HCIUART_NOKIA)	+= hci_nokia.o
- 
- obj-$(CONFIG_BT_HCIRSI)		+= btrsi.o
-diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-new file mode 100644
-index 0000000..8ec7568
---- /dev/null
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -0,0 +1,588 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+/*
-+ * Bluetooth support for MediaTek serial devices
-+ *
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <linux/atomic.h>
-+#include <linux/clk.h>
-+#include <linux/firmware.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/serdev.h>
-+#include <linux/skbuff.h>
-+
-+#include <net/bluetooth/bluetooth.h>
-+#include <net/bluetooth/hci_core.h>
-+
-+#include "h4_recv.h"
-+
-+#define VERSION "0.1"
-+
-+#define FIRMWARE_MT7622		"mediatek/mt7622pr2h.bin"
-+
-+#define MTK_STP_TLR_SIZE	2
-+
-+#define BTMTKUART_TX_STATE_ACTIVE	1
-+#define BTMTKUART_TX_STATE_WAKEUP	2
-+
-+enum {
-+	MTK_WMT_PATCH_DWNLD = 0x1,
-+	MTK_WMT_FUNC_CTRL = 0x6,
-+	MTK_WMT_RST = 0x7
-+};
-+
-+struct mtk_stp_hdr {
-+	u8 prefix;
-+	u8 dlen1;
-+	u8 dlen2;
-+	u8 cs;
-+} __packed;
-+
-+struct mtk_wmt_hdr {
-+	u8	dir;
-+	u8	op;
-+	__le16	dlen;
-+	u8	flag;
-+} __packed;
-+
-+struct mtk_hci_wmt_cmd {
-+	struct mtk_wmt_hdr hdr;
-+	u8 data[256];
-+} __packed;
-+
-+struct btmtkuart_dev {
-+	struct hci_dev *hdev;
-+	struct serdev_device *serdev;
-+	struct clk *clk;
-+
-+	struct work_struct tx_work;
-+	unsigned long tx_state;
-+	struct sk_buff_head txq;
-+
-+	struct sk_buff *rx_skb;
-+
-+	u8	stp_pad[6];
-+	u8	stp_cursor;
-+	u16	stp_dlen;
-+};
-+
-+static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 op, u8 flag, u16 plen,
-+			    const void *param)
-+{
-+	struct mtk_hci_wmt_cmd wc;
-+	struct mtk_wmt_hdr *hdr;
-+	struct sk_buff *skb;
-+	u32 hlen;
-+
-+	hlen = sizeof(*hdr) + plen;
-+	if (hlen > 255)
-+		return -EINVAL;
-+
-+	hdr = (struct mtk_wmt_hdr *)&wc;
-+	hdr->dir = 1;
-+	hdr->op = op;
-+	hdr->dlen = cpu_to_le16(plen + 1);
-+	hdr->flag = flag;
-+	memcpy(wc.data, param, plen);
-+
-+	skb = __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
-+				HCI_INIT_TIMEOUT);
-+
-+	if (IS_ERR(skb)) {
-+		int err = PTR_ERR(skb);
-+
-+		bt_dev_err(hdev, "Failed to send wmt cmd (%d)", err);
-+		return err;
-+	}
-+
-+	kfree_skb(skb);
-+
-+	return 0;
-+}
-+
-+static int mtk_setup_fw(struct hci_dev *hdev)
-+{
-+	const struct firmware *fw;
-+	const u8 *fw_ptr;
-+	size_t fw_size;
-+	int err, dlen;
-+	u8 flag;
-+
-+	err = request_firmware(&fw, FIRMWARE_MT7622, &hdev->dev);
-+	if (err < 0) {
-+		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
-+		return err;
-+	}
-+
-+	fw_ptr = fw->data;
-+	fw_size = fw->size;
-+
-+	/* The size of patch header is 30 bytes, should be skip. */
-+	if (fw_size < 30)
-+		return -EINVAL;
-+
-+	fw_size -= 30;
-+	fw_ptr += 30;
-+	flag = 1;
-+
-+	while (fw_size > 0) {
-+		dlen = min_t(int, 250, fw_size);
-+
-+		/* Tell deivice the position in sequence. */
-+		if (fw_size - dlen <= 0)
-+			flag = 3;
-+		else if (fw_size < fw->size - 30)
-+			flag = 2;
-+
-+		err = mtk_hci_wmt_sync(hdev, MTK_WMT_PATCH_DWNLD, flag, dlen,
-+				       fw_ptr);
-+		if (err < 0)
-+			break;
-+
-+		fw_size -= dlen;
-+		fw_ptr += dlen;
-+	}
-+
-+	release_firmware(fw);
-+
-+	return err;
-+}
-+
-+static int btmtkuart_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	struct hci_event_hdr *hdr = (void *)skb->data;
-+
-+	/* Fix up the vendor event id with HCI_VENDOR_PKT instead of
-+	 * 0xe4 so that btmon can parse the kind of vendor event properly.
-+	 */
-+	if (hdr->evt == 0xe4)
-+		hdr->evt = HCI_VENDOR_PKT;
-+
-+	return hci_recv_frame(hdev, skb);
-+}
-+
-+static const struct h4_recv_pkt mtk_recv_pkts[] = {
-+	{ H4_RECV_ACL,      .recv = hci_recv_frame },
-+	{ H4_RECV_SCO,      .recv = hci_recv_frame },
-+	{ H4_RECV_EVENT,    .recv = btmtkuart_recv_event },
-+};
-+
-+static void btmtkuart_tx_work(struct work_struct *work)
-+{
-+	struct btmtkuart_dev *bdev = container_of(work, struct btmtkuart_dev,
-+						   tx_work);
-+	struct serdev_device *serdev = bdev->serdev;
-+	struct hci_dev *hdev = bdev->hdev;
-+
-+	while (1) {
-+		clear_bit(BTMTKUART_TX_STATE_WAKEUP, &bdev->tx_state);
-+
-+		while (1) {
-+			struct sk_buff *skb = skb_dequeue(&bdev->txq);
-+			int len;
-+
-+			if (!skb)
-+				break;
-+
-+			len = serdev_device_write_buf(serdev, skb->data,
-+						      skb->len);
-+			hdev->stat.byte_tx += len;
-+
-+			skb_pull(skb, len);
-+			if (skb->len > 0) {
-+				skb_queue_head(&bdev->txq, skb);
-+				break;
-+			}
-+
-+			switch (hci_skb_pkt_type(skb)) {
-+			case HCI_COMMAND_PKT:
-+				hdev->stat.cmd_tx++;
-+				break;
-+			case HCI_ACLDATA_PKT:
-+				hdev->stat.acl_tx++;
-+				break;
-+			case HCI_SCODATA_PKT:
-+				hdev->stat.sco_tx++;
-+				break;
-+			}
-+
-+			kfree_skb(skb);
-+		}
-+
-+		if (!test_bit(BTMTKUART_TX_STATE_WAKEUP, &bdev->tx_state))
-+			break;
-+	}
-+
-+	clear_bit(BTMTKUART_TX_STATE_ACTIVE, &bdev->tx_state);
-+}
-+
-+static void btmtkuart_tx_wakeup(struct btmtkuart_dev *bdev)
-+{
-+	if (test_and_set_bit(BTMTKUART_TX_STATE_ACTIVE, &bdev->tx_state))
-+		set_bit(BTMTKUART_TX_STATE_WAKEUP, &bdev->tx_state);
-+
-+	schedule_work(&bdev->tx_work);
-+}
-+
-+static const unsigned char *
-+mtk_stp_split(struct btmtkuart_dev *bdev, const unsigned char *data, int count,
-+	      int *sz_h4)
-+{
-+	struct mtk_stp_hdr *shdr;
-+
-+	/* The cursor is reset when all the data of STP is consumed out. */
-+	if (!bdev->stp_dlen && bdev->stp_cursor >= 6)
-+		bdev->stp_cursor = 0;
-+
-+	/* Filling pad until all STP info is obtained. */
-+	while (bdev->stp_cursor < 6 && count > 0) {
-+		bdev->stp_pad[bdev->stp_cursor] = *data;
-+		bdev->stp_cursor++;
-+		data++;
-+		count--;
-+	}
-+
-+	/* Retrieve STP info and have a sanity check. */
-+	if (!bdev->stp_dlen && bdev->stp_cursor >= 6) {
-+		shdr = (struct mtk_stp_hdr *)&bdev->stp_pad[2];
-+		bdev->stp_dlen = (shdr->dlen1 & 0xf) << 8 | shdr->dlen2;
-+
-+		/* Resync STP when unexpected data is being read. */
-+		if (shdr->prefix != 0x80 || bdev->stp_dlen > 2048) {
-+			bt_dev_err(bdev->hdev, "stp format unexpect (%d, %d)",
-+				   shdr->prefix, bdev->stp_dlen);
-+			bdev->stp_cursor = 2;
-+			bdev->stp_dlen = 0;
-+		}
-+	}
-+
-+	/* Directly quit when there's no data found for H4 can process. */
-+	if (count <= 0)
-+		return NULL;
-+
-+	/* Tranlate to how much the size of data H4 can handle so far. */
-+	*sz_h4 = min_t(int, count, bdev->stp_dlen);
-+
-+	/* Update the remaining size of STP packet. */
-+	bdev->stp_dlen -= *sz_h4;
-+
-+	/* Data points to STP payload which can be handled by H4. */
-+	return data;
-+}
-+
-+static int btmtkuart_recv(struct hci_dev *hdev, const u8 *data, size_t count)
-+{
-+	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-+	const unsigned char *p_left = data, *p_h4;
-+	int sz_left = count, sz_h4, adv;
-+	int err;
-+
-+	while (sz_left > 0) {
-+		/*  The serial data received from MT7622 BT controller is
-+		 *  at all time padded around with the STP header and tailer.
-+		 *
-+		 *  A full STP packet is looking like
-+		 *   -----------------------------------
-+		 *  | STP header  |  H:4   | STP tailer |
-+		 *   -----------------------------------
-+		 *  but it doesn't guarantee to contain a full H:4 packet which
-+		 *  means that it's possible for multiple STP packets forms a
-+		 *  full H:4 packet that means extra STP header + length doesn't
-+		 *  indicate a full H:4 frame, things can fragment. Whose length
-+		 *  recorded in STP header just shows up the most length the
-+		 *  H:4 engine can handle currently.
-+		 */
-+
-+		p_h4 = mtk_stp_split(bdev, p_left, sz_left, &sz_h4);
-+		if (!p_h4)
-+			break;
-+
-+		adv = p_h4 - p_left;
-+		sz_left -= adv;
-+		p_left += adv;
-+
-+		bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb, p_h4,
-+					   sz_h4, mtk_recv_pkts,
-+					   sizeof(mtk_recv_pkts));
-+		if (IS_ERR(bdev->rx_skb)) {
-+			err = PTR_ERR(bdev->rx_skb);
-+			bt_dev_err(bdev->hdev,
-+				   "Frame reassembly failed (%d)", err);
-+			bdev->rx_skb = NULL;
-+			return err;
-+		}
-+
-+		sz_left -= sz_h4;
-+		p_left += sz_h4;
-+	}
-+
-+	return 0;
-+}
-+
-+static int btmtkuart_receive_buf(struct serdev_device *serdev, const u8 *data,
-+				 size_t count)
-+{
-+	struct btmtkuart_dev *bdev = serdev_device_get_drvdata(serdev);
-+	int err;
-+
-+	err = btmtkuart_recv(bdev->hdev, data, count);
-+	if (err < 0)
-+		return err;
-+
-+	bdev->hdev->stat.byte_rx += count;
-+
-+	return count;
-+}
-+
-+static void btmtkuart_write_wakeup(struct serdev_device *serdev)
-+{
-+	struct btmtkuart_dev *bdev = serdev_device_get_drvdata(serdev);
-+
-+	btmtkuart_tx_wakeup(bdev);
-+}
-+
-+static const struct serdev_device_ops btmtkuart_client_ops = {
-+	.receive_buf = btmtkuart_receive_buf,
-+	.write_wakeup = btmtkuart_write_wakeup,
-+};
-+
-+static int btmtkuart_open(struct hci_dev *hdev)
-+{
-+	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-+	struct device *dev;
-+	int err;
-+
-+	err = serdev_device_open(bdev->serdev);
-+	if (err) {
-+		bt_dev_err(hdev, "Unable to open UART device %s",
-+			   dev_name(&bdev->serdev->dev));
-+		goto err_open;
-+	}
-+
-+	dev = &bdev->serdev->dev;
-+
-+	bdev->stp_cursor = 2;
-+	bdev->stp_dlen = 0;
-+
-+	/* Enable the power domain and clock the device requires. */
-+	pm_runtime_enable(dev);
-+	err = pm_runtime_get_sync(dev);
-+	if (err < 0) {
-+		pm_runtime_put_noidle(dev);
-+		goto err_disable_rpm;
-+	}
-+
-+	err = clk_prepare_enable(bdev->clk);
-+	if (err < 0)
-+		goto err_put_rpm;
-+
-+	return 0;
-+
-+err_put_rpm:
-+	pm_runtime_put_sync(dev);
-+err_disable_rpm:
-+	pm_runtime_disable(dev);
-+err_open:
-+	return err;
-+}
-+
-+static int btmtkuart_close(struct hci_dev *hdev)
-+{
-+	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-+	struct device *dev = &bdev->serdev->dev;
-+
-+	/* Shutdown the clock and power domain the device requires. */
-+	clk_disable_unprepare(bdev->clk);
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
-+
-+	serdev_device_close(bdev->serdev);
-+
-+	return 0;
-+}
-+
-+static int btmtkuart_flush(struct hci_dev *hdev)
-+{
-+	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-+
-+	/* Flush any pending characters */
-+	serdev_device_write_flush(bdev->serdev);
-+	skb_queue_purge(&bdev->txq);
-+
-+	cancel_work_sync(&bdev->tx_work);
-+
-+	kfree_skb(bdev->rx_skb);
-+	bdev->rx_skb = NULL;
-+	bdev->stp_cursor = 2;
-+	bdev->stp_dlen = 0;
-+
-+	return 0;
-+}
-+
-+static int btmtkuart_setup(struct hci_dev *hdev)
-+{
-+	u8 param = 0x1;
-+	int err = 0;
-+
-+	/* Setup a firmware which the device definitely requires. */
-+	err = mtk_setup_fw(hdev);
-+	if (err < 0)
-+		return err;
-+
-+	/* Activate funciton the firmware providing to. */
-+	err = mtk_hci_wmt_sync(hdev, MTK_WMT_RST, 0x4, 0, 0);
-+	if (err < 0)
-+		return err;
-+
-+	/* Enable Bluetooth protocol. */
-+	err = mtk_hci_wmt_sync(hdev, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param),
-+			       &param);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int btmtkuart_shutdown(struct hci_dev *hdev)
-+{
-+	u8 param = 0x0;
-+	int err;
-+
-+	/* Disable the device. */
-+	err = mtk_hci_wmt_sync(hdev, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param),
-+			       &param);
-+
-+	return err;
-+}
-+
-+static int btmtkuart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-+	struct mtk_stp_hdr *shdr;
-+	int err, dlen;
-+	u8 *p;
-+
-+	/* Prepend skb with frame type */
-+	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
-+	dlen = skb->len;
-+
-+	/* Make sure that there is enough rooms for STP header and trailer */
-+	if (unlikely(skb_headroom(skb) < sizeof(*shdr)) ||
-+	    (skb_tailroom(skb) < MTK_STP_TLR_SIZE)) {
-+		err = pskb_expand_head(skb, sizeof(*shdr), MTK_STP_TLR_SIZE,
-+				       GFP_ATOMIC);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	/* Add the STP header */
-+	shdr = skb_push(skb, sizeof(*shdr));
-+	p = (u8 *)shdr;
-+	shdr->prefix = 0x80;
-+	shdr->dlen1 = (dlen & 0xf00) >> 8;
-+	shdr->dlen2 = dlen & 0xff;
-+	/* MT7622 don't care the checksum value */
-+	shdr->cs = 0;
-+	/* Add the STP trailer */
-+	skb_put_zero(skb, MTK_STP_TLR_SIZE);
-+
-+	skb_queue_tail(&bdev->txq, skb);
-+
-+	btmtkuart_tx_wakeup(bdev);
-+	return 0;
-+}
-+
-+static int btmtkuart_probe(struct serdev_device *serdev)
-+{
-+	struct btmtkuart_dev *bdev;
-+	struct hci_dev *hdev;
-+
-+	bdev = devm_kzalloc(&serdev->dev, sizeof(*bdev), GFP_KERNEL);
-+	if (!bdev)
-+		return -ENOMEM;
-+
-+	bdev->clk = devm_clk_get(&serdev->dev, "ref");
-+	if (IS_ERR(bdev->clk))
-+		return PTR_ERR(bdev->clk);
-+
-+	bdev->serdev = serdev;
-+	serdev_device_set_drvdata(serdev, bdev);
-+
-+	serdev_device_set_client_ops(serdev, &btmtkuart_client_ops);
-+
-+	INIT_WORK(&bdev->tx_work, btmtkuart_tx_work);
-+	skb_queue_head_init(&bdev->txq);
-+
-+	/* Initialize and register HCI device */
-+	hdev = hci_alloc_dev();
-+	if (!hdev) {
-+		dev_err(&serdev->dev, "Can't allocate HCI device\n");
-+		return -ENOMEM;
-+	}
-+
-+	bdev->hdev = hdev;
-+
-+	hdev->bus = HCI_UART;
-+	hci_set_drvdata(hdev, bdev);
-+
-+	hdev->open  = btmtkuart_open;
-+	hdev->close = btmtkuart_close;
-+	hdev->flush = btmtkuart_flush;
-+	hdev->setup = btmtkuart_setup;
-+	hdev->shutdown = btmtkuart_shutdown;
-+	hdev->send  = btmtkuart_send_frame;
-+	SET_HCIDEV_DEV(hdev, &serdev->dev);
-+
-+	hdev->manufacturer = 70;
-+	set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
-+
-+	if (hci_register_dev(hdev) < 0) {
-+		dev_err(&serdev->dev, "Can't register HCI device\n");
-+		hci_free_dev(hdev);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static void btmtkuart_remove(struct serdev_device *serdev)
-+{
-+	struct btmtkuart_dev *bdev = serdev_device_get_drvdata(serdev);
-+	struct hci_dev *hdev = bdev->hdev;
-+
-+	hci_unregister_dev(hdev);
-+	hci_free_dev(hdev);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id mtk_of_match_table[] = {
-+	{ .compatible = "mediatek,mt7622-bluetooth"},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mtk_of_match_table);
-+#endif
-+
-+static struct serdev_device_driver btmtkuart_driver = {
-+	.probe = btmtkuart_probe,
-+	.remove = btmtkuart_remove,
-+	.driver = {
-+		.name = "btmtkuart",
-+		.of_match_table = of_match_ptr(mtk_of_match_table),
-+	},
-+};
-+
-+module_serdev_device_driver(btmtkuart_driver);
-+
-+MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
-+MODULE_DESCRIPTION("MediaTek Bluetooth Serial driver ver " VERSION);
-+MODULE_VERSION(VERSION);
-+MODULE_LICENSE("GPL");
-+MODULE_FIRMWARE(FIRMWARE_MT7622);
--- 
-2.7.4
-
+perf has all of that.
