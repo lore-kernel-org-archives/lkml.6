@@ -2,111 +2,149 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36561C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD8CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC786214FA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC786214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 98D6F21502
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:40:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D6F21502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbeHBL2k (ORCPT
+        id S1727829AbeHBLaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:28:40 -0400
-Received: from verein.lst.de ([213.95.11.211]:38796 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbeHBL2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:28:40 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 2CE5E68D64; Thu,  2 Aug 2018 11:43:00 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 11:43:00 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <marc.zyngier@arm.com>, palmer@sifive.com,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        shorne@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH 3/6] irqchip: RISC-V Local Interrupt Controller Driver
-Message-ID: <20180802094300.GA14127@lst.de>
-References: <20180725093649.32332-1-hch@lst.de> <20180725093649.32332-4-hch@lst.de> <c3ccb953-cd75-4a37-636a-ca643602053a@arm.com> <20180725112457.GA24502@lst.de> <alpine.DEB.2.21.1808012049170.1835@nanos.tec.linutronix.de> <20180802073452.GA11693@lst.de> <alpine.DEB.2.21.1808021038260.2037@nanos.tec.linutronix.de>
+        Thu, 2 Aug 2018 07:30:55 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10220 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726238AbeHBLaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 07:30:55 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1115757F38EE7;
+        Thu,  2 Aug 2018 17:40:32 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 2 Aug 2018 17:39:20 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <devel@driverdev.osuosl.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <gaoxiang25@huawei.com>, <sfr@canb.auug.org.au>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] staging: erofs: disable compiling temporarile
+Date:   Thu, 2 Aug 2018 17:39:17 +0800
+Message-ID: <20180802093917.4796-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808021038260.2037@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 11:35:43AM +0200, Thomas Gleixner wrote:
-> On Thu, 2 Aug 2018, Christoph Hellwig wrote:
-> > The cpu local interrupt handling, which was irq-riscv-intc.c in this
-> > series and has been moved to arch/riscv/kernel/irq.c in my new series
-> > is split over a few control registers (CSRs in RISC-V speak):
-> > 
-> > The exception handler, which includes the delivery of interrupts to
-> > the CPU is set up using the stvec CSR (Section 4.1.4).  The vector mode
-> > mentioned there is not supported by Linux (and not by any hardware known
-> > to me), so ignore it.
-> 
-> And even if it would be available then it would just avoid the software
-> decoding of the cause register. So no fundamental difference.
-> 
-> > Once an exception has been triggered Linux reads the scause CSR
-> > (Section 4.1.10) to check the exception cause.  If the interrupt
-> > bit is set we have three possible exception causes that matter for
-> > the kernel: Supervisor software interrupt, Supervisor timer interrupt,
-> > Supervisor external interrupt (ignore the user versions, I'm not even
-> > sure they are implementable, and they certainly are not at the moment).
-> 
-> Yeah. I would upfront declare the user stuff broken and not supported.
-> 
-> > To enable / disable any of these logical interrupt sources the sie
-> > CSR (Section 4.1.5) has a bit for each kind thast can be set/cleared.
-> > 
-> > Also there is the sip CSR (also section 4.1.5) which tells if any of those
-> > is pending at the moment.
-> 
-> So that's the low level per cpu interrupt/exception distribution mechanism,
-> i.e. a distinct per cpu 'vector' space with fixed functionality. It does
-> not make sense to actually handle that as an irq chip. It has absolutely no
-> relevance. The software interrupts are enabled when the CPU is started and
-> the external ones as well as they are gated by the PLIC.
-> 
-> The only thing which might need to access the enable register is the local
-> timer interrupt. That really does not require an extra irq chip as the
-> enable/disable is really just at cpu up/down time and the magic happens on
-> the local CPU so no smp functional call hackery is required.
-> 
-> The PLIC is the beast which wants a proper irqdomain/irqchip
-> implementation.
+As Stephen Rothwell reported:
 
-And that is exactly what I've done in the repost.
+"After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Local interrupt handling:
+drivers/staging/erofs/super.c: In function 'erofs_read_super':
+drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+  sb->s_flags |= MS_RDONLY | MS_NOATIME;
+                 ^~~~~~~~~
+                 IS_RDONLY
+drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
+drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
+  sb->s_flags |= MS_RDONLY | MS_NOATIME;
+                             ^~~~~~~~~~
+                             S_NOATIME
+drivers/staging/erofs/super.c: In function 'erofs_mount':
+drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+   &priv, erofs_fill_super);
+          ^~~~~~~~~~~~~~~~
+In file included from include/linux/buffer_head.h:12:0,
+                 from drivers/staging/erofs/super.c:14:
+include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+                       ^~~~~~~~~~
+drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+  return mount_bdev(fs_type, flags, dev_name,
+         ^~~~~~~~~~
+In file included from include/linux/buffer_head.h:12:0,
+                 from drivers/staging/erofs/super.c:14:
+include/linux/fs.h:2151:23: note: declared here
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+                       ^~~~~~~~~~
+drivers/staging/erofs/super.c: At top level:
+drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .mount          = erofs_mount,
+                    ^~~~~~~~~~~
+drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
+drivers/staging/erofs/super.c: In function 'erofs_remount':
+drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+  *flags |= MS_RDONLY;
+            ^~~~~~~~~
+            IS_RDONLY
+drivers/staging/erofs/super.c: At top level:
+drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .remount_fs = erofs_remount,
+                ^~~~~~~~~~~~~
 
-http://git.infradead.org/users/hch/riscv.git/commitdiff/149ae0008effe80e1fb79444eb6a03c45bed29ba
+Caused by various commits creating erofs in the staging tree interacting
+with various commits redoing the mount infrastructure in the vfs tree.
 
-PLIC driver:
+I have disabed CONFIG_EROFS_FS for now:"
 
-http://git.infradead.org/users/hch/riscv.git/commitdiff/00f68341fa6dcda9b7c6c4da7eeb52d7ef933368
+The reason of compiling error is:
 
-Clocksource:
+Since -next collects and merges developing patches including common vfs
+stuff from multi-trees, but those patches didn't cover erofs, such as:
 
-http://git.infradead.org/users/hch/riscv.git/commitdiff/51981cbba2fe2a118bb84b4c4aabb0f0d988ed2a
+('vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=109b45090d7d3ce2797bb1ef7f70eead5bfe0ff3
 
-I need to polish the DT binding a little more and will repost later today.
+("vfs: Require specification of size of mount data for internal mounts")
+https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=0a191e4505a4f255e6513b49426213da69bf0e80
 
-> 
-> Thanks,
-> 
-> 	tglx
----end quoted text---
+Above vfs related patches has not been merged in staging tree, if we
+submit those erofs patches to staging mailing list and after including
+them in staging-{test,nexts} tree, it can easily cause compiling error.
+
+We worked out some patches to adjust those vfs change, but now we just
+submit them to -next tree temporarily to avoid compiling error.
+
+For potentail conflict in between erofs and vfs changes in incoming
+merge window, Stephen suggested that we can disable CONFIG_EROFS_FS
+temporarily to pass merge window, and after that we can do restore by
+reenabling CONFIG_EROFS_FS and applying those fixing patches. Also
+Greg confirmed this solution.
+
+So, let's disable compiling erofs for a while.
+
+Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ drivers/staging/erofs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
+index 663b755bf2fb..96f614934df1 100644
+--- a/drivers/staging/erofs/Kconfig
++++ b/drivers/staging/erofs/Kconfig
+@@ -2,7 +2,7 @@
+ 
+ config EROFS_FS
+ 	tristate "EROFS filesystem support"
+-	depends on BLOCK
++	depends on BROKEN
+ 	help
+ 	  EROFS(Enhanced Read-Only File System) is a lightweight
+ 	  read-only file system with modern designs (eg. page-sized
+-- 
+2.18.0.rc1
+
