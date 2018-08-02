@@ -5,162 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C438C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89267C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A592156F
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A592156F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 34FDA2156F
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 20:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FDA2156F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731233AbeHBVws (ORCPT
+        id S1731781AbeHBV67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:52:48 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:33900 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeHBVws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:52:48 -0400
-Received: by mail-qk0-f196.google.com with SMTP id b66-v6so2494767qkj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 13:00:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=91l2h2t3/xKYaNP7soprXxqavel+FILehFZBfd4Z6ZI=;
-        b=lRLmMKYWMWN+NGbd7l03evaepQz1wISV5/vrGwVOYKA1lq6GDAWnh2K+FO6Td70DNb
-         lRAcfD0gbZVHKbkbRwLA2/SEqSWI5Sx3L8Qz6WRXcN+GjD2zE4Egsl2dmEWHdte9Rv+y
-         qJt6opnwTCiGvL4pPB10CpDpwxTe/+VeYr9jK6gj1vjp/svugDgsVxqCAxohrH640VET
-         Tn/VRH/jDfKMR6Ytq12IZRA3eswTFr2e9k0Wr+XFr812oo2EaCnnTdFW5I5wtmU9z6NF
-         ErvI7/Hdr6T3IBeoDgaOlS7nGea2qB0HclUVIyKTOA1uM3Y4PJGl3PId8ZX+sU7URKlO
-         7Plw==
-X-Gm-Message-State: AOUpUlGcXLzm4Od5dKrd45s0jeCY8ovchsKMC7+ROGP8epCWaJFySz9y
-        A05dCghgvA5fi6kfRPCshS1FQoXnBt0=
-X-Google-Smtp-Source: AAOMgpcy6qH3YARgWjtv/BpQLQ7mjoEU3+fd6g4MAsZlXVz5ecRu7Jv7ge/P26DUztMFmh0WtV7ilg==
-X-Received: by 2002:a37:8643:: with SMTP id i64-v6mr978149qkd.194.1533240009490;
-        Thu, 02 Aug 2018 13:00:09 -0700 (PDT)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id v192-v6sm2824675qkb.0.2018.08.02.13.00.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 13:00:08 -0700 (PDT)
-Message-ID: <b55fe368eaf99dee03e88288ec6e8fa53bb466e7.camel@redhat.com>
-Subject: Re: [PATCH v4 8/8] drm/nouveau: Call pm_runtime_get_noresume() from
- hpd handlers
-From:   Lyude Paul <lyude@redhat.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     nouveau@lists.freedesktop.org,
-        Karol Herbst <karolherbst@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Thu, 02 Aug 2018 16:00:08 -0400
-In-Reply-To: <20180802194041.GC6180@wunner.de>
-References: <20180801211459.7731-1-lyude@redhat.com>
-         <20180801211459.7731-9-lyude@redhat.com> <20180802194041.GC6180@wunner.de>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 2 Aug 2018 17:58:59 -0400
+Received: from mga07.intel.com ([134.134.136.100]:38493 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727302AbeHBV67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 17:58:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 13:06:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,436,1526367600"; 
+   d="scan'208";a="245518218"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga005.jf.intel.com with ESMTP; 02 Aug 2018 13:06:20 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>
+References: <cover.1533064851.git.reinette.chatre@intel.com>
+ <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
+ <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
+ <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+ <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+ <20180802173727.GP2494@hirez.programming.kicks-ass.net>
+ <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
+ <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <d64f85e8-98ca-a81d-bf2d-13dd72fc411e@intel.com>
+Date:   Thu, 2 Aug 2018 13:06:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 21:40 +0200, Lukas Wunner wrote:
-> On Wed, Aug 01, 2018 at 05:14:58PM -0400, Lyude Paul wrote:
-> > We can't and don't need to try resuming the device from our hotplug
-> > handlers, but hotplug events are generally something we'd like to keep
-> > the device awake for whenever possible. So, grab a PM ref safely in our
-> > hotplug handlers using pm_runtime_get_noresume() and mark the device as
-> > busy once we're finished.
+On 08/02/2018 12:54 PM, Peter Zijlstra wrote:
+>> I totally understand not wanting to fill the tree with code hijacking
+>> the raw PMU.  Is your reaction to this really around not wanting to
+>> start down the slippery slope that ends up with lots of raw PMU "owners"?
+> That and the fact that multiple owner directly contradicts what perf set
+> out to do, provide resource arbitration for the PMU.
 > 
-> Patch looks fine in principle, but doesn't seem to be sufficient to fix
-> the following race:
-> 
-> 1. runtime_suspend commences
-> 2. user plugs in a display before the runtime_suspend worker disables
->    hotplug interrupts in nouveau_display_fini()
-> 3. hotplug is handled, display is lit up
-> 4. runtime_suspend worker waits for hotplug handler to finish
-> 5. GPU is runtime suspended and the newly plugged in display goes black
-> 
-> The call to pm_runtime_mark_last_busy() has no effect in this situation
-> because rpm_suspend() doesn't look at the last_busy variable after the
-> call to rpm_callback().  What's necessary here is that runtime_suspend is
-> aborted and -EBUSY returned.
+> Not being able to use both perf and this resctl thing at the same time
+> is utter crap. You will not get special dispensation.
 
-So: that wasn't actually what this patch was meant to fix, this is just meant
-to make it a little more likely that the GPU won't fall asleep while doing
-connector probing, since there's no risk handling it here.
+Is there something we could do in the middle, like have perf itself be
+in charge of doing all the programming, but the psuedo-locking could
+still _read_ the counters?
 
-That being said; I think there's some parts you're missing on this. Mainly
-that regardless of whether or not the GPU ends up getting runtime suspended
-here, a hotplug event has still been propogated to userspace. If fbcon isn't
-the one in charge in that scenario (e.g. we have gnome-shell, X, etc. running)
-then whoever is can still respond to the hotplug as usual, and the probing
-from userspace will result in waking the GPU back up again since
-nouveau_connector_detect() will grab a runtime PM ref since it's not being
-called from the hpd context. I don't think this is the case yet for MST
-connectors since they don't use nouveau_connector_detect(), and I'll see if I
-fix that as well in the next patch series.
+I guess we'd still end up needing to have perf expose which counter got
+assigned to which event, and make sure things like multiplexing are not
+in play.
 
-Now; what you pointed out made me realize I'm not sure that would apply when
-fbcon does happen to be the one in control, since fb_helper will have it's
-hotplug handling suspended at this point, which will mean that it won't
-respond to the connector change until the GPU is runtime resumed by something
-else. That definitely should get fixed.
-
-Also: let me know if any of this doesn't sound correct, there's so much to
-this I wouldn't be surprised if I missed something else
-> 
-> Thanks,
-> 
-> Lukas
-> 
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: stable@vger.kernel.org
-> > Cc: Lukas Wunner <lukas@wunner.de>
-> > Cc: Karol Herbst <karolherbst@gmail.com>
-> > ---
-> >  drivers/gpu/drm/nouveau/nouveau_connector.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > index 8409c3f2c3a1..5a8e8c1ad647 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > @@ -1152,6 +1152,11 @@ nouveau_connector_hotplug(struct nvif_notify
-> > *notify)
-> >  	const char *name = connector->name;
-> >  	struct nouveau_encoder *nv_encoder;
-> >  
-> > +	/* Resuming the device here isn't possible; but the suspend PM ops
-> > +	 * will wait for us to finish our work before disabling us so this
-> > +	 * should be enough
-> > +	 */
-> > +	pm_runtime_get_noresume(drm->dev->dev);
-> >  	nv_connector->hpd_task = current;
-> >  
-> >  	if (rep->mask & NVIF_NOTIFY_CONN_V0_IRQ) {
-> > @@ -1171,6 +1176,9 @@ nouveau_connector_hotplug(struct nvif_notify
-> > *notify)
-> >  	}
-> >  
-> >  	nv_connector->hpd_task = NULL;
-> > +
-> > +	pm_runtime_mark_last_busy(drm->dev->dev);
-> > +	pm_runtime_put_autosuspend(drm->dev->dev);
-> >  	return NVIF_NOTIFY_KEEP;
-> >  }
-> >  
-> > -- 
-> > 2.17.1
-> > 
--- 
-Cheers,
-	Lyude Paul
-
+But, either way, I think we can live with this measurement being fragile
+(like it already is).  If it only works when all the planets are
+aligned, I think it's still usable enough.
