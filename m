@@ -2,77 +2,148 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FDCC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD35C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A1620894
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A1620894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A2F7D208B7
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F7D208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbeHBDIY (ORCPT
+        id S1732443AbeHBDIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 23:08:24 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57472 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726444AbeHBDIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 23:08:24 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 49CA75E034F41;
-        Thu,  2 Aug 2018 09:19:46 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
- 09:19:47 +0800
-Subject: Re: [PATCH] net/9p/trans_virtio.c: add a terminal char for mount tag
-To:     Dominique Martinet <asmadeus@codewreck.org>,
-        Greg Kurz <groug@kaod.org>
-References: <5B6164F6.60004@huawei.com> <20180801081157.GA20127@nautica>
- <5B616E3B.4050205@huawei.com> <20180801125222.3ba39416@bahia.lan>
- <20180801120958.GA571@nautica>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B625BD1.8050602@huawei.com>
-Date:   Thu, 2 Aug 2018 09:18:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Wed, 1 Aug 2018 23:08:30 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:31521 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726444AbeHBDI3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 23:08:29 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42957283"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 02 Aug 2018 09:19:46 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 3EA114B66A09;
+        Thu,  2 Aug 2018 09:19:45 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Thu, 2 Aug 2018 09:19:49 +0800
+Date:   Thu, 2 Aug 2018 09:17:36 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v4 0/4] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory.
+Message-ID: <20180802011735.GB6723@localhost.localdomain>
+References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20180801120958.GA571@nautica>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 3EA114B66A09.AA06A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dominique and Greg,
+Hi,
 
-Thanks for your reviewing, and I will try to simplify other related code
-according your suggestions in patch v2.
+Sorry for disturbance, no reply for a week, any comments?
 
 Thanks,
-Jun
+Chao Fan
 
-On 2018/8/1 20:09, Dominique Martinet wrote:
-> Greg Kurz wrote on Wed, Aug 01, 2018:
->> So this patch basically turns chan->tag into a nul terminated string,
->> which is indeed more convenient and robust. Maybe you can update the
->> rest of the code accordingly and drop chan->tag_len then ?
-> 
-> If we can use that to simplify some other part of the code, that's
-> certainly more appealing to me :)
-> 
-> 
->> FWIW, 9P strings received from the client are also converted to
->> nul terminated strings:
-> 
-> Oh, good to know; I guess that makes sense when these strings come and
-> go from/to other components of the kernel that likely expect that.
-> 
+On Mon, Jul 23, 2018 at 05:29:04PM +0800, Chao Fan wrote:
+>***Background:
+>People reported that kaslr may randomly chooses some positions
+>which are located in movable memory regions. This will break memory
+>hotplug feature and make the memory can't be removed.
+>
+>***Solutions:
+>There should be a method to limit kaslr to choosing immovable memory
+>regions, so there are 2 solutions:
+>1) Add a kernel parameter to specify the memory regions.
+>2) Get the information of memory hotremove, then kaslr will know the
+>   right regions.
+>In method 2, information about memory hot remove is in ACPI
+>tables, which will be parsed after 'start_kernel', kaslr can't get
+>the information.
+>In method 1, users should know the regions address and specify in
+>kernel parameter.
+>
+>In the earliest time, I tried to dig ACPI tabls to solve this problem.
+>But I didn't splite the code in 'compressed/' and ACPI code, so the patch
+>is hard to follow so refused by community.
+>Somebody suggest to add a kernel parameter to specify the
+>immovable memory so that limit kaslr in these regions. Then I make
+>a patchset. After several versions, Ingo gave a suggestion:
+>https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+>Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
+>tables, so that the kaslr can get necessary memory information in
+>ACPI tables.
+>Since I think ACPI code is independent part, so copy the codes
+>and functions to 'compressed/' directory, so that kaslr won't
+>influence the initialization of ACPI.
+>
+>PATCH 1/4 Reuse the head file of linux/acpi.h, and copy a fcuntion from
+>          ACPI code.
+>PATCH 2/4 Functions to parse ACPI code.
+>PATCH 3/4 If 'CONFIG_MEMORY_HOTREMOVE' specified, walk all nodes and
+>          store the information of immovable memory regions.
+>PATCH 4/4 According to the immovable memory regions, filter the
+>          immovable regions which KASLR can choose.
+>
+>***Test results:
+> - I did a very simple test, and it can get the memory information in
+>   bios and efi KVM guest machine, and put it by early printk. But no
+>   more tests, so it's with RFC tag.
+>
+>v1->v2:
+> -  Simplify some code.
+>Follow Baoquan He's suggestion:
+> - Reuse the head file of acpi code.
+>
+>v2->v3:
+> - Test in more conditions, so remove the 'RFC' tag.
+> - Change some comments.
+>
+>v3->v4:
+>Follow Thomas Gleixner's suggetsion:
+> - Put the whole efi related function into #define CONFIG_EFI and return
+>   false in the other stub.
+> - Simplify two functions in head file.
+>
+>Any comments will be welcome.
+>
+>
+>Chao Fan (4):
+>  x86/boot: Add acpitb.h to help parse acpi tables
+>  x86/boot: Add acpitb.c to parse acpi tables
+>  x86/boot/KASLR: Walk srat tables to filter immovable memory
+>  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
+>
+> arch/x86/boot/compressed/Makefile |   4 +
+> arch/x86/boot/compressed/acpitb.c | 251 ++++++++++++++++++++++++++++++
+> arch/x86/boot/compressed/acpitb.h |   7 +
+> arch/x86/boot/compressed/kaslr.c  | 121 ++++++++++++--
+> 4 files changed, 372 insertions(+), 11 deletions(-)
+> create mode 100644 arch/x86/boot/compressed/acpitb.c
+> create mode 100644 arch/x86/boot/compressed/acpitb.h
+>
+>-- 
+>2.17.1
+>
+
+
