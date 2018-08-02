@@ -2,101 +2,159 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BDDC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ACFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DF1208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:35:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="odhSX7zF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DF1208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B89A208DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:38:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B89A208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbeHBIZa (ORCPT
+        id S1726595AbeHBI1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:25:30 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45314 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeHBIZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:25:30 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w726ZdH2086569;
-        Thu, 2 Aug 2018 01:35:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1533191739;
-        bh=LwrEQsq/9ej0hBUnY8eBhiYUM8Vb627H559JaTjbQOg=;
-        h=From:To:CC:Subject:Date;
-        b=odhSX7zF8j5EvfZara5YD8Ak5azJJ96mrCJRiRDrj5gfvEbqnC6u6CFotIPefunIQ
-         mWNCDLnx9O3i81vffq/MxvNroJvnXBs5ADgskVTZcTJUgmPR9QVezqWICC7Ru5DzmU
-         OE3ZdaS2fpFVaup7DRLg/VbM/wkD8sR9Q8n6kknc=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w726ZdpH009377;
-        Thu, 2 Aug 2018 01:35:39 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 2 Aug
- 2018 01:35:38 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 2 Aug 2018 01:35:38 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w726ZYLB023193;
-        Thu, 2 Aug 2018 01:35:35 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <baolin.wang@linaro.org>, <d-gerlach@ti.com>, <tony@atomide.com>,
-        <grygorii.strashko@ti.com>, <j-keerthy@ti.com>, <t-kristo@ti.com>
-Subject: [PATCH] clocksource: ti-32k: Remove CLOCK_SOURCE_SUSPEND_NONSTOP flag
-Date:   Thu, 2 Aug 2018 12:05:16 +0530
-Message-ID: <1533191716-20476-1-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 2 Aug 2018 04:27:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:52756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726021AbeHBI1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:27:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72A9680D;
+        Wed,  1 Aug 2018 23:38:12 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 841843F2EA;
+        Wed,  1 Aug 2018 23:38:09 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 07:38:04 +0100
+Message-ID: <86tvodw9wz.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <peterz@infradead.org>, <mingo@kernel.org>
+Subject: Re: [PATCH 1/4] genirq: Provide basic NMI management for interrupt lines
+In-Reply-To: <20180802020320.GC31758@voyager>
+References: <1532430427-57151-1-git-send-email-julien.thierry@arm.com>
+        <1532430427-57151-2-git-send-email-julien.thierry@arm.com>
+        <20180801030723.GA31383@voyager>
+        <df8f9f98-a1d3-e871-eec8-d805ff7cf5b7@arm.com>
+        <20180802020320.GC31758@voyager>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of below commit:
+On Thu, 02 Aug 2018 03:03:20 +0100,
+Ricardo Neri <ricardo.neri-calderon@linux.intel.com> wrote:
+> 
+> On Wed, Aug 01, 2018 at 04:09:59PM +0100, Julien Thierry wrote:
+> > >>+static bool irq_supports_nmi(struct irq_desc *desc)
+> > >>+{
+> > >>+	struct irq_data *d = irq_desc_get_irq_data(desc);
+> > >>+
+> > >>+#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+> > >>+	/* Only IRQs directly managed by the root irqchip can be set as NMI */
+> > >>+	if (d->parent_data)
+> > >>+		return false;
+> > >>+#endif
+> > >
+> > >I don't think this works in x86 because the local APIC irq_chip is the
+> > >root of the hierarchy; the rest of the irq_chips are children of it.
+> > >Furthermore, the delivery mode (i.e., regular interrupt vs NMI) is set in
+> > >these children controllers, either MSI or interrupt remapping.
+> > >
+> > >Instead, could it be possible to determine if NMI mode is supported by
+> > >checking if any of the parents of the irq_data supports NMI mode? If it
+> > >has to be the root, perhaps a flag can indicate irq_supports_nmi() about
+> > >this restriction.
+> > >
+> > 
+> > I see, I'm not very sure how to deal with the semantics here. Does it make
+> > sense for an irqchip to be able to deliver NMIs if its parent doesn't?
+> 
+> I think it does not make sense. 
+> 
+> > 
+> > If we want to handle NMI in and irqchip hierachy, shouldn't all irqchips
+> > between the one delivering the NMI and the root irqchip also be able to
+> > deliver NMIs? (Or is it the other way around and an irqchip can deliver an
+> > NMI if all its children irqchip are also able to deliver an NMI?)
+> 
+> At least in APIC, all the irq_chips support NMI delivery. However only one
+> of them will generate the NMI interrupt message, the rest (e.g., the local
+> APIC) will only relay it to the CPU.
+> 
+> So yes, I agree that the whole hierarchy should support NMI delivery, but
+> the chip generating the NMI is not necessarily the root chip.
+> 
+> One question that I have is that whether the new flag IRQCHIP_SUPPORTS_NMI
+> should be added to irq_chips that only relay NMIs or only to those from
+> which an NMI can be requested.
 
-commit 39232ed5a1793f67b11430c43ed8a9ed6e96c6eb
+If we need to distinguish between the two, then we need two flags. One
+that indicates the generation capability, and one that indicates the
+forwarding capability.
 
-time: Introduce one suspend clocksource to compensate the suspend time
+> > >>+
+> > >>+	desc = irq_to_desc(irq);
+> > >>+
+> > >>+	if (!desc || irq_settings_can_autoenable(desc)
+> > >>+	    || !irq_settings_can_request(desc)
+> > >
+> > >Is this a hard requirement for ARM? I guess it is, because you added
+> > >enable_nmi() for this very purpose. I could not find any irq in the x86
+> > >core code that uses the IRQ_NOAUTOEN flag.
+> > >
+> > 
+> > On Arm64, we do use IRQ_NOAUTOEN and it is used for one of the interrupts
+> > we'd like to handle as NMI. So we do need IRQ_NOAUTOEN to be supported for
+> > NMIs.
+> 
+> I am not sure what would be the changes to add IRQ_NOAUTOEN to a specific
+> interrupt in my use case and whether these changes would be regarded as a
+> hack for a special case. I'll investigate and get back to you.
+> 
+> > 
+> > However, the rationale for forcing it for NMIs was:
+> > - I wanted to avoid too many things being done automatically for NMIs, this
+> > way most of the responsability of managing the NMI is on the NMI requester
+> > rather than the core code.
+> 
+> But doesn't the NMI requester already have some control? It can control at
+> least the source of the NMIs (e.g., it can control when to start the timer
+> that would generate the NMI).
+> 
+> > 
+> > - There would be a need to pass down the information that we are requesting
+> > an NMI to __setup_irq and do the proper setup when enabling depending on
+> > whether we have an NMI or not.
+> > 
+> > I'm not completely against supporting autoenable for NMIs, but I'd like to
+> > have the opinion of others on the matter
+> 
+> +1
 
-The suspend/resume fails on AM437x platforms as the source is not
-a non-stop while trying to compensate time using this.
+I guess it is a matter of defining precisely where you want the
+enabling to take place, and using NOAUTOEN does give you
+flexibility. It also gives a coherent API with the percpu NMIs which
+do require a separate, percpu enable.
 
-Hence remove the CLOCK_SOURCE_SUSPEND_NONSTOP flag.
+Now, it is pretty easy to support both behaviours: we could bring back
+the auto-enable on request for non-percpu NMIs, and rely on a
+irq_set_status_flags(irq, IRQ_NOAUTOEN) before the request...
 
-Suggested-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- drivers/clocksource/timer-ti-32k.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks,
 
-diff --git a/drivers/clocksource/timer-ti-32k.c b/drivers/clocksource/timer-ti-32k.c
-index 880a861..7368e8e 100644
---- a/drivers/clocksource/timer-ti-32k.c
-+++ b/drivers/clocksource/timer-ti-32k.c
-@@ -78,8 +78,7 @@ static u64 notrace ti_32k_read_cycles(struct clocksource *cs)
- 		.rating		= 250,
- 		.read		= ti_32k_read_cycles,
- 		.mask		= CLOCKSOURCE_MASK(32),
--		.flags		= CLOCK_SOURCE_IS_CONTINUOUS |
--				CLOCK_SOURCE_SUSPEND_NONSTOP,
-+		.flags		= CLOCK_SOURCE_IS_CONTINUOUS, 
- 	},
- };
- 
+	M.
+
 -- 
-1.9.1
-
+Jazz is not dead, it just smell funny.
