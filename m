@@ -2,179 +2,101 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAA0C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50483C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56773214FB
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0672021501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 09:52:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mkmv9rnj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56773214FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="qeAMZOgm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0672021501
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731763AbeHBLmr (ORCPT
+        id S1731969AbeHBLnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:42:47 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37015 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbeHBLmr (ORCPT
+        Thu, 2 Aug 2018 07:43:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37394 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbeHBLnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:42:47 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so1375313ljk.4;
-        Thu, 02 Aug 2018 02:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=MzwBIsl0lvxpOlH5v9xNVTyELIzw7sg3i5YJ3iIGYw0=;
-        b=Mkmv9rnjMVrcZ13hc6N6hbWyOyiuOJ+51EYcD8mTCnSCrBHQJS3n56y0dKxH4hqQUg
-         GFeQARAGp8Cx6OPTV0fsA0+tGEgejVi0beXKxTEkKq/Z0drpkXkl++b9CyRQrXx1bNZ7
-         kENnQs9smeN+b7f5vUsxn7ikhIpBw4NfXU47NArVdZnQHwV82NRDg4zs0w0FeDnxGYry
-         VKrQH7ogviykLjDzkJ7ij18VD1r2WK10lGr0CJIYs58oVtgQJqpMyHaKYc45t3PFxBrJ
-         zmlm7RHoyuuCfCSkJry2rVQGdw59RDjSTS4L5Bm8H9L42z7X1EYwcVslfbU5/UcB0F67
-         dpPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=MzwBIsl0lvxpOlH5v9xNVTyELIzw7sg3i5YJ3iIGYw0=;
-        b=kdELaRa3BO/wa3Oco6lZ8ZfgFte8jxFaYv5HMbjk/4sflLs2IaHJzookx66iIWoG3R
-         zj80j0W4EhxpoWHQdokf1w5x5TLVGz9GmUK6AK+C30L8DobeWH4FlMQp15HhQ3DfqJ0n
-         tvG2dC5H90RCD8MaXnG6UexdKRnLRR6FhGmgbIb6gox5QA5FpoB7QY+o+LHA2JMTjI95
-         WhEkrx6g0qgoYruJODWVe4hV01Q1TdiT4v1GxQlPJwhpcBeG/34R6Mr7uhs8V6Wnscsk
-         6iRyKZYO6VdudF8CCaWMGrgCWUwsk6eOVfvrxzKAYwj7g9tl9eUCddZ16GMdE4jS7a3N
-         Dz6Q==
-X-Gm-Message-State: AOUpUlG1Zc8O9pnbqpitz66dPmlnnw3tZ8Q1+gHYjDX6nv/mAtk8vDo5
-        Gd2zkuI9q+UXU9WXLH19p98zEU9JfJcOIVlRQyg=
-X-Google-Smtp-Source: AAOMgpcMRtMX1bEiX8R5TKyrYo3cDgCes4N22AZ86U/9Vyu5isV81yQtSSGRnf1qWT46km58VNMpO84rC5PSCmVQBO8=
-X-Received: by 2002:a2e:8950:: with SMTP id b16-v6mr1746863ljk.111.1533203541978;
- Thu, 02 Aug 2018 02:52:21 -0700 (PDT)
+        Thu, 2 Aug 2018 07:43:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Xr0aOvXN84Kpsez+8eAtnZVAPRQLjVF0zKFxBqh+Has=; b=qeAMZOgmTpkbYb+3WYDcyznY3
+        HeWOzlOdMlDXZHDrSdI4n24kelSESZmjChvqczWJhSAxLeBsdz+ue1jgNd/ux9mmtnLThzllQxARG
+        4LCUofJ7SsbrFm9eIhBYYCWG/mkLp9YikN7WgVnU/LEALdCu2N+SJIw8R8nokJdJ9s4fg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1flAHb-0001pE-Ti; Thu, 02 Aug 2018 09:52:35 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6E5951124241; Thu,  2 Aug 2018 10:52:35 +0100 (BST)
+Date:   Thu, 2 Aug 2018 10:52:35 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org
+Subject: Re: Applied "ASoC: wcd9335: add CLASS-H Controller support" to the
+ asoc tree
+Message-ID: <20180802095235.GB9117@sirena.org.uk>
+References: <20180801112000.DC6B51124241@debutante.sirena.org.uk>
+ <d7c2e466-9f60-9347-bc62-7ed0dc3df91b@linaro.org>
+ <20180802063130.GJ4662@dell>
 MIME-Version: 1.0
-Received: by 2002:a19:4d55:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 02:51:51 -0700 (PDT)
-In-Reply-To: <20180727115220.10991-1-vasilyev@ispras.ru>
-References: <20180727115220.10991-1-vasilyev@ispras.ru>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 2 Aug 2018 10:51:51 +0100
-Message-ID: <CA+V-a8vXEiZ6widPZRdiw-0QejFHwDcTtMz5iKfkHc9gZLZ79Q@mail.gmail.com>
-Subject: Re: [PATCH] media: davinci: vpif_display: Mix memory leak on probe
- error path
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, ldv-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
+Content-Disposition: inline
+In-Reply-To: <20180802063130.GJ4662@dell>
+X-Cookie: BARBARA STANWYCK makes me nervous!!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-thank you for the patch.
+--qcHopEYAB45HaUaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Jul 27, 2018 at 12:52 PM, Anton Vasilyev <vasilyev@ispras.ru> wrote:
-> If vpif_probe() fails on v4l2_device_register() then memory allocated
-> at initialize_vpif() for global vpif_obj.dev[i] become unreleased.
->
-> The patch adds deallocation of vpif_obj.dev[i] on the error path and
-> removes duplicated check on platform_data presence.
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-> ---
->  drivers/media/platform/davinci/vpif_display.c | 24 ++++++++++++-------
->  1 file changed, 16 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
-> index 7be636237acf..0f324055cc9f 100644
-> --- a/drivers/media/platform/davinci/vpif_display.c
-> +++ b/drivers/media/platform/davinci/vpif_display.c
-> @@ -1114,6 +1114,14 @@ static int initialize_vpif(void)
->         return err;
->  }
->
-> +static void free_vpif_objs(void)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < VPIF_DISPLAY_MAX_DEVICES; i++)
-> +               kfree(vpif_obj.dev[i]);
-> +}
-> +
->  static int vpif_async_bound(struct v4l2_async_notifier *notifier,
->                             struct v4l2_subdev *subdev,
->                             struct v4l2_async_subdev *asd)
-> @@ -1255,11 +1263,6 @@ static __init int vpif_probe(struct platform_device *pdev)
->                 return -EINVAL;
->         }
->
-> -       if (!pdev->dev.platform_data) {
-> -               dev_warn(&pdev->dev, "Missing platform data.  Giving up.\n");
-> -               return -EINVAL;
-> -       }
-> -
-Could make this as a separate patch.
+On Thu, Aug 02, 2018 at 07:31:30AM +0100, Lee Jones wrote:
+> On Wed, 01 Aug 2018, Srinivas Kandagatla wrote:
 
->         vpif_dev = &pdev->dev;
->         err = initialize_vpif();
->
-> @@ -1271,7 +1274,7 @@ static __init int vpif_probe(struct platform_device *pdev)
->         err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
->         if (err) {
->                 v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
-> -               return err;
-> +               goto vpif_free;
->         }
->
->         while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, res_idx))) {
-> @@ -1314,7 +1317,10 @@ static __init int vpif_probe(struct platform_device *pdev)
->                         if (vpif_obj.sd[i])
->                                 vpif_obj.sd[i]->grp_id = 1 << i;
->                 }
-> -               vpif_probe_complete();
-> +               err = vpif_probe_complete();
-> +               if (err) {
-> +                       goto probe_subdev_out;
-> +               }
+> > Without the "[PATCH v2 02/10] mfd: wcd9335: add support to wcd9335 core" It
+> > would break the build.
 
-{} braces are not needed
+> This is not a run-time dependency.
 
->         } else {
->                 vpif_obj.notifier.subdevs = vpif_obj.config->asd;
->                 vpif_obj.notifier.num_subdevs = vpif_obj.config->asd_sizes[0];
-> @@ -1334,6 +1340,8 @@ static __init int vpif_probe(struct platform_device *pdev)
->         kfree(vpif_obj.sd);
->  vpif_unregister:
->         v4l2_device_unregister(&vpif_obj.v4l2_dev);
-> +vpif_free:
-> +       free_vpif_objs();
->
-Just put the for loop here instead.
+> Without 02/10 there is no build. :)
 
->         return err;
->  }
-> @@ -1355,8 +1363,8 @@ static int vpif_remove(struct platform_device *device)
->                 ch = vpif_obj.dev[i];
->                 /* Unregister video device */
->                 video_unregister_device(&ch->video_dev);
-> -               kfree(vpif_obj.dev[i]);
->         }
-> +       free_vpif_objs();
->
-Just leave this as is, as its already looping and freeing up the objects.
+I reverted both patches after Srini's mail anyway (I didn't go and check
+for the MFD dependency, probably should've done).
 
->         return 0;
->  }
-> --
-> 2.18.0
->
+--qcHopEYAB45HaUaB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
---Prabhakar Lad
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti1GIACgkQJNaLcl1U
+h9Bj6gf8CW3GQP6wh/uI0bsTgcrN3VIWuUsOzAmi9uwXXvvKpht9jBEQEvnHeW6F
+4RHbLEYW6Ftf/QA4Gq9aSQkeZwtpnq7NNfDBmiNiNjt6ZQ3NDoDnJh7eJPl45rRG
+oUMpqESO8grhP3Xvdn2D79zMUQbjmzxJpKmf32AxLpp+CV2HGWL07VofsmkmljoA
+7AkOOHRAV5cupYkC+pKAkYZTAZsCj0TeVGDtfCO6ytZ/eGfyKPK4n0eIa+KEJUP4
+4bT0GWP8bQIV5Was00DTRRaYdAIETVrTFU60Ukv+4lxw43yGhk47inx+ZT+Cw6XE
+YBqxdCFtO/8ClZIK+5TLmiBdpR+kIg==
+=GgCo
+-----END PGP SIGNATURE-----
+
+--qcHopEYAB45HaUaB--
