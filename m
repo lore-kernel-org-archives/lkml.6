@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C3DC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56986C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD4B208A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C6BC20862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 00:53:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GPnZhXC5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BD4B208A4
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DVmxEOUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6BC20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732388AbeHBCmM (ORCPT
+        id S1732449AbeHBCmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 22:42:12 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:32891 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730431AbeHBCmL (ORCPT
+        Wed, 1 Aug 2018 22:42:15 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34939 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732392AbeHBCmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 22:42:11 -0400
-Received: by mail-qt0-f194.google.com with SMTP id c15-v6so581528qtp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:53:41 -0700 (PDT)
+        Wed, 1 Aug 2018 22:42:14 -0400
+Received: by mail-qt0-f196.google.com with SMTP id a5-v6so563750qtp.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 17:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=189DY+gaLXQRLRw2y8y5yRwb7CdtbfhSBM5/gsjAGqM=;
-        b=GPnZhXC5E7pNxlqWEX9IMy4v2CydY8Z4zIYGhv5hW21N84zsjYbUAA4R0ZV4ftRDZe
-         9W1ibYCaeuaUscOEjyLKR+m2LJw7bFR1dTMVeMis6YJmiPFDE6nakeWxDNbc8zlhWIZV
-         a9YjIdbrxWElY+C/5GiGpVxUPyWeZBlT44hBU=
+        bh=VsjrZXC5OpUj/mRiqlhQAUbom/HbTgymFwHCvgsVH+Q=;
+        b=DVmxEOUYOHzrEWaNwNqxrjCBhcbHLa9zr8AAQd246c+q6pGHg6yCXVKHxLVXb7jGPX
+         WOstrBxw6kjm3pxUB/wfVKzK+cNa8uDbFgaU9pQFOCw60q+J7kKP2ZW+DCxpHYvEEkCu
+         XkUoDC1wJ6CYcoLxqw9yflFbYhgy6RYUKq21o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=189DY+gaLXQRLRw2y8y5yRwb7CdtbfhSBM5/gsjAGqM=;
-        b=nd28ZbbapuJ74V66Mh7naymLiAffqkvD7Z6XkjYycQ6cmeUT56VesL1Uv1qZcTLh8I
-         7Yc5/vvL3nhtZzNKGrBV6olJU2dA1jcqinsJjyJ7YycLf6zNSUZv8Rn+NNUWMumXc90B
-         ocw5/WjKs+d/Tssxgwc7egWJ5ZDhusr3hlvgI1E9/FENuz6Sz+QKbASd/gbiFdtLxE6w
-         mB8IYUcvlMNXD5tcIALI2Uhm7SA8jRcX701OUmEYZeO7d31BcKSQQTfbHvBO50nyKyeq
-         qOkKQ9Vv48UbMusvRk3wSLHihw/vb8v7GI+NA1GbkLzZVCBd7wU+6NZTdIGCtFEzuOG7
-         GL7w==
-X-Gm-Message-State: AOUpUlESVDYHfMFyEHaJ6boskQ5U4BSOy+CKJ3R/HoSpQIPrgFpQwlpD
-        Zby2cZAS8pY4Du6A1ckXB3dsWg==
-X-Google-Smtp-Source: AAOMgpfAtu0kop0nh9fRCRAbCx0MbQV9hL5Uw+ib4/e75LjCTz2em6Xq8+MINlVcpNYExegu61cZQQ==
-X-Received: by 2002:a0c:c3c6:: with SMTP id p6-v6mr641296qvi.146.1533171220963;
-        Wed, 01 Aug 2018 17:53:40 -0700 (PDT)
+        bh=VsjrZXC5OpUj/mRiqlhQAUbom/HbTgymFwHCvgsVH+Q=;
+        b=eYmQrxrY/ppFBC5irj7KucnxHG7HZgELLKgPh1zzBGnBR5rw4Wzx6AEk3LnBYrIvyL
+         hITnAVh2Mz9oNBiNLnClQZPH0kk1hJJNO/Vdxi17xzZXOdORcb3uS9BWLDG/nOrx1AbP
+         bD6Dneav77kZ0u2Eyf4OSZmTUPr1OKp7mpctFdbnR8l4uBrPLv5pUhZ7PbNLns1/PBXo
+         +voscJ9/9KFxmoSu+rp8uHEhfREJsx71OlI4k57diiUMI3N8BhWYnlgIT3XVJ5s4u7WX
+         n7lZM5rtikSXbuRqfZnOjv84xjjAfmG+AmnnvHGREJnfmvzDbrqYQNcH11cP7iLmy5/m
+         gfLA==
+X-Gm-Message-State: AOUpUlHy/+UEwBo7K9TI2H0h/cey9E0RjtywXHEc/1Ai7Yg52meOk605
+        jqw6R2PKKboGltZ0/hJSecxZdQ==
+X-Google-Smtp-Source: AAOMgpd6FLlQOIZ4d1/DI2VKP8vuXtMASY02S7UDSIAeC/nWKPYiD4hdVV28hz+cSKMO+s/4bCz94w==
+X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr649834qvb.26.1533171224345;
+        Wed, 01 Aug 2018 17:53:44 -0700 (PDT)
 Received: from lbrmn-lnxub86.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id e81-v6sm325116qka.3.2018.08.01.17.53.37
+        by smtp.gmail.com with ESMTPSA id e81-v6sm325116qka.3.2018.08.01.17.53.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 01 Aug 2018 17:53:40 -0700 (PDT)
+        Wed, 01 Aug 2018 17:53:43 -0700 (PDT)
 From:   Arun Parameswaran <arun.parameswaran@broadcom.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         Arun Parameswaran <arun.parameswaran@broadcom.com>
-Subject: [PATCH v4 1/8] dt-bindings: net: Fix Broadcom iProc mdio mux driver base address
-Date:   Wed,  1 Aug 2018 17:53:46 -0700
-Message-Id: <1533171233-14557-2-git-send-email-arun.parameswaran@broadcom.com>
+Subject: [PATCH v4 2/8] net: phy: Fix the register offsets in Broadcom iProc mdio mux driver
+Date:   Wed,  1 Aug 2018 17:53:47 -0700
+Message-Id: <1533171233-14557-3-git-send-email-arun.parameswaran@broadcom.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1533171233-14557-1-git-send-email-arun.parameswaran@broadcom.com>
 References: <1533171233-14557-1-git-send-email-arun.parameswaran@broadcom.com>
@@ -78,33 +78,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify the base address of the Broadcom iProc MDIO mux driver to
-point to the start of the block's register address space.
+Modify the register offsets in the Broadcom iProc mdio mux to start
+from the top of the register address space.
+
+Earlier, the base address pointed to the end of the block's register
+space. The base address will now point to the start of the mdio's
+address space. The offsets have been fixed to match this.
 
 Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/phy/mdio-mux-bcm-iproc.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
-index dfe287a..dc8aa68 100644
---- a/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
-+++ b/Documentation/devicetree/bindings/net/brcm,mdio-mux-iproc.txt
-@@ -18,9 +18,9 @@ at- Documentation/devicetree/bindings/net/mdio-mux.txt
+diff --git a/drivers/net/phy/mdio-mux-bcm-iproc.c b/drivers/net/phy/mdio-mux-bcm-iproc.c
+index 0831b71..48bb74a 100644
+--- a/drivers/net/phy/mdio-mux-bcm-iproc.c
++++ b/drivers/net/phy/mdio-mux-bcm-iproc.c
+@@ -22,7 +22,7 @@
+ #include <linux/mdio-mux.h>
+ #include <linux/delay.h>
  
+-#define MDIO_PARAM_OFFSET		0x00
++#define MDIO_PARAM_OFFSET		0x23c
+ #define MDIO_PARAM_MIIM_CYCLE		29
+ #define MDIO_PARAM_INTERNAL_SEL		25
+ #define MDIO_PARAM_BUS_ID		22
+@@ -30,20 +30,22 @@
+ #define MDIO_PARAM_PHY_ID		16
+ #define MDIO_PARAM_PHY_DATA		0
  
- for example:
--		mdio_mux_iproc: mdio-mux@6602023c {
-+		mdio_mux_iproc: mdio-mux@66020000 {
- 			compatible = "brcm,mdio-mux-iproc";
--			reg = <0x6602023c 0x14>;
-+			reg = <0x66020000 0x250>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+-#define MDIO_READ_OFFSET		0x04
++#define MDIO_READ_OFFSET		0x240
+ #define MDIO_READ_DATA_MASK		0xffff
+-#define MDIO_ADDR_OFFSET		0x08
++#define MDIO_ADDR_OFFSET		0x244
  
+-#define MDIO_CTRL_OFFSET		0x0C
++#define MDIO_CTRL_OFFSET		0x248
+ #define MDIO_CTRL_WRITE_OP		0x1
+ #define MDIO_CTRL_READ_OP		0x2
+ 
+-#define MDIO_STAT_OFFSET		0x10
++#define MDIO_STAT_OFFSET		0x24c
+ #define MDIO_STAT_DONE			1
+ 
+ #define BUS_MAX_ADDR			32
+ #define EXT_BUS_START_ADDR		16
+ 
++#define MDIO_REG_ADDR_SPACE_SIZE	0x250
++
+ struct iproc_mdiomux_desc {
+ 	void *mux_handle;
+ 	void __iomem *base;
+@@ -169,6 +171,14 @@ static int mdio_mux_iproc_probe(struct platform_device *pdev)
+ 	md->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (res->start & 0xfff) {
++		/* For backward compatibility in case the
++		 * base address is specified with an offset.
++		 */
++		dev_info(&pdev->dev, "fix base address in dt-blob\n");
++		res->start &= ~0xfff;
++		res->end = res->start + MDIO_REG_ADDR_SPACE_SIZE - 1;
++	}
+ 	md->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(md->base)) {
+ 		dev_err(&pdev->dev, "failed to ioremap register\n");
 -- 
 1.9.1
 
