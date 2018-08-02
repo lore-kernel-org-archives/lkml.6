@@ -2,93 +2,139 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEF1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33691C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86C5214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0C3F214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qzlbilNj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86C5214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oHJ4JkJh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C3F214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732421AbeHBOgk (ORCPT
+        id S2387424AbeHBOhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:36:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58376 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732130AbeHBOgk (ORCPT
+        Thu, 2 Aug 2018 10:37:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40971 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732130AbeHBOhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:36:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Pii8l6UzTDMFVsEEYXI3f4EMFHca1mSUOZRFBYnMG8E=; b=qzlbilNjY3QDB/G0ItG85YLI8
-        FJnbXIUZMEOGv47miKsdTrVWL/a0icElpF7BOqL65jd4NnuVo71K7rBD5ZzHNmRghmMwFACnCsWzR
-        FdTu0EDN1bbuNTky0YiM6MnrayHgfsYFXuS0VXxzkCQLzBct30JxCtHBBjbe45AdZulGn5kY2iOR+
-        DwzEzzyVpEI5lZRgzg+uweuh7J/hcedxdmEnhwP/ZzUDPkBNOC0BAWVMKzyXI1qWqklkLw+sgyb+/
-        h9Gp6/az76BsWaiIWj/lqRA0q71ka8gUlseFpOD0hAFMcQdfRG/9y8oiZGVxAzNcqTjNrqo8GgGOl
-        6ZjJ33VQg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flCyf-0005VH-SI; Thu, 02 Aug 2018 12:45:14 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9ABDC2026826B; Thu,  2 Aug 2018 14:45:11 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 14:45:11 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     skannan@codeaurora.org
-Cc:     Quentin Perret <quentin.perret@arm.com>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org, linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH v5 10/14] sched/cpufreq: Refactor the utilization
- aggregation method
-Message-ID: <20180802124511.GN2512@hirez.programming.kicks-ass.net>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-11-quentin.perret@arm.com>
- <331552975e858911db66bc78c2c8e720@codeaurora.org>
- <20180802123315.GV2476@hirez.programming.kicks-ass.net>
+        Thu, 2 Aug 2018 10:37:25 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z8-v6so1131636pgu.8;
+        Thu, 02 Aug 2018 05:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wNife3HM+j4+7Svk4nK0pDwzdWpwW/h3E6Ppt9T7ANw=;
+        b=oHJ4JkJh5B7qG4HyZO4HPW5+RJIOGkvFJRIbSbiDzVJrNtIrBYI6zTDc/vZKPJDPQF
+         Xn10boJjAnozd4ZQuJ06p7tX9PLdPTk+HfuprX7L/AmidPpkI9PBEMs6gnO68Pgb30fb
+         0s5orxAVYYNkD9XuApMrkwF8VdyYw2vrr6+fRDNT/sTv0VDFpX7eJDAWmaXoNM45W99V
+         Fi1Xsu8zEPvZjQWfOghQ33YN6kJjK1OiWXZetg5A5MhTs2V2uWHBQ/LYeOCFtG3g6y3n
+         xZ8wKxqa3GPEKVU5sSwGtdIj378z+DThu9Fml02g0lSs0aUpcpQZYAb7EqvqmfRKsDmk
+         u++w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wNife3HM+j4+7Svk4nK0pDwzdWpwW/h3E6Ppt9T7ANw=;
+        b=uQpBN6xC4bi2p0Ci1tPL55wFGzMALFKGuWAqncxCfoAxpXH5PWKrl1TQH5npl66X4p
+         t/OCqF/7YgILASlqL3GN317e4GQKDh0w9C39Tbjo718RhP/YbkPoDM0h4a9iPrYC4bZn
+         u7fF5LD1XCm7oACglQdjQkA1tJkJ/KgG1XX0pWJRCUC7xUWlm57xlO3bD3+UgJOYk3me
+         ACB+OXs20C3zwdnvrchk8eGLjGhvlaRo6Tj0XlT74MACnELJaeJnk3igt0ydyfC++r9I
+         B5gocg6HD37ekyCICWDYhpnN7fztFfqJxlX6VRa0Vz5NGXxqqT2a6Jg3GXxxKV4t7HiX
+         E42g==
+X-Gm-Message-State: AOUpUlE4H6Y0f/xJOCrrtz4KLP44tPl1FX5XnSTlAQO1X//DoCJNC8Be
+        /ctpaXS1P73WKoHwDAt/Jh7kYMRg
+X-Google-Smtp-Source: AAOMgpd7jwFGqLJrYlvOUNp7lQosW0I5Xc7REPlNYdg/6CpW3dtTvCYMbMM5Sx512Aq7eJ9DPiEgvg==
+X-Received: by 2002:a63:9741:: with SMTP id d1-v6mr2578335pgo.403.1533213982631;
+        Thu, 02 Aug 2018 05:46:22 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u17-v6sm5611941pfa.176.2018.08.02.05.46.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 05:46:21 -0700 (PDT)
+Subject: Re: linux-next: Tree for Aug 1
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "James.Bottomley@HansenPartnership.com" 
+        <James.Bottomley@HansenPartnership.com>,
+        "tom.leiming@gmail.com" <tom.leiming@gmail.com>
+Cc:     "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+References: <20180801175852.36549130@canb.auug.org.au>
+ <20180801224813.GA13074@roeck-us.net>
+ <1533163965.3158.1.camel@HansenPartnership.com>
+ <20180801234727.GA3762@roeck-us.net>
+ <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
+ <1533168205.3158.12.camel@HansenPartnership.com>
+ <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
+ <e3e32fd801cb1270cddec6fc1ea3dabad4473b64.camel@wdc.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <93cbb876-3a25-482a-a5b4-6e13d42ee535@roeck-us.net>
+Date:   Thu, 2 Aug 2018 05:46:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180802123315.GV2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <e3e32fd801cb1270cddec6fc1ea3dabad4473b64.camel@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 02:33:15PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 30, 2018 at 12:35:27PM -0700, skannan@codeaurora.org wrote:
-> > On 2018-07-24 05:25, Quentin Perret wrote:
-> > If it's going to be a different aggregation from what's done for frequency
-> > guidance, I don't see the point of having this inside schedutil. Why not
-> > keep it inside the scheduler files? Also, it seems weird to use a governor's
-> > code when it might not actually be in use. What if someone is using
-> > ondemand, conservative, performance, etc?
+On 08/01/2018 10:04 PM, Bart Van Assche wrote:
+> On Wed, 2018-08-01 at 21:58 -0700, Guenter Roeck wrote:
+>> I am running out of ideas. Any thoughts on how to track this down further ?
 > 
-> EAS hard relies on schedutil -- I suppose we need a check for that
-> somewhere and maybe some infrastructure to pin the cpufreq governor.
+> Is a shell available when the hang occurs? If so, it would be helpful if you
+> could provide a dump of the information in /sys/kernel/debug/block. There is
+> namely detailed information in that directory about pending commands.
+> 
 
-Either that or disable EAS when another governor is selected.
+No, it hangs hard early in the boot process. See various logs at
+http://kerneltests.org/builders/, in the 'next' column.
 
-> We're simply not going to support it for anything else.
+Here is some interesting information from the x86_64 boot tests.
 
-To clarify, it makes absolutely no sense what so ever to attempt EAS
-when the DVFS control is not coordinated.
+Building x86_64:q35:Broadwell-noTSX:defconfig:smp:sata:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:IvyBridge:defconfig:smp:nvme:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:SandyBridge:defconfig:smp:usb:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:Haswell:defconfig:smp:usb-uas:rootfs ... running ...... passed
+Building x86_64:q35:Skylake-Client:defconfig:smp:mmc:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:Conroe:defconfig:smp:scsi[DC395]:rootfs ... running ........ passed
+Building x86_64:q35:Nehalem:defconfig:smp:scsi[AM53C974]:rootfs ... running ...... passed
+Building x86_64:q35:Westmere-IBRS:defconfig:smp:scsi[53C810]:rootfs ... running ....... passed
+Building x86_64:q35:Skylake-Server:defconfig:smp:scsi[53C895A]:rootfs ... running ....... passed
+Building x86_64:pc:EPYC:defconfig:smp:scsi[MEGASAS]:rootfs ... running ...... passed
+Building x86_64:q35:EPYC-IBPB:defconfig:smp:scsi[MEGASAS2]:rootfs ... running ....... passed
+Building x86_64:q35:Opteron_G5:defconfig:smp:scsi[FUSION]:rootfs ... running ....... passed
+Building x86_64:pc:phenom:defconfig:smp:initrd ... running .................................. failed (timeout)
+Building x86_64:q35:Opteron_G1:defconfig:smp:initrd ... running .................................. failed (timeout)
+Building x86_64:pc:Opteron_G2:defconfig:smp:sata:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:core2duo:defconfig:smp:usb:rootfs ... running .................................. failed (timeout)
+Building x86_64:pc:Opteron_G3:defconfig:nosmp:usb:rootfs ... running .................................. failed (timeout)
+Building x86_64:q35:Opteron_G4:defconfig:nosmp:sata:rootfs ... running .................................. failed (timeout)
+
+This is consistent across multiple test runs. In summary,
+
+- Boot from initrd fails
+- Boot from SATA drive fails (this is with CONFIG_ATA)
+- Boot from NVME fails
+- Boot from USB drive fails
+- Boot from MMC (SD) fails
+- Boot from USB UAS drive passes
+- Boot from various real SCSI drives passes
+
+Platform (pc,q35), CPU type, or SMP/NOSMP does not seem to make a difference.
+
+Guenter
