@@ -2,107 +2,165 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150D1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33751C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1792208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7955208DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZMNPrncs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1792208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="RtYmfhWr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FGNNSTDN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7955208DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbeHBICM (ORCPT
+        id S1726580AbeHBIEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:02:12 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44012 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbeHBICM (ORCPT
+        Thu, 2 Aug 2018 04:04:54 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39749 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726174AbeHBIEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:02:12 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7264539122915;
-        Thu, 2 Aug 2018 06:12:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=kS4foqt/6bOC8QY3RGD+ah6CP+9XssfnGY2zOFQUmgw=;
- b=ZMNPrncsQfVmzGl3/iKzss4RPlJg1Z6HzqJ58p/Rp8r4NpXtO76Dyw7qsKQcZKmpw5ib
- OhWS4X7jLg0m/B31+SczAXvKc35PK8aEVf0T+9ax961vyyMQYWdAgiUmedeN65UawDML
- vW6SkJ/7jHJ/JdGfHM5cwial0GAv4AcmMFIAkmdkJ7cKJTkQD6yIsg6gkD7Ti8jtECWT
- vT2Kd3Ermzfph2t8INelVfxofCb3cJy1K+2sFVCZK5y/Ifo+DVidG+3PVYG49QgpenGC
- ksXjJ27Px7dTgH7wUFcQJVmAzjx20cjxDaT6QISRhwn67VWpaT2J+tkAjOLo0u4fqE+9 Rw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2kggep9qbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Aug 2018 06:12:38 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w726Cbvh011902
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Aug 2018 06:12:37 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w726CaFq023232;
-        Thu, 2 Aug 2018 06:12:36 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Aug 2018 23:12:36 -0700
-Date:   Thu, 2 Aug 2018 09:12:29 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jheng-Jhong Wu <goodwater.wu@gmail.com>
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: mt29f_spinand: fix memory leak while
- programming pages
-Message-ID: <20180802061229.vg4zefomfxek4vvi@mwanda>
-References: <1533116658-14924-1-git-send-email-goodwater.wu@gmail.com>
- <20180801114518.ajkgsx7exjny63mt@mwanda>
- <CALtPoQCyoe5V0m5=3K1XeZm41aDCaJ0rmYU-a=qkm=Yb8jgMxg@mail.gmail.com>
- <CALtPoQA7EdUDmN26Z406J6gFFx4XLUy1zTb65x8MgTVpoG57tg@mail.gmail.com>
+        Thu, 2 Aug 2018 04:04:54 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 532C520DE4;
+        Thu,  2 Aug 2018 02:15:22 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 02 Aug 2018 02:15:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=2Qi64U/ldsfGINuLRcy8PwLwNPh+xXB0BDEhvGwZm3o=; b=RtYmfhWr
+        zyYQrCC9LMc8/DB8nBlDkAR/6iYJvBE4apERiCwjJETEX6pQhEJwGJOy2Av+RO1M
+        rqTWCuXimLLOZd4Eh6yI+/Avw/KFkaJao4jtg8k2kj5kITKueUm3BD/f8uRjiBw0
+        VMuCc4CUFVvO/MrD3AQjOjDQH5Nxa1FlQ17KVFWckqx3GFLXXwO4KrcB3+Hc0Kpm
+        q+/nZ2wb03jtvy1jTnH7F1dyr78SAhZA1ZYB5AJsrfFgPAslzVmiYutSxGXiFvCV
+        9TfoWY+Mf/YTqlr7zWg08rtmo8+/VcsAXv1Q4W6JjLvye4EqQeO4LeiWmLcAZWQV
+        3HVuZi5Ra1IncA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=2Qi64U/ldsfGINuLRcy8PwLwNPh+x
+        XB0BDEhvGwZm3o=; b=FGNNSTDNcv3J8Vv5kYdkF8/0Bm7g1qQBohQztGN2NL2yx
+        x3N37qeMLTfO7EXZ9iX5LprQEzjxhQ4MG58+wkLFbH5VH3I54Qcz6+ltPdijBVjJ
+        K6wVqZ9iziHqDdWL04cd1j6oEsvh28ofk0k4wP747vGjd/6ci0dr7tVwWLbWr1IS
+        oQldslr/vJBI10g13OkWHO8Mt76xWIG6Hf6dKi0BrSgzH2Vbw1ryTrVL1J6ZwQob
+        wT9cvwxwvgK73t83d0cSoXFxxk+BIqPbIqnFTqyJP9QiRpxBR49IqWwpQHx9/GTz
+        zpjjD2slKuKRTkQLuZpWlHvIf7DNlN+knxJS/mlCw==
+X-ME-Proxy: <xmx:eaFiW-M6Ti0OKwtwEPepqQYAUuzd99bwKTFIy2FCoHj2jWC8RFJkKg>
+    <xmx:eaFiW65NVd4esW1f-LGzIqUCL5SAM9TGqU2c_I6CBM8SXus3SGR6Lw>
+    <xmx:eaFiW83kSrjVDilVdFE3l_7vVmrGrUiFG85dk4MOzSfHlqDUo6plgg>
+    <xmx:eaFiW7aEBxLQEdWtUCkvqMvRUOnQXd2UuKBgH8Y7UHvYcqTF2kwIRw>
+    <xmx:eaFiW0C4y3XHkUjFJNIPtCB4puH8d5e7vjbzKNzPRFgcOw544O84gg>
+    <xmx:eqFiWwk75twb-HU6Itqfh9vku9wkOj7AZ6HobNSB_AeGFkElkq0wDw>
+X-ME-Sender: <xms:eaFiWzNEJMkUMvQhIowW6jMF9LsrTrctwrbyZHLH43B9XbhuEssHFA>
+Received: from localhost (d57e6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 10F8C10255;
+        Thu,  2 Aug 2018 02:15:20 -0400 (EDT)
+Date:   Thu, 2 Aug 2018 08:15:18 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Miao Xie <miaoxie@huawei.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Message-ID: <20180802061518.GD3272@kroah.com>
+References: <20180730161622.3837cb15@canb.auug.org.au>
+ <559c49b8-9d58-e242-20c2-fe1b491664dd@huawei.com>
+ <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALtPoQA7EdUDmN26Z406J6gFFx4XLUy1zTb65x8MgTVpoG57tg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8972 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=828
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1808020066
+In-Reply-To: <7152b6ba-9ad6-4a9c-3b13-2d5310266ccd@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 11:42:30AM +0800, Jheng-Jhong Wu wrote:
-> Dear Dan,
+On Wed, Aug 01, 2018 at 05:09:13PM +0800, Chao Yu wrote:
+> Hi Stephen,
 > 
-> I know what you wrote, but before the spinand device is removed and
-> freed memory automatically, programming pages may do many many times.
-> Assume we erase and rewrite a large part of the flash, then
-> spinand_program_page() might exhaust memory if memory is not large
-> enough.
-> In fact, OOM indeed occured when I tested programming multi-pages by
-> mtd_debug tool.
-> If OOM was not caused by devm_kzalloc() in spinand_program_page(),
-> what may exhaust memory?
+> On 2018/7/30 14:31, Gao Xiang wrote:
+> > Hi Stephen,
+> > 
+> > On 2018/7/30 14:16, Stephen Rothwell wrote:
+> >> Hi Greg,
+> >>
+> >> After merging the staging tree, today's linux-next build (x86_64
+> >> allmodconfig) failed like this:
+> >>
+> >> drivers/staging/erofs/super.c: In function 'erofs_read_super':
+> >> drivers/staging/erofs/super.c:343:17: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+> >>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+> >>                  ^~~~~~~~~
+> >>                  IS_RDONLY
+> >> drivers/staging/erofs/super.c:343:17: note: each undeclared identifier is reported only once for each function it appears in
+> >> drivers/staging/erofs/super.c:343:29: error: 'MS_NOATIME' undeclared (first use in this function); did you mean 'S_NOATIME'?
+> >>   sb->s_flags |= MS_RDONLY | MS_NOATIME;
+> >>                              ^~~~~~~~~~
+> >>                              S_NOATIME
+> >> drivers/staging/erofs/super.c: In function 'erofs_mount':
+> >> drivers/staging/erofs/super.c:501:10: warning: passing argument 5 of 'mount_bdev' makes integer from pointer without a cast [-Wint-conversion]
+> >>    &priv, erofs_fill_super);
+> >>           ^~~~~~~~~~~~~~~~
+> >> In file included from include/linux/buffer_head.h:12:0,
+> >>                  from drivers/staging/erofs/super.c:14:
+> >> include/linux/fs.h:2151:23: note: expected 'size_t {aka long unsigned int}' but argument is of type 'int (*)(struct super_block *, void *, int)'
+> >>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+> >>                        ^~~~~~~~~~
+> >> drivers/staging/erofs/super.c:500:9: error: too few arguments to function 'mount_bdev'
+> >>   return mount_bdev(fs_type, flags, dev_name,
+> >>          ^~~~~~~~~~
+> >> In file included from include/linux/buffer_head.h:12:0,
+> >>                  from drivers/staging/erofs/super.c:14:
+> >> include/linux/fs.h:2151:23: note: declared here
+> >>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+> >>                        ^~~~~~~~~~
+> >> drivers/staging/erofs/super.c: At top level:
+> >> drivers/staging/erofs/super.c:518:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >>   .mount          = erofs_mount,
+> >>                     ^~~~~~~~~~~
+> >> drivers/staging/erofs/super.c:518:20: note: (near initialization for 'erofs_fs_type.mount')
+> >> drivers/staging/erofs/super.c: In function 'erofs_remount':
+> >> drivers/staging/erofs/super.c:630:12: error: 'MS_RDONLY' undeclared (first use in this function); did you mean 'IS_RDONLY'?
+> >>   *flags |= MS_RDONLY;
+> >>             ^~~~~~~~~
+> >>             IS_RDONLY
+> >> drivers/staging/erofs/super.c: At top level:
+> >> drivers/staging/erofs/super.c:640:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >>   .remount_fs = erofs_remount,
+> >>                 ^~~~~~~~~~~~~
+> >>
+> >> Caused by various commits creating erofs in the staging tree interacting
+> >> with various commits redoing the mount infrastructure in the vfs tree.
+> >>
+> >> I have disabed CONFIG_EROFS_FS for now:
 > 
+> Xiang has submitted several patches as below to fix compiling error on -next
+> tree, could you consider to merge those temporary fixes into -next after merging
+> staging-next's updates, and reenable CONFIG_EROFS_FS for further integrity
+> compiling and test?
+> 
+> staging: erofs: fix superblock/inode flags (MS_RDONLY -> SB_RDONLY, S_NOATIME)
+> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
+> 
+> staging: erofs: remove RADIX_TREE_EXCEPTIONAL_{ENTRY, SHIFT}
+> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000283.html
+> 
+> staging: erofs: update .mount and .remount_sb
+> https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000285.html
 
-Ok.  That makes sense.  I didn't look at it in context.  You should say
-that sort of thing in your changelog.  Looking at it now, the devm_
-model isn't right for this function so we should change it to use normal
-kzalloc().
+Why have these not been submitted to me for inclusion in my tree?
 
-We should fix all the error paths as well.  It looks like if this
-function starts returning errors, we are probably toasted, but it's
-still good practice to avoid slow leaks.
+thanks,
 
-regards,
-dan carpenter
-
-
+greg k-h
