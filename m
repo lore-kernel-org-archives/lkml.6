@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C74AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC75C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E95214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31E95214E0
+	by mail.kernel.org (Postfix) with ESMTP id 9F69C2150B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F69C2150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbeHBOW2 (ORCPT
+        id S1732397AbeHBOW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:22:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57503 "EHLO
+        Thu, 2 Aug 2018 10:22:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54817 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728797AbeHBOW1 (ORCPT
+        with ESMTP id S1731383AbeHBOW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:22:27 -0400
+        Thu, 2 Aug 2018 10:22:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72CVNTd3499881
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72CVs053499909
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 2 Aug 2018 05:31:23 -0700
+        Thu, 2 Aug 2018 05:31:55 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72CVNIx3499878;
-        Thu, 2 Aug 2018 05:31:23 -0700
-Date:   Thu, 2 Aug 2018 05:31:23 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72CVsYs3499906;
+        Thu, 2 Aug 2018 05:31:54 -0700
+Date:   Thu, 2 Aug 2018 05:31:54 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Colin Ian King <tipbot@zytor.com>
-Message-ID: <tip-d79d024820f2e522ab30b5e6662c245f887c752b@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        colin.king@canonical.com, hpa@zytor.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, hpa@zytor.com, colin.king@canonical.com
-In-Reply-To: <20180731090938.11856-1-colin.king@canonical.com>
-References: <20180731090938.11856-1-colin.king@canonical.com>
+From:   tip-bot for Chengguang Xu <tipbot@zytor.com>
+Message-ID: <tip-765d28f136291f9639e3c031a1070fb76d6625c7@git.kernel.org>
+Cc:     cgxu519@gmx.com, tglx@linutronix.de, mingo@kernel.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, cgxu519@gmx.com
+In-Reply-To: <1528804132-154948-1-git-send-email-cgxu519@gmx.com>
+References: <1528804132-154948-1-git-send-email-cgxu519@gmx.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/platform] x86/platform/UV: Remove redundant check of p ==
- q
-Git-Commit-ID: d79d024820f2e522ab30b5e6662c245f887c752b
+Subject: [tip:x86/mm] x86/mm: Remove redundant check for kmem_cache_create()
+Git-Commit-ID: 765d28f136291f9639e3c031a1070fb76d6625c7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,41 +56,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d79d024820f2e522ab30b5e6662c245f887c752b
-Gitweb:     https://git.kernel.org/tip/d79d024820f2e522ab30b5e6662c245f887c752b
-Author:     Colin Ian King <colin.king@canonical.com>
-AuthorDate: Tue, 31 Jul 2018 10:09:38 +0100
+Commit-ID:  765d28f136291f9639e3c031a1070fb76d6625c7
+Gitweb:     https://git.kernel.org/tip/765d28f136291f9639e3c031a1070fb76d6625c7
+Author:     Chengguang Xu <cgxu519@gmx.com>
+AuthorDate: Tue, 12 Jun 2018 19:48:52 +0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 2 Aug 2018 14:25:41 +0200
+CommitDate: Thu, 2 Aug 2018 14:27:35 +0200
 
-x86/platform/UV: Remove redundant check of p == q
+x86/mm: Remove redundant check for kmem_cache_create()
 
-The check for p == q is dead code because the proceeding switch
-statements jump to the end of the outer for-loop with continue
-statements.  Remove the dead code.
+The flag 'SLAB_PANIC' implies panic on failure, So there is no need to
+check the returned pointer for NULL.
 
-Detected by CoverityScan, CID#145071 ("Structurally dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180731090938.11856-1-colin.king@canonical.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/1528804132-154948-1-git-send-email-cgxu519@gmx.com
 
 ---
- arch/x86/platform/uv/tlb_uv.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/x86/mm/pgtable.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index ca446da48fd2..e26dfad507c8 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1607,8 +1607,6 @@ static int parse_tunables_write(struct bau_control *bcp, char *instr,
- 				*tunables[cnt].tunp = val;
- 			continue;
- 		}
--		if (q == p)
--			break;
- 	}
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index e3deefb891da..0f1683fcb196 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -329,9 +329,6 @@ static int __init pgd_cache_init(void)
+ 	 */
+ 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_ALIGN,
+ 				      SLAB_PANIC, NULL);
+-	if (!pgd_cache)
+-		return -ENOMEM;
+-
  	return 0;
  }
+ core_initcall(pgd_cache_init);
