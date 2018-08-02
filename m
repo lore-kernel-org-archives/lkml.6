@@ -2,133 +2,149 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBCEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E70D2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9137208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8974F208D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 05:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="Vwc344N4";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="RhmBqgjX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9137208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXj4s4kM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8974F208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbeHBGxU (ORCPT
+        id S1726148AbeHBG5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 02:53:20 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:9731 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbeHBGxU (ORCPT
+        Thu, 2 Aug 2018 02:57:40 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34649 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbeHBG5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 02:53:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1533187143; x=1564723143;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=VLCoBRiCXKjKQ8uCivPI8QZ7pzB31Dc5smuyubkFo+g=;
-  b=Vwc344N4hQy28FZpVwVVx/NpA4kVP2GwvVThRdpaGdFDKPJKdUDmYLXu
-   cfs6RZ6c72AQUR8EE20kJLDa4tDNoAQlstVNOjHnTXoScX2cSHn8jXb9X
-   ScFpAowSBnWJSSgpXI08iR/BN9NQIZeNVvqubGnViYjfVOzmH4VtCb2xR
-   yHvh95h5NDsTncko0ULizu6jZoiIKH2N72KXTpWctUCAaYnUzd7cEsvyc
-   glpDDlouT0IW1rOunafapYEwv+2Gj2Z63puGeXl94e58M9VJiK6wlqDIh
-   4TreTA3dxa24G9pCA5Z0DNYTLtbtYFUmXdkCZn7N5J8lC3OWYegurVi1/
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,434,1526313600"; 
-   d="scan'208";a="183207139"
-Received: from mail-by2nam01lp0181.outbound.protection.outlook.com (HELO NAM01-BY2-obe.outbound.protection.outlook.com) ([216.32.181.181])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Aug 2018 13:19:02 +0800
+        Thu, 2 Aug 2018 02:57:40 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c13-v6so766471wrt.1;
+        Wed, 01 Aug 2018 22:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VLCoBRiCXKjKQ8uCivPI8QZ7pzB31Dc5smuyubkFo+g=;
- b=RhmBqgjXKlOzOc0GuutwQedCYRf8ZRp5XVOypqJRK4nW6J2oV5qlbOXiFLTcl2N2cKwgv4UgMMASsdS55mPB8p1kl5BOwKLmBiizdGfBz7c0DxDkt8hFFCTo+Ni+qUtuhgy3d2JIuQBaloCU6KGQzFEkao2BZZyq5i279afhcU8=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0335.namprd04.prod.outlook.com (10.169.202.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1017.15; Thu, 2 Aug 2018 05:04:00 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::855a:8758:5f65:f8ee%8]) with mapi id 15.20.1017.010; Thu, 2 Aug 2018
- 05:04:00 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "linux@roeck-us.net" <linux@roeck-us.net>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "tom.leiming@gmail.com" <tom.leiming@gmail.com>
-CC:     "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Tree for Aug 1
-Thread-Topic: linux-next: Tree for Aug 1
-Thread-Index: AQHUKeplC62Adp/s7EWpMcTZnFWHbKSrkCyAgAAC74CAAAGHgIAAUnqAgAABgIA=
-Date:   Thu, 2 Aug 2018 05:04:00 +0000
-Message-ID: <e3e32fd801cb1270cddec6fc1ea3dabad4473b64.camel@wdc.com>
-References: <20180801175852.36549130@canb.auug.org.au>
-         <20180801224813.GA13074@roeck-us.net>
-         <1533163965.3158.1.camel@HansenPartnership.com>
-         <20180801234727.GA3762@roeck-us.net>
-         <CACVXFVMrzLRP5Q=cwZGnqeUeyODL3Pq9jMkT7czZouK9510fUA@mail.gmail.com>
-         <1533168205.3158.12.camel@HansenPartnership.com>
-         <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
-In-Reply-To: <171b2cdc-2e74-2b3c-e5f5-c656a196601a@roeck-us.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [174.62.111.89]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0335;20:/17fW+8VAs2jGYfYfi7Y8SViqzhRXv2eIrWKyf7ar4sma9PRsVi2/x971iWV6GKO62zeFCH8uoqc/cnneTeoPaWssr8dseEAZMqSGeUr/Yh94iPCrR7P0L6neHQQaEDJ2kchyZ9zKAO80M1vXmXjBdm/OMdO7HBZiTFq29GJx1Y=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c94aa316-a27f-4b95-cac9-08d5f8355c50
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0335;
-x-ms-traffictypediagnostic: MWHPR04MB0335:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB033564F1510BC3B2B54B450E982C0@MWHPR04MB0335.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0335;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0335;
-x-forefront-prvs: 07521929C1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(366004)(396003)(136003)(199004)(189003)(54906003)(76176011)(2906002)(6506007)(2201001)(446003)(86362001)(72206003)(6512007)(105586002)(305945005)(486006)(8676002)(11346002)(316002)(2900100001)(106356001)(81156014)(476003)(66066001)(97736004)(99286004)(118296001)(53936002)(110136005)(7736002)(81166006)(2616005)(2501003)(8936002)(36756003)(6436002)(39060400002)(14454004)(25786009)(68736007)(5250100002)(6246003)(102836004)(5660300001)(6486002)(93886005)(26005)(3846002)(186003)(256004)(478600001)(14444005)(4326008)(229853002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0335;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: QZuRmiTVlb2GfEyqwE9dtpH3ZA621pDQelLlT+JDQrc2XIOzIhxf1bm7so0KAT2jfpnwVrM9wZ11yMed3pXsITGGBAbxJ7R+0QyST+tGw/ncH3YkERnbQgVM+fTyLMRm9qpWlrAvDkcKSAoER2iX9sH6mB6nqpurA4QhKagvQrAewocorjcILqJdKjVK4jvs3LK1F/Xz+7+WhoC9Jf9T7x9ixFBY9kpbDAatvzD1XauyIB6uZ5vAyggVJXok2Y+wy8s/dwDSsxZrMz4j+TwElzUbcDZNbtotmQj5Obz44tEb8jYKVVLPUAB4nIHdkj6xLGx+vI4gzNyBczmsnD+R1zA7IedHmC0b8DtnTIC/mJw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-7"
-Content-ID: <54378916F667384BAEA486F5C42A5B28@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YiYSk5IQhAcSZUy8aWzLiQuUe14Rnzc05Q1tVhlQ0dk=;
+        b=cXj4s4kMbGF7lmOXTG+oftzvrzWZUZhx4FK2qD5FlZuoYiChQIaM2HwBLyCkHgKfee
+         nlf1IkGMkBLfDMqb+kk5yGr0i1mFKLfoTk7Es8tZJKAVvzrAVZ5Yns9NfiFLrU0cw9m+
+         PyQH6sM9DzlNAqvFwD6IGAcveikq3OAs1rO1uXpVqgy8GAJWrZQQuVC5kmJEcPMCneGO
+         7auyPSCZg904BFSHtjHFDMOiIJPlS68cobBOhDHIWelAUtXUUhp7X7we/ZyiswgXNgWg
+         sULXHwRhsUAD7GXAZ3nBK6sBsuh1s0B/gUPgjasLW6PpUcRzrd2FVp2sScHBMt89meCI
+         Y/Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YiYSk5IQhAcSZUy8aWzLiQuUe14Rnzc05Q1tVhlQ0dk=;
+        b=bY0fOUIgUU77cn7KVtd5/H4jSXZB8FR9tUXL4vBIv642MaBIO28esqhTcOntB9kf7e
+         hhtnGB/1LFmzOQCbeeqJYGQz4NsBj6JhrgyUApJCo/oarAKgAYR72G+XVAQOtiHRNAt1
+         AZyHmCUsLWwj8b0OMSSf4oBdeRpckXwYA7wHJL5pQUDpMz1reNB1YPQtxtUbnb8gnB95
+         Agk9GRrJOa4Vk9R+gii60/JSLAYPe5e62w0d+/GqroLiMukUgsPkUMqdWgZTaGtCe5tN
+         Z3dJFoIOv98cDU+5dpwRBMqzWNMJvo28xJTWd+hQDZJuPj7GvLOCk78+T6DTQWaMuJM6
+         MpNQ==
+X-Gm-Message-State: AOUpUlGnAgNjjIn0CgX1AoCvZKgFGgJsMYqmGDkkZyVHPEAFZfeZR8XQ
+        yWT/HlVYrpNLwsAPDo62LYs=
+X-Google-Smtp-Source: AAOMgpfE7aR9UwAuIm5BBru+g3OJyq8lQGPuDrgSGuH8rPUfApJBuS0eLCppw/vrKH2ID37/ugBMXg==
+X-Received: by 2002:adf:8103:: with SMTP id 3-v6mr725701wrm.213.1533186500652;
+        Wed, 01 Aug 2018 22:08:20 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm802494wrn.83.2018.08.01.22.08.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 22:08:19 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 22:08:18 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     ndesaulniers@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] inet/connection_sock: prefer _THIS_IP_ to
+ current_text_addr
+Message-ID: <20180802050818.GA18742@flashbox>
+References: <20180801215759.103758-1-ndesaulniers@google.com>
+ <20180801.184208.776886134692058469.davem@davemloft.net>
+ <20180802045825.GA16769@flashbox>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c94aa316-a27f-4b95-cac9-08d5f8355c50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2018 05:04:00.7453
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0335
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802045825.GA16769@flashbox>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-01 at 21:58 -0700, Guenter Roeck wrote:
-+AD4- I am running out of ideas. Any thoughts on how to track this down fur=
-ther ?
+On Wed, Aug 01, 2018 at 09:58:25PM -0700, Nathan Chancellor wrote:
+> On Wed, Aug 01, 2018 at 06:42:08PM -0700, David Miller wrote:
+> > From: Nick Desaulniers <ndesaulniers@google.com>
+> > Date: Wed,  1 Aug 2018 14:57:59 -0700
+> > 
+> > > -			 sk, what, when, current_text_addr());
+> > > +			 sk, what, when, (void *)_THIS_IP_);
+> > 
+> > Is a fugly macro in all caps really better than a function()?
+> > 
+> > I'm really surprised that _THIS_IP_ is being chosen over
+> > current_text_addr(), seriously.
+> 
+> Hi Dave,
 
-Is a shell available when the hang occurs? If so, it would be helpful if yo=
-u
-could provide a dump of the information in /sys/kernel/debug/block. There i=
-s
-namely detailed information in that directory about pending commands.
+Sorry for the second email so quick after the first, needed to clarify
+two things.
 
-Bart.
+> 
+> current_text_addr is only used in five places in the entire kernel and
+> this is the only non-architecture specific use.
+> 
+> include/net/inet_connection_sock.h:227:			 sk, what, when, current_text_addr());
+> arch/sh/include/asm/kexec.h:64:		newregs->pc = (unsigned long)current_text_addr();
+> arch/sh/kernel/dwarf.c:602:		pc = (unsigned long)current_text_addr();
+> arch/x86/include/asm/kexec.h:135:		newregs->ip = (unsigned long)current_text_addr();
+> arch/parisc/kernel/unwind.c:442:	r.iaoq[0] = (unsigned long) current_text_addr();
+> 
+> We're trying to merge it with _THIS_IP_ before for most architectures,
 
+because for most...
 
+> it is defined nearly identically to _THIS_IP_:
+> 
+> #define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
+> 
+> #define current_text_addr() ({ __label__ _l; _l: &&_l; })
+> 
+> * arc
+> * arm
+> * arm64
+> * h8300
+> * hexagon
+> * m68k
+> * mips
+> * nds32
+> * nios2
+> * openrisc
+> * powerpc
+> * riscv
+> * unicore32
+> * xtensa
+> 
+> Ultimately, we're trying to turn off a new Clang warning in _THIS_IP_
+> which requires some changes to work around what is believed to be a GCC
+> bug (see https://lore.kernel.org/patchwork/patch/969101/).
+
+and I should have mentioned that current_text_addr suffers from the
+exact same issue so we're trying not to duplicate it 14 times across
+the kernel.
+
+> I guess the alternative to this patch is to just define current_text_addr
+> as _THIS_IP_ for all of those architectures, I am not sure how that
+> filters into Nick's plan (I think the goal of this was to try and avoid
+> getting all of the architecture folks involved).
+> 
+> Thanks for your time!
+> Nathan
