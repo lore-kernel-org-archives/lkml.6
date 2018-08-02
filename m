@@ -2,176 +2,208 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0933AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADEBC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD531208DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B810208DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:43:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GrbxX0pV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD531208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="gGV1MUQb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B810208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeHBIbn (ORCPT
+        id S1726673AbeHBIdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:31:43 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:38362 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeHBIbm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:31:42 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w726dco6142457;
-        Thu, 2 Aug 2018 06:41:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Ct68BS42SADlZjWpSg5LY8Gy/4XIVqDueAxV6cO7hkk=;
- b=GrbxX0pVnd63pBQlT0VmQkvj5hUPuKRaYjArW4JoN3bXrgorpaKC9GgsnQkAcxkSbNIG
- WSO4dHfSBgpM8Y4kd1cIQkyn1MrP5lK2vxwjKaiLNof2s3KnYs8eYbYPo9kXjk8qLe1H
- 0cAyFpTQmUojWmndJRaVKYGt52n37z4C/eX8yjhCa+AqG79xzPzfwCXjdZ3umCC0hrKU
- ArMMPgowPWP2HTmG5bw9OFtTZLA5haz9wIp69ofEd9W82UFzYD3MJjAGwgEr5gMeHleI
- jnVNuurPEjuygAqrC4V8jgNFZgZHh+rNAgOtwBbqPhJq64oEZxDg0C4XjWN8VK01WAkJ uA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2kge0d9y98-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 02 Aug 2018 06:41:48 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w726fl1K030054
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Aug 2018 06:41:47 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w726fkqC000966;
-        Thu, 2 Aug 2018 06:41:46 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 01 Aug 2018 23:41:46 -0700
-Date:   Thu, 2 Aug 2018 09:41:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     mikelley@microsoft.com
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        vkuznets@redhat.com, jasowang@redhat.com,
-        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
-        kys@microsoft.com
-Subject: Re: [PATCH char-misc 1/1] Drivers: hv: vmbus: Cleanup synic memory
- free path
-Message-ID: <20180802064133.jm5wo4e5ypn6p3xq@mwanda>
-References: <1533163513-10764-1-git-send-email-mikelley@microsoft.com>
+        Thu, 2 Aug 2018 04:33:13 -0400
+Received: from mail-eopbgr680065.outbound.protection.outlook.com ([40.107.68.65]:28635
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726021AbeHBIdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:33:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qPs7Lja3sgj6XDliEo/n7gBVB+Rxkzzc2r2BWyvwKEU=;
+ b=gGV1MUQbEslwdB+KzqnjtEYaOGei6DZV9QIeMlVegIaUPY5JQt05/UIaYsw+8hXXN1x/AEvTjUFVddOPbD3jn8qsw9nFjKnBbgprj9NeQKXaDnGpqL0ZNQFaLKz15Pr6BVo8URjkgwwm5PSs16zRekD+7JqLOLv841xi+/lBh54=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com; 
+Received: from akshu-HP-EliteBook-745-G2.amd.com (125.21.194.1) by
+ DM5PR12MB2359.namprd12.prod.outlook.com (2603:10b6:4:b4::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1017.15; Thu, 2 Aug 2018 06:43:16 +0000
+From:   Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     djkurtz@chromium.org, akshu.agrawal@amd.com,
+        Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
+        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] ASoC: AMD: Make ACP->SYSMEM DMA non circular
+Date:   Thu,  2 Aug 2018 12:11:54 +0530
+Message-Id: <1533192134-11626-1-git-send-email-akshu.agrawal@amd.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533163513-10764-1-git-send-email-mikelley@microsoft.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8972 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1808020072
+Content-Type: text/plain
+X-Originating-IP: [125.21.194.1]
+X-ClientProxiedBy: MA1PR01CA0086.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::26)
+ To DM5PR12MB2359.namprd12.prod.outlook.com (2603:10b6:4:b4::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 64bc2d22-424d-4874-aecc-08d5f8433f35
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2359;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;3:DmldJ/UPpd5jHnuk0hjDwC1Mg84UlbXVt1iwTOTnQtMkLs+TP0ByMq22K8ww1tPm6n1GFGZG8skNpEWsOtbDipd4TIkIXGLVWybIw6rNW4XyOlBurkGByFBs174kBtjoXfrJOQJ1HLLvYeHRKJRQ1KbQvD1qXrXUG/Xz967GFXgShRtjJDvB5xJZpM1g+UMlztpUJQxXDOwCSqb8Ru1MPL3owDMRfhQC/+4nSAVXzKkL652Jze3cCzk9SaRsO/4n;25:f7UDBkfuN7ivWbWHpBdBNU+wlSkEDMVQNJbVaRAq7/HCPjC677Tg2fqkvEIxa8lfK0ggVVoM1RMzjxge2S103J6fJN1rSG1XVCJ4frVHrQG9dSIIbCELs522mVTjvVwtTMCq8ruaI/0BEOGcwHQ9+MVD4hLitv3LItcZSF/1J2HIKeO0k+2IBgucdMnV3nfWEduFxzeg3Ax3e51+PTFByTAjd6mAIlinL7ljgUNJwr927hf2qYtWwGJd7HRyyPNriRHnXXf5Pt2xzDGg7hRhktRTcfu5RFvXitPfTkUJVgnRFQWCiQNXGEqPotFpDNuTZVnqkZeJbiyhhsy9bCSL8Q==;31:hXokGJovFPvPg0yEAHWggtVsUktr6mkrj8SZbEJUD+rWVCC3xn5IvpjAXlodT40YlY4kjdXf1KgWGDTyCaF5AtstFtCJwzMWnTw/l3OLyBOqDf6HLIsKpYdkQM2b6fWK/bdQLMWgZN7KnD86pqQ2/HdwDbWj3cdmrv1DAuOOePiH781mbrUV9lnZ7k6mmF1oGR5qGnYCi4RkapR4XE9t510JdpDWLvXKx8gsTcdBE+M=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2359:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;20:C9klloynIQqVJ05H7Z98dQCAO32BJhVscRcCE7idNcbNr0eFxakFdgm5rjZo9dht7QwwJ5YEhQQiRbA5kxqUOgg0cGDiz9rhWzizBGx+oC14FlB/Jq5Gn7x7CYgh+eJPa2fnAODT68ELXg3WG39HRFFuGZu+4pPDIQU3B+mGffCkwpauZ0JYdLomARdljN+qQS9EuuFQzanZuB5fATc3sVKVd+pZ3wezz2/w596/0YwlqqkiiE3y+8J51lGQ5z23nb3RXIfzir2EvEcLe6tuDTCi0rNYHsn+7hGmbPhLARb+DdZNSp6jYGbw3InGim/g3cT4yy5y8EzrrjNC+7z9dzsVWPlFps0WrCGVESN8CodgwKkPy3GopkGgO2ap2Djb12oXMFkRhVBaHuGYIdCbSc1RWwrpgzA3fsalIzkv0gK1Zmj00eQpw5K5wqG0/MLeLq5nKM2m9nKjqQbrBspkDR3ZC3gw319HPev4eqWQ1EcjrVifDqiahXNveyWNpXnJ;4:EqUOz3qbAJB3awpBiExq2TidaYRg0yfM/ioNuymXUn1ze1QvJ32qHueTHEUxyYlQXnh/46If/T2dw72Huu5+w5bdWj+S4nM03zvuLwPz9Zkupe/FtrFvhgAdGKvNmTcG3MWdaGs73czL9Qy4DuMgTUS45u9726OMDV5RJRVMKpibOf/aLQbwkeTBaN8Y8ykVcFszB4wD+/D4TENCp81uHbbBs/JrTzHJ1iIDwFiQjAklinI3ULUGR3umDwCR+wuLNwIBsSiLQhK7D/mK2ameBM02sSpTWsMQinC3k3JnMR/XdV8ORNXuuOHNRy4hD8Zb
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2359AFBC2602F1CEAF84ED2BF82C0@DM5PR12MB2359.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DM5PR12MB2359;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2359;
+X-Forefront-PRVS: 07521929C1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(396003)(39860400002)(366004)(199004)(189003)(51416003)(50466002)(2906002)(6486002)(8936002)(8676002)(39060400002)(3846002)(81156014)(81166006)(109986005)(4326008)(36756003)(48376002)(44832011)(486006)(1671002)(25786009)(86362001)(476003)(50226002)(217873002)(6116002)(68736007)(66066001)(6666003)(7696005)(26005)(105586002)(106356001)(16526019)(53936002)(47776003)(54906003)(16586007)(2616005)(5660300001)(956004)(53416004)(7736002)(478600001)(72206003)(305945005)(52116002)(97736004)(186003)(316002)(386003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2359;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB2359;23:qGFqCZeCbW9/qQwzdqRsZcQARf91ergS2ZhSkK28J?=
+ =?us-ascii?Q?Z4K7oA7+1JO6mYRyC5CUTNTo22gfahzATYYDwVIzxNIjs1iDyDHEmE5lziSg?=
+ =?us-ascii?Q?LBs297t9a5T1jJVwTktKlpvlmwPbbHXnlLbw7xOwHC4VkT12HePnBGQswgp1?=
+ =?us-ascii?Q?vhi6lkzjGYizGsS+1PsSVjKPuM4enzOlRDwOSb6JBEQciR80BP4gabVmdj57?=
+ =?us-ascii?Q?kAlwQ6kJ9MaQVxZ3MBplqxplIdDu4qu+zLmLS7ZMxkQMoTDqc+3QrmBR3WQF?=
+ =?us-ascii?Q?WQsjnKWwFFWg9JlgH1iKxXA6xyEG66G1BhK1yB056A39VH605st2XBpBZHTt?=
+ =?us-ascii?Q?jjKJgeS+9VKQlMGHJpS891SGFB4gRjsWan4T7bDl6kAx3tONvMEs5WEamFpv?=
+ =?us-ascii?Q?fJj7b6jhN/XoKXFbWlww6YTu+2JuhTbwgFSbws4ELwuhKlmPhBY3ZtO7qK21?=
+ =?us-ascii?Q?6izpEv54aE0HeuzbZTWK/3Z8+VT2Qv04cDelWLL2p+z+RNXFNLMaTxSv+mGA?=
+ =?us-ascii?Q?uFlFu/s2t32Sn8G8ZjVY9Jfr1QWIhUf88JF3TxjJTTcxJ5M3in89ctmHef+v?=
+ =?us-ascii?Q?OUNz5oIrMGR2QZb8cJNYswayL4+Dc7b2VCC7mB+2q3wJrUE0zg9zbWwhse/X?=
+ =?us-ascii?Q?k7tu0WkP4/ckFRS3fuggo82xPOkGRXw8sVYJHxQuvLGIG8WAHkxnWO24Zbfl?=
+ =?us-ascii?Q?hNtS10tPmfHhOeIzRec7+Jhk4R8SGAO4mW+I3gQO9vpmqMG6lNGNaSInTFuz?=
+ =?us-ascii?Q?92kuoFIKmyTag9RAAIbwq0yXat/qvoKCz5VmCJZWpUwNRjDclzrfvHr2AY/S?=
+ =?us-ascii?Q?a1ILv2iUglpCrm9YKaqbAOwvuTHBvFZB8nWuZuReqQpoXsq7ZJ09j5wfc+Ct?=
+ =?us-ascii?Q?2t0gUVo8fpGqmy+aIx5cjjh8xp5Wews3ZkCV+pqmzCgVDPnMGiBMvWfK146e?=
+ =?us-ascii?Q?FwY3TNpDucAc7uIST2X4A0VUQXxp85GCR7ouEmj7ksyO/PTE2hEzIx01h6Y9?=
+ =?us-ascii?Q?rWOLCjEnyq7HIcUPxZT3hL+V2aBzZYhzJVrUb1ZMyBCalL0R5RROZAlw3GHh?=
+ =?us-ascii?Q?BnFhdLQR1AYaNbrl0NCWDDqAdX7SAGaTho+APYm1DGBeWEAZoqtV4Ho7gyWG?=
+ =?us-ascii?Q?FTj5FlqlKV3ESxUDNKjiQNKl1g5OApsmNPa/9UUe3UMdbi0XVVM07n+F/4Mr?=
+ =?us-ascii?Q?vLjbT6q8PmNd9iBe4DOnMmk1bynUHYNRvMgH3kZS3xf456dfupuCJvwvIzZv?=
+ =?us-ascii?Q?h9pOxM22JoefuM2mH3IodohHNmoUpoJGmYyeFEp?=
+X-Microsoft-Antispam-Message-Info: yqmnVPxyNB87khKg5kcxkoqulHRwudZoJbXCYCn4RmUilpVY5vxGxkllgtQFDzNR4izkpRO27MbsYiXV03zWZq6JuQ6emVVFleaxvLRQLo6hQ+wSNhZrDbz0Zz/xdLL1e8a4r7i6YMdv1tBrMahcA/t8fJ/isvUdZWS5rxyb2c1H7IOiTF+KMREdXr313ZpXS/6l/d3hPhvMeeq6Ru0lf+n9KHgMaRj3WGeBtN+38WDWceg3qe1SyKyxlJAhOxbRu5Isa7VWFDDPdxgvJGuOkJ1JIiQ1anuU3XmXCKCBwLRwGffFPTE+jMDDu/uSjhM5qelntmkZ91MQ0CiCaWzBw9i89Ls3Poxr6+NiNW2bUSE=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;6:PpI3HEiheaAPMBUFrpX0JgapMlGVj2f46ZMOFCjxGhWHCIOM7Y3HDx9uRhFyucnxz/Z7nmDz14SLSB91qVy8SyoAzTiJ9aZywckHJPlspDZZHvunj3pI+0auWP49p1dT8MFQu3Op0+AyO0+gsInulr88nx8uYYNsSAF8hrM8jGeoCV9GE+Mx74axG5u43DBOsAq8t5SlFik7msll1bWXuV9oxXlTu3GkkmCsiNNAV3NTd3gmfRW7EfO7XppbLWE+9JBpZeZHgrn4zyXP/1IDlzKq2fpcYQ1COZxnPUEsbCJjeIHH7rPqKcWRI7PkXbhNknmwjH+iud9pzfCwM3GPr/hPBbcO2dj+lM/gRYc7nMQbxbcNSXjln0TtWfUFYeni7K6oS8lAxsfT6zRsQf7n1Q398b1MJ6m2jltM+6ESl8aNbRyG2qpx3FqAXGtO/W0IKFZ6YbdRYvyHID/JvyztLw==;5:bar/cILOr0QSybcQeqiR3+6lcvppHk6ag3QECuP9ymjWSsL8ifqZzauvZvxZV4ERinbDUUYQGDhWJNbsFzcG9w+JoQTjcP+wnHE1YRnAPdzop+Xybbd9aFQAfep4gA72vVsPLKEjGURlIJBRfVfe1J6ZulXBrrdGZSg/Xvt/qh0=;7:23hYpjVS9pbbIyRM2YQL1IY+gycqT/7ln65f9e5mwjwyfo3CICJKSaesxsmYXgmnOIr1B/Fvsw3mzFGWJygjEtao5MeBJExHKadRlfkUgHawN1DceTEiiFGz8gNP2Z7W79KUrUA4UiaF3ssQzcmF1epr3GHWXYzAHVNj9iQjXy2B727UQm1x4+NRSQSYV44jEK4NrTeDPi+0QOQ2YkwLFhlCpXHxwoqe6NPllMLzHVcpz+v7CkMZ+St5lapxNsdO
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;20:rknOip3mEjVsMlINhlhzv00sbacSzLrjSks9agy98EfxlQOL32U+HCg77fEs+S1n2anVuUOiQEkoKreZKSiDnegcPGpaxcczB8cNa0joxRHwSljLlMVmA6/wAgs2k5/0/Lh2gREn/U3N2soSTe5DTe/IqLTYtyW0v1055OzrLUQUd/tXL1J+AfNnFcvoZDUR7G52fzoSaE5KZAKTVipZMsnOPTwhw8QAjXN4g4Oe/5J5MyPwV6OFA3iUwd7uNm9Z
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2018 06:43:16.0369 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64bc2d22-424d-4874-aecc-08d5f8433f35
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2359
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 03:45:13PM -0700, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mikelley@microsoft.com>
-> 
-> clk_evt memory is not being freed when the synic is shutdown
-> or when there is an allocation error.  Add the appropriate
-> kfree() call, along with a comment to clarify how the memory
-> gets freed after an allocation error.  Make the free path
-> consistent by removing checks for NULL since kfree() and
-> free_page() already do the check.
-> 
-> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/hv/hv.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 8d4fe0e..1fb9a6b 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -240,6 +240,10 @@ int hv_synic_alloc(void)
->  
->  	return 0;
->  err:
-> +	/*
-> +	 * Any memory allocations that succeeded will be freed when
-> +	 * the caller cleans up by calling hv_synic_free()
-> +	 */
->  	return -ENOMEM;
->  }
->  
-> @@ -252,12 +256,10 @@ void hv_synic_free(void)
->         for_each_present_cpu(cpu) {
->  		struct hv_per_cpu_context *hv_cpu
->  			= per_cpu_ptr(hv_context.cpu_context, cpu);
->  
-> -		if (hv_cpu->synic_event_page)
-> -			free_page((unsigned long)hv_cpu->synic_event_page);
-> -		if (hv_cpu->synic_message_page)
-> -			free_page((unsigned long)hv_cpu->synic_message_page);
-> -		if (hv_cpu->post_msg_page)
-> -			free_page((unsigned long)hv_cpu->post_msg_page);
-> +		kfree(hv_cpu->clk_evt);
-> +		free_page((unsigned long)hv_cpu->synic_event_page);
-> +		free_page((unsigned long)hv_cpu->synic_message_page);
-> +		free_page((unsigned long)hv_cpu->post_msg_page);
+In capture case we don't want ACP to SYSMEM dma
+to be circular. This is because if an in place DSP
+filter is applied to captured output then circular DMA
+can overwrite the filter value with stale data.
 
-This looks buggy.
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+ sound/soc/amd/acp-pcm-dma.c | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 
-We can pass NULLs to free_page() so that's fine.  So the error handling assumes
-that hv_cpu->clk_evt is either NULL or allocated.  Here is how it is allocated:
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index 94bcf69..816abd6 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -400,7 +400,7 @@ static void acp_dma_cap_channel_disable(void __iomem *acp_mmio,
+ }
+ 
+ /* Start a given DMA channel transfer */
+-static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
++static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num, bool is_circular)
+ {
+ 	u32 dma_ctrl;
+ 
+@@ -429,8 +429,11 @@ static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
+ 		break;
+ 	}
+ 
+-	/* circular for both DMA channel */
+-	dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
++	/* enable for ACP to SRAM DMA channel */
++	if (is_circular == true)
++		dma_ctrl |= ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
++	else
++		dma_ctrl &= ~ACP_DMA_CNTL_0__Circular_DMA_En_MASK;
+ 
+ 	acp_reg_write(dma_ctrl, acp_mmio, mmACP_DMA_CNTL_0 + ch_num);
+ }
+@@ -674,6 +677,7 @@ static int acp_deinit(void __iomem *acp_mmio)
+ /* ACP DMA irq handler routine for playback, capture usecases */
+ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ {
++	u16 dscr_idx;
+ 	u32 intr_flag, ext_intr_status;
+ 	struct audio_drv_data *irq_data;
+ 	void __iomem *acp_mmio;
+@@ -705,6 +709,15 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 
+ 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
+ 		valid_irq = true;
++		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_14) ==
++				CAPTURE_START_DMA_DESCR_CH15)
++			dscr_idx = CAPTURE_END_DMA_DESCR_CH14;
++		else
++			dscr_idx = CAPTURE_START_DMA_DESCR_CH14;
++		config_acp_dma_channel(acp_mmio, ACP_TO_SYSRAM_CH_NUM, dscr_idx,
++				       1, 0);
++		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_CH_NUM, false);
++
+ 		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
+ 		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+@@ -712,6 +725,17 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 
+ 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
++		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_10) ==
++			CAPTURE_START_DMA_DESCR_CH11)
++			dscr_idx = CAPTURE_END_DMA_DESCR_CH10;
++		else
++			dscr_idx = CAPTURE_START_DMA_DESCR_CH10;
++		config_acp_dma_channel(acp_mmio,
++				       ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
++				       dscr_idx, 1, 0);
++		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
++			      false);
++
+ 		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
+ 		acp_reg_write((intr_flag &
+ 			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
+@@ -1053,9 +1077,11 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 				acp_dma_cap_channel_enable(rtd->acp_mmio,
+ 							   CAP_CHANNEL1);
+ 			}
++			acp_dma_start(rtd->acp_mmio, rtd->ch1, true);
++		} else {
++			acp_dma_start(rtd->acp_mmio, rtd->ch1, true);
++			acp_dma_start(rtd->acp_mmio, rtd->ch2, true);
+ 		}
+-		acp_dma_start(rtd->acp_mmio, rtd->ch1);
+-		acp_dma_start(rtd->acp_mmio, rtd->ch2);
+ 		ret = 0;
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+-- 
+1.9.1
 
-   189  int hv_synic_alloc(void)
-   190  {
-   191          int cpu;
-   192  
-   193          hv_context.hv_numa_map = kcalloc(nr_node_ids, sizeof(struct cpumask),
-   194                                           GFP_KERNEL);
-   195          if (hv_context.hv_numa_map == NULL) {
-   196                  pr_err("Unable to allocate NUMA map\n");
-   197                  goto err;
-   198          }
-   199  
-   200          for_each_present_cpu(cpu) {
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We loop over each CPU.
-
-   201                  struct hv_per_cpu_context *hv_cpu
-   202                          = per_cpu_ptr(hv_context.cpu_context, cpu);
-   203  
-   204                  memset(hv_cpu, 0, sizeof(*hv_cpu));
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We set this cpu memory to NULL.
-
-   205                  tasklet_init(&hv_cpu->msg_dpc,
-   206                               vmbus_on_msg_dpc, (unsigned long) hv_cpu);
-   207  
-   208                  hv_cpu->clk_evt = kzalloc(sizeof(struct clock_event_device),
-   209                                            GFP_KERNEL);
-   210                  if (hv_cpu->clk_evt == NULL) {
-                            ^^^^^^^^^^^^^^^^^^^^^^^
-Let's assume this fails on the first iteration through the loop.  We
-haven't memset the next cpu to NULL or allocated it.  But we loop over
-all the cpus in the error handling.  Since we didn't set everything to NULL in
-hv_synic_free() then it seems like this could be a double free.  It's possible I
-am misreading the code, but either it's buggy or the memset() can be removed.
-
-This is a very typical bug for this style of error handling where we free
-things which were never allocated.
-
-   211                          pr_err("Unable to allocate clock event device\n");
-   212                          goto err;
-   213                  }
-
-regards,
-dan carpenter
