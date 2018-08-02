@@ -2,134 +2,161 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E489C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948F9C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D93208A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:23:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hpDnHZ2w";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hpDnHZ2w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D93208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4544C208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 02:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4544C208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbeHBEMA (ORCPT
+        id S1726187AbeHBEWP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 00:12:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48180 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbeHBEMA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 00:12:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B6AA1602B7; Thu,  2 Aug 2018 02:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533176591;
-        bh=JN5I1dnxDyziBpQOLN5udr7oKu/3RV3FSL2Ye4jtXuM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hpDnHZ2wGMjlv0aba6xpYMICvo+FLRjHjB+S6QnZUgrfPCAV5fthrYaENbMXWdRIg
-         hgMknB/SmTj2KMFwjdJn5VPQiXheHh3axyJre3AM806ClKKbXLKSEB7AbXiJknCqsQ
-         1L1s5nkDJBu2+tFyEiPrQRmUzvjhM28SlfTKbbMg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id F3DEF6079C;
-        Thu,  2 Aug 2018 02:23:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533176591;
-        bh=JN5I1dnxDyziBpQOLN5udr7oKu/3RV3FSL2Ye4jtXuM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hpDnHZ2wGMjlv0aba6xpYMICvo+FLRjHjB+S6QnZUgrfPCAV5fthrYaENbMXWdRIg
-         hgMknB/SmTj2KMFwjdJn5VPQiXheHh3axyJre3AM806ClKKbXLKSEB7AbXiJknCqsQ
-         1L1s5nkDJBu2+tFyEiPrQRmUzvjhM28SlfTKbbMg=
+        Thu, 2 Aug 2018 00:22:15 -0400
+Received: from mga03.intel.com ([134.134.136.65]:1702 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbeHBEWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 00:22:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2018 19:33:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,434,1526367600"; 
+   d="scan'208";a="78001840"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga001.jf.intel.com with ESMTP; 01 Aug 2018 19:33:15 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 1 Aug 2018 19:33:15 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 1 Aug 2018 19:33:14 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.173]) with mapi id 14.03.0319.002;
+ Thu, 2 Aug 2018 10:33:12 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>
+CC:     Hao Fang <fanghao11@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>
+Subject: RE: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Topic: [RFC PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Index: AQHUKYHSUTvc9I1u4EGviW0yiW9YHKSqmCAAgAElIaA=
+Date:   Thu, 2 Aug 2018 02:33:12 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191290E1A@SHSMSX101.ccr.corp.intel.com>
+References: <20180801102221.5308-1-nek.in.cn@gmail.com>
+ <20180801165644.GA3820@redhat.com>
+In-Reply-To: <20180801165644.GA3820@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzgyNTFlMTUtNTFkNi00NjAyLWE0YTctMjZmNzIxMjQ3NmE3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRFNmcW5FQ2t4eUxqSjZrOVlqOWxRdkMyK0R6RGtCZ29sM3VEYURrazh3M0xudkhOaXpEK3dSd3ZBcW9NSW43OSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 01 Aug 2018 19:23:10 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        wen.xu@gatech.edu, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Remounting filesystem read-only
-In-Reply-To: <20180728074704.GA4203@magnolia>
-References: <366cf3ac534bbadaaa61714a43006ac7@codeaurora.org>
- <e9869d6cd358e9de395d730ab7b3aa60@codeaurora.org>
- <20180727195213.GE13922@thunk.org>
- <c121825198eba667c09fc53fa9b4fd3a@codeaurora.org>
- <20180728001823.GA28432@thunk.org> <20180728074704.GA4203@magnolia>
-Message-ID: <91cab9ba274131c4701fe4c1ce444d6b@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-28 00:47, Darrick J. Wong wrote:
-> On Fri, Jul 27, 2018 at 08:18:23PM -0400, Theodore Y. Ts'o wrote:
->> On Fri, Jul 27, 2018 at 01:34:31PM -0700, Sodagudi Prasad wrote:
->> > > The error should be pretty clear: "Inode table for bg 0 marked as
->> > > needing zeroing".  That should never happen.
->> >
->> > Can you provide any debug patch to detect when this corruption is happening?
->> > Source of this corruption and how this is partition getting corrupted?
->> > Or which file system operation lead to this corruption?
->> 
->> Do you have a reliable repro?  If it's a one-off, it can be caused by
->> *anything*.  Crappy hardware, a bug in some proprietary, binary-only
->> GPU driver dereferencing some wild pointer that corrupts kernel
->> memory, etc.
->> 
->> Asking for a debug patch is like asking for "can you create technology
->> that can detect when a cockroach enter my house?"
+> From: Jerome Glisse
+> Sent: Thursday, August 2, 2018 12:57 AM
 > 
-> Well, ext4 *could* add metadata read and write verifiers to complain
-> loudly in dmesg about stuff that shouldn't be there, so at least we'd
-> know when we're writing cockroaches into the house... :)
+> On Wed, Aug 01, 2018 at 06:22:14PM +0800, Kenneth Lee wrote:
+> > From: Kenneth Lee <liguozhu@hisilicon.com>
+> >
+> > WarpDrive is an accelerator framework to expose the hardware
+> capabilities
+> > directly to the user space. It makes use of the exist vfio and vfio-mdev
+> > facilities. So the user application can send request and DMA to the
+> > hardware without interaction with the kernel. This remove the latency
+> > of syscall and context switch.
+> >
+> > The patchset contains documents for the detail. Please refer to it for
+> more
+> > information.
+> >
+> > This patchset is intended to be used with Jean Philippe Brucker's SVA
+> > patch [1] (Which is also in RFC stage). But it is not mandatory. This
+> > patchset is tested in the latest mainline kernel without the SVA patches.
+> > So it support only one process for each accelerator.
+> >
+> > With SVA support, WarpDrive can support multi-process in the same
+> > accelerator device.  We tested it in our SoC integrated Accelerator (board
+> > ID: D06, Chip ID: HIP08). A reference work tree can be found here: [2].
 > 
-> --D
+> I have not fully inspected things nor do i know enough about
+> this Hisilicon ZIP accelerator to ascertain, but from glimpsing
+> at the code it seems that it is unsafe to use even with SVA due
+> to the doorbell. There is a comment talking about safetyness
+> in patch 7.
 > 
-Hi Ted,
+> Exposing thing to userspace is always enticing, but if it is
+> a security risk then it should clearly say so and maybe a
+> kernel boot flag should be necessary to allow such device to
+> be use.
+> 
+> 
+> My more general question is do we want to grow VFIO to become
+> a more generic device driver API. This patchset adds a command
+> queue concept to it (i don't think it exist today but i have
+> not follow VFIO closely).
+> 
+> Why is that any better that existing driver model ? Where a
+> device create a device file (can be character device, block
+> device, ...). Such models also allow for direct hardware
+> access from userspace. For instance see the AMD KFD driver
+> inside drivers/gpu/drm/amd
 
-Below change fixed this issue. Thanks for your support.
+One motivation I guess, is that most accelerators lack of a 
+well-abstracted high level APIs similar to GPU side (e.g. OpenCL 
+clearly defines Shared Virtual Memory models). VFIO mdev
+might be an alternative common interface to enable SVA usages 
+on various accelerators...
 
-https://github.com/torvalds/linux/commit/5012284700775a4e6e3fbe7eac4c543c4874b559
-
-"ext4: fix check to prevent initializing reserved inodes"
-
--Thanks, Prasad
-
->> So if you have a reliable repro, then we know what operations might be
->> triggering the corruption, and then you work on creating a minimal
->> repro, and only *then* when we have a restricted set of possibilities
->> that might be the cause (for example, if removing a GPU call makes the
->> problem go away, then the patch would need to be in the proprietary
->> GPU driver....)
->> 
->> > I am digging code a bit around this warning to understand more.
->> 
->> The warning means that a flag in block group descriptor #0 is set
->> that should never be set.  How did the flag get set?  There is any
->> number of things that could cause that.
->> 
->> You might want to look at the block group descriptor via dumpe2fs or
->> debugfs, to see if it's just a single bit getting flipped, or if the
->> entire block group descriptor is garbage.  Note that under normal code
->> paths, the flag *never* gets set by ext4 kernel code.  The flag will
->> get set on non-block group 0 block group descriptors by ext4, and the
->> ext4 kernel code will only clear the flag.
->> 
->> Of course, if there is a bug in some driver that dereferences a
->> pointer widely, all bets are off.
->> 
->> 					- Ted
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+> 
+> So you can already do what you are doing with the Hisilicon
+> driver today without this new infrastructure. This only need
+> hardware that have command queue and doorbell like mechanisms.
+> 
+> 
+> Unlike mdev which unify a very high level concept, it seems
+> to me spimdev just introduce low level concept (namely command
+> queue) and i don't see the intrinsic value here.
+> 
+> 
+> Cheers,
+> Jérôme
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
