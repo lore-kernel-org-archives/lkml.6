@@ -2,81 +2,94 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577A3C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A71FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF132088E
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:23:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="H0B2ETwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF132088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DD4D21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD4D21501
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387549AbeHBQPB (ORCPT
+        id S1732516AbeHBQSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:15:01 -0400
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:45974 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387504AbeHBQPA (ORCPT
+        Thu, 2 Aug 2018 12:18:50 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.84]:19225 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732272AbeHBQSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:15:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1533219814;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=y6bulpRbEjfHIFhEoTfMdi3LypqJNGhWx4XpQySka6E=;
-        b=H0B2ETwbICTy/Zab4/DHdxumCbtnMTuqzwHCV8TcPTgkSJBlmM0tvoZ8vyYwj5nE
-        kbWITil3eplsvNJYeLFM2yV/d7Cbuq6I2zI1nUKra5mvvs0RkXIHWcZa5YtZd6B4ufB
-        VgvK5ctPnOV0pJrrB6B9JjEhusWxocPmfQRj8j5U=
-Date:   Thu, 2 Aug 2018 14:23:34 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Jeremy Linton <jeremy.linton@arm.com>
-cc:     linux-mm@kvack.org, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, mhocko@suse.com,
-        vbabka@suse.cz, Punit.Agrawal@arm.com, Lorenzo.Pieralisi@arm.com,
-        linux-arm-kernel@lists.infradead.org, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 1/2] slub: Avoid trying to allocate memory on offline
- nodes
-In-Reply-To: <20180801200418.1325826-2-jeremy.linton@arm.com>
-Message-ID: <01000164fb05bba7-1804e794-a08d-4ee0-b842-c44c89647716-000000@email.amazonses.com>
-References: <20180801200418.1325826-1-jeremy.linton@arm.com> <20180801200418.1325826-2-jeremy.linton@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 2 Aug 2018 12:18:49 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id E077213B74E7
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 09:18:16 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id lEPsfUvtIbXuJlEQOfuqxM; Thu, 02 Aug 2018 09:18:16 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.61.218] (port=44676 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1flEPs-003k7z-Be; Thu, 02 Aug 2018 09:17:24 -0500
+Date:   Thu, 2 Aug 2018 09:17:23 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: usb-audio: Fix wrong sizeof argument
+Message-ID: <20180802141723.GA7258@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.08.02-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.61.218
+X-Source-L: No
+X-Exim-ID: 1flEPs-003k7z-Be
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.61.218]:44676
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 1 Aug 2018, Jeremy Linton wrote:
+The correct argument to be passed to kzalloc is sizeof(*pd)
 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 51258eff4178..e03719bac1e2 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2519,6 +2519,8 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->  		if (unlikely(!node_match(page, searchnode))) {
->  			stat(s, ALLOC_NODE_MISMATCH);
->  			deactivate_slab(s, page, c->freelist, c);
-> +			if (!node_online(searchnode))
-> +				node = NUMA_NO_NODE;
->  			goto new_slab;
->  		}
->  	}
->
+Addresses-Coverity-ID: 1472224 ("Wrong sizeof argument")
+Fixes: 7edf3b5e6a45 ("ALSA: usb-audio: AudioStreaming Power Domain parsing")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/usb/stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Would it not be better to implement this check in the page allocator?
-There is also the issue of how to fallback to the nearest node.
-
-NUMA_NO_NODE should fallback to the current memory allocation policy but
-it seems by inserting it here you would end up just with the default node
-for the processor.
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 8fe3b0e..67cf849 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -1037,7 +1037,7 @@ snd_usb_get_audioformat_uac3(struct snd_usb_audio *chip,
+ 		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
+ 		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
+ 
+-		pd = kzalloc(sizeof(pd), GFP_KERNEL);
++		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+ 		if (!pd) {
+ 			kfree(fp->rate_table);
+ 			kfree(fp);
+-- 
+2.7.4
 
