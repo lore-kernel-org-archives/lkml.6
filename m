@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B01EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B6CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C551921531
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1541821531
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mTY19WAX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C551921531
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gDOTFSH0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1541821531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731911AbeHCApO (ORCPT
+        id S1732231AbeHCApS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 20:45:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43516 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbeHCApO (ORCPT
+        Thu, 2 Aug 2018 20:45:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34635 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732120AbeHCApR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 20:45:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17-v6so1880200pgv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 15:51:58 -0700 (PDT)
+        Thu, 2 Aug 2018 20:45:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y5-v6so1901791pgv.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 15:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cYqwOJ7ESFIZwb4gd+/rbe5MIJRsMeh+zsX7Pq9yPAY=;
-        b=mTY19WAXKcACv2jHRUfcKmGhLkXkq85tiOxXJpcFj0PAX9lWdyvUM9LqDcHa6iBIG/
-         IiVeCwl6vqLnRdkeoxpKqO8dH/xl00FXb/lTnVVb0ztRX032O5A+wUw86q+fl6g1gK+e
-         zB2UK6iF1LM/YHdusCOZ0lTsaU8j2aRNlKuyw=
+        bh=f6HZhbULuwp1ONQvXFzzLM5M+BCFj7xnBsodxU5HF/8=;
+        b=gDOTFSH0mCBlWwYAR3zE4E/NU4Ae68M1jZ2jlcToRp3C9d6cxCTDvXvfyrU8eUVCA+
+         tg0Fav652WJByf3rSA6iZmyZCVEChYE6VKtWEwB6X4FfhWMErgxk3PiMHA6tzxYTgl1a
+         VceqcEG3m4dJBP9zVGYDbhCRq4cJknF64bF2s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cYqwOJ7ESFIZwb4gd+/rbe5MIJRsMeh+zsX7Pq9yPAY=;
-        b=Pj7UPckBLsnPVjFyMycCmbdN2pbZ9tsNTK1UclRdM2j4HdLdTDdfnK6ln0I+/sVBHV
-         LDarfdq0QP46J7wc0grcUs9p/M24NjBZgC+TnO56aEXSpb0ZD+6OJYh9zjwEtcmbcmlR
-         xQ/L0Om84hJKm6RbyDyWkAZFXNPNsCdQ5dAgt6SvOCGloTfHye/TQEKruMFeZaw1HDEd
-         fgrEDlAgbW19WNsqBecQhfLGXvKnH5YIzDGu1Ybf6oyPfItxZMdWltSWpZWiJdso9CLs
-         mS+Y1GAtvDay5J4SLamH9uGrb4CspmYynJQtt9ADIIMXhceS9HUQhSB7Ff7/wnqWkkm1
-         9jGw==
-X-Gm-Message-State: AOUpUlFxPYaH2e0MFyd9cp68v9rSsUgtIhxq07IUlmR+vtzQCJhQRHaD
-        DGM7bzygiG0B7FnNLGogChZciw==
-X-Google-Smtp-Source: AAOMgpc8iy9cvq8p6m9TZlGMtkIL+1L6+pA1vJtJHEVUn52NqhF7WjFMgLggNV//Jd9BU8b0PMhiqA==
-X-Received: by 2002:a63:f344:: with SMTP id t4-v6mr1222258pgj.428.1533250318354;
-        Thu, 02 Aug 2018 15:51:58 -0700 (PDT)
+        bh=f6HZhbULuwp1ONQvXFzzLM5M+BCFj7xnBsodxU5HF/8=;
+        b=TrYHaDz14oSa9mE1uWJdeFsRvKY37ZnkMySf0WZ+uj20bIjU159eke0oFoO4GSzUmE
+         yQijhTPjcPv/qwRcNMrxU8tJUmWWDmsYWp2jXuFr/GUNPgKS4JfG41Gjg1A4JJ3O4LV0
+         ivHhilxWygpBAmUeW3LsaW8bHEem1peaBuAkAe0qBlbardANpEyEGUBVavQBeIvZKV6Z
+         oZJ5cs1nmYi09vEYv+Peu5j3NeRKasc2UBVg7U6icq8tO+uTICRVc1H+OiHIBXHdEdX7
+         RWVsg7eJ3lqgq1nAq6ByOBd1LyN2Kj22nTd/JCyetP18Y10vvxJJFwyvLY6SUYPPETT6
+         CmxA==
+X-Gm-Message-State: AOUpUlF6BvbNXpUuO9lD3hR5OSPOdIoaIWEb+pY4GEaFtpSkSXUZnNye
+        GCDbZOqFh2/ZpSuoRzF6Hqqpow==
+X-Google-Smtp-Source: AAOMgpeq7b4A4TtOygBOe2UF5UT/NmKqS/7woheqoowHId5Vx0ISuomHOEX8ttSG/0TPY+FNq9uo2g==
+X-Received: by 2002:a63:1a49:: with SMTP id a9-v6mr1237556pgm.423.1533250321097;
+        Thu, 02 Aug 2018 15:52:01 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm4050397pfh.124.2018.08.02.15.51.55
+        by smtp.gmail.com with ESMTPSA id 87-v6sm6761280pfn.103.2018.08.02.15.51.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 02 Aug 2018 15:51:56 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -73,9 +73,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/9] crypto: ccm: Remove VLA usage
-Date:   Thu,  2 Aug 2018 15:51:46 -0700
-Message-Id: <20180802225152.19194-4-keescook@chromium.org>
+Subject: [PATCH v7 4/9] crypto: hash: Remove VLA usage
+Date:   Thu,  2 Aug 2018 15:51:47 -0700
+Message-Id: <20180802225152.19194-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180802225152.19194-1-keescook@chromium.org>
 References: <20180802225152.19194-1-keescook@chromium.org>
@@ -84,54 +84,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+In the quest to remove all stack VLA usage from the kernel[1], this
+removes the VLAs in SHASH_DESC_ON_STACK (via crypto_shash_descsize())
+by using the maximum allowable size (which is now more clearly captured
+in a macro), along with a few other cases. Similar limits are turned into
+macros as well.
 
-In the quest to remove all stack VLA usage from the kernel[1], this drops
-AHASH_REQUEST_ON_STACK by preallocating the ahash request area combined
-with the skcipher area (which are not used at the same time).
+A review of existing sizes shows that SHA512_DIGEST_SIZE (64) is the
+largest digest size and that sizeof(struct sha3_state) (360) is the
+largest descriptor size. The corresponding maximums are reduced.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- crypto/ccm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ crypto/ahash.c        | 4 ++--
+ crypto/algif_hash.c   | 2 +-
+ crypto/shash.c        | 6 +++---
+ include/crypto/hash.h | 6 +++++-
+ 4 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/ccm.c b/crypto/ccm.c
-index 0a083342ec8c..b242fd0d3262 100644
---- a/crypto/ccm.c
-+++ b/crypto/ccm.c
-@@ -50,7 +50,10 @@ struct crypto_ccm_req_priv_ctx {
- 	u32 flags;
- 	struct scatterlist src[3];
- 	struct scatterlist dst[3];
--	struct skcipher_request skreq;
-+	union {
-+		struct ahash_request ahreq;
-+		struct skcipher_request skreq;
-+	};
+diff --git a/crypto/ahash.c b/crypto/ahash.c
+index a64c143165b1..78aaf2158c43 100644
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
+ {
+ 	struct crypto_alg *base = &alg->halg.base;
+ 
+-	if (alg->halg.digestsize > PAGE_SIZE / 8 ||
+-	    alg->halg.statesize > PAGE_SIZE / 8 ||
++	if (alg->halg.digestsize > HASH_MAX_DIGESTSIZE ||
++	    alg->halg.statesize > HASH_MAX_STATESIZE ||
+ 	    alg->halg.statesize == 0)
+ 		return -EINVAL;
+ 
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index bfcf595fd8f9..d0cde541beb6 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
+ 	struct alg_sock *ask = alg_sk(sk);
+ 	struct hash_ctx *ctx = ask->private;
+ 	struct ahash_request *req = &ctx->req;
+-	char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
++	char state[HASH_MAX_STATESIZE];
+ 	struct sock *sk2;
+ 	struct alg_sock *ask2;
+ 	struct hash_ctx *ctx2;
+diff --git a/crypto/shash.c b/crypto/shash.c
+index 5d732c6bb4b2..86d76b5c626c 100644
+--- a/crypto/shash.c
++++ b/crypto/shash.c
+@@ -458,9 +458,9 @@ static int shash_prepare_alg(struct shash_alg *alg)
+ {
+ 	struct crypto_alg *base = &alg->base;
+ 
+-	if (alg->digestsize > PAGE_SIZE / 8 ||
+-	    alg->descsize > PAGE_SIZE / 8 ||
+-	    alg->statesize > PAGE_SIZE / 8)
++	if (alg->digestsize > HASH_MAX_DIGESTSIZE ||
++	    alg->descsize > HASH_MAX_DESCSIZE ||
++	    alg->statesize > HASH_MAX_STATESIZE)
+ 		return -EINVAL;
+ 
+ 	base->cra_type = &crypto_shash_type;
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 76e432cab75d..21587011ab0f 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -151,9 +151,13 @@ struct shash_desc {
+ 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
  };
  
- struct cbcmac_tfm_ctx {
-@@ -181,7 +184,7 @@ static int crypto_ccm_auth(struct aead_request *req, struct scatterlist *plain,
- 	struct crypto_ccm_req_priv_ctx *pctx = crypto_ccm_reqctx(req);
- 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
- 	struct crypto_ccm_ctx *ctx = crypto_aead_ctx(aead);
--	AHASH_REQUEST_ON_STACK(ahreq, ctx->mac);
-+	struct ahash_request *ahreq = &pctx->ahreq;
- 	unsigned int assoclen = req->assoclen;
- 	struct scatterlist sg[3];
- 	u8 *odata = pctx->odata;
-@@ -427,7 +430,7 @@ static int crypto_ccm_init_tfm(struct crypto_aead *tfm)
- 	crypto_aead_set_reqsize(
- 		tfm,
- 		align + sizeof(struct crypto_ccm_req_priv_ctx) +
--		crypto_skcipher_reqsize(ctr));
-+		max(crypto_ahash_reqsize(mac), crypto_skcipher_reqsize(ctr)));
++#define HASH_MAX_DIGESTSIZE	 64
++#define HASH_MAX_DESCSIZE	360
++#define HASH_MAX_STATESIZE	512
++
+ #define SHASH_DESC_ON_STACK(shash, ctx)				  \
+ 	char __##shash##_desc[sizeof(struct shash_desc) +	  \
+-		crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \
++		HASH_MAX_DESCSIZE] CRYPTO_MINALIGN_ATTR; \
+ 	struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
  
- 	return 0;
- 
+ /**
 -- 
 2.17.1
 
