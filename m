@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25118C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A234C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C15DD21566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74C022156B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:45:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdVY0Nz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C15DD21566
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qHmwc3Xi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C022156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeHBViR (ORCPT
+        id S1729763AbeHBVi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:38:17 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37474 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeHBViQ (ORCPT
+        Thu, 2 Aug 2018 17:38:28 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45278 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeHBVi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:38:16 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b10-v6so1342537eds.4
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:45:41 -0700 (PDT)
+        Thu, 2 Aug 2018 17:38:27 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s16-v6so1328312edq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 12:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EmyceJsWlKJKj6s5+Zz3FdA8utFArWkVCik2jDUiN6E=;
-        b=YdVY0Nz5fXStaE6uu1NNY12n+22kjsdewedximc7nF4PA8ckI6egqPdATfJugSeHlj
-         BrcGwoZCi43gzwD2sxBDmENTP7Tw8KNL5PIr226mcI87GyNTsnPnN+w9OX4MrSxGNZSw
-         i8HGxLpwq7vn+7IBUtAREDe+GH5B43pV5y2hTAxJphxJpVI31Ff0cIy5xKOzm91Gyasm
-         /Yu39DhqFq3r8/l7NutKT3bEfpIHiFuDL/gaCR2HTcDYgcJhK1Pvfe5y28oovZNbn+PU
-         k0kJ4WRB+LIiCXcUzZcfxGhcutUIZdsvg4ZgxaY3zNu1qgT80d6C44cfMUtQcGPj/spt
-         6J5A==
+        bh=W+QhGKv63Bkgx9akWAUZspgZxiyfH0Fd3o7TmCLCC2o=;
+        b=qHmwc3Xiz7ZJFGNtXVCZSmFC7nDO99Ht3WcTkRgqo31uQn6KL3Ltyx1J/Dh7S2uhL+
+         RSzpnagKGgb6qOYbkL9H/j1rEo5PCxImwrxoBa7JpPoUK0zvesGCN6717Vxy6EjWBCh5
+         gwpB5/LV5HEktFv1QaEomW3U687CZIBk/xsAvjTFF+rGJsyPlnGRM8tesUr/ZGy27ANG
+         98YsNyRN9x4mKfzoOitLFMMplyJEq2UekZqFmsIn44MFcW3jzND88icS2WM0c2dF1GxM
+         zVlyRnD4dUKTh1MtHxBH1iqNfszpcbNd21JRYi2dTxce7l79qhthSA2RcBzhrmJNOY/a
+         ykBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=EmyceJsWlKJKj6s5+Zz3FdA8utFArWkVCik2jDUiN6E=;
-        b=HEYeI8mpHA9RkxqPiaJo+RMG3X1Sdg0VDfPPCcLhrWvMq2XVUqnUVqQAs7BbHEG4fo
-         HgxLFxWAgNw9CzAy9BkldMulvVb2TgQymyI1ooSshBHdrOTJ25sq3YO9QRZUbYiTAJVh
-         LvuLMrzwb4tZfJEQ3r5r/DnogPG9W9dUJooy4i+Svi/JY1DJCdDB0Uf0y0DGD7zfwdXY
-         nkMkA1Nt7NcIkcaeAWbvz1VtN5FJ12Byzmxssc/iWKCgr0A2U4xX/KuRQBfp4uuaqxpN
-         67OY0uhJo9BvEfX7xUEyBwR7mM9HWYSHEvR6t8S2HN3oj65TWVkrykRGf6EU7L10ph6K
-         IBgA==
-X-Gm-Message-State: AOUpUlHHVcdgpzeJLTqmpW3jucGiaLvNoGRuspHBeK4n9oVZblrsnRr7
-        5zsQ5HrdoE8Ei/eUbhSDIso=
-X-Google-Smtp-Source: AAOMgpdeOrDFpcLwNdkN/bA+C9nkk4jXDsqGWw1FZG5A3IVNe8Tbf1XiF9uUCcd2HRqKkFAQRCuGIw==
-X-Received: by 2002:a50:c8c3:: with SMTP id k3-v6mr4532127edh.193.1533239141291;
-        Thu, 02 Aug 2018 12:45:41 -0700 (PDT)
+        bh=W+QhGKv63Bkgx9akWAUZspgZxiyfH0Fd3o7TmCLCC2o=;
+        b=nIj0zRR6t+4VWpLqk2uqP5tUw1I0/4NEd45m5YHPPuNw+CBAAneUmyKT9Ev3xpyoEo
+         xe5YXNaZFgM4gS4qKUnlbAxKk78WdP+9EzYPq9gsg4mDG7YfnHfRRlu/Bjrj9k4t8Bnl
+         sB0uqNsdAcRlIrvd/Qqzz90jzyoZteSApPOgz4JUgF9Jqsmej+iRuJlQr5n5FrZwUw4V
+         Tm7Ba6JlBxTsOrUT36QbtBgm6T9cFjyb2OMmmE8zkeZbIu48XIx/RNMnLCC/n3YA+qLd
+         KF2kJr72ThFiMbHEo7Q4192gF/l7skggOw/ve8Fuiz35odZJXCSGV+w9wAgh17nRECwt
+         giQQ==
+X-Gm-Message-State: AOUpUlEKxbU0xaq0UUlOzv3OsEpFOIm2ZvbRj8nB/EnLu7iPvXZcZLyC
+        ObsEBsCPeuGTbSmY5k1Dzzo=
+X-Google-Smtp-Source: AAOMgpdN5bfm2kAfg6E/VQZ69SwSYXR2b4sW5fty/L0z2r5yneAImxQ9yCe29PnFjEhPWmYKoyahew==
+X-Received: by 2002:a50:fd93:: with SMTP id o19-v6mr4496083edt.73.1533239150136;
+        Thu, 02 Aug 2018 12:45:50 -0700 (PDT)
 Received: from jupiter.lan (126.158-248-196.customer.lyse.net. [158.248.196.126])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm1219655edn.28.2018.08.02.12.45.39
+        by smtp.gmail.com with ESMTPSA id g6-v6sm1219655edn.28.2018.08.02.12.45.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 12:45:40 -0700 (PDT)
+        Thu, 02 Aug 2018 12:45:49 -0700 (PDT)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Noralf T <noralf@tronnes.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 1/5] dt-bindings: add parallel data bus (pardata)
-Date:   Thu,  2 Aug 2018 21:45:32 +0200
-Message-Id: <20180802194536.10820-1-sam@ravnborg.org>
+Subject: [PATCH v1 2/5] pardata: new bus for parallel data access
+Date:   Thu,  2 Aug 2018 21:45:33 +0200
+Message-Id: <20180802194536.10820-2-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20180802193909.GA11443@ravnborg.org>
 References: <20180802193909.GA11443@ravnborg.org>
@@ -73,83 +73,622 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parallel data bus is a simple parallel bus
-that may be used to drive displays.
-It is mostly used in simple embedded systems
-but is also used in some desings utilising Linux.
+The pardata supports implement a simple bus for devices
+that are connected using a parallel bus driven by GPIOs.
+The is often used in combination with simple displays
+that is often seen in older embedded designs.
+There is a demand for this support also in the linux
+kernel for HW designs that uses these kind of displays.
+
+The pardata bus uses a platfrom_driver that when probed
+creates devices for all child nodes in the DT,
+which are then supposed to be handled by pardata_drivers.
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- .../bindings/pardata/parallel-data-bus.txt         | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pardata/parallel-data-bus.txt
+ Documentation/driver-api/index.rst   |   1 +
+ Documentation/driver-api/pardata.rst |  60 ++++++++
+ MAINTAINERS                          |   9 ++
+ drivers/Kconfig                      |   2 +
+ drivers/Makefile                     |   1 +
+ drivers/pardata/Kconfig              |  17 +++
+ drivers/pardata/Makefile             |   5 +
+ drivers/pardata/pardata.c            | 282 +++++++++++++++++++++++++++++++++++
+ include/linux/pardata.h              | 138 +++++++++++++++++
+ 9 files changed, 515 insertions(+)
+ create mode 100644 Documentation/driver-api/pardata.rst
+ create mode 100644 drivers/pardata/Kconfig
+ create mode 100644 drivers/pardata/Makefile
+ create mode 100644 drivers/pardata/pardata.c
+ create mode 100644 include/linux/pardata.h
 
-diff --git a/Documentation/devicetree/bindings/pardata/parallel-data-bus.txt b/Documentation/devicetree/bindings/pardata/parallel-data-bus.txt
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 6d9f2f9fe20e..1808fca406ae 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -41,6 +41,7 @@ available subsections can be seen below.
+    miscellaneous
+    w1
+    rapidio
++   pardata
+    s390-drivers
+    vme
+    80211/index
+diff --git a/Documentation/driver-api/pardata.rst b/Documentation/driver-api/pardata.rst
 new file mode 100644
-index 000000000000..fa33b5bb8302
+index 000000000000..a811f024a0fe
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pardata/parallel-data-bus.txt
++++ b/Documentation/driver-api/pardata.rst
 @@ -0,0 +1,60 @@
-+DT binding for parallel data bus
++.. SPDX-License-Identifier: GPL-2.0
 +
-+Required properties:
-+- compatible: "parallel-data-bus"
-+- data-gpios: array of 8 GPIO specifiers, referring to the GPIO pins
-+  connected to the data signal lines DB0-DB7
-+  (8-bit mode) of the LCD Controller's bus interface,
-+- enable-gpios: GPIO specifier, referring to the GPIO pin connected to
-+  the "E" (Enable) signal line of the controller's bus interface,
-+- rs-gpios: GPIO specifier, referring to the GPIO pin
-+  connected to the "RS" (Register Select) controller's bus interface,
++=========================
++Parallel Data Bus/Drivers
++=========================
 +
-+Required properties for 8080 interface:
-+- readwrite-gpios: For chips with 8080 interface list the GPIO
-+  pin connected to the controllers read/write pin
++Displays may be connected using a simple parallel bus.
++This is often seen in embedded systems with a simple MCU, but is also
++used in Linux based systems to a small extent.
 +
-+Required properties for 6800 interface:
-+- read-gpios: For chips with 6800 interface list the GPIO
-+  pin connected to the controllers read pin
-+- write-gpios: For chips with 6800 interface list the GPIO
-+  pin connected to the controllers write pin
++The bus looks like this:
 +
-+Required property for child node(s):
-+- reg: numeric identifier for the display
++.. code-block:: none
 +
-+Example:
++       ----+
++           |  DB0-DB7 or DB4-DB7      +----
++           ===/========================
++           |  E - enable              |  D
++           ----------------------------  I
++        C  |  Reset                   |  S
++        P  ----------------------------  P
++        U  |  Read/Write (one or two) |  L
++           ----------------------------  A
++           |  RS - instruction/data   |  Y
++           ----------------------------
++           |                          +----
++       ----+
 +
-+	backlight: backlight {
-+		compatible = "gpio-backlight";
++There may be several devices connected to the bus with individual
++reset and read/write signals.
++Two types of interfaces are supported. 8800 with a single read/write signal,
++and 6800 with individual read/write signals.
++
++Display supported by the parallel data bus: `<https://www.sparkfun.com/products/710>`_
++
++The overall code structure is
++
++.. code-block:: none
++
++  platform_device [pardata bus]   <--- pardatabus [driver]
++       |
++       +-> device
++             |
++             +-> pardata_bus_data
++
++  pardata_device
++      |
++      +-> device
++            |
++            +->
++
++  pardatabus_bus
++
++
++API documentation
++=================
++.. kernel-doc:: include/linux/pardata.h
++   :internal:
++.. kernel-doc:: drivers/pardata/pardata.c
++   :internal:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 96e98e206b0d..4ba7ff7c3e46 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10727,6 +10727,15 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/panasonic-laptop.c
+ 
++PARALLEL DATA SUBSYSTEM
++M:	Sam Ravnborg <sam@ravnborg.org>
++S:	Maintained
++F:	drivers/pardata/
++F:	include/linux/pardata.h
++F:	drivers/gpu/drm/tinydrm/pardata-dbi.c
++F:	include/drm/pardata-dbi.h
++F:	Documentation/driver-api/pardata.rst
++
+ PARALLEL LCD/KEYPAD PANEL DRIVER
+ M:	Willy Tarreau <willy@haproxy.com>
+ M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 95b9ccc08165..b51b25aae9a5 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -217,4 +217,6 @@ source "drivers/siox/Kconfig"
+ 
+ source "drivers/slimbus/Kconfig"
+ 
++source "drivers/pardata/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 24cd47014657..cfe7945f2f6b 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -67,6 +67,7 @@ obj-$(CONFIG_CONNECTOR)		+= connector/
+ obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
+ obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
+ 
++obj-$(CONFIG_PARDATA)		+= pardata/
+ obj-$(CONFIG_PARPORT)		+= parport/
+ obj-$(CONFIG_NVM)		+= lightnvm/
+ obj-y				+= base/ block/ misc/ mfd/ nfc/
+diff --git a/drivers/pardata/Kconfig b/drivers/pardata/Kconfig
+new file mode 100644
+index 000000000000..5a4280a3f85a
+--- /dev/null
++++ b/drivers/pardata/Kconfig
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Parallel Data Bus framework
++#
++menuconfig PARDATA
++	tristate "Parallel Data support"
++	help
++	  The parallel data framework is used for devices communicating
++	  with a simple parallel interface.
++	  The interface include 8 data pins, one register select,
++	  one enable pin, a chip select and a reset pin.
++	  The read/write may be 8080 style (one r/w pin) or 6800 style
++	  with separate read and write pins.
++	  The parallel data bus is often used for displays in embedded
++	  systems.
++
++	  If unsure, choose N.
+diff --git a/drivers/pardata/Makefile b/drivers/pardata/Makefile
+new file mode 100644
+index 000000000000..0e48bd648879
+--- /dev/null
++++ b/drivers/pardata/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for kernel Parallel Data subsystem
++#
++obj-$(CONFIG_PARDATA) += pardata.o
+diff --git a/drivers/pardata/pardata.c b/drivers/pardata/pardata.c
+new file mode 100644
+index 000000000000..985d692c116a
+--- /dev/null
++++ b/drivers/pardata/pardata.c
+@@ -0,0 +1,282 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, Sam Ravnborg
++ *
++ * Author: Sam Ravnborg <sam@ravnborg.org>
++ */
++
++/**
++ * DOC: Bus driver for parallel data bus
++ *
++ * The parallel data bus is often used for displays
++ * in embedded designs and is sometimes also used
++ * in designs supporting Linux.
++ */
++
++#include <linux/platform_device.h>
++#include <linux/gpio/consumer.h>
++#include <linux/of_device.h>
++#include <linux/pardata.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/slab.h>
++#include <linux/init.h>
++#include <linux/of.h>
++
++static struct pardata_device *
++pardata_device_create(struct pardatabus_data *pdbus)
++{
++	struct pardata_device *pddev;
++
++	/* We allocate the device, and initialize the default values */
++	pddev = kzalloc(sizeof(*pddev), GFP_KERNEL);
++	if (!pddev)
++		return ERR_PTR(-ENOMEM);
++
++	pddev->dev.parent = pdbus->dev;
++	pddev->dev.bus = &pardata_bus;
++
++	dev_set_name(&pddev->dev, "pardata");
++
++	device_initialize(&pddev->dev);
++
++	return pddev;
++}
++
++static void pardata_device_release(struct pardata_device *ppdev)
++{
++	kfree(ppdev);
++}
++
++int pardata_device_register(struct pardata_device *pddev)
++{
++	return device_add(&pddev->dev);
++}
++
++static int of_pdbus_register_device(struct pardatabus_data *pdbus,
++				    struct device_node *np)
++{
++	struct pardata_device *pddev;
++	int ret;
++	u32 id;
++
++	pddev = pardata_device_create(pdbus);
++	if (IS_ERR(pddev))
++		return PTR_ERR(pddev);
++
++	/* The reg property is used as id */
++	ret = of_property_read_u32(np, "reg", &id);
++	if (ret) {
++		dev_err(pdbus->dev, "Failed to read the 'reg' property");
++		pardata_device_release(pddev);
++		return ret;
++	}
++	pddev->id = id;
++
++	/*
++	 *  Associate the OF node with the device structure so it
++	 * can be looked up later.
++	 */
++	of_node_get(np);
++	pddev->dev.of_node = np;
++
++	/* All data is now stored in the pardata_device struct; register it. */
++	ret = pardata_device_register(pddev);
++	if (ret) {
++		pardata_device_release(pddev);
++		of_node_put(np);
++		return ret;
 +	}
 +
-+	power: regulator@0 {
++	dev_dbg(&pddev->dev, "registered pardata device %s with id %i\n",
++		np->name, id);
++	return 0;
++}
++
++static void pdbus_unregister(void)
++{
++	bus_unregister(&pardata_bus);
++}
++
++/**
++ * of_pardata_register - Register pardatabus and create devices from DT
++ *
++ * @pdbus: pointer to pardatabus_data structure
++ *
++ * This function registers the pardatabus_data structure and registers
++ * a pardata_device for each child node of @np.
++ */
++int of_pardata_register(struct pardatabus_data *pdbus)
++{
++	struct device_node *child;
++	struct device_node *np;
++	int ret;
++
++	np = pdbus->dev->of_node;
++
++	/* Do not continue if the node is not available or disabled */
++	if (!np || !of_device_is_available(np))
++		return -ENODEV;
++
++	/* Register the parallel data bus */
++	ret = bus_register(&pardata_bus);
++	if (ret)
++		return ret;
++
++	/*
++	 * Loop over the child nodes and register a
++	 * pardata_device for each node
++	 */
++	for_each_available_child_of_node(np, child) {
++		ret = of_pdbus_register_device(pdbus, child);
++
++		if (ret == -ENODEV)
++			dev_err(pdbus->dev, "pardata device missing.\n");
++		else if (ret)
++			goto unregister;
 +	}
++	return 0;
 +
-+	pardatabus {
-+		compatible = "parallel-data-bus";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pardata>;
-+		data-gpios = <&pioe 0 GPIO_ACTIVE_HIGH
-+			      &pioe 1 GPIO_ACTIVE_HIGH
-+			      &pioe 2 GPIO_ACTIVE_HIGH
-+			      &pioe 3 GPIO_ACTIVE_HIGH
-+			      &pioe 4 GPIO_ACTIVE_HIGH
-+			      &pioe 5 GPIO_ACTIVE_HIGH
-+			      &pioe 6 GPIO_ACTIVE_HIGH
-+			      &pioe 7 GPIO_ACTIVE_HIGH>;
-+		enable-gpios = <&pioe 8 GPIO_ACTIVE_HIGH>;
-+		rs-gpios = <&pioe 12 GPIO_ACTIVE_HIGH>;
-+		readdwrite-gpios = <&pioe 11 GPIO_ACTIVE_HIGH>;
++unregister:
++	pdbus_unregister();
++	return ret;
++}
 +
-+		wg160160@0 {
-+			compatible = "winstar,wg160160";
-+			reg = <1>;
-+			reset-gpios = <&pioe 13 GPIO_ACTIVE_LOW>;
-+			chipselect-gpios = <&pioe 9 GPIO_ACTIVE_LOW>;
-+			backlight = &backlight;
-+			power = &power;
-+		}
++static int pardata_device_match(struct device *dev, struct device_driver *drv)
++{
++	/* OF style match */
++	if (of_match_device(drv->of_match_table, dev) != NULL)
++		return 1;
++
++	return 0;
++}
++
++static int pardata_device_probe(struct device *dev)
++{
++	struct pardata_device *pddev;
++	struct pardata_driver *pddrv;
++
++	pddev = to_pardata_device(dev);
++	pddrv = to_pardata_driver(dev->driver);
++
++	return pddrv->probe(pddev);
++}
++
++struct bus_type pardata_bus = {
++	.name		= "pardata",
++	.match		= pardata_device_match,
++	.probe		= pardata_device_probe,
++};
++EXPORT_SYMBOL_GPL(pardata_bus);
++
++/*
++ * __pardata_driver_register() - Client driver registration
++ *
++ * @drv:Client driver to be associated with client-device.
++ * @owner: owning module/driver
++ *
++ * Do not call this direct, use pardata_driver_register()
++ */
++int __pardata_driver_register(struct pardata_driver *drv, struct module *owner)
++{
++	/* probe is mandatory */
++	if (!drv->probe)
++		return -EINVAL;
++
++	drv->driver.bus = &pardata_bus;
++	drv->driver.owner = owner;
++
++	return driver_register(&drv->driver);
++}
++EXPORT_SYMBOL_GPL(__pardata_driver_register);
++
++/*
++ * Use a simple pardatabus driver to create the pardata
++ * devices from child nodes in DT.
++ *
++ * The pardatabus driver parses the properties in the
++ * device tree that will be used by the pardata drivers.
++ */
++static int pardatabus_probe(struct platform_device *pdev)
++{
++	struct pardatabus_data *pdbus;
++	struct gpio_descs *pins;
++	struct gpio_desc *pin;
++	struct device *dev;
++
++	dev = &pdev->dev;
++
++	pdbus = devm_kzalloc(dev, sizeof(*pdbus), GFP_KERNEL);
++	if (!pdbus)
++		return -ENOMEM;
++
++	pdbus->dev = &pdev->dev;
++	dev_set_drvdata(dev, pdbus);
++
++	/* Get the mandatory bus details from DT */
++	pins = devm_gpiod_get_array(dev, "data-gpios", GPIOD_OUT_LOW);
++	if (IS_ERR(pins)) {
++		dev_err(dev, "Failed to get gpio 'data-gpios'");
++		return PTR_ERR(pins);
 +	}
++	if (pins->ndescs != 4 && pins->ndescs != 8) {
++		dev_err(dev, "Invalid number of data-gpios %d - expected 4 or 8\n",
++			    pins->ndescs);
++		return -EINVAL;
++	}
++	pdbus->data_pins = pins;
 +
++	pin = devm_gpiod_get(dev, "enable-gpios", GPIOD_OUT_LOW);
++	if (IS_ERR(pin)) {
++		dev_err(dev, "Failed to get gpio 'enable-gpios'\n");
++		return PTR_ERR(pin);
++	}
++	pdbus->pin_enable = pin;
++
++	pin = devm_gpiod_get(dev, "rs-gpios", GPIOD_OUT_HIGH);
++	if (IS_ERR(pin)) {
++		dev_err(dev, "Failed to get gpio 'rs-gpios'\n");
++		return PTR_ERR(pin);
++	}
++	pdbus->pin_rs = pin;
++
++	pin = devm_gpiod_get(dev, "rw-gpios", GPIOD_OUT_HIGH);
++	if (IS_ERR(pin)) {
++		dev_err(dev, "Failed to get gpio 'rw-gpios'\n");
++		return PTR_ERR(pin);
++	}
++	pdbus->pin_readwrite = pin;
++
++	pin = devm_gpiod_get(dev, "read-gpios", GPIOD_OUT_HIGH);
++	if (IS_ERR(pin)) {
++		dev_err(dev, "Failed to get gpio 'read-gpios'\n");
++		return PTR_ERR(pin);
++	}
++	pdbus->pin_read = pin;
++
++	pin = devm_gpiod_get(dev, "write-gpios", GPIOD_OUT_HIGH);
++	if (IS_ERR(pin)) {
++		dev_err(dev, "Failed to get gpio 'write-gpios'\n");
++		return PTR_ERR(pin);
++	}
++	pdbus->pin_write = pin;
++
++	return of_pardata_register(pdbus);
++}
++
++static const struct of_device_id pardata_bus_dt_ids[] = {
++	{ .compatible = "parallel-data-bus", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver pardatabus_driver = {
++	.driver	 = {
++		.name   = "pardatabus",
++		.of_match_table = pardata_bus_dt_ids,
++	},
++	.probe = pardatabus_probe,
++};
++module_platform_driver(pardatabus_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Parallel Data Bus");
+diff --git a/include/linux/pardata.h b/include/linux/pardata.h
+new file mode 100644
+index 000000000000..888a1c88176e
+--- /dev/null
++++ b/include/linux/pardata.h
+@@ -0,0 +1,138 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 Sam Ravnborg
++ */
++
++#ifndef _LINUX_PARDATA_H
++#define _LINUX_PARDATA_H
++
++#include <linux/device.h>
++#include <linux/module.h>
++
++extern struct bus_type pardata_bus;
++
++/**
++ * struct pardatabus_data - private data for the pardata bus
++ *
++ * Drivers uses these data when usung the pins that are part of
++ * the bus.
++ */
++struct pardatabus_data {
++	/**
++	 * @dev: device node that represent the DT node of the bus
++	 */
++	struct device *dev;
++
++	/**
++	 * @data_pins: The 8 or 4 GPIOs used for data
++	 */
++	struct gpio_descs *data_pins;
++
++	/**
++	 * @pin_enable: The enable pin (mandatory)
++	 */
++	struct gpio_desc *pin_enable;
++
++	/**
++	 * @pin_rs: register select (0: instruction 1: data)
++	 */
++	struct gpio_desc *pin_rs;
++
++	/**
++	 * @pin_readwrite: readwrite pin for 8080 style interface
++	 */
++	struct gpio_desc *pin_readwrite;
++
++	/**
++	 * @pin_read: read pin for 6800 style interface
++	 */
++	struct gpio_desc *pin_read;
++
++	/**
++	 * @pin_write: write pin for 6800 style interface
++	 */
++	struct gpio_desc *pin_write;
++};
++
++static inline struct pardatabus_data *to_pardatabus_data(struct device *d)
++{
++	return container_of(d, struct pardatabus_data, dev);
++}
++
++/**
++ * struct pardata_device - pardata device handle.
++ * @dev: Driver model representation of the device.
++ *
++ * This is the device handle returned when a pardata
++ * device is registered.
++ * The id comes from the DT
++ *
++ * @dev: The device
++ * @id: Id of the device (from DT)
++ */
++struct pardata_device {
++	struct device dev;
++	u32	   id;
++};
++
++static inline struct pardata_device *to_pardata_device(struct device *d)
++{
++	return container_of(d, struct pardata_device, dev);
++}
++
++static inline void *pardata_dev_get_drvdata(const struct pardata_device *pdd)
++{
++	return dev_get_drvdata(&pdd->dev);
++}
++
++static inline void pardata_dev_set_drvdata(struct pardata_device *pdd,
++					    void *data)
++{
++	dev_set_drvdata(&pdd->dev, data);
++}
++
++/**
++ * struct pardata_driver - pardata 'generic device'
++ *			(similar to 'spi_device' on SPI)
++ *
++ * @driver: generic device driver
++ *	  pardata drivers must initialize name, owner and of_match_table
++ *	  of this structure
++ * @probe: Binds this driver to a pardata bus.
++ * @shutdown: Standard shutdown callback used during powerdown/halt.
++ */
++struct pardata_driver {
++	struct device_driver driver;
++	int   (*probe)(struct pardata_device *pdd);
++	void  (*shutdown)(struct pardata_device *pdd);
++};
++
++static inline struct pardata_driver *to_pardata_driver(struct device_driver *d)
++{
++	return container_of(d, struct pardata_driver, driver);
++}
++
++/* Use macro for driver registering to get simple access to THIS_MODULE */
++#define pardata_driver_register(drv) \
++	__pardata_driver_register(drv, THIS_MODULE)
++int __pardata_driver_register(struct pardata_driver *drv, struct module *owner);
++
++static inline void pardata_driver_unregister(struct pardata_driver *drv)
++{
++	return driver_unregister(&drv->driver);
++}
++
++/**
++ * module_pardata_driver() - Helper macro for registering a parallel data driver
++ * @__pardata_driver: pardatabus_driver struct
++ *
++ * Helper macro for parallel data drivers which do not do anything special in
++ * module init/exit. This eliminates a lot of boilerplate. Each module may
++ * only use this macro once, and calling it replaces module_init() and
++ * module_exit()
++ */
++#define module_pardata_driver(__pardata_driver) \
++	module_driver(__pardata_driver, pardata_driver_register, \
++			pardata_driver_unregister)
++
++#endif /* _LINUX_PARDATA_H */
 -- 
 2.12.0
 
