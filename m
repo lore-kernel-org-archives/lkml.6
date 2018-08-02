@@ -2,125 +2,97 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A48C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43057C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2723721537
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECA6E2156B
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc9Apsxe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2723721537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vr3jxd9K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA6E2156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbeHBVqj (ORCPT
+        id S1731564AbeHBVrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:46:39 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:37959 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHBVqj (ORCPT
+        Thu, 2 Aug 2018 17:47:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33966 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeHBVrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:46:39 -0400
-Received: by mail-it0-f67.google.com with SMTP id v71-v6so5209105itb.3;
-        Thu, 02 Aug 2018 12:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=7p8mIWf/t8LtjE55u0+fpsgskGxy2peYtkHsQGFdXbs=;
-        b=gc9Apsxe5TjepHnJDyt/m2ksSDqPmXKL2fPL6BCsy6ps7tjIKyKkmGUkCyyME7bNmK
-         +e/1qgLrVhn1HKJMTcnGtdyON1z+Hj+RrCtkFh9r/MzXR3lPvobzxtZksBe36dkABg3D
-         txDv75SoFPVfXKmR1XzmU+NAG6EGLkUGHji5Gf5pW3QgXunZWcOi6odVgyMwmcvA9tL5
-         NWsx2tuIjRRpuspjScNtCbqtkIAuOOtYROHYXKC+PdC9BZuUxJQ2HSWjZAvYTUUDMsH/
-         5yS9/WqtlIkIz7cQzv54mNRx5QoccpqAIcA8v8UDGllHzETfw7J0jlrEb/LSQQIHxZui
-         lokQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=7p8mIWf/t8LtjE55u0+fpsgskGxy2peYtkHsQGFdXbs=;
-        b=qevQJUSpPJiqdgmqE3M20LScAkeY1Nfv15ZWMYPcmxwvjvpGDbah1SpwX4gSs5jWE+
-         qjFKsYywRVZ7hXaS8gwqfL5nU4Azxdn2fHMoAMeYIrpXilQypyA/IjXfT41ZGJ8Ftzz+
-         h/M1vKDJQ7R+ZUpv41WQdh52RGj3cpfdVJn9RHF8bYSqeHmMtAnH0tHbbOPg5ETG0qdN
-         p8B6e4TEf8+mhq09xEv6DnWjI2BWXmMi3npKmoCYXzp6njUQvaS9jlDab/v5PC/xLao7
-         FfqmW5jhpdZqGRAIsahn3lk02936wvzri+QqxGgJ7/jTM2wKukeUB/l32gupsqeBm6tp
-         kVYQ==
-X-Gm-Message-State: AOUpUlGgOVwzDKIGUfY5DSQOFVG27owXINCEYecdAr7aIkhgi9Q0r+yQ
-        Hc58tQOwqRsCNKaePAqR3llwB7Jrfv7xrqoF0/u9YGO4
-X-Google-Smtp-Source: AAOMgpdMzAbq+vbXQGYsDMLYuhYTFj3Fe0lYFOjRCCUStEPBNPv+ETIt1Om+dXFa3+LOCk/3blmMbyoXCU/Q3ISRchs=
-X-Received: by 2002:a02:943:: with SMTP id f64-v6mr919178jad.31.1533239642044;
- Thu, 02 Aug 2018 12:54:02 -0700 (PDT)
+        Thu, 2 Aug 2018 17:47:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SoFNaEJssEh5lDXOJmxu+4uTXbUwwRfiPoPNNxvlTrg=; b=Vr3jxd9KEbwhiFfta2h6u6LZa
+        hejejq5JxR993WP87354daG1Tev7cOt+LFOHltR/OSUQzh7GwOYE1Rdnexc3YPW+63xOvzX77K0gI
+        DAGMUy/xQkHHKZrXdX1Pd8oNN5HjC+X+S5fCnqkSkTkkzLYw2RIKb3MV3AtFAprwhWVIqRgHcmErN
+        m918OIwZcs/Wws8C2xOqP5WBQ9PcsPQuNzQVMAVXkcE1ewFMEyXkLWnAUwkFafGdJqW7S6fa+mkkt
+        ofjQliAd7hqW2C3MBIymB/OLEgVyM1TYeN0Q9JqBVRm3xYNXcimHSiLk2OKzdB5ww1HQCf5K02Ty0
+        bTaxXX9Mw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flJfp-0008R9-B0; Thu, 02 Aug 2018 19:54:13 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BBB8820267B1E; Thu,  2 Aug 2018 21:54:10 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 21:54:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, fenghua.yu@intel.com, tony.luck@intel.com,
+        vikas.shivappa@linux.intel.com, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+Message-ID: <20180802195410.GR2494@hirez.programming.kicks-ass.net>
+References: <cover.1533064851.git.reinette.chatre@intel.com>
+ <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
+ <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
+ <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+ <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+ <20180802173727.GP2494@hirez.programming.kicks-ass.net>
+ <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
 MIME-Version: 1.0
-Received: by 2002:ac0:bc4a:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 12:53:41 -0700 (PDT)
-In-Reply-To: <20180731005615.GA2911@visor>
-References: <20180731005615.GA2911@visor>
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-Date:   Thu, 2 Aug 2018 20:53:41 +0100
-Message-ID: <CAJwJo6bmFZ+2wni1d-t2hh_RqYvnN2c+NJPNyrBLp9H=StTZFg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] exec: don't force_sigsegv processes with a pending
- fatal signal
-To:     Ivan Delalande <colona@arista.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <653e874f-5e77-a9b5-996a-ed9daa3c6d43@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ivan,
+On Thu, Aug 02, 2018 at 11:18:01AM -0700, Dave Hansen wrote:
+> On 08/02/2018 10:37 AM, Peter Zijlstra wrote:
+> >> I do not see how I can do so without incurring the cache hits and misses
+> >> from the data needed and instructions run by this interface. Could you
+> >> please share how I can do so and still obtain the accurate measurement
+> >> of cache residency of a specific memory region?
+> > That's the best you're going to get. You do _NOT_ get to use raw PMU.
+> 
+> Hi Peter,
+> 
+> This code is really fidgety.  It's really easily perturbed even by tiny
+> things like implicit cache accesses from the page walker filling the TLB
+> from the page tables.
+> 
+> Adding a bunch more code in the way is surely going to make it more
+> fragile and imprecise.
+> 
+> I totally understand not wanting to fill the tree with code hijacking
+> the raw PMU.  Is your reaction to this really around not wanting to
+> start down the slippery slope that ends up with lots of raw PMU "owners"?
 
-2018-07-31 1:56 GMT+01:00 Ivan Delalande <colona@arista.com>:
-> We were seeing unexplained segfaults in coreutils processes and other
-> basic utilities that we tracked down to binfmt_elf failing to load
-> segments for ld.so. Digging further, the actual problem seems to occur
-> when a process gets sigkilled while it is still being loaded by the
-> kernel. In our case when _do_page_fault goes for a retry it will return
-> early as it first checks for fatal_signal_pending(), so load_elf_interp
-> also returns with error and as a result search_binary_handler will
-> force_sigsegv() which is pretty confusing as nothing actually failed
-> here.
->
-> Fixes: 19d860a140be ("handle suicide on late failure exits in execve() in search_binary_handler()")
-> Reference: https://lkml.org/lkml/2013/2/14/5
-> Signed-off-by: Ivan Delalande <colona@arista.com>
+That and the fact that multiple owner directly contradicts what perf set
+out to do, provide resource arbitration for the PMU.
 
-+Cc: Oleg Nesterov <oleg@redhat.com>
-+Cc: Andy Lutomirski <luto@kernel.org>
-
-> ---
->  fs/exec.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index bdd0eacefdf5..6e8007edbb2d 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1656,7 +1656,8 @@ int search_binary_handler(struct linux_binprm *bprm)
->                 if (retval < 0 && !bprm->mm) {
->                         /* we got to flush_old_exec() and failed after it */
->                         read_unlock(&binfmt_lock);
-> -                       force_sigsegv(SIGSEGV, current);
-> +                       if (!fatal_signal_pending(current))
-> +                               force_sigsegv(SIGSEGV, current);
-
-I would suggest to add something like:
-: if (print_fatal_signals)
-:         pr_info("load_binary() failed: %d\n", retval);
-
-It was interesting to catch that it actually segfaults during loading,
-probably will save someone a couple of minutes too ;-)
-
->                         return retval;
->                 }
->                 if (retval != -ENOEXEC || !bprm->file) {
-
-Thanks,
-             Dmitry
+Not being able to use both perf and this resctl thing at the same time
+is utter crap. You will not get special dispensation.
