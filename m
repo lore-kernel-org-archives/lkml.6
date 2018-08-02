@@ -2,90 +2,86 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3992CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CC1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9338421566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:37:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BmjqvUHD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9338421566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 04D9721564
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D9721564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387529AbeHBT3m (ORCPT
+        id S2387548AbeHBTgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:29:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52020 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387423AbeHBT3m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:29:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oJiz/8aARGFPY1OEeaUkxNLa5LQ0uhPtU2ayiEipenI=; b=BmjqvUHDHC2Mir8Okh8kC9m8j
-        2v8ri5tiNJuTbJXJaqqL4MwL/qkhdbw0xA4DWWIV1jTtV2+IXO/4YhPq+qmFurDt0e/dY9dx3AKxG
-        nQJic63ffK/Tm0OjHoqdihGUF8kT+rNTBGISRLmJcRQY6YSRAJosR+T/ZhGe7qCQGpDlzh9nYPhc5
-        Hw5lsHvWmM9dH1wyNOGrbYVAlMtDjhS2Z5tBYAXZ69wal2uld1qw94Yq/a59OL6H0lYVh0vE1Zyjj
-        QLgWep+OGee2XCDHWIpuzzTcatnHlLQ3BC5c95Or49825jvUKGjVZtfQO3nxvO+WD4JYJrqWf4B1F
-        009HEOiXw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flHXV-0004t1-Vb; Thu, 02 Aug 2018 17:37:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A6A7B20267E4D; Thu,  2 Aug 2018 19:37:27 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 19:37:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, fenghua.yu@intel.com,
-        tony.luck@intel.com, vikas.shivappa@linux.intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
- with perf
-Message-ID: <20180802173727.GP2494@hirez.programming.kicks-ass.net>
-References: <cover.1533064851.git.reinette.chatre@intel.com>
- <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
- <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
- <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
- <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 2 Aug 2018 15:36:08 -0400
+Received: from mout.gmx.net ([212.227.17.21]:35105 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387423AbeHBTgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 15:36:08 -0400
+Received: from homer.simpson.net ([185.221.150.28]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MIQlv-1fnlo61n5T-004DZv; Thu, 02
+ Aug 2018 19:43:37 +0200
+Message-ID: <1533231816.12550.54.camel@gmx.de>
+Subject: Re: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq
+ context
+From:   Mike Galbraith <efault@gmx.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Thu, 02 Aug 2018 19:43:36 +0200
+In-Reply-To: <1533228650.12550.15.camel@gmx.de>
+References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
+         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
+         <1533192980.11791.8.camel@gmx.de>
+         <20180802123104.7fed73b4@gandalf.local.home>
+         <1533228650.12550.15.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:85jmNUmV3Uh8zik6wlxYligp1ohTiMrkgUOylJoYgy5mu1j8Hfs
+ KprBc36HZuJ2pBtu3ixB6+79+MVLCiLjxFsUwZ4RuW4LbuRU/c/+KUQbE0KOGHu5T0RmonE
+ UtCNla46dYJ6hbmEA1D83o/HphhF+16KNRgUGGIpT/LQz+J1siKe1fU1AXDFuLxpS0gD2gg
+ NCGHno83Ku3hC7tFoOeWw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:0IC9WfFRl8s=:Rp81Tb4/rwaMU9L1fq5mny
+ UnjJxfax4A07b5orC+NB0WtdBIw4HEMs4E/ItZcIIQbuO7H1n5EP73tSS1x+LJn5E5Vv1Hw4O
+ pSqbEuUUBFbunsIxP8rbkPZwaEa0dBSAgHBt03mD6CsiXrj063asUnVJqWplMyn63wUzeojGR
+ gXPGfTuipDNqbG0w0dmENjAdDGguOS/MbRxX6/Hb104mHIqaLY0RREHU5uvjzVDPkLTFKizJz
+ efNb6VWUU6GGfuvJeYu76F4ipVLY1sUTRIC0EbNVaDskP3SqVSctcFMZupr8W+yHs7XJvcp8l
+ vtmwUWbBzHq3O0LpwTRW3knaHwdPxXPY0LFjIM+FM+QTmUMatgAstOB66f9eDflt3VlhXiGez
+ PLuN18KLDf14hI6VR3QBPRKXOCflFN6Sn6tUiSTzpOs4txT4BrKXUCfmjB2xkyTCk4+ImQtKh
+ ErzgDWE/OrR9kSbFxguzxdZEtAslLKRkil0K5XTQdK0LlFEg8TrtKJLRf9+V4nYJBugAVlsSH
+ iboutXUrexgB1XL7s5VUTQ2BelFpijgqcIIylEUNy91wILZV+lgAVwelq7CviC0ujPro/oQlJ
+ E2mtNlZ7wavu/ePzKl/REQFrG9nsZGQs1ZDnHQDdgpe1fiQ8+huoPch1VKkyQ5wbE8xv4/a0/
+ ZKQTNzp3SiA8eo2stWsRlhw3dZbwgY87O0U3i4i5udD0jwzoYscUmpwAkJf/OBAi0s5yLLSoT
+ MArKGv1/wqYLoBQtsE3gItra4fEBJbEcGB//TV3Ayu2vyvgcMZVwwZIglbl8UUlM/fuB2UUJS
+ VQ4EBax
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 09:44:13AM -0700, Reinette Chatre wrote:
-> On 8/2/2018 9:18 AM, Peter Zijlstra wrote:
-> > On Thu, Aug 02, 2018 at 09:14:10AM -0700, Reinette Chatre wrote:
+On Thu, 2018-08-02 at 18:50 +0200, Mike Galbraith wrote:
+> On Thu, 2018-08-02 at 12:31 -0400, Steven Rostedt wrote:
+> > On Thu, 02 Aug 2018 08:56:20 +0200
+> > Mike Galbraith <efault@gmx.de> wrote:
 > > 
-> >> The current implementation does not coordinate with perf and this is
-> >> what I am trying to fix in this series.
-> >>
-> >> I do respect your NAK but it is not clear to me how to proceed after
-> >> obtaining it. Could you please elaborate on what you would prefer as a
-> >> solution to ensure accurate measurement of cache-locked data that is
-> >> better integrated?
+> > > (arm-land adventures 1/3 take2 will have to wait, my cup runeth over) 
+> > > 
+> > > v4.14..v4.15 timer handling changes including calling kvm_timer_vcpu_load()
 > > 
-> > We have an in-kernel interface to perf, use that if you want access to
-> > the PMU. You will not directly stomp on PMU registers.
+> > I take it that this should be added to v4.16-rt and marked stable-rt?
 > 
-> I do not see how I can do so without incurring the cache hits and misses
-> from the data needed and instructions run by this interface. Could you
-> please share how I can do so and still obtain the accurate measurement
-> of cache residency of a specific memory region?
+> Yeah, barring way sexier ideas of course.
 
-That's the best you're going to get. You do _NOT_ get to use raw PMU.
+Gah, wait.  WRT marking for stable-rt, only the pmu allocation splat
+fix is applicable to @stable-rt, kvm locking woes start at 4.15.
+
+	-Mike
