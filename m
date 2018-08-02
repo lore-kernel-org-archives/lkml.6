@@ -2,122 +2,141 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3241C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6B1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932FE2159F
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7B32159F
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3bNNaec"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932FE2159F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Z75LJRwC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P33+FX1T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7B32159F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeHBXsX (ORCPT
+        id S1732366AbeHBXt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:48:23 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38972 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732006AbeHBXsX (ORCPT
+        Thu, 2 Aug 2018 19:49:56 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46586 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731925AbeHBXt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:48:23 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j8-v6so2072713pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:55:19 -0700 (PDT)
+        Thu, 2 Aug 2018 19:49:56 -0400
+Received: by mail-yw1-f68.google.com with SMTP id e23-v6so216812ywe.13
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hDo64eeItt5T9UxE2nsFi+Bp1dQ740xkVGLMqbOAVbo=;
-        b=N3bNNaecAvR+vDqNR/CH/DTW7iDT7M3ZsAXVDGWXSewAEdLDTeJmX7X0LzsQOmlcoT
-         CX3Z+uuIysJ5QU4naVreQ3+8pLl4MSUSXvmTbGLF+JpgqvpG2lHUL66xijGeSpU5A/Du
-         85dPGV2hS/+EUrLALxXv28o4MPF8kZKlCQ4UA=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=56IjTREqObYMyQTisoaqJLTbN3CTCDy9WMymtl99x34=;
+        b=Z75LJRwCmgCvms+8KOBk2BT5T1D++fwWeQYC6+pgxB4pHpg/BHO6crhTSkGb3F/nyQ
+         DoDxd/ZC1pdMc+Xb8UBH+BeDtBTNmSCMtHABsCmS1ipFMuo/xsxqmJNRrSlx8LiRjgze
+         gapUL+vMnyCgN4ZKFDKSWfSRl2boowdZBDAnQsBOQyrTe3BcRvuXsLAnQuVqAcW6UEnt
+         gAZga9sGmZdcGTCJco7fd7yNSDZ54u5uKeEtQ72fYy/8RzJZTlkLg4QYT9bCFJ9ND5NL
+         ou7CwWIYW5SZc/zWZ0eVVhWfunXhGRfWO9wgzUT08nRCtSLYszcp/yDeSCwL4nYgt56i
+         49Aw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=56IjTREqObYMyQTisoaqJLTbN3CTCDy9WMymtl99x34=;
+        b=P33+FX1Tn/rigBqmEccnNjV1R8T+P21edXK+MyUrr2YuWmn99O2YZlnHwFq00v2afM
+         dVhLZnNYr+Vl25fEp9BJiXE2g0jyl2/gHMG+59cA6wSI/IGkRxNrzkhpocLTElkzr0bJ
+         46Ldej3sXtkOQQUXDQrpsVoFgiamyKzmR2HIA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hDo64eeItt5T9UxE2nsFi+Bp1dQ740xkVGLMqbOAVbo=;
-        b=B81Etd49y5Am/ALWCX9WquZZd7t3PMQbpdiUBA6zlQvuzWVHJA2sALeefocpqwjWsq
-         bBV/IBbowiFzxsEvPeNqXeVph6Rjkpoo1DJ24E9XOVe0qIzU8TNeCfLntmqMPcXHCxqc
-         VQvSRSZhnyDHcguzlu2NIb0XwmKjubv6njJ8wcmM5urujAso+pFVfzLhSn8fsU9Y/LaZ
-         pl16jwx9j1V2g496JVr+a9ki7ayv41oNtXoupmbGA/0aQSF6OTGZ7zHiaOn8CBivfB5S
-         YSu6So+nF/2wg5PzSYk3dGA3WgSUisA2x8OYB1t0ONW0iMicsBgR9VRGusoldYYpVtn+
-         r57g==
-X-Gm-Message-State: AOUpUlErDr5er8sO+0HouPjO1gebdLGFwZKWXKHpuUZxRhW2lB1br6Xg
-        J9PXpn/QifcLyTRkYjk3m+22fresjzY=
-X-Google-Smtp-Source: AAOMgpe/ohn8dIM7p/PDJbPPQ3aK9jMH0r6LiLyE7cqqStVGVlujVwaU+ClxuRegtORRBFB4VHTghQ==
-X-Received: by 2002:a62:3545:: with SMTP id c66-v6mr1283947pfa.63.1533246919476;
-        Thu, 02 Aug 2018 14:55:19 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id d26-v6sm6684387pfl.159.2018.08.02.14.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 14:55:18 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 14:53:40 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, pavel@ucw.cz,
-        rteysseyre@gmail.com, david@lechnology.com, broonie@kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180802215340.GP30024@minitux>
-References: <1bf9aed83d1756dd4f81590297ce7e0b9972bf85.1533112637.git.baolin.wang@linaro.org>
- <34c87589-ccaf-e541-7acb-efcf3bd306f6@gmail.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=56IjTREqObYMyQTisoaqJLTbN3CTCDy9WMymtl99x34=;
+        b=bO2ggi3dqqwHpSB2dHSeDYAJ/QqFxBxdiZbbvFPhZsEtFoY7roDA7ih1/Fc5RZNiih
+         jmaRKm92cyKV+8zS8eQFQoF9q1qa+e61ZFXeMr0utcicHr3SpFXW5qpWYro2qe34Y7Ph
+         /mBYh5d1jnfn2V4Cbxcz+PRlqL2Lg4N9fbq71wXHg0gmdB3QcVpqkSQmJZLI4SJLggf4
+         lC5gmGIHcZ5WKfNfqoXUDOUb9sZOo3rhy3GUjAOd3J8I/8nlaMcMtJ4DNHGbbBPixsyJ
+         AU4XzXpkjQfTK3+NkhDCBf8sswTHMwcEdThIzImE9UCvbEJF2r3Rj87orxN3mdztcPvm
+         sxog==
+X-Gm-Message-State: AOUpUlFzIFptkMFvmPa1NunxkHQeSm4abj3IImhM8iyf/cWSmmf7obhX
+        Ys3iajlkO5ABm8ljf4PtlpA4Wxu/u+li6HqJuIaoAw==
+X-Google-Smtp-Source: AAOMgpemYEWQ7CJm0C2ocNnzf5+Hcu3/SQ0lfKsevGyVcxiUGUkDXq54Gw55po18cJOtCgs4zZXYGNegu082mgerDxk=
+X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr808445ywe.116.1533247010510;
+ Thu, 02 Aug 2018 14:56:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34c87589-ccaf-e541-7acb-efcf3bd306f6@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 14:56:49 -0700 (PDT)
+In-Reply-To: <50e0f257-60d9-73c8-b4ac-a93c7bdccb57@kernel.dk>
+References: <20180731195155.46664-1-keescook@chromium.org> <50e0f257-60d9-73c8-b4ac-a93c7bdccb57@kernel.dk>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 2 Aug 2018 14:56:49 -0700
+X-Google-Sender-Auth: t0lpCkeC69c_SVxhh_fJMCus7sk
+Message-ID: <CAGXu5jLKk_9rw5etROW4ucwK+ZR7YfC_zq+6AwtxK4=S3Y7sOw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] block: Consolidate scsi sense buffer usage
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Juergen Gross <jgross@suse.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        David Kershner <david.kershner@unisys.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel <target-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 02 Aug 14:21 PDT 2018, Jacek Anaszewski wrote:
-> On 08/01/2018 11:01 AM, Baolin Wang wrote:
-[..]
-> > diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-[..]
-> > +static ssize_t pattern_trig_store_pattern(struct device *dev,
-> > +					  struct device_attribute *attr,
-> > +					  const char *buf, size_t count)
-> > +{
-> > +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > +	struct pattern_trig_data *data = led_cdev->trigger_data;
-> > +	int cr, ccount, offset = 0, err = 0;
-> > +
-> > +	if (!data->hardware_pattern)
-> > +		del_timer_sync(&data->timer);
-> > +
-> > +	mutex_lock(&data->lock);
-> > +
-> > +	data->npatterns = 0;
-> > +	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
-> > +		cr = 0;
-> > +		ccount = sscanf(buf + offset, "%d %d " PATTERN_SEPARATOR "%n",
-> > +				&data->patterns[data->npatterns].brightness,
-> > +				&data->patterns[data->npatterns].delta_t, &cr);
-> 
-> In case user makes a typo while constructing list of pattern tuples,
-> e.g. he forgets a comma, the pattern gets silently truncated.
-> 
-> User is able to detect the truncation by reading pattern file,
-> but it is not an immediate feedback anyway.
-> 
+On Thu, Aug 2, 2018 at 2:24 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 7/31/18 1:51 PM, Kees Cook wrote:
+>> This is a follow-up to commit f7068114d45e ("sr: pass down correctly
+>> sized SCSI sense buffer") which further cleans up and removes needless
+>> sense character array buffers and "struct request_sense" usage in favor
+>> of the common "struct scsi_sense_hdr".
+>>
+>> First, drop a bunch of unused sense buffers:
+>>  [PATCH 1/9] ide-cd: Drop unused sense buffers
+>>  [PATCH 2/9] scsi: cxlflash: Drop unused sense buffers
+>>
+>> Next, allow the sense buffer to be usable outside SCSI tree:
+>>  [PATCH 3/9] scsi: build scsi_common.o for all scsi passthrough request users
+>>  [PATCH 4/9] target: don't depend on SCSI
+>>
+>> Then move all request_sense usage to scsi_sense_hdr:
+>>  [PATCH 5/9] block: Switch struct packet_command to use struct scsi_sense_hdr
+>>
+>> And do some further cleanups for scsi_sense_hdr now that we can:
+>>  [PATCH 6/9] ide-cd: Remove redundant sense buffer
+>>  [PATCH 7/9] cdrom: Use struct scsi_sense_hdr internally
+>>
+>> Finally add a build-time check to make sure we don't pass bad buffer sizes:
+>>  [PATCH 8/9] libata-scsi: Move sense buffers onto stack
+>>  [PATCH 9/9] scsi: Check sense buffer size at build time
+>
+> Thanks Kees, applied for 4.19. Note that I hand applied patch #5 and #9,
+> since they did not apply directly to the block tree.
 
-I agree, a failure to parse the entire pattern should result in an error
-returned, rather than just silently truncating the pattern.
+Thanks; I appreciate that. I think I was based on v4.18-rc2 or something.
 
-> I propose that pattern format should require number of tuples in the
-> first position which would allow to get rid of this ambiguity, since
-> we could verify if the number of parsed tuples is as intended.
-> 
+-Kees
 
-I would prefer to see that we check that we have consumed the entire
-input (accepting optional \n end), rather than having to prepend a count
-to the string...
-
-Regards,
-Bjorn
+-- 
+Kees Cook
+Pixel Security
