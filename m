@@ -2,253 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698E7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5B7C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012FA21530
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3018D21531
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:36:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgIUNTLt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012FA21530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bulgCsjQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bulgCsjQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3018D21531
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbeHBS1F (ORCPT
+        id S1729899AbeHBS2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:27:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46898 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbeHBS1F (ORCPT
+        Thu, 2 Aug 2018 14:28:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42104 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726907AbeHBS2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:27:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h14-v6so2736664wrw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 09:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mGj3ed1fYnR9TbHh/5+gcgqX+LmtdSAIH1Y8PS99Gv8=;
-        b=TgIUNTLt63b4G/XvzbrBIPBcmRPryP41tBrxUXcBerkwpvALWQuarb8rIs+2hKNm8p
-         tbNTw6JmoCxDyq/0FExduKqvJHy/flBAT021EEJuiNvWPVNDBo+B4f8UMUdY78LB94yX
-         IfRDKzqG7qZRbXLAQfMc6VWhOtvmPyT91pRK8xpMe6J1jx9EcmuKBGYNssayEFfal6Ba
-         65USpQcQxhS/2WMkEtG9nxSRibwxQRRSSRaJwfnvznYDO5vTlOV63RRKjNZzQNFzkvP8
-         a/JpMs7D58fnjkG27G9pYW2VFnWjXK1DAblAomgAJH3QMpIeWjRP7iCLVBNcPeMM4Fr7
-         0Xdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mGj3ed1fYnR9TbHh/5+gcgqX+LmtdSAIH1Y8PS99Gv8=;
-        b=FW82IJcCPOtchAdEB2goifzFMvYaYDZX03/5lOJdgmcW9Q3L3zaf8RBO6u89fT75Qw
-         rKMz7gs/46F0Mn/3689OA5vzhlpT2+u9Fp2sHY8yHiJ9uGFjO+7C6JIs9/28O0hD7cBi
-         bnPub4BNHB3fzxl3Px8qbU5uGAtFm4+VpgRGkgwbUhhGQC9PMTC405n0MpWOPA5Rd9ob
-         NHSfvyDIjX6er3zcXPqAH0tW38JFEHlSJAk/7rrFnQhtOOaYTyAr6qaskNliLKXXTv7G
-         fXLEzM/8U3VzhjZRFzGK/VDL9TbnLDcDNOwgwjo4ll8CqlpQF/egfoSj3wZhaMAQN2wo
-         yNqQ==
-X-Gm-Message-State: AOUpUlGaNLRS5qxaR88AyHZKPefCw2+Bxx+ljNQyIgeyvUhzi5S9NRjx
-        NLWcUb7Pkzaujr6V3ZaTtvUp4rXI
-X-Google-Smtp-Source: AAOMgpcRViPHYtLN7N3LH3Nr0OpCwksoOSDINTQoTJzUSnnYr1NClucLUQutc0xsBA7Ds9PyZ7P5jg==
-X-Received: by 2002:adf:a907:: with SMTP id u7-v6mr119583wrc.175.1533227707929;
-        Thu, 02 Aug 2018 09:35:07 -0700 (PDT)
-Received: from ?IPv6:2a02:8108:85c0:57c8:32db:916d:97a2:c4eb? ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id c12-v6sm1866081wrr.6.2018.08.02.09.35.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 09:35:07 -0700 (PDT)
-Subject: Re: [PATCH 2/2] staging:r8188eu: Use lib80211 to encrypt (CCMP) tx
- frames
-From:   Michael Straube <straube.linux@gmail.com>
-To:     Ivan Safonov <insafonov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Santha Meena Ramamoorthy <santhameena13@gmail.com>,
-        Janani Sankara Babu <jananis37@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20180714175410.24296-1-insafonov@gmail.com>
- <20180714175410.24296-2-insafonov@gmail.com>
- <a6a3900d-74f8-aa2a-4bb2-a67b59b44f31@gmail.com>
-Message-ID: <97e5e056-4f6c-4c70-4a00-6eecedbcde1a@gmail.com>
-Date:   Thu, 2 Aug 2018 18:35:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 14:28:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ECE3260397; Thu,  2 Aug 2018 16:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533227782;
+        bh=ZSG0bzVfXn36wM5n5//TxVGTJTbOZZyHMsbacWWis+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bulgCsjQ0yITRbsrWhdq3u166ajXmVAYLZh7U+h8oh5UxPRLQjxNL6IAHpFU2580Z
+         K2m/lH+TWGs26b95rmpe5tlhx8ETspdLo/vg9/FIryQ1sIds1Coi5e3IwiKQQ9lQB0
+         G12SaMBqnFjWrmsbHXQ/w53O7djKGAjymGro3GYI=
+Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7971F60397;
+        Thu,  2 Aug 2018 16:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1533227782;
+        bh=ZSG0bzVfXn36wM5n5//TxVGTJTbOZZyHMsbacWWis+8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bulgCsjQ0yITRbsrWhdq3u166ajXmVAYLZh7U+h8oh5UxPRLQjxNL6IAHpFU2580Z
+         K2m/lH+TWGs26b95rmpe5tlhx8ETspdLo/vg9/FIryQ1sIds1Coi5e3IwiKQQ9lQB0
+         G12SaMBqnFjWrmsbHXQ/w53O7djKGAjymGro3GYI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7971F60397
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Thu, 2 Aug 2018 10:36:18 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     robdclark@gmail.com, airlied@linux.ie,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/gpu: fix parameters in function
+ msm_gpu_crashstate_capture
+Message-ID: <20180802163618.GC21283@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Anders Roxell <anders.roxell@linaro.org>,
+        robdclark@gmail.com, airlied@linux.ie,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180731204532.4808-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <a6a3900d-74f8-aa2a-4bb2-a67b59b44f31@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180731204532.4808-1-anders.roxell@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/18 15:30, Michael Straube wrote:
-> On 07/14/18 19:54, Ivan Safonov wrote:
->> Put data to skb, decrypt with lib80211_crypt_ccmp, and place back to tx buffer.
->>
->> Signed-off-by: Ivan Safonov <insafonov@gmail.com>
->> ---
->>   drivers/staging/rtl8188eu/core/rtw_security.c | 778 +++-----------------------
->>   1 file changed, 72 insertions(+), 706 deletions(-)
->>
+On Tue, Jul 31, 2018 at 10:45:32PM +0200, Anders Roxell wrote:
+> When CONFIG_DEV_COREDUMP isn't defined msm_gpu_crashstate_capture
+> doesn't pass the correct parameters.
+> drivers/gpu/drm/msm/msm_gpu.c: In function ‘recover_worker’:
+> drivers/gpu/drm/msm/msm_gpu.c:479:34: error: passing argument 2 of ‘msm_gpu_crashstate_capture’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
+>                                   ^~~~~~
+> drivers/gpu/drm/msm/msm_gpu.c:388:13: note: expected ‘char *’ but argument is of type ‘struct msm_gem_submit *’
+>  static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
+>              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/msm/msm_gpu.c:479:2: error: too many arguments to function ‘msm_gpu_crashstate_capture’
+>   msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/msm/msm_gpu.c:388:13: note: declared here
+>  static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
 > 
-> Hi Ivan,
+> In current code the function msm_gpu_crashstate_capture parameters.
 > 
-> with this applied I get the following in dmesg:
-> 
-> [    3.901334] [drm] Initialized amdgpu 3.26.0 20150101 for 0000:07:00.0 on minor 0
-> [    4.108904] IPv6: ADDRCONF(NETDEV_UP): enp6s0: link is not ready
-> [    4.185502] r8169 0000:06:00.0 enp6s0: link down
-> [    4.185564] IPv6: ADDRCONF(NETDEV_UP): enp6s0: link is not ready
-> [    4.193647] IPv6: ADDRCONF(NETDEV_UP): wlp1s0f0u9: link is not ready
-> [   17.741809] MAC Address = 7c:8b:ca:08:80:7e
-> [   17.828850] IPv6: ADDRCONF(NETDEV_UP): wlp1s0f0u9: link is not ready
-> [   17.969593] R8188EU: indicate disassoc
-> [   18.081923] IPv6: ADDRCONF(NETDEV_UP): wlp1s0f0u9: link is not ready
-> [   18.123036] IPv6: ADDRCONF(NETDEV_UP): wlp1s0f0u9: link is not ready
-> [   23.034084] R8188EU: assoc success
-> [   23.085043] IPv6: ADDRCONF(NETDEV_CHANGE): wlp1s0f0u9: link becomes ready
-> [   23.093587] BUG: scheduling while atomic: NetworkManager/495/0x00000202
-> [   23.093590] Modules linked in: amdkfd amd_iommu_v2 amdgpu nls_iso8859_1 nls_cp437 vfat fat r8188eu(C) lib80211 snd_hda_codec_realtek cfg80211 snd_hda_codec_generic edac_mce_amd chash snd_hda_codec_hdmi gpu_sched kvm_amd i2c_algo_bit ttm ccp snd_hda_intel rng_core drm_kms_helper kvm snd_hda_codec input_leds led_class joydev mousedev drm rfkill irqbypass snd_hda_core crct10dif_pclmul agpgart crc32_pclmul snd_hwdep ghash_clmulni_intel syscopyarea sysfillrect sysimgblt pcbc wmi_bmof snd_pcm aesni_intel snd_timer aes_x86_64 crypto_simd cryptd k10temp fb_sys_fops snd r8169 sp5100_tco pcspkr glue_helper soundcore mii i2c_piix4 rtc_cmos pinctrl_amd evdev gpio_amdpt wmi mac_hid acpi_cpufreq crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto sd_mod hid_generic usbhid hid ahci libahci
-> [   23.093655]  xhci_pci xhci_hcd libata crc32c_intel usbcore scsi_mod usb_common
-> [   23.093661] Preemption disabled at:
-> [   23.093667] [<ffffffffb9600954>] __dev_queue_xmit+0x74/0x910
-> [   23.093672] CPU: 7 PID: 495 Comm: NetworkManager Tainted: G         C        4.18.0-rc5-staging+ #1
-> [   23.093673] Hardware name: Gigabyte Technology Co., Ltd. A320M-S2H/A320M-S2H-CF, BIOS F23d 04/17/2018
-> [   23.093675] Call Trace:
-> [   23.093683]  dump_stack+0x5c/0x80
-> [   23.093686]  ? __dev_queue_xmit+0x74/0x910
-> [   23.093691]  __schedule_bug.cold.14+0x82/0x9b
-> [   23.093696]  __schedule+0x705/0x8b0
-> [   23.093700]  ? enqueue_task_fair+0xc3/0x730
-> [   23.093704]  schedule+0x32/0x90
-> [   23.093707]  schedule_timeout+0x311/0x4a0
-> [   23.093710]  ? _raw_spin_unlock_irqrestore+0x20/0x40
-> [   23.093713]  ? try_to_wake_up+0x23a/0x490
-> [   23.093716]  wait_for_common+0x15f/0x190
-> [   23.093719]  ? wake_up_q+0x70/0x70
-> [   23.093736]  ? rtw_aes_encrypt+0x26f/0x290 [r8188eu]
-> [   23.093739]  wait_for_completion_killable+0x19/0x30
-> [   23.093743]  call_usermodehelper_exec+0x115/0x160
-> [   23.093747]  __request_module+0x1ac/0x3e2
-> [   23.093764]  rtw_aes_encrypt+0x26f/0x290 [r8188eu]
-> [   23.093778]  ? rtw_get_stainfo+0xe6/0x130 [r8188eu]
-> [   23.093793]  rtw_xmitframe_coalesce+0x950/0xb00 [r8188eu]
-> [   23.093799]  ? _raw_spin_lock_irqsave+0x25/0x50
-> [   23.093812]  rtw_hal_xmit+0x83/0x130 [r8188eu]
-> [   23.093826]  rtw_xmit+0x258/0x5d0 [r8188eu]
-> [   23.093840]  rtw_xmit_entry+0xe8/0x2e7 [r8188eu]
-> [   23.093845]  dev_hard_start_xmit+0xa5/0x240
-> [   23.093849]  sch_direct_xmit+0x150/0x340
-> [   23.093852]  __dev_queue_xmit+0x2f6/0x910
-> [   23.093856]  packet_sendmsg+0x945/0x1592
-> [   23.093860]  ? attach_to_pi_state+0x18/0x110
-> [   23.093862]  ? preempt_count_sub+0x60/0x90
-> [   23.093866]  ? ep_item_poll.isra.1+0x40/0xc0
-> [   23.093871]  sock_sendmsg+0x33/0x40
-> [   23.093874]  __sys_sendto+0xee/0x160
-> [   23.093879]  ? memzero_explicit+0xa/0x10
-> [   23.093883]  ? urandom_read+0x120/0x270
-> [   23.093887]  __x64_sys_sendto+0x24/0x30
-> [   23.093890]  do_syscall_64+0x5b/0x170
-> [   23.093893]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   23.093896] RIP: 0033:0x7fac0b700c12
-> [   23.093897] Code: 48 83 ec 18 44 89 4c 24 08 e8 9a f5 ff ff 44 8b 4c 24 08 4d 89 f8 45 89 f2 89 c5 4c 89 ea 4c 89 e6 89 df b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3a 89 ef 48 89 44 24 08 e8 ca f5 ff ff 48 8b
-> [   23.093935] RSP: 002b:00007fffc46321b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-> [   23.093938] RAX: ffffffffffffffda RBX: 0000000000000011 RCX: 00007fac0b700c12
-> [   23.093939] RDX: 0000000000000148 RSI: 000055f8a5417c70 RDI: 0000000000000011
-> [   23.093940] RBP: 0000000000000000 R08: 000055f8a54154c0 R09: 0000000000000014
-> [   23.093942] R10: 0000000000000000 R11: 0000000000000293 R12: 000055f8a5417c70
-> [   23.093943] R13: 0000000000000148 R14: 0000000000000000 R15: 000055f8a54154c0
-> [   23.096167] lib80211_crypt: registered algorithm 'CCMP'
-> [   23.096544] ------------[ cut here ]------------
-> [   23.096549] DEBUG_LOCKS_WARN_ON(val > preempt_count())
-> [   23.096557] WARNING: CPU: 7 PID: 495 at kernel/sched/core.c:3246 preempt_count_sub+0x5a/0x90
-> [   23.096561] Modules linked in: lib80211_crypt_ccmp amdkfd amd_iommu_v2 amdgpu nls_iso8859_1 nls_cp437 vfat fat r8188eu(C) lib80211 snd_hda_codec_realtek cfg80211 snd_hda_codec_generic edac_mce_amd chash snd_hda_codec_hdmi gpu_sched kvm_amd i2c_algo_bit ttm ccp snd_hda_intel rng_core drm_kms_helper kvm snd_hda_codec input_leds led_class joydev mousedev drm rfkill irqbypass snd_hda_core crct10dif_pclmul agpgart crc32_pclmul snd_hwdep ghash_clmulni_intel syscopyarea sysfillrect sysimgblt pcbc wmi_bmof snd_pcm aesni_intel snd_timer aes_x86_64 crypto_simd cryptd k10temp fb_sys_fops snd r8169 sp5100_tco pcspkr glue_helper soundcore mii i2c_piix4 rtc_cmos pinctrl_amd evdev gpio_amdpt wmi mac_hid acpi_cpufreq crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto sd_mod hid_generic
-> [   23.096604]  usbhid hid ahci libahci xhci_pci xhci_hcd libata crc32c_intel usbcore scsi_mod usb_common
-> [   23.096613] CPU: 7 PID: 495 Comm: NetworkManager Tainted: G        WC        4.18.0-rc5-staging+ #1
-> [   23.096615] Hardware name: Gigabyte Technology Co., Ltd. A320M-S2H/A320M-S2H-CF, BIOS F23d 04/17/2018
-> [   23.096618] RIP: 0010:preempt_count_sub+0x5a/0x90
-> [   23.096619] Code: 15 f7 46 c3 e8 a7 86 2d 00 85 c0 74 f6 8b 15 15 6b 5a 01 85 d2 75 ec 48 c7 c6 be fb e6 b9 48 c7 c7 6b ad e5 b9 e8 c0 77 fd ff <0f> 0b c3 84 d2 75 c9 e8 7a 86 2d 00 85 c0 74 c9 8b 05 e8 6a 5a 01
-> [   23.096647] RSP: 0018:ffff9d5581447c48 EFLAGS: 00010286
-> [   23.096650] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000001
-> [   23.096652] RDX: 0000000080000001 RSI: ffffffffb9e82096 RDI: 00000000ffffffff
-> [   23.096653] RBP: ffff959ef568a600 R08: 0000001cb3397218 R09: 00000000000003f3
-> [   23.096655] R10: ffffffffba5f7700 R11: 0000000000000000 R12: ffff959ef568a6ac
-> [   23.096657] R13: ffff959f0db9a000 R14: ffff959f15441000 R15: 0000000000000007
-> [   23.096660] FS:  00007fac0dcd9000(0000) GS:ffff959f1edc0000(0000) knlGS:0000000000000000
-> [   23.096663] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   23.096665] CR2: 00007fffc462efe8 CR3: 0000000206e88000 CR4: 00000000003406e0
-> [   23.096667] Call Trace:
-> [   23.096674]  _raw_spin_unlock+0x16/0x30
-> [   23.096678]  sch_direct_xmit+0x178/0x340
-> [   23.096684]  __dev_queue_xmit+0x2f6/0x910
-> [   23.096689]  packet_sendmsg+0x945/0x1592
-> [   23.096694]  ? attach_to_pi_state+0x18/0x110
-> [   23.096696]  ? preempt_count_sub+0x60/0x90
-> [   23.096701]  ? ep_item_poll.isra.1+0x40/0xc0
-> [   23.096706]  sock_sendmsg+0x33/0x40
-> [   23.096710]  __sys_sendto+0xee/0x160
-> [   23.096715]  ? memzero_explicit+0xa/0x10
-> [   23.096719]  ? urandom_read+0x120/0x270
-> [   23.096724]  __x64_sys_sendto+0x24/0x30
-> [   23.096728]  do_syscall_64+0x5b/0x170
-> [   23.096732]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   23.096735] RIP: 0033:0x7fac0b700c12
-> [   23.096736] Code: 48 83 ec 18 44 89 4c 24 08 e8 9a f5 ff ff 44 8b 4c 24 08 4d 89 f8 45 89 f2 89 c5 4c 89 ea 4c 89 e6 89 df b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3a 89 ef 48 89 44 24 08 e8 ca f5 ff ff 48 8b
-> [   23.096763] RSP: 002b:00007fffc46321b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-> [   23.096766] RAX: ffffffffffffffda RBX: 0000000000000011 RCX: 00007fac0b700c12
-> [   23.096767] RDX: 0000000000000148 RSI: 000055f8a5417c70 RDI: 0000000000000011
-> [   23.096769] RBP: 0000000000000000 R08: 000055f8a54154c0 R09: 0000000000000014
-> [   23.096770] R10: 0000000000000000 R11: 0000000000000293 R12: 000055f8a5417c70
-> [   23.096772] R13: 0000000000000148 R14: 0000000000000000 R15: 000055f8a54154c0
-> [   23.096775] ---[ end trace 8e7e0aecb937369e ]---
-> [   23.096792] BUG: using __this_cpu_read() in preemptible [00000000] code: NetworkManager/495
-> [   23.096795] caller is __local_bh_enable_ip+0x50/0x80
-> [   23.096798] CPU: 7 PID: 495 Comm: NetworkManager Tainted: G        WC        4.18.0-rc5-staging+ #1
-> [   23.096799] Hardware name: Gigabyte Technology Co., Ltd. A320M-S2H/A320M-S2H-CF, BIOS F23d 04/17/2018
-> [   23.096800] Call Trace:
-> [   23.096804]  dump_stack+0x5c/0x80
-> [   23.096808]  check_preemption_disabled.cold.0+0x46/0x51
-> [   23.096812]  __local_bh_enable_ip+0x50/0x80
-> [   23.096814]  __dev_queue_xmit+0x450/0x910
-> [   23.096819]  packet_sendmsg+0x945/0x1592
-> [   23.096823]  ? attach_to_pi_state+0x18/0x110
-> [   23.096826]  ? preempt_count_sub+0x60/0x90
-> [   23.096829]  ? ep_item_poll.isra.1+0x40/0xc0
-> [   23.096833]  sock_sendmsg+0x33/0x40
-> [   23.096835]  __sys_sendto+0xee/0x160
-> [   23.096840]  ? memzero_explicit+0xa/0x10
-> [   23.096842]  ? urandom_read+0x120/0x270
-> [   23.096845]  __x64_sys_sendto+0x24/0x30
-> [   23.096848]  do_syscall_64+0x5b/0x170
-> [   23.096850]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   23.096852] RIP: 0033:0x7fac0b700c12
-> [   23.096853] Code: 48 83 ec 18 44 89 4c 24 08 e8 9a f5 ff ff 44 8b 4c 24 08 4d 89 f8 45 89 f2 89 c5 4c 89 ea 4c 89 e6 89 df b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3a 89 ef 48 89 44 24 08 e8 ca f5 ff ff 48 8b
-> [   23.096880] RSP: 002b:00007fffc46321b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-> [   23.096882] RAX: ffffffffffffffda RBX: 0000000000000011 RCX: 00007fac0b700c12
-> [   23.096885] RDX: 0000000000000148 RSI: 000055f8a5417c70 RDI: 0000000000000011
-> [   23.096886] RBP: 0000000000000000 R08: 000055f8a54154c0 R09: 0000000000000014
-> [   23.096888] R10: 0000000000000000 R11: 0000000000000293 R12: 000055f8a5417c70
-> [   23.096889] R13: 0000000000000148 R14: 0000000000000000 R15: 000055f8a54154c0
-> 
-> 
-> 
+> Fixes: cdb95931dea3 ("drm/msm/gpu: Add the buffer objects from the submit to the crash dump")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Hi,
+Thanks for doing this.
 
-I guess in addition to
-Revert "staging:r8188eu: Use lib80211 to encrypt (TKIP) tx frames"
+Reviewed-By: Jordan Crouse <jcrouse@codeaurora.org>
 
-this patch should also be reverted. I still get the above messages in dmesg.
-With this [1] reverted dmesg looks good.
+> ---
+>  drivers/gpu/drm/msm/msm_gpu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+> index f388944c93e2..713a92b516ba 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.c
+> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> @@ -385,8 +385,8 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
+>  		msm_gpu_devcoredump_read, msm_gpu_devcoredump_free);
+>  }
+>  #else
+> -static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
+> -		char *cmd)
+> +static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
+> +		struct msm_gem_submit *submit, char *comm, char *cmd)
+>  {
+>  }
+>  #endif
 
-[1]
-515ce733e86ee2e1bea4dba76d2d4491013d0f73
-staging:r8188eu: Use lib80211 to encrypt (CCMP) tx frames
-
-Best regards,
-Michael
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
