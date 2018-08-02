@@ -2,89 +2,111 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A982C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE92BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0090F21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6396321527
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wE3vc7xD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0090F21501
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVvR3mFO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6396321527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbeHBRvH (ORCPT
+        id S2388072AbeHBRvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:51:07 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52855 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387649AbeHBRvG (ORCPT
+        Thu, 2 Aug 2018 13:51:08 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44303 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387645AbeHBRvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:51:06 -0400
-Received: by mail-it0-f67.google.com with SMTP id d9-v6so4120870itf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 08:59:20 -0700 (PDT)
+        Thu, 2 Aug 2018 13:51:07 -0400
+Received: by mail-yb0-f193.google.com with SMTP id l16-v6so1245172ybk.11;
+        Thu, 02 Aug 2018 08:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QJVFAUK2sfteIg6kbmoMjvdcqTQ40d+S51jY/MyhMWQ=;
-        b=wE3vc7xDdxlQhYou2+VTmydkJy5dBsDg+Pcnws1VdqSQMGcMS+y5b+j9ZnOx7s8A60
-         ctcJ1a50BzccegiCErWftjkjEHIXqUr/egZHZ7iTDpphfJjQZwyAfatmhQFZI4BDtn7F
-         LQRo002mXv7vigfhckL4RMJezBVopO6+rNKYKiVkn1oPkCePNxfuV2kU8pk4DAF0jcaq
-         sjtmeqxnduBquoEHoYKEX/ewGYFMAasKlAzVBAy3jjY62KjMPAP0vD261WYjcOihx0Uy
-         iqhYJ55vqqtpYRXCunMDfjuFI9paORa/KxZVqKno+JyqY/ZkmoxXUw2kbTUlRxZqmJkE
-         ux7g==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M3klYL2uA16Rv+kKtnJ/HBA6++FkoRU9kQl21iYfCSs=;
+        b=CVvR3mFO0wOCKbKWq6Af8u2IrlQSMCkVvymGPyFNadJ7XT6EfXgmGrTSO2rEHGKBTt
+         vipRCJS+ReokgEev3gIhPXKWwss8ue+pyEz9hLW+GvXnNA2FI165OuE+cWs6A8W2HsdA
+         t8gCpIBTnkz1DY4l28OICu0sbzUBp30GgdoBIAgTgNwcdPm3jP5xoWIjooPNVoRXYlag
+         7eKjzlZ1yGM/ZF+k5X/rCjrPMdDTY+wjkp1gh30Jsn1DBvyhB0q2EpDbucU0w2Ht/Yjc
+         PhpKGrQEoDLR44kxM1UjHTGfXJLZYyqcxyFBFPJePWVEP5L0zIy5+Q+zE1J4dGWTQrsB
+         t5Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QJVFAUK2sfteIg6kbmoMjvdcqTQ40d+S51jY/MyhMWQ=;
-        b=sPWpxJiM/+WNR/rrTgEyWrrmr+nQMpzO+TlJPITpecNSeyjtdb6niYTWfhSv2gjrlS
-         uxTRPnmfw6JoQpSE8hKQ5K421gpb1lgJ/Elg53MaKDlpmSNTKeSuBVbDPyEBXdmmk7AV
-         jWQT3EOnkVzEapjIR839Kye5q6ragMbLbE1NQaT83pZnFtbHhmN4u5uh/PfYrBr0912T
-         jNvn4tMSm62wJqbAVG0ihGUgFzZgugi6wZekzn3aoG0PxzkWzy1Wl1Ugaj7C8AN3QI10
-         X2VMdRjYtVFrGjfJaSKFwd/Z9k0yxncyxHR1kZrdMlLzI+a+NqRyOETejoWjcxpgBo43
-         P5hw==
-X-Gm-Message-State: AOUpUlEMuJvU4tA4eNhkFWvOm0tfBPGwz6uxekvXjUCzc2Ngt2+shstX
-        vgnRdwgcjP5YVgwj1fgCffutORSz5LI=
-X-Google-Smtp-Source: AAOMgpdTxa/7BzIbq2iyknlV61dxppMHvmm36B3QwfNx/9QeZhpRTmUGccimBvDkK28YAPWuVLW8Vw==
-X-Received: by 2002:a24:6a8a:: with SMTP id l132-v6mr3177272itc.50.1533225559613;
-        Thu, 02 Aug 2018 08:59:19 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id v23-v6sm603775iob.72.2018.08.02.08.59.17
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M3klYL2uA16Rv+kKtnJ/HBA6++FkoRU9kQl21iYfCSs=;
+        b=bAiXb4NGkEvT0IC/EICCSttbKxf0vt0lG45PMXVhVKQ29Dko3FzwX34h6QKCSaDrLu
+         7e8MjMLY8iFvwqWjqpE0EM+6BRzZy9Jkx8Mf6kJI2eSP+paGHPED159uPdpXUp9dz5LN
+         XQFqjKYDe8lCHNiPUYNYH75YpnZo89AzGY+VNWqE1fgQX8gCySOGGBArZMv7yC7o3TDx
+         bu6xa7/XwvBqPaQvS2f95Dkmhnuc2JzUkimZk+tQ0Nbol1BOmU+npR6Qz2aXKIGvXFOd
+         o8ED2vGa3zKl9bGlJfLwHAb6A8NnmA1Hbz1axeUsAz/CZ4cwAP5H6HRx8cfxrvUSShv0
+         Motg==
+X-Gm-Message-State: AOUpUlE5s0JGXuvhJakB3FHCkfSJEH4XRFNuIgoZc15LXqNb7MLzbOlv
+        K7sqmHL28mtEgSwAViFlLP4=
+X-Google-Smtp-Source: AAOMgpfGw+QQhjO1eisvcJ8IVmC3NVwwMRWln4V1YAnjSWxspuAGf4yopXuDSRqxu9xYNrgWloo5Xw==
+X-Received: by 2002:a81:8947:: with SMTP id z68-v6mr39234ywf.310.1533225560213;
+        Thu, 02 Aug 2018 08:59:20 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::3:c239])
+        by smtp.gmail.com with ESMTPSA id m19-v6sm977638ywd.90.2018.08.02.08.59.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 08:59:18 -0700 (PDT)
-Subject: Re: [PATCH] aoe: mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Ed L. Cashin" <ed.cashin@acm.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180801223020.GA11729@embeddedor.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <676f82a9-82d6-d219-f9d1-6e8847a7db73@kernel.dk>
-Date:   Thu, 2 Aug 2018 09:59:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 02 Aug 2018 08:59:19 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 08:59:17 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <jbacik@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] block: make iolatency avg_lat exponentially decay
+Message-ID: <20180802155917.GT1206094@devbig004.ftw2.facebook.com>
+References: <20180802061541.49173-1-dennisszhou@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180801223020.GA11729@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802061541.49173-1-dennisszhou@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/18 4:30 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+Hello, Dennis.
 
-Applied for 4.19, thanks.
+On Wed, Aug 01, 2018 at 11:15:41PM -0700, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+> 
+> Currently, avg_lat is calculated by accumulating the mean of every
+> window in a long running cumulative average. As time goes on, the metric
+> becomes less and less useful due to the accumulated history.
+> 
+> This patch reuses the same calculation done in load averages to make the
+> avg_lat metric more lively. Unlike load averages, the avg only advances
+> when a window elapses (due to an io). Idle periods extend the most
+> recent window. Bucketing is used to limit the history of avg_lat by
+> binding it to the window size. So, the window range for 1/exp (decay
+> rate) is [1 min, 2.5 min) when windows elapse immediately.
+> 
+> The current sample window size is exposed in the debug info to enable
+> calculation of the window range.
+> 
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Josef Bacik <josef@toxicpanda.com>
+
+Heh, sorry about not thinking this up from the beginning but I think
+it'd be great to move this to blkcg core so that the stat is always
+available regardless of blk-iolatency.  It's a really important metric
+and can be used for both monitoring and policy implementation.
+
+Thanks!
 
 -- 
-Jens Axboe
-
+tejun
