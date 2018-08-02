@@ -2,90 +2,100 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAF8C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D3BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E33E21582
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:36:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="eoo7n5h6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E33E21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 035142157F
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035142157F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=torlan.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732177AbeHBX3M (ORCPT
+        id S1732171AbeHBXc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:29:12 -0400
-Received: from imap.thunk.org ([74.207.234.97]:60032 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbeHBX3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:29:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=KwlrU/CPyV/Q35bT5wl/mW434v6Jsvo4rIN20TKx7dQ=; b=eoo7n5h6+ZkizYI/GMND7PIFLn
-        TO5Cv4IqM/GngeE9p65J26+Y4zcKVpmr6hFG9Zyq+qAfGMKSAgXBIzpumge5f0Pb01+dUgpaCU4Xo
-        72WiNkb0UFfosb1toKLvVMQZVCy9mvbCHRE0XhYHxnh63MXZEf9YA5ygQ4NF1WBWqDnk=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1flLGK-0006Us-14; Thu, 02 Aug 2018 21:36:00 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 243E67A64C9; Thu,  2 Aug 2018 17:35:59 -0400 (EDT)
-Date:   Thu, 2 Aug 2018 17:35:59 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net
-Subject: Re: [PATCH v1 1/3] random: Make crng state queryable
-Message-ID: <20180802213559.GA32066@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net
-References: <20180731191102.2434-1-Jason@zx2c4.com>
- <20180731191102.2434-2-Jason@zx2c4.com>
+        Thu, 2 Aug 2018 19:32:26 -0400
+Received: from forward103j.mail.yandex.net ([5.45.198.246]:33105 "EHLO
+        forward103j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731366AbeHBXc0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:32:26 -0400
+Received: from mxback2o.mail.yandex.net (mxback2o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::1c])
+        by forward103j.mail.yandex.net (Yandex) with ESMTP id 4CC0534C47E8;
+        Fri,  3 Aug 2018 00:39:23 +0300 (MSK)
+Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
+        by mxback2o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id vnSIHLm7qY-dM7GTsQZ;
+        Fri, 03 Aug 2018 00:39:23 +0300
+Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 0wFCcvwoHc-dM8CDJ4l;
+        Fri, 03 Aug 2018 00:39:22 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: LVM snapshot broke between 4.14 and 4.16
+From:   WGH <wgh@torlan.ru>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
+References: <226835ba-2197-b850-6e5b-8ba14f7fd016@torlan.ru>
+ <CAOi1vP_tYG77e71CdDiOcszSSEWrp9Vfi+KB7yFAXVQChkjP5A@mail.gmail.com>
+ <93bff248-6897-4867-841b-2dace11597de@torlan.ru>
+ <CA+55aFyAox9BTDpRsqLXiROhHOX60aa45LEZ7Azteaumdu11Fw@mail.gmail.com>
+ <CAOi1vP-SJO4AMK=XD3Lmja++2dQqoiw6Zn8Vgxf8OfvYgnuC6Q@mail.gmail.com>
+ <CA+55aFy2DR9fxHhmGq+azSjX9D71YtLsuFKmoEuYW3uTAUYtJg@mail.gmail.com>
+ <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+Openpgp: preference=signencrypt
+Message-ID: <1ec0a220-d5b0-1c27-e63b-c4d3f4ce9d77@torlan.ru>
+Date:   Fri, 3 Aug 2018 00:39:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180731191102.2434-2-Jason@zx2c4.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <d76415de-2056-c7d6-cc88-b896deaa8ead@torlan.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 09:11:00PM +0200, Jason A. Donenfeld wrote:
-> It is very useful to be able to know whether or not get_random_bytes_wait
-> / wait_for_random_bytes is going to block or not, or whether plain
-> get_random_bytes is going to return good randomness or bad randomness.
-> 
-> The particular use case is for mitigating certain attacks in WireGuard.
-> A handshake packet arrives and is queued up. Elsewhere a worker thread
-> takes items from the queue and processes them. In replying to these
-> items, it needs to use some random data, and it has to be good random
-> data. If we simply block until we can have good randomness, then it's
-> possible for an attacker to fill the queue up with packets waiting to be
-> processed. Upon realizing the queue is full, WireGuard will detect that
-> it's under a denial of service attack, and behave accordingly. A better
-> approach is just to drop incoming handshake packets if the crng is not
-> yet initialized.
-> 
-> This patch, therefore, makes that information directly accessible.
-> 
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+On 08/03/2018 12:32 AM, WGH wrote:
+> On 08/02/2018 09:32 PM, Linus Torvalds wrote:
+>> WGH (sorry, no idea what your real name is) - what's the source of the
+>> script that broke? Was it some system script you got from outside and
+>> likely to affect others too?
+>>
+>> Or was it just some local thing you wrote yourself and was
+>> unintentionally buggy and nobody else is likely to hit this?
+>>
+>> Because if the latter, if you can work around it and you're the only
+>> user this hits, we might just be able to ignore it.
+> The script in question is written by me and contains literally two lines:
+>
+>     lvcreate --size 5G --snapshot --name snap0 --permission r
+> /dev/mapper/vg0-lvol_rootfs
+>     mount /dev/mapper/vg0-snap0 /mnt/rootfs_snapshot
+>
+> The script is not buggy (I think), it was written under simple
+> assumption that --permission r works. And it does - unless you happen to
+> have combination of kernel >=4.16 and lvm2 <2.02.178.
+>
+> The commit in question appeared only in 4.16, and this kernel version is
+> not widespread yet. You have to be running both recent kernel and
+> not-so-recent lvm2 to be bitten by this. This probably explains why no
+> one else reported this problem.
+>
+> Workaround certainly exists: I can just create read-write snapshot, but
+> mount it read-only. The reason why I didn't discover the workaround
+> earlier is that after unsuccessful read-only snapshot creation system
+> ends up in some weird state where read-write snapshots are also failing
+> with the same error (until reboot). So I got a wrong impression that
+> read-write snapshots were broken as well.
+>
+I've just found one public report of this bug, though:
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900442
 
-Applied to the random.git tree.
-
-					- Ted
