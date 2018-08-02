@@ -2,109 +2,159 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0F9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10726C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E268821473
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA0221476
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:35:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DLS8VB9+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E268821473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Mx1x4hgp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA0221476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeHBKZQ (ORCPT
+        id S1729676AbeHBKZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:25:16 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52714 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbeHBKZQ (ORCPT
+        Thu, 2 Aug 2018 06:25:24 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:47598 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeHBKZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:25:16 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o11-v6so1506360wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=iurhmWpHLki665DmppB6rufNwf3IqT+4+IAdfLtEEGE=;
-        b=DLS8VB9+V3Wp//ya510JIy4nwHr81mPOsVjTqKkEnhUQYIMnkDHQF4txAspgQ1dw//
-         E5aNDRgUr7BY+nBbAYmSh20Z4a85TCVqG1gkpS3nFBuAtEAU2ECoHyyZESXext93s54J
-         fgynEdGvizinupuzj2N1ApfBNuVgRIbVCgDP0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=iurhmWpHLki665DmppB6rufNwf3IqT+4+IAdfLtEEGE=;
-        b=ly6P8FxeEc1AnZ0wp3J8ZvLLUe5n78dpLRrKXlSGNhKxVqTzT8V7fS4ThbKLc5M7F6
-         r5X/emWeOAM2Au8qemw4qjfUN7u3n/iD4DvI5rx/y26mQNHrSjf5Q7F9k+yZvSljvEkC
-         G+TbYRxtt2Xyyxhg95Ch2ZqDcQHFlJnF44AJAzcS7+wVHxayYZkP3jqlt6gL3YieUNBV
-         +98ibX/i1H1WcYYce/xveBk/UVuZ6VstzzgpxXde/luqEPNEEXKkMv/O6ZNagqwppkhr
-         +yxbVhwsReX6LV6GPNYUvj/I+Zu67Pwk0O2p/Tc6xajkG3JT/SPwfZUbdSvG436P2pa4
-         1Bqw==
-X-Gm-Message-State: AOUpUlFlJPWx/yw9y4cT7aBl1oLHo6SasgNUzejyw/hD89AX99y8zADM
-        ACuv6zL/6PkBxGoqu+zpxyYrHA==
-X-Google-Smtp-Source: AAOMgpdhB7NyCOM1+stxOM9cmNePDdOwCz7cwnN2ZrtWr+ZOpvDhF3uvrwuSFHHPdfOXBbsPSKY3Xw==
-X-Received: by 2002:a1c:6d94:: with SMTP id b20-v6mr1346109wmi.28.1533198908673;
-        Thu, 02 Aug 2018 01:35:08 -0700 (PDT)
-Received: from dell ([95.149.160.4])
-        by smtp.gmail.com with ESMTPSA id q16-v6sm1214559wmq.25.2018.08.02.01.35.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 01:35:08 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 09:35:06 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, eballetbo@gmail.com,
-        linus.walleij@linaro.org, mazziesaccount@gmail.com,
-        dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, broonie@kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v11 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180802083506.GO4662@dell>
-References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
- <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 2 Aug 2018 06:25:24 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 619F45C05C9;
+        Thu,  2 Aug 2018 10:35:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1533198912;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jUpai7/NdPg5uzem4YhUH6zdCQxkOh97wUqOyxA26Jo=;
+        b=Mx1x4hgpS66tu8EIf7Sge9yAXunRg0wxnb0DyvoAhsQ/jCip2Sz3DGTIJq36IPqAO/SHsu
+        esva3D0YsCH8pCTNZEBeYON0Ah7/9wtIcQnuxI0OuITcDywM4cfF3e/yhlGIpkif8j7vsX
+        ZXmM1rlPxZIcZ2zlbwaZUWnfz5I+SHw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date:   Thu, 02 Aug 2018 10:35:10 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Andy Duan <fugang.duan@nxp.com>
+Cc:     davem@davemloft.net, krzk@kernel.org, robin.murphy@arm.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: fec: check DMA addressing limitations
+In-Reply-To: <AM4PR0401MB226079C9A7B818229955744CFF2C0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
+References: <20180801114449.21208-1-stefan@agner.ch>
+ <AM4PR0401MB22608258EB2B045E708A3779FF2C0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
+ <7d692e8aaefcfec15877a8cd340ee646@agner.ch>
+ <AM4PR0401MB226079C9A7B818229955744CFF2C0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
+Message-ID: <627b458370e0ae89f32e8298a696cd87@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Jul 2018, Matti Vaittinen wrote:
+On 02.08.2018 09:47, Andy Duan wrote:
+> From: Stefan Agner <stefan@agner.ch> Sent: 2018年8月2日 15:16
+>> On 02.08.2018 04:00, Andy Duan wrote:
+>> > From: Stefan Agner <stefan@agner.ch> Sent: 2018年8月1日 19:45
+>> >> Check DMA addressing limitations as suggested by the DMA API how-to.
+>> >> This does not fix a particular issue seen but is considered good style.
+>> >>
+>> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> >> ---
+>> >>  drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
+>> >>  1 file changed, 6 insertions(+)
+>> >>
+>> >> diff --git a/drivers/net/ethernet/freescale/fec_main.c
+>> >> b/drivers/net/ethernet/freescale/fec_main.c
+>> >> index c729665107f5..af0fb200e936 100644
+>> >> --- a/drivers/net/ethernet/freescale/fec_main.c
+>> >> +++ b/drivers/net/ethernet/freescale/fec_main.c
+>> >> @@ -3146,6 +3146,12 @@ static int fec_enet_init(struct net_device
+>> >> *ndev)
+>> >>  	fep->tx_align = 0x3;
+>> >>  #endif
+>> >>
+>> >> +	/* Check mask of the streaming and coherent API */
+>> >> +	if (dma_set_mask_and_coherent(&fep->pdev->dev,
+>> >> DMA_BIT_MASK(32))) {
+>> >> +		dev_warn(&fep->pdev->dev, "No suitable DMA
+>> available\n");
+>> >> +		return -ENODEV;
+>> > It is better:
+>> >
+>> > ret = dma_set_mask_and_coherent(&fep->pdev->dev,
+>> DMA_BIT_MASK(32)); if
+>> > (ret < 0) {
+>> > 	dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
+>> > 	return ret;
+>> > }
+>>
+>> The code comes from the example in
+>> Documentation/DMA-API-HOWTO.txt.
+>>
+>> I can rearrange if you prefer.
+>>
+> It is better to return the real error code like -EIO if dma_mask is
+> not initialized.
 
-> ROHM BD71837 PMIC MFD driver providing interrupts and support
-> for three subsystems:
-> - clk
-> - Regulators
-> - input/power-key
+Good point. Will send a v2.
+
+--
+Stefan
+
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->  drivers/mfd/Kconfig              |  13 ++
->  drivers/mfd/Makefile             |   1 +
->  drivers/mfd/rohm-bd718x7.c       | 208 ++++++++++++++++++++++++
->  include/linux/mfd/rohm-bd718x7.h | 332 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 554 insertions(+)
->  create mode 100644 drivers/mfd/rohm-bd718x7.c
->  create mode 100644 include/linux/mfd/rohm-bd718x7.h
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>> >
+>> >
+>> > If the patch aim to "OF: Don't set default coherent DMA mask", I think
+>> > not only this driver need to add the DMA mask limitations,  many other
+>> > drivers also need.
+>>
+>> It doesn't exactly address the issue since with that patch DMA mask wasn't
+>> set at all. This code would just make the driver fail with -ENODEV instead of
+>> -ENOMEM.
+>>
+> Yes, I agree. It doesn't address the issue if no patch "of/platform:
+> Initialise default DMA masks".
+> 
+> For non-DT, it seems dma_coerce_mask_and_coherent() much better.
+> 
+>> To force a DMA mask I would have to set the DMA mask using
+>> dma_coerce_mask_and_coherent(). But as discussed with Robin it is safe
+>> to assume that an initial mask is set by the bus code:
+>> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flk
+>> ml.kernel.org%2Fr%2F892f9d14-e6fd-7b1b-d07b-af0be6e623fa%40arm.c
+>> om&amp;data=02%7C01%7Cfugang.duan%40nxp.com%7C618543fb9b4e
+>> 4f9fa49908d5f847c47f%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%
+>> 7C0%7C636687909487381876&amp;sdata=hyeeh0KSC3Fu7VDl4A8JbcCO
+>> %2FwocUpTEMvTv1hjba0E%3D&amp;reserved=0
+>>
+>> Setting the DMA mask on DT buses has been addressed by Robin with
+>> "of/platform: Initialise default DMA masks". So everything should be fine
+>> again.
+>>
+> Anyway, I am fine with the patch except the return code.
+> Thanks.
+> 
+>> I agree, other drivers need fixing too.
+>>
+>> --
+>> Stefan
+>>
+>> >
+>> >
+>> >> +	}
+>> >> +
+>> >>  	fec_enet_alloc_queue(ndev);
+>> >>
+>> >>  	bd_size = (fep->total_tx_ring_size + fep->total_rx_ring_size) *
+>> >> dsize;
+>> >> --
+>> >> 2.18.0
