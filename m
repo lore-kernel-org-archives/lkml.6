@@ -2,182 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B78C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073FEC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 430EC214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:12:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430EC214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B497C214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:13:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qu9SfZ3l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B497C214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbeHBPDs (ORCPT
+        id S1732466AbeHBPEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:03:48 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49145 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732276AbeHBPDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:03:48 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 59D2F20739; Thu,  2 Aug 2018 15:12:36 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1FFD206A6;
-        Thu,  2 Aug 2018 15:12:35 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 15:12:36 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, broonie@kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        cyrille.pitchen@wedev4u.fr, pp@emlix.com, Zhiqiang.Hou@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] spi: spi-mem: Extend the SPI mem interface to
- set a custom memory name
-Message-ID: <20180802151236.2d4006ae@bbrezillon>
-In-Reply-To: <1533214434-28761-3-git-send-email-frieder.schrempf@exceet.de>
-References: <1533214434-28761-1-git-send-email-frieder.schrempf@exceet.de>
-        <1533214434-28761-3-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 2 Aug 2018 11:04:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33132 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732276AbeHBPEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:04:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d4-v6so1317110pfn.0;
+        Thu, 02 Aug 2018 06:13:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RdCRXFVE5TBzGIEgMyO7srPCJtbIiQTFtmdQetVbZjU=;
+        b=qu9SfZ3lHVp3/p8H2rh3WFR6jtUbxZGSvy9psTIK8qaMnoO1khJ9GspX26KZeZA6+c
+         kEcSGNsxOYIrv/J6PQZocRfLwOyeGvpuKE3JTN6b9zwmhDOSvgaBhac/H6ITkzRT86WO
+         GHOCgbEwqsK0f/P1cU9rOE6+KdE/Kks5aOyhYjv1Mpt2WagXuEQaZNYgr4sg3/WH4a/5
+         EznhQqELvhE60suBhsu5//k0GPHoYgR/dQ93k5ZzeJlrB4ReIWfadVAZ6ZN3QsR/Jary
+         ruy8SWtwCnD9xNnr6SLLuHiobb1jkZGUuYTlF2bGOBWU3o0jjd5MJWGkloVeFecujbHJ
+         uosw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RdCRXFVE5TBzGIEgMyO7srPCJtbIiQTFtmdQetVbZjU=;
+        b=M7tWSHh7zRokKdnUOMrI4CaiiDQNnxOzpM76S2r06ROdUnSjN+CPWPMid5uCkLhVJG
+         z4bXvnGZrS+9wFp02hM0IgtU0CmagEhn4zutmXoG5ZgmDwrHt+w9nxtAnD8daiyi5kjP
+         urxNLtbDnbSnGKfBn7ikvB46nbJJobAV29s7iE09p8w5K0B8jNwVkkxazCpRMytEqViT
+         uTcVef42HMN70aHFIc6BdeQqINnOtepBTwuA5+cerFn85tyLzgArXQcBzPxYzTPIAAtW
+         Dizsg4gL7sL+nYY3Zvp+hgjyJvIgzSTHjSj7NlaHtmb9Ure+/GqelcOdhZu5JimowMzU
+         fm7Q==
+X-Gm-Message-State: AOUpUlHU17q77DcG0gPqGUaPMMtXiNBCn6AvDR7lbzbsSqaZyLcu0Wt3
+        v5cPkLm9SIKAmTS/L0QKojk=
+X-Google-Smtp-Source: AAOMgpc9cT1xWi5Pse5oKv+4HwD/3PfxuQ41TPtx08kzkdIUc4iCGgp5U4EPL4hvM8V6g8ncZg+xfQ==
+X-Received: by 2002:a62:1314:: with SMTP id b20-v6mr2983110pfj.230.1533215584058;
+        Thu, 02 Aug 2018 06:13:04 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm3704900pfa.28.2018.08.02.06.13.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 06:13:03 -0700 (PDT)
+Subject: Re: AW: PROBLEM: Kernel Oops in UDP stack
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Marcel Hellwig' <mhellwig@mut-group.com>,
+        'Eric Dumazet' <eric.dumazet@gmail.com>,
+        "'davem@davemloft.net'" <davem@davemloft.net>,
+        "'kuznet@ms2.inr.ac.ru'" <kuznet@ms2.inr.ac.ru>,
+        "'yoshfuji@linux-ipv6.org'" <yoshfuji@linux-ipv6.org>,
+        "'andrew@lunn.ch'" <andrew@lunn.ch>
+Cc:     "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        Matthias Wystrik <mwystrik@mut-group.com>
+References: <18092446dfa7435aaa8deaab65afbf23@ZCOM03.mut-group.com>
+ <f1940127-7307-e1ba-7a05-075680a6d3c1@gmail.com>
+ <b8ceab2531f345d295686903b003787b@ZCOM03.mut-group.com>
+ <96753ca4-88fe-aa26-b439-6e22eaf8b524@gmail.com>
+ <9f9d731107594b368504cbbaf698bc3d@ZCOM03.mut-group.com>
+ <d16f03bf47b24313ad9f2ff4e37d6274@AcuMS.aculab.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <405319c1-2fa0-e1b5-7173-b19d9769d98a@gmail.com>
+Date:   Thu, 2 Aug 2018 06:13:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <d16f03bf47b24313ad9f2ff4e37d6274@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  2 Aug 2018 14:53:53 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
 
-> When porting (Q)SPI controller drivers from the MTD layer to the SPI
-> layer, the naming scheme for the memory devices changes. To be able
-> to keep compatibility with the old drivers naming scheme, a name
-> field is added to struct spi_mem and a hook is added to let controller
-> drivers set a custom name for the memory device.
-> 
-> Example for the FSL QSPI driver:
-> 
-> Name with the old driver: 21e0000.qspi,
-> or with multiple devices: 21e0000.qspi-0, 21e0000.qspi-1, ...
-> 
-> Name with the new driver without spi_mem_get_name: spi4.0
-> 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/spi/spi-mem.c       | 28 ++++++++++++++++++++++++++++
->  include/linux/spi/spi-mem.h | 12 ++++++++++++
->  2 files changed, 40 insertions(+)
+On 08/02/2018 02:17 AM, David Laight wrote:
+> From: Marcel Hellwig
+>> Sent: 01 August 2018 11:36
+>>>> [<c0228adc>] (udp_recvmsg+0x284/0x33c) from [<c02306e0>] (inet_recvmsg+0x38/0x4c):
+>> net/ipv4/udp.c:1234
+>>>
+>>>              sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
+>>>
+>>> Unaligned access trap (virtual address c14fe63a), so either sin or ip_hdr(skb) are not on a 32bit
+>> alignment
+>>>
+>>> Can you produce the disassembly of the trapping instruction ?
+>>
+>> https://gist.github.com/hellow554/6b11c6c0827d5db80a7e66f71f5636ff#file-net_uipv4_udp-lst-L1892-L1895
+>>
+>> 		sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
+>> c0228ad8:	e5943080 	ldr	r3, [r4, #128]	; 0x80
+>> c0228adc:	e593300c 	ldr	r3, [r3, #12]
+>> c0228ae0: 	e5823004	str	r3, [r2, #4]
 > 
-> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-> index 990770d..e43842c 100644
-> --- a/drivers/spi/spi-mem.c
-> +++ b/drivers/spi/spi-mem.c
-> @@ -311,6 +311,24 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
->  EXPORT_SYMBOL_GPL(spi_mem_exec_op);
->  
->  /**
-> + * spi_mem_get_name() - Return the SPI mem device name to be used by the
-> + *			upper layer if necessary
-> + * @mem: the SPI memory
-> + *
-> + * This function allows SPI mem users to retrieve the SPI mem device name.
-> + * It is useful if the upper layer needs to expose a custom name for
-> + * compatibility reasons.
-> + *
-> + * Return: a string containing the name of the memory device to be used
-> + *	   by the SPI mem user
-> + */
-> +const char *spi_mem_get_name(struct spi_mem *mem)
-> +{
-> +	return mem->name;
-> +}
-> +EXPORT_SYMBOL_GPL(spi_mem_get_name);
-> +
-> +/**
->   * spi_mem_adjust_op_size() - Adjust the data size of a SPI mem operation to
->   *			      match controller limitations
->   * @mem: the SPI memory
-> @@ -344,6 +362,7 @@ static inline struct spi_mem_driver *to_spi_mem_drv(struct device_driver *drv)
->  static int spi_mem_probe(struct spi_device *spi)
->  {
->  	struct spi_mem_driver *memdrv = to_spi_mem_drv(spi->dev.driver);
-> +	struct spi_controller *ctlr = spi->controller;
->  	struct spi_mem *mem;
->  
->  	mem = devm_kzalloc(&spi->dev, sizeof(*mem), GFP_KERNEL);
-> @@ -351,6 +370,15 @@ static int spi_mem_probe(struct spi_device *spi)
->  		return -ENOMEM;
->  
->  	mem->spi = spi;
-> +
-> +	if (ctlr->mem_ops && ctlr->mem_ops->get_name)
-> +		mem->name = ctlr->mem_ops->get_name(mem);
-> +	else
-> +		mem->name = dev_name(&spi->dev);
-> +
-> +	if (IS_ERR_OR_NULL(mem->name))
-> +		return PTR_ERR(mem->name);
-> +
->  	spi_set_drvdata(spi, mem);
->  
->  	return memdrv->probe(mem);
-> diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-> index 72cc9bc..0d41826 100644
-> --- a/include/linux/spi/spi-mem.h
-> +++ b/include/linux/spi/spi-mem.h
-> @@ -125,6 +125,7 @@ struct spi_mem_op {
->   * struct spi_mem - describes a SPI memory device
->   * @spi: the underlying SPI device
->   * @drvpriv: spi_mem_driver private data
-> + * @name: name of the SPI memory device
->   *
->   * Extra information that describe the SPI memory device and may be needed by
->   * the controller to properly handle this device should be placed here.
-> @@ -135,6 +136,7 @@ struct spi_mem_op {
->  struct spi_mem {
->  	struct spi_device *spi;
->  	void *drvpriv;
-> +	char *name;
->  };
->  
->  /**
-> @@ -167,6 +169,13 @@ static inline void *spi_mem_get_drvdata(struct spi_mem *mem)
->   *		    limitations)
->   * @supports_op: check if an operation is supported by the controller
->   * @exec_op: execute a SPI memory operation
-> + * @get_name: get a custom name for the SPI mem device from the controller.
-> + *	      This might be needed if the controller driver has been ported
-> + *	      to use the SPI mem layer and a custom name is used to keep
-> + *	      mtdparts compatible.
-> + *	      Note that if the implementation of this function allocates memory
-> + *	      dynamically, then it should do so with devm_xxx(), as we don't
-> + *	      have a ->free_name() function.
->   *
->   * This interface should be implemented by SPI controllers providing an
->   * high-level interface to execute SPI memory operation, which is usually the
-> @@ -178,6 +187,7 @@ struct spi_controller_mem_ops {
->  			    const struct spi_mem_op *op);
->  	int (*exec_op)(struct spi_mem *mem,
->  		       const struct spi_mem_op *op);
-> +	const char *(*get_name)(struct spi_mem *mem);
->  };
->  
->  /**
-> @@ -236,6 +246,8 @@ bool spi_mem_supports_op(struct spi_mem *mem,
->  int spi_mem_exec_op(struct spi_mem *mem,
->  		    const struct spi_mem_op *op);
->  
-> +const char *spi_mem_get_name(struct spi_mem *mem);
-> +
->  int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
->  				       struct module *owner);
->  
+> There are actually 2 faults, difficult to quickly sort out the merged tracebacks.
+> You are also running a rather old kernel: Linux version 3.4.113.
+> 
+> It may well be that whichever ethernet driver generated the misaligned frame
+> has since been fixed.
+
+A misalign frame driver problem would have faulted earlier in IP stack,
+much before we perform the copy to user space in udp_recvmsg()
+
 
