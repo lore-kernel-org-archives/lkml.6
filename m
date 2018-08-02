@@ -2,97 +2,80 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906E3C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E913CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4540C2152B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:43:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4540C2152B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A127E214D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:44:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A127E214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731454AbeHBSfi (ORCPT
+        id S1731639AbeHBSgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:35:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726938AbeHBSfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:35:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B5191401296A;
-        Thu,  2 Aug 2018 16:43:41 +0000 (UTC)
-Received: from localhost (ovpn-12-120.pek2.redhat.com [10.72.12.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F5E22026D69;
-        Thu,  2 Aug 2018 16:43:33 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Brown <broonie@kernel.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] blk-mq: fix blk_mq_tagset_busy_iter
-Date:   Fri,  3 Aug 2018 00:43:29 +0800
-Message-Id: <20180802164329.11900-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 16:43:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 16:43:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+        Thu, 2 Aug 2018 14:36:09 -0400
+Received: from mga05.intel.com ([192.55.52.43]:30410 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726938AbeHBSgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 14:36:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 09:44:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,436,1526367600"; 
+   d="scan'208";a="72050155"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.122]) ([10.24.14.122])
+  by orsmga003.jf.intel.com with ESMTP; 02 Aug 2018 09:44:13 -0700
+Subject: Re: [PATCH 0/2] x86/intel_rdt and perf/x86: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, mingo@redhat.com, fenghua.yu@intel.com,
+        tony.luck@intel.com, vikas.shivappa@linux.intel.com,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1533064851.git.reinette.chatre@intel.com>
+ <20180802123923.GJ2530@hirez.programming.kicks-ass.net>
+ <1af731f8-b5d3-5aca-af02-575802a961b9@intel.com>
+ <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <f990df31-ab75-974e-b142-47af07a33a08@intel.com>
+Date:   Thu, 2 Aug 2018 09:44:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180802161823.GJ2458@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit d250bf4e776ff09d5("blk-mq: only iterate over inflight requests
-in blk_mq_tagset_busy_iter") uses 'blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT'
-to replace 'blk_mq_request_started(req)', this way is wrong, and causes
-lots of test system hang during booting.
+On 8/2/2018 9:18 AM, Peter Zijlstra wrote:
+> On Thu, Aug 02, 2018 at 09:14:10AM -0700, Reinette Chatre wrote:
+> 
+>> The current implementation does not coordinate with perf and this is
+>> what I am trying to fix in this series.
+>>
+>> I do respect your NAK but it is not clear to me how to proceed after
+>> obtaining it. Could you please elaborate on what you would prefer as a
+>> solution to ensure accurate measurement of cache-locked data that is
+>> better integrated?
+> 
+> We have an in-kernel interface to perf, use that if you want access to
+> the PMU. You will not directly stomp on PMU registers.
 
-Fix the issue by using blk_mq_request_started(req) inside bt_tags_iter().
+I do not see how I can do so without incurring the cache hits and misses
+from the data needed and instructions run by this interface. Could you
+please share how I can do so and still obtain the accurate measurement
+of cache residency of a specific memory region?
 
-Fixes: d250bf4e776ff09d5 ("blk-mq: only iterate over inflight requests in blk_mq_tagset_busy_iter")
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Matt Hart <matthew.hart@linaro.org>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: John Garry <john.garry@huawei.com>
-Cc: Hannes Reinecke <hare@suse.com>,
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-mq-tag.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reinette
 
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index 09b2ee6694fb..3de0836163c2 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -271,7 +271,7 @@ static bool bt_tags_iter(struct sbitmap *bitmap, unsigned int bitnr, void *data)
- 	 * test and set the bit before assining ->rqs[].
- 	 */
- 	rq = tags->rqs[bitnr];
--	if (rq && blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT)
-+	if (rq && blk_mq_request_started(rq))
- 		iter_data->fn(rq, iter_data->data, reserved);
- 
- 	return true;
--- 
-2.9.5
 
