@@ -2,213 +2,173 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF596C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAD4C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68902214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:10:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68902214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E184214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 11:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHGcoVtH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E184214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbeHBNBV (ORCPT
+        id S1732151AbeHBNDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:01:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55922 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbeHBNBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:01:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B3AD7A9;
-        Thu,  2 Aug 2018 04:10:40 -0700 (PDT)
-Received: from armageddon.cambridge.arm.com (armageddon.emea.arm.com [10.4.13.16])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A67543F5D0;
-        Thu,  2 Aug 2018 04:10:34 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 12:10:32 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, Paul Lawrence <paullawrence@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Potapenko <glider@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Christoph Lameter <cl@linux.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-sparse@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-ID: <20180802111031.yx3x6y5d5q6drq52@armageddon.cambridge.arm.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <20180628105057.GA26019@e103592.cambridge.arm.com>
- <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
- <20180629110709.GA17859@arm.com>
- <CAAeHK+wHd8B2nhat-Z2Y2=s4NVobPG7vjr2CynjFhqPTwQRepQ@mail.gmail.com>
- <20180703173608.GF27243@arm.com>
- <CAAeHK+wTcH+2hgm_BTkLLdn1GkjBtkhQ=vPWZCncJ6KenqgKpg@mail.gmail.com>
- <CAAeHK+xc1E64tXEEHoXqOuUNZ7E_kVyho3_mNZTCc+LTGHYFdA@mail.gmail.com>
- <20180801163538.GA10800@arm.com>
- <CACT4Y+aZtph5qDsLzTDEgpQRz4_Vtg1DD-cB18qooi6D0bexDg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aZtph5qDsLzTDEgpQRz4_Vtg1DD-cB18qooi6D0bexDg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 2 Aug 2018 09:03:02 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44139 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729592AbeHBNDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 09:03:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f23-v6so788020edr.11;
+        Thu, 02 Aug 2018 04:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0ynkw2hB14rcQY1Mb1ryHXQyygRwuaPP/EG0/OxRpQM=;
+        b=sHGcoVtHuofzVa966cvlYe5Ex0esvthdgCeut5cB8Nlq3IDMPxPYzhikpJ/EUq6pk/
+         D/gkpc5vgRz0EPBDA9LEymN/y+gHgOiCJY6d05vRp0If0HkewysUsl0xi1/yMxDO5ZJt
+         G+EIgp6un0VauCd8KERT9cLNsCVmebBCJGvfGEzxX9vjYN/me+RA/8SMrpHfgrnfndVP
+         e2E22jYM396tF6cq/GuR5q+dcuL5efOniPDw2+qvS7/iK1jv1iENDW/7w7aUp6jixxQy
+         /t7oVD0QHO/TlkiBeJcPJYbzAO6AGRNElMYaTi0Bt3bAAKzPB0kx8imjZDZIs3VW45sd
+         1CHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0ynkw2hB14rcQY1Mb1ryHXQyygRwuaPP/EG0/OxRpQM=;
+        b=fi+48gTIHeX0EwH2v3H667oL4YhByE9cjBhLAoCmyLU1uwodvviaulkJvU7OsBUSSu
+         DWomr9HXKnKRZZRzrJZ8+B9IkCaZf45hSL7iCzvdPkOlsX9ocwC2C7QAGKzblip/zkAZ
+         owFQlsdRhmchGHt6ISL9MEpNQLNTDg18Is17bearWfVzWw/17d01SaOzme9hg5rW/KBE
+         1zOwxNu9pnLTOKljcgNygy0Ex5OijsUv8UbY3DdGubhg2FktQOFfIPTVwGOIqvowF80F
+         O3Y8mBGl5pbT7PaoMGFxpQZcXqNsY2q4poN6MBDN5ptuEJpu1hL1mlI3VOjCRDXPNqyQ
+         sdBw==
+X-Gm-Message-State: AOUpUlGp4rdrHyil0EA6ymRVDA+aipXtZ5Xqsxq4slE7HWQ0t4E0AGqk
+        bh2agmZtGrTR+bo1861dPoWQOKJ2
+X-Google-Smtp-Source: AAOMgpejJz9noI0utA0fn8b75CZ5Yu7X5tdgyVwyT8/GpZiLYK8GIHXmYaiLiMHDVLuZ+l1nNV4eJA==
+X-Received: by 2002:a50:955e:: with SMTP id v30-v6mr2978557eda.268.1533208340396;
+        Thu, 02 Aug 2018 04:12:20 -0700 (PDT)
+Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id c21-v6sm886933eda.21.2018.08.02.04.12.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 04:12:19 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to arch_init level
+Date:   Thu,  2 Aug 2018 14:11:43 +0300
+Message-Id: <20180802111144.12512-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 06:52:09PM +0200, Dmitry Vyukov wrote:
-> On Wed, Aug 1, 2018 at 6:35 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > On Tue, Jul 31, 2018 at 03:22:13PM +0200, Andrey Konovalov wrote:
-> >> On Wed, Jul 18, 2018 at 7:16 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> >> > On Tue, Jul 3, 2018 at 7:36 PM, Will Deacon <will.deacon@arm.com> wrote:
-> >> >> Hmm, but elsewhere in this thread, Evgenii is motivating the need for this
-> >> >> patch set precisely because the lower overhead means it's suitable for
-> >> >> "near-production" use. So I don't think writing this off as a debugging
-> >> >> feature is the right approach, and we instead need to put effort into
-> >> >> analysing the impact of address tags on the kernel as a whole. Playing
-> >> >> whack-a-mole with subtle tag issues sounds like the worst possible outcome
-> >> >> for the long-term.
-> >> >
-> >> > I don't see a way to find cases where pointer tags would matter
-> >> > statically, so I've implemented the dynamic approach that I mentioned
-> >> > above. I've instrumented all pointer comparisons/subtractions in an
-> >> > LLVM compiler pass and used a kernel module that would print a bug
-> >> > report whenever two pointers with different tags are being
-> >> > compared/subtracted (ignoring comparisons with NULL pointers and with
-> >> > pointers obtained by casting an error code to a pointer type). Then I
-> >> > tried booting the kernel in QEMU and on an Odroid C2 board and I ran
-> >> > syzkaller overnight.
-> >> >
-> >> > This yielded the following results.
-> >> >
-> >> > ======
-> >> >
-> >> > The two places that look interesting are:
-> >> >
-> >> > is_vmalloc_addr in include/linux/mm.h (already mentioned by Catalin)
-> >> > is_kernel_rodata in mm/util.c
-> >> >
-> >> > Here we compare a pointer with some fixed untagged values to make sure
-> >> > that the pointer lies in a particular part of the kernel address
-> >> > space. Since KWHASAN doesn't add tags to pointers that belong to
-> >> > rodata or vmalloc regions, this should work as is. To make sure I've
-> >> > added debug checks to those two functions that check that the result
-> >> > doesn't change whether we operate on pointers with or without
-> >> > untagging.
-> >> >
-> >> > ======
-> >> >
-> >> > A few other cases that don't look that interesting:
-> >> >
-> >> > Comparing pointers to achieve unique sorting order of pointee objects
-> >> > (e.g. sorting locks addresses before performing a double lock):
-> >> >
-> >> > tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
-> >> > pipe_double_lock in fs/pipe.c
-> >> > unix_state_double_lock in net/unix/af_unix.c
-> >> > lock_two_nondirectories in fs/inode.c
-> >> > mutex_lock_double in kernel/events/core.c
-> >> >
-> >> > ep_cmp_ffd in fs/eventpoll.c
-> >> > fsnotify_compare_groups fs/notify/mark.c
-> >> >
-> >> > Nothing needs to be done here, since the tags embedded into pointers
-> >> > don't change, so the sorting order would still be unique.
-> >> >
-> >> > Check that a pointer belongs to some particular allocation:
-> >> >
-> >> > is_sibling_entry lib/radix-tree.c
-> >> > object_is_on_stack in include/linux/sched/task_stack.h
-> >> >
-> >> > Nothing needs to be here either, since two pointers can only belong to
-> >> > the same allocation if they have the same tag.
-> >> >
-> >> > ======
-> >> >
-> >> > Will, Catalin, WDYT?
-> >>
-> >> ping
-> >
-> > Thanks for tracking these cases down and going through each of them. The
-> > obvious follow-up question is: how do we ensure that we keep on top of
-> > this in mainline? Are you going to repeat your experiment at every kernel
-> > release or every -rc or something else? I really can't see how we can
-> > maintain this in the long run, especially given that the coverage we have
-> > is only dynamic -- do you have an idea of how much coverage you're actually
-> > getting for, say, a defconfig+modules build?
-> >
-> > I'd really like to enable pointer tagging in the kernel, I'm just still
-> > failing to see how we can do it in a controlled manner where we can reason
-> > about the semantic changes using something other than a best-effort,
-> > case-by-case basis which is likely to be fragile and error-prone.
-> > Unfortunately, if that's all we have, then this gets relegated to a
-> > debug feature, which sort of defeats the point in my opinion.
-> 
-> Well, in some cases there is no other way as resorting to dynamic testing.
-> How do we ensure that kernel does not dereference NULL pointers, does
-> not access objects after free or out of bounds?
+There is a bug in regards to deferred probing within the drivers core
+that causes GPIO-driver to suspend after its users. The bug appears if
+GPIO-driver probe is getting deferred, which happens after introducing
+dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
+property in device-tree. The bug in the drivers core is old (more than 4
+years now) and is well known, unfortunately there is no easy fix for it.
+The good news is that we can workaround the deferred probe issue by
+changing GPIO / PINCTRL drivers registration order and hence by moving
+PINCTRL driver registration to the arch_init level and GPIO to the
+subsys_init.
 
-We should not confuse software bugs (like NULL pointer dereference) with
-unexpected software behaviour introduced by khwasan where pointers no
-longer represent only an address range (e.g. calling find_vmap_area())
-but rather an address and a tag. Parts of the kernel rely on pointers
-being just address ranges.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra114.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra124.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra20.c  | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 7 ++++++-
+ drivers/pinctrl/tegra/pinctrl-tegra30.c  | 7 ++++++-
+ 5 files changed, 30 insertions(+), 5 deletions(-)
 
-It's the latter that we'd like to identify more easily and avoid subtle
-bugs or change in behaviour when running correctly written code.
-
-> And, yes, it's
-> constant maintenance burden resolved via dynamic testing.
-> In some sense HWASAN is better in this regard because it's like, say,
-> LOCKDEP in this regard. It's enabled only when one does dynamic
-> testing and collect, analyze and fix everything that pops up. Any
-> false positives will fail loudly (as opposed to, say, silent memory
-> corruptions due to use-after-frees), so any false positives will be
-> just first things to fix during the tool application.
-
-Again, you are talking about the bugs that khwasan would discover. We
-don't deny its value and false positives are acceptable here.
-
-However, not untagging a pointer when converting to long may have
-side-effects in some cases and I consider these bugs introduced by the
-khwasan support rather than bugs in the original kernel code. Ideally
-we'd need some tooling on top of khwasan to detect such shortcomings but
-I'm not sure we can do this statically, as Andrey already mentioned. For
-__user pointers, things are slightly better as we can detect the
-conversion either with sparse (modified) or some LLVM changes.
-
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+index 511a8774fd8d..d43c209e9c30 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+@@ -1868,4 +1868,9 @@ static struct platform_driver tegra114_pinctrl_driver = {
+ 	},
+ 	.probe = tegra114_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra114_pinctrl_driver);
++
++static int __init tegra114_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra114_pinctrl_driver);
++}
++arch_initcall(tegra114_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+index 57e3cdcf4503..5b07a5834d15 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+@@ -2080,4 +2080,9 @@ static struct platform_driver tegra124_pinctrl_driver = {
+ 	},
+ 	.probe = tegra124_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra124_pinctrl_driver);
++
++static int __init tegra124_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra124_pinctrl_driver);
++}
++arch_initcall(tegra124_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 624889ed3a9d..1fc82a9576e0 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -2277,4 +2277,9 @@ static struct platform_driver tegra20_pinctrl_driver = {
+ 	},
+ 	.probe = tegra20_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra20_pinctrl_driver);
++
++static int __init tegra20_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra20_pinctrl_driver);
++}
++arch_initcall(tegra20_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 0956a1c73391..3e77f5474dd8 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1582,4 +1582,9 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra210_pinctrl_driver);
++
++static int __init tegra210_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra210_pinctrl_driver);
++}
++arch_initcall(tegra210_pinctrl_init);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+index c923ad58af84..10e617003e9c 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+@@ -2503,4 +2503,9 @@ static struct platform_driver tegra30_pinctrl_driver = {
+ 	},
+ 	.probe = tegra30_pinctrl_probe,
+ };
+-builtin_platform_driver(tegra30_pinctrl_driver);
++
++static int __init tegra30_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra30_pinctrl_driver);
++}
++arch_initcall(tegra30_pinctrl_init);
 -- 
-Catalin
+2.18.0
+
