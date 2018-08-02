@@ -2,97 +2,136 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03C7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1310EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9402151D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6DA2150E
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FE7aQpXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9402151D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qVQHkycN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6DA2150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732518AbeHBP7I (ORCPT
+        id S1732477AbeHBQBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:59:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47222 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732141AbeHBP7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:59:07 -0400
-Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B5A621523;
-        Thu,  2 Aug 2018 14:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1533218865;
-        bh=cBv3OXnpORnSFCYXIej8OlPyAb+R5ul/5k09xIaxpD8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FE7aQpXImJ01lo83V7iAB8AD91m4BDN/PH9VfqM19KXIgRGjKwb8o453Vr+8c6+e9
-         /kWAnm1kUtQ2qvlByH0na8kq31OY7nT6Rl1g3raiCfltyMSfEo95elrfg6dy0Dr0ai
-         BgpfiC92aBwV8Bfu+JloJRA2IYpEd6xOXQVqQ8d0=
-Received: by mail-qt0-f178.google.com with SMTP id d4-v6so2345837qtn.13;
-        Thu, 02 Aug 2018 07:07:45 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFV9sdTQ3qxrk37pbkMpdvqt++/lrLefXKXi5MrxNTB2mVkWSWy
-        wnTlvrHLDG/WkVwu1O/chBQVwf2wU1k/LXpu7Q==
-X-Google-Smtp-Source: AAOMgpfd3r2DybMKHM9hYdDhvAB3JAS7x1n2gh3kzh0VmHE+TkC9ZPgTO31oYMoEkxf7N2smJcQDeSVB/N2+h4BcsAU=
-X-Received: by 2002:ac8:29a4:: with SMTP id 33-v6mr2854778qts.354.1533218864327;
- Thu, 02 Aug 2018 07:07:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180727121806.18209-1-srinivas.kandagatla@linaro.org>
- <20180727121806.18209-2-srinivas.kandagatla@linaro.org> <20180731204315.GA5265@rob-hp-laptop>
- <53a4e82c-7270-fdbd-a2ea-efbfc2d747a2@linaro.org> <CAL_JsqKcxB2NZR94BP9-Qc8AAFsySPoADm2UA_ZV8V7JdP8-wQ@mail.gmail.com>
- <4c821ce9-6268-150f-2ab0-358f5b312ec0@linaro.org>
-In-Reply-To: <4c821ce9-6268-150f-2ab0-358f5b312ec0@linaro.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 2 Aug 2018 08:07:33 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJKXfnCggFK3QC4Q2+-ZCGKdASJ87e=s6AUq4kYA-GWjg@mail.gmail.com>
-Message-ID: <CAL_JsqJKXfnCggFK3QC4Q2+-ZCGKdASJ87e=s6AUq4kYA-GWjg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] ASoC: dt-bindings: add dt bindings for wcd9335
- audio codec
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vinod <vkoul@kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 2 Aug 2018 12:01:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36732 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732141AbeHBQBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:01:42 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h9-v6so2299429wro.3;
+        Thu, 02 Aug 2018 07:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NPisTIUxEJWllPtVLNR+w7rnRDOVuscZpqNlMO4PTg8=;
+        b=qVQHkycNLclULwTXiDeJPxKYdPwDoM0UCfDyc2FdD0++BxTwl3kSb0MOnH3uMV4qdb
+         qKSg4R4VcVDls2VmQa17AB0GIPU4kR0WnMIHsrILlUejoJtzWE7DpbJtmvJKWPpuhNgD
+         NZvBx4xIM5oPTXPzV7A0+RGCTBOrEcbh6+w8XleP2HpUi+iA7T8VOv8DmZWLlSmR5fm+
+         p2sI7LkpQBEuKX5SzcbcLIBwwEYY+wEOPczGVpF5fePlrEB2ryXoTIQnivUT/KeevhMy
+         U+MBnFD6S8HA8AuEPfDy/JeRmB+HG4jvn2Dhj7VyczHejMAjIMnMeynJK18PRFtVau23
+         zWzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NPisTIUxEJWllPtVLNR+w7rnRDOVuscZpqNlMO4PTg8=;
+        b=CEE6lv0Bfoa3QsIHRiZwyH66WG8jk26tnBdYmtfWgdVIN47LgL0YPQpTk3wRsh2SUs
+         U2NPocMlmsQAebH1lpi0zYvBNKeuP6Crqrqy71z4EwYL5HfQDRzvEbo9lMo08nObFA14
+         RTq5ZPBQnQuOB4Yi1EHYCWP8XJGeB4/3O0zlJciUiStdXZcABjt41bUGLKMuCMXb3PAa
+         eSyAFfgPsHgb5jSl89i8C8tgH05IeM7g7oxTc1VRHK2wSdTW+nW0pPL58xwIv4zRFzTP
+         POZgue0apKmPof/8VVNsIY3P2kZyVj6XuzVSijPYDRbScIBHGgTsZ8TVF/I20EzbcQoz
+         VA+w==
+X-Gm-Message-State: AOUpUlE8DTwYYBvZYk6T/ZKh6DcerPGs+vrvY+Y0LurvAbInbSOyTp2w
+        TEzdDHqB6qJykJZyRbgTYiQ=
+X-Google-Smtp-Source: AAOMgpcPYdK2+JgAvUBhf8b+RM5WPAVCDoisie/8hbPiagqA9l6iXr0W0pVcjCKD7MFAGWxM0/GluQ==
+X-Received: by 2002:adf:bc03:: with SMTP id s3-v6mr2262503wrg.211.1533219018243;
+        Thu, 02 Aug 2018 07:10:18 -0700 (PDT)
+Received: from NewMoon.iit.local ([90.147.180.254])
+        by smtp.gmail.com with ESMTPSA id d78-v6sm3392310wma.37.2018.08.02.07.10.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 07:10:17 -0700 (PDT)
+From:   Andrea Merello <andrea.merello@gmail.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
+        dmaengine@vger.kernel.org
+Cc:     v4-000linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        radhey.shyam.pandey@xilinx.com,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v4 1/7] dmaengine: xilinx_dma: commonize DMA copy size calculation
+Date:   Thu,  2 Aug 2018 16:10:06 +0200
+Message-Id: <20180802141012.19970-1-andrea.merello@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 1:33 AM Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
-> Thanks for review,
->
-> On 01/08/18 23:20, Rob Herring wrote:
-> >>>> +- qcom,ifd:
-> >>>> +    Usage: required
-> >>>> +    Value type: <phandle>
-> >>>> +    Definition: SLIM interface device
-> >>> Wouldn't this be the parent?
-> >>>
-> >> No, Interface device is just like other slim device and is part of
-> >> SLIMbus Component and has a unique address. Every SLIMbus component has
-> >> one interface device.
-> > I still don't understand what this means. If this is SLIMbus specific,
-> > then maybe it should be named that way? Or it is QCom specific?
->
-> It is SLIMbus specific, I will rename this to "slim,ifd" in next version
-> which makes it clear!
+This patch removes a bit of duplicated code by introducing a new
+function that implements calculations for DMA copy size.
 
-'slim' is not a vendor. So 'slim-ifc-dev' perhaps. Unless IFD is a
-well known acronym for someone familiar with SLIMbus.
+Suggested-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+---
+Changes in v4:
+	- introduce this patch in the patch series
+---
+ drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-Rob
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 27b523530c4a..a3aaa0e34cc7 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -952,6 +952,19 @@ static int xilinx_dma_alloc_chan_resources(struct dma_chan *dchan)
+ 	return 0;
+ }
+ 
++/**
++ * xilinx_dma_calc_copysize - Calculate the amount of data to copy
++ * @size: Total data that needs to be copied
++ * @done: Amount of data that has been already copied
++ *
++ * Return: Amount of data that has to be copied
++ */
++static int xilinx_dma_calc_copysize(int size, int done)
++{
++	return min_t(size_t, size - done,
++		     XILINX_DMA_MAX_TRANS_LEN);
++}
++
+ /**
+  * xilinx_dma_tx_status - Get DMA transaction status
+  * @dchan: DMA channel
+@@ -1791,8 +1804,8 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
+ 			 * Calculate the maximum number of bytes to transfer,
+ 			 * making sure it is less than the hw limit
+ 			 */
+-			copy = min_t(size_t, sg_dma_len(sg) - sg_used,
+-				     XILINX_DMA_MAX_TRANS_LEN);
++			copy = xilinx_dma_calc_copysize(sg_dma_len(sg),
++							sg_used);
+ 			hw = &segment->hw;
+ 
+ 			/* Fill in the descriptor */
+@@ -1896,8 +1909,7 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
+ 			 * Calculate the maximum number of bytes to transfer,
+ 			 * making sure it is less than the hw limit
+ 			 */
+-			copy = min_t(size_t, period_len - sg_used,
+-				     XILINX_DMA_MAX_TRANS_LEN);
++			copy = xilinx_dma_calc_copysize(period_len, sg_used);
+ 			hw = &segment->hw;
+ 			xilinx_axidma_buf(chan, hw, buf_addr, sg_used,
+ 					  period_len * i);
+-- 
+2.17.1
+
