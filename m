@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7050EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94309C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2979521545
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AEAB21501
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:18:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS5jl6L/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2979521545
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKK62NFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AEAB21501
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387467AbeHBTKw (ORCPT
+        id S2387513AbeHBTKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:10:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37699 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbeHBTKv (ORCPT
+        Thu, 2 Aug 2018 15:10:53 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45435 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387450AbeHBTKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:10:51 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n11-v6so3418813wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:18:48 -0700 (PDT)
+        Thu, 2 Aug 2018 15:10:53 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f12-v6so2865750wrv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:18:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7Dmlu67sax7CAqxxrePaf1+hkI+XMm++rNx/gbZNK0A=;
-        b=fS5jl6L/mL94kEMuZSzgQ8ACEFOHmwhNJH/h1A+W1xU6QtOJ62Ve5cJCr92j8EJChF
-         i+LA9do+Er1J3lgRfWub7/iqiMnqP80DxFkwIghINoZeTJaovAxE/7JKV4cAZTrYcq0w
-         G0KrbJNSSDxBEb8nZv+a1lOHNyH45HjniNV+/PONFCjhCNfMw+Uj5awVUepcjLY83Ns/
-         j0jF0VP9qWZtzjJO/cbN0UYd9Rghpvp7MgRUzCp/80Agbs4bKIX/RXtbysmt3DSBiD+s
-         inlP4RCxJE3261BdTIUdh1a7d9k7ujFx/blURaaFV1JXhVeevG5iIZD7HHht1Kwi4yNk
-         vjGA==
+        bh=fCb5F1FcydG4XRwhuoUj4EZSfDf+C/OcZkcj5fTdYPA=;
+        b=cKK62NFSe5Gj88kEYLCV83VhoJty/BcKnEyUqaIhshPxur4RFnGQWB12ISUakEJXe2
+         KUitay/e2kN017+aHabjS3gNHCFKMVQCVYpUMmzbAs3HwvU+ZWbGrfudOJdGjFpUz/U7
+         1BS7LHDCbN/PlMJkHbbspKNypchEbAc1Lr6duRi8Li9bvbPqUGI4ajXYKuDUyF3DgYi9
+         DSNxWK10hiNSmUXBKcgMwjzXd16nETaT6EjCK1gkYRjvstRmsuxs2OWUQDKmwFFrHf5Q
+         MVhXdRXN53ogKyjcG9dBypJi+twQjI2IEys0u2tz1wXU72lexOVkwpW6Cbq8VxrNsmxv
+         Lejw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7Dmlu67sax7CAqxxrePaf1+hkI+XMm++rNx/gbZNK0A=;
-        b=pp7OZ7OLE5kTMiigUt8+sphXjo0yWU9E1hnf3jfoF3ZYmU224NBOoDaWwdRrJVq7HM
-         Lb/unZnk/GldgJvAxXyyPZb0R9g94R2NcoJjwt2Zn5P+JjgKqV8Xs6WCuXVEJLcf+ior
-         4BVYn5iN5euycG3R3qwl++vByfCfEZ567kWXutpaey3U8JGGiGqP7SWVXh/0V4mmmrYV
-         VSqySAZvaB+c7N0Cgy/lwGp6ode69dDDFbqRpnUhY2xYtyeHo1t0RtT5Kkw0AupTHjN5
-         m583/pR7Wjck9pZt8hHzXt9ZS2pkaPGQVIeRGGHeey7fw5wklJestSthT51jPfcxVJLJ
-         yxyw==
-X-Gm-Message-State: AOUpUlEVFUmR06l/4fyPk9MsvFrb8VJ6f45kGCNoVnunXD3UULYQJ5+3
-        wxcatlEsh4x7JWkIQQSI2sE=
-X-Google-Smtp-Source: AAOMgpfiSBwl0QVxLTjp5XsB4YzonVAk7QtSMkwAQGQEgGQ0cY9UkkT8y6QOQUiBY50n3hs5plGRpA==
-X-Received: by 2002:a1c:dcf:: with SMTP id 198-v6mr2606248wmn.131.1533230327442;
-        Thu, 02 Aug 2018 10:18:47 -0700 (PDT)
+        bh=fCb5F1FcydG4XRwhuoUj4EZSfDf+C/OcZkcj5fTdYPA=;
+        b=t1LqmtY4l63Bt7d6V9f03BnrmmnwrjBiiDgLJKdh9u6l5/7VUW/Sx7Ru5mS7hRkFIa
+         L+jywsAbte2O3Sa6JF1JKThNIrgTGVq/5q+q2R6FyFFO2aG8Iq3jAMmdSMx0E/i6KhDr
+         adZ4lMhMkb1kLfPjO5J5vnDLbkRb8qqoD2l4IBTfzYTOir3gd5gD22ZcSpRQs060yX5t
+         HbowZdFTrPzgtk3ltonyuLUVh622i+nykrqPlgzhPgpOn/TzEfRCXRNjApHxj1kvLBgh
+         1IvFE4O+CTnNMNA+ZYrte1FZyU9EfSNUYRKtER8SKxGJacVAxGw+n4/iNwHY564VI7pV
+         vZYg==
+X-Gm-Message-State: AOUpUlHucMY5xFbHeLSVfUkJK1VCFwPY7ZweT6xs9AW5ZZ/bCViVg5o9
+        Zixqt55Vj2B/1xfZKszvcGw=
+X-Google-Smtp-Source: AAOMgpdbOuOMNn5HMm4gpDNgUUomRoA3efaVtngdqLlEgCdSDipzZz8bMe6HmodS24zYP3mRX4OMAQ==
+X-Received: by 2002:adf:80c9:: with SMTP id 67-v6mr226583wrl.95.1533230328999;
+        Thu, 02 Aug 2018 10:18:48 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm3205081wrn.34.2018.08.02.10.18.46
+        by smtp.gmail.com with ESMTPSA id t15-v6sm3205081wrn.34.2018.08.02.10.18.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 10:18:46 -0700 (PDT)
+        Thu, 02 Aug 2018 10:18:48 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/6] staging: rtl8188eu: remove whitespace - style
-Date:   Thu,  2 Aug 2018 19:18:21 +0200
-Message-Id: <20180802171823.1571-4-straube.linux@gmail.com>
+Subject: [PATCH 5/6] staging: rtl8188eu: use is_multicast_ether_addr
+Date:   Thu,  2 Aug 2018 19:18:22 +0200
+Message-Id: <20180802171823.1571-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180802171823.1571-1-straube.linux@gmail.com>
 References: <20180802171823.1571-1-straube.linux@gmail.com>
@@ -73,69 +73,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace tabs with spaces and/or remove spaces where appropriate.
+Use is_multicast_ether_addr instead of custom IS_MCAST in
+core/rtw_sta_mgt.c.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8188eu/hal/rtl8188eu_xmit.c    | 22 +++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-index 6925ec48dff1..a11bee16d070 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_xmit.c
-@@ -15,7 +15,7 @@
+diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+index 53e518148ae5..34c3e2af63c1 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
++++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+@@ -414,7 +414,7 @@ struct sta_info *rtw_get_stainfo(struct sta_priv *pstapriv, u8 *hwaddr)
+ 	if (!hwaddr)
+ 		return NULL;
  
- s32 rtw_hal_init_xmit_priv(struct adapter *adapt)
- {
--	struct xmit_priv	*pxmitpriv = &adapt->xmitpriv;
-+	struct xmit_priv *pxmitpriv = &adapt->xmitpriv;
- 
- 	tasklet_init(&pxmitpriv->xmit_tasklet,
- 		     (void(*)(unsigned long))rtl8188eu_xmit_tasklet,
-@@ -30,8 +30,8 @@ static u8 urb_zero_packet_chk(struct adapter *adapt, int sz)
- 
- static void rtl8188eu_cal_txdesc_chksum(struct tx_desc	*ptxdesc)
- {
--	u16	*usptr = (u16 *)ptxdesc;
--	u32 count = 16;		/*  (32 bytes / 2 bytes per XOR) => 16 times */
-+	u16 *usptr = (u16 *)ptxdesc;
-+	u32 count = 16; /* (32 bytes / 2 bytes per XOR) => 16 times */
- 	u32 index;
- 	u16 checksum = 0;
- 
-@@ -160,15 +160,15 @@ static void fill_txdesc_phy(struct pkt_attrib *pattrib, __le32 *pdw)
- 
- static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bagg_pkt)
- {
--	int	pull = 0;
--	uint	qsel;
-+	int pull = 0;
-+	uint qsel;
- 	u8 data_rate, pwr_status, offset;
--	struct adapter		*adapt = pxmitframe->padapter;
--	struct pkt_attrib	*pattrib = &pxmitframe->attrib;
-+	struct adapter *adapt = pxmitframe->padapter;
-+	struct pkt_attrib *pattrib = &pxmitframe->attrib;
- 	struct odm_dm_struct *odmpriv = &adapt->HalData->odmpriv;
--	struct tx_desc	*ptxdesc = (struct tx_desc *)pmem;
--	struct mlme_ext_priv	*pmlmeext = &adapt->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct tx_desc *ptxdesc = (struct tx_desc *)pmem;
-+	struct mlme_ext_priv *pmlmeext = &adapt->mlmeextpriv;
-+	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
- 
- 	if (adapt->registrypriv.mp_mode == 0) {
- 		if ((!bagg_pkt) && (urb_zero_packet_chk(adapt, sz) == 0)) {
-@@ -328,7 +328,7 @@ static s32 update_txdesc(struct xmit_frame *pxmitframe, u8 *pmem, s32 sz, u8 bag
- 	return pull;
- }
- 
--/* for non-agg data frame or  management frame */
-+/* for non-agg data frame or management frame */
- static s32 rtw_dump_xframe(struct adapter *adapt, struct xmit_frame *pxmitframe)
- {
- 	s32 ret = _SUCCESS;
+-	if (IS_MCAST(hwaddr))
++	if (is_multicast_ether_addr(hwaddr))
+ 		addr = bc_addr;
+ 	else
+ 		addr = hwaddr;
 -- 
 2.18.0
 
