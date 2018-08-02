@@ -2,156 +2,90 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1432DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAF8C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B652B21581
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B652B21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E33E21582
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:36:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="eoo7n5h6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E33E21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731977AbeHBX1m (ORCPT
+        id S1732177AbeHBX3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:27:42 -0400
-Received: from gate.crashing.org ([63.228.1.57]:33962 "EHLO gate.crashing.org"
+        Thu, 2 Aug 2018 19:29:12 -0400
+Received: from imap.thunk.org ([74.207.234.97]:60032 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbeHBX1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:27:42 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w72LD9tM004777;
-        Thu, 2 Aug 2018 16:13:10 -0500
-Message-ID: <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
-Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
-        haren@linux.vnet.ibm.com, paulus@samba.org,
-        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
-        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
-Date:   Thu, 02 Aug 2018 16:13:09 -0500
-In-Reply-To: <20180802225738-mutt-send-email-mst@kernel.org>
-References: <20180730155633-mutt-send-email-mst@kernel.org>
-         <20180731173052.GA17153@infradead.org>
-         <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
-         <20180801081637.GA14438@arm.com> <20180801083639.GF26378@infradead.org>
-         <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
-         <20180802182959-mutt-send-email-mst@kernel.org>
-         <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
-         <20180802200646-mutt-send-email-mst@kernel.org>
-         <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
-         <20180802225738-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.4 (3.28.4-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728799AbeHBX3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:29:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=KwlrU/CPyV/Q35bT5wl/mW434v6Jsvo4rIN20TKx7dQ=; b=eoo7n5h6+ZkizYI/GMND7PIFLn
+        TO5Cv4IqM/GngeE9p65J26+Y4zcKVpmr6hFG9Zyq+qAfGMKSAgXBIzpumge5f0Pb01+dUgpaCU4Xo
+        72WiNkb0UFfosb1toKLvVMQZVCy9mvbCHRE0XhYHxnh63MXZEf9YA5ygQ4NF1WBWqDnk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1flLGK-0006Us-14; Thu, 02 Aug 2018 21:36:00 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 243E67A64C9; Thu,  2 Aug 2018 17:35:59 -0400 (EDT)
+Date:   Thu, 2 Aug 2018 17:35:59 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net
+Subject: Re: [PATCH v1 1/3] random: Make crng state queryable
+Message-ID: <20180802213559.GA32066@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net
+References: <20180731191102.2434-1-Jason@zx2c4.com>
+ <20180731191102.2434-2-Jason@zx2c4.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180731191102.2434-2-Jason@zx2c4.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 23:52 +0300, Michael S. Tsirkin wrote:
-> > Yes, this is the purpose of Anshuman original patch (I haven't looked
-> > at the details of the patch in a while but that's what I told him to
-> > implement ;-) :
-> > 
-> >   - Make virtio always use DMA ops to simplify the code path (with a set
-> > of "transparent" ops for legacy)
-> > 
-> >   and
-> > 
-> >   -  Provide an arch hook allowing us to "override" those "transparent"
-> > DMA ops with some custom ones that do the appropriate swiotlb gunk.
-> > 
-> > Cheers,
-> > Ben.
-> > 
+On Tue, Jul 31, 2018 at 09:11:00PM +0200, Jason A. Donenfeld wrote:
+> It is very useful to be able to know whether or not get_random_bytes_wait
+> / wait_for_random_bytes is going to block or not, or whether plain
+> get_random_bytes is going to return good randomness or bad randomness.
 > 
-> Right but as I tried to say doing that brings us to a bunch of issues
-> with using DMA APIs in virtio. Put simply DMA APIs weren't designed for
-> guest to hypervisor communication.
+> The particular use case is for mitigating certain attacks in WireGuard.
+> A handshake packet arrives and is queued up. Elsewhere a worker thread
+> takes items from the queue and processes them. In replying to these
+> items, it needs to use some random data, and it has to be good random
+> data. If we simply block until we can have good randomness, then it's
+> possible for an attacker to fill the queue up with packets waiting to be
+> processed. Upon realizing the queue is full, WireGuard will detect that
+> it's under a denial of service attack, and behave accordingly. A better
+> approach is just to drop incoming handshake packets if the crng is not
+> yet initialized.
+> 
+> This patch, therefore, makes that information directly accessible.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
-I'm not sure I see the problem, see below
+Applied to the random.git tree.
 
-> When we do (as is the case with PLATFORM_IOMMU right now) this adds a
-> bunch of overhead which we need to get rid of if we are to switch to
-> PLATFORM_IOMMU by default.  We need to fix that.
-
-So let's differenciate the two problems of having an IOMMU (real or
-emulated) which indeeds adds overhead etc... and using the DMA API.
-
-At the moment, virtio does this all over the place:
-
-	if (use_dma_api)
-		dma_map/alloc_something(...)
-	else
-		use_pa
-
-The idea of the patch set is to do two, somewhat orthogonal, changes
-that together achieve what we want. Let me know where you think there
-is "a bunch of issues" because I'm missing it:
-
- 1- Replace the above if/else constructs with just calling the DMA API,
-and have virtio, at initialization, hookup its own dma_ops that just
-"return pa" (roughly) when the IOMMU stuff isn't used.
-
-This adds an indirect function call to the path that previously didn't
-have one (the else case above). Is that a significant/measurable
-overhead ?
-
-This change stands alone, and imho "cleans" up virtio by avoiding all
-that if/else "2 path" and unless it adds a measurable overhead, should
-probably be done.
-
- 2- Make virtio use the DMA API with our custom platform-provided
-swiotlb callbacks when needed, that is when not using IOMMU *and*
-running on a secure VM in our case.
-
-This benefits from -1- by making us just plumb in a different set of
-DMA ops we would have cooked up specifically for virtio in our arch
-code (or in virtio itself but build arch-conditionally in a separate
-file). But it doesn't strictly need it -1-:
-
-Now, -2- doesn't strictly needs -1-. We could have just done another
-xen-like hack that forces the DMA API "ON" for virtio when running in a
-secure VM.
-
-The problem if we do that however is that we also then need the arch
-PCI code to make sure it hooks up the virtio PCI devices with the
-special "magic" DMA ops that avoid the iommu but still do swiotlb, ie,
-not the same as other PCI devices. So it will have to play games such
-as checking vendor/device IDs for virtio, checking the IOMMU flag,
-etc... from the arch code which really bloody sucks when assigning PCI
-DMA ops.
-
-However, if we do it the way we plan here, on top of -1-, with a hook
-called from virtio into the arch to "override" the virtio DMA ops, then
-we avoid the problem completely: The arch hook would only be called by
-virtio if the IOMMU flag is *not* set. IE only when using that special
-"hypervisor" iommu bypass. If the IOMMU flag is set, virtio uses normal
-PCI dma ops as usual.
-
-That way, we have a very clear semantic: This hook is purely about
-replacing those "null" DMA ops that just return PA introduced in -1-
-with some arch provided specially cooked up DMA ops for non-IOMMU
-virtio that know about the arch special requirements. For us bounce
-buffering.
-
-Is there something I'm missing ?
-
-Cheers,
-Ben.
-
-
-
-
+					- Ted
