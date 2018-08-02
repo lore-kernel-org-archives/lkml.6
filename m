@@ -1,94 +1,150 @@
 Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5BC46463
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4226CC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018C9208EC
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018C9208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EDBAD2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBAD2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732072AbeHBKDg (ORCPT
+        id S1732094AbeHBKEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:03:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36152 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730113AbeHBKDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:03:35 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9077F402242D;
-        Thu,  2 Aug 2018 08:13:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-116.rdu2.redhat.com [10.10.120.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9E7A2026D66;
-        Thu,  2 Aug 2018 08:13:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next] rxrpc: Remove set but not used variable 'nowj'
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, weiyongjun1@huawei.com
-Date:   Thu, 02 Aug 2018 09:13:33 +0100
-Message-ID: <153319761338.28801.14787677585388434259.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Thu, 2 Aug 2018 06:04:05 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:43496 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729926AbeHBKED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 06:04:03 -0400
+Received: by mail-it0-f69.google.com with SMTP id n68-v6so1472265ite.8
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:14:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VRU9bPV6JKrEHGjtJBYGbGNeCy2fEKGMGH0VJREb54I=;
+        b=awjp21RrmYhRIYzAvdYxfA31PntNq9VJtmsJA01QRaHU9638WvFMv6aD+4UNAt+tY4
+         8lI5fqEIiFgLXYzQQlup+RBZ7RVviG1r9c+j9LpmwIdok8/fwFBGik2lisE8Rg3vvmDK
+         m1F3fNlfueNbAUwCUuLbPM6prC8Rrh+mDSNzsi3fvS8rlnRdUmDJDxc0IOm5QrvzRBjE
+         hsU2DXyKpyCy/3JNYMn58Xq9Ee10wEX4IqBrr1S9YkC/WLkPodQlZQfY59+KNwE7iqvl
+         VPKteZeLWQR2WF00dlCqiOWXKte6m++2DZ2I0/D5025kI536Xd6nucjzUZmHY+Uymv8d
+         1swQ==
+X-Gm-Message-State: AOUpUlF6GSYr4TFk+Ivp+orf5Pd4YG8WJFxfORoNXhRGPqLWnmn1Sf8E
+        fZM9PyMEpmcjraZTAyu+zqnCGwaJPlVGRhWkM53YXM697wZi
+X-Google-Smtp-Source: AAOMgpdoLomxTxjareN4qGLvZvtQM6EF5QZnPfAy7kW+zZMPKTBTHOrfYrHAwUkahB+XcuuK+ZhpJyQ9++dqYOB2TxOkrpAD9+gF
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 08:13:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 02 Aug 2018 08:13:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Received: by 2002:a24:294d:: with SMTP id p74-v6mr843833itp.36.1533197642562;
+ Thu, 02 Aug 2018 01:14:02 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 01:14:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000db041505726f64d5@google.com>
+Subject: kernel panic: corrupted stack end detected inside scheduler (3)
+From:   syzbot <syzbot+05b2210c521c829a20f5@syzkaller.appspotmail.com>
+To:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Hello,
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+syzbot found the following crash on:
 
-net/rxrpc/proc.c: In function 'rxrpc_call_seq_show':
-net/rxrpc/proc.c:66:29: warning:
- variable 'nowj' set but not used [-Wunused-but-set-variable]
-  unsigned long timeout = 0, nowj;
-                             ^
+HEAD commit:    fea49f60c9b7 net: ethernet: ti: cpsw: replace unnecessaril..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d5fae8400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6a9eba95cc5dd8e
+dashboard link: https://syzkaller.appspot.com/bug?extid=05b2210c521c829a20f5
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=108ef064400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1022672c400000
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+05b2210c521c829a20f5@syzkaller.appspotmail.com
+
+RBP: 00007ffdbb414a40 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000040 R11: 0000000000000216 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+Kernel panic - not syncing: corrupted stack end detected inside scheduler
+
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 6188 Comm: syz-executor748 Not tainted 4.18.0-rc6+ #165
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:put_page include/linux/mm.h:913 [inline]
+RIP: 0010:tls_push_sg+0x2a3/0x880 net/tls/tls_main.c:133
+Code: fb 4d 39 e5 75 a2 e8 4c 5f d6 fb 48 8b 85 08 ff ff ff 49 8d 7f 08 48  
+b9 00 00 00 00 00 fc ff df c6 00 00 48 89 f8 48 c1 e8 03 <80> 3c 08 00 0f  
+85 50 05 00 00 48 8b 85 08 ff ff ff 49 8b 5f 08 80
+RSP: 0018:ffff8801c9f1f7b8 EFLAGS: 00010202
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: ffffffff85a5b634 RDI: 0000000000000008
+RBP: ffff8801c9f1f8d8 R08: ffff8801c7d88340 R09: 0000000000000000
+R10: fffff94000e38bc6 R11: ffffea00071c5e37 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000000000119b880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8c0bf4a000 CR3: 00000001c777e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  tls_push_record+0xaf3/0x1400 net/tls/tls_sw.c:247
+  tls_sw_push_pending_record+0x22/0x30 net/tls/tls_sw.c:259
+  tls_handle_open_record net/tls/tls_main.c:155 [inline]
+  tls_sk_proto_close+0x759/0xb90 net/tls/tls_main.c:255
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
+  __sock_release+0xd7/0x250 net/socket.c:597
+  sock_close+0x19/0x20 net/socket.c:1157
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4017f0
+Code: 01 f0 ff ff 0f 83 d0 0a 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
+44 00 00 83 3d 3d 30 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 a4 0a 00 00 c3 48 83 ec 08 e8 5a 01 00 00
+RSP: 002b:00007ffdbb414a28 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00000000004017f0
+RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000003
+RBP: 00007ffdbb414a40 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- net/rxrpc/proc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
-index 163d05df339d..9805e3b85c36 100644
---- a/net/rxrpc/proc.c
-+++ b/net/rxrpc/proc.c
-@@ -63,7 +63,7 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 	struct rxrpc_peer *peer;
- 	struct rxrpc_call *call;
- 	struct rxrpc_net *rxnet = rxrpc_net(seq_file_net(seq));
--	unsigned long timeout = 0, nowj;
-+	unsigned long timeout = 0;
- 	rxrpc_seq_t tx_hard_ack, rx_hard_ack;
- 	char lbuff[50], rbuff[50];
- 
-@@ -97,7 +97,6 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 
- 	if (call->state != RXRPC_CALL_SERVER_PREALLOC) {
- 		timeout = READ_ONCE(call->expect_rx_by);
--		nowj = jiffies;
- 		timeout -= jiffies;
- 	}
- 
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
