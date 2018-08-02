@@ -2,155 +2,133 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95519C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E19EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B54E21546
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B54E21546
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DDC262098A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 17:24:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JimfSSER"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC262098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbeHBTQL (ORCPT
+        id S1732189AbeHBTQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 15:16:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36292 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727007AbeHBTQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 15:16:11 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 369787DAC3;
-        Thu,  2 Aug 2018 17:24:05 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-120.pek2.redhat.com [10.72.12.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3D4C2026D69;
-        Thu,  2 Aug 2018 17:23:51 +0000 (UTC)
-Date:   Fri, 3 Aug 2018 01:23:46 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Josef Bacik <josef@toxicpanda.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Brown <broonie@kernel.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] blk-mq: fix blk_mq_tagset_busy_iter
-Message-ID: <20180802172345.GE8928@ming.t460p>
-References: <20180802164329.11900-1-ming.lei@redhat.com>
- <1533228846.3915.17.camel@HansenPartnership.com>
- <20180802170601.GC8928@ming.t460p>
- <acd8de2a-4a24-385c-e76a-5f54c8dc09d7@kernel.dk>
- <1533230318.12916.2.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Thu, 2 Aug 2018 15:16:17 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35616 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729924AbeHBTQR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 15:16:17 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6-v6so1531638pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 10:24:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CartgWcyMGNYkrVQg9gKV81p9yJ8BPdE1rjLFM4ML7M=;
+        b=JimfSSERlwlcKT4rHBAE7lrnEQzPjMULpYjR+8TMCbLUhecXWlthkCpN9psK880R/L
+         vCh5UT4EVwz63Kv3x3ZHrs/NBHTCUdvk34f3TM5PlGGL8Pb4EFRj047yhVXyHlj4YYRV
+         x0265svDhYhc0kA5614/1Juv8jPc6OYYLxDxEwK5GPL3BeBkcqtWjFDV6oSfu35pxxjt
+         Qs6V43MHlqh7JgXAPgZfbpwH6Kz00NIzmHgTOQI+TZTyvlr72I9kLKqt55uLUx4Enrfd
+         PVEZUDfSQxvmSH8EA0KiivmK5O0QfrQSSh5IE66EQoxVuUz0NDqvXAH/6ozvNopM8/Cm
+         PdRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=CartgWcyMGNYkrVQg9gKV81p9yJ8BPdE1rjLFM4ML7M=;
+        b=cK1nvpxNcof8wldxf2IJMLIn6GzRq/g4qH76AwPd9AkkeYNgUVD3oVExQCq8gkwu6R
+         nu4tFkUkjGxJpP0P9BXIYev1vL0toDyq7lz31LySddT43JFy3iDWuVpB8hIfMORs2PoR
+         /C+b7tk6pZ0FM4db2nODJI1wr5D9jyHREObJMzLizKQh7i9tC2TWI086rdc3jBNs6TBo
+         MeAU+Dyg1cGi195bnwO0MVxZRugz/rJKbLkECAvjGPpaZoWfyjRtHf17xvOMmS5mY+tH
+         jU1Nbu7HKlFbwz0e3k3HMf3ge0F+t3oIQKAXkYlJyMuLpoXQPuwpFMxkY2TV0b7k2AbJ
+         0VGg==
+X-Gm-Message-State: AOUpUlE+aXpxPZs7fgeLHLa9zz2I4yiIfKaDXwefw7SAd+DmPBrKe13K
+        UzPIRQ6XCanP6hHEsgAx0q8a7A==
+X-Google-Smtp-Source: AAOMgpfGvwwXqlmTX5O1m5vnoCTT15qnEuLK+yRTyyXQvvYGu4d7P1J7Xzcz/MDfKLWXhtOkP/f+Vw==
+X-Received: by 2002:a62:8d7:: with SMTP id 84-v6mr413534pfi.172.1533230652769;
+        Thu, 02 Aug 2018 10:24:12 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id f3-v6sm2485426pgq.49.2018.08.02.10.24.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 10:24:11 -0700 (PDT)
+Date:   Thu, 02 Aug 2018 10:24:11 -0700 (PDT)
+X-Google-Original-Date: Thu, 02 Aug 2018 10:24:05 PDT (-0700)
+Subject:     Re: simplified RISC-V interrupt and clocksource handling v2
+In-Reply-To: <20180802115008.4031-1-hch@lst.de>
+CC:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, anup@brainfault.org,
+        atish.patra@wdc.com, devicetree@vger.kernel.org,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, shorne@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Christoph Hellwig <hch@lst.de>
+Message-ID: <mhng-1a7030e5-19c4-481b-9f7c-e0976214eb18@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1533230318.12916.2.camel@HansenPartnership.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 17:24:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 02 Aug 2018 17:24:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 10:18:38AM -0700, James Bottomley wrote:
-> On Thu, 2018-08-02 at 11:08 -0600, Jens Axboe wrote:
-> > On 8/2/18 11:06 AM, Ming Lei wrote:
-> > > On Thu, Aug 02, 2018 at 09:54:06AM -0700, James Bottomley wrote:
-> > > > On Fri, 2018-08-03 at 00:43 +0800, Ming Lei wrote:
-> > > > > Commit d250bf4e776ff09d5("blk-mq: only iterate over inflight
-> > > > > requests
-> > > > > in blk_mq_tagset_busy_iter") uses 'blk_mq_rq_state(rq) ==
-> > > > > MQ_RQ_IN_FLIGHT' to replace 'blk_mq_request_started(req)', this
-> > > > > way is wrong, and causes lots of test system hang during
-> > > > > booting.
-> > > > > 
-> > > > > Fix the issue by using blk_mq_request_started(req) inside
-> > > > > bt_tags_iter().
-> > > > > 
-> > > > > Fixes: d250bf4e776ff09d5 ("blk-mq: only iterate over inflight
-> > > > > requests in blk_mq_tagset_busy_iter")
-> > > > > Cc: Josef Bacik <josef@toxicpanda.com>
-> > > > > Cc: Christoph Hellwig <hch@lst.de>
-> > > > > Cc: Guenter Roeck <linux@roeck-us.net>
-> > > > > Cc: Mark Brown <broonie@kernel.org>
-> > > > > Cc: Matt Hart <matthew.hart@linaro.org>
-> > > > > Cc: Johannes Thumshirn <jthumshirn@suse.de>
-> > > > > Cc: John Garry <john.garry@huawei.com>
-> > > > > Cc: Hannes Reinecke <hare@suse.com>,
-> > > > > Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-> > > > > Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
-> > > > > Cc: linux-scsi@vger.kernel.org
-> > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > > > > ---
-> > > > >  block/blk-mq-tag.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-> > > > > index 09b2ee6694fb..3de0836163c2 100644
-> > > > > --- a/block/blk-mq-tag.c
-> > > > > +++ b/block/blk-mq-tag.c
-> > > > > @@ -271,7 +271,7 @@ static bool bt_tags_iter(struct sbitmap
-> > > > > *bitmap,
-> > > > > unsigned int bitnr, void *data)
-> > > > >  	 * test and set the bit before assining ->rqs[].
-> > > > >  	 */
-> > > > >  	rq = tags->rqs[bitnr];
-> > > > > -	if (rq && blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT)
-> > > > > +	if (rq && blk_mq_request_started(rq))
-> > > > 
-> > > > So now we have dueling versions of this patch:
-> > > > 
-> > > > https://marc.info/?l=linux-scsi&m=153322802207688
-> > > > 
-> > > > Can we at least make sure we've root caused the problem and
-> > > > confirmed we've got it fixed before we start the formal patch
-> > > > process?  When we
-> > > 
-> > > EH uses scsi_host_busy to check if the error handler needs to be
-> > > waken up. And blk_mq_tagset_busy_iter() is used for implementing
-> > > scsi_host_busy(), so causes EH not waken up, then this timed-out
-> > > request can't be handled.
-> 
-> Yes, I know what the problem is and why this patch is necessary and
-> that it is very likely the root cause.  However, can we confirm that it
-> fixes the boot hang completely before we declare victory?
+On Thu, 02 Aug 2018 04:49:57 PDT (-0700), Christoph Hellwig wrote:
+> This series tries adds support for interrupt handling and timers
+> for the RISC-V architecture.
+>
+> The basic per-hart interrupt handling implemented by the scause
+> and sie CSRs is extremely simple and implemented directly in
+> arch/riscv/kernel/irq.c.  In addition there is a irqchip driver
+> for the PLIC external interrupt controller, which is called through
+> the set_handle_irq API, and a clocksource driver that gets its
+> timer interrupt directly from the low-level interrupt handling.
+>
+> Compared to previous iterations this version does not try to use an
+> irqchip driver for the low-level interrupt handling.  This saves
+> a couple indirect calls and an additional read of the scause CSR
+> in the hot path, makes the code much simpler and last but not least
+> avoid the dependency on a device tree for a mandatory architectural
+> feature.
+>
+> A git tree is available here (contains a few more patches before
+> the ones in this series)
+>
+>     git://git.infradead.org/users/hch/riscv.git riscv-irq-simple.2
+>
+> Gitweb:
+>
+>     http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-irq-simple.2
+>
+> Changes since v1:
+>  - rename the plic driver to irq-sifive-plic
+>  - switch to a default compatible of sifive,plic0 (still supporting the
+>    riscv,plic0 name for compatibility)
+>  - add a reference for the SiFive PLIC register layout
+>  - fix plic_toggle addressing for large numbers of hwirqs
+>  - remove the call to ack_bad_irq
+>  - use a raw spinlock for plic_toggle_lock
+>  - use the irq_desc cpumask in the plic enable/disable methods
+>  - add back OF contexid parsing in the plic driver
+>  - don't allow COMPILE_TEST builds of the clocksource driver, as it
+>    depends on <asm/sbi.h>
+>  - default the clocksource driver to y
+>  - clean up naming in the clocksource driver
+>  - remove the MINDELTA and MAXDELTA #defines
+>  - various DT binding fixes
 
-Frankly speaking, I can reproduce & verify it, but still suggest to wait
-for ack from our report guys.
+Ah, thank you so much.  This is great!  With this patch set applied on top of 
+rc7 I can boot QEMU master and get to the Fedora root file system.  I'll review 
+the patch set properly, but at least for now I think a
 
-> 
-> > > > do start the formal patch process, please give appropriate credit
-> > > > to the reporter(s) since this has been a royal pain for them to
-> > > > help us track down.
-> > > 
-> > > Sure.
-> > > 
-> > > Jens, could you add reported-by if you are fine with this version?
-> > > Or please just let me know if new version is needed, then I can add
-> > > it.
-> > 
-> > I'll add that, would also love a tested-by from the reporter. The
-> > patch looks good to me, however.
-> 
-> Is there a reason why blk_mq_request_started() isn't a static inline? 
-> It looks to be somewhat in the hot path.
+Tested-by: Palmer Dabbelt <palmer@sifive.com>
 
-Looks good idea, which should have been in header file, will do it in
-V2.
-
-Thanks,
-Ming
+is warranted.  What's the best way to go about merging this?  There's quite a 
+bit of arch/riscv diff here so I don't mind taking it through the RISC-V tree, 
+but there's also some irqchip and clocksource stuff as well so I'm not sure if 
+that's OK to do.
