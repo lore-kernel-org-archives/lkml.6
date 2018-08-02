@@ -2,119 +2,127 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A72C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DE4C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18343215E5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF6F215E5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:31:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EnnalDaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18343215E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="H+kxaYVf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XWpdjENP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF6F215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732129AbeHCAXQ (ORCPT
+        id S1731885AbeHCAYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 20:23:16 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42459 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeHCAXQ (ORCPT
+        Thu, 2 Aug 2018 20:24:25 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39875 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726989AbeHCAYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 20:23:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l9-v6so2104469pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 15:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KnnFiTr+gowHsIMXxEA/2izMmTShehwD0fbhtUXT4qU=;
-        b=EnnalDaq8sB+aj3ExwWbhsIu+NnzCOgmRhzRTVGYBwmue9DRgGt8qilpWuh599SHLo
-         SHzYSVrcZp3WV5H97EVNPkvLCjdqBjgsJY92SI/EXPQpKbeClHh/jhpOwhqnjv+6WYDc
-         ryUfkKeQLs0lYSBHjSGAqL7T/22TR0IbTAHuegvqfNPDDKMsdMTOvFL9HTQVOBUAh433
-         yKMtzDVNpLI0npM1awx6uiRJlod4J/S1i1pyiiaUT6xYiAINgg7SHQE4OAvhREenhAkK
-         5Iznst0iwk7NeHZ3b554Nxj9sba8amGlmSDY7PMS+U3rr/CWHjZz8AQJ7PhmjMPek1qe
-         JFIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KnnFiTr+gowHsIMXxEA/2izMmTShehwD0fbhtUXT4qU=;
-        b=KdxfXzNKo0uNwZLQt/zvNu95ir0kXSx8ixyP644Pw/LJiln6fLMGf9xPm0cPdKGqWc
-         kOR5zuAR0ckdDBDoFAKTosHHnVB3MrTbmlpi/HTEvMRAXurlib4aQ543aViV3LE2gTwo
-         /MfpNNUeRk8XLCs9iPNT8u6vRTm/RDFdnkyzux8+ervMuvny5EHXGe8SwxDyjxeBiCfB
-         04+JJKWxZEhfn5ymfLVGIw3fg+yqtTpDsJgR4S0v7aIlmVWjmtDjIAbruiLOy92izIIf
-         Wd6eOv6DbLW7O/N1yL7YE1uHmpBjKH+fNsvXNs+RD6hpAzBIfK9J4AcpWf7VuQLWUOr+
-         zKpw==
-X-Gm-Message-State: AOUpUlGwazULCe1ntC8CzOaTKhTcg+L7wiWDvQ1zxvf/FALYjoBY2XdS
-        smP5OOGEmFFhqgdAqELrM9x6Y9kdD/kG+kZX2/kwOw==
-X-Google-Smtp-Source: AAOMgpeFAegnFWPGScM5YsXgzGlpW/8/W80z/fiJn7mM/QKxGlnYKwKsvX6RF+LKNNlm0Xy61s+knBzrMFRBNVXqci8=
-X-Received: by 2002:a63:195e:: with SMTP id 30-v6mr1190514pgz.192.1533249003476;
- Thu, 02 Aug 2018 15:30:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180801215759.103758-1-ndesaulniers@google.com>
- <20180802.144234.41564686794492805.davem@davemloft.net> <CAKwvOdnp7R094sbsyKi921ZVB8BD+d-8L37mcPv0UjMMF4QqDg@mail.gmail.com>
- <20180802.151740.166085629835691260.davem@davemloft.net>
-In-Reply-To: <20180802.151740.166085629835691260.davem@davemloft.net>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 2 Aug 2018 15:29:52 -0700
-Message-ID: <CAKwvOdnujUd-3bT2LJEo=4ApnismX7LbQ_PhyzKcY4XxiS+77g@mail.gmail.com>
-Subject: Re: [PATCH] inet/connection_sock: prefer _THIS_IP_ to current_text_addr
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 2 Aug 2018 20:24:25 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id D73D421785;
+        Thu,  2 Aug 2018 18:31:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 02 Aug 2018 18:31:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :date:from:message-id:subject:to:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=0/AztLt+OEDABGKoE4DLMeIZb8E4w1IHL8DhBIhmz
+        sE=; b=H+kxaYVfeA2JHNlTa/5xtgMtDKVB4QsDGYZ5JmsvJCaO4mIOSQWKy3ycy
+        jW3Aj5AbHTQd0SUvACmx2XA0+3OgNIr+bGVtO6KrFS2sDrVV6ubzVnKfimZeMH+2
+        N4TrSVV+KvBWwcnTJ2rSJvOJFO9idIAi8ycmPnxkjKavlxjdSRV8p4aSqsF/ApFw
+        7B27RJGv4QflyAlHnQtmVTZXC4ESiuRsvNk8c1NTnD4zhDpVfIlLlEqOigj0ahKa
+        qRac7g7bJz8VZuc8E7IqaYHzks1HtLeFur3/w/dHVuFOkoQEpwxJ8B4yGe6jHP3c
+        IBT4TNk7WRvRWG5IX94O0+NRMvCRw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:date:from:message-id:subject:to
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=0/AztLt+OEDABGKoE
+        4DLMeIZb8E4w1IHL8DhBIhmzsE=; b=XWpdjENPQXcAjBUmQxS8PoOeUhpMOByHX
+        9S5HLZEqXLH0NddAaQLuvlfoAZ9rsLK1ITRzjUYSvflJNq5YCqrV8Di/haMmwF1S
+        1XI8a/1iBhRkALwuDXhMDwhdrE/TNrA8ZSeuNEsv2E2jzOwpAV1QthAUXan6pHmD
+        UIwIjcmCBjsn8B08YNqHwKWiwM8/d71nP9j1d9zZvnfzLq5oPhYohLfQWQUkoIdy
+        cKfwaN+4aK7rksI15suz921AgRjkambDLUDFEi9N0UIUw2HFlfVatL/JM/Myqs2N
+        fUMax+R/gqjkuVsFa/9djdhGVyRoVzc2I2qEnqyezwEN05jY+tKpA==
+X-ME-Proxy: <xmx:LIZjW4WnmyFPSTPlU93n7KK-Pn7fqLw0CSjv9SDZ6mj1xqTR5QgUZA>
+    <xmx:LIZjW8zHrCBbup9cY-rwWmbuAYQJ3LLgMH6ryerqsbZ5sxQCkbe8rA>
+    <xmx:LIZjW-Oi_GStBr_ozE6OkeowadTh1g9AJsCFs_9pjNbrIg-Rv3TdZg>
+    <xmx:LIZjW17K8-aJGBnZ2qndMSR1ftGrCoUzvU8p6_drZxMKBnddiZxcfA>
+    <xmx:LIZjW3OJ3Q3DwbO5wxLG80dBy5nI0sMwetKU366ZMwUAMvdr8w_-CA>
+    <xmx:LYZjW2QY8QNat33r6ZRXt3Kkkkp3cvcujkH2BmWkaxkwwklOuOTK4Q>
+X-ME-Sender: <xms:LIZjW6AXSZPpzzMQb9_cwXpyhK0zQbAqeHcfWAfxbs1-jMKfMykBfA>
+Received: from localhost (ppp121-44-199-247.bras1.syd2.internode.on.net [121.44.199.247])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 04BD3E4074;
+        Thu,  2 Aug 2018 18:31:07 -0400 (EDT)
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     "Tobin C. Harding" <me@tobin.cc>, Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC bpf-next v2 0/3] docs: Convert filter.txt to RST
+Date:   Fri,  3 Aug 2018 08:30:57 +1000
+Message-Id: <20180802223100.26236-1-me@tobin.cc>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 3:17 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Nick Desaulniers <ndesaulniers@google.com>
-> Date: Thu, 2 Aug 2018 15:10:00 -0700
->
-> > On Thu, Aug 2, 2018 at 2:42 PM David Miller <davem@davemloft.net> wrote:
-> >>
-> >> From: Nick Desaulniers <ndesaulniers@google.com>
-> >> Date: Wed,  1 Aug 2018 14:57:59 -0700
-> >>
-> >> > As part of the effort to reduce the code duplication between _THIS_IP_
-> >> > and current_text_addr(), let's consolidate callers of
-> >> > current_text_addr() to use _THIS_IP_.
-> >> >
-> >> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> >>
-> >> I'll ACk this for now:
-> >>
-> >> Acked-by: David S. Miller <davem@davemloft.net>
-> >
-> > Thank you David.  Should you take it into the net tree, can you please add:
-> >
-> > Cc: stable@vger.kernel.org # 4.17, 4.14, 4.9, 4.4
-> >
-> > to the commit message? This will help us as Nathan stated previously
-> > in this thread.
->
-> Why in the world is this a stable candidate?  It doesn't fix a bug.
->
-> My understanding is that you are trying to do a consolidation of code
-> and clean things up so that only one interface is used.
->
-> That means it should, at best, go to the net-next tree.
->
-> Thank you.
+Hi,
 
-+ gkh
+v2 new and improved (with the actual files committed).
 
-We're trying to provide backports for all clang related bugs and
-warnings to the stable trees back through 4.4.
+This is a documentation RFC for two reasons
+
+1. The content is heavy and I don't fully understand it all, original
+   authors are you ok with the document being split up like this?
+
+2. I'm only the conversion monkey, I'd like someone with a bigger view
+   of kernel docs in general to ok this please.
+
+This RFC came out of this patch set
+
+	[PATCH bpf-next 00/13] docs: Convert BPF filter.txt to RST
+
+As such the first two patches are the only ones I could salvage from
+that set.  Stating the obvious the mappings are:
+
+Patch 1 was [PATCH bpf-next 12/13] docs: net: Fix various minor typos
+Patch 2 was [PATCH bpf-next 09/13] docs: net: Use lowercase 'k' for kernel
+
+Patch 3 is the splitting of filter.txt into bpf/eBPF.rst and
+core-api/bpf.rst 
+
+Again, stating the obvious, if this RFC is ok I'll redo all the other
+patches from the original set on top of this.
+
+
+thanks,
+Tobin.
+
+v2:
+ - Actually add the files to the commit
+ - Check the _whole_ patch before sending
+ - Use checkpatch like we are supposed to
+ - Add licences
+
+Tobin C. Harding (3):
+  docs: net: Fix various minor typos
+  docs: net: Use lowercase 'k' for kernel
+  docs: Split filter.txt into separate documents.
+
+ .../{networking/filter.txt => bpf/eBPF.rst}   | 648 ++----------------
+ Documentation/core-api/bpf.rst                | 599 ++++++++++++++++
+ 2 files changed, 643 insertions(+), 604 deletions(-)
+ rename Documentation/{networking/filter.txt => bpf/eBPF.rst} (60%)
+ create mode 100644 Documentation/core-api/bpf.rst
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.17.1
+
