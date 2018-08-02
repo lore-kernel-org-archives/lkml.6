@@ -3,158 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A14CC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E55C28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E65208A4
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E65208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 06714208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06714208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732273AbeHBDhk (ORCPT
+        id S1732385AbeHBDi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 23:37:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbeHBDhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 23:37:40 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4B61208A3;
-        Thu,  2 Aug 2018 01:48:56 +0000 (UTC)
-Date:   Wed, 1 Aug 2018 21:48:55 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCHv3] lib/ratelimit: Lockless ratelimiting
-Message-ID: <20180801214855.3ae1abb9@vmware.local.home>
-In-Reply-To: <1532100816.18720.44.camel@arista.com>
-References: <20180703225628.25684-1-dima@arista.com>
-        <1531789154.18720.3.camel@arista.com>
-        <CAHp75VdmQ1YLzWpYb7878zKOCCyOEicdLAtpohbmY2hL1h1RNg@mail.gmail.com>
-        <20180720150948.nv57fjmmrmo2r7rx@pathway.suse.cz>
-        <1532100816.18720.44.camel@arista.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 1 Aug 2018 23:38:28 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53189 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725937AbeHBDi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Aug 2018 23:38:27 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 036182229E616;
+        Thu,  2 Aug 2018 09:49:43 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
+ 09:49:43 +0800
+To:     Dominique Martinet <asmadeus@codewreck.org>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "Eric Van Hensbergen" <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        "Latchesar Ionkov" <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+From:   piaojun <piaojun@huawei.com>
+Subject: [PATCH v2] net/9p/trans_virtio.c: add null terminal for mount tag
+Message-ID: <5B6262F4.9080601@huawei.com>
+Date:   Thu, 2 Aug 2018 09:48:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Jul 2018 16:33:36 +0100
-Dmitry Safonov <dima@arista.com> wrote:
+chan->tag is Non-null terminated which will result in printing messy code
+when debugging code. So we should add '\0' for tag to make the code more
+convenient and robust. In addition, I drop char->tag_len to simplify the
+code.
 
-> On Fri, 2018-07-20 at 17:09 +0200, Petr Mladek wrote:
-> > > > On Tue, 2018-07-03 at 23:56 +0100, Dmitry Safonov wrote:  
-> > > > > Currently ratelimit_state is protected with spin_lock. If the
-> > > > > .lock
-> > > > > is
-> > > > > taken at the moment of ___ratelimit() call, the message is
-> > > > > suppressed
-> > > > > to
-> > > > > make ratelimiting robust.
-> > > > > 
-> > > > > That results in the following issue issue:
-> > > > >       CPU0                          CPU1
-> > > > > ------------------           ------------------
-> > > > > printk_ratelimit()           printk_ratelimit()
-> > > > >         |                             |
-> > > > >   try_spin_lock()              try_spin_lock()
-> > > > >         |                             |
-> > > > > time_is_before_jiffies()          return 0; // suppress
-> > > > > 
-> > > > > So, concurrent call of ___ratelimit() results in silently
-> > > > > suppressing
-> > > > > one of the messages, regardless if the limit is reached or not.
-> > > > > And rc->missed is not increased in such case so the issue is
-> > > > > covered
-> > > > > from user.
-> > > > > 
-> > > > > Convert ratelimiting to use atomic counters and drop spin_lock.
-> > > > > 
-> > > > > Note: That might be unexpected, but with the first interval of
-> > > > > messages
-> > > > > storm one can print up to burst*2 messages. So, it doesn't
-> > > > > guarantee
-> > > > > that in *any* interval amount of messages is lesser than burst.
-> > > > > But, that differs lightly from previous behavior where one can
-> > > > > start
-> > > > > burst=5 interval and print 4 messages on the last milliseconds
-> > > > > of
-> > > > > interval + new 5 messages from new interval (totally 9 messages
-> > > > > in
-> > > > > lesser than interval value):
-> > > > > 
-> > > > >    msg0              msg1-msg4 msg0-msg4
-> > > > >     |                     |       |
-> > > > >     |                     |       |
-> > > > >  |--o---------------------o-|-----o--------------------|--> (t)
-> > > > >                           <------->
-> > > > >                        Lesser than burst
-> > > > >   
-> > 
-> > I am a bit confused. Does this patch fix two problems?
-> > 
-> >    + Lost rc->missed update when try_spin_lock() fails
-> >    + printing up to burst*2 messages in a give interval  
-> 
-> What I tried to solve here (maybe I could better point it in the commit
-> message): is the situation where ratelimit::burst haven't been hit yet
-> and there are calls for __ratelimit() from different CPUs.
-> So, neither of the messages should be suppressed, but as the spinlock
-> is taken already - one of them is dropped and even without updating
-> missed counter.
-> 
-> > It would make the review much easier if you split it into more
-> > patches and fix the problems separately.  
-> 
-> Hmm, not really sure: the patch changes spinlock to atomics and I'm not
-> sure it make much sense to add atomics before removing the spinlock..
-> 
-> > Otherwise, it looks promissing...
-> > 
-> > Best Regards,
-> > Petr
-> > 
-> > PS: I have vacation the following two weeks. Anyway, please, CC me
-> > if you send any new version.  
-> 
-> Surely, thanks for your attention to the patch (and time).
-> 
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+---
+ net/9p/trans_virtio.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-I'm just catching up from my vacation. What about making rs->missed
-into an atomic, and have:
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index d422bfc..0fe9c37 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -89,10 +89,8 @@ struct virtio_chan {
+ 	unsigned long p9_max_pages;
+ 	/* Scatterlist: can be too big for stack. */
+ 	struct scatterlist sg[VIRTQUEUE_NUM];
+-
+-	int tag_len;
+ 	/*
+-	 * tag name to identify a mount Non-null terminated
++	 * tag name to identify a mount null terminated
+ 	 */
+ 	char *tag;
 
-	if (!raw_spin_trylock_irqsave(&rs->lock, flags)) {
-		atomic_inc(&rs->missed);
-		return 0;
-	}
+@@ -529,10 +527,9 @@ static ssize_t p9_mount_tag_show(struct device *dev,
+ 	vdev = dev_to_virtio(dev);
+ 	chan = vdev->priv;
 
-?
+-	memcpy(buf, chan->tag, chan->tag_len);
+-	buf[chan->tag_len] = 0;
++	memcpy(buf, chan->tag, strlen(chan->tag) + 1);
 
-You would also need to do:
+-	return chan->tag_len + 1;
++	return strlen(chan->tag) + 1;
+ }
 
-	if (time_is_before_jiffies(rs->begin + rs->interval)) {
-		int missed = atomic_xchg(&rs->missed, 0);
-		if (missed) {
+ static DEVICE_ATTR(mount_tag, 0444, p9_mount_tag_show, NULL);
+@@ -585,7 +582,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+ 		err = -EINVAL;
+ 		goto out_free_vq;
+ 	}
+-	tag = kmalloc(tag_len, GFP_KERNEL);
++	tag = kzalloc(tag_len + 1, GFP_KERNEL);
+ 	if (!tag) {
+ 		err = -ENOMEM;
+ 		goto out_free_vq;
+@@ -594,7 +591,6 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+ 	virtio_cread_bytes(vdev, offsetof(struct virtio_9p_config, tag),
+ 			   tag, tag_len);
+ 	chan->tag = tag;
+-	chan->tag_len = tag_len;
+ 	err = sysfs_create_file(&(vdev->dev.kobj), &dev_attr_mount_tag.attr);
+ 	if (err) {
+ 		goto out_free_tag;
+@@ -654,8 +650,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
 
-So that you don't have a race between checking rs->missed and setting it
-to zero.
-
--- Steve
+ 	mutex_lock(&virtio_9p_lock);
+ 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
+-		if (!strncmp(devname, chan->tag, chan->tag_len) &&
+-		    strlen(devname) == chan->tag_len) {
++		if (!strncmp(devname, chan->tag, strlen(chan->tag) + 1)) {
+ 			if (!chan->inuse) {
+ 				chan->inuse = true;
+ 				found = 1;
+-- 
