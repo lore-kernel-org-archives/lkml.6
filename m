@@ -2,92 +2,92 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91077C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E72DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB21208DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:00:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB21208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id CFAD2208C3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:06:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CoSs6Q4V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAD2208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeHBFtm (ORCPT
+        id S1726267AbeHBFzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 01:49:42 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10216 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbeHBFtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 01:49:42 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 69C52C50A955B;
-        Thu,  2 Aug 2018 12:00:32 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
- 12:00:26 +0800
-Message-ID: <5B6281D7.5030801@huawei.com>
-Date:   Thu, 2 Aug 2018 12:00:23 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 2 Aug 2018 01:55:21 -0400
+Received: from imap.thunk.org ([74.207.234.97]:56434 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725954AbeHBFzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 01:55:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=LCCfssrd3CeWdkpKxHDAHOJ6cjkdIVLcqZC2rT8pLYA=; b=CoSs6Q4VFm+I0zPZq/XSxi7mO+
+        l3TIHw+uUIA8ZSW76AmcaSozIE5Reo4dSlu9lfvCQrT5aNrevnnW9Kdf/myzCwAgmwXboTKCorwp6
+        SESzKpko+yj1YZMxBqy0oPqEAnH4Z04cMigGv5Ns9lY0yHM8TkmAMxNj3rorbD1hcLGA=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fl4sM-0001vS-G9; Thu, 02 Aug 2018 04:06:10 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5F2607A614F; Thu,  2 Aug 2018 00:06:09 -0400 (EDT)
+Date:   Thu, 2 Aug 2018 00:06:09 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Jeremy Cline <jcline@redhat.com>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: mballoc: Fix spectre gadget in
+ ext4_mb_regular_allocator
+Message-ID: <20180802040609.GD9187@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jeremy Cline <jcline@redhat.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
+References: <20180730180747.25200-1-jcline@redhat.com>
 MIME-Version: 1.0
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-CC:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "aacraid@microsemi.com" <aacraid@microsemi.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "john.garry@huawei.com" <john.garry@huawei.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 2/2] scsi:qlogicfas408: remove the same check in qlogicfas408_detect
-References: <1533177901-19514-1-git-send-email-zhongjiang@huawei.com>  <1533177901-19514-3-git-send-email-zhongjiang@huawei.com>  <dc1f8e81007466172d383cc63a4be246c568a2d4.camel@wdc.com>  <5B627AB2.8000101@huawei.com> <2ff30988089f3cbc0d2127dbfaa29955e0449997.camel@wdc.com>
-In-Reply-To: <2ff30988089f3cbc0d2127dbfaa29955e0449997.camel@wdc.com>
-Content-Type: text/plain; charset="UTF-7"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730180747.25200-1-jcline@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/2 11:52, Bart Van Assche wrote:
-> On Thu, 2018-08-02 at 11:29 +ACs-0800, zhong jiang wrote:
->> On 2018/8/2 11:21, Bart Van Assche wrote:
->>> On Thu, 2018-08-02 at 10:45 +ACs-0800, zhong jiang wrote:
->>>> we should not use same check in a expression. just remove one
->>>> of them.
->>>>
->>>> Signed-off-by: zhong jiang <zhongjiang+AEA-huawei.com>
->>>> ---
->>>>  drivers/scsi/qlogicfas408.c +AHw- 3 +ACs---
->>>>  1 file changed, 1 insertion(+ACs-), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/scsi/qlogicfas408.c b/drivers/scsi/qlogicfas408.c
->>>> index 8b471a9..1409ac1 100644
->>>> --- a/drivers/scsi/qlogicfas408.c
->>>> +ACsAKwAr- b/drivers/scsi/qlogicfas408.c
->>>> +AEAAQA- -567,8 +ACs-567,7 +AEAAQA- void qlogicfas408+AF8-setup(int qbase, int id, int int+AF8-type)
->>>>  int qlogicfas408+AF8-detect(int qbase, int int+AF8-type)
->>>>  +AHs-
->>>>          REG1;
->>>> -	return (((inb(qbase +ACs- 0xe) +AF4- inb(qbase +ACs- 0xe)) == 7) +ACYAJg-
->>>> -	       ((inb(qbase +ACs- 0xe) +AF4- inb(qbase +ACs- 0xe)) == 7));		
->>>> +ACs-	return (inb(qbase +ACs- 0xe) +AF4- inb(qbase +ACs- 0xe)) == 7;
->>>>  +AH0-
->>> Does inb() have any side effects?
->>  just redundant. is it necessary for this . Maybe I miss something.
-> If doubletest.cocci came up with this patch, I think that script is
-> wrong and needs a thorough review.
->
-> Bart.
->
- Ok, Maybe I am wrong with this issue. Thank you for clarification.
+On Mon, Jul 30, 2018 at 06:07:47PM +0000, Jeremy Cline wrote:
+> 'ac->ac_g_ex.fe_len' is a user-controlled value which is used in the
+> derivation of 'ac->ac_2order'. 'ac->ac_2order', in turn, is used to
+> index arrays which makes it a potential spectre gadget. Fix this by
+> sanitizing the value assigned to 'ac->ac2_order'.  This covers the
+> following accesses found with the help of smatch:
+> 
+> * fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
+>   spectre issue 'grp->bb_counters' [w] (local cap)
+> 
+> * fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
+>   'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
+> 
+> * fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
+>   'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
+> 
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: stable@vger.kernel.org
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Jeremy Cline <jcline@redhat.com>
 
- Sincerely,
- zhong jiang
->
+Thanks, applied.
 
-
+					- Ted
