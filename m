@@ -2,447 +2,136 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46993C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C014DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DA4208C3
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DA4208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 654DC208C3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 04:58:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTxFzWrc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654DC208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeHBGmG (ORCPT
+        id S1727002AbeHBGrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 02:42:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727152AbeHBGmG (ORCPT
+        Thu, 2 Aug 2018 02:47:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55087 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbeHBGrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 02:42:06 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w724lxZH083227
-        for <linux-kernel@vger.kernel.org>; Thu, 2 Aug 2018 00:52:49 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2kku7x83xy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 00:52:49 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akshay.adiga@linux.vnet.ibm.com>;
-        Thu, 2 Aug 2018 05:52:46 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 2 Aug 2018 05:52:43 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w724qgAi42008662
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 2 Aug 2018 04:52:43 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 36F5442041;
-        Thu,  2 Aug 2018 07:52:54 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 777F742045;
-        Thu,  2 Aug 2018 07:52:52 +0100 (BST)
-Received: from aksadiga.ibm (unknown [9.79.222.241])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  2 Aug 2018 07:52:52 +0100 (BST)
-From:   Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     npiggin@gmail.com, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        ego@linux.vnet.ibm.com, huntbag@linux.vnet.ibm.com,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: [RFC PATCH 3/3] cpuidle/powernv: Conditionally save-restore sprs using opal
-Date:   Thu,  2 Aug 2018 10:21:32 +0530
-X-Mailer: git-send-email 2.18.0.rc2.85.g1fb9df7
-In-Reply-To: <20180802045132.12432-1-akshay.adiga@linux.vnet.ibm.com>
-References: <20180802045132.12432-1-akshay.adiga@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18080204-0012-0000-0000-000002928DDC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18080204-0013-0000-0000-000020C498B4
-Message-Id: <20180802045132.12432-4-akshay.adiga@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1808020051
+        Thu, 2 Aug 2018 02:47:46 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so929005wmb.4;
+        Wed, 01 Aug 2018 21:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6bTvhP5+3LhemU0ZT/tPJEczBjran5yL56z8lJXiajs=;
+        b=FTxFzWrci7aytuVMSeZsUUHGAge2+AxqfKl/cqPhRqO8H3a6caq+5LCddKmx2tjoeR
+         5fU8aRg9qFxao0fIJ5RAD+bFZothAvJrd4nYPF3nHx12Hx/otR32k/SqpW2dFrLXASxo
+         hyGnjb0w8zVy89Y36VHCnrn1SJblR+58DRaknjsoTdOWx/YoNZv+A9TjO3/L6xiXgvdn
+         YYhL+DnqhPLW9cD56ShKKrzpOXKfGxG4O1YN5gczYXWCTSyo7EInC5W/1RX5nSCfS9Q3
+         Zu1e4ZHUVurSiUptt8DssBvQR8NeG3xk7vxaw3GPtQcRYZuKYrZr87oDwFyeAdZxNeWC
+         TOlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6bTvhP5+3LhemU0ZT/tPJEczBjran5yL56z8lJXiajs=;
+        b=qUr7cli9UD40XgDaIwXVm/s03Mi6wnwFarKj/GdzZoYb5ssCQnSKlnAWpdaMWO3SvH
+         Yja5JwObyQiBUBorAOwb46eQVdbL8DVkV5RKK/NF+A10xrWJrnV0r+4Jo/w2p6ts5LXt
+         Vnlm60m2p4b1Z0XaH8pim2AaUb6gLm5Hr/U6D/2CcZO2L+RCuZlZygH77XSCcmrnqBWn
+         14Qj7D9Eu/whuDc05XvxyAgLBPpGtrjilg6+ubC6DgLI3MNr1z+ESIY/KRzJes8pDn8I
+         I6/MzRcsnxwcvO9h1ScGN9lzi4n3R6qHyAALtCP7sXNiX3zEkNxZv95LWrhOkYvvrlzv
+         dRww==
+X-Gm-Message-State: AOUpUlHGdEiveA2l+1jy9SGiPO3bLgkvFFQtzeIDQiGOkwdVP/SehGi0
+        r0gN7a159RaWejbO5cEHAoo=
+X-Google-Smtp-Source: AAOMgpeH9b0XIQvtKeYXY+R+6qA0W2xvwvClqN/mCG9w8LCVDmyUD2tN3+1laZivR3Iqz85Cem1l3w==
+X-Received: by 2002:a1c:6d94:: with SMTP id b20-v6mr840067wmi.28.1533185908100;
+        Wed, 01 Aug 2018 21:58:28 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id t186-v6sm767692wmf.14.2018.08.01.21.58.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Aug 2018 21:58:27 -0700 (PDT)
+Date:   Wed, 1 Aug 2018 21:58:25 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     ndesaulniers@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] inet/connection_sock: prefer _THIS_IP_ to
+ current_text_addr
+Message-ID: <20180802045825.GA16769@flashbox>
+References: <20180801215759.103758-1-ndesaulniers@google.com>
+ <20180801.184208.776886134692058469.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180801.184208.776886134692058469.davem@davemloft.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+On Wed, Aug 01, 2018 at 06:42:08PM -0700, David Miller wrote:
+> From: Nick Desaulniers <ndesaulniers@google.com>
+> Date: Wed,  1 Aug 2018 14:57:59 -0700
+> 
+> > -			 sk, what, when, current_text_addr());
+> > +			 sk, what, when, (void *)_THIS_IP_);
+> 
+> Is a fugly macro in all caps really better than a function()?
+> 
+> I'm really surprised that _THIS_IP_ is being chosen over
+> current_text_addr(), seriously.
 
-If a state has "opal-supported" compat flag in device-tree, an opal call
-needs to be made during the entry and exit of the stop state. This patch
-passes a hint to the power9_idle_stop and power9_offline_stop.
+Hi Dave,
 
-This patch moves the saving and restoring of sprs for P9 cpuidle
-from kernel to opal. This patch still uses existing code to detect
-first thread in core.
-In an attempt to make the powernv idle code backward compatible,
-and to some extent forward compatible, add support for pre-stop entry
-and post-stop exit actions in OPAL. If a kernel knows about this
-opal call, then just a firmware supporting newer hardware is required,
-instead of waiting for kernel updates.
+current_text_addr is only used in five places in the entire kernel and
+this is the only non-architecture specific use.
 
-Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
-Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
----
- arch/powerpc/include/asm/cpuidle.h            |  1 +
- arch/powerpc/include/asm/opal-api.h           |  4 +-
- arch/powerpc/include/asm/opal.h               |  3 +
- arch/powerpc/include/asm/paca.h               |  5 +-
- arch/powerpc/include/asm/processor.h          |  6 +-
- arch/powerpc/kernel/asm-offsets.c             |  3 +
- arch/powerpc/kernel/idle_book3s.S             | 55 ++++++++++++++++++-
- arch/powerpc/platforms/powernv/idle.c         | 41 ++++++++++----
- .../powerpc/platforms/powernv/opal-wrappers.S |  2 +
- arch/powerpc/xmon/xmon.c                      | 14 ++---
- 10 files changed, 109 insertions(+), 25 deletions(-)
+include/net/inet_connection_sock.h:227:			 sk, what, when, current_text_addr());
+arch/sh/include/asm/kexec.h:64:		newregs->pc = (unsigned long)current_text_addr();
+arch/sh/kernel/dwarf.c:602:		pc = (unsigned long)current_text_addr();
+arch/x86/include/asm/kexec.h:135:		newregs->ip = (unsigned long)current_text_addr();
+arch/parisc/kernel/unwind.c:442:	r.iaoq[0] = (unsigned long) current_text_addr();
 
-diff --git a/arch/powerpc/include/asm/cpuidle.h b/arch/powerpc/include/asm/cpuidle.h
-index b965066560cc..2fb2324d15fc 100644
---- a/arch/powerpc/include/asm/cpuidle.h
-+++ b/arch/powerpc/include/asm/cpuidle.h
-@@ -96,6 +96,7 @@ struct pnv_idle_states_t {
- 	u64 psscr_val;
- 	u64 psscr_mask;
- 	u32 flags;
-+	bool req_opal_call;
- 	enum idle_state_type_t type;
- 	bool valid;
- };
-diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-index 3bab299eda49..6792a737bc9a 100644
---- a/arch/powerpc/include/asm/opal-api.h
-+++ b/arch/powerpc/include/asm/opal-api.h
-@@ -208,7 +208,9 @@
- #define OPAL_SENSOR_READ_U64			162
- #define OPAL_PCI_GET_PBCQ_TUNNEL_BAR		164
- #define OPAL_PCI_SET_PBCQ_TUNNEL_BAR		165
--#define OPAL_LAST				165
-+#define OPAL_IDLE_SAVE				168
-+#define OPAL_IDLE_RESTORE			169
-+#define OPAL_LAST				169
- 
- #define QUIESCE_HOLD			1 /* Spin all calls at entry */
- #define QUIESCE_REJECT			2 /* Fail all calls with OPAL_BUSY */
-diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-index e1b2910c6e81..12d57aeacde2 100644
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -356,6 +356,9 @@ extern void opal_kmsg_init(void);
- 
- extern int opal_event_request(unsigned int opal_event_nr);
- 
-+extern int opal_cpuidle_save(u64 *stop_sprs, int scope, u64 psscr);
-+extern int opal_cpuidle_restore(u64 *stop_sprs, int scope, u64 psscr, u64 srr1);
-+
- struct opal_sg_list *opal_vmalloc_to_sg_list(void *vmalloc_addr,
- 					     unsigned long vmalloc_size);
- void opal_free_sg_list(struct opal_sg_list *sg);
-diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
-index 6d34bd71139d..586059594443 100644
---- a/arch/powerpc/include/asm/paca.h
-+++ b/arch/powerpc/include/asm/paca.h
-@@ -195,11 +195,14 @@ struct paca_struct {
- 	/* The PSSCR value that the kernel requested before going to stop */
- 	u64 requested_psscr;
- 
-+	u64 wakeup_psscr;
-+	u8 req_opal_call;
- 	/*
--	 * Save area for additional SPRs that need to be
-+	 * Save area for SPRs that need to be
- 	 * saved/restored during cpuidle stop.
- 	 */
- 	struct stop_sprs stop_sprs;
-+	u64 *opal_stop_sprs;
- #endif
- 
- #ifdef CONFIG_PPC_BOOK3S_64
-diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
-index 34f572056add..9f9fb1f11dd6 100644
---- a/arch/powerpc/include/asm/processor.h
-+++ b/arch/powerpc/include/asm/processor.h
-@@ -513,8 +513,10 @@ enum idle_boot_override {IDLE_NO_OVERRIDE = 0, IDLE_POWERSAVE_OFF};
- extern int powersave_nap;	/* set if nap mode can be used in idle loop */
- extern unsigned long power7_idle_insn(unsigned long type); /* PNV_THREAD_NAP/etc*/
- extern void power7_idle_type(unsigned long type);
--extern unsigned long power9_idle_stop(unsigned long psscr_val);
--extern unsigned long power9_offline_stop(unsigned long psscr_val);
-+extern unsigned long power9_idle_stop(unsigned long psscr_val,
-+				      bool opal_enabled);
-+extern unsigned long power9_offline_stop(unsigned long psscr_val,
-+					 bool opal_enabled);
- extern void power9_idle_type(int index);
- 
- extern void flush_instruction_cache(void);
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 262c44a90ea1..740ae068ec74 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -768,6 +768,9 @@ int main(void)
- 	OFFSET(PACA_SIBLING_PACA_PTRS, paca_struct, thread_sibling_pacas);
- 	OFFSET(PACA_REQ_PSSCR, paca_struct, requested_psscr);
- 	OFFSET(PACA_DONT_STOP, paca_struct, dont_stop);
-+	OFFSET(PACA_WAKEUP_PSSCR, paca_struct, wakeup_psscr);
-+	OFFSET(PACA_REQ_OPAL_CALL, paca_struct, req_opal_call);
-+	OFFSET(STOP_SPRS, paca_struct, opal_stop_sprs);
- #define STOP_SPR(x, f)	OFFSET(x, paca_struct, stop_sprs.f)
- 	STOP_SPR(STOP_PID, pid);
- 	STOP_SPR(STOP_LDBAR, ldbar);
-diff --git a/arch/powerpc/kernel/idle_book3s.S b/arch/powerpc/kernel/idle_book3s.S
-index e734f6e45abc..b5f5245011a5 100644
---- a/arch/powerpc/kernel/idle_book3s.S
-+++ b/arch/powerpc/kernel/idle_book3s.S
-@@ -45,6 +45,9 @@
- 
- #define PSSCR_EC_ESL_MASK_SHIFTED          (PSSCR_EC | PSSCR_ESL) >> 16
- 
-+#define SCOPE_CORE	0
-+#define SCOPE_THREAD	1
-+
- 	.text
- 
- /*
-@@ -388,7 +391,18 @@ lwarx_loop_stop:
- 	bne-    lwarx_loop_stop
- 	isync
- 
-+	ld	r6,PACA_REQ_OPAL_CALL(r13)
-+	cmpwi	r6,1
-+	beq	opal_save
- 	bl	save_sprs_to_stack
-+	PPC_STOP
-+	b 	.
-+
-+opal_save:
-+	ld      r3,STOP_SPRS(r13)
-+	li	r4,SCOPE_CORE
-+	ld	r5,PACA_REQ_PSSCR(r13)
-+	bl      opal_cpuidle_save
- 
- 	PPC_STOP	/* Does not return (system reset interrupt) */
- 
-@@ -435,13 +449,14 @@ _GLOBAL(power9_offline_stop)
- 	 * between threads, but in that case KVM has a barrier sync in real
- 	 * mode before and after switching between radix and hash.
- 	 */
--	li	r4,KVM_HWTHREAD_IN_IDLE
--	stb	r4,HSTATE_HWTHREAD_STATE(r13)
-+	li	r5,KVM_HWTHREAD_IN_IDLE
-+	stb	r5,HSTATE_HWTHREAD_STATE(r13)
- #endif
- 	/* fall through */
- 
- _GLOBAL(power9_idle_stop)
- 	std	r3, PACA_REQ_PSSCR(r13)
-+	std	r4, PACA_REQ_OPAL_CALL(r13)
- #ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
- BEGIN_FTR_SECTION
- 	sync
-@@ -566,6 +581,8 @@ ALT_FTR_SECTION_END_IFSET(CPU_FTR_ARCH_300)
- #endif
- 
- 	/* Return SRR1 from power7_nap() */
-+	rlwinm  r11,r12,47-31,30,31
-+	cmpwi   cr3,r11,2
- 	blt	cr3,pnv_wakeup_noloss
- 	b	pnv_wakeup_loss
- 
-@@ -576,6 +593,8 @@ ALT_FTR_SECTION_END_IFSET(CPU_FTR_ARCH_300)
-  * cr3 - set to gt if waking up with partial/complete hypervisor state loss
-  */
- pnv_restore_hyp_resource_arch300:
-+	mfspr   r5, SPRN_PSSCR
-+	std     r5, PACA_WAKEUP_PSSCR(r13)
- 	/*
- 	 * Workaround for POWER9, if we lost resources, the ERAT
- 	 * might have been mixed up and needs flushing. We also need
-@@ -831,7 +850,24 @@ subcore_state_restored:
- 	bne	cr2,clear_lock
- 
- first_thread_in_core:
-+	ld	r6,PACA_REQ_OPAL_CALL(r13)
-+	cmpwi	r6,1
-+	beq	opal_restore_core
-+	b	kernel_restore_core
-+
-+opal_restore_core:
-+	ld      r3,STOP_SPRS(r13)
-+	li      r4,SCOPE_CORE
-+	ld	r5,PACA_WAKEUP_PSSCR(r13)
-+	mr	r6,r19	/*r19 contains SRR1*/
-+	bl      opal_cpuidle_restore
-+	ld      r1,PACAR1(r13)
-+	xoris   r15,r15,PNV_CORE_IDLE_LOCK_BIT@h
-+	lwsync
-+	stw     r15,0(r14)
-+	b	hypervisor_state_restored
- 
-+kernel_restore_core:
- 	/*
- 	 * First thread in the core waking up from any state which can cause
- 	 * partial or complete hypervisor state loss. It needs to
-@@ -885,6 +921,21 @@ clear_lock:
- 	stw	r15,0(r14)
- 
- common_exit:
-+	ld	r6,PACA_REQ_OPAL_CALL(r13)
-+	cmpwi	r6,1
-+	beq	opal_restore_thread
-+	b	kernel_restore_thread
-+
-+opal_restore_thread:
-+	ld      r3,STOP_SPRS(r13)
-+	li      r4,SCOPE_THREAD
-+	ld	r5,PACA_WAKEUP_PSSCR(r13)
-+	mr   	r6,r19	/*r19 contains SRR1*/
-+	bl      opal_cpuidle_restore
-+	ld      r1,PACAR1(r13)
-+	b	hypervisor_state_restored
-+
-+kernel_restore_thread:
- 	/*
- 	 * Common to all threads.
- 	 *
-diff --git a/arch/powerpc/platforms/powernv/idle.c b/arch/powerpc/platforms/powernv/idle.c
-index a6ef9b68e27b..e5d38524aec3 100644
---- a/arch/powerpc/platforms/powernv/idle.c
-+++ b/arch/powerpc/platforms/powernv/idle.c
-@@ -147,6 +147,7 @@ static int pnv_save_sprs_for_deep_states(void)
- 	return 0;
- }
- 
-+#define MAX_STOP_SPRS_COUNT 25
- static void pnv_alloc_idle_core_states(void)
- {
- 	int i, j;
-@@ -186,6 +187,9 @@ static void pnv_alloc_idle_core_states(void)
- 		for (j = 0; j < threads_per_core; j++) {
- 			int cpu = first_cpu + j;
- 
-+			paca_ptrs[cpu]->opal_stop_sprs = kmalloc_node(
-+					MAX_STOP_SPRS_COUNT * sizeof(u64),
-+					GFP_KERNEL, node);
- 			paca_ptrs[cpu]->core_idle_state_ptr = core_idle_state;
- 			paca_ptrs[cpu]->thread_idle_state = PNV_THREAD_RUNNING;
- 			paca_ptrs[cpu]->thread_mask = 1 << j;
-@@ -372,7 +376,7 @@ static unsigned long __power9_idle_type(struct pnv_idle_states_t *state)
- 	psscr = mfspr(SPRN_PSSCR);
- 	psscr = (psscr & ~stop_psscr_mask) | stop_psscr_val;
- 	__ppc64_runlatch_off();
--	srr1 = power9_idle_stop(psscr, state->opal_supported);
-+	srr1 = power9_idle_stop(psscr, state->req_opal_call);
- 	__ppc64_runlatch_on();
- 
- 	fini_irq_for_idle_irqsoff();
-@@ -518,7 +522,7 @@ unsigned long pnv_cpu_offline(unsigned int cpu)
- 
- 		psscr = mfspr(SPRN_PSSCR);
- 		psscr = (psscr & ~state->psscr_mask) |	state->psscr_val;
--		srr1 = power9_offline_stop(psscr, state->opal_supported);
-+		srr1 = power9_offline_stop(psscr, state->req_opal_call);
- 
- 	} else if ((idle_states & OPAL_PM_WINKLE_ENABLED) &&
- 		   (idle_states & OPAL_PM_LOSE_FULL_CONTEXT)) {
-@@ -815,6 +819,7 @@ static int pnv_parse_cpuidle_dt(void)
- 	u32 *temp_u32;
- 	u64 *temp_u64;
- 	const char **temp_string;
-+	bool fall_back_to_opal = false;
- 
- 	np = of_find_node_by_path("/ibm,opal/power-mgt");
- 	if (!np) {
-@@ -929,21 +934,33 @@ static int pnv_parse_cpuidle_dt(void)
- 	/* Parse each child node with appropriate parser_fn */
- 	for_each_child_of_node(np1, dt_node) {
- 		bool found_known_version = false;
--		/* we don't have state falling back to opal*/
--		for (i = 0; i < nr_known_versions ; i++) {
--			if (of_device_is_compatible(dt_node, known_versions[i].name)) {
--				rc = known_versions[i].parser_fn(dt_node);
--				if (rc) {
--					pr_err("%s could not parse\n",known_versions[i].name);
--					continue;
-+		int idx = nr_pnv_idle_states;
-+		if (!fall_back_to_opal) {
-+			/* we don't have state falling back to opal*/
-+			for (i = 0; i < nr_known_versions ; i++) {
-+				if (of_device_is_compatible(dt_node, known_versions[i].name)) {
-+					rc = known_versions[i].parser_fn(dt_node);
-+					if (rc) {
-+						pr_err("%s could not parse\n",known_versions[i].name);
-+						continue;
-+					}
-+					found_known_version = true;
- 				}
--				found_known_version = true;
- 			}
- 		}
--		
--		if (!found_known_version) {
-+		if (!found_known_version || fall_back_to_opal) {
-+			if (of_device_is_compatible(dt_node, "opal-support")) {
-+				rc = known_versions[0].parser_fn(dt_node);
-+				if (rc) {
-+					pr_err("%s could not parse\n", "opal-support");
-+					continue;
-+				}
-+				pnv_idle_states[idx].req_opal_call = true;
-+				fall_back_to_opal = true;
-+			} else {
- 				pr_info("Unsupported state, skipping all further state\n");
- 				goto out;
-+			}
- 		}
- 		nr_pnv_idle_states++;
- 	}
-diff --git a/arch/powerpc/platforms/powernv/opal-wrappers.S b/arch/powerpc/platforms/powernv/opal-wrappers.S
-index a8d9b4089c31..b75c37d93efd 100644
---- a/arch/powerpc/platforms/powernv/opal-wrappers.S
-+++ b/arch/powerpc/platforms/powernv/opal-wrappers.S
-@@ -327,3 +327,5 @@ OPAL_CALL(opal_npu_tl_set,			OPAL_NPU_TL_SET);
- OPAL_CALL(opal_pci_get_pbcq_tunnel_bar,		OPAL_PCI_GET_PBCQ_TUNNEL_BAR);
- OPAL_CALL(opal_pci_set_pbcq_tunnel_bar,		OPAL_PCI_SET_PBCQ_TUNNEL_BAR);
- OPAL_CALL(opal_sensor_read_u64,			OPAL_SENSOR_READ_U64);
-+OPAL_CALL(opal_cpuidle_save,			OPAL_IDLE_SAVE);
-+OPAL_CALL(opal_cpuidle_restore,			OPAL_IDLE_RESTORE);
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 47166ad2a669..8ae34f37e60a 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -2431,14 +2431,14 @@ static void dump_one_paca(int cpu)
- 	DUMP(p, subcore_sibling_mask, "%#-*x");
- 	DUMP(p, thread_sibling_pacas, "%-*px");
- 	DUMP(p, requested_psscr, "%#-*llx");
--	DUMP(p, stop_sprs.pid, "%#-*llx");
--	DUMP(p, stop_sprs.ldbar, "%#-*llx");
--	DUMP(p, stop_sprs.fscr, "%#-*llx");
--	DUMP(p, stop_sprs.hfscr, "%#-*llx");
--	DUMP(p, stop_sprs.mmcr1, "%#-*llx");
--	DUMP(p, stop_sprs.mmcr2, "%#-*llx");
--	DUMP(p, stop_sprs.mmcra, "%#-*llx");
- 	DUMP(p, dont_stop.counter, "%#-*x");
-+
-+	/*
-+	 * TODO Either kernel or opal has sprs stored. If opal stored it,
-+	 * we can find a way to make the indices available to kernel through
-+	 * paca.
-+	 */
-+
- #endif
- 
- 	DUMP(p, accounting.utime, "%#-*lx");
--- 
-2.18.0.rc2.85.g1fb9df7
+We're trying to merge it with _THIS_IP_ before for most architectures,
+it is defined nearly identically to _THIS_IP_:
 
+#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
+
+#define current_text_addr() ({ __label__ _l; _l: &&_l; })
+
+* arc
+* arm
+* arm64
+* h8300
+* hexagon
+* m68k
+* mips
+* nds32
+* nios2
+* openrisc
+* powerpc
+* riscv
+* unicore32
+* xtensa
+
+Ultimately, we're trying to turn off a new Clang warning in _THIS_IP_
+which requires some changes to work around what is believed to be a GCC
+bug (see https://lore.kernel.org/patchwork/patch/969101/).
+
+I guess the alternative to this patch is to just define current_text_addr
+as _THIS_IP_ for all of those architectures, I am not sure how that
+filters into Nick's plan (I think the goal of this was to try and avoid
+getting all of the architecture folks involved).
+
+Thanks for your time!
+Nathan
