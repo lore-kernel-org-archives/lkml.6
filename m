@@ -2,150 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FEAC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A48C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9402E2152D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9402E2152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2723721537
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:54:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gc9Apsxe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2723721537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeHBVpA (ORCPT
+        id S1730730AbeHBVqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:45:00 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.139]:39959 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726828AbeHBVpA (ORCPT
+        Thu, 2 Aug 2018 17:46:39 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37959 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeHBVqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:45:00 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id BB8B02B593A
-        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 14:52:22 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id lJdKfo3IxbXuJlJdkfDwaq; Thu, 02 Aug 2018 14:52:21 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.61.218] (port=56534 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1flJdK-002EMC-IN; Thu, 02 Aug 2018 14:51:38 -0500
-Subject: Re: [PATCH] drm/nouveau/secboot/acr: fix memory leak
-To:     Kees Cook <keescook@chromium.org>, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180724132719.GA32237@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <d9e87a82-f70f-3eca-5f63-2450863e7099@embeddedor.com>
-Date:   Thu, 2 Aug 2018 14:51:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 2 Aug 2018 17:46:39 -0400
+Received: by mail-it0-f67.google.com with SMTP id v71-v6so5209105itb.3;
+        Thu, 02 Aug 2018 12:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7p8mIWf/t8LtjE55u0+fpsgskGxy2peYtkHsQGFdXbs=;
+        b=gc9Apsxe5TjepHnJDyt/m2ksSDqPmXKL2fPL6BCsy6ps7tjIKyKkmGUkCyyME7bNmK
+         +e/1qgLrVhn1HKJMTcnGtdyON1z+Hj+RrCtkFh9r/MzXR3lPvobzxtZksBe36dkABg3D
+         txDv75SoFPVfXKmR1XzmU+NAG6EGLkUGHji5Gf5pW3QgXunZWcOi6odVgyMwmcvA9tL5
+         NWsx2tuIjRRpuspjScNtCbqtkIAuOOtYROHYXKC+PdC9BZuUxJQ2HSWjZAvYTUUDMsH/
+         5yS9/WqtlIkIz7cQzv54mNRx5QoccpqAIcA8v8UDGllHzETfw7J0jlrEb/LSQQIHxZui
+         lokQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7p8mIWf/t8LtjE55u0+fpsgskGxy2peYtkHsQGFdXbs=;
+        b=qevQJUSpPJiqdgmqE3M20LScAkeY1Nfv15ZWMYPcmxwvjvpGDbah1SpwX4gSs5jWE+
+         qjFKsYywRVZ7hXaS8gwqfL5nU4Azxdn2fHMoAMeYIrpXilQypyA/IjXfT41ZGJ8Ftzz+
+         h/M1vKDJQ7R+ZUpv41WQdh52RGj3cpfdVJn9RHF8bYSqeHmMtAnH0tHbbOPg5ETG0qdN
+         p8B6e4TEf8+mhq09xEv6DnWjI2BWXmMi3npKmoCYXzp6njUQvaS9jlDab/v5PC/xLao7
+         FfqmW5jhpdZqGRAIsahn3lk02936wvzri+QqxGgJ7/jTM2wKukeUB/l32gupsqeBm6tp
+         kVYQ==
+X-Gm-Message-State: AOUpUlGgOVwzDKIGUfY5DSQOFVG27owXINCEYecdAr7aIkhgi9Q0r+yQ
+        Hc58tQOwqRsCNKaePAqR3llwB7Jrfv7xrqoF0/u9YGO4
+X-Google-Smtp-Source: AAOMgpdMzAbq+vbXQGYsDMLYuhYTFj3Fe0lYFOjRCCUStEPBNPv+ETIt1Om+dXFa3+LOCk/3blmMbyoXCU/Q3ISRchs=
+X-Received: by 2002:a02:943:: with SMTP id f64-v6mr919178jad.31.1533239642044;
+ Thu, 02 Aug 2018 12:54:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180724132719.GA32237@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.61.218
-X-Source-L: No
-X-Exim-ID: 1flJdK-002EMC-IN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.61.218]:56534
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Received: by 2002:ac0:bc4a:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 12:53:41 -0700 (PDT)
+In-Reply-To: <20180731005615.GA2911@visor>
+References: <20180731005615.GA2911@visor>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Date:   Thu, 2 Aug 2018 20:53:41 +0100
+Message-ID: <CAJwJo6bmFZ+2wni1d-t2hh_RqYvnN2c+NJPNyrBLp9H=StTZFg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] exec: don't force_sigsegv processes with a pending
+ fatal signal
+To:     Ivan Delalande <colona@arista.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Ivan,
 
-Friendly ping! Who can take this?
+2018-07-31 1:56 GMT+01:00 Ivan Delalande <colona@arista.com>:
+> We were seeing unexplained segfaults in coreutils processes and other
+> basic utilities that we tracked down to binfmt_elf failing to load
+> segments for ld.so. Digging further, the actual problem seems to occur
+> when a process gets sigkilled while it is still being loaded by the
+> kernel. In our case when _do_page_fault goes for a retry it will return
+> early as it first checks for fatal_signal_pending(), so load_elf_interp
+> also returns with error and as a result search_binary_handler will
+> force_sigsegv() which is pretty confusing as nothing actually failed
+> here.
+>
+> Fixes: 19d860a140be ("handle suicide on late failure exits in execve() in search_binary_handler()")
+> Reference: https://lkml.org/lkml/2013/2/14/5
+> Signed-off-by: Ivan Delalande <colona@arista.com>
 
-Thanks
---
-Gustavo
++Cc: Oleg Nesterov <oleg@redhat.com>
++Cc: Andy Lutomirski <luto@kernel.org>
 
-On 07/24/2018 08:27 AM, Gustavo A. R. Silva wrote:
-> In case memory resources for *bl_desc* were allocated, release
-> them before return.
-> 
-> Addresses-Coverity-ID: 1472021 ("Resource leak")
-> Fixes: 0d466901552a ("drm/nouveau/secboot/acr: Remove VLA usage")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> index d02e183..5c14d6a 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> @@ -801,6 +801,7 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
->  		bl = acr->hsbl_unload_blob;
->  	} else {
->  		nvkm_error(_acr->subdev, "invalid secure boot blob!\n");
-> +		kfree(bl_desc);
->  		return -EINVAL;
->  	}
->  
-> 
+>  fs/exec.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index bdd0eacefdf5..6e8007edbb2d 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1656,7 +1656,8 @@ int search_binary_handler(struct linux_binprm *bprm)
+>                 if (retval < 0 && !bprm->mm) {
+>                         /* we got to flush_old_exec() and failed after it */
+>                         read_unlock(&binfmt_lock);
+> -                       force_sigsegv(SIGSEGV, current);
+> +                       if (!fatal_signal_pending(current))
+> +                               force_sigsegv(SIGSEGV, current);
+
+I would suggest to add something like:
+: if (print_fatal_signals)
+:         pr_info("load_binary() failed: %d\n", retval);
+
+It was interesting to catch that it actually segfaults during loading,
+probably will save someone a couple of minutes too ;-)
+
+>                         return retval;
+>                 }
+>                 if (retval != -ENOEXEC || !bprm->file) {
+
+Thanks,
+             Dmitry
