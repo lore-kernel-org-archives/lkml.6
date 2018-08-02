@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47C0C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C621C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80AF121476
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7BB2148E
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dbbswwds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80AF121476
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UH9dw5Jz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B7BB2148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeHBKdO (ORCPT
+        id S1731959AbeHBKdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:33:14 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43190 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731362AbeHBKdN (ORCPT
+        Thu, 2 Aug 2018 06:33:16 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42395 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbeHBKdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:33:13 -0400
-Received: by mail-pl0-f66.google.com with SMTP id x6-v6so693822plv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:06 -0700 (PDT)
+        Thu, 2 Aug 2018 06:33:15 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so893233pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bJgIjqnzBpjDCHcIaR7Lgo3X/dn0+4y3mN89lG2WtHQ=;
-        b=DbbswwdsTkULcafNwaAAInXXXs3KFfrvT/IlSns12D+RZtD3yIa5dthCHQIqknATDd
-         iiqWMAGXoDY/sbniagudVMCpDYVQADuuluNQDvhJ8e97kB3CRItTbyJmp54149cVa+mI
-         e+ydIGclyiJ4rxpXoA7dVrYwxD9gfL1UM4l6SGJG/5i4NkF/+hGmk3IYDpBsxsPhNSLp
-         zlUF/pk9xQbgKEOKg8Z1tzQCiIx/6IkWRqOEBsXvVaoq+Ncw+84yHUsTXP0acNKpa3Vf
-         5OMep0Bz7MwUf3TM1hwPX1NcYNVjblwmS1BPpAnrNQjFo20X/Appmn54W7Pa1iU8RMa1
-         96Jw==
+        bh=f1kHrX6yr8618+B1fyR7WDZRA65nQgxP/8qCsSCQ9UM=;
+        b=UH9dw5Jz31gD3qRw5Nf/4xSSYMkmxyqOwzhExJ/BbU/S5FMUehvJ0nU3DUz/YGZloD
+         oUdfd8ZRJi5CL2bGWYoQHKZRQTjqImXBeAKRlB54AkUM6Qzb7dfljUkYVmRn7oNeXkoa
+         525NphYNtno0VcqenWlwNS2yBB7W35nP1v2sitMjonk6yl2ZWpX/wvWDjlreyz4Nu+Au
+         r4UWxJ8vysjWbcG6i7g0VTTU//wrF85KWbLothDBXe80B8JOG9A5GXifGRyWc1WGFpGo
+         hKS/T6PBl0dJP5Gk7JDgFu2p5/CPkNgpMLLszAScV3+6CS0yikc0jOjTRltNO9Q4SMI7
+         IwHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bJgIjqnzBpjDCHcIaR7Lgo3X/dn0+4y3mN89lG2WtHQ=;
-        b=I9qlzGq/QqRYp0bu1WQbhkjcRLlXjHcQdLC7gIUE4ixL+Oho5KGwLn4cgm7SQXs+V7
-         6Yq/0mDmnf23Kao57Rt9j6UoawdivhcpYqpQF3XACeOM50qFLxwN25OGMFrJ/Ee905KG
-         AWApiXaqAK3wr9HERARiYvbzGPoQpn678hlvgNLMUtLgHucf15ar40Q3y/VMKgcax2x9
-         0/8DGwRLzhLcjq38yjI3TZZLDUiW3mQKsy78h/TaiqRqkA9hw3Kev8MR4yE+NI/fmgIP
-         4IHOAktAUw3Lek72TqepdWJmaBmrfa4zJ3vJ3qTGSaKv0C5Q9w6cfrG8D2T9JwJG7gIe
-         l/TQ==
-X-Gm-Message-State: AOUpUlFaSYVBIC7cJueN28uy8XqhmPpymb3eyDlVZj2Ownn0OOw4RcUj
-        Q158tLz26MqexGvXYW+4fL0=
-X-Google-Smtp-Source: AAOMgpfki2+qapIrcWsb+vNLMctnfAWGhGDrriu4jlz88nm1luWAP4GGrLG42kranGiGKgJcPwPAlw==
-X-Received: by 2002:a17:902:e18d:: with SMTP id cd13-v6mr1499792plb.305.1533199385688;
-        Thu, 02 Aug 2018 01:43:05 -0700 (PDT)
+        bh=f1kHrX6yr8618+B1fyR7WDZRA65nQgxP/8qCsSCQ9UM=;
+        b=mPoc0Z/OLGEDBtHP7Ln6I1oLJiCFR5kwWOPM38Gfv/0GUTab4qdV0zo344BQxpiIrw
+         26hNsvUZ15nFVjU7ajRE7BpxlsJGH+ug2NaN82TpU0BZQel27j0KnJsHhPFEGnrv9ApA
+         oFNk5ns7NFo8PuKIFiy7ve+u5MbMRLuDd+VlcjDCIZuVAcztLIx8jw5o3urGpCwDjlQB
+         MmeMzDx8VWZ1HfFhJOFwvAFAAooDLx8gGOkTuhK6G9EqRJscL8euAPeRGJaCMyqQpPhC
+         AATqdti6IkG6+DwiDRjwudXv1GZhiycd3Yr1HDw10YbCyLMqhAuJX40Tx+4B7CUl1RiP
+         KQVQ==
+X-Gm-Message-State: AOUpUlFvP4s/lhx8kLck69U4L7sYnh7IR8u4hnT+OKlZ065XGQKVoz4a
+        hF17yIYFia+NzjqwUgjYEFc=
+X-Google-Smtp-Source: AAOMgpdu9QXQxVvfV97h2YTmBsCmtIpnHs/hnaoAOgSkfAQDNA3ebAJn7yTxJs8Qc1QpqF2R5D+onw==
+X-Received: by 2002:a63:6188:: with SMTP id v130-v6mr1849791pgb.100.1533199386852;
+        Thu, 02 Aug 2018 01:43:06 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.43.04
+        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.43.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 01:43:05 -0700 (PDT)
+        Thu, 02 Aug 2018 01:43:06 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 5/8] staging: gasket: core: add subsystem and device info to error logs
-Date:   Thu,  2 Aug 2018 01:42:42 -0700
-Message-Id: <20180802084245.239689-6-toddpoynor@gmail.com>
+Subject: [PATCH 6/8] staging: gasket: remove "reset type" param from framework
+Date:   Thu,  2 Aug 2018 01:42:43 -0700
+Message-Id: <20180802084245.239689-7-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180802084245.239689-1-toddpoynor@gmail.com>
 References: <20180802084245.239689-1-toddpoynor@gmail.com>
@@ -81,130 +81,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Identify gasket as the subsystem printing various error messages.
-Add the driver name to appropriate messages to indicate which driver
-has a problem.
+The "type of reset" parameter to the gasket device reset APIs isn't
+required by the only gasket device submitted upstream, apex.
+
+The framework documents the param as private to the device driver and a
+pass-through at the gasket layer, but the gasket core calls the device
+driver with a hardcoded reset type of zero, which is not documented as
+having a predefined meaning.
+
+In light of all this, remove the reset type parameter from the
+framework.  Remove the reset ioctl reset type parameter, and bump the
+framework version number to reflect the interface change.
 
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ drivers/staging/gasket/gasket.h           |  4 ++--
+ drivers/staging/gasket/gasket_constants.h |  2 +-
+ drivers/staging/gasket/gasket_core.c      | 11 +++++------
+ drivers/staging/gasket/gasket_core.h      | 13 +++----------
+ drivers/staging/gasket/gasket_ioctl.c     |  3 +--
+ 5 files changed, 12 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/staging/gasket/gasket.h b/drivers/staging/gasket/gasket.h
+index 9f709f0c5a2bb..a0f065c517a52 100644
+--- a/drivers/staging/gasket/gasket.h
++++ b/drivers/staging/gasket/gasket.h
+@@ -52,8 +52,8 @@ struct gasket_coherent_alloc_config_ioctl {
+ /* Base number for all Gasket-common IOCTLs */
+ #define GASKET_IOCTL_BASE 0xDC
+ 
+-/* Reset the device using the specified reset type. */
+-#define GASKET_IOCTL_RESET _IOW(GASKET_IOCTL_BASE, 0, unsigned long)
++/* Reset the device. */
++#define GASKET_IOCTL_RESET _IO(GASKET_IOCTL_BASE, 0)
+ 
+ /* Associate the specified [event]fd with the specified interrupt. */
+ #define GASKET_IOCTL_SET_EVENTFD                                               \
+diff --git a/drivers/staging/gasket/gasket_constants.h b/drivers/staging/gasket/gasket_constants.h
+index 82ed3f21e8aed..50d87c7b178c2 100644
+--- a/drivers/staging/gasket/gasket_constants.h
++++ b/drivers/staging/gasket/gasket_constants.h
+@@ -3,7 +3,7 @@
+ #ifndef __GASKET_CONSTANTS_H__
+ #define __GASKET_CONSTANTS_H__
+ 
+-#define GASKET_FRAMEWORK_VERSION "1.1.1"
++#define GASKET_FRAMEWORK_VERSION "1.1.2"
+ 
+ /*
+  * The maximum number of simultaneous device types supported by the framework.
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 36c077fffc41c..19331feb9b09f 100644
+index 19331feb9b09f..99994e30b154b 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -160,7 +160,7 @@ static int gasket_find_dev_slot(struct gasket_internal_desc *internal_desc,
- 	for (i = 0; i < GASKET_DEV_MAX; i++) {
- 		if (internal_desc->devs[i] &&
- 		    strcmp(internal_desc->devs[i]->kobj_name, kobj_name) == 0) {
--			pr_err("Duplicate device %s\n", kobj_name);
-+			pr_err("gasket: Duplicate device %s\n", kobj_name);
- 			mutex_unlock(&internal_desc->mutex);
- 			return -EBUSY;
- 		}
-@@ -173,7 +173,8 @@ static int gasket_find_dev_slot(struct gasket_internal_desc *internal_desc,
- 	}
+@@ -1295,7 +1295,7 @@ static int gasket_release(struct inode *inode, struct file *file)
+ 			ownership->owner = 0;
  
- 	if (i == GASKET_DEV_MAX) {
--		pr_err("Too many registered devices; max %d\n", GASKET_DEV_MAX);
-+		pr_err("gasket: Too many registered devices, max %d\n",
-+		       GASKET_DEV_MAX);
- 		mutex_unlock(&internal_desc->mutex);
- 		return -EBUSY;
- 	}
-@@ -208,7 +209,7 @@ static int gasket_alloc_dev(struct gasket_internal_desc *internal_desc,
+ 			/* Forces chip reset before we unmap the page tables. */
+-			driver_desc->device_reset_cb(gasket_dev, 0);
++			driver_desc->device_reset_cb(gasket_dev);
  
- 	gasket_dev = *pdev = kzalloc(sizeof(*gasket_dev), GFP_KERNEL);
- 	if (!gasket_dev) {
--		pr_err("no memory for device\n");
-+		pr_err("gasket: no memory for device %s\n",  kobj_name);
- 		return -ENOMEM;
- 	}
- 	internal_desc->devs[dev_idx] = gasket_dev;
-@@ -1464,7 +1465,7 @@ static int gasket_pci_probe(struct pci_dev *pci_dev,
- 	internal_desc = lookup_internal_desc(pci_dev);
- 	mutex_unlock(&g_mutex);
- 	if (!internal_desc) {
--		pr_err("PCI probe called for unknown driver type\n");
-+		pr_err("gasket: PCI probe called for unknown driver type\n");
- 		return -ENODEV;
- 	}
+ 			for (i = 0; i < driver_desc->num_page_tables; ++i) {
+ 				gasket_page_table_unmap_all(gasket_dev->page_table[i]);
+@@ -1623,18 +1623,18 @@ const char *gasket_num_name_lookup(uint num,
+ }
+ EXPORT_SYMBOL(gasket_num_name_lookup);
  
-@@ -1476,7 +1477,7 @@ static int gasket_pci_probe(struct pci_dev *pci_dev,
- 		return ret;
- 	gasket_dev->pci_dev = pci_dev_get(pci_dev);
- 	if (IS_ERR_OR_NULL(gasket_dev->dev_info.device)) {
--		pr_err("Cannot create %s device %s [ret = %ld]\n",
-+		pr_err("gasket: Cannot create %s device %s [ret = %ld]\n",
- 		       driver_desc->name, gasket_dev->dev_info.name,
- 		       PTR_ERR(gasket_dev->dev_info.device));
- 		ret = -ENODEV;
-@@ -1523,7 +1524,7 @@ static int gasket_pci_probe(struct pci_dev *pci_dev,
+-int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type)
++int gasket_reset(struct gasket_dev *gasket_dev)
+ {
+ 	int ret;
  
- 	ret = gasket_enable_dev(internal_desc, gasket_dev);
+ 	mutex_lock(&gasket_dev->mutex);
+-	ret = gasket_reset_nolock(gasket_dev, reset_type);
++	ret = gasket_reset_nolock(gasket_dev);
+ 	mutex_unlock(&gasket_dev->mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(gasket_reset);
+ 
+-int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
++int gasket_reset_nolock(struct gasket_dev *gasket_dev)
+ {
+ 	int ret;
+ 	int i;
+@@ -1644,8 +1644,7 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
+ 	if (!driver_desc->device_reset_cb)
+ 		return 0;
+ 
+-	/* Perform a device reset of the requested type. */
+-	ret = driver_desc->device_reset_cb(gasket_dev, reset_type);
++	ret = driver_desc->device_reset_cb(gasket_dev);
  	if (ret) {
--		pr_err("cannot setup %s device\n", driver_desc->name);
-+		pr_err("gasket: cannot setup %s device\n", driver_desc->name);
- 		gasket_disable_dev(gasket_dev);
- 		goto fail5;
- 	}
-@@ -1743,7 +1744,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
+ 		dev_dbg(gasket_dev->dev, "Device reset cb returned %d.\n",
+ 			ret);
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 713bf42de41a4..67f5960943a8a 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -580,17 +580,12 @@ struct gasket_driver_desc {
+ 	/*
+ 	 * device_reset_cb: Reset the hardware in question.
+ 	 * @dev: Pointer to the gasket_dev structure for this device.
+-	 * @type: Integer representing reset type. (All
+-	 * Gasket resets have an integer representing their type
+-	 * defined in (device)_ioctl.h; the specific resets are
+-	 * device-dependent, but are handled in the device-specific
+-	 * callback anyways.)
+ 	 *
+ 	 * Called by reset ioctls. This function should not
+ 	 * lock the gasket_dev mutex. It should return 0 on success
+ 	 * and an error on failure.
+ 	 */
+-	int (*device_reset_cb)(struct gasket_dev *dev, uint reset_type);
++	int (*device_reset_cb)(struct gasket_dev *dev);
+ };
  
- 	for (i = 0; i < GASKET_FRAMEWORK_DESC_MAX; i++) {
- 		if (g_descs[i].driver_desc == driver_desc) {
--			pr_err("%s driver already loaded/registered\n",
-+			pr_err("gasket: %s driver already loaded/registered\n",
- 			       driver_desc->name);
- 			mutex_unlock(&g_mutex);
- 			return -EBUSY;
-@@ -1761,7 +1762,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 	mutex_unlock(&g_mutex);
+ /*
+@@ -615,15 +610,13 @@ void gasket_unregister_device(const struct gasket_driver_desc *desc);
+ /*
+  * Reset the Gasket device.
+  * @gasket_dev: Gasket device struct.
+- * @reset_type: Uint representing requested reset type. Should be
+- * valid in the underlying callback.
+  *
+  * Calls device_reset_cb. Returns 0 on success and an error code othewrise.
+  * gasket_reset_nolock will not lock the mutex, gasket_reset will.
+  *
+  */
+-int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type);
+-int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type);
++int gasket_reset(struct gasket_dev *gasket_dev);
++int gasket_reset_nolock(struct gasket_dev *gasket_dev);
  
- 	if (desc_idx == -1) {
--		pr_err("Too many Gasket drivers loaded: %d\n",
-+		pr_err("gasket: too many drivers loaded, max %d\n",
- 		       GASKET_FRAMEWORK_DESC_MAX);
- 		return -EBUSY;
- 	}
-@@ -1778,7 +1779,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 		class_create(driver_desc->module, driver_desc->name);
- 
- 	if (IS_ERR(internal->class)) {
--		pr_err("Cannot register %s class [ret=%ld]\n",
-+		pr_err("gasket: Cannot register %s class [ret=%ld]\n",
- 		       driver_desc->name, PTR_ERR(internal->class));
- 		ret = PTR_ERR(internal->class);
- 		goto unregister_gasket_driver;
-@@ -1791,7 +1792,8 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 	ret = __pci_register_driver(&internal->pci, driver_desc->module,
- 				    driver_desc->name);
- 	if (ret) {
--		pr_err("cannot register pci driver [ret=%d]\n", ret);
-+		pr_err("gasket: cannot register %s pci driver [ret=%d]\n",
-+		       driver_desc->name, ret);
- 		goto fail1;
- 	}
- 
-@@ -1799,7 +1801,8 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 					   driver_desc->minor), GASKET_DEV_MAX,
- 				     driver_desc->name);
- 	if (ret) {
--		pr_err("cannot register char driver [ret=%d]\n", ret);
-+		pr_err("gasket: cannot register %s char driver [ret=%d]\n",
-+		       driver_desc->name, ret);
- 		goto fail2;
- 	}
- 
-@@ -1840,7 +1843,7 @@ void gasket_unregister_device(const struct gasket_driver_desc *driver_desc)
- 	mutex_unlock(&g_mutex);
- 
- 	if (!internal_desc) {
--		pr_err("request to unregister unknown desc: %s, %d:%d\n",
-+		pr_err("gasket: request to unregister unknown desc: %s, %d:%d\n",
- 		       driver_desc->name, driver_desc->major,
- 		       driver_desc->minor);
- 		return;
+ /*
+  * Memory management functions. These will likely be spun off into their own
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index d3397cc74e69f..0ca48e688818f 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -304,8 +304,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
+ 	 */
+ 	switch (cmd) {
+ 	case GASKET_IOCTL_RESET:
+-		trace_gasket_ioctl_integer_data(arg);
+-		retval = gasket_reset(gasket_dev, arg);
++		retval = gasket_reset(gasket_dev);
+ 		break;
+ 	case GASKET_IOCTL_SET_EVENTFD:
+ 		retval = gasket_set_event_fd(gasket_dev, argp);
 -- 
 2.18.0.597.ga71716f1ad-goog
 
