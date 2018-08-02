@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1E2C28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF94AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4D120862
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80B9520862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:40:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNUj7N4h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4D120862
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx8rIRHn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B9520862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbeHBD2X (ORCPT
+        id S1732427AbeHBD2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 23:28:23 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40429 "EHLO
+        Wed, 1 Aug 2018 23:28:51 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:37035 "EHLO
         mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729460AbeHBD2X (ORCPT
+        with ESMTP id S1729460AbeHBD2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 23:28:23 -0400
-Received: by mail-oi0-f68.google.com with SMTP id w126-v6so1024530oie.7;
-        Wed, 01 Aug 2018 18:39:43 -0700 (PDT)
+        Wed, 1 Aug 2018 23:28:50 -0400
+Received: by mail-oi0-f68.google.com with SMTP id j205-v6so1054731oib.4;
+        Wed, 01 Aug 2018 18:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=x8GIIBDA958XGfKhaWswtFtR0MNbYZNc8MWzwxUGzuI=;
-        b=lNUj7N4hLl2q0l87PTsMGXFepUUAVqpsWxHGYZ7PeAAfWy0chi2ggqYUP68FNdp5fA
-         oMDIFAptYrqd9x0L6EfYfElHC8ULzTrZiTZwWgx0Ww4OelQcVLnopGWlc2Cczs6aNMme
-         p8LEpiV8UjL8Md6Y8KBiWA1oDup/84kVcAyPOlC/yOUpEb5448b7r0OJRpLc4vmgXC8x
-         Q64wz17w7y2vANd/xW3SP1an9+hPDDP0TzxDj9Va1sbWfHG5CmV3RLCVi+sVeBSneZxm
-         s7BJLMRyOpKZORlkSQ9r4jHpRhxY1PL29mlQ8sqor9VzCUTn1ffvqZjJFQpUdjpA0dkp
-         huPQ==
+        bh=OinT7F/8R9NShIzxO4YtCSQ3Frhns9QDjgjJnu0Mixg=;
+        b=fx8rIRHnibls/u3VzAhikwz4vS5sU4xXzylunW0BA+vxywNeV/G7bHylu1YS8inNaa
+         dBUHRsnNHgJBH7qIQ9LIZ7Z98w3Z3QTMfbNtWXHpMCzLV4g8McbvTAQPzUhw0iFQl2av
+         Dr7wgir9knHCihfCz1eiuW4vginQYGJ7OCbNfZAhx7y+mSImkWuf1Tn3+0daumZkF8+P
+         S0MTXpk8Nmv67WYvewYnICIDQDCkrJkyyLyO7/wKCe68yIfk17w5M1OH/UG95t8sJEP6
+         duTVNwYPh80N5BZoPDlwgkQ94XxnOtgAI7M3QBMoWTkgO3qs0FGf8t7WVEXwUfVDf650
+         +ibA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=x8GIIBDA958XGfKhaWswtFtR0MNbYZNc8MWzwxUGzuI=;
-        b=SyFF4If2fwLWdzwPbsZnVbcYjFied699txxPE+xALUc/1Jb3ZRPvs/w62z0qv9Harb
-         GJTLBY5IsI/KddXOngM+OG5tfp074sZ0z3IY25+TxVQCCh/UwRaMLcEV3xfR07xFJ5XS
-         dEb8wozhMuYzcuh7zo6GqK3WSOESjmDhwO3azigwWfYpDzWCZYuKdhwMZf9bwjGvc0ml
-         2fBr5t8CYAivn8VEmDFFc8vqrMZeJLz4+EoGSnH9VuPkbTNsHwL9z6DY06iGkwtxklaz
-         z3CyqK0IcROr5wdY0oJ1tDOVwD/ssnR+QO6B9RZuodJQ7KzpN4Dyq7F6AQzA6e4csPrA
-         F37Q==
-X-Gm-Message-State: AOUpUlF84XPfCmE7cpeCEm8bsxbEP/dBaysQhehAdt3DMa+4N30gjZnS
-        FwjPTdwYJBnFHViHdZQr9y1bWgbV
-X-Google-Smtp-Source: AAOMgpccoUp0CEFClucsrFegEsL/datGDoJdtXxmqffn7jgCcOOtcFLhMPdc5DxGI7rPBwf1KAcVmw==
-X-Received: by 2002:aca:45d6:: with SMTP id s205-v6mr772485oia.147.1533173983416;
-        Wed, 01 Aug 2018 18:39:43 -0700 (PDT)
+        bh=OinT7F/8R9NShIzxO4YtCSQ3Frhns9QDjgjJnu0Mixg=;
+        b=GT8GRQVXzfrXY6xYNKDTPOulO1NnrEdfvzikHfW5CqJAxH+15W+ziqItf5Sish86k0
+         NPw6yoqa82jhJC5IWXO+yVZprapnu16l/crKO0Xk/AyKjAWUkSYSPPf1s5gEzT6lS8UX
+         NOtNfgEgJePDSsDjaT8XQUi8qnCA2t/MleiLmpLsfG24c88cX66tnwnJEoSRz3Puabq+
+         eF67o7XQ1dq7fCpWSWyo+jKb4XjJ1JDyGAtUcelCv4DoNCe3GijbmErwpqaNCrw1Dwo/
+         7QwabZ3jA8LSGhBOKylM8Iqb+UFgY1ayQ8iq8w+f4n1uHb0OaHQvDjyNZAURWPq4nUYt
+         XswQ==
+X-Gm-Message-State: AOUpUlErqJ7nNQmORHUq+arfkcqe/vJOkvZxDQLw7pFEUZjIrg1HUmht
+        HrTOVmUlbtkUPlbNs6AG++M=
+X-Google-Smtp-Source: AAOMgpfZ0XNJX7HupA80WzxgJAshL7je0WMDju0yrsrRvqwKaIkshDYu4N3YnfpjXer2RXihC9qUVQ==
+X-Received: by 2002:aca:c70f:: with SMTP id x15-v6mr754822oif.97.1533174010752;
+        Wed, 01 Aug 2018 18:40:10 -0700 (PDT)
 Received: from [192.168.1.3] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id w204-v6sm1276755oif.2.2018.08.01.18.39.40
+        by smtp.gmail.com with ESMTPSA id w204-v6sm1279474oif.2.2018.08.01.18.40.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Aug 2018 18:39:41 -0700 (PDT)
-Subject: Re: [PATCH v4 5/8] net: phy: Use devm api for mdio bus allocation in
- bcm iproc mdio mux
+        Wed, 01 Aug 2018 18:40:09 -0700 (PDT)
+Subject: Re: [PATCH v4 7/8] net: phy: Add support to configure clock in
+ Broadcom iProc mdio mux
 To:     Arun Parameswaran <arun.parameswaran@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
@@ -75,7 +75,7 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com
 References: <1533171233-14557-1-git-send-email-arun.parameswaran@broadcom.com>
- <1533171233-14557-6-git-send-email-arun.parameswaran@broadcom.com>
+ <1533171233-14557-8-git-send-email-arun.parameswaran@broadcom.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -111,12 +111,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <9bd09f10-895b-23cd-cf42-64a942cd266c@gmail.com>
-Date:   Wed, 1 Aug 2018 18:39:38 -0700
+Message-ID: <a63d5c49-3657-c8f8-ce86-6c775a51de24@gmail.com>
+Date:   Wed, 1 Aug 2018 18:40:06 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1533171233-14557-6-git-send-email-arun.parameswaran@broadcom.com>
+In-Reply-To: <1533171233-14557-8-git-send-email-arun.parameswaran@broadcom.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -128,8 +128,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 08/01/2018 05:53 PM, Arun Parameswaran wrote:
-> Use devm_mdiobus_alloc() instead of mdiobus_alloc() in the Broadcom
-> iProc mdio mux driver.
+> Add support to configure the internal rate adjust register based on the
+> core clock supplied through device tree in the Broadcom iProc mdio mux.
+> 
+> The operating frequency of the mdio mux block is 11MHz. This is derrived
+> by dividing the clock to the mdio mux with the rate adjust register.
+> 
+> In some SoC's the default values of the rate adjust register do not yield
+> 11MHz. These SoC's are required to specify the clock via the device tree
+> for proper operation.
 > 
 > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
 
