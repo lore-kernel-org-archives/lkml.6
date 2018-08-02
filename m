@@ -2,93 +2,80 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B30BEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A5AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 691072098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:03:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ioCpSXI2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Erk05jGX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691072098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 308AF20BED
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 07:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308AF20BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeHBIw5 (ORCPT
+        id S1728708AbeHBIxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:52:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43964 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbeHBIw4 (ORCPT
+        Thu, 2 Aug 2018 04:53:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57094 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbeHBIxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:52:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 003D560B15; Thu,  2 Aug 2018 07:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533193392;
-        bh=Jjgfyv+dQVVbyiQpmzCw+qM7xLiNSo29TtfRsgLwfE0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ioCpSXI2uHC8EoY4SvmSB2HCh23BIf+iih8CLkbu+x+KibKsd5kazXc381LVbHib1
-         49X8bfvIACvyfvd7q+MKQws6QBxNudg/QHBLYn2Ohltpvrg3zbTlBztiYghlvflY+o
-         SCsaGGB5JBugJ7zfZCkgs4vJ5v6IelEC4U6fmCrU=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4B3E86044B;
-        Thu,  2 Aug 2018 07:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533193390;
-        bh=Jjgfyv+dQVVbyiQpmzCw+qM7xLiNSo29TtfRsgLwfE0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Erk05jGXK4x7w8pXPryU2zU1asjiH1bNxcuZNE5hROqxAApPJVtTzct//VG6mmQpH
-         NAf7sGfKtn2tExgLFJxtj9s8WHYN26OpPZvWuOQRXa1vrlQG+3OLk311Xk/nHMdYk0
-         O1m+BrOiGn32J9KYwkxfGXIxd8sH2wL7+wLXYVkw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B3E86044B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     plai@codeaurora.org, bgoswami@codeaurora.org, sfr@canb.auug.org.au,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH] ASoC: qcom: Fix unmet dependency warning for SND_SOC_SDM845
-Date:   Thu,  2 Aug 2018 12:32:59 +0530
-Message-Id: <1533193379-1125-1-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 2 Aug 2018 04:53:36 -0400
+Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2B8940C;
+        Thu,  2 Aug 2018 07:03:50 +0000 (UTC)
+Date:   Thu, 2 Aug 2018 09:03:48 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 4.17 000/336] 4.17.12-stable review
+Message-ID: <20180802070348.GA24944@kroah.com>
+References: <20180801165028.930831994@linuxfoundation.org>
+ <CA+G9fYtXfNtufXr=_w4Rdq-WaYXb52yeY7x58k5oMJcHP28r7Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYtXfNtufXr=_w4Rdq-WaYXb52yeY7x58k5oMJcHP28r7Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DEPENDS_ON QCOM_APR for SND_SOC_SDM845 to fix the
-warning: unmet direct dependencies detected for
-SND_SOC_QDSP6.
+On Thu, Aug 02, 2018 at 12:27:24PM +0530, Naresh Kamboju wrote:
+> On 1 August 2018 at 22:15, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.17.12 release.
+> > There are 336 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri Aug  3 16:49:21 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.12-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm and x86_64.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Wonderful, thanks for testing all three of these and letting me know.
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 3507308..5f03312 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -93,6 +93,7 @@ config SND_SOC_MSM8996
- 
- config SND_SOC_SDM845
- 	tristate "SoC Machine driver for SDM845 boards"
-+	depends on QCOM_APR
- 	select SND_SOC_QDSP6
- 	help
- 	  To add support for audio on Qualcomm Technologies Inc.
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+greg k-h
