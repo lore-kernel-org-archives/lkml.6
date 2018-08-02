@@ -6,88 +6,170 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C715DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F323C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 820B8208B0
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820B8208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C251F208B7
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C251F208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbeHBFfI (ORCPT
+        id S1726683AbeHBFg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 01:35:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10608 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726042AbeHBFfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 01:35:08 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 097F3D4FB405C;
-        Thu,  2 Aug 2018 11:46:00 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Thu, 2 Aug 2018
- 11:45:55 +0800
-Message-ID: <5B627E71.5020600@huawei.com>
-Date:   Thu, 2 Aug 2018 11:45:53 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 2 Aug 2018 01:36:26 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:5043 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726042AbeHBFgZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 01:36:25 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42966782"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 02 Aug 2018 11:47:16 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id D3ABA4B6ADE1;
+        Thu,  2 Aug 2018 11:47:14 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Thu, 2 Aug 2018 11:47:16 +0800
+Subject: Re: [PATCH v4 3/4] x86/boot/KASLR: Walk srat tables to filter
+ immovable memory
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+References: <20180723092908.32656-1-fanc.fnst@cn.fujitsu.com>
+ <20180723092908.32656-4-fanc.fnst@cn.fujitsu.com>
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <18d27595-43d8-d2a0-bfdf-bd731b77d1b9@cn.fujitsu.com>
+Date:   Thu, 2 Aug 2018 11:47:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-CC:     "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "fthain@telegraphics.com.au" <fthain@telegraphics.com.au>,
-        "schmitzmic@gmail.com" <schmitzmic@gmail.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "john.garry@huawei.com" <john.garry@huawei.com>
-Subject: Re: [PATCH] scsi:NCR5380: remove same check condition in NCR5380_select
-References: <1533179408-20631-1-git-send-email-zhongjiang@huawei.com> <c99a75a2905c1eef50f94ccc0871c36af431e21a.camel@wdc.com>
-In-Reply-To: <c99a75a2905c1eef50f94ccc0871c36af431e21a.camel@wdc.com>
-Content-Type: text/plain; charset="UTF-7"
+In-Reply-To: <20180723092908.32656-4-fanc.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: D3ABA4B6ADE1.AE3B9
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/2 11:26, Bart Van Assche wrote:
-> On Thu, 2018-08-02 at 11:10 +ACs-0800, zhong jiang wrote:
->> The same check condition is redundant, so remove one of them.
->>
->> Signed-off-by: zhong jiang <zhongjiang+AEA-huawei.com>
->> ---
->>  drivers/scsi/NCR5380.c +AHw- 3 +ACs---
->>  1 file changed, 1 insertion(+ACs-), 2 deletions(-)
->>
->> diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
->> index 90ea0f5..2ecaf3f 100644
->> --- a/drivers/scsi/NCR5380.c
->> +ACsAKwAr- b/drivers/scsi/NCR5380.c
->> +AEAAQA- -999,8 +ACs-999,7 +AEAAQA- static struct scsi+AF8-cmnd +ACo-NCR5380+AF8-select(struct Scsi+AF8-Host +ACo-instance,
->>  
->>  	/+ACo- Check for lost arbitration +ACo-/
->>  	if ((NCR5380+AF8-read(INITIATOR+AF8-COMMAND+AF8-REG) +ACY- ICR+AF8-ARBITRATION+AF8-LOST) +AHwAfA-
->> -	    (NCR5380+AF8-read(CURRENT+AF8-SCSI+AF8-DATA+AF8-REG) +ACY- hostdata->id+AF8-higher+AF8-mask) +AHwAfA-
->> -	    (NCR5380+AF8-read(INITIATOR+AF8-COMMAND+AF8-REG) +ACY- ICR+AF8-ARBITRATION+AF8-LOST)) +AHs-
->> +ACs-	    (NCR5380+AF8-read(CURRENT+AF8-SCSI+AF8-DATA+AF8-REG) +ACY- hostdata->id+AF8-higher+AF8-mask)) +AHs-
->>  		NCR5380+AF8-write(MODE+AF8-REG, MR+AF8-BASE);
->>  		dsprintk(NDEBUG+AF8-ARBITRATION, instance, "lost arbitration, deasserting MR+AF8-ARBITRATE+AFw-n");
->>  		spin+AF8-lock+AF8-irq(+ACY-hostdata->lock);
-> Has this patch been tested?
- I check the issue by doubletest.cocci. Just review the code by myself. Maybe I miss something else.
- please tell let me know if you any objection.
+Hi Fan,
 
- Thanks
- zhong jiang
-> Thanks,
->
-> Bart.
->
->
->
+At 07/23/2018 05:29 PM, Chao Fan wrote:
+> If 'CONFIG_MEMORY_HOTREMOVE' specified, walk the acpi srat memory
+> tables, store the immovable memory regions, so that kaslr can get
+> the information abouth where can be selected or not.
+> If 'CONFIG_MEMORY_HOTREMOVE' not specified, go on the old code.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>   arch/x86/boot/compressed/kaslr.c | 55 ++++++++++++++++++++++++++++++++
+>   1 file changed, 55 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 531c9876f573..4705682caf1f 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -31,6 +31,7 @@
+>   
+>   #include "misc.h"
+>   #include "error.h"
+> +#include "acpitb.h"
+>   #include "../string.h"
+>   
+>   #include <generated/compile.h>
+> @@ -104,6 +105,14 @@ static bool memmap_too_large;
+>   /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+>   unsigned long long mem_limit = ULLONG_MAX;
+>   
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/* Store the immovable memory regions */
+> +struct mem_vector immovable_mem[];
+> +
+> +/* Store the amount of immovable memory regions */
+> +static int num_immovable_mem;
+> +#endif
+> +
+>   
+>   enum mem_avoid_index {
+>   	MEM_AVOID_ZO_RANGE = 0,
+> @@ -298,6 +307,47 @@ static int handle_mem_options(void)
+>   	return 0;
+>   }
+>   
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +static void handle_immovable_mem(void)
+> +{
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_size;
+> +	unsigned long table_end;
+> +	int i = 0;
+> +
+> +	table_header = get_acpi_srat_table();
+> +
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
+> +	table_size = sizeof(struct acpi_subtable_header);
+
+table_size isn't used, can be remove.
+
+> +	while (((unsigned long)table) + table->length < table_end) {
+> +		if (table->type == 1) {
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+
+need a check(i < MAX_NUMNODES*2) before doing that in case of
+__IndexOutOfBoundsException__ even if it may be impossible in ACPI.
+
+Thanks,
+	dou
+> +			}
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
+> +#endif
+> +
+>   /*
+>    * In theory, KASLR can put the kernel anywhere in the range of [16M, 64T).
+>    * The mem_avoid array is used to store the ranges that need to be avoided
+> @@ -421,6 +471,11 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+>   	/* Mark the memmap regions we need to avoid */
+>   	handle_mem_options();
+>   
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +	/* Mark the immovable regions we need to choose */
+> +	handle_immovable_mem();
+> +#endif
+> +
+>   #ifdef CONFIG_X86_VERBOSE_BOOTUP
+>   	/* Make sure video RAM can be used. */
+>   	add_identity_map(0, PMD_SIZE);
+> 
 
 
