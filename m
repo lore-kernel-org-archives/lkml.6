@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C191EC46463
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6435FC46463
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E5182147E
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1191F214D5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB1up3UP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E5182147E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkhuKczP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1191F214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbeHBKdR (ORCPT
+        id S1732069AbeHBKd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:33:17 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44875 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbeHBKdR (ORCPT
+        Thu, 2 Aug 2018 06:33:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43014 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729764AbeHBKdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:33:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so807022pgp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:09 -0700 (PDT)
+        Thu, 2 Aug 2018 06:33:16 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j26-v6so888005pfi.10
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=onxrZC2lcOIMrbQCqvJ5HNoaXo2Tg/ND8y+h2EPTHdg=;
-        b=gB1up3UPLlg7b7apDAbE7/aJHhLAoBIjLjmUVvAQeVh84HgPTEtqsmBRnFjIYr4Raz
-         s17WPXEPg7NNJYHq4K9eYeUBHTu+QV4X//FnE0/+mLIfB6xAmIJnkr/Ykwudc0zycJfv
-         cEQmBr3uuUL1yqMUDRRO8bCfJuG7izoW3ptvb+jJ7a24GQ7/JdwIdTbQtJolevlILO2x
-         5sCnXhp0Y8Psx3x43qEiC3LeH9rYSJ/qWQPIE8Bz/3dYy1iua+kkTPej2Q72/b4ciQ6o
-         1CXGQgfQdxnmNGj8ExS7/kZSDu3wZP3SI6u/ELlhtYyqIxJl2mHpJRD1GPB3X6C9MSQ5
-         6X+w==
+        bh=mnogcxiN/xocxeCQncF+qzndWxKUqsxwngLucgmExa8=;
+        b=CkhuKczPq0DgtjkF2xx9WCOsELxFeDG7NdcQdsixuYyumrVTn0CUdFrZmRsS4jkg5v
+         9vkB6sN5upnRhjKZuVBqV1vRiEWZgCt8WopAdxFFT/TW/bGDRa/Q55kZltjV5+l5WqL7
+         ulyG1HVuX1OT3/8ew29Bk4XYdvHiK/bds3bDrS3608yVvNZAKQ8tyj4gKj488Uas66y1
+         AI5/NfSWmm/cDykNoU6YRyMa/s0Wd/Hl3bDCpgRNwFRVxFT9awxv2ELVauklOyDgtlv6
+         oTFiamv+rE9tkFp4wyY+4mDGDcyR4v5dRN1yAXXlCRLqetFqw6tqWdd5WYH4rS9JB3YI
+         33Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=onxrZC2lcOIMrbQCqvJ5HNoaXo2Tg/ND8y+h2EPTHdg=;
-        b=VIZ7UP+x/OvMLrJ0UJ8a5MKFoSNyHHcyYEWRMDAQfLhojIuo8Du/zyVcX1mAVjlHBD
-         jSGFLLT8PXSU67ekdIZ6g/fA8FLT4s/No1aK1bww3npZ8SH8dz1o+eoIBY3RORfYxpVb
-         zU4BI4Lodv1taqM0Wf+nFkeM8lLVGDMvZ+GSepAXepNAC44tC6/UE6KkQENmAy6RRe8G
-         QltV8Ki2GHjkdY/lPaPIiA9HrAsMmMFQKE/WRapsHSrZFOAHosJEp2pNQfsFVeDzhzV6
-         vWaVh6s4QlGta5Q/1oYvLB1ev75pNfWJnkpzgnjLOzGbz+jMloCykzWLqTAgfyLie9lM
-         2SVg==
-X-Gm-Message-State: AOUpUlE8Pam8Ch81vdZG1MvPc9PY78l3y6t0EO8+zkU+4xu3ZUdkYp/p
-        XqLSydpzLbL4axUJNtwEkc0=
-X-Google-Smtp-Source: AAOMgpc2kw4UQZFjbnp3ooZlGhC2dkhTvOXFAB/36gZ2c1HdqRmngKZgEFnN3++tnae/M1lU+fmkPQ==
-X-Received: by 2002:a63:c902:: with SMTP id o2-v6mr1840606pgg.118.1533199388719;
-        Thu, 02 Aug 2018 01:43:08 -0700 (PDT)
+        bh=mnogcxiN/xocxeCQncF+qzndWxKUqsxwngLucgmExa8=;
+        b=VR7A5HRms2rR5IBvEeOq6ZlGpV67jFOeW5yEeKt9IxE+q6Qqag73O26q6BrAZdbNry
+         97XrEs0DyLrg0wOeRxuea/B5CS5WEzHQz/P+FdYXEB03o9Wc//kECbBx76h1iV+DHB2m
+         L1oW3EhSCdhPkzc8kTIJ/kP+4JWw3fblMHAjOsSbwDSZ3TaRIhzmWY5ulZvd5Vv6KXeW
+         iOK6aZgyD3vSm/wAdisuLov99zuyQhP3/zJ7Y5G3tOLvR6cUyxjxs5ecGpj1SATg7h7/
+         x3204wl+9ADdqsl6hpCoouAjlMuoCESaT+xsEL4V2YNymUYXMYMNJ6xcCmJxzVnljfNO
+         UUgw==
+X-Gm-Message-State: AOUpUlE50l991ZwVkUDUxVK6OvarQJFlXRm4mZRV0nRuxLJ18hUuvLpt
+        Hdc+eGGJJYova3R2TM2K4y0=
+X-Google-Smtp-Source: AAOMgpd2Z4Hn7+OeT86WMELWNcDYtbEwXovcE4Pxxi2K0VvGNKbg5YWRsAUc4CCM17jhaqXs74KL9Q==
+X-Received: by 2002:a63:ec14:: with SMTP id j20-v6mr1819426pgh.28.1533199387738;
+        Thu, 02 Aug 2018 01:43:07 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.43.07
+        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.43.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 01:43:08 -0700 (PDT)
+        Thu, 02 Aug 2018 01:43:07 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 8/8] Revert "staging: gasket: core: hold reference to pci_dev while used"
-Date:   Thu,  2 Aug 2018 01:42:45 -0700
-Message-Id: <20180802084245.239689-9-toddpoynor@gmail.com>
+Subject: [PATCH 7/8] staging: gasket: apex: drop reset type param
+Date:   Thu,  2 Aug 2018 01:42:44 -0700
+Message-Id: <20180802084245.239689-8-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
 In-Reply-To: <20180802084245.239689-1-toddpoynor@gmail.com>
 References: <20180802084245.239689-1-toddpoynor@gmail.com>
@@ -81,38 +81,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-There's no need to take an additional reference on the pci_dev structure
-for the pointer copy saved in gasket data structures.
+Apex doesn't implement different types of resets based on the reset type
+param passed through the gasket layer or from userspace via the
+gasket_reset ioctl.  The reset type is dropped from the gasket framework
+in a previous patch due to a lack of present need and non-conforming use
+of this parameter by the framework.  Drop the parameter from the apex
+driver as well.
 
-This reverts commit 8dd8a48b9a7dae5493494a8603adddfdf1914716.
-
-Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/gasket/apex_driver.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 99994e30b154b..8c5574305f13b 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -253,7 +253,6 @@ static void gasket_free_dev(struct gasket_dev *gasket_dev)
- 	internal_desc->devs[gasket_dev->dev_idx] = NULL;
- 	mutex_unlock(&internal_desc->mutex);
- 	put_device(gasket_dev->dev);
--	pci_dev_put(gasket_dev->pci_dev);
- 	kfree(gasket_dev);
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index 7fd0dd609d037..42cef68eb4c19 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -56,10 +56,6 @@
+ 
+ #define APEX_EXTENDED_SHIFT 63 /* Extended address bit position. */
+ 
+-enum apex_reset_types {
+-	APEX_CHIP_REINIT_RESET = 3,
+-};
+-
+ /* Check reset 120 times */
+ #define APEX_RESET_RETRY 120
+ /* Wait 100 ms between checks. Total 12 sec wait maximum. */
+@@ -258,7 +254,7 @@ static int apex_get_status(struct gasket_dev *gasket_dev)
  }
  
-@@ -1475,7 +1474,7 @@ static int gasket_pci_probe(struct pci_dev *pci_dev,
- 	ret = gasket_alloc_dev(internal_desc, parent, &gasket_dev, kobj_name);
- 	if (ret)
- 		return ret;
--	gasket_dev->pci_dev = pci_dev_get(pci_dev);
-+	gasket_dev->pci_dev = pci_dev;
- 	if (IS_ERR_OR_NULL(gasket_dev->dev_info.device)) {
- 		pr_err("gasket: Cannot create %s device %s [ret = %ld]\n",
- 		       driver_desc->name, gasket_dev->dev_info.name,
+ /* Enter GCB reset state. */
+-static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
++static int apex_enter_reset(struct gasket_dev *gasket_dev)
+ {
+ 	if (bypass_top_level)
+ 		return 0;
+@@ -313,7 +309,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
+ }
+ 
+ /* Quit GCB reset state. */
+-static int apex_quit_reset(struct gasket_dev *gasket_dev, uint type)
++static int apex_quit_reset(struct gasket_dev *gasket_dev)
+ {
+ 	u32 val0, val1;
+ 
+@@ -413,7 +409,7 @@ static int apex_device_cleanup(struct gasket_dev *gasket_dev)
+ 		__func__, gasket_dev, hib_error, scalar_error);
+ 
+ 	if (allow_power_save)
+-		ret = apex_enter_reset(gasket_dev, APEX_CHIP_REINIT_RESET);
++		ret = apex_enter_reset(gasket_dev);
+ 
+ 	return ret;
+ }
+@@ -429,7 +425,7 @@ static bool is_gcb_in_reset(struct gasket_dev *gasket_dev)
+ }
+ 
+ /* Reset the hardware, then quit reset.  Called on device open. */
+-static int apex_reset(struct gasket_dev *gasket_dev, uint type)
++static int apex_reset(struct gasket_dev *gasket_dev)
+ {
+ 	int ret;
+ 
+@@ -442,11 +438,11 @@ static int apex_reset(struct gasket_dev *gasket_dev, uint type)
+ 		 */
+ 		dev_dbg(gasket_dev->dev, "%s: toggle reset\n", __func__);
+ 
+-		ret = apex_enter_reset(gasket_dev, type);
++		ret = apex_enter_reset(gasket_dev);
+ 		if (ret)
+ 			return ret;
+ 	}
+-	ret = apex_quit_reset(gasket_dev, type);
++	ret = apex_quit_reset(gasket_dev);
+ 
+ 	return ret;
+ }
+@@ -456,7 +452,7 @@ static int apex_add_dev_cb(struct gasket_dev *gasket_dev)
+ 	ulong page_table_ready, msix_table_ready;
+ 	int retries = 0;
+ 
+-	apex_reset(gasket_dev, 0);
++	apex_reset(gasket_dev);
+ 
+ 	while (retries < APEX_RESET_RETRY) {
+ 		page_table_ready =
+@@ -611,7 +607,7 @@ static int apex_sysfs_setup_cb(struct gasket_dev *gasket_dev)
+ /* On device open, perform a core reinit reset. */
+ static int apex_device_open_cb(struct gasket_dev *gasket_dev)
+ {
+-	return gasket_reset_nolock(gasket_dev, APEX_CHIP_REINIT_RESET);
++	return gasket_reset_nolock(gasket_dev);
+ }
+ 
+ static const struct pci_device_id apex_pci_ids[] = {
 -- 
 2.18.0.597.ga71716f1ad-goog
 
