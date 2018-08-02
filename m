@@ -2,167 +2,150 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E1DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FEAC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85ADB21566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnYvMMSG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85ADB21566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9402E2152D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 19:52:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9402E2152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbeHBVoi (ORCPT
+        id S1730196AbeHBVpA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 17:44:38 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:40216 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHBVoi (ORCPT
+        Thu, 2 Aug 2018 17:45:00 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.139]:39959 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726828AbeHBVpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 17:44:38 -0400
-Received: by mail-vk0-f68.google.com with SMTP id q184-v6so1632769vke.7;
-        Thu, 02 Aug 2018 12:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FFkZOuciTSWH3PXQg7FzWg2BCu6qD6mXF998zw61qDY=;
-        b=BnYvMMSGmR5xHE7WbIqqevTdqFp5mGvzuNbsoPXDgTpbuU4hUasZ1xsFVsBfxc6isK
-         8unO2/4F3tW+920hdI0qo0a63dn2IOV6tUs56XsGdsO6op4R+to74+zmwDGzQLlQ0D+p
-         rvV6kcH+Mr2nSLohav2dqPjK4fevFsAjnKklXIKhKFwuWuuQyFXkU+sbZ5ZT5ZlzXVP6
-         ThQ/uN8Ov8Vyhx6P1uWzeHZvNzeIr6+YBO/6CT7bW1aIS4fcHX+J6GuyHtktHx4s/bQT
-         vFYWXx2sx7xUAwnn3BxffUL2E+IIdNCjnJpTJfsDAQ03h5W09iQMb9BP8bcS1U+MKc9E
-         ZPrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FFkZOuciTSWH3PXQg7FzWg2BCu6qD6mXF998zw61qDY=;
-        b=uiJSTiAQj63lJbUir5O3g0kvK1oqr3gFdvQvAWVCBITJOJR6csS1JKcFvdLMrJY0R3
-         Wd3pHxyKqdK51YqHSpE6NKtLCg3xO8SMtRcZqdD+m7zFGEUVXrhwZ7jy5/x0daR0iAbQ
-         Z6B79SZCGtf0ngJP5SIqQRZUyQQDyM5vmNfumEZjJHkoWTc4COgxcJBJ7Mow4NxDHmmR
-         YN/eAVu/Ai5H7q2bYJY8CpOv4D48kzz1XB7RBNdfhVfBWEsHQOFqIuDmifEO1f+JKBBr
-         V2K424PMkxfNjblLFaJDbGQq+v5Rs4Z5pr+aux+itUMXpWJPeqk+4YVTJqWX7iR0nai8
-         eefQ==
-X-Gm-Message-State: AOUpUlE1lMIg/XRCoL4rTMsNfvJpLOsq8n2Io3zu00l+52gp3/dPDuhG
-        QGyf1U7u2WiX+KnfhlR4bIYWSqJAu2zk8TShYaM=
-X-Google-Smtp-Source: AAOMgpeZZrtygHxWyQNUJFAOUlhO8utaVgmYGdo0W2YKEpRTmzukSAKWe+zHbTYxyPJsTW8Ub6HuJKZB3oENfvBqMUg=
-X-Received: by 2002:a1f:920b:: with SMTP id u11-v6mr589875vkd.58.1533239521306;
- Thu, 02 Aug 2018 12:52:01 -0700 (PDT)
+        Thu, 2 Aug 2018 17:45:00 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id BB8B02B593A
+        for <linux-kernel@vger.kernel.org>; Thu,  2 Aug 2018 14:52:22 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id lJdKfo3IxbXuJlJdkfDwaq; Thu, 02 Aug 2018 14:52:21 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.61.218] (port=56534 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1flJdK-002EMC-IN; Thu, 02 Aug 2018 14:51:38 -0500
+Subject: Re: [PATCH] drm/nouveau/secboot/acr: fix memory leak
+To:     Kees Cook <keescook@chromium.org>, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180724132719.GA32237@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <d9e87a82-f70f-3eca-5f63-2450863e7099@embeddedor.com>
+Date:   Thu, 2 Aug 2018 14:51:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Thu, 2 Aug 2018 12:52:00 -0700 (PDT)
-In-Reply-To: <20180802191554.20176-1-marcus.folkesson@gmail.com>
-References: <20180802191554.20176-1-marcus.folkesson@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 2 Aug 2018 22:52:00 +0300
-Message-ID: <CAHp75Vf8kMLsoFN_EK150yW_FvH8XfgjiETYAtvW63et5NNurw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] iio: adc: add support for mcp3911
-To:     Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     Kent Gustavsson <kent@minoris.se>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180724132719.GA32237@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.61.218
+X-Source-L: No
+X-Exim-ID: 1flJdK-002EMC-IN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.61.218]:56534
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 10:15 PM, Marcus Folkesson
-<marcus.folkesson@gmail.com> wrote:
-> MCP3911 is a dual channel Analog Front End (AFE) containing two
-> synchronous sampling delta-sigma Analog-to-Digital Converters (ADC).
->
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Hi all,
 
-> Signed-off-by: Kent Gustavsson <kent@minoris.se>
+Friendly ping! Who can take this?
 
-What is this? Why it's here (presense and location in the message)?
+Thanks
+--
+Gustavo
 
-> + * Copyright (C) 2018 Kent Gustavsson <kent@minoris.se>
-
-> + *
-
-Redundant.
-
-> +static int mcp3911_read(struct mcp3911 *adc, u8 reg, u32 *val, u8 len)
-> +{
-> +       int ret;
-> +
-> +       reg = MCP3911_REG_READ(reg, adc->dev_addr);
-> +       ret = spi_write_then_read(adc->spi, &reg, 1, val, len);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       be32_to_cpus(val);
-> +       *val >>= ((4 - len) * 8);
-> +       dev_dbg(&adc->spi->dev, "reading 0x%x from register 0x%x\n", *val,
-> +                       reg>>1);
-> +       return ret;
-> +}
-> +
-> +static int mcp3911_write(struct mcp3911 *adc, u8 reg, u32 val, u8 len)
-> +{
-> +       dev_dbg(&adc->spi->dev, "writing 0x%x to register 0x%x\n", val, reg);
-> +
-> +       val <<= (3 - len) * 8;
-> +       cpu_to_be32s(&val);
-> +       val |= MCP3911_REG_WRITE(reg, adc->dev_addr);
-> +
-> +       return spi_write(adc->spi, &val, len + 1);
-> +}
-
-Can't you use REGMAP_SPI ?
-
-> +       of_property_read_u32(of_node, "device-addr", &adc->dev_addr);
-> +       if (adc->dev_addr > 3) {
-> +               dev_err(&adc->spi->dev,
-> +                               "invalid device address (%i). Must be in range 0-3.\n",
-> +                               adc->dev_addr);
-> +               return -EINVAL;
-> +       }
-> +       dev_dbg(&adc->spi->dev, "use device address %i\n", adc->dev_addr);
-
-Isn't what we called CS (chip select)?
-
-> +       if (IS_ERR(adc->vref)) {
-
-> +
-
-Redundant.
-
-> +       if (adc->clki)
-
-Seems to be redundant if clock is optional (it should be NULL and API
-is NULL-aware).
-
-> +               clk_disable_unprepare(adc->clki);
-
-> +       if (adc->clki)
-> +               clk_disable_unprepare(adc->clki);
-
-Ditto.
-
-> +#if defined(CONFIG_OF)
-
-This prevents playing with the device on ACPI enabled platforms.
-
-> +               .of_match_table = of_match_ptr(mcp3911_dt_ids),
-
-Ditto for macro.
-
--- 
-With Best Regards,
-Andy Shevchenko
+On 07/24/2018 08:27 AM, Gustavo A. R. Silva wrote:
+> In case memory resources for *bl_desc* were allocated, release
+> them before return.
+> 
+> Addresses-Coverity-ID: 1472021 ("Resource leak")
+> Fixes: 0d466901552a ("drm/nouveau/secboot/acr: Remove VLA usage")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> index d02e183..5c14d6a 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+> @@ -801,6 +801,7 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
+>  		bl = acr->hsbl_unload_blob;
+>  	} else {
+>  		nvkm_error(_acr->subdev, "invalid secure boot blob!\n");
+> +		kfree(bl_desc);
+>  		return -EINVAL;
+>  	}
+>  
+> 
