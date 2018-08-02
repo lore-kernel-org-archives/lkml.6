@@ -3,167 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E793C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A864EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA2C214F1
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA2C214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A933214F1
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:08:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A933214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732372AbeHBN6O (ORCPT
+        id S1732382AbeHBN6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 09:58:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48141 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732034AbeHBN6O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:58:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w72C6tAS3494026
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 2 Aug 2018 05:06:55 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w72C6tNR3494023;
-        Thu, 2 Aug 2018 05:06:55 -0700
-Date:   Thu, 2 Aug 2018 05:06:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-2171ce2d470d6e389ebbef3edd22c7643918a02f@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, bigeasy@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, hpa@zytor.com, bigeasy@linutronix.de,
-          peterz@infradead.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180730112140.GH2494@hirez.programming.kicks-ass.net>
-References: <20180730112140.GH2494@hirez.programming.kicks-ass.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] stop_machine: Reflow cpu_stop_queue_two_works()
-Git-Commit-ID: 2171ce2d470d6e389ebbef3edd22c7643918a02f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 2 Aug 2018 09:58:53 -0400
+Received: from mga02.intel.com ([134.134.136.20]:34686 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732074AbeHBN6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 09:58:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2018 05:07:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,435,1526367600"; 
+   d="scan'208";a="251116159"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Aug 2018 05:07:49 -0700
+Message-ID: <54b34c40dbe7a16ef4964813ad5aa73027a917f1.camel@linux.intel.com>
+Subject: Re: [PATCH v4 0/5] bitmap: Introduce alloc/free helpers
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        linux-input <linux-input@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Joe Perches <joe@perches.com>
+Date:   Thu, 02 Aug 2018 15:07:48 +0300
+In-Reply-To: <20180802010325.GB184797@dtor-ws>
+References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+         <CAHp75Vd9RSxVsYrbiAFJKLPL4wNzAtS9qAPjCNJJ4E=QbeTP8A@mail.gmail.com>
+         <2310fa540b9e5db3b94f4917ecae76dce2a2ca65.camel@linux.intel.com>
+         <20180802010325.GB184797@dtor-ws>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2171ce2d470d6e389ebbef3edd22c7643918a02f
-Gitweb:     https://git.kernel.org/tip/2171ce2d470d6e389ebbef3edd22c7643918a02f
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 30 Jul 2018 13:21:40 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 2 Aug 2018 14:02:53 +0200
+On Wed, 2018-08-01 at 18:03 -0700, Dmitry Torokhov wrote:
 
-stop_machine: Reflow cpu_stop_queue_two_works()
+> I put the first 3 patches into an immutable branch off 4.17:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git ib/4.17-
+> bitmap
 
-The code flow in cpu_stop_queue_two_works() is a little arcane; fix this by
-lifting the preempt_disable() to the top to create more natural nesting wrt
-the spinlocks and make the wake_up_q() and preempt_enable() unconditional
-at the end.
+Thank you!
 
-Furthermore, enable preemption in the -EDEADLK case, such that we spin-wait
-with preemption enabled.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: isaacm@codeaurora.org
-Cc: matt@codeblueprint.co.uk
-Cc: psodagud@codeaurora.org
-Cc: gregkh@linuxfoundation.org
-Cc: pkondeti@codeaurora.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180730112140.GH2494@hirez.programming.kicks-ass.net
----
- kernel/stop_machine.c | 41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index e190d1ef3a23..34b6652e8677 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -236,13 +236,24 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
- 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
- 	DEFINE_WAKE_Q(wakeq);
- 	int err;
-+
- retry:
-+	/*
-+	 * The waking up of stopper threads has to happen in the same
-+	 * scheduling context as the queueing.  Otherwise, there is a
-+	 * possibility of one of the above stoppers being woken up by another
-+	 * CPU, and preempting us. This will cause us to not wake up the other
-+	 * stopper forever.
-+	 */
-+	preempt_disable();
- 	raw_spin_lock_irq(&stopper1->lock);
- 	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
- 
--	err = -ENOENT;
--	if (!stopper1->enabled || !stopper2->enabled)
-+	if (!stopper1->enabled || !stopper2->enabled) {
-+		err = -ENOENT;
- 		goto unlock;
-+	}
-+
- 	/*
- 	 * Ensure that if we race with __stop_cpus() the stoppers won't get
- 	 * queued up in reverse order leading to system deadlock.
-@@ -253,36 +264,30 @@ retry:
- 	 * It can be falsely true but it is safe to spin until it is cleared,
- 	 * queue_stop_cpus_work() does everything under preempt_disable().
- 	 */
--	err = -EDEADLK;
--	if (unlikely(stop_cpus_in_progress))
--			goto unlock;
-+	if (unlikely(stop_cpus_in_progress)) {
-+		err = -EDEADLK;
-+		goto unlock;
-+	}
- 
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
--	/*
--	 * The waking up of stopper threads has to happen
--	 * in the same scheduling context as the queueing.
--	 * Otherwise, there is a possibility of one of the
--	 * above stoppers being woken up by another CPU,
--	 * and preempting us. This will cause us to n ot
--	 * wake up the other stopper forever.
--	 */
--	preempt_disable();
-+
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
- 
- 	if (unlikely(err == -EDEADLK)) {
-+		preempt_enable();
-+
- 		while (stop_cpus_in_progress)
- 			cpu_relax();
-+
- 		goto retry;
- 	}
- 
--	if (!err) {
--		wake_up_q(&wakeq);
--		preempt_enable();
--	}
-+	wake_up_q(&wakeq);
-+	preempt_enable();
- 
- 	return err;
- }
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
