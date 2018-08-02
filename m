@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF0EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B78C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E31B2151C
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E31B2151C
+	by mail.kernel.org (Postfix) with ESMTP id 430EC214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430EC214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387600AbeHBPAz (ORCPT
+        id S1732401AbeHBPDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 11:00:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49027 "EHLO mail.bootlin.com"
+        Thu, 2 Aug 2018 11:03:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49145 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387421AbeHBPAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 11:00:55 -0400
+        id S1732276AbeHBPDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 11:03:48 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CE2852074F; Thu,  2 Aug 2018 15:09:44 +0200 (CEST)
+        id 59D2F20739; Thu,  2 Aug 2018 15:12:36 +0200 (CEST)
 Received: from bbrezillon (AAubervilliers-681-1-89-120.w90-88.abo.wanadoo.fr [90.88.30.120])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7E46220719;
-        Thu,  2 Aug 2018 15:09:44 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 15:09:45 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id F1FFD206A6;
+        Thu,  2 Aug 2018 15:12:35 +0200 (CEST)
+Date:   Thu, 2 Aug 2018 15:12:36 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Frieder Schrempf <frieder.schrempf@exceet.de>
 Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
@@ -35,12 +35,12 @@ Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
         linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
         cyrille.pitchen@wedev4u.fr, pp@emlix.com, Zhiqiang.Hou@nxp.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] spi: spi-mem: Fix a typo in the documentation of
- struct spi_mem
-Message-ID: <20180802150945.44cc8328@bbrezillon>
-In-Reply-To: <1533214434-28761-2-git-send-email-frieder.schrempf@exceet.de>
+Subject: Re: [PATCH v3 2/3] spi: spi-mem: Extend the SPI mem interface to
+ set a custom memory name
+Message-ID: <20180802151236.2d4006ae@bbrezillon>
+In-Reply-To: <1533214434-28761-3-git-send-email-frieder.schrempf@exceet.de>
 References: <1533214434-28761-1-git-send-email-frieder.schrempf@exceet.de>
-        <1533214434-28761-2-git-send-email-frieder.schrempf@exceet.de>
+        <1533214434-28761-3-git-send-email-frieder.schrempf@exceet.de>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,37 +50,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  2 Aug 2018 14:53:52 +0200
+On Thu,  2 Aug 2018 14:53:53 +0200
 Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
 
-We usually try to avoid empty commit message, even if this one is
-pretty obvious, I'd suggest adding something here.
-
-"
-Fix a typo in the @drvpriv description.
-"
-
-?
-
+> When porting (Q)SPI controller drivers from the MTD layer to the SPI
+> layer, the naming scheme for the memory devices changes. To be able
+> to keep compatibility with the old drivers naming scheme, a name
+> field is added to struct spi_mem and a hook is added to let controller
+> drivers set a custom name for the memory device.
+> 
+> Example for the FSL QSPI driver:
+> 
+> Name with the old driver: 21e0000.qspi,
+> or with multiple devices: 21e0000.qspi-0, 21e0000.qspi-1, ...
+> 
+> Name with the new driver without spi_mem_get_name: spi4.0
+> 
+> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
 > Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
 > ---
->  include/linux/spi/spi-mem.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/spi/spi-mem.c       | 28 ++++++++++++++++++++++++++++
+>  include/linux/spi/spi-mem.h | 12 ++++++++++++
+>  2 files changed, 40 insertions(+)
 > 
+> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> index 990770d..e43842c 100644
+> --- a/drivers/spi/spi-mem.c
+> +++ b/drivers/spi/spi-mem.c
+> @@ -311,6 +311,24 @@ int spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+>  EXPORT_SYMBOL_GPL(spi_mem_exec_op);
+>  
+>  /**
+> + * spi_mem_get_name() - Return the SPI mem device name to be used by the
+> + *			upper layer if necessary
+> + * @mem: the SPI memory
+> + *
+> + * This function allows SPI mem users to retrieve the SPI mem device name.
+> + * It is useful if the upper layer needs to expose a custom name for
+> + * compatibility reasons.
+> + *
+> + * Return: a string containing the name of the memory device to be used
+> + *	   by the SPI mem user
+> + */
+> +const char *spi_mem_get_name(struct spi_mem *mem)
+> +{
+> +	return mem->name;
+> +}
+> +EXPORT_SYMBOL_GPL(spi_mem_get_name);
+> +
+> +/**
+>   * spi_mem_adjust_op_size() - Adjust the data size of a SPI mem operation to
+>   *			      match controller limitations
+>   * @mem: the SPI memory
+> @@ -344,6 +362,7 @@ static inline struct spi_mem_driver *to_spi_mem_drv(struct device_driver *drv)
+>  static int spi_mem_probe(struct spi_device *spi)
+>  {
+>  	struct spi_mem_driver *memdrv = to_spi_mem_drv(spi->dev.driver);
+> +	struct spi_controller *ctlr = spi->controller;
+>  	struct spi_mem *mem;
+>  
+>  	mem = devm_kzalloc(&spi->dev, sizeof(*mem), GFP_KERNEL);
+> @@ -351,6 +370,15 @@ static int spi_mem_probe(struct spi_device *spi)
+>  		return -ENOMEM;
+>  
+>  	mem->spi = spi;
+> +
+> +	if (ctlr->mem_ops && ctlr->mem_ops->get_name)
+> +		mem->name = ctlr->mem_ops->get_name(mem);
+> +	else
+> +		mem->name = dev_name(&spi->dev);
+> +
+> +	if (IS_ERR_OR_NULL(mem->name))
+> +		return PTR_ERR(mem->name);
+> +
+>  	spi_set_drvdata(spi, mem);
+>  
+>  	return memdrv->probe(mem);
 > diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-> index 4fa34a2..72cc9bc 100644
+> index 72cc9bc..0d41826 100644
 > --- a/include/linux/spi/spi-mem.h
 > +++ b/include/linux/spi/spi-mem.h
-> @@ -124,7 +124,7 @@ struct spi_mem_op {
->  /**
+> @@ -125,6 +125,7 @@ struct spi_mem_op {
 >   * struct spi_mem - describes a SPI memory device
 >   * @spi: the underlying SPI device
-> - * @drvpriv: spi_mem_drviver private data
-> + * @drvpriv: spi_mem_driver private data
+>   * @drvpriv: spi_mem_driver private data
+> + * @name: name of the SPI memory device
 >   *
 >   * Extra information that describe the SPI memory device and may be needed by
 >   * the controller to properly handle this device should be placed here.
+> @@ -135,6 +136,7 @@ struct spi_mem_op {
+>  struct spi_mem {
+>  	struct spi_device *spi;
+>  	void *drvpriv;
+> +	char *name;
+>  };
+>  
+>  /**
+> @@ -167,6 +169,13 @@ static inline void *spi_mem_get_drvdata(struct spi_mem *mem)
+>   *		    limitations)
+>   * @supports_op: check if an operation is supported by the controller
+>   * @exec_op: execute a SPI memory operation
+> + * @get_name: get a custom name for the SPI mem device from the controller.
+> + *	      This might be needed if the controller driver has been ported
+> + *	      to use the SPI mem layer and a custom name is used to keep
+> + *	      mtdparts compatible.
+> + *	      Note that if the implementation of this function allocates memory
+> + *	      dynamically, then it should do so with devm_xxx(), as we don't
+> + *	      have a ->free_name() function.
+>   *
+>   * This interface should be implemented by SPI controllers providing an
+>   * high-level interface to execute SPI memory operation, which is usually the
+> @@ -178,6 +187,7 @@ struct spi_controller_mem_ops {
+>  			    const struct spi_mem_op *op);
+>  	int (*exec_op)(struct spi_mem *mem,
+>  		       const struct spi_mem_op *op);
+> +	const char *(*get_name)(struct spi_mem *mem);
+>  };
+>  
+>  /**
+> @@ -236,6 +246,8 @@ bool spi_mem_supports_op(struct spi_mem *mem,
+>  int spi_mem_exec_op(struct spi_mem *mem,
+>  		    const struct spi_mem_op *op);
+>  
+> +const char *spi_mem_get_name(struct spi_mem *mem);
+> +
+>  int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
+>  				       struct module *owner);
+>  
 
