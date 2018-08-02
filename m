@@ -2,75 +2,95 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18C9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71502C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A237E21501
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A237E21501
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 3127A2150D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 13:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3127A2150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387597AbeHBOyi (ORCPT
+        id S1732400AbeHBOyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:54:38 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:42860 "EHLO gloria.sntech.de"
+        Thu, 2 Aug 2018 10:54:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:57800 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387426AbeHBOyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:54:37 -0400
-Received: from wd0970.dip.tu-dresden.de ([141.76.111.202] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1flDG9-00020L-2X; Thu, 02 Aug 2018 15:03:17 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     cl@rock-chips.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        klaus.goger@theobroma-systems.com, hjc@rock-chips.com,
-        jagan@amarulasolutions.com, djw@t-chip.com.cn,
-        jacob-chen@iotwrt.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        frank.wang@rock-chips.com, lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        yamada.masahiro@socionext.com, arnd@arndb.de,
-        zhangqing@rock-chips.com, shawn.lin@rock-chips.com,
-        kever.yang@rock-chips.com, david.wu@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com,
-        sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
-        william.wu@rock-chips.com, sandy.huang@rock-chips.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc2: add description for px30
-Date:   Thu, 02 Aug 2018 15:03:15 +0200
-Message-ID: <1906917.Z0b3HQLJhP@phil>
-In-Reply-To: <1533113116-8820-2-git-send-email-cl@rock-chips.com>
-References: <1533113116-8820-1-git-send-email-cl@rock-chips.com> <1533113116-8820-2-git-send-email-cl@rock-chips.com>
+        id S1732267AbeHBOyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:54:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A53577A9;
+        Thu,  2 Aug 2018 06:03:46 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B08003F2EA;
+        Thu,  2 Aug 2018 06:03:42 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 14:03:38 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
+ indicator
+Message-ID: <20180802130337.uf6tlac2hg4nkbwr@queper01-lin>
+References: <20180724122521.22109-1-quentin.perret@arm.com>
+ <20180724122521.22109-10-quentin.perret@arm.com>
+ <20180802122629.GU2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802122629.GU2476@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 1. August 2018, 10:45:13 CEST schrieb cl@rock-chips.com:
-> From: Liang Chen <cl@rock-chips.com>
+On Thursday 02 Aug 2018 at 14:26:29 (+0200), Peter Zijlstra wrote:
+> On Tue, Jul 24, 2018 at 01:25:16PM +0100, Quentin Perret wrote:
+> > @@ -5100,8 +5118,17 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >  		update_cfs_group(se);
+> >  	}
+> >  
+> > -	if (!se)
+> > +	if (!se) {
+> >  		add_nr_running(rq, 1);
+> > +		/*
+> > +		 * The utilization of a new task is 'wrong' so wait for it
+> > +		 * to build some utilization history before trying to detect
+> > +		 * the overutilized flag.
+> > +		 */
+> > +		if (flags & ENQUEUE_WAKEUP)
+> > +			update_overutilized_status(rq);
+> > +
+> > +	}
+> >  
+> >  	hrtick_update(rq);
+> >  }
 > 
-> This patch adds the compatible of dwc2 for PX30 SoCs.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
+> That is a somewhat dodgy hack. There is no guarantee what so ever that
+> when the task wakes next its history is any better. The comment doesn't
+> reflect this I feel.
 
-I've split out the dwc2 things from the px30 dts and readded them
-in a new series and also moved the binding addition over there [0]
+AFAICT the main use-case here is to avoid re-enabling the load balance
+and ruining all the task placement because of a tiny task. I don't
+really see how we can do that differently ...
 
-Heiko
+Or am I missing something Morten ?
 
-[0] https://patchwork.kernel.org/cover/10553569/
+In the meantime, I can try to improve the comment at least :-)
 
-
+Thanks,
+Quentin
