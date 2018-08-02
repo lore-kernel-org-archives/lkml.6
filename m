@@ -2,80 +2,87 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4BAC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68231C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7837020C0B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7837020C0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A4AC208DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4AC208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbeHBJul (ORCPT
+        id S1729034AbeHBJw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 05:50:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58826 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726307AbeHBJul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 05:50:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EB1A7AD26;
-        Thu,  2 Aug 2018 08:00:42 +0000 (UTC)
-Date:   Thu, 2 Aug 2018 10:00:41 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] introduce memory.oom.group
-Message-ID: <20180802080041.GB10808@dhcp22.suse.cz>
-References: <20180730180100.25079-1-guro@fb.com>
- <alpine.DEB.2.21.1807301847000.198273@chino.kir.corp.google.com>
- <20180731235135.GA23436@castle.DHCP.thefacebook.com>
- <alpine.DEB.2.21.1808011437350.38896@chino.kir.corp.google.com>
+        Thu, 2 Aug 2018 05:52:57 -0400
+Received: from www62.your-server.de ([213.133.104.62]:42839 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeHBJw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 05:52:57 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fl8ZO-0004Bd-Qc; Thu, 02 Aug 2018 10:02:50 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fl8ZO-000EtS-Lc; Thu, 02 Aug 2018 10:02:50 +0200
+Subject: Re: [RFC bpf-next 3/3] docs: Split filter.txt into separate
+ documents.
+To:     "Tobin C. Harding" <me@tobin.cc>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jay Schulist <jschlst@samba.org>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180802062848.14332-1-me@tobin.cc>
+ <20180802062848.14332-4-me@tobin.cc>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <514b4a99-5ebd-9bb5-f6f3-99fe1b19c25d@iogearbox.net>
+Date:   Thu, 2 Aug 2018 10:02:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808011437350.38896@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180802062848.14332-4-me@tobin.cc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24804/Thu Aug  2 02:43:46 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 01-08-18 14:51:25, David Rientjes wrote:
-> On Tue, 31 Jul 2018, Roman Gushchin wrote:
+On 08/02/2018 08:28 AM, Tobin C. Harding wrote:
+> In preparation for conversion of Documentation/networking/filter.txt it was
+> noticed that the document contains a lot of information.  The document may be
+> more accessible if it was split up.  Some parts pertain to everyone, let's put
+> these bits in core-api/.  The more hard core bits about eBPF internals could be
+> put with the other BPF docs in Documentation/bpf/.  There is a small bit of
+> information on testing and miscellaneous matters that are useful for everyone
+> (everyone does testing, right) so lets keep that info at the bottom of both new
+> documents.  (This includes the original authors.)
 > 
-> > > What's the plan with the cgroup aware oom killer?  It has been sitting in 
-> > > the -mm tree for ages with no clear path to being merged.
-> > 
-> > It's because your nack, isn't it?
-> > Everybody else seem to be fine with it.
-> > 
+> Split Documentation/networking/filter.txt into Documentation/bpf/eBPF.rst and
+> Documentation/core-api/bpf.rst
 > 
-> If they are fine with it, I'm not sure they have tested it :)  Killing 
-> entire cgroups needlessly for mempolicy oom kills that will not free 
-> memory on target nodes is the first regression they may notice.
+> Cc: Jay Schulist <jschlst@samba.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc; Alexei Starovoitov <ast@kernel.org>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+>  Documentation/networking/filter.txt | 1480 ---------------------------
+>  1 file changed, 1480 deletions(-)
+>  delete mode 100644 Documentation/networking/filter.txt
 
-I do not remember you would be mentioning this previously. Anyway the
-older implementation has considered the nodemask in memcg_oom_badness.
-You are right that a cpuset allocation could needlessly select a memcg
-with small or no memory from the target nodemask which is something I
-could have noticed during the review. If only I didn't have to spend all
-my energy to go through repetitive arguments of yours. Anyway this would
-be quite trivial to resolve in the same function by checking
-node_isset(node, current->mems_allowed).
+Missing git add given the new files are not present here?
 
-Thanks for your productive feedback again.
-
-Skipping the rest which is yet again repeating same arguments and it
-doesn't add anything new to the table.
--- 
-Michal Hocko
-SUSE Labs
+Overall I agree it would be good if we move all the content over into
+Documentation/bpf/ eventually, but would be useful to see a full diff.
