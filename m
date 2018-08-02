@@ -2,124 +2,210 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E75AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27886C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE4D21525
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 14:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C647921525
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="XzYKcRa3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE4D21525
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXwr5WD0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C647921525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387678AbeHBQuM (ORCPT
+        id S1732501AbeHBQvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 12:50:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42728 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387633AbeHBQuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 12:50:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=z+aT8V2XcdcuCxCxMdTUlbQjWtj2VbWEZItLwOjTQnA=; b=XzYKcRa3Gor8
-        haQ4BXFcC/JVcTxgbjD5h1DzcYvIBCRm/Sz16GHGi7oqVXvuyft/JHxstTFRIZ7zNup3dM61xqIJE
-        jYXd7p5CIVP23WPNSDMPpNK4de8TeSYybTg5ZMCQb9+IEn3ajScK9mzFnCj62lRP9z4/KbPEG265j
-        kkG8U=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1flF3U-00027k-Be; Thu, 02 Aug 2018 14:58:20 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 032B11121BE5; Thu,  2 Aug 2018 15:58:19 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com, richard@nod.at, broonie@kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        cyrille.pitchen@wedev4u.fr, frieder.schrempf@exceet.de,
-        pp@emlix.com, Zhiqiang.Hou@nxp.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "mtd: m25p80: Call spi_mem_get_name() to let controller set a custom name" to the spi tree
-In-Reply-To:  <1533214434-28761-4-git-send-email-frieder.schrempf@exceet.de>
-Message-Id: <20180802145820.032B11121BE5@debutante.sirena.org.uk>
-Date:   Thu,  2 Aug 2018 15:58:19 +0100 (BST)
+        Thu, 2 Aug 2018 12:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732416AbeHBQvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 12:51:40 -0400
+Received: from localhost.localdomain (unknown [121.229.118.135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E257C2151B;
+        Thu,  2 Aug 2018 15:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1533222006;
+        bh=9/8RJ6NN+iRY/BIFRPwe7YPVG5MNYU9LGj8g99dxsz8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lXwr5WD0g/8Y23HfuYk0Kz1hawR/i4PEZWM+pWp42Jy1Cdwb3i2SXTptundzM40mH
+         YLtVkNCGEFh5bgS+JsP24Ox6Ulnp3P0eOibvuBmlr6/cqDMpxlGXqFZN2dNywBwpfz
+         vSHiUpaB2QXr66qZyaUGmFI9Nz1NeyR5hWSBXox0=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix invalid memory access
+Date:   Thu,  2 Aug 2018 22:59:12 +0800
+Message-Id: <20180802145912.10578-1-chao@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: Chao Yu <yuchao0@huawei.com>
 
-   mtd: m25p80: Call spi_mem_get_name() to let controller set a custom name
+syzbot found the following crash on:
 
-has been applied to the spi tree at
+HEAD commit:    d9bd94c0bcaa Add linux-next specific files for 20180801
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1001189c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc8964ea4d04518c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c966a82db0b14aa37e81
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Unfortunately, I don't have any reproducer for this crash yet.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c966a82db0b14aa37e81@syzkaller.appspotmail.com
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+loop7: rw=12288, want=8200, limit=20
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+openvswitch: netlink: Message has 8 unknown bytes.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 1 PID: 7615 Comm: syz-executor7 Not tainted 4.18.0-rc7-next-20180801+ #29
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_get_valid_checkpoint+0x436/0x1ec0 fs/f2fs/checkpoint.c:860
+ f2fs_fill_super+0x2d42/0x8110 fs/f2fs/super.c:2883
+ mount_bdev+0x314/0x3e0 fs/super.c:1344
+ f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3133
+ legacy_get_tree+0x131/0x460 fs/fs_context.c:729
+ vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
+ do_new_mount fs/namespace.c:2603 [inline]
+ do_mount+0x6f2/0x1e20 fs/namespace.c:2927
+ ksys_mount+0x12d/0x140 fs/namespace.c:3143
+ __do_sys_mount fs/namespace.c:3157 [inline]
+ __se_sys_mount fs/namespace.c:3154 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3154
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45943a
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f36a61d4a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f36a61d4b30 RCX: 000000000045943a
+RDX: 00007f36a61d4ad0 RSI: 0000000020000100 RDI: 00007f36a61d4af0
+RBP: 0000000020000100 R08: 00007f36a61d4b30 R09: 00007f36a61d4ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000013
+R13: 0000000000000000 R14: 00000000004c8ea0 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+---[ end trace bd8550c129352286 ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:compound_head include/linux/page-flags.h:142 [inline]
+RIP: 0010:PageLocked include/linux/page-flags.h:272 [inline]
+RIP: 0010:f2fs_put_page fs/f2fs/f2fs.h:2011 [inline]
+RIP: 0010:validate_checkpoint+0x66d/0xec0 fs/f2fs/checkpoint.c:835
+Code: e8 58 05 7f fe 4c 8d 6b 80 4d 8d 74 24 08 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 c6 04 02 00 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f 85 f4 06 00 00 4c 89 ea 4d 8b 7c 24 08 48 b8 00 00
+RSP: 0018:ffff8801937cebe8 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801937cef30 RCX: ffffc90006035000
+RDX: 0000000000000000 RSI: ffffffff82fd9658 RDI: 0000000000000005
+netlink: 65342 bytes leftover after parsing attributes in process `syz-executor4'.
+RBP: ffff8801937cef58 R08: ffff8801ab254700 R09: fffff94000d9e026
+openvswitch: netlink: Message has 8 unknown bytes.
+R10: fffff94000d9e026 R11: ffffea0006cf0137 R12: fffffffffffffffb
+R13: ffff8801937ceeb0 R14: 0000000000000003 R15: ffff880193419b40
+FS:  00007f36a61d5700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc04ff93000 CR3: 00000001d0562000 CR4: 00000000001426e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+In validate_checkpoint(), if we failed to call get_checkpoint_version(), we
+will pass returned invalid page pointer into f2fs_put_page, cause accessing
+invalid memory, this patch tries to handle error path correctly to fix this
+issue.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b02b17f55b2e789b9747cf4dd2eaaa110439a4cc Mon Sep 17 00:00:00 2001
-From: Frieder Schrempf <frieder.schrempf@exceet.de>
-Date: Thu, 2 Aug 2018 14:53:54 +0200
-Subject: [PATCH] mtd: m25p80: Call spi_mem_get_name() to let controller set a
- custom name
-
-By calling spi_mem_get_name(), the driver of the (Q)SPI controller can
-set a custom name for the memory device if necessary.
-This is useful to keep mtdparts compatible when controller drivers are
-ported from the MTD to the SPI layer.
-
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- drivers/mtd/devices/m25p80.c | 3 +++
- 1 file changed, 3 insertions(+)
+v2:
+- fix to release cp_page_2 in error path.
+ fs/f2fs/checkpoint.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-index e84563d2067f..aac488008216 100644
---- a/drivers/mtd/devices/m25p80.c
-+++ b/drivers/mtd/devices/m25p80.c
-@@ -202,6 +202,9 @@ static int m25p_probe(struct spi_mem *spimem)
- 	if (data && data->name)
- 		nor->mtd.name = data->name;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 2cffc37e6c5b..00e03fa96526 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -780,6 +780,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
  
-+	if (!nor->mtd.name)
-+		nor->mtd.name = spi_mem_get_name(spimem);
-+
- 	/* For some (historical?) reason many platforms provide two different
- 	 * names in flash_platform_data: "name" and "type". Quite often name is
- 	 * set to "m25p80" and then "type" provides a real chip name.
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+ 	if (crc_offset > (blk_size - sizeof(__le32))) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"invalid crc_offset: %zu", crc_offset);
+ 		return -EINVAL;
+@@ -787,6 +788,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 
+ 	crc = cur_cp_crc(*cp_block);
+ 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
++		f2fs_put_page(*cp_page, 1);
+ 		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+ 		return -EINVAL;
+ 	}
+@@ -806,14 +808,14 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_1, version);
+ 	if (err)
+-		goto invalid_cp1;
++		return NULL;
+ 
+ 	if (le32_to_cpu(cp_block->cp_pack_total_block_count) >
+ 					sbi->log_blocks_per_seg) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+ 			"invalid cp_pack_total_block_count:%u",
+ 			le32_to_cpu(cp_block->cp_pack_total_block_count));
+-		goto invalid_cp1;
++		goto invalid_cp;
+ 	}
+ 	pre_version = *version;
+ 
+@@ -821,7 +823,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+ 					&cp_page_2, version);
+ 	if (err)
+-		goto invalid_cp2;
++		goto invalid_cp;
+ 	cur_version = *version;
+ 
+ 	if (cur_version == pre_version) {
+@@ -829,9 +831,8 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 		f2fs_put_page(cp_page_2, 1);
+ 		return cp_page_1;
+ 	}
+-invalid_cp2:
+ 	f2fs_put_page(cp_page_2, 1);
+-invalid_cp1:
++invalid_cp:
+ 	f2fs_put_page(cp_page_1, 1);
+ 	return NULL;
+ }
 -- 
 2.18.0
 
