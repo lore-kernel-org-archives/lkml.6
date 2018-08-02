@@ -2,482 +2,196 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BAEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BC0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F86921566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cHzOsbwX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F86921566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B05DE21566
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05DE21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbeHBXoj (ORCPT
+        id S1732556AbeHBXop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 19:44:39 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41635 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732424AbeHBXog (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:44:36 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w8-v6so1614122ply.8
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kb11HbOXI/pEiyf3JtYdhzGyLXU+44znbAkRrATq/do=;
-        b=cHzOsbwX2V6MDTfx4wvMtbLF4L0O+AEojAJthIFOfHladqAVEcTQDf0ar/9EY8H0a+
-         wck4RUBrdqp6rXjauaWWKIB/u9P8sfOTmzssBywemQ5UP0GhCj6N30CfqklxqGcHSL+r
-         zsoyy8O1IY/RNNn7LoyKapr774sXQZZwKRb7U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kb11HbOXI/pEiyf3JtYdhzGyLXU+44znbAkRrATq/do=;
-        b=QeZwG1XSqAkYwerRHmFuBuhVTDjyosfqkMLdfOuoXtVj1GX/2IqWCFCpl7uxhZRnsX
-         AG42W8xHeAt6uGrh9K80VhOLPkpcvPnHxp4/PKoMgz71RXeGpuWCI7uzEGGvgpVIjV2w
-         NZqcfy010YiyBiwflZSIg3iTZ1af4qbBlm5Ew27k0DrvnHMqqYg3mcVVhh3rR/C1daVv
-         CBGfzLpxmD5lgxa/xJTEd5E0R9VBn1PC/yVkwg9ObaRmp1ljVrHq+P9qXHZGlFE3FEa+
-         hHCQtDb619E3q+s/Ha1KU60QzW62/lZZGbHHW2KTrLUv8ClQrOm8bjKmqhbOjzGhSnFF
-         NE8g==
-X-Gm-Message-State: AOUpUlEnjAVMoImrexXYwRzu5bZZy1F/eTx6i6uzF+Y66bbGZP2Lq3pP
-        EsniasIEqP0xp3vRFvoBbJDg7w==
-X-Google-Smtp-Source: AAOMgpfm2juMgWsDAP2Z71RGbucCQsqFHO63DMR3vKNSlPgKlQ9DHhGWatLCHGQN1Z6VrlH4Fl20fg==
-X-Received: by 2002:a17:902:e18d:: with SMTP id cd13-v6mr978405plb.305.1533246693584;
-        Thu, 02 Aug 2018 14:51:33 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm7554889pfg.25.2018.08.02.14.51.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Aug 2018 14:51:28 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Haren Myneni <haren@us.ibm.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] pstore: Use crypto_comp_zbufsize()
-Date:   Thu,  2 Aug 2018 14:51:18 -0700
-Message-Id: <20180802215118.17752-10-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180802215118.17752-1-keescook@chromium.org>
-References: <20180802215118.17752-1-keescook@chromium.org>
+        Thu, 2 Aug 2018 19:44:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51128 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732424AbeHBXop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 19:44:45 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4B954B5C4;
+        Thu,  2 Aug 2018 21:51:41 +0000 (UTC)
+Received: from redhat.com (ovpn-117-57.ams2.redhat.com [10.36.117.57])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6CDEB2026D69;
+        Thu,  2 Aug 2018 21:51:35 +0000 (UTC)
+Date:   Fri, 3 Aug 2018 00:51:34 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, linuxram@us.ibm.com,
+        haren@linux.vnet.ibm.com, paulus@samba.org,
+        srikar@linux.vnet.ibm.com, robin.murphy@arm.com,
+        jean-philippe.brucker@arm.com, marc.zyngier@arm.com
+Subject: Re: [RFC 0/4] Virtio uses DMA API for all devices
+Message-ID: <20180803001818-mutt-send-email-mst@kernel.org>
+References: <3d6e81511571260de1c8047aaffa8ac4df093d2e.camel@kernel.crashing.org>
+ <20180801081637.GA14438@arm.com>
+ <20180801083639.GF26378@infradead.org>
+ <26c1d3d50d8e081eed44fe9940fbefed34598cbd.camel@kernel.crashing.org>
+ <20180802182959-mutt-send-email-mst@kernel.org>
+ <82ccef6ec3d95ee43f3990a4a2d0aea87eb45e89.camel@kernel.crashing.org>
+ <20180802200646-mutt-send-email-mst@kernel.org>
+ <e9beb6bba5a7d05741e27e85b24a3b23ba7c2762.camel@kernel.crashing.org>
+ <20180802225738-mutt-send-email-mst@kernel.org>
+ <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de4888b6457e220776e16a9c8958ff0886ffc66c.camel@kernel.crashing.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 02 Aug 2018 21:51:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 02 Aug 2018 21:51:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the crypto compression API has a zbufsize interface, use that
-instead, so pstore doesn't need to keep getting updated for each new
-compression algo that gets added to the kernel. This reorganizes the
-code slightly at initialization time (since we must allocate the algo
-first now), but otherwise is a massive cleanup of the code, making
-pstore kernel code algorithm-agnostic now.
+On Thu, Aug 02, 2018 at 04:13:09PM -0500, Benjamin Herrenschmidt wrote:
+> On Thu, 2018-08-02 at 23:52 +0300, Michael S. Tsirkin wrote:
+> > > Yes, this is the purpose of Anshuman original patch (I haven't looked
+> > > at the details of the patch in a while but that's what I told him to
+> > > implement ;-) :
+> > > 
+> > >   - Make virtio always use DMA ops to simplify the code path (with a set
+> > > of "transparent" ops for legacy)
+> > > 
+> > >   and
+> > > 
+> > >   -  Provide an arch hook allowing us to "override" those "transparent"
+> > > DMA ops with some custom ones that do the appropriate swiotlb gunk.
+> > > 
+> > > Cheers,
+> > > Ben.
+> > > 
+> > 
+> > Right but as I tried to say doing that brings us to a bunch of issues
+> > with using DMA APIs in virtio. Put simply DMA APIs weren't designed for
+> > guest to hypervisor communication.
+> 
+> I'm not sure I see the problem, see below
+> 
+> > When we do (as is the case with PLATFORM_IOMMU right now) this adds a
+> > bunch of overhead which we need to get rid of if we are to switch to
+> > PLATFORM_IOMMU by default.  We need to fix that.
+> 
+> So let's differenciate the two problems of having an IOMMU (real or
+> emulated) which indeeds adds overhead etc... and using the DMA API.
 
-The Kconfig is also adjusted to continue to provide build-time "default
-algorithm" selection while minimizing what is needed when new algorithms
-are added.
+Well actually it's the other way around. An iommu in theory doesn't need
+to bring overhead if you set it in bypass mode.  Which does imply the
+iommu supports bypass mode. Is that universally the case?  DMA API does
+see Christoph's list of things it does some of which add overhead.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/pstore/Kconfig    |  91 +++++++----------------
- fs/pstore/inode.c    |   2 -
- fs/pstore/internal.h |   3 -
- fs/pstore/platform.c | 171 +++++++++----------------------------------
- 4 files changed, 61 insertions(+), 206 deletions(-)
+> At the moment, virtio does this all over the place:
+> 
+> 	if (use_dma_api)
+> 		dma_map/alloc_something(...)
+> 	else
+> 		use_pa
+> 
+> The idea of the patch set is to do two, somewhat orthogonal, changes
+> that together achieve what we want. Let me know where you think there
+> is "a bunch of issues" because I'm missing it:
+> 
+>  1- Replace the above if/else constructs with just calling the DMA API,
+> and have virtio, at initialization, hookup its own dma_ops that just
+> "return pa" (roughly) when the IOMMU stuff isn't used.
+> 
+> This adds an indirect function call to the path that previously didn't
+> have one (the else case above). Is that a significant/measurable
+> overhead ?
 
-diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index 09c19ef91526..1010304e0996 100644
---- a/fs/pstore/Kconfig
-+++ b/fs/pstore/Kconfig
-@@ -1,6 +1,5 @@
- config PSTORE
- 	tristate "Persistent store support"
--	select CRYPTO if PSTORE_COMPRESS
- 	default n
- 	help
- 	   This option enables generic access to platform level
-@@ -13,88 +12,54 @@ config PSTORE
- 	   If you don't have a platform persistent store driver,
- 	   say N.
- 
--config PSTORE_DEFLATE_COMPRESS
--	tristate "DEFLATE (ZLIB) compression"
--	default y
--	depends on PSTORE
--	select CRYPTO_DEFLATE
--	help
--	  This option enables DEFLATE (also known as ZLIB) compression
--	  algorithm support.
--
--config PSTORE_LZO_COMPRESS
--	tristate "LZO compression"
--	depends on PSTORE
--	select CRYPTO_LZO
--	help
--	  This option enables LZO compression algorithm support.
--
--config PSTORE_LZ4_COMPRESS
--	tristate "LZ4 compression"
--	depends on PSTORE
--	select CRYPTO_LZ4
--	help
--	  This option enables LZ4 compression algorithm support.
--
--config PSTORE_LZ4HC_COMPRESS
--	tristate "LZ4HC compression"
--	depends on PSTORE
--	select CRYPTO_LZ4HC
--	help
--	  This option enables LZ4HC (high compression) mode algorithm.
--
--config PSTORE_842_COMPRESS
--	bool "842 compression"
--	depends on PSTORE
--	select CRYPTO_842
--	help
--	  This option enables 842 compression algorithm support.
--
- config PSTORE_COMPRESS
--	def_bool y
-+	bool "Perform compression on pstore records"
- 	depends on PSTORE
--	depends on PSTORE_DEFLATE_COMPRESS || PSTORE_LZO_COMPRESS ||	\
--		   PSTORE_LZ4_COMPRESS || PSTORE_LZ4HC_COMPRESS ||	\
--		   PSTORE_842_COMPRESS
-+	default y
-+	select CRYPTO
-+	help
-+	  Normally, pstore will store records uncompressed. However,
-+	  since some backends have limited storage and records can get
-+	  long, it may be more efficient to have pstore compress the
-+	  records. Enabling this feature will enable compression
-+	  support.
- 
- choice
- 	prompt "Default pstore compression algorithm"
- 	depends on PSTORE_COMPRESS
- 	help
- 	  This option chooses the default active compression algorithm.
--	  This change be changed at boot with "pstore.compress=..." on
--	  the kernel command line.
--
--	  Currently, pstore has support for 5 compression algorithms:
--	  deflate, lzo, lz4, lz4hc and 842.
-+	  Selecting "None" means an algorithm must be chosen on the
-+	  kernel command line via "pstore.compress=..."
- 
--	  The default compression algorithm is deflate.
-+	config PSTORE_COMPRESS_DEFAULT_DEFLATE
-+		bool "deflate" if CRYPTO_DEFLATE
- 
--	config PSTORE_DEFLATE_COMPRESS_DEFAULT
--		bool "deflate" if PSTORE_DEFLATE_COMPRESS
-+	config PSTORE_COMPRESS_DEFAULT_LZO
-+		bool "lzo" if CRYPTO_LZO
- 
--	config PSTORE_LZO_COMPRESS_DEFAULT
--		bool "lzo" if PSTORE_LZO_COMPRESS
-+	config PSTORE_COMPRESS_DEFAULT_LZ4
-+		bool "lz4" if CRYPTO_LZ4
- 
--	config PSTORE_LZ4_COMPRESS_DEFAULT
--		bool "lz4" if PSTORE_LZ4_COMPRESS
-+	config PSTORE_COMPRESS_DEFAULT_LZ4HC
-+		bool "lz4hc" if CRYPTO_LZ4HC
- 
--	config PSTORE_LZ4HC_COMPRESS_DEFAULT
--		bool "lz4hc" if PSTORE_LZ4HC_COMPRESS
-+	config PSTORE_COMPRESS_DEFAULT_842
-+		bool "842" if CRYPTO_842
- 
--	config PSTORE_842_COMPRESS_DEFAULT
--		bool "842" if PSTORE_842_COMPRESS
-+	config PSTORE_COMPRESS_DEFAULT_NONE
-+		bool "None"
- 
- endchoice
- 
- config PSTORE_COMPRESS_DEFAULT
- 	string
- 	depends on PSTORE_COMPRESS
--	default "deflate" if PSTORE_DEFLATE_COMPRESS_DEFAULT
--	default "lzo" if PSTORE_LZO_COMPRESS_DEFAULT
--	default "lz4" if PSTORE_LZ4_COMPRESS_DEFAULT
--	default "lz4hc" if PSTORE_LZ4HC_COMPRESS_DEFAULT
--	default "842" if PSTORE_842_COMPRESS_DEFAULT
-+	default "deflate" if PSTORE_COMPRESS_DEFAULT_DEFLATE
-+	default "lzo" if PSTORE_COMPRESS_DEFAULT_LZO
-+	default "lz4" if PSTORE_COMPRESS_DEFAULT_LZ4
-+	default "lz4hc" if PSTORE_COMPRESS_DEFAULT_LZ4HC
-+	default "842" if PSTORE_COMPRESS_DEFAULT_842
- 
- config PSTORE_CONSOLE
- 	bool "Log kernel console messages"
-diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 5fcb845b9fec..d814723fb27d 100644
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -486,8 +486,6 @@ static int __init init_pstore_fs(void)
- {
- 	int err;
- 
--	pstore_choose_compression();
--
- 	/* Create a convenient mount point for people to access pstore */
- 	err = sysfs_create_mount_point(fs_kobj, "pstore");
- 	if (err)
-diff --git a/fs/pstore/internal.h b/fs/pstore/internal.h
-index fb767e28aeb2..c029314478fa 100644
---- a/fs/pstore/internal.h
-+++ b/fs/pstore/internal.h
-@@ -37,7 +37,4 @@ extern bool	pstore_is_mounted(void);
- extern void	pstore_record_init(struct pstore_record *record,
- 				   struct pstore_info *psi);
- 
--/* Called during module_init() */
--extern void __init pstore_choose_compression(void);
--
- #endif
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index c238ab8ba31d..eca7588afa92 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -28,12 +28,6 @@
- #include <linux/console.h>
- #include <linux/module.h>
- #include <linux/pstore.h>
--#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
--#include <linux/lzo.h>
--#endif
--#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
--#include <linux/lz4.h>
--#endif
- #include <linux/crypto.h>
- #include <linux/string.h>
- #include <linux/timer.h>
-@@ -82,13 +76,8 @@ static char *compress =
- /* Compression parameters */
- static struct crypto_comp *tfm;
- 
--struct pstore_zbackend {
--	int (*zbufsize)(size_t size);
--	const char *name;
--};
--
- static char *big_oops_buf;
--static size_t big_oops_buf_sz;
-+static unsigned int big_oops_buf_sz;
- 
- /* How much of the console log to snapshot */
- unsigned long kmsg_bytes = PSTORE_DEFAULT_KMSG_BYTES;
-@@ -142,92 +131,6 @@ bool pstore_cannot_block_path(enum kmsg_dump_reason reason)
- }
- EXPORT_SYMBOL_GPL(pstore_cannot_block_path);
- 
--#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
--static int zbufsize_deflate(size_t size)
--{
--	size_t cmpr;
--
--	switch (size) {
--	/* buffer range for efivars */
--	case 1000 ... 2000:
--		cmpr = 56;
--		break;
--	case 2001 ... 3000:
--		cmpr = 54;
--		break;
--	case 3001 ... 3999:
--		cmpr = 52;
--		break;
--	/* buffer range for nvram, erst */
--	case 4000 ... 10000:
--		cmpr = 45;
--		break;
--	default:
--		cmpr = 60;
--		break;
--	}
--
--	return (size * 100) / cmpr;
--}
--#endif
--
--#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
--static int zbufsize_lzo(size_t size)
--{
--	return lzo1x_worst_compress(size);
--}
--#endif
--
--#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS) || IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
--static int zbufsize_lz4(size_t size)
--{
--	return LZ4_compressBound(size);
--}
--#endif
--
--#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
--static int zbufsize_842(size_t size)
--{
--	return size;
--}
--#endif
--
--static const struct pstore_zbackend *zbackend __ro_after_init;
--
--static const struct pstore_zbackend zbackends[] = {
--#if IS_ENABLED(CONFIG_PSTORE_DEFLATE_COMPRESS)
--	{
--		.zbufsize	= zbufsize_deflate,
--		.name		= "deflate",
--	},
--#endif
--#if IS_ENABLED(CONFIG_PSTORE_LZO_COMPRESS)
--	{
--		.zbufsize	= zbufsize_lzo,
--		.name		= "lzo",
--	},
--#endif
--#if IS_ENABLED(CONFIG_PSTORE_LZ4_COMPRESS)
--	{
--		.zbufsize	= zbufsize_lz4,
--		.name		= "lz4",
--	},
--#endif
--#if IS_ENABLED(CONFIG_PSTORE_LZ4HC_COMPRESS)
--	{
--		.zbufsize	= zbufsize_lz4,
--		.name		= "lz4hc",
--	},
--#endif
--#if IS_ENABLED(CONFIG_PSTORE_842_COMPRESS)
--	{
--		.zbufsize	= zbufsize_842,
--		.name		= "842",
--	},
--#endif
--	{ }
--};
--
- static int pstore_compress(const void *in, void *out,
- 			   unsigned int inlen, unsigned int outlen)
- {
-@@ -256,42 +159,48 @@ static int pstore_decompress(void *in, void *out,
- 	return outlen;
- }
- 
-+static void free_buf_for_compression(void)
-+{
-+	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
-+		crypto_free_comp(tfm);
-+	tfm = NULL;
-+	kfree(big_oops_buf);
-+	big_oops_buf = NULL;
-+	big_oops_buf_sz = 0;
-+}
-+
- static void allocate_buf_for_compression(void)
- {
--	if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !zbackend)
-+	if (!IS_ENABLED(CONFIG_PSTORE_COMPRESS) || !compress)
- 		return;
- 
--	if (!crypto_has_comp(zbackend->name, 0, 0)) {
--		pr_err("No %s compression\n", zbackend->name);
--		return;
-+	if (!crypto_has_comp(compress, 0, 0)) {
-+		pr_err("No %s compression available\n", compress);
-+		goto fail;
- 	}
- 
--	big_oops_buf_sz = zbackend->zbufsize(psinfo->bufsize);
--	if (big_oops_buf_sz <= 0)
--		return;
-+	tfm = crypto_alloc_comp(compress, 0, 0);
-+	if (IS_ERR_OR_NULL(tfm)) {
-+		pr_err("crypto_alloc_comp(\"%s\") failed!\n", compress);
-+		goto fail;
-+	}
-+
-+	if (crypto_comp_zbufsize(tfm, psinfo->bufsize, &big_oops_buf_sz)) {
-+		pr_err("crypto_comp_zbufsize() for %s failed!\n", compress);
-+		goto fail;
-+	}
- 
- 	big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
- 	if (!big_oops_buf) {
- 		pr_err("allocate compression buffer error!\n");
--		return;
-+		goto fail;
- 	}
- 
--	tfm = crypto_alloc_comp(zbackend->name, 0, 0);
--	if (IS_ERR_OR_NULL(tfm)) {
--		kfree(big_oops_buf);
--		big_oops_buf = NULL;
--		pr_err("crypto_alloc_comp() failed!\n");
--		return;
--	}
--}
-+	return;
- 
--static void free_buf_for_compression(void)
--{
--	if (IS_ENABLED(CONFIG_PSTORE_COMPRESS) && !IS_ERR_OR_NULL(tfm))
--		crypto_free_comp(tfm);
--	kfree(big_oops_buf);
--	big_oops_buf = NULL;
--	big_oops_buf_sz = 0;
-+fail:
-+	compress = NULL;
-+	free_buf_for_compression();
- }
- 
- /*
-@@ -587,7 +496,9 @@ int pstore_register(struct pstore_info *psi)
- 	 */
- 	backend = psi->name;
- 
--	pr_info("Registered %s as persistent store backend\n", psi->name);
-+	pr_info("Registered %s as backend%s%s.\n",
-+		psi->name, compress ? " compressed with " : "",
-+		compress ?: "");
- 
- 	module_put(owner);
- 
-@@ -748,22 +659,6 @@ static void pstore_timefunc(struct timer_list *unused)
- 			  jiffies + msecs_to_jiffies(pstore_update_ms));
- }
- 
--void __init pstore_choose_compression(void)
--{
--	const struct pstore_zbackend *step;
--
--	if (!compress)
--		return;
--
--	for (step = zbackends; step->name; step++) {
--		if (!strcmp(compress, step->name)) {
--			zbackend = step;
--			pr_info("using %s compression\n", zbackend->name);
--			return;
--		}
--	}
--}
--
- module_param(compress, charp, 0444);
- MODULE_PARM_DESC(compress, "Pstore compression to use");
- 
+Seems to be :( Jason reports about 4%. I wonder whether we can support
+map_sg and friends being NULL, then use that when mapping is an
+identity. A conditional branch there is likely very cheap.
+
+Would this cover all platforms with kvm (which is where we care
+most about performance)?
+
+> This change stands alone, and imho "cleans" up virtio by avoiding all
+> that if/else "2 path" and unless it adds a measurable overhead, should
+> probably be done.
+> 
+>  2- Make virtio use the DMA API with our custom platform-provided
+> swiotlb callbacks when needed, that is when not using IOMMU *and*
+> running on a secure VM in our case.
+> 
+> This benefits from -1- by making us just plumb in a different set of
+> DMA ops we would have cooked up specifically for virtio in our arch
+> code (or in virtio itself but build arch-conditionally in a separate
+> file). But it doesn't strictly need it -1-:
+> 
+> Now, -2- doesn't strictly needs -1-. We could have just done another
+> xen-like hack that forces the DMA API "ON" for virtio when running in a
+> secure VM.
+> 
+> The problem if we do that however is that we also then need the arch
+> PCI code to make sure it hooks up the virtio PCI devices with the
+> special "magic" DMA ops that avoid the iommu but still do swiotlb, ie,
+> not the same as other PCI devices. So it will have to play games such
+> as checking vendor/device IDs for virtio, checking the IOMMU flag,
+> etc... from the arch code which really bloody sucks when assigning PCI
+> DMA ops.
+> 
+> However, if we do it the way we plan here, on top of -1-, with a hook
+> called from virtio into the arch to "override" the virtio DMA ops, then
+> we avoid the problem completely: The arch hook would only be called by
+> virtio if the IOMMU flag is *not* set. IE only when using that special
+> "hypervisor" iommu bypass. If the IOMMU flag is set, virtio uses normal
+> PCI dma ops as usual.
+> 
+> That way, we have a very clear semantic: This hook is purely about
+> replacing those "null" DMA ops that just return PA introduced in -1-
+> with some arch provided specially cooked up DMA ops for non-IOMMU
+> virtio that know about the arch special requirements. For us bounce
+> buffering.
+> 
+> Is there something I'm missing ?
+> 
+> Cheers,
+> Ben.
+
+Right so I was trying to write it up in a systematic way, but just to
+give you one example, if there is a system where DMA API handles
+coherency issues, or flushing of some buffers, then our PLATFORM_IOMMU
+flag causes that to happen.
+
+And we kinda worked around this without the IOMMU by basically saying
+"ok we do not really need DMA API so let's just bypass it" and
+it was kind of ok except now everyone is switching to vIOMMU
+just in case. So now people do want some parts of what DMA API does,
+such as the bounce buffer use, or IOMMU mappings.
+
+And maybe in the end the solution is going to be to do something similar
+to virt_Xmb except for DMA APIs: add APIs that handle just the
+addressing bits but without the overhead. See
+commit 6a65d26385bf487926a0616650927303058551e3
+    asm-generic: implement virt_xxx memory barriers
+for reference, it's a similar set of issues.
+
+So it's not a problem with your patches as such, it's just that
+they don't solve that harder problem.
+
 -- 
-2.17.1
-
+MST
