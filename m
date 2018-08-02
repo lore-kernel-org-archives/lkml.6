@@ -3,87 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11176C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC42C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C632147A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FE321476
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:43:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="NAHnxrp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C632147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnThzByl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FE321476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730217AbeHBKdD (ORCPT
+        id S1731146AbeHBKdK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:33:03 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:47684 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbeHBKdC (ORCPT
+        Thu, 2 Aug 2018 06:33:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41143 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbeHBKdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:33:02 -0400
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 4DA075C0A80;
-        Thu,  2 Aug 2018 10:42:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1533199373;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=Jex5bShoBENvnN9HpXMYmB/UJrRCVrkYWRT6EiLnQvA=;
-        b=NAHnxrp0Heu4IEVk8znkiM6jz6INVctQTs5XrudSWcFVkBroVNzVMvapBF2Q5ZcPbQUjL0
-        10I2jM7wvdmpiAetYEMyawMj+lUptR4EhBQmza04hrXu+AQDbCM99pXMopb1j++AW1C4cV
-        0VWd6LkYjXoqFpUTAN/HbNh8aY4UAMo=
-From:   Stefan Agner <stefan@agner.ch>
-To:     fugang.duan@nxp.com, davem@davemloft.net
-Cc:     krzk@kernel.org, robin.murphy@arm.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2] net: fec: check DMA addressing limitations
-Date:   Thu,  2 Aug 2018 10:42:50 +0200
-Message-Id: <20180802084250.26489-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
+        Thu, 2 Aug 2018 06:33:09 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z8-v6so812130pgu.8
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:43:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TF1DgZ7pY4LPbfrswnAT7Lt2fEXLPlNspSQ5l4KfkWk=;
+        b=lnThzByl/yyr7vUM2PjPX5wbMxag8KugK8xjAmjC0gLgXElNSf38mpvlvI4hxGN6hu
+         mOyHaqI59DJpItdoquC3x8ixiqXIUUCGYkwpE3dKYxBtZxIYvJYxDUUA3aStXcREW0hz
+         SD/bhChcHqfAkAwfr1/5amaJUXAkI6vlf5dSVyrSp6AzCL1eb18NqoUYDAr+/XflLXKa
+         mB5HhH/mdg5HjqyJAWtDJ8HcOyMvphXR+OomY2bXMAwL+D1skU4we5yivi60R+8R5rIG
+         Hfgrxgire1mlWIMnRHbc0NvJUzzSVokfbLiSJKmEppK0Cb74p4N/K/S6kZ2Nn4ZYr1yD
+         vJIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TF1DgZ7pY4LPbfrswnAT7Lt2fEXLPlNspSQ5l4KfkWk=;
+        b=BcoLU812iQfmLGyXYmvpHb97MsB8B205GifgtX799zOfgu8iPycQ6aPYC+ylH+mRxS
+         MUtnVeO4MlPLH6w2AmUpsGsHCa3oetu2ElGaXEMO5MuzYavFH/pxIb++Q+r1YCPXHPRw
+         Vs513PPn51Y4LIZq/dije59Tg5eMwSHyyseNLUko9k9PSB2L6bgR38EgDmQYDYA8nGpo
+         D6zEma/jxJRN1PPTgM05DTRIQarn2H8KWjtEr5Kzfaz9CXF2AoR+LJC676b4Ng6aKDx4
+         F3U4TCLU1qu4ViXxdGtlxQk0brCMb3/l3xWbGD2Xrjn38lgUEGdBrVuTdt0FBh7ka7q/
+         hPhQ==
+X-Gm-Message-State: AOUpUlHuUypU6aitBDy07kReaylVC4o0+GsHOhk3YaNWiPq+ocCqQJ0m
+        CfuKchexmacom0eVg5GIXVo=
+X-Google-Smtp-Source: AAOMgpcG4IBHlBJffVezwVWz3TgfyMGI/7OeEm/WDzwWaNx4BO9FkaGGsKQdigry/Ry2hgfpNVRtqQ==
+X-Received: by 2002:a63:c60:: with SMTP id 32-v6mr1827617pgm.155.1533199380828;
+        Thu, 02 Aug 2018 01:43:00 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id q21-v6sm2128397pfl.156.2018.08.02.01.42.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Aug 2018 01:42:59 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 0/8] staging: gasket: cleanups du jour
+Date:   Thu,  2 Aug 2018 01:42:37 -0700
+Message-Id: <20180802084245.239689-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.597.ga71716f1ad-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check DMA addressing limitations as suggested by the DMA API
-how-to. This does not fix a particular issue seen but is
-considered good style.
+From: Todd Poynor <toddpoynor@google.com>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/net/ethernet/freescale/fec_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+More cleanups for the gasket+apex drivers.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index c729665107f5..cdf2f5447910 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3136,6 +3136,7 @@ static int fec_enet_init(struct net_device *ndev)
- 	unsigned dsize = fep->bufdesc_ex ? sizeof(struct bufdesc_ex) :
- 			sizeof(struct bufdesc);
- 	unsigned dsize_log2 = __fls(dsize);
-+	int ret;
- 
- 	WARN_ON(dsize != (1 << dsize_log2));
- #if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-@@ -3146,6 +3147,13 @@ static int fec_enet_init(struct net_device *ndev)
- 	fep->tx_align = 0x3;
- #endif
- 
-+	/* Check mask of the streaming and coherent API */
-+	ret = dma_set_mask_and_coherent(&fep->pdev->dev, DMA_BIT_MASK(32));
-+	if (ret < 0) {
-+		dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
-+		return ret;
-+	}
-+
- 	fec_enet_alloc_queue(ndev);
- 
- 	bd_size = (fep->total_tx_ring_size + fep->total_rx_ring_size) * dsize;
+Todd Poynor (8):
+  staging: gasket: apex: enable power save mode by default
+  staging: gasket: core: print driver version code at registration time
+  staging: gasket: core: move driver loaded log after error cases
+  staging: gasket: core: device register debug log cleanups
+  staging: gasket: core: add subsystem and device info to error logs
+  staging: gasket: remove "reset type" param from framework
+  staging: gasket: apex: drop reset type param
+  Revert "staging: gasket: core: hold reference to pci_dev while used"
+
+ drivers/staging/gasket/apex_driver.c      | 22 ++++-----
+ drivers/staging/gasket/gasket.h           |  4 +-
+ drivers/staging/gasket/gasket_constants.h |  2 +-
+ drivers/staging/gasket/gasket_core.c      | 56 +++++++++++------------
+ drivers/staging/gasket/gasket_core.h      | 13 ++----
+ drivers/staging/gasket/gasket_ioctl.c     |  3 +-
+ 6 files changed, 43 insertions(+), 57 deletions(-)
+
 -- 
-2.18.0
+2.18.0.597.ga71716f1ad-goog
 
