@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDA6C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B70C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AEB421531
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F253C215E6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 22:52:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G+87Y9tx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEB421531
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YK0sLQ6y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F253C215E6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732451AbeHCApx (ORCPT
+        id S1731447AbeHCApO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 20:45:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43018 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731999AbeHCApR (ORCPT
+        Thu, 2 Aug 2018 20:45:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37677 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbeHCApO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 20:45:17 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so2125907pfi.10
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 15:52:00 -0700 (PDT)
+        Thu, 2 Aug 2018 20:45:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n7-v6so1894716pgq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 15:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Lw1x6/XXm0lKXP9nlcp75yHGkurHRFg6rUCxMz3zWcw=;
-        b=G+87Y9txjkKex5p4nQPg8DFpWzDVHI99Z36eo9cmFvI0MpZiXOXcH41b4/+jayE7RI
-         LuCn8uhmrdRdTO6+rbN3fEZHowc8vSA9577z5TIJElRHr0ABv3OkiSQjUtbRpq/445+G
-         fZaeHlqntKxW6SKEZY9gXAS08sEiQWgKgvK+Y=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=aHfzmuE3dXR4IAoiUCBdTyidzm+NOXbAHoWt0SfC0Yk=;
+        b=YK0sLQ6yx/nNf22z78FvybF7smSHZTnhCRXQxGyslT7EpdDx2alGo3541jQNsGp9vp
+         8pDZrDntU+idgZMIW2VDvcaO1N0zhTJCjJZIexUkW5A5TeQmfDQqalbe48DGnFU0buQf
+         uEONOy+9a5tJLimhzzgbNSgnmtp8nSNISwRZA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Lw1x6/XXm0lKXP9nlcp75yHGkurHRFg6rUCxMz3zWcw=;
-        b=da/4CpXcAMKTAwNT7nQxk6AkKlHKihCz/qbguhHQvFdcAG1zXASAy9wB60je50eFY+
-         iQIafFJ1bYVFDl4WHHl4+hsxL5NqO4HLXJSdp2XYkl8PNnHxHqU9zjFQQFxEsSbXLg30
-         C9onzyo7AlIzcaA+4xL+kYrFZOrvJJoPiBVCpi7Rn4KKcULqPzICk1lD9K4W5J5sAc6e
-         WN9wdJ9dohLx8XT4Xhz3rXYWjgrPW7aIFl8cI7nxgea/jyVsyfHQRrygTveCM3tARmeB
-         305Xi3S9dCI8r6O4lDRWJmAb36XCaPhctDTNdh75XBq2JhiZ7sDvoT3wuBBHd8bJ3TZc
-         H7cw==
-X-Gm-Message-State: AOUpUlG9RJsqfgcy3OVh2p2xDEfvaGjBz7Cttl2hOk+W7c0ZBP9DQiJk
-        IjE+WlU706FTX7shTNMIU0SUbA==
-X-Google-Smtp-Source: AAOMgpf6POfbDGJKBxUqZiJ0GIdfhMEqOf0U3K0rG+LM2MBDBbsTeGr/XVHjTkHRxwDzM1g3P0YQSQ==
-X-Received: by 2002:aa7:850b:: with SMTP id v11-v6mr1428270pfn.165.1533250320176;
-        Thu, 02 Aug 2018 15:52:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=aHfzmuE3dXR4IAoiUCBdTyidzm+NOXbAHoWt0SfC0Yk=;
+        b=UvD/4z4Hq499eLtwNo9xsw6r/KrPg9q/4oto5QL7afq12TM1qvUx8k+0dyHbIHyep8
+         bescvV4TPp8keo0BOBT+O/l6SxPbzIxcOk23uxRRXZw7s7EeoTaSwwKNWTyctsssyeoD
+         YSCQL6gB8Vpl3jrmSPFDuAFdZXxgauDvuUgbJI4jfkCIF9fLTHtV+7ToPNAH29aVf8V7
+         rPyQKZQO0A9dySbv3hC8Q44xs8lMUw9Iu3zgKodErZVQ0z6/W/mV6c1tq+KNjN46Gtef
+         S1uh/h6pboJGpGaT6x8Ur+apWdhKj12e75tKiO6eHPfGOawW9lU+o8c3djEUV5emF4CJ
+         NWeA==
+X-Gm-Message-State: AOUpUlGXFHUpJxJ5CAM9yTk1xeOBiNl7OVXFBJXt+3BmEYtztJ9bQ9OS
+        az+HfaBft778sxdzXV6wE48G9Q==
+X-Google-Smtp-Source: AAOMgpdxUZUIZzGXTUAHJB42T93KR5IqwOqZF7WaiQ/FktZbkan+JYAnOI7iUO0ZrKk468r1i6dY3g==
+X-Received: by 2002:a63:1902:: with SMTP id z2-v6mr1226160pgl.86.1533250317502;
+        Thu, 02 Aug 2018 15:51:57 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s184-v6sm4345186pfb.56.2018.08.02.15.51.55
+        by smtp.gmail.com with ESMTPSA id y3-v6sm6236173pfi.24.2018.08.02.15.51.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 02 Aug 2018 15:51:56 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -72,115 +73,43 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 0/9] crypto: Remove VLA usage
-Date:   Thu,  2 Aug 2018 15:51:43 -0700
-Message-Id: <20180802225152.19194-1-keescook@chromium.org>
+Subject: [PATCH v7 2/9] crypto: cbc: Remove VLA usage
+Date:   Thu,  2 Aug 2018 15:51:45 -0700
+Message-Id: <20180802225152.19194-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180802225152.19194-1-keescook@chromium.org>
+References: <20180802225152.19194-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v7 cover letter:
-
-Since the ahash->shash conversions are going via separate trees, I've
-removed those patches from this series. In the meantime, this contains
-all the remaining patches for getting rid of almost all VLAs in crypto.
-I'd _really_ like to get this landed for v4.19. Any chance of that
-happening?
-
-Series cover letter:
-
-This is nearly the last of the VLA removals[1], but it's one of the
-largest because crypto gets used in lots of places. After looking
-through code, usage, reading the threads Gustavo started, and comparing
-the use-cases to the other VLA removals that have landed in the kernel,
-I think this series is likely the best way forward to shut the door on
-VLAs forever.
-
-For background, the crypto stack usage is for callers to do an immediate
-bit of work that doesn't allocate new memory. This means that other VLA
-removal techniques (like just using kmalloc) aren't workable, and the
-next common technique is needed: examination of maximum stack usage and
-the addition of sanity checks. This series does that, and in several
-cases, these maximums were already implicit in the code.
-
-This series is intended to land via the crypto tree for 4.19, though it
-touches dm, networking, and a few other things as well, since there are
-dependent patches (new crypto #defines being used, etc).
-
-Thanks!
-
--Kees
+In the quest to remove all stack VLA usage from the kernel[1], this
+uses the upper bounds on blocksize. Since this is always a cipher
+blocksize, use the existing cipher max blocksize.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Changelog:
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/crypto/cbc.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-v7:
-- refresh and reorganization without ahash->shash conversions
-
-v6:
-- make xcbc blocksize unconditional
-- add ahash-to-shash conversion patch series to entirely remove
-  AHASH_REQUEST_ON_STACK from the kernel
-
-v5:
-- limit AHASH_REQUEST_ON_STACK size only to non-async hash wrapping.
-- sanity-check ahash reqsize only when doing shash wrapping.
-- remove frame_warn changes in favor of shash conversions and other fixes.
-- send ahash to shash conversion patches and other fixes separately.
-
-v4:
-- add back *_REQUEST_ON_STACK patches.
-- programmatically find stack sizes for *_REQUEST_ON_STACK patches.
-- whitelist some code that trips FRAME_WARN on 32-bit builds.
-- fix alignment patches.
-
-v3:
-- drop *_REQUEST_ON_STACK patches. The rest of this series is pretty
-  straight-forward, and I'd like to get them tested in -next while
-  we continue to chip away at the *_REQUEST_ON_STACK VLA removal patches
-  separately. "Part 2" will continue with those.
-
-v2:
-- use 512 instead of PAGE_SIZE / 8 to avoid bloat on large-page archs.
-- swtich xcbc to "16" max universally.
-- fix typo in bounds check for dm buffer size.
-- examine actual reqsizes for skcipher and ahash instead of guessing.
-- improve names and comments for alg maxes
-
-
-Ard Biesheuvel (1):
-  crypto: ccm: Remove VLA usage
-
-Kees Cook (8):
-  crypto: xcbc: Remove VLA usage
-  crypto: cbc: Remove VLA usage
-  crypto: hash: Remove VLA usage
-  dm: Remove VLA usage from hashes
-  crypto alg: Introduce generic max blocksize and alignmask
-  crypto: qat: Remove VLA usage
-  crypto: shash: Remove VLA usage in unaligned hashing
-  crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-
- crypto/ahash.c                           |  4 +--
- crypto/algapi.c                          |  7 ++++-
- crypto/algif_hash.c                      |  2 +-
- crypto/ccm.c                             |  9 ++++---
- crypto/shash.c                           | 33 ++++++++++++++----------
- crypto/xcbc.c                            |  8 +++---
- drivers/crypto/qat/qat_common/qat_algs.c |  8 ++++--
- drivers/md/dm-integrity.c                | 23 ++++++++++++-----
- drivers/md/dm-verity-fec.c               |  5 +++-
- include/crypto/algapi.h                  |  4 ++-
- include/crypto/cbc.h                     |  4 ++-
- include/crypto/hash.h                    |  6 ++++-
- include/crypto/internal/skcipher.h       |  1 +
- include/crypto/skcipher.h                |  4 ++-
- include/linux/compiler-gcc.h             |  1 -
- 15 files changed, 81 insertions(+), 38 deletions(-)
-
+diff --git a/include/crypto/cbc.h b/include/crypto/cbc.h
+index f5b8bfc22e6d..47db0aac2ab9 100644
+--- a/include/crypto/cbc.h
++++ b/include/crypto/cbc.h
+@@ -113,7 +113,9 @@ static inline int crypto_cbc_decrypt_inplace(
+ 	unsigned int bsize = crypto_skcipher_blocksize(tfm);
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *src = walk->src.virt.addr;
+-	u8 last_iv[bsize];
++	u8 last_iv[MAX_CIPHER_BLOCKSIZE];
++
++	BUG_ON(bsize > sizeof(last_iv));
+ 
+ 	/* Start of the last block. */
+ 	src += nbytes - (nbytes & (bsize - 1)) - bsize;
 -- 
 2.17.1
 
