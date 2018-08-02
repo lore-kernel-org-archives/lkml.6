@@ -2,140 +2,129 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EDAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC8AC28CF6
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B06020862
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:34:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A1220862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 01:39:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QUo0mxuG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J8UqtZpE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B06020862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=dugeo-com.20150623.gappssmtp.com header.i=@dugeo-com.20150623.gappssmtp.com header.b="HX+qlXqH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A1220862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dugeo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbeHBDXT (ORCPT
+        id S1731991AbeHBD1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 1 Aug 2018 23:23:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33880 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeHBDXT (ORCPT
+        Wed, 1 Aug 2018 23:27:35 -0400
+Received: from mail-pg1-f182.google.com ([209.85.215.182]:35425 "EHLO
+        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730038AbeHBD1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Aug 2018 23:23:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1E90560540; Thu,  2 Aug 2018 01:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533173681;
-        bh=OGpHk+iqPtddHUfp+LRViLAwAvqL7aoaPEJ25uKrgBA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QUo0mxuGl+dlNIqNdI10VZycudufKewrtKpLX/W7UA/uIj7xMwd2t5A/B7d0XnOBF
-         YS3RLwCpWQe/a4a/mGxjGxYf6V1ok5KJ6NR/jE6CoE4c+tn4lmZS1f8IzD2+3mn5qI
-         k4syGTCzmP0/bN/LWLxqrckEoHI+KrP6/LlOw8bg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3D9D860540;
-        Thu,  2 Aug 2018 01:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1533173680;
-        bh=OGpHk+iqPtddHUfp+LRViLAwAvqL7aoaPEJ25uKrgBA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=J8UqtZpE9R8eq/m76BIhMIW6s2IwMS/tb9aFJrb36TTu+/YxD9FmFAhWenJR4OkvM
-         2ESE9qWwqPqJjy5j8awIqrg8spXNUJfNCFtTLxyGIMymqMhz6CE/fMR1F+cn2Pvdpg
-         vfPly/Yt0yDb7RxT5mbV+vcasyhhx6+zU+hYD+tA=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 01 Aug 2018 18:34:40 -0700
-From:   Sodagudi Prasad <psodagud@codeaurora.org>
-To:     peterz@infradead.org, mingo@kernel.org, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, tglx@linutronix.de
-Cc:     isaacm@codeaurora.org, psodagud@codeaurora.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Subject: cpu stopper threads and setaffinity leads to deadlock
-Message-ID: <24eebe1d874cb8e3b9a18087554544fa@codeaurora.org>
-X-Sender: psodagud@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 1 Aug 2018 23:27:35 -0400
+Received: by mail-pg1-f182.google.com with SMTP id e6-v6so311350pgv.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 18:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dugeo-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=nm0UxIhPx1cXqGRwecH+OO05GzRWqNwW8UAtOCMK7/g=;
+        b=HX+qlXqHVdu5baAMRSed5b7l7Bl944CtnelvyzdugPnFnZPJ73k19ArZFRXFGhmNVF
+         SupLxmicTNDZBtk2NrS761w2hDEVWBBYtrTl7fq2UZFMswZVWNbh+D/U8irtavKFHQq/
+         0dZZJZAgN5GZgc+XnnFi/pF7Xe4lCmbiQJMXeHp7T+ueE6BRFyh/0IGTd5OywCrXm6Cz
+         1s0plRxGGurfjtaEqvEWBzDlqAZ7vPsxsu5yUQnnQQ+NlgD1CKvfB2z71YqTx2jJ3ah6
+         3dSwDozW11/8EeHhmlx+1M8xvZLswTYJgaQNt2EfQ1EWeg3/ZyiwJVxWlDAQcauCkXQO
+         9ZYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nm0UxIhPx1cXqGRwecH+OO05GzRWqNwW8UAtOCMK7/g=;
+        b=ZMeoWpdPagiLhJvyLiCloPROYfcOBfS2BfyHPYwBjQjQ/mn8jNUPRirHjGhSIqgKyI
+         sfUT/xhqWgheemsYXVKgEDC656+6fXoAuL+0pmXANFVvKZrfxBT3738E6Ics4mQx9cP7
+         ioSgrOohxIwVxjRzYFu2i4WoomNCy8tSpN5w4hWthgfnGWFLaeMDhXg3PK64B2YlswLw
+         m6enktLVOTk8oK3poDQ70iTqCi5q0MnB6SUTlYU3Mu7LpsAMA1I0Yl8OJ+BdenoTFUCB
+         e4Tjh4HDT2zmQETv4GnwnnYZ1rz66YleRgV+B/q35a6nutV+pR832jcL9cZkO2Wz3wRy
+         4jsQ==
+X-Gm-Message-State: AOUpUlFFompSM2kuQjcEgY0/DNtqCSerc2/wDoAsCUwFrq9X3lzIIXf7
+        7nWL0hMKech24feuI5so5jpolA==
+X-Google-Smtp-Source: AAOMgpcKWC6BJLamrB+NPI5wzLRZggiBZbmVi/6C+/LpUzhSQlqiN3Ky8xyGIeER6nzYLMdaGHvCpg==
+X-Received: by 2002:a63:40c7:: with SMTP id n190-v6mr707666pga.116.1533173935985;
+        Wed, 01 Aug 2018 18:38:55 -0700 (PDT)
+Received: from bud178.dugeo.com ([116.212.202.58])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm503775pft.93.2018.08.01.18.38.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Aug 2018 18:38:54 -0700 (PDT)
+From:   Jacek Tomaka <jacekt@dugeo.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jacek Tomaka <jacek.tomaka@poczta.fm>
+Subject: [PATCH v4] perf/x86/intel: Add support for MISPREDICT bit on Knights Landing cpus
+Date:   Thu,  2 Aug 2018 09:38:30 +0800
+Message-Id: <20180802013830.10600-1-jacekt@dugeo.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter and Tglx,
+From: Jacek Tomaka <jacek.tomaka@poczta.fm>
 
-We are observing another deadlock issue due to commit 
-0b26351b91(stop_machine, sched: Fix migrate_swap() vs. active_balance() 
-deadlock), even after taking the following fix
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1740526.html 
-on the Linux-4.14.56  kernel.
+Problem: perf did not show branch predicted/mispredicted bit in brstack.
 
-Here is the scenario that leads to this deadlock.
-We have used the stress-ng-64 --affinity test case to reproduce this 
-issue in a controlled environment, while simultaneously running CPU hot 
-plug and task migrations.
+Output of perf -F brstack for profile collected
 
-Stress-ng-affin (call stack shown below) is changing its own affinity 
-from cpu3 to cpu7. Stress-ng-affin is preempted in the 
-cpu_stop_queue_work() function
-as soon as the stopper lock for migration/3 is released . At the same 
-time, on CPU 7, cross migration of tasks happens between  cpu3 and cpu7.
+Before:
+0x4fdbcd/0x4fdc03/-/-/-/0
+0x45f4c1/0x4fdba0/-/-/-/0
+0x45f544/0x45f4bb/-/-/-/0
+0x45f555/0x45f53c/-/-/-/0
+0x7f66901cc24b/0x45f555/-/-/-/0
+0x7f66901cc22e/0x7f66901cc23d/-/-/-/0
+0x7f66901cc1ff/0x7f66901cc20f/-/-/-/0
+0x7f66901cc1e8/0x7f66901cc1fc/-/-/-/0
 
-=======================================================
-Process: stress-ng-affin, cpu: 3 pid: 1748 start: 0xffffffd8817e4480
-=====================================================
-     Task name: stress-ng-affin pid: 1748 cpu: 3 start: ffffffd8817e4480
-     state: 0x0 exit_state: 0x0 stack base: 0xffffff801c8e8000 Prio: 120
-     Stack:
-     [<ffffff87754864f4>] __switch_to+0xb8
-     [<ffffff87763ebf8c>] __schedule+0x690
-     [<ffffff87763ec388>] preempt_schedule_common+0x100
-     [<ffffff87763eb8f4>] preempt_schedule+0x24
-     [<ffffff87763f0e58>] _raw_spin_unlock_irqrestore+0x64
-     [<ffffff8775574f8c>] cpu_stop_queue_work+0x9c
-     [<ffffff8775574dfc>] stop_one_cpu+0x58
-     [<ffffff87754e4884>] __set_cpus_allowed_ptr+0x234
-     [<ffffff87754e8888>] sched_setaffinity+0x150
-     [<ffffff87754e8ad8>] SyS_sched_setaffinity+0xcc
-     [<ffffff87754837c0>] el0_svc_naked+0x34
-     [<0>] UNKNOWN+0x0
+After:
+0x4fdbcd/0x4fdc03/P/-/-/0
+0x45f4c1/0x4fdba0/P/-/-/0
+0x45f544/0x45f4bb/P/-/-/0
+0x45f555/0x45f53c/P/-/-/0
+0x7f66901cc24b/0x45f555/P/-/-/0
+0x7f66901cc22e/0x7f66901cc23d/P/-/-/0
+0x7f66901cc1ff/0x7f66901cc20f/P/-/-/0
+0x7f66901cc1e8/0x7f66901cc1fc/P/-/-/0
 
-Due to cross migration of tasks between cpu7 and cpu3, migration/7 has 
-started executing and waits for the migration/3 task, so that they can 
-proceed within the multi cpu stop state machine together.
-Unfortunately stress-ng-affin is affine to cpu7, and since migration 7 
-has started running, and has monopolized cpu7’s execution, stress-ng 
-will never run on cpu7, and cpu3’s migration task is never woken up.
+Cause:
+As mentioned in Software Development Manual vol 3, 17.4.8.1,
+IA32_PERF_CAPABILITIES[5:0] indicates the format of the address that is
+stored in the LBR stack. Knights Landing reports 1 (LBR_FORMAT_LIP) as
+its format. Despite that, registers containing FROM address of the branch,
+do have MISPREDICT bit but because of the format indicated in
+IA32_PERF_CAPABILITIES[5:0], LBR did not read MISPREDICT bit.
 
-Essentially:
-Due to the nature of the wake_q interface,  a thread can only be in at 
-most one wake queue at a time.
-migration/3 is currently in stress-ng-affin’s wake_q. This means that no 
-other thread can add migration/3 to their wake queue.
-Thus, even if any attempt is made to stop CPU 3 (e.g. cross-migration, 
-hot plugging, etc), no thread will wake up migration/3.
+Solution:
+Teach LBR about above Knights Landing quirk and make it read MISPREDICT bit.
 
-Below change helped to fix this deadlock.
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index e190d1e..f932e1e 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -87,9 +87,9 @@ static bool cpu_stop_queue_work(unsigned int cpu, 
-struct cpu_stop_work *work)
-                 __cpu_stop_queue_work(stopper, work, &wakeq);
-         else if (work->done)
-                 cpu_stop_signal_done(work->done);
--       raw_spin_unlock_irqrestore(&stopper->lock, flags);
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+---
+ arch/x86/events/intel/lbr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-         wake_up_q(&wakeq);
-+       raw_spin_unlock_irqrestore(&stopper->lock, flags);
-
-
--Thanks, Prasad
-
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index cf372b9055..81fe5047c6 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -1230,4 +1230,8 @@ void intel_pmu_lbr_init_knl(void)
+ 
+ 	x86_pmu.lbr_sel_mask = LBR_SEL_MASK;
+ 	x86_pmu.lbr_sel_map  = snb_lbr_sel_map;
++
++	/* Knights Landing does have MISPREDICT bit */
++	if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_LIP)
++		x86_pmu.intel_cap.lbr_format = LBR_FORMAT_EIP_FLAGS;
+ }
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+2.17.0
+
