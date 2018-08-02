@@ -2,106 +2,72 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DAEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E94AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EDB92098A
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:32:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ho8ttMNN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EDB92098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F1D8A20BF3
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:34:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D8A20BF3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeHBIWI (ORCPT
+        id S1726636AbeHBIXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:22:08 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:51199 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbeHBIWI (ORCPT
+        Thu, 2 Aug 2018 04:23:48 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25814 "EHLO
+        sender1.zoho.com.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726156AbeHBIXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:22:08 -0400
-Received: by mail-wm0-f52.google.com with SMTP id s12-v6so1144020wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 23:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sclHyPI658Bo86ihATULFDPhWb21Qn8HPq3LhZbMxPM=;
-        b=ho8ttMNNlw58QqrvD0c/U07uh9K3eQ0HtjfMMKAOU0aFhGzgtZ8wQp3VAjKIG8Poyj
-         TNEYicZv42kErHK7EOqGcz0oc1PAFbs/hdKegFIpnWWtS/4bIMFjXiY+4VPGKfQ4Zuv+
-         HbW1C6LWsbQ+Mde++mBNfRuhAe8zSnKtgruaE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sclHyPI658Bo86ihATULFDPhWb21Qn8HPq3LhZbMxPM=;
-        b=bUlWCz4VEPoksXZJ3DlHSiET4SGJd+ob31DvK8g8ljyrKNbgieXxLnLJmFyWgg1zzd
-         0EfmJ6Dkpw4vI0g00tRmQ4GVumR21zDS8IIYk9xrPZB84l3UfWIm/1prpi710DO34D4P
-         aGn7Rq0M66qkeO0MJh00zj3+LXCmIgO42xfFrBCK6496/WMag29QCMHNM8oCe36+Q5jR
-         tNoVkO2Bzxf4O+FCIk9wKReQx+P4C0g/bW2GQtXMyTthoXEuE/DGCTXtW8mKuVydm4fN
-         2NQ/nuiIRG7d9QIr6pwBkIkLfMocOjQTR8RKwp+/Qdapan7A3Fym2V7HddqzBbyaHhY/
-         acNw==
-X-Gm-Message-State: AOUpUlGVqhdv/lsFJ9KjepJv/C5KCvUYBm2Bh1s4rqtNXo+u6cExrgTU
-        2eLE//yY+v0++8ls1jTJ7oEZHg==
-X-Google-Smtp-Source: AAOMgpdta05AK6e1qNDm2bfPttxWXE7t3nJ7WVJ1j3mrSJ4eXcEpUXwElQqHVMc177dv5vy98KuFCQ==
-X-Received: by 2002:a1c:ad4:: with SMTP id 203-v6mr903068wmk.98.1533191548970;
-        Wed, 01 Aug 2018 23:32:28 -0700 (PDT)
-Received: from dell ([95.149.160.4])
-        by smtp.gmail.com with ESMTPSA id w185-v6sm1112014wmw.6.2018.08.01.23.32.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Aug 2018 23:32:28 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 07:32:26 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        tiwai@suse.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org
-Subject: Re: Applied "ASoC: wcd9335: add support to wcd9335 codec" to the
- asoc tree
-Message-ID: <20180802063226.GK4662@dell>
-References: <20180801112011.33C511124241@debutante.sirena.org.uk>
- <2b90faa5-6fd9-f769-183e-23cb59bf460e@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b90faa5-6fd9-f769-183e-23cb59bf460e@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 2 Aug 2018 04:23:48 -0400
+Received: from localhost.localdomain.localdomain (45.62.52.41 [45.62.52.41]) by mx.zoho.com.cn
+        with SMTPS id 1533191606755967.5943860410273; Thu, 2 Aug 2018 14:33:26 +0800 (CST)
+From:   oceanhe@zoho.com.cn
+To:     dan.j.williams@intel.com, ross.zwisler@linux.intel.com,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, rjw@rjwysocki.net,
+        lenb@kernel.org
+Cc:     linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ocean He <hehy1@lenovo.com>
+Subject: [PATCH] ACPI: nfit: remove redundant assignment if nfit_mem found
+Date:   Thu,  2 Aug 2018 02:33:11 -0400
+Message-Id: <1533191591-20453-1-git-send-email-oceanhe@zoho.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 01 Aug 2018, Srinivas Kandagatla wrote:
+From: Ocean He <hehy1@lenovo.com>
 
-> Hi Mark,
-> 
-> On 01/08/18 12:20, Mark Brown wrote:
-> > +#include <sound/soc.h>
-> > +#include <sound/pcm_params.h>
-> > +#include <sound/soc-dapm.h>
-> > +#include <sound/tlv.h>
-> > +#include <sound/info.h>
-> > +#include <dt-bindings/mfd/wcd9335.h>
-> > +#include <linux/mfd/wcd9335/wcd9335.h>
-> > +#include <linux/mfd/wcd9335/registers.h>
-> 
-> Without the "[PATCH v2 02/10] mfd: wcd9335: add support to wcd9335 core" It
-> would break the build.
+When nfit_mem is found via list_for_each_entry, it has already been
+assigned valid value. There is no need to assign it again in the following
+codes.
 
-This file should not be built without 02/10.
+Signed-off-by: Ocean He <hehy1@lenovo.com>
+---
+ drivers/acpi/nfit/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 7c47900..85dde54 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1048,9 +1048,7 @@ static int __nfit_mem_init(struct acpi_nfit_desc *acpi_desc,
+ 				break;
+ 			}
+ 
+-		if (found)
+-			nfit_mem = found;
+-		else {
++		if (!found) {
+ 			nfit_mem = devm_kzalloc(acpi_desc->dev,
+ 					sizeof(*nfit_mem), GFP_KERNEL);
+ 			if (!nfit_mem)
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.8.3.1
+
+
