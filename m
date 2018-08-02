@@ -3,127 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F0BC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58517C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFCE2146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DCC32146F
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:31:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FNmvMj97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFCE2146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UejQ85FY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCC32146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731904AbeHBKVV (ORCPT
+        id S1726932AbeHBKV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:21:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:56577 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726021AbeHBKVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:21:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41h3Kr2KkPz9s3q;
-        Thu,  2 Aug 2018 18:31:12 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1533198673;
-        bh=Km7JIRWzx4NLTjo9U0B28/CFvE7+2t/hUp4CUBAZ/vU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FNmvMj97Qqi5HG7XvHX768P93W/xpfPFKBSR4MGoOwnThZDjHcht/n9wv588gkH/O
-         nEvQPX76x/CwKUzTNxtsEam6pntIeMFi/sJQO/h3ejZak6zZ4b8+YYJxryK8ikr2Ym
-         HcjiJ62hJWKEXiVv9UiF3TxxV2IJ8SAGNyLVa/TbY3X5ZFGWiBeuQcDzHZnqfojyQe
-         n8li+0ywOl8TIBLeJnI4erDxUGw/p44SUR4IjMtFcgcuWRNA+nrF6X5R2RC8ZGU1Fz
-         JXisZlp7rT5A5A8qIyO/5iMEgDhhPx8Vt9w/+Pzn57kboO7Pdxye61Ctmng7nwSYss
-         akScjtlgZs/IQ==
-Date:   Thu, 2 Aug 2018 18:31:10 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: linux-next: manual merge of the akpm-current tree with the block
- tree
-Message-ID: <20180802183110.1e1ad25b@canb.auug.org.au>
+        Thu, 2 Aug 2018 06:21:58 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:43356 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeHBKV6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 06:21:58 -0400
+Received: by mail-qt0-f169.google.com with SMTP id f18-v6so1368980qtp.10
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 01:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oNckchScRrgUL8jKS42uSnplmoil5TAfqgcZC/4GdfU=;
+        b=UejQ85FYmnKtgqZUs9LkzZwddkkmLdMpkswsd2JDwu/AAo8EGYVlxu+B46TTZ0uCos
+         NbG3uhn5f32v30j7ymUXVN8i6ZKbZD9gMUKNaCsgLlw99C2CKUZ5yygtftqVDE42LfdO
+         kYXu7W/iqPHS4jijmlc+g6PUn2WKQequirSZ45ulquI7YgY64HzBKjpyIvDAmQ225Zis
+         kAJG90awy0IKZJ0tFjj/eDFJUcE06JNZmY8k8NCMucvkkGtR412Fuyk40HojxHOj5AE1
+         rHBM7Q52LlTuymPCam+dM7bVkLhoh85Vl6CV2ABn3prPeERQBpsfFarZT656AxVnpbu6
+         yDjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oNckchScRrgUL8jKS42uSnplmoil5TAfqgcZC/4GdfU=;
+        b=baNrhJzBqY/hFAuBxyWrSM1yNem0FLersiAeSF20YbJtEWlbUkd7VzKbS2/+pmPkY/
+         Pttnm0TXpyhHvxxzsbhXy2YoHI2eH/c4KXhWXBar0IcOhe4D55uUBS/cL/yXxTLbD4MH
+         QmEQad1aQOfmUSMnhWuyw+PH+GQBJz+PAl/pDmpNJoeCXvQU9ffsPtS2pwjTtAuc2pbV
+         bljp9VPytM3DHh5Ci4aMMh7IsoSNc3j7vd2qAhDudrA3IYVsAy/S5hOiZkmrSVumAEj0
+         QrIYxRIbkj6zRo2KHm6PoMUCQjdsgvH1bVkQeBEL1Lo4ByeEgWlSeh4Zq6oHJe+5VePo
+         IG2g==
+X-Gm-Message-State: AOUpUlFnWRhnNqQ86VKW+bXTZlKcD1ZBE1wLYwpNZCiUfrJfHSZMoEFo
+        42PL4lf5k3pypfXSBCCWzHywV647cLTAQ7+iGQ4hjqni
+X-Google-Smtp-Source: AAOMgpfi8hCO9hEFBMz2fprhp29qr/XPe/fBVPWzoraCU0dX95idxZ7JzTZJ7KtylkpcQ9HrxOCRoLf2mTVRvRQAVso=
+X-Received: by 2002:a0c:f94e:: with SMTP id i14-v6mr1574842qvo.73.1533198711762;
+ Thu, 02 Aug 2018 01:31:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bf0ktMUeT2FxtmdDwzJUNjv"; protocol="application/pgp-signature"
+References: <1533116658-14924-1-git-send-email-goodwater.wu@gmail.com>
+ <1533196290-9669-1-git-send-email-goodwater.wu@gmail.com> <20180802080258.GA13222@kroah.com>
+In-Reply-To: <20180802080258.GA13222@kroah.com>
+From:   Jheng-Jhong Wu <goodwater.wu@gmail.com>
+Date:   Thu, 2 Aug 2018 16:31:40 +0800
+Message-ID: <CALtPoQCskvbkEYE2m6Q=h_gPEV6+Abt+SJqLjVtAa+jReHGrzA@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: mt29f_spinand: fix memory leak while
+ programming pages
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bf0ktMUeT2FxtmdDwzJUNjv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear greg k-h,
 
-Hi all,
+Before device is removed and freed memory automatically, programming
+pages may run many many times.
+Assume we erase and rewrite a large part of the flash, then
+spinand_program_page() might exhaust memory if memory is not large
+enough.
+We may not remove and re-add the device between each programming page, righ=
+t?
+In fact, OOM indeed occurred when I tested programming multi-pages by
+mtd_debug tool.
+Erased first, then programmed pages.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
-
-  kernel/fork.c
-
-between commit:
-
-  2c323017e381 ("blk-cgroup: clear the throttle queue on fork")
-
-from the block tree and commit:
-
-  f3ed47469a7b ("fs: fsnotify: account fsnotify metadata to kmemcg")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/fork.c
-index f54c49573139,3913dd898bd4..000000000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -867,11 -867,9 +868,14 @@@ static struct task_struct *dup_task_str
-  	tsk->fail_nth =3D 0;
-  #endif
- =20
- +#ifdef CONFIG_BLK_CGROUP
- +	tsk->throttle_queue =3D NULL;
- +	tsk->use_memdelay =3D 0;
- +#endif
- +
-+ #ifdef CONFIG_MEMCG
-+ 	tsk->active_memcg =3D NULL;
-+ #endif
-  	return tsk;
- =20
-  free_stack:
-
---Sig_/bf0ktMUeT2FxtmdDwzJUNjv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltiwU4ACgkQAVBC80lX
-0GxH4Qf/cDtoOJbO6LJh1UVykrbIq2Qol0uQoLPQxf/frn+o0WqJFyqf3omyjETq
-VjSS9s5wRUFIifIvztNvog6SbbwxH2VS5JgQlaVP6Nr1GpNXJMAJx795vslncC0l
-RneBIdbvrVI4jIFdkmk6AV6nEbeJrGA1MH/Qm8t3RI4ZJuC4QE2aAOSvNLVJldXT
-2+9rcFryNRh4p3Xnf50tsiQAGhxs2bnUCln6aelP/nyTBnRymiviZZ2QdGHP3lhy
-Xf3/YiVabdwsU8u2DuTYGv6ctbi7q9bJtVpmru84chg31T61YgDUdMrUnQ+Fbc++
-7Ggh0FEGXgl6jH0nx8wnpvJVWeQpSg==
-=558s
------END PGP SIGNATURE-----
-
---Sig_/bf0ktMUeT2FxtmdDwzJUNjv--
+Best Regards,
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+Jheng-Jhong Wu (Victor Wu)
+E-mail: goodwater.wu@gmail.com
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> =E6=96=BC 2018=E5=B9=B48=E6=
+=9C=882=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:03=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+>
+> On Thu, Aug 02, 2018 at 03:51:30PM +0800, Jheng-Jhong Wu wrote:
+> > In spinand_program_page(), it uses devm_kzalloc() to allocate memory to
+> > wbuf dynamically if internal ECC is on, but it doesn't free memory
+> > allocated to wbuf at the end of this function. Before the spinand devic=
+e
+> > is removed and frees memory automatically, programming pages may run ma=
+ny
+> > times. This leads to a memory leak issue when internal ECC is on.
+>
+> How is this a memory leak?  The memory will be freed when the struct
+> device is removed from the system.  How did you test that there was a
+> leak?
+>
+> > Changelog:
+> >
+> > v2:
+> > - use kzalloc()/kfree() to replace devm_kzalloc()/devm_kfree()
+> > - add some descriptions to commit message
+>
+> this changelog goes below the --- line.
+>
+> thanks,
+>
+> greg k-h
