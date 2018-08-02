@@ -2,120 +2,75 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE61C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED72DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF2A214FF
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:04:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF2A214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9562C214FF
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 10:05:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qQzMnYKb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9562C214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbeHBLyk (ORCPT
+        id S1731925AbeHBLzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 07:54:40 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36299 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbeHBLyk (ORCPT
+        Thu, 2 Aug 2018 07:55:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49320 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeHBLzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 07:54:40 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1flASi-0003G4-Ff; Thu, 02 Aug 2018 12:04:04 +0200
-Date:   Thu, 2 Aug 2018 12:04:04 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Christoph Hellwig <hch@lst.de>
-cc:     palmer@sifive.com, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, anup@brainfault.org,
-        atish.patra@wdc.com, devicetree@vger.kernel.org,
-        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, shorne@gmail.com
-Subject: Re: [PATCH 7/9] irqchip: add a RISC-V PLIC driver
-In-Reply-To: <20180726143723.16585-8-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.1808021149470.2037@nanos.tec.linutronix.de>
-References: <20180726143723.16585-1-hch@lst.de> <20180726143723.16585-8-hch@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 2 Aug 2018 07:55:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QWTTubVQE6xDeeQ+j+xY/c9yjAtGJp9ZdSEgYsPLlys=; b=qQzMnYKbOKPymgtt8WpQpWPG3
+        aNJv8TufzeVL7HECXm6RGfWry932G9ItBS0HAd8ngLP3eenOwpZkiVKIGX2o2IDSX1QEDaloVToym
+        QT39+0dqs5LwIKipJlRERwyKqPkbb6qDXwseFhfMk7HexRJac6O/avSbnaQNegE+Tg3I0F+m13Y53
+        1zb9wiF+IHMvZ6mW6Cj4020vdiimbLFf10PG1P0kLiXz2Renxuj3FVgjLjaJfdPensh5I5k8a6N2V
+        kM8GHIfjfw4662XtBRNscKVBCR0CoupU0Ao3HlwZptGyY+TivSik9vnz9/rziON24DQWYkTUN3jAy
+        zah5JInLg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1flATu-0002P5-Cs; Thu, 02 Aug 2018 10:05:18 +0000
+Date:   Thu, 2 Aug 2018 03:05:18 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Zong Li <zong@andestech.com>
+Cc:     palmer@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        greentime@adnestech.com
+Subject: Re: [PATCH] RISC-V: Add the directive for alignment of stvec's value
+Message-ID: <20180802100518.GA4144@infradead.org>
+References: <1529545207-26999-1-git-send-email-zong@andestech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529545207-26999-1-git-send-email-zong@andestech.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 21, 2018 at 09:40:07AM +0800, Zong Li wrote:
+> The stvec's value must be 4 byte alignment by specification definition.
+> This directive avoids to stvec be set the non-alignment value by the
+> following code in head.S
+> 
+>  /* Point stvec to virtual address of intruction after satp write */
+> la a0, 1f
+> add a0, a0, a1
+> csrw stvec, a0
+> 
+> Signed-off-by: Zong Li <zong@andestech.com>
 
-On Thu, 26 Jul 2018, Christoph Hellwig wrote:
+Just noticed this didn't get picked up yet, so:
 
-> This patch adds a driver for the Platform Level Interrupt Controller (PLIC)
-
-See Documentation/process/submitting-patches.rst and search for 'This patch'
-
-> +static inline void __iomem *plic_hart_offset(int ctxid)
-> +{
-> +	return plic_regs + CONTEXT_BASE + ctxid * CONTEXT_PER_HART;
-> +}
-> +
-> +/*
-> + * Protect mask operations on the registers given that we can't assume that
-> + * atomic memory operations work on them.
-> + */
-> +static DEFINE_SPINLOCK(plic_toggle_lock);
-
-RAW_SPINLOCK please.
-
-> +
-> +static inline void plic_toggle(int ctxid, int hwirq, int enable)
-> +{
-> +	u32 __iomem *reg = plic_regs + ENABLE_BASE + ctxid * ENABLE_PER_HART;
-> +	u32 hwirq_mask = 1 << (hwirq % 32);
-> +
-> +	spin_lock(&plic_toggle_lock);
-> +	if (enable)
-> +		writel(readl(reg) | hwirq_mask, reg);
-> +	else
-> +		writel(readl(reg) & ~hwirq_mask, reg);
-> +	spin_unlock(&plic_toggle_lock);
-> +}
-> +
-> +static inline void plic_irq_toggle(struct irq_data *d, int enable)
-> +{
-> +	int cpu;
-> +
-> +	writel(enable, plic_regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
-> +	for_each_present_cpu(cpu)
-> +		plic_toggle(cpu, d->hwirq, enable);
-
-I suggest to make that:
-
-	for_each_cpu(cpu, irq_data_get_affinity_mask(d))
-		plic_toggle(cpu, d->hwirq, enable);
-       
-That gives you immediately support for interrupt affinity. And then it's
-trivial to do the actual irq_chip::irq_set_affinity() magic as well.
-
-> +/*
-> + * Handling an interrupt is a two-step process: first you claim the interrupt
-> + * by reading the claim register, then you complete the interrupt by writing
-> + * that source ID back to the same claim register.  This automatically enables
-> + * and disables the interrupt, so there's nothing else to do.
-> + */
-> +static void plic_handle_irq(struct pt_regs *regs)
-> +{
-> +	void __iomem *claim =
-> +		plic_hart_offset(smp_processor_id()) + CONTEXT_CLAIM;
-
-Either ignore the 80 char thing or just move the assignment into the code
-section please. That line break is horrible to read.
-
-> +	irq_hw_number_t hwirq;
-> +
-
-Other than that this looks halfways sane.
-
-Thanks,
-
-	tglx
+Reviewed-by: Christoph Hellwig <hch@lst.de>
