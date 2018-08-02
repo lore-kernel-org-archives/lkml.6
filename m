@@ -2,99 +2,133 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84ECFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25AFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8CB214C5
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:50:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jR4SilVl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8CB214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 38558214C5
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 08:52:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38558214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeHBKkb (ORCPT
+        id S1729224AbeHBKm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 06:40:31 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:58711 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbeHBKkb (ORCPT
+        Thu, 2 Aug 2018 06:42:58 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:53049 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726702AbeHBKm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 06:40:31 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AEF6710C0D5E;
-        Thu,  2 Aug 2018 01:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1533199821; bh=ipUZHF4yZpqXVbgJ7wfp4x/Twrz9NCJXSd5/EVZMR4U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jR4SilVlN1srLDT0FguPFNZQ8+zAZFZ6fyyN6IBNd02uHvgj2LGMV2Tnge+Ag6LZt
-         kf3FVevIsLBVmYt3LNQEpfbCPFt6ZjUdKOUyOq97PQr9MlN66XjlCV1g0XdCw+LaDJ
-         U5kamlJFrFNgYtJg4LhiHxtFB8CQ6HETf+MRUY76eJrfifLbvYQ6IQV42mc/z1Rrp9
-         ayioOuaeVPTlotQnT0egJ/rWfE8br3rj4HUHtpG6K1lRasZuW7N8ArjvSJrvP5KPgQ
-         VEAHU4vwVEnv/6Pqd/NIgre46/ILwfxEemyLP3s9WKBZHWu+uq8gAwWXpSsdk/uk1g
-         icp7sHBMhk5sQ==
-Received: from abrodkin-7480l.internal.synopsys.com (unknown [10.121.8.87])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 50C9A3E55;
-        Thu,  2 Aug 2018 01:50:20 -0700 (PDT)
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] ARC: [plat-axs10x] Enable SWAP
-Date:   Thu,  2 Aug 2018 11:50:16 +0300
-Message-Id: <20180802085016.16000-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 2 Aug 2018 06:42:58 -0400
+X-IronPort-AV: E=Sophos;i="5.51,434,1526322600"; 
+   d="scan'208";a="120563"
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 02 Aug 2018 14:21:12 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,8972"; a="834704"
+Received: from gkohli-linux.qualcomm.com ([10.204.78.26])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 02 Aug 2018 14:21:12 +0530
+Received: by gkohli-linux.qualcomm.com (Postfix, from userid 427023)
+        id CA7CC303D; Thu,  2 Aug 2018 14:21:10 +0530 (IST)
+From:   Gaurav Kohli <gkohli@codeaurora.org>
+To:     tglx@linutronix.de, john.stultz@linaro.org, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Gaurav Kohli <gkohli@codeaurora.org>
+Subject: [PATCH v3] timers: Clear must_forward_clk inside base lock
+Date:   Thu,  2 Aug 2018 14:21:03 +0530
+Message-Id: <1533199863-22748-1-git-send-email-gkohli@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SWAP support on ARC was fixed earlier by
-commit 6e3761145a9b ("ARC: Fix CONFIG_SWAP")
-so now we may safely enable it on platforms that
-have external media like USB and SD-card.
+Timer wheel base->must_forward_clock is indicating that
+the base clock might be stale due to a long idle sleep.
+The forwarding of the base clock takes place in the timer
+softirq or when a timer is enqueued to a base which is
+idle. If the enqueue of timer to an idle base happens from
+a remote CPU, then the following race can happen:
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: stable@vger.kernel.org # 6e3761145a9b: ARC: Fix CONFIG_SWAP
+  CPU0					CPU1
+  run_timer_softirq			mod_timer
+
+					base = lock_timer_base(timer);
+  base->must_forward_clk = false
+					if (base->must_forward_clk)
+				       	forward(base); >>skip
+
+					enqueue_timer(base, timer, idx);
+					>> idx is calculated high due to
+					>> stale base
+					unlock_timer_base(timer);
+  base = lock_timer_base(timer);
+  forward(base);
+
+The root cause is that base->must_forward_clk is cleared outside the
+base->lock held region, so the remote queuing CPU observes it as
+cleared, but the base clock is still stale. This can cause large
+granularity values for timers, i.e. the accuracy of the expiry time
+suffers.
+
+Prevent this by clearing the flag with base->lock held, so that the
+forwarding takes place before the cleared flag is observable by a remote
+CPU.
+
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
 ---
- arch/arc/configs/axs101_defconfig     | 1 -
- arch/arc/configs/axs103_defconfig     | 1 -
- arch/arc/configs/axs103_smp_defconfig | 1 -
- 3 files changed, 3 deletions(-)
+Changes since v2:
+ - Updated commit suggested by Thomas.
 
-diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
-index 3dbb2b3f60af..96b7258a76be 100644
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -1,4 +1,3 @@
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
-diff --git a/arch/arc/configs/axs103_defconfig b/arch/arc/configs/axs103_defconfig
-index 4d7b85d4b2dc..72fc21ef1334 100644
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -1,4 +1,3 @@
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
-diff --git a/arch/arc/configs/axs103_smp_defconfig b/arch/arc/configs/axs103_smp_defconfig
-index 92417e2e39f3..2ac89bd00e28 100644
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -1,4 +1,3 @@
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index cc2d23e..8f61d45 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1657,6 +1657,22 @@ static inline void __run_timers(struct timer_base *base)
+ 
+ 	raw_spin_lock_irq(&base->lock);
+ 
++	/*
++	 * Timer wheel base must_forward_clk must be cleared before running
++	 * timers so that any timer functions that call mod_timer will not
++	 * try to forward the base. idle tracking / clock forwarding logic
++	 * is only used with BASE_STD timers.
++	 *
++	 * The must_forward_clk flag is cleared unconditionally also for
++	 * the deferrable base. The deferrable base is not affected by idle
++	 * tracking and never forwarded, so clearing the flag is a NOOP.
++	 *
++	 * The fact that the deferrable base is never forwarded can cause
++	 * large variations in granularity for deferrable timers, but they
++	 * can be deferred for long periods due to idle anyway.
++	 */
++	base->must_forward_clk = false;
++
+ 	while (time_after_eq(jiffies, base->clk)) {
+ 
+ 		levels = collect_expired_timers(base, heads);
+@@ -1676,19 +1692,6 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
+ {
+ 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
+ 
+-	/*
+-	 * must_forward_clk must be cleared before running timers so that any
+-	 * timer functions that call mod_timer will not try to forward the
+-	 * base. idle trcking / clock forwarding logic is only used with
+-	 * BASE_STD timers.
+-	 *
+-	 * The deferrable base does not do idle tracking at all, so we do
+-	 * not forward it. This can result in very large variations in
+-	 * granularity for deferrable timers, but they can be deferred for
+-	 * long periods due to idle.
+-	 */
+-	base->must_forward_clk = false;
+-
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
 -- 
-2.17.1
+1.9.1
 
