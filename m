@@ -2,96 +2,62 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B450DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9722BC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605822150B
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:26:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W8Nd/s3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605822150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1017B2150A
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 12:30:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1017B2150A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732390AbeHBORl (ORCPT
+        id S1732348AbeHBOU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 10:17:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52086 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732034AbeHBORl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 10:17:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=09Y+oiJ6OuY7A5bT81gZvt+MplKry8zPB717wEAV2O0=; b=W8Nd/s3d+tii55H20I5/Tns16
-        X153NbdzBIUJxQTXi6P5HWrMU+Z/v9RLQ+GqFywWraKjd5pwAZp9tSW92oKoqKTULHaXKA2/U8jXu
-        UOsIo6W4o7CaTWHQ8O9CN2LuK+Wa4vBb1vdwdKhD9WcAomjtmvEzrx0xp2MpaNbDatFLrqrHR4PeU
-        oYey/jzwxR5iIrzmv0lhr/0TqzwEY2//ISNKLonK2po4cs/D8Lk3JugfsI4kbU2b+Bmrn5Kwa6E6f
-        0NWDTYVbOHpN1PSxoyOCfhwF/xW+5QYT887fXbfukhHfFdu1qDw2+UJ2MwxWT8sSRlSOq0OWdopXM
-        0qUu9HzPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1flCga-0002BJ-0N; Thu, 02 Aug 2018 12:26:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A667D20268263; Thu,  2 Aug 2018 14:26:29 +0200 (CEST)
-Date:   Thu, 2 Aug 2018 14:26:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v5 09/14] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180802122629.GU2476@hirez.programming.kicks-ass.net>
-References: <20180724122521.22109-1-quentin.perret@arm.com>
- <20180724122521.22109-10-quentin.perret@arm.com>
+        Thu, 2 Aug 2018 10:20:56 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:46544 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728797AbeHBOU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 10:20:56 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w72CTu1d017908;
+        Thu, 2 Aug 2018 13:29:56 +0100
+Date:   Thu, 2 Aug 2018 13:29:56 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     Jeff Chua <jeff.chua.linux@gmail.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: How to secure erase PCI-E NVME SSD connected via USB3?
+Message-ID: <20180802132956.6b7110ed@alans-desktop>
+In-Reply-To: <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com>
+References: <CAAJw_ZuQXrYaEu9_pXWtoDpUjR2au1gGT_FP9F1e1Y7veHSz2Q@mail.gmail.com>
+        <CACVXFVPpSJDqR8ki2PiDBbU36KsGFMYsOEf_9bmN6Cpo3w_YoQ@mail.gmail.com>
+        <CAAJw_ZtZ8hXi_B6+duiQYpaeSsQ7BQD-KwtE3H6K8Y8O8pAuig@mail.gmail.com>
+        <CAAJw_Zvaw8yoyejg5T6CtRFjoS4i_EBYKRVWocpH+mpwfaVC1Q@mail.gmail.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180724122521.22109-10-quentin.perret@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 01:25:16PM +0100, Quentin Perret wrote:
-> @@ -5100,8 +5118,17 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  		update_cfs_group(se);
->  	}
->  
-> -	if (!se)
-> +	if (!se) {
->  		add_nr_running(rq, 1);
-> +		/*
-> +		 * The utilization of a new task is 'wrong' so wait for it
-> +		 * to build some utilization history before trying to detect
-> +		 * the overutilized flag.
-> +		 */
-> +		if (flags & ENQUEUE_WAKEUP)
-> +			update_overutilized_status(rq);
-> +
-> +	}
->  
->  	hrtick_update(rq);
->  }
+> # hdparm --user-master u --security-erase p /dev/sda
+> (returns immediately and does nothing).
+> 
+> I've tried hdparm on an SSD connected via USB3 and it secure-erased ok.
+> 
+> Anyone working on this?
 
-That is a somewhat dodgy hack. There is no guarantee what so ever that
-when the task wakes next its history is any better. The comment doesn't
-reflect this I feel.
+Sounds to me like you need to contact the vendor of the interface in
+question. If it accepted a security erase command and didn't do it then
+it's broken. It's at liberty to refuse it, or report it doesn't know what
+you are talking about, but if it just returned and after re-plugging the
+device its still using the old keys then it or the device is busted and
+it's not something the OS can do much about.
+
+Alan
