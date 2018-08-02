@@ -2,133 +2,160 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2695C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD07C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81B47208DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:56:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B47208DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 39A5320C09
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 06:57:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="glgJ23vr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A5320C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeHBIqa (ORCPT
+        id S1727142AbeHBIrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 04:46:30 -0400
-Received: from mout.gmx.net ([212.227.17.22]:40027 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbeHBIqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 04:46:30 -0400
-Received: from homer.simpson.net ([185.191.216.67]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MYOCL-1fPRos0Dc9-00V8Vj; Thu, 02
- Aug 2018 08:56:23 +0200
-Message-ID: <1533192980.11791.8.camel@gmx.de>
-Subject: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq context
-From:   Mike Galbraith <efault@gmx.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Thu, 02 Aug 2018 08:56:20 +0200
-In-Reply-To: <1532768853.9882.73.camel@gmx.de>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:tRqZbZ4ii0YEQnFH5QzY4FnVNgN++R/6D/nfTMKEkbnhc3OPu8/
- /Fkz/f+5HYLbXUXm1b4IO+hht/lszV0M8e2xWF8adP/80/B84YSkNY14DuuRjIINX655eVH
- Go5CrphvmK28gVwFCu51PkZ/abwdAEkj1PT5y5dC/1zwjMjI387EG4nLyUVR8aXgxEOy5er
- gniosEUxLpmJi+4OHDHTg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:muuBhGYaHD0=:aDOSoUtiUMHw8sSJXcVxL7
- LsybNeHVQrdNc5kD0GtyZIQh/hTB6mOfsaFa77zI5Um0ROLumgAgcH7WPSo/7fkjzV/26nORc
- lvkiE2hrksWlIfuPuzpLR83IsVwnY70DMPdc//M6eyW3WTDglDidAL5Te4ujMGisAyqNpI27E
- h5bbpL9BDN/RyOCHkloqa/tJZ8YaZ7oasz0OoF5YUbCWm4xbF8TEu6h9B4WQIOSWsl3mzaW40
- Hr1deI6cZPD+OChOUcnYXUfpHpBKMR8N63N/NAkwJDhYtlxYd10P3zVpfZ9FDgHLtfy+cytrT
- P1GvH1NCau5UN6M3Ubqu/ROWOr76VpOS79q7edxkO1dwQHgn//bvDd5xCsqeyzsV1RtBj5qtB
- aYeOQA2xc2t/SPwu04mrI+hfOTPBApnpKgPj1edfbfZGRazms8IsV1r/vYw2jYwO2Z9TtNTTQ
- EmMAuHqv0qDTo7lb8v4GQy2AzBGMuQCUFufoQug6DUes9JGxzRuKV6Phv0UdlyKgfHB52XPJv
- NJ/feoVjdzTGVjJVvrb8weeg3DTtCdGNE17uf2HKLLhS+50UCPOChJ0lCpiTmb4UfEkWPq0SS
- 9IJv+gWRrET7VZbDKfQw0T1qnkM8VX6x0IfRaeFVGRg4wd/Xo/SLroxVhXRFYYSCTwULAv/Px
- MiTt3XkDBofcWxHrn1AVUwIVIfUXxyp2j3Q5d00IAVEuiO5FsFxYa29U3hUMHZ5odL3259PB0
- bXqWNK8hjOKCPNmLZpIiRZ7Nlwv3TbvqNGikCC6E0lGXdPU5BVpfFwREDVWiGeMtCB90oQiDL
- CvA+ps3
+        Thu, 2 Aug 2018 04:47:10 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39802 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbeHBIrK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 04:47:10 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so957987lji.6
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Aug 2018 23:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fagzDcCichf1gcyD+kdyaQ1u5vYECVyaR1ANTrhbU2c=;
+        b=glgJ23vrN18qNpGiVU2xMgH2lQGW13YIOMEkKqTJjPiLeam7AXzbUT/uqi3jj06lFP
+         rU6ZwF9gTd0qAnjyhkvrt/MCLY3zaz6GPkGiLW6K5MRGqLnFX9ghjlvAy11I4SepE1Zc
+         ASqm75zMwi0Ij++V3/gMHFl5cTBZPByfgcjz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fagzDcCichf1gcyD+kdyaQ1u5vYECVyaR1ANTrhbU2c=;
+        b=EDLh10s/lm9lkg+qirJvg9Gr0Kp2nUYFRSeDPQesJChbuJ9WmINiewOciuC5ILYhde
+         QGPMprt2y6N9y8L5cR+kEXt6Gmgs5DUlWS5ym/f0gJBhMJu74UWMHLqA96NNwHNxPjfI
+         Jw8an01b2Kho+LkaMHg8qtEt2yY6eMmQhN8Mr9FR+h2UuUAajgQd5p3mT7+dA2ziiXn1
+         geJ4wUbDcvLFBOhLPMRjaniEJNh8yAfRn3NISNQjKPZWWZKMXiNNnbr3abeevHHDVIcL
+         ZkSqJ2yv6czCDUoF8eLUakhoywCxwrsSzptYRQr22nN6prPskdcf39dC/ci0iICR4NIa
+         J7Cw==
+X-Gm-Message-State: AOUpUlFQexqmX3p4sXH6svolefBYCcahwdKyD6OEkUEO5zCU8DlaaLjn
+        HPUJw7nPVdGppAM2t2SpQlVuaFdxjJMHk2ptAA91lw==
+X-Google-Smtp-Source: AAOMgpcJSlF6jUnTykVthYQtG0qyW7E/1pFFn7Wp6GFOGil3QEYdlH1PHl4SFXzrCScdcObhqsjn0AMuJBnrWS46jas=
+X-Received: by 2002:a2e:9e55:: with SMTP id g21-v6mr1156375ljk.116.1533193045189;
+ Wed, 01 Aug 2018 23:57:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Wed, 1 Aug 2018 23:57:24 -0700 (PDT)
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
+References: <20180801165028.930831994@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 2 Aug 2018 12:27:24 +0530
+Message-ID: <CA+G9fYtXfNtufXr=_w4Rdq-WaYXb52yeY7x58k5oMJcHP28r7Q@mail.gmail.com>
+Subject: Re: [PATCH 4.17 000/336] 4.17.12-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(arm-land adventures 1/3 take2 will have to wait, my cup runeth over) 
+On 1 August 2018 at 22:15, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.17.12 release.
+> There are 336 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri Aug  3 16:49:21 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.17.12-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-v4.14..v4.15 timer handling changes including calling kvm_timer_vcpu_load()
-during kvm_preempt_ops.sched_in and taking vgic_dist.lpi_list_lock in the
-timer interrupt handler required locks for which locking rules/context had
-been changed be converted to raw_spinlock_t...
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-Quoting virt/kvm/arm/vgic/vgic.c:
- * Locking order is always:
- * kvm->lock (mutex)
- *   its->cmd_lock (mutex)
- *     its->its_lock (mutex)
- *       vgic_cpu->ap_list_lock         must be taken with IRQs disabled
- *         kvm->lpi_list_lock           must be taken with IRQs disabled
- *           vgic_irq->irq_lock         must be taken with IRQs disabled
- *
- * As the ap_list_lock might be taken from the timer interrupt handler,
- * we have to disable IRQs before taking this lock and everything lower
- * than it.
+Summary
+------------------------------------------------------------------------
 
-...and fixed the obvious bricking consequence of those changes for RT,
-but left an RT specific kvm unit test timer failure in its wake.  Handling
-phys_timer in hard interrupt context as expected cures that failure.
+kernel: 4.17.12-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.17.y
+git commit: a7e0b37ac7bfee2dc0e9560d86ac518979244313
+git describe: v4.17.11-337-ga7e0b37ac7bf
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/bu=
+ild/v4.17.11-337-ga7e0b37ac7bf
 
-Pre:
-PASS selftest-setup (2 tests)
-PASS selftest-vectors-kernel (2 tests)
-PASS selftest-vectors-user (2 tests)
-PASS selftest-smp (65 tests)
-PASS pci-test (1 tests)
-PASS pmu (3 tests)
-PASS gicv2-ipi (3 tests)
-PASS gicv3-ipi (3 tests)
-PASS gicv2-active (1 tests)
-PASS gicv3-active (1 tests)
-PASS psci (4 tests)
-FAIL timer (8 tests, 1 unexpected failures)
+No regressions (compared to build v4.17.11-337-g90ebeb339f8f)
 
-Post:
-PASS selftest-setup (2 tests)
-PASS selftest-vectors-kernel (2 tests)
-PASS selftest-vectors-user (2 tests)
-PASS selftest-smp (65 tests)
-PASS pci-test (1 tests)
-PASS pmu (3 tests)
-PASS gicv2-ipi (3 tests)
-PASS gicv3-ipi (3 tests)
-PASS gicv2-active (1 tests)
-PASS gicv3-active (1 tests)
-PASS psci (4 tests)
-PASS timer (8 tests)
 
-Signed-off-by: Mike Galbraith <efault@gmx.de>
----
- virt/kvm/arm/arch_timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ran 13775 total tests in the following environments and test suites.
 
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -634,7 +634,7 @@ void kvm_timer_vcpu_init(struct kvm_vcpu
- 	hrtimer_init(&timer->bg_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
- 	timer->bg_timer.function = kvm_bg_timer_expire;
- 
--	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
- 	timer->phys_timer.function = kvm_phys_timer_expire;
- 
- 	vtimer->irq.irq = default_vtimer_irq.irq;
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
