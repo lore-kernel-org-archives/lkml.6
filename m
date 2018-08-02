@@ -2,81 +2,125 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0D4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3380C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCD8214F1
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:51:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BCD8214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id A730721531
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 16:54:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kXgEQphB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A730721531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731927AbeHBSnM (ORCPT
+        id S1731885AbeHBSqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 14:43:12 -0400
-Received: from mout.gmx.net ([212.227.15.15]:60601 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726938AbeHBSnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 14:43:11 -0400
-Received: from homer.simpson.net ([185.221.150.28]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lug4m-1fuF2Z2F2u-00zk5h; Thu, 02
- Aug 2018 18:50:51 +0200
-Message-ID: <1533228650.12550.15.camel@gmx.de>
-Subject: Re: [rt-patch 4/3] arm,KVM: Move phys_timer handling to hard irq
- context
-From:   Mike Galbraith <efault@gmx.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Thu, 02 Aug 2018 18:50:50 +0200
-In-Reply-To: <20180802123104.7fed73b4@gandalf.local.home>
-References: <20180727215710.zq6gkoqzlb4ca7qv@linutronix.de>
-         <1532764179.9882.14.camel@gmx.de> <1532768853.9882.73.camel@gmx.de>
-         <1533192980.11791.8.camel@gmx.de>
-         <20180802123104.7fed73b4@gandalf.local.home>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
+        Thu, 2 Aug 2018 14:46:07 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37558 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726636AbeHBSqG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 14:46:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E907C8EE13D;
+        Thu,  2 Aug 2018 09:54:08 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id z_Lcw2Uqykj6; Thu,  2 Aug 2018 09:54:08 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 33C108EE0E4;
+        Thu,  2 Aug 2018 09:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1533228848;
+        bh=KR1OilPoffnqDJ8TvY/IhbwigcvVf3NpaTYyRobxsNU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=kXgEQphB0mNUml6sR/FNFJzAlr5M41/dgAJq6wlBbiSBXWQ3Zji4YxEk9JdarBHyA
+         RVjO2kA7s24FWaqL2TU9K+UphE+/sYviCxP/m2hGETZlAmxm/3DtOuTQz0Jk91AlGx
+         TaqFsbBA8FxQSCwLUlNBSbcufFeDyah4AhnWchro=
+Message-ID: <1533228846.3915.17.camel@HansenPartnership.com>
+Subject: Re: [PATCH] blk-mq: fix blk_mq_tagset_busy_iter
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        John Garry <john.garry@huawei.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 02 Aug 2018 09:54:06 -0700
+In-Reply-To: <20180802164329.11900-1-ming.lei@redhat.com>
+References: <20180802164329.11900-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:L/h4LdVzwALVIipIpTc3Rp/obQTQfvhbTriZZZ8nroOC0i5hFI2
- sbBxxLrky/SWc/V4yE/izibi8USz2MTvubEVt/cuYhul5FOp1OkZ6RdbfOU5NXybLx1HmLb
- cje/De1O/qsngGVxvZIWIR9SXWmC/VRyGVdQKfra0leXoUDr4GqAnAewo9TWQ/rOpcAotCu
- fpHdz4c7L48u5biehK8LA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:g4mjiNxvZw0=:VOi8JoVBtGsHFTZrM8YlI4
- mo+simXF9QtauxgbWS2jg3Z7VjwLUVAExnkQvtR+HkWeirl6p+HXAES2dSBvYJY3qUtEQ3z5T
- fvJwPmUKoFqkFk+BakR+MZ4kX2sR4+8lT7dapG7fZcpTewG3b5kvQPW0sUGyhZGI9Px0fZjOG
- 8FrAATYx+GpCJlbko4z3iOjS/9MlumSXgqen6cga+ci3Cc0cRZrhsgOtrbRe0ZKMD4SfY/gej
- naGW0AQlqtjRN+ZdgTfAhgymgwA8OgCVWrDXnaOewfNf7u7ACqMVjFkLF903Iw9nSBwJ2B1IU
- DXm9UFbDap7HEJ/rZmWj5uV8avp98s/BDFFkVnel4HG1Zk+hnAFCKdwUbBxr2/jM0LQuP64e9
- biSDtGeX4SKHGv15ur0PVKff7MWTRPayCccyP9hjgzPtBGr1oq4H3BCY0y0FMT++hvvxAL0GZ
- miJOuHIfW+XrunBatCn9E3nicH5IAVRgFqlwESJHM/e8Ih026mUDyFvZljn69SdHepKVZN3xS
- ngWO/4EvUOpS0wEuVFZG2bF9p0nonUZ5L+/Q4zIA9QDGnTq5WGPgmMQaS+pivhEkDx/dLvACl
- E0wogOuxxqdcYyvj3ZOLw5ld+0Js/EYo9ReJ5G5BbPJ83c3dFqkyRJfix6dOkwwOGjprIx9WC
- bGEAneYPXXEvWsZRQ/S0XLlJljZJO6pUKhfULPfVrnSjBbBni1vg2Gf9SCoC64hdUtLJFp/Xk
- kpEN21rLacEZlrom21w+CdpAAOJ71uxgVu1edDBWP3QqbOJHmm7MjSw9p9medhuF434j7S2aX
- 03WRdMB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-02 at 12:31 -0400, Steven Rostedt wrote:
-> On Thu, 02 Aug 2018 08:56:20 +0200
-> Mike Galbraith <efault@gmx.de> wrote:
+On Fri, 2018-08-03 at 00:43 +0800, Ming Lei wrote:
+> Commit d250bf4e776ff09d5("blk-mq: only iterate over inflight requests
+> in blk_mq_tagset_busy_iter") uses 'blk_mq_rq_state(rq) ==
+> MQ_RQ_IN_FLIGHT'
+> to replace 'blk_mq_request_started(req)', this way is wrong, and
+> causes
+> lots of test system hang during booting.
 > 
-> > (arm-land adventures 1/3 take2 will have to wait, my cup runeth over) 
-> > 
-> > v4.14..v4.15 timer handling changes including calling kvm_timer_vcpu_load()
+> Fix the issue by using blk_mq_request_started(req) inside
+> bt_tags_iter().
 > 
-> I take it that this should be added to v4.16-rt and marked stable-rt?
+> Fixes: d250bf4e776ff09d5 ("blk-mq: only iterate over inflight
+> requests in blk_mq_tagset_busy_iter")
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Matt Hart <matthew.hart@linaro.org>
+> Cc: Johannes Thumshirn <jthumshirn@suse.de>
+> Cc: John Garry <john.garry@huawei.com>
+> Cc: Hannes Reinecke <hare@suse.com>,
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+> Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
+> Cc: linux-scsi@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  block/blk-mq-tag.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
+> index 09b2ee6694fb..3de0836163c2 100644
+> --- a/block/blk-mq-tag.c
+> +++ b/block/blk-mq-tag.c
+> @@ -271,7 +271,7 @@ static bool bt_tags_iter(struct sbitmap *bitmap,
+> unsigned int bitnr, void *data)
+>  	 * test and set the bit before assining ->rqs[].
+>  	 */
+>  	rq = tags->rqs[bitnr];
+> -	if (rq && blk_mq_rq_state(rq) == MQ_RQ_IN_FLIGHT)
+> +	if (rq && blk_mq_request_started(rq))
 
-Yeah, barring way sexier ideas of course.
+So now we have dueling versions of this patch:
 
-	-Mike
+https://marc.info/?l=linux-scsi&m=153322802207688
+
+Can we at least make sure we've root caused the problem and confirmed
+we've got it fixed before we start the formal patch process?  When we
+do start the formal patch process, please give appropriate credit to
+the reporter(s) since this has been a royal pain for them to help us
+track down.
+
+James
+
