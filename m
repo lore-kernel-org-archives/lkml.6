@@ -2,1025 +2,159 @@ Return-Path: <SRS0=MSGh=KR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB96C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE18FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55602083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:48:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55602083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C93820862
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 03:52:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="BjNCQEZN";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="ReOjlKOg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C93820862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeHBFiB (ORCPT
+        id S1726794AbeHBFlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 01:38:01 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:10214 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726042AbeHBFiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 01:38:01 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0B0FC81117F8F;
-        Thu,  2 Aug 2018 11:48:51 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 2 Aug 2018
- 11:48:46 +0800
-Date:   Thu, 2 Aug 2018 11:47:27 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Thu, 2 Aug 2018 01:41:24 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:5929 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeHBFlY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Aug 2018 01:41:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1533183074; x=1564719074;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=vKdiIh9qvWHpZx4AD33Nrjef77jX8DM8SPdR4Rz3kr8=;
+  b=BjNCQEZNsBq1VkatnjEHjR61PiD2oojURtS8Q68YdEz5F6mEzCQH9ZKy
+   EWJBx2E/s5+Zcfsx3qWA4VNQK1WfLtZIAX0AJ0c7E+UpvD6oy43AIvoYn
+   bauEHgvtyU++8S6OMke3peHvLTEcGL/ESZHa7fKq8KUNo8dP7oZQaRx2J
+   iBwZUAbFIOznpkRcZ3s7kTgEh7Jw0bJQG4rNBmfLfIaGW4KG9rC9be2g3
+   mNjyrVWurqnQjaU16tLggEfbPGx80KM8BeAeydnPB1l3j+wMfXKAOSPlr
+   gBQl+4QSk1iLRxKB3KguQFFDQCjkB1e+ODSEq/hZbsNl7sCF5a/0wi5I5
+   A==;
+X-IronPort-AV: E=Sophos;i="5.51,434,1526313600"; 
+   d="scan'208";a="183196557"
+Received: from mail-bn3nam04lp0111.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([216.32.180.111])
+  by ob1.hgst.iphmx.com with ESMTP; 02 Aug 2018 12:11:12 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VaDA8FsqV0X9XC/m2zTyqWNqNoPfPTZ2oDhQ3NLK9SY=;
+ b=ReOjlKOgyVd0BRydRg/sDf++giQflRIToMNNkoNmEa8YJsOQ+Fc3vK/cMr4NGMQKCc2y8SRf4I+FlEMT3I7EBF2DuU99acz7iV8f3dYx9M9ldl8lUBybwIOvlmJAGO+Jj/jB36+OpFJ7Y6+nNzAwaB/pfEJ25EA2DZpA60kugAA=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB3742.namprd04.prod.outlook.com (10.172.169.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.995.19; Thu, 2 Aug 2018 03:52:14 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::855a:8758:5f65:f8ee%8]) with mapi id 15.20.1017.010; Thu, 2 Aug 2018
+ 03:52:14 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "zhongjiang@huawei.com" <zhongjiang@huawei.com>
+CC:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "aacraid@microsemi.com" <aacraid@microsemi.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>
-Subject: Re: [RFC PATCH 3/7] vfio: add spimdev support
-Message-ID: <20180802034727.GK160746@Turing-Arch-b>
-References: <20180801102221.5308-1-nek.in.cn@gmail.com>
- <20180801102221.5308-4-nek.in.cn@gmail.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
+        "john.garry@huawei.com" <john.garry@huawei.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Subject: Re: [PATCH 2/2] scsi:qlogicfas408: remove the same check in
+ qlogicfas408_detect
+Thread-Topic: [PATCH 2/2] scsi:qlogicfas408: remove the same check in
+ qlogicfas408_detect
+Thread-Index: AQHUKgx/zt38yhew/kSYwTWaKUYeNaSry8qAgAACRQCAAAY8gA==
+Date:   Thu, 2 Aug 2018 03:52:14 +0000
+Message-ID: <2ff30988089f3cbc0d2127dbfaa29955e0449997.camel@wdc.com>
+References: <1533177901-19514-1-git-send-email-zhongjiang@huawei.com>
+         <1533177901-19514-3-git-send-email-zhongjiang@huawei.com>
+         <dc1f8e81007466172d383cc63a4be246c568a2d4.camel@wdc.com>
+         <5B627AB2.8000101@huawei.com>
+In-Reply-To: <5B627AB2.8000101@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [174.62.111.89]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB3742;20:cL/9JTJZqph+8g/2DC6rbTf0px421x4aoe3pwT1qmwRVAg2c5cbpd5jR5Ed9tCI7BRV8u6smDP5RwMgkHCKBy/21+LX6Ck0RvBIMCI17jkCZuhnvv91Z0inKUDHiqZmqMZV3H87jVUcdfaR/BtCP7jfRE4pnVLzBYuGKnuD1FTY=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: ec861e01-9c88-42af-325f-08d5f82b55b3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB3742;
+x-ms-traffictypediagnostic: MWHPR04MB3742:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB3742D43465323CCDA38196F8982C0@MWHPR04MB3742.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(50582790962513);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB3742;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB3742;
+x-forefront-prvs: 07521929C1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(366004)(346002)(39860400002)(396003)(189003)(199004)(51444003)(229853002)(2906002)(14444005)(2351001)(53546011)(446003)(8936002)(68736007)(97736004)(54906003)(72206003)(2616005)(118296001)(478600001)(11346002)(486006)(256004)(476003)(1730700003)(53936002)(106356001)(5250100002)(186003)(2501003)(105586002)(5660300001)(15760500003)(81156014)(26005)(6512007)(25786009)(66066001)(7736002)(81166006)(39060400002)(3846002)(6486002)(305945005)(6116002)(99286004)(6916009)(36756003)(8676002)(102836004)(14454004)(4326008)(93886005)(5640700003)(2900100001)(86362001)(76176011)(6506007)(6246003)(316002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB3742;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 1XKWYrt+7viUuzJ6ocJA6b8l9AOg2V2Oz7qfTSXuYxVtNx2nJlSF0l6zj/rX4XbVKgURV2PR08blBGwVllCjkc7kJmgXX14LOHZP0X3ZkX3OuGSlTJ552kWWDtStmEuvDzA4Y9RayPxNucrA+QfjsaeEy4YwbK6yPn+ZPCnUF/26TZZy0hf+1NhokkmfTLuDFEn/cd880Q97Dg7r+D0dYA3CS7JK8stmMuNrGpT9WW1mSFjc3qpGmwerz09paiLtcZaOMmagdboiGxParNxhoQYyiNFnYyk9I5WE0a3SNzLV+IjEeLzMeQ4RoB4UPk9gdQzqLXJVRHeKegl1cN8Ftl6yjWhEdnDl8Mjk+AjjyyA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <73802270CCDF2E48B707FDE28290CB10@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec861e01-9c88-42af-325f-08d5f82b55b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2018 03:52:14.6788
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB3742
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 02, 2018 at 03:21:25AM +0000, Tian, Kevin wrote:
-> Date: Thu, 2 Aug 2018 03:21:25 +0000
-> From: "Tian, Kevin" <kevin.tian@intel.com>
-> To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
->  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
->  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
->  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
->  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
->  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
->  <tglx@linutronix.de>, "linux-doc@vger.kernel.org"
->  <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
->  <linux-kernel@vger.kernel.org>, "linux-crypto@vger.kernel.org"
->  <linux-crypto@vger.kernel.org>, "iommu@lists.linux-foundation.org"
->  <iommu@lists.linux-foundation.org>, "kvm@vger.kernel.org"
->  <kvm@vger.kernel.org>, "linux-accelerators@lists.ozlabs.org"
->  <linux-accelerators@lists.ozlabs.org>, Lu Baolu
->  <baolu.lu@linux.intel.com>, "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>
-> CC: "linuxarm@huawei.com" <linuxarm@huawei.com>
-> Subject: RE: [RFC PATCH 3/7] vfio: add spimdev support
-> Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191290F7B@SHSMSX101.ccr.corp.intel.com>
-> 
-> > From: Kenneth Lee
-> > Sent: Wednesday, August 1, 2018 6:22 PM
-> > 
-> > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > 
-> > SPIMDEV is "Share Parent IOMMU Mdev". It is a vfio-mdev. But differ from
-> > the general vfio-mdev:
-> > 
-> > 1. It shares its parent's IOMMU.
-> > 2. There is no hardware resource attached to the mdev is created. The
-> > hardware resource (A `queue') is allocated only when the mdev is
-> > opened.
-> 
-> Alex has concern on doing so, as pointed out in:
-> 
-> 	https://www.spinics.net/lists/kvm/msg172652.html
-> 
-> resource allocation should be reserved at creation time.
+On Thu, 2018-08-02 at 11:29 +-0800, zhong jiang wrote:
++AD4- On 2018/8/2 11:21, Bart Van Assche wrote:
++AD4- +AD4- On Thu, 2018-08-02 at 10:45 +-0800, zhong jiang wrote:
++AD4- +AD4- +AD4- we should not use same check in a expression. just remove=
+ one
++AD4- +AD4- +AD4- of them.
++AD4- +AD4- +AD4-=20
++AD4- +AD4- +AD4- Signed-off-by: zhong jiang +ADw-zhongjiang+AEA-huawei.com=
++AD4-
++AD4- +AD4- +AD4- ---
++AD4- +AD4- +AD4-  drivers/scsi/qlogicfas408.c +AHw- 3 +---
++AD4- +AD4- +AD4-  1 file changed, 1 insertion(+-), 2 deletions(-)
++AD4- +AD4- +AD4-=20
++AD4- +AD4- +AD4- diff --git a/drivers/scsi/qlogicfas408.c b/drivers/scsi/q=
+logicfas408.c
++AD4- +AD4- +AD4- index 8b471a9..1409ac1 100644
++AD4- +AD4- +AD4- --- a/drivers/scsi/qlogicfas408.c
++AD4- +AD4- +AD4- +-+-+- b/drivers/scsi/qlogicfas408.c
++AD4- +AD4- +AD4- +AEAAQA- -567,8 +-567,7 +AEAAQA- void qlogicfas408+AF8-se=
+tup(int qbase, int id, int int+AF8-type)
++AD4- +AD4- +AD4-  int qlogicfas408+AF8-detect(int qbase, int int+AF8-type)
++AD4- +AD4- +AD4-  +AHs-
++AD4- +AD4- +AD4-          REG1+ADs-
++AD4- +AD4- +AD4- -	return (((inb(qbase +- 0xe) +AF4- inb(qbase +- 0xe)) +A=
+D0APQ- 7) +ACYAJg-
++AD4- +AD4- +AD4- -	       ((inb(qbase +- 0xe) +AF4- inb(qbase +- 0xe)) +AD=
+0APQ- 7))+ADs-	=09
++AD4- +AD4- +AD4- +-	return (inb(qbase +- 0xe) +AF4- inb(qbase +- 0xe)) +AD=
+0APQ- 7+ADs-
++AD4- +AD4- +AD4-  +AH0-
++AD4- +AD4-=20
++AD4- +AD4- Does inb() have any side effects?
++AD4-=20
++AD4-  just redundant. is it necessary for this . Maybe I miss something.
 
-Yes. That is why I keep telling that SPIMDEV is not for "VM", it is for "many
-processes", it is just an access point to the process. Not a device to VM. I hope
-Alex can accept it:)
+If doubletest.cocci came up with this patch, I think that script is
+wrong and needs a thorough review.
 
-> 
-> > 
-> > Currently only the vfio type-1 driver is updated to make it to be aware
-> > of.
-> > 
-> > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> > Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-> > Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-> > ---
-> >  drivers/vfio/Kconfig                |   1 +
-> >  drivers/vfio/Makefile               |   1 +
-> >  drivers/vfio/spimdev/Kconfig        |  10 +
-> >  drivers/vfio/spimdev/Makefile       |   3 +
-> >  drivers/vfio/spimdev/vfio_spimdev.c | 421
-> > ++++++++++++++++++++++++++++
-> >  drivers/vfio/vfio_iommu_type1.c     | 136 ++++++++-
-> >  include/linux/vfio_spimdev.h        |  95 +++++++
-> >  include/uapi/linux/vfio_spimdev.h   |  28 ++
-> >  8 files changed, 689 insertions(+), 6 deletions(-)
-> >  create mode 100644 drivers/vfio/spimdev/Kconfig
-> >  create mode 100644 drivers/vfio/spimdev/Makefile
-> >  create mode 100644 drivers/vfio/spimdev/vfio_spimdev.c
-> >  create mode 100644 include/linux/vfio_spimdev.h
-> >  create mode 100644 include/uapi/linux/vfio_spimdev.h
-> > 
-> > diff --git a/drivers/vfio/Kconfig b/drivers/vfio/Kconfig
-> > index c84333eb5eb5..3719eba72ef1 100644
-> > --- a/drivers/vfio/Kconfig
-> > +++ b/drivers/vfio/Kconfig
-> > @@ -47,4 +47,5 @@ menuconfig VFIO_NOIOMMU
-> >  source "drivers/vfio/pci/Kconfig"
-> >  source "drivers/vfio/platform/Kconfig"
-> >  source "drivers/vfio/mdev/Kconfig"
-> > +source "drivers/vfio/spimdev/Kconfig"
-> >  source "virt/lib/Kconfig"
-> > diff --git a/drivers/vfio/Makefile b/drivers/vfio/Makefile
-> > index de67c4725cce..28f3ef0cdce1 100644
-> > --- a/drivers/vfio/Makefile
-> > +++ b/drivers/vfio/Makefile
-> > @@ -9,3 +9,4 @@ obj-$(CONFIG_VFIO_SPAPR_EEH) += vfio_spapr_eeh.o
-> >  obj-$(CONFIG_VFIO_PCI) += pci/
-> >  obj-$(CONFIG_VFIO_PLATFORM) += platform/
-> >  obj-$(CONFIG_VFIO_MDEV) += mdev/
-> > +obj-$(CONFIG_VFIO_SPIMDEV) += spimdev/
-> > diff --git a/drivers/vfio/spimdev/Kconfig b/drivers/vfio/spimdev/Kconfig
-> > new file mode 100644
-> > index 000000000000..1226301f9d0e
-> > --- /dev/null
-> > +++ b/drivers/vfio/spimdev/Kconfig
-> > @@ -0,0 +1,10 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +config VFIO_SPIMDEV
-> > +	tristate "Support for Share Parent IOMMU MDEV"
-> > +	depends on VFIO_MDEV_DEVICE
-> > +	help
-> > +	  Support for VFIO Share Parent IOMMU MDEV, which enable the
-> > kernel to
-> > +	  support for the light weight hardware accelerator framework,
-> > WrapDrive.
-> > +
-> > +	  To compile this as a module, choose M here: the module will be
-> > called
-> > +	  spimdev.
-> > diff --git a/drivers/vfio/spimdev/Makefile b/drivers/vfio/spimdev/Makefile
-> > new file mode 100644
-> > index 000000000000..d02fb69c37e4
-> > --- /dev/null
-> > +++ b/drivers/vfio/spimdev/Makefile
-> > @@ -0,0 +1,3 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +spimdev-y := spimdev.o
-> > +obj-$(CONFIG_VFIO_SPIMDEV) += vfio_spimdev.o
-> > diff --git a/drivers/vfio/spimdev/vfio_spimdev.c
-> > b/drivers/vfio/spimdev/vfio_spimdev.c
-> > new file mode 100644
-> > index 000000000000..1b6910c9d27d
-> > --- /dev/null
-> > +++ b/drivers/vfio/spimdev/vfio_spimdev.c
-> > @@ -0,0 +1,421 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +#include <linux/anon_inodes.h>
-> > +#include <linux/idr.h>
-> > +#include <linux/module.h>
-> > +#include <linux/poll.h>
-> > +#include <linux/vfio_spimdev.h>
-> > +
-> > +struct spimdev_mdev_state {
-> > +	struct vfio_spimdev *spimdev;
-> > +};
-> > +
-> > +static struct class *spimdev_class;
-> > +static DEFINE_IDR(spimdev_idr);
-> > +
-> > +static int vfio_spimdev_dev_exist(struct device *dev, void *data)
-> > +{
-> > +	return !strcmp(dev_name(dev), dev_name((struct device *)data));
-> > +}
-> > +
-> > +#ifdef CONFIG_IOMMU_SVA
-> > +static bool vfio_spimdev_is_valid_pasid(int pasid)
-> > +{
-> > +	struct mm_struct *mm;
-> > +
-> > +	mm = iommu_sva_find(pasid);
-> > +	if (mm) {
-> > +		mmput(mm);
-> > +		return mm == current->mm;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +#endif
-> > +
-> > +/* Check if the device is a mediated device belongs to vfio_spimdev */
-> > +int vfio_spimdev_is_spimdev(struct device *dev)
-> > +{
-> > +	struct mdev_device *mdev;
-> > +	struct device *pdev;
-> > +
-> > +	mdev = mdev_from_dev(dev);
-> > +	if (!mdev)
-> > +		return 0;
-> > +
-> > +	pdev = mdev_parent_dev(mdev);
-> > +	if (!pdev)
-> > +		return 0;
-> > +
-> > +	return class_for_each_device(spimdev_class, NULL, pdev,
-> > +			vfio_spimdev_dev_exist);
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfio_spimdev_is_spimdev);
-> > +
-> > +struct vfio_spimdev *vfio_spimdev_pdev_spimdev(struct device *dev)
-> > +{
-> > +	struct device *class_dev;
-> > +
-> > +	if (!dev)
-> > +		return ERR_PTR(-EINVAL);
-> > +
-> > +	class_dev = class_find_device(spimdev_class, NULL, dev,
-> > +		(int(*)(struct device *, const void
-> > *))vfio_spimdev_dev_exist);
-> > +	if (!class_dev)
-> > +		return ERR_PTR(-ENODEV);
-> > +
-> > +	return container_of(class_dev, struct vfio_spimdev, cls_dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfio_spimdev_pdev_spimdev);
-> > +
-> > +struct vfio_spimdev *mdev_spimdev(struct mdev_device *mdev)
-> > +{
-> > +	struct device *pdev = mdev_parent_dev(mdev);
-> > +
-> > +	return vfio_spimdev_pdev_spimdev(pdev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(mdev_spimdev);
-> > +
-> > +static ssize_t iommu_type_show(struct device *dev,
-> > +			       struct device_attribute *attr, char *buf)
-> > +{
-> > +	struct vfio_spimdev *spimdev = vfio_spimdev_pdev_spimdev(dev);
-> > +
-> > +	if (!spimdev)
-> > +		return -ENODEV;
-> > +
-> > +	return sprintf(buf, "%d\n", spimdev->iommu_type);
-> > +}
-> > +
-> > +static DEVICE_ATTR_RO(iommu_type);
-> > +
-> > +static ssize_t dma_flag_show(struct device *dev,
-> > +			     struct device_attribute *attr, char *buf)
-> > +{
-> > +	struct vfio_spimdev *spimdev = vfio_spimdev_pdev_spimdev(dev);
-> > +
-> > +	if (!spimdev)
-> > +		return -ENODEV;
-> > +
-> > +	return sprintf(buf, "%d\n", spimdev->dma_flag);
-> > +}
-> > +
-> > +static DEVICE_ATTR_RO(dma_flag);
-> > +
-> > +/* mdev->dev_attr_groups */
-> > +static struct attribute *vfio_spimdev_attrs[] = {
-> > +	&dev_attr_iommu_type.attr,
-> > +	&dev_attr_dma_flag.attr,
-> > +	NULL,
-> > +};
-> > +static const struct attribute_group vfio_spimdev_group = {
-> > +	.name  = VFIO_SPIMDEV_PDEV_ATTRS_GRP_NAME,
-> > +	.attrs = vfio_spimdev_attrs,
-> > +};
-> > +const struct attribute_group *vfio_spimdev_groups[] = {
-> > +	&vfio_spimdev_group,
-> > +	NULL,
-> > +};
-> > +
-> > +/* default attributes for mdev->supported_type_groups, used by
-> > registerer*/
-> > +#define MDEV_TYPE_ATTR_RO_EXPORT(name) \
-> > +		MDEV_TYPE_ATTR_RO(name); \
-> > +		EXPORT_SYMBOL_GPL(mdev_type_attr_##name);
-> > +
-> > +#define DEF_SIMPLE_SPIMDEV_ATTR(_name, spimdev_member, format)
-> > \
-> > +static ssize_t _name##_show(struct kobject *kobj, struct device *dev, \
-> > +			    char *buf) \
-> > +{ \
-> > +	struct vfio_spimdev *spimdev = vfio_spimdev_pdev_spimdev(dev);
-> > \
-> > +	if (!spimdev) \
-> > +		return -ENODEV; \
-> > +	return sprintf(buf, format, spimdev->spimdev_member); \
-> > +} \
-> > +MDEV_TYPE_ATTR_RO_EXPORT(_name)
-> > +
-> > +DEF_SIMPLE_SPIMDEV_ATTR(flags, flags, "%d");
-> > +DEF_SIMPLE_SPIMDEV_ATTR(name, name, "%s"); /* this should be
-> > algorithm name, */
-> > +		/* but you would not care if you have only one algorithm */
-> > +DEF_SIMPLE_SPIMDEV_ATTR(device_api, api_ver, "%s");
-> > +
-> > +/* this return total queue left, not mdev left */
-> > +static ssize_t
-> > +available_instances_show(struct kobject *kobj, struct device *dev, char
-> > *buf)
-> > +{
-> > +	struct vfio_spimdev *spimdev = vfio_spimdev_pdev_spimdev(dev);
-> > +
-> > +	return sprintf(buf, "%d",
-> > +			spimdev->ops->get_available_instances(spimdev));
-> > +}
-> > +MDEV_TYPE_ATTR_RO_EXPORT(available_instances);
-> > +
-> > +static int vfio_spimdev_mdev_create(struct kobject *kobj,
-> > +	struct mdev_device *mdev)
-> > +{
-> > +	struct device *dev = mdev_dev(mdev);
-> > +	struct device *pdev = mdev_parent_dev(mdev);
-> > +	struct spimdev_mdev_state *mdev_state;
-> > +	struct vfio_spimdev *spimdev = mdev_spimdev(mdev);
-> > +
-> > +	if (!spimdev->ops->get_queue)
-> > +		return -ENODEV;
-> > +
-> > +	mdev_state = devm_kzalloc(dev, sizeof(struct
-> > spimdev_mdev_state),
-> > +				  GFP_KERNEL);
-> > +	if (!mdev_state)
-> > +		return -ENOMEM;
-> > +	mdev_set_drvdata(mdev, mdev_state);
-> > +	mdev_state->spimdev = spimdev;
-> > +	dev->iommu_fwspec = pdev->iommu_fwspec;
-> > +	get_device(pdev);
-> > +	__module_get(spimdev->owner);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int vfio_spimdev_mdev_remove(struct mdev_device *mdev)
-> > +{
-> > +	struct device *dev = mdev_dev(mdev);
-> > +	struct device *pdev = mdev_parent_dev(mdev);
-> > +	struct vfio_spimdev *spimdev = mdev_spimdev(mdev);
-> > +
-> > +	put_device(pdev);
-> > +	module_put(spimdev->owner);
-> > +	dev->iommu_fwspec = NULL;
-> > +	mdev_set_drvdata(mdev, NULL);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/* Wake up the process who is waiting this queue */
-> > +void vfio_spimdev_wake_up(struct vfio_spimdev_queue *q)
-> > +{
-> > +	wake_up(&q->wait);
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfio_spimdev_wake_up);
-> > +
-> > +static int vfio_spimdev_q_file_open(struct inode *inode, struct file *file)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static int vfio_spimdev_q_file_release(struct inode *inode, struct file *file)
-> > +{
-> > +	struct vfio_spimdev_queue *q =
-> > +		(struct vfio_spimdev_queue *)file->private_data;
-> > +	struct vfio_spimdev *spimdev = q->spimdev;
-> > +	int ret;
-> > +
-> > +	ret = spimdev->ops->put_queue(q);
-> > +	if (ret) {
-> > +		dev_err(spimdev->dev, "drv put queue fail (%d)!\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	put_device(mdev_dev(q->mdev));
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static long vfio_spimdev_q_file_ioctl(struct file *file, unsigned int cmd,
-> > +	unsigned long arg)
-> > +{
-> > +	struct vfio_spimdev_queue *q =
-> > +		(struct vfio_spimdev_queue *)file->private_data;
-> > +	struct vfio_spimdev *spimdev = q->spimdev;
-> > +
-> > +	if (spimdev->ops->ioctl)
-> > +		return spimdev->ops->ioctl(q, cmd, arg);
-> > +
-> > +	dev_err(spimdev->dev, "ioctl cmd (%d) is not supported!\n", cmd);
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +static int vfio_spimdev_q_file_mmap(struct file *file,
-> > +		struct vm_area_struct *vma)
-> > +{
-> > +	struct vfio_spimdev_queue *q =
-> > +		(struct vfio_spimdev_queue *)file->private_data;
-> > +	struct vfio_spimdev *spimdev = q->spimdev;
-> > +
-> > +	if (spimdev->ops->mmap)
-> > +		return spimdev->ops->mmap(q, vma);
-> > +
-> > +	dev_err(spimdev->dev, "no driver mmap!\n");
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +static __poll_t vfio_spimdev_q_file_poll(struct file *file, poll_table *wait)
-> > +{
-> > +	struct vfio_spimdev_queue *q =
-> > +		(struct vfio_spimdev_queue *)file->private_data;
-> > +	struct vfio_spimdev *spimdev = q->spimdev;
-> > +
-> > +	poll_wait(file, &q->wait, wait);
-> > +	if (spimdev->ops->is_q_updated(q))
-> > +		return EPOLLIN | EPOLLRDNORM;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct file_operations spimdev_q_file_ops = {
-> > +	.owner = THIS_MODULE,
-> > +	.open = vfio_spimdev_q_file_open,
-> > +	.unlocked_ioctl = vfio_spimdev_q_file_ioctl,
-> > +	.release = vfio_spimdev_q_file_release,
-> > +	.poll = vfio_spimdev_q_file_poll,
-> > +	.mmap = vfio_spimdev_q_file_mmap,
-> > +};
-> > +
-> > +static long vfio_spimdev_mdev_get_queue(struct mdev_device *mdev,
-> > +		struct vfio_spimdev *spimdev, unsigned long arg)
-> > +{
-> > +	struct vfio_spimdev_queue *q;
-> > +	int ret;
-> > +
-> > +#ifdef CONFIG_IOMMU_SVA
-> > +	int pasid = arg;
-> > +
-> > +	if (!vfio_spimdev_is_valid_pasid(pasid))
-> > +		return -EINVAL;
-> > +#endif
-> > +
-> > +	if (!spimdev->ops->get_queue)
-> > +		return -EINVAL;
-> > +
-> > +	ret = spimdev->ops->get_queue(spimdev, arg, &q);
-> > +	if (ret < 0) {
-> > +		dev_err(spimdev->dev, "get_queue failed\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	ret = anon_inode_getfd("spimdev_q", &spimdev_q_file_ops,
-> > +			q, O_CLOEXEC | O_RDWR);
-> > +	if (ret < 0) {
-> > +		dev_err(spimdev->dev, "getfd fail %d\n", ret);
-> > +		goto err_with_queue;
-> > +	}
-> > +
-> > +	q->fd = ret;
-> > +	q->spimdev = spimdev;
-> > +	q->mdev = mdev;
-> > +	q->container = arg;
-> > +	init_waitqueue_head(&q->wait);
-> > +	get_device(mdev_dev(mdev));
-> > +
-> > +	return ret;
-> > +
-> > +err_with_queue:
-> > +	spimdev->ops->put_queue(q);
-> > +	return ret;
-> > +}
-> > +
-> > +static long vfio_spimdev_mdev_ioctl(struct mdev_device *mdev, unsigned
-> > int cmd,
-> > +			       unsigned long arg)
-> > +{
-> > +	struct spimdev_mdev_state *mdev_state;
-> > +	struct vfio_spimdev *spimdev;
-> > +
-> > +	if (!mdev)
-> > +		return -ENODEV;
-> > +
-> > +	mdev_state = mdev_get_drvdata(mdev);
-> > +	if (!mdev_state)
-> > +		return -ENODEV;
-> > +
-> > +	spimdev = mdev_state->spimdev;
-> > +	if (!spimdev)
-> > +		return -ENODEV;
-> > +
-> > +	if (cmd == VFIO_SPIMDEV_CMD_GET_Q)
-> > +		return vfio_spimdev_mdev_get_queue(mdev, spimdev, arg);
-> > +
-> > +	dev_err(spimdev->dev,
-> > +		"%s, ioctl cmd (0x%x) is not supported!\n", __func__, cmd);
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +static void vfio_spimdev_release(struct device *dev) { }
-> > +static void vfio_spimdev_mdev_release(struct mdev_device *mdev) { }
-> > +static int vfio_spimdev_mdev_open(struct mdev_device *mdev) { return
-> > 0; }
-> > +
-> > +/**
-> > + *	vfio_spimdev_register - register a spimdev
-> > + *	@spimdev: device structure
-> > + */
-> > +int vfio_spimdev_register(struct vfio_spimdev *spimdev)
-> > +{
-> > +	int ret;
-> > +	const char *drv_name;
-> > +
-> > +	if (!spimdev->dev)
-> > +		return -ENODEV;
-> > +
-> > +	drv_name = dev_driver_string(spimdev->dev);
-> > +	if (strstr(drv_name, "-")) {
-> > +		pr_err("spimdev: parent driver name cannot include '-'!\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	spimdev->dev_id = idr_alloc(&spimdev_idr, spimdev, 0, 0,
-> > GFP_KERNEL);
-> > +	if (spimdev->dev_id < 0)
-> > +		return spimdev->dev_id;
-> > +
-> > +	atomic_set(&spimdev->ref, 0);
-> > +	spimdev->cls_dev.parent = spimdev->dev;
-> > +	spimdev->cls_dev.class = spimdev_class;
-> > +	spimdev->cls_dev.release = vfio_spimdev_release;
-> > +	dev_set_name(&spimdev->cls_dev, "%s", dev_name(spimdev-
-> > >dev));
-> > +	ret = device_register(&spimdev->cls_dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	spimdev->mdev_fops.owner		= spimdev->owner;
-> > +	spimdev->mdev_fops.dev_attr_groups	=
-> > vfio_spimdev_groups;
-> > +	WARN_ON(!spimdev->mdev_fops.supported_type_groups);
-> > +	spimdev->mdev_fops.create		=
-> > vfio_spimdev_mdev_create;
-> > +	spimdev->mdev_fops.remove		=
-> > vfio_spimdev_mdev_remove;
-> > +	spimdev->mdev_fops.ioctl		= vfio_spimdev_mdev_ioctl;
-> > +	spimdev->mdev_fops.open			=
-> > vfio_spimdev_mdev_open;
-> > +	spimdev->mdev_fops.release		=
-> > vfio_spimdev_mdev_release;
-> > +
-> > +	ret = mdev_register_device(spimdev->dev, &spimdev->mdev_fops);
-> > +	if (ret)
-> > +		device_unregister(&spimdev->cls_dev);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfio_spimdev_register);
-> > +
-> > +/**
-> > + * vfio_spimdev_unregister - unregisters a spimdev
-> > + * @spimdev: device to unregister
-> > + *
-> > + * Unregister a miscellaneous device that wat previously successully
-> > registered
-> > + * with vfio_spimdev_register().
-> > + */
-> > +void vfio_spimdev_unregister(struct vfio_spimdev *spimdev)
-> > +{
-> > +	mdev_unregister_device(spimdev->dev);
-> > +	device_unregister(&spimdev->cls_dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(vfio_spimdev_unregister);
-> > +
-> > +static int __init vfio_spimdev_init(void)
-> > +{
-> > +	spimdev_class = class_create(THIS_MODULE,
-> > VFIO_SPIMDEV_CLASS_NAME);
-> > +	return PTR_ERR_OR_ZERO(spimdev_class);
-> > +}
-> > +
-> > +static __exit void vfio_spimdev_exit(void)
-> > +{
-> > +	class_destroy(spimdev_class);
-> > +	idr_destroy(&spimdev_idr);
-> > +}
-> > +
-> > +module_init(vfio_spimdev_init);
-> > +module_exit(vfio_spimdev_exit);
-> > +
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_AUTHOR("Hisilicon Tech. Co., Ltd.");
-> > +MODULE_DESCRIPTION("VFIO Share Parent's IOMMU Mediated Device");
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> > b/drivers/vfio/vfio_iommu_type1.c
-> > index 3e5b17710a4f..0ec38a17c98c 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -41,6 +41,7 @@
-> >  #include <linux/notifier.h>
-> >  #include <linux/dma-iommu.h>
-> >  #include <linux/irqdomain.h>
-> > +#include <linux/vfio_spimdev.h>
-> > 
-> >  #define DRIVER_VERSION  "0.2"
-> >  #define DRIVER_AUTHOR   "Alex Williamson
-> > <alex.williamson@redhat.com>"
-> > @@ -89,6 +90,8 @@ struct vfio_dma {
-> >  };
-> > 
-> >  struct vfio_group {
-> > +	/* iommu_group of mdev's parent device */
-> > +	struct iommu_group	*parent_group;
-> >  	struct iommu_group	*iommu_group;
-> >  	struct list_head	next;
-> >  };
-> > @@ -1327,6 +1330,109 @@ static bool vfio_iommu_has_sw_msi(struct
-> > iommu_group *group, phys_addr_t *base)
-> >  	return ret;
-> >  }
-> > 
-> > +/* return 0 if the device is not spimdev.
-> > + * return 1 if the device is spimdev, the data will be updated with parent
-> > + * 	device's group.
-> > + * return -errno if other error.
-> > + */
-> > +static int vfio_spimdev_type(struct device *dev, void *data)
-> > +{
-> > +	struct iommu_group **group = data;
-> > +	struct iommu_group *pgroup;
-> > +	int (*spimdev_mdev)(struct device *dev);
-> > +	struct device *pdev;
-> > +	int ret = 1;
-> > +
-> > +	/* vfio_spimdev module is not configurated */
-> > +	spimdev_mdev = symbol_get(vfio_spimdev_is_spimdev);
-> > +	if (!spimdev_mdev)
-> > +		return 0;
-> > +
-> > +	/* check if it belongs to vfio_spimdev device */
-> > +	if (!spimdev_mdev(dev)) {
-> > +		ret = 0;
-> > +		goto get_exit;
-> > +	}
-> > +
-> > +	pdev = dev->parent;
-> > +	pgroup = iommu_group_get(pdev);
-> > +	if (!pgroup) {
-> > +		ret = -ENODEV;
-> > +		goto get_exit;
-> > +	}
-> > +
-> > +	if (group) {
-> > +		/* check if all parent devices is the same */
-> > +		if (*group && *group != pgroup)
-> > +			ret = -ENODEV;
-> > +		else
-> > +			*group = pgroup;
-> > +	}
-> > +
-> > +	iommu_group_put(pgroup);
-> > +
-> > +get_exit:
-> > +	symbol_put(vfio_spimdev_is_spimdev);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/* return 0 or -errno */
-> > +static int vfio_spimdev_bus(struct device *dev, void *data)
-> > +{
-> > +	struct bus_type **bus = data;
-> > +
-> > +	if (!dev->bus)
-> > +		return -ENODEV;
-> > +
-> > +	/* ensure all devices has the same bus_type */
-> > +	if (*bus && *bus != dev->bus)
-> > +		return -EINVAL;
-> > +
-> > +	*bus = dev->bus;
-> > +	return 0;
-> > +}
-> > +
-> > +/* return 0 means it is not spi group, 1 means it is, or -EXXX for error */
-> > +static int vfio_iommu_type1_attach_spigroup(struct vfio_domain *domain,
-> > +					    struct vfio_group *group,
-> > +					    struct iommu_group
-> > *iommu_group)
-> > +{
-> > +	int ret;
-> > +	struct bus_type *pbus = NULL;
-> > +	struct iommu_group *pgroup = NULL;
-> > +
-> > +	ret = iommu_group_for_each_dev(iommu_group, &pgroup,
-> > +				       vfio_spimdev_type);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +	else if (ret > 0) {
-> > +		domain->domain = iommu_group_share_domain(pgroup);
-> > +		if (IS_ERR(domain->domain))
-> > +			goto out;
-> > +		ret = iommu_group_for_each_dev(pgroup, &pbus,
-> > +				       vfio_spimdev_bus);
-> > +		if (ret < 0)
-> > +			goto err_with_share_domain;
-> > +
-> > +		if (pbus && iommu_capable(pbus,
-> > IOMMU_CAP_CACHE_COHERENCY))
-> > +			domain->prot |= IOMMU_CACHE;
-> > +
-> > +		group->parent_group = pgroup;
-> > +		INIT_LIST_HEAD(&domain->group_list);
-> > +		list_add(&group->next, &domain->group_list);
-> > +
-> > +		return 1;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +err_with_share_domain:
-> > +	iommu_group_unshare_domain(pgroup);
-> > +out:
-> > +	return ret;
-> > +}
-> > +
-> >  static int vfio_iommu_type1_attach_group(void *iommu_data,
-> >  					 struct iommu_group
-> > *iommu_group)
-> >  {
-> > @@ -1335,8 +1441,8 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  	struct vfio_domain *domain, *d;
-> >  	struct bus_type *bus = NULL, *mdev_bus;
-> >  	int ret;
-> > -	bool resv_msi, msi_remap;
-> > -	phys_addr_t resv_msi_base;
-> > +	bool resv_msi = false, msi_remap;
-> > +	phys_addr_t resv_msi_base = 0;
-> > 
-> >  	mutex_lock(&iommu->lock);
-> > 
-> > @@ -1373,6 +1479,14 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  	if (mdev_bus) {
-> >  		if ((bus == mdev_bus) && !iommu_present(bus)) {
-> >  			symbol_put(mdev_bus_type);
-> > +
-> > +			ret = vfio_iommu_type1_attach_spigroup(domain,
-> > group,
-> > +					iommu_group);
-> > +			if (ret < 0)
-> > +				goto out_free;
-> > +			else if (ret > 0)
-> > +				goto replay_check;
-> > +
-> >  			if (!iommu->external_domain) {
-> >  				INIT_LIST_HEAD(&domain->group_list);
-> >  				iommu->external_domain = domain;
-> > @@ -1451,12 +1565,13 @@ static int
-> > vfio_iommu_type1_attach_group(void *iommu_data,
-> > 
-> >  	vfio_test_domain_fgsp(domain);
-> > 
-> > +replay_check:
-> >  	/* replay mappings on new domains */
-> >  	ret = vfio_iommu_replay(iommu, domain);
-> >  	if (ret)
-> >  		goto out_detach;
-> > 
-> > -	if (resv_msi) {
-> > +	if (!group->parent_group && resv_msi) {
-> >  		ret = iommu_get_msi_cookie(domain->domain,
-> > resv_msi_base);
-> >  		if (ret)
-> >  			goto out_detach;
-> > @@ -1471,7 +1586,10 @@ static int vfio_iommu_type1_attach_group(void
-> > *iommu_data,
-> >  out_detach:
-> >  	iommu_detach_group(domain->domain, iommu_group);
-> >  out_domain:
-> > -	iommu_domain_free(domain->domain);
-> > +	if (group->parent_group)
-> > +		iommu_group_unshare_domain(group->parent_group);
-> > +	else
-> > +		iommu_domain_free(domain->domain);
-> >  out_free:
-> >  	kfree(domain);
-> >  	kfree(group);
-> > @@ -1533,6 +1651,7 @@ static void
-> > vfio_iommu_type1_detach_group(void *iommu_data,
-> >  	struct vfio_iommu *iommu = iommu_data;
-> >  	struct vfio_domain *domain;
-> >  	struct vfio_group *group;
-> > +	int ret;
-> > 
-> >  	mutex_lock(&iommu->lock);
-> > 
-> > @@ -1560,7 +1679,11 @@ static void
-> > vfio_iommu_type1_detach_group(void *iommu_data,
-> >  		if (!group)
-> >  			continue;
-> > 
-> > -		iommu_detach_group(domain->domain, iommu_group);
-> > +		if (group->parent_group)
-> > +			iommu_group_unshare_domain(group-
-> > >parent_group);
-> > +		else
-> > +			iommu_detach_group(domain->domain,
-> > iommu_group);
-> > +
-> >  		list_del(&group->next);
-> >  		kfree(group);
-> >  		/*
-> > @@ -1577,7 +1700,8 @@ static void
-> > vfio_iommu_type1_detach_group(void *iommu_data,
-> >  				else
-> > 
-> > 	vfio_iommu_unmap_unpin_reaccount(iommu);
-> >  			}
-> > -			iommu_domain_free(domain->domain);
-> > +			if (!ret)
-> > +				iommu_domain_free(domain->domain);
-> >  			list_del(&domain->next);
-> >  			kfree(domain);
-> >  		}
-> > diff --git a/include/linux/vfio_spimdev.h b/include/linux/vfio_spimdev.h
-> > new file mode 100644
-> > index 000000000000..f7e7d90013e1
-> > --- /dev/null
-> > +++ b/include/linux/vfio_spimdev.h
-> > @@ -0,0 +1,95 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +#ifndef __VFIO_SPIMDEV_H
-> > +#define __VFIO_SPIMDEV_H
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/iommu.h>
-> > +#include <linux/mdev.h>
-> > +#include <linux/vfio.h>
-> > +#include <uapi/linux/vfio_spimdev.h>
-> > +
-> > +struct vfio_spimdev_queue;
-> > +struct vfio_spimdev;
-> > +
-> > +/**
-> > + * struct vfio_spimdev_ops - WD device operations
-> > + * @get_queue: get a queue from the device according to algorithm
-> > + * @put_queue: free a queue to the device
-> > + * @is_q_updated: check whether the task is finished
-> > + * @mask_notify: mask the task irq of queue
-> > + * @mmap: mmap addresses of queue to user space
-> > + * @reset: reset the WD device
-> > + * @reset_queue: reset the queue
-> > + * @ioctl:   ioctl for user space users of the queue
-> > + * @get_available_instances: get numbers of the queue remained
-> > + */
-> > +struct vfio_spimdev_ops {
-> > +	int (*get_queue)(struct vfio_spimdev *spimdev, unsigned long arg,
-> > +		struct vfio_spimdev_queue **q);
-> > +	int (*put_queue)(struct vfio_spimdev_queue *q);
-> > +	int (*is_q_updated)(struct vfio_spimdev_queue *q);
-> > +	void (*mask_notify)(struct vfio_spimdev_queue *q, int
-> > event_mask);
-> > +	int (*mmap)(struct vfio_spimdev_queue *q, struct vm_area_struct
-> > *vma);
-> > +	int (*reset)(struct vfio_spimdev *spimdev);
-> > +	int (*reset_queue)(struct vfio_spimdev_queue *q);
-> > +	long (*ioctl)(struct vfio_spimdev_queue *q, unsigned int cmd,
-> > +			unsigned long arg);
-> > +	int (*get_available_instances)(struct vfio_spimdev *spimdev);
-> > +};
-> > +
-> > +struct vfio_spimdev_queue {
-> > +	struct mutex mutex;
-> > +	struct vfio_spimdev *spimdev;
-> > +	int qid;
-> > +	__u32 flags;
-> > +	void *priv;
-> > +	wait_queue_head_t wait;
-> > +	struct mdev_device *mdev;
-> > +	int fd;
-> > +	int container;
-> > +#ifdef CONFIG_IOMMU_SVA
-> > +	int pasid;
-> > +#endif
-> > +};
-> > +
-> > +struct vfio_spimdev {
-> > +	const char *name;
-> > +	int status;
-> > +	atomic_t ref;
-> > +	struct module *owner;
-> > +	const struct vfio_spimdev_ops *ops;
-> > +	struct device *dev;
-> > +	struct device cls_dev;
-> > +	bool is_vf;
-> > +	u32 iommu_type;
-> > +	u32 dma_flag;
-> > +	u32 dev_id;
-> > +	void *priv;
-> > +	int flags;
-> > +	const char *api_ver;
-> > +	struct mdev_parent_ops mdev_fops;
-> > +};
-> > +
-> > +int vfio_spimdev_register(struct vfio_spimdev *spimdev);
-> > +void vfio_spimdev_unregister(struct vfio_spimdev *spimdev);
-> > +void vfio_spimdev_wake_up(struct vfio_spimdev_queue *q);
-> > +int vfio_spimdev_is_spimdev(struct device *dev);
-> > +struct vfio_spimdev *vfio_spimdev_pdev_spimdev(struct device *dev);
-> > +int vfio_spimdev_pasid_pri_check(int pasid);
-> > +int vfio_spimdev_get(struct device *dev);
-> > +int vfio_spimdev_put(struct device *dev);
-> > +struct vfio_spimdev *mdev_spimdev(struct mdev_device *mdev);
-> > +
-> > +extern struct mdev_type_attribute mdev_type_attr_flags;
-> > +extern struct mdev_type_attribute mdev_type_attr_name;
-> > +extern struct mdev_type_attribute mdev_type_attr_device_api;
-> > +extern struct mdev_type_attribute mdev_type_attr_available_instances;
-> > +#define VFIO_SPIMDEV_DEFAULT_MDEV_TYPE_ATTRS \
-> > +	&mdev_type_attr_name.attr, \
-> > +	&mdev_type_attr_device_api.attr, \
-> > +	&mdev_type_attr_available_instances.attr, \
-> > +	&mdev_type_attr_flags.attr
-> > +
-> > +#define _VFIO_SPIMDEV_REGION(vm_pgoff)	(vm_pgoff & 0xf)
-> > +
-> > +#endif
-> > diff --git a/include/uapi/linux/vfio_spimdev.h
-> > b/include/uapi/linux/vfio_spimdev.h
-> > new file mode 100644
-> > index 000000000000..3435e5c345b4
-> > --- /dev/null
-> > +++ b/include/uapi/linux/vfio_spimdev.h
-> > @@ -0,0 +1,28 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +#ifndef _UAPIVFIO_SPIMDEV_H
-> > +#define _UAPIVFIO_SPIMDEV_H
-> > +
-> > +#include <linux/ioctl.h>
-> > +
-> > +#define VFIO_SPIMDEV_CLASS_NAME		"spimdev"
-> > +
-> > +/* Device ATTRs in parent dev SYSFS DIR */
-> > +#define VFIO_SPIMDEV_PDEV_ATTRS_GRP_NAME	"params"
-> > +
-> > +/* Parent device attributes */
-> > +#define SPIMDEV_IOMMU_TYPE	"iommu_type"
-> > +#define SPIMDEV_DMA_FLAG	"dma_flag"
-> > +
-> > +/* Maximum length of algorithm name string */
-> > +#define VFIO_SPIMDEV_ALG_NAME_SIZE		64
-> > +
-> > +/* the bits used in SPIMDEV_DMA_FLAG attributes */
-> > +#define VFIO_SPIMDEV_DMA_INVALID		0
-> > +#define	VFIO_SPIMDEV_DMA_SINGLE_PROC_MAP	1
-> > +#define	VFIO_SPIMDEV_DMA_MULTI_PROC_MAP		2
-> > +#define	VFIO_SPIMDEV_DMA_SVM			4
-> > +#define	VFIO_SPIMDEV_DMA_SVM_NO_FAULT		8
-> > +#define	VFIO_SPIMDEV_DMA_PHY			16
-> > +
-> > +#define VFIO_SPIMDEV_CMD_GET_Q	_IO('W', 1)
-> > +#endif
-> > --
-> > 2.17.1
-
--- 
-			-Kenneth(Hisilicon)
-
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
+Bart.
 
