@@ -7,92 +7,92 @@ X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
 	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B11C43142
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A434C43142
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E742152C
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E66CD2152D
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 15:43:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKrGrtrM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E742152C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MU4KpMBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66CD2152D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387760AbeHBRfK (ORCPT
+        id S2387799AbeHBRfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 2 Aug 2018 13:35:10 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44113 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387660AbeHBRfK (ORCPT
+        Thu, 2 Aug 2018 13:35:36 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33273 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387654AbeHBRff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 13:35:10 -0400
-Received: by mail-pl0-f68.google.com with SMTP id ba4-v6so1193004plb.11;
-        Thu, 02 Aug 2018 08:43:27 -0700 (PDT)
+        Thu, 2 Aug 2018 13:35:35 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so1404699pgv.0;
+        Thu, 02 Aug 2018 08:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4xB6CYYP8IvTrhTriTcapb3rpc0KMM1JsYBRCNRBjcg=;
-        b=UKrGrtrM2qLGkuszabY1MHJ6hDOZ5z1vz6lXwcDMBWQIyJR3vVgNlLPbGnmDC/Tfbe
-         Qqg3knL9/IOsGXnZb2L8tkNCa0KnMbwPRCUNoyn9xo9Zd3MTB0yqV36Vo5ydfpebv0Ma
-         DFgQ/qnHOgunst5HWhLhayCGxR9A47N3MgBOsudCKhyaIhx6TBvyjFNnAIEDWMICX7Qp
-         1lcpTzg1sk/3Z7AJesLn0tMSL5zEqoIN6iQqssAtMlfqvJVNiFquq+pLD/srvbDlfswZ
-         VVb2mZ6JTwqTv3KuCUCGXQPtZDOX+tybbRTJb2dVPvRpkiUvI60895n6XcN01cDU66No
-         ahRw==
+        bh=4OayxKKKCyoIq2h/9CcrlRQKqDe6LYgNhcEHstZOIRM=;
+        b=MU4KpMBFiLEs9oAN+mgWPvJbeVEn7TC6JboDhIwEQytxWRR5YrYy5E6TySENdat/cc
+         qyWEfni1mzE46T+gQVj2cuP49WWAL1Rim44vXBldmxYWVHyXemXXAy4Ehi3x39RqiSEC
+         tQWzG0lehoFM+QqHJfPZNgwnbEXDbTXrYhSSNmHw7MmP7v/Ei7nmLWzjdYGC4FoGpvNd
+         sq/R/sdRAVx/oduFGqLpRXKR3GgaGKQ9ww7d1hr+WWCBd5etYZgqheGO1LsSUcjyMEML
+         BJyQJrDW5y/34eW84kJXZstErr7PPgtz0uBjzv9pAXway7LnzFcyeXWDr3+wqypy6o02
+         imOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4xB6CYYP8IvTrhTriTcapb3rpc0KMM1JsYBRCNRBjcg=;
-        b=DEWlzu9DVeAIQH9FLRtKAVN3hZlab8dx/o19jVzI/WIP/KY5NR3ParDMvLxZ8RZN+K
-         IehSw9xHOZwWIlg0mWcuskmCzuNen1pxwTGiVOLnAN+BnYuBPDZn06uYd3ClhOtjZH+J
-         BMzW2MAFjQ9xZge4VSO18bC1ilQibWEHb1tQ+lQFIGwyJXHCTUhIcJX5OQLASU16A/jY
-         93oeyAAO4sLM+7hF1yAaQLS6qkhIqTCEKwHgn3xWhKNVsjayhU/0wJSZyie1z0TrxkGA
-         BuoDOfbuxbkZ31MIKUT3nJneqy2XhKJigkNvahQmQpGFv84Nnl3hYduuP7hNcc7A/+jQ
-         fJnQ==
-X-Gm-Message-State: AOUpUlFMSaxIQeOs/93Gjwsjis2waJFN/d4F4LHLn9So/tDxqayLjD7U
-        uLjBa6FxwCSg5p/5fCULeBE=
-X-Google-Smtp-Source: AAOMgpc55OEbYy+3bvH2OipBHmv9Fa/jvUS1QxP+fbm+0/1QcNVoxAuO7fgRule8EHL+nvtr75QaSw==
-X-Received: by 2002:a17:902:530a:: with SMTP id b10-v6mr2312330pli.101.1533224607269;
-        Thu, 02 Aug 2018 08:43:27 -0700 (PDT)
+        bh=4OayxKKKCyoIq2h/9CcrlRQKqDe6LYgNhcEHstZOIRM=;
+        b=KFAS6wfJSDm5rNWyGVNJPpMQJfUXTshyNosnTwDti+9CtAZdZAf1olhZeBqLp4TdSf
+         VhdvWIIy2Ti3fyfybG1sprry9umRsG5TM0wek9dMZrZqrI+TUwVIllJ0FUzDXlH2JsK1
+         EcsdCrBZEcjd8Kddjs+d8pPVG42Z6ZKM1FgPWAYpP0pIKuJyTsVFZCUaFRsimcq1PISQ
+         jUe417+CsYA/fWJhARjousulVyZLvrU95A9C/nlqH6dBGEktQyEzRDANu6+puWe4ATk6
+         XtAaeQtRURJ7OxL6+5u/CF4RCPUf9bU3iTRLhogi2TUcYKqjGHVdTa8EjcmQZaz9k29e
+         CyPA==
+X-Gm-Message-State: AOUpUlEFHG450UgstT9vdumqwXo+2tBotBx+o2syaPb2UtIStjqTcq35
+        rMvQPjx3EgT64wQGQTc7eWc=
+X-Google-Smtp-Source: AAOMgpeU0GrNga6ReY14HPjXVXPZ+EiuLN5GZpMTfqSqxk5oyE6Py1Uglr6hKxrFWn3+N7nLKCW7fw==
+X-Received: by 2002:a62:2e02:: with SMTP id u2-v6mr21848pfu.134.1533224632154;
+        Thu, 02 Aug 2018 08:43:52 -0700 (PDT)
 Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id b18-v6sm8876226pgk.15.2018.08.02.08.43.26
+        by smtp.gmail.com with ESMTPSA id t186-v6sm3210882pgd.77.2018.08.02.08.43.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Aug 2018 08:43:26 -0700 (PDT)
-Date:   Thu, 2 Aug 2018 08:43:25 -0700
+        Thu, 02 Aug 2018 08:43:51 -0700 (PDT)
+Date:   Thu, 2 Aug 2018 08:43:50 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/246] 4.14.60-stable review
-Message-ID: <20180802154325.GB5137@roeck-us.net>
-References: <20180801165011.700991984@linuxfoundation.org>
+Subject: Re: [PATCH 4.17 000/336] 4.17.12-stable review
+Message-ID: <20180802154350.GC5137@roeck-us.net>
+References: <20180801165028.930831994@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180801165011.700991984@linuxfoundation.org>
+In-Reply-To: <20180801165028.930831994@linuxfoundation.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 01, 2018 at 06:48:30PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.60 release.
-> There are 246 patches in this series, all will be posted as a response
+On Wed, Aug 01, 2018 at 06:45:35PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.17.12 release.
+> There are 336 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Fri Aug  3 16:49:18 UTC 2018.
+> Responses should be made by Fri Aug  3 16:49:21 UTC 2018.
 > Anything received after that time might be too late.
 > 
 
 Build results:
-	total: 148 pass: 148 fail: 0
+	total: 134 pass: 134 fail: 0
 Qemu test results:
-	total: 198 pass: 198 fail: 0
+	total: 201 pass: 201 fail: 0
 
 Details are available at http://kerneltests.org/builders/.
 
