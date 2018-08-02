@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01978C43142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C4CC46467
 	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF8C21566
-	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53846215EB
+	for <linux-kernel@archiver.kernel.org>; Thu,  2 Aug 2018 21:51:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dbb5FjxO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF8C21566
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iJphebjY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53846215EB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeHBXof (ORCPT
+        id S1732523AbeHBXof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 2 Aug 2018 19:44:35 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33835 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732422AbeHBXoe (ORCPT
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37725 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732480AbeHBXof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Aug 2018 19:44:34 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k19-v6so2075771pfi.1
+        Thu, 2 Aug 2018 19:44:35 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a26-v6so2068735pfo.4
         for <linux-kernel@vger.kernel.org>; Thu, 02 Aug 2018 14:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u0K6USUpuBoWt0Lp8iIXbpSRCTtHn6HWYBuJRPD69PY=;
-        b=Dbb5FjxO76fCk4otdxWbsOt6BuBSYXFIDrHYvnRkwYKLLWLnG4rgc9d+PmDfGUXuTc
-         ZYur4VOS4cEcLvK/dTbz7hLk/FcueevvM5AAald4FdPqEGdAAZkcNTt1zDWMElJpFF87
-         WGB1wH+y2YdlnfDS/S9W9/BNZteWRqLXBBpQo=
+        bh=NiNDxc68m2WmDTmrjJG1BEXvvndByC2Ak5klnTeYFOY=;
+        b=iJphebjYEdmwoEEp0C6Njvbonu9mwIqazoswC2TyhGCD8QVK+1IJi55eJqyogaa4Rg
+         9giaKz/RFkkNH5pg02RT6og4DexI/jIi93niIEueBODyRlLsij25Xzo9OcKrbTiR7FWX
+         xzJ+vV7xxv9zWGBiaPHgWIASHCh4xO6zGlQVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=u0K6USUpuBoWt0Lp8iIXbpSRCTtHn6HWYBuJRPD69PY=;
-        b=VxwtExMmZoaBZagW4yWAeTNKs7Ee6GnqQuqCu+PPotZLxrHpOhH2ZFlOupyw2uzAAi
-         vMwnJsoSHY1+RR36REa6Qqs3lYWnSrNBZLx1fH5y4rqkkK42QZ92c2imePHKZX3aLubI
-         3s6xV+fvw2afVjh1jKdMsrXX6+TmcwreFyKBHtwXtY0MTGv9hZNujeKJi6GepEEmOlDn
-         G6KZcgX19qf88423BlE9TvK3MQ4KHA64YD+1hSrPbmM8ootwsazZZBPJuYgtLtgYJGgc
-         zZirqh5z9QGaApuq8B7yjwUUGryPFUOpSE/FoMRdowvpQRb4pDjnZHV1v7jA98ySMefd
-         aX4w==
-X-Gm-Message-State: AOUpUlFbhT1x4hN+qC20OVtxkibVtr56fQWMvSJfOrdl9MaftFYExejp
-        CMLYo7kldPTqqwPwJ+cP/zIgLw==
-X-Google-Smtp-Source: AAOMgpfyo2nWKbt55OkcwHDhF+wlboqMRDFD9QQFiwUmWr+C1VbW8Mp78NpkSFn3awyDf0Jqg31ULQ==
-X-Received: by 2002:a63:90c8:: with SMTP id a191-v6mr1086792pge.173.1533246691573;
-        Thu, 02 Aug 2018 14:51:31 -0700 (PDT)
+        bh=NiNDxc68m2WmDTmrjJG1BEXvvndByC2Ak5klnTeYFOY=;
+        b=lPqhijkvSYPY3uEnrLlQIhtjjL4+cILaJiCyEb+tV1xDgMuzulL7h4CtLmGHw8kL3h
+         YX7PV0fUdBSWglP2hC8LCFiI4XR4o9NUwexnerwlORc81QAubkDAyNGAVaBz5sEtr3oJ
+         DrvMk4yW1WERFXl2vGzQK3SaITLLQxgk6vO/0wkSfkRLD5EoXspnd39eFU0+gIVy56nV
+         1NCIy5Esa8idXZl+2MjQf+nyrhyps/FnBTWXgw65vCTLvJzhwBjCV0filpr1DHyuQ9ub
+         xHbrX61k7TtyuM438oLfezGWxdSOczPnXCjrinsMVch/gnj8+4qj0rBD7fyvxOK7XBKN
+         mouQ==
+X-Gm-Message-State: AOUpUlHtOh4G1cwMqqCXngd7Mn5c5rQkpsiO7x+pKtLT99fEimYbXp50
+        vgokFz+9QOw0tzSxiPxU1kIBjA==
+X-Google-Smtp-Source: AAOMgpck70/+UIrwsATnOhg4I2SRAomA0RyL/ppIMSTekyo8er4AW4MeIq8JonAtC8eI3NB9l+epig==
+X-Received: by 2002:a65:52cc:: with SMTP id z12-v6mr1081121pgp.69.1533246692681;
+        Thu, 02 Aug 2018 14:51:32 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm6599171pfk.134.2018.08.02.14.51.25
+        by smtp.gmail.com with ESMTPSA id g5-v6sm2567133pgn.73.2018.08.02.14.51.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 02 Aug 2018 14:51:28 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Tony Luck <tony.luck@intel.com>,
         Zhou Wang <wangzhou1@hisilicon.com>,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] crypto, zstd: Implement zbufsize()
-Date:   Thu,  2 Aug 2018 14:51:15 -0700
-Message-Id: <20180802215118.17752-7-keescook@chromium.org>
+Subject: [PATCH 8/9] crypto, lz4hc: Implement zbufsize()
+Date:   Thu,  2 Aug 2018 14:51:17 -0700
+Message-Id: <20180802215118.17752-9-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180802215118.17752-1-keescook@chromium.org>
 References: <20180802215118.17752-1-keescook@chromium.org>
@@ -76,60 +76,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This implements the worst-case compression size querying interface for
-zstd, based on the logic originally used by pstore.
+lz4hc, based on the logic originally used by pstore.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- crypto/zstd.c | 22 +++++++++++++++++++++-
+ crypto/lz4hc.c | 22 +++++++++++++++++++++-
  1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/zstd.c b/crypto/zstd.c
-index 9a76b3ed8b8b..ce8efd40f27f 100644
---- a/crypto/zstd.c
-+++ b/crypto/zstd.c
-@@ -212,6 +212,24 @@ static int zstd_sdecompress(struct crypto_scomp *tfm, const u8 *src,
- 	return __zstd_decompress(src, slen, dst, dlen, ctx);
+diff --git a/crypto/lz4hc.c b/crypto/lz4hc.c
+index 2be14f054daf..cf6f38a1c35b 100644
+--- a/crypto/lz4hc.c
++++ b/crypto/lz4hc.c
+@@ -118,6 +118,24 @@ static int lz4hc_decompress_crypto(struct crypto_tfm *tfm, const u8 *src,
+ 	return __lz4hc_decompress_crypto(src, slen, dst, dlen, NULL);
  }
  
-+static int __zstd_zbufsize(unsigned int slen, unsigned int *dlen)
++static int __lz4hc_zbufsize_crypto(unsigned int slen, unsigned int *dlen)
 +{
-+	*dlen = ZSTD_compressBound(slen);
++	*dlen = LZ4_compressBound(slen);
 +	return 0;
 +}
 +
-+static int zstd_zbufsize(struct crypto_tfm *tfm, unsigned int slen,
-+			 unsigned int *dlen)
++static int lz4hc_szbufsize(struct crypto_scomp *tfm, unsigned int slen,
++			   unsigned int *dlen, void *ctx)
 +{
-+	return __zstd_zbufsize(slen, dlen);
++	return __lz4hc_zbufsize_crypto(slen, dlen);
 +}
 +
-+static int zstd_szbufsize(struct crypto_scomp *tfm, unsigned int slen,
-+			  unsigned int *dlen, void *ctx)
++static int lz4hc_zbufsize_crypto(struct crypto_tfm *tfm, unsigned int slen,
++				 unsigned int *dlen)
 +{
-+	return __zstd_zbufsize(slen, dlen);
++	return __lz4hc_zbufsize_crypto(slen, dlen);
 +}
 +
- static struct crypto_alg alg = {
- 	.cra_name		= "zstd",
+ static struct crypto_alg alg_lz4hc = {
+ 	.cra_name		= "lz4hc",
  	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
-@@ -221,7 +239,8 @@ static struct crypto_alg alg = {
- 	.cra_exit		= zstd_exit,
+@@ -128,7 +146,8 @@ static struct crypto_alg alg_lz4hc = {
+ 	.cra_exit		= lz4hc_exit,
  	.cra_u			= { .compress = {
- 	.coa_compress		= zstd_compress,
--	.coa_decompress		= zstd_decompress } }
-+	.coa_decompress		= zstd_decompress,
-+	.coa_zbufsize		= zstd_zbufsize } }
+ 	.coa_compress		= lz4hc_compress_crypto,
+-	.coa_decompress		= lz4hc_decompress_crypto } }
++	.coa_decompress		= lz4hc_decompress_crypto,
++	.coa_zbufsize		= lz4hc_zbufsize_crypto } }
  };
  
  static struct scomp_alg scomp = {
-@@ -229,6 +248,7 @@ static struct scomp_alg scomp = {
- 	.free_ctx		= zstd_free_ctx,
- 	.compress		= zstd_scompress,
- 	.decompress		= zstd_sdecompress,
-+	.zbufsize		= zstd_szbufsize,
+@@ -136,6 +155,7 @@ static struct scomp_alg scomp = {
+ 	.free_ctx		= lz4hc_free_ctx,
+ 	.compress		= lz4hc_scompress,
+ 	.decompress		= lz4hc_sdecompress,
++	.zbufsize		= lz4hc_szbufsize,
  	.base			= {
- 		.cra_name	= "zstd",
- 		.cra_driver_name = "zstd-scomp",
+ 		.cra_name	= "lz4hc",
+ 		.cra_driver_name = "lz4hc-scomp",
 -- 
 2.17.1
 
