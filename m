@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CFAC28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6E7C46469
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C321E216FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A73612172B
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 07:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="KgxgCQod"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C321E216FD
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="IkXXP2ay"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73612172B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=iluvatar.ai
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeHCJQZ (ORCPT
+        id S1732488AbeHCJQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 05:16:25 -0400
-Received: from mail.iluvatar.ai ([58.213.90.100]:57298 "EHLO mail.iluvatar.ai"
+        Fri, 3 Aug 2018 05:16:31 -0400
+Received: from mail.iluvatar.ai ([58.213.90.100]:57210 "EHLO mail.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729811AbeHCJQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:24 -0400
+        id S1732423AbeHCJQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 05:16:30 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 14DF7107081DF;
-        Fri,  3 Aug 2018 15:24:58 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTP id CE5D214504401;
+        Fri,  3 Aug 2018 15:25:09 +0800 (CST)
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id KKMlbiDt_jml; Fri,  3 Aug 2018 15:24:56 +0800 (CST)
+        with ESMTP id iQr33wHCtCzo; Fri,  3 Aug 2018 15:25:09 +0800 (CST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.iluvatar.ai (Postfix) with ESMTP id 9A682107081CA;
-        Fri,  3 Aug 2018 15:24:56 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 9A682107081CA
+        by mail.iluvatar.ai (Postfix) with ESMTP id 678CA145043FE;
+        Fri,  3 Aug 2018 15:25:09 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.9.2 mail.iluvatar.ai 678CA145043FE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iluvatar.ai;
-        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281096;
-        bh=7M8YDrOHWJpB7tzyFl2kdYvU8LWK3PVxCFkytWw8lpA=;
+        s=809B2F8E-810B-11E8-86FD-A0A654EEFFEB; t=1533281109;
+        bh=rgmSXGMvw+EYuLBa3ZU933snDykwSEnuCUtsDBz8ScQ=;
         h=From:To:Subject:Date:Message-Id;
-        b=KgxgCQodreLHPuFjrX8npWNMgmv7QXajAnelDEl33jFVaw1WDTOJKPLvAwO+q9EKL
-         s9HzFbKX8I7mcaO2ruI7xsl11brtFRUKOhzEURKNXoxg75rZ5Dwj7v1LJaixVKI7Yj
-         AZ1kAGfSD71M3mg8sZ7ZHMmQl3D3eIItvc81/Ca8=
+        b=IkXXP2ayISbTq0EvcAKBELZ5qSfQd2vxMb/Qb/PZ7mYD4/G15q6+sK18KyYa0fua8
+         06CqgRgTezIhwX3uPky24BSHxK4kD8wlsuSrVXtaAPCia9WnkiItRCA3ChUCCuqeKt
+         zSHZLVKr/9iBaI6qIHGfhrU1fqzdewfVMuM4Q3kY=
 X-Virus-Scanned: amavisd-new at iluvatar.ai
 Received: from mail.iluvatar.ai ([127.0.0.1])
         by localhost (mail.iluvatar.ai [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2A8JbPuqQOyp; Fri,  3 Aug 2018 15:24:56 +0800 (CST)
+        with ESMTP id ccBozGSxrAxX; Fri,  3 Aug 2018 15:25:09 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.166.124.10])
-        by mail.iluvatar.ai (Postfix) with ESMTPSA id AB109107081C4;
-        Fri,  3 Aug 2018 15:24:55 +0800 (CST)
+        by mail.iluvatar.ai (Postfix) with ESMTPSA id BF6C9145043EE;
+        Fri,  3 Aug 2018 15:25:08 +0800 (CST)
 From:   Huang Shijie <sjhuang@iluvatar.ai>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         michal.simek@xilinx.com, baohua@kernel.org,
         ludovic.desroches@microchip.com, linus.walleij@linaro.org,
         david.brown@linaro.org, Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH 10/46] dmaengine: tegra210-adma: use helper dmaenginem_async_device_register
-Date:   Fri,  3 Aug 2018 15:19:40 +0800
-Message-Id: <20180803072016.21544-11-sjhuang@iluvatar.ai>
+Subject: [PATCH 25/46] dmaengine: mmp_tdma: use dmaenginem_async_device_register to simplify the code
+Date:   Fri,  3 Aug 2018 15:19:55 +0800
+Message-Id: <20180803072016.21544-26-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180803072016.21544-1-sjhuang@iluvatar.ai>
 References: <20180803072016.21544-1-sjhuang@iluvatar.ai>
@@ -71,53 +71,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use dmaenginem_async_device_register to simplify the code:
-   remove dma_async_device_unregister
-   remove the label dma_remove
+	remove dma_async_device_unregister.
+	return error if it fails.
 
 Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
 ---
- drivers/dma/tegra210-adma.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/dma/mmp_tdma.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index b26256f23d67..bd99f12a00e3 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -746,7 +746,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
- 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+diff --git a/drivers/dma/mmp_tdma.c b/drivers/dma/mmp_tdma.c
+index 13c68b6434ce..9f5869e1a017 100644
+--- a/drivers/dma/mmp_tdma.c
++++ b/drivers/dma/mmp_tdma.c
+@@ -530,9 +530,6 @@ static void mmp_tdma_issue_pending(struct dma_chan *chan)
  
--	ret = dma_async_device_register(&tdma->dma_dev);
-+	ret = dmaenginem_async_device_register(&tdma->dma_dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
- 		goto irq_dispose;
-@@ -756,7 +756,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 					 tegra_dma_of_xlate, tdma);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "ADMA OF registration failed %d\n", ret);
--		goto dma_remove;
-+		goto irq_dispose;
- 	}
- 
- 	pm_runtime_put(&pdev->dev);
-@@ -766,8 +766,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--dma_remove:
--	dma_async_device_unregister(&tdma->dma_dev);
- irq_dispose:
- 	while (--i >= 0)
- 		irq_dispose_mapping(tdma->channels[i].irq);
-@@ -786,8 +784,6 @@ static int tegra_adma_remove(struct platform_device *pdev)
- 	struct tegra_adma *tdma = platform_get_drvdata(pdev);
- 	int i;
- 
--	dma_async_device_unregister(&tdma->dma_dev);
+ static int mmp_tdma_remove(struct platform_device *pdev)
+ {
+-	struct mmp_tdma_device *tdev = platform_get_drvdata(pdev);
 -
- 	for (i = 0; i < tdma->nr_channels; ++i)
- 		irq_dispose_mapping(tdma->channels[i].irq);
+-	dma_async_device_unregister(&tdev->device);
+ 	return 0;
+ }
+ 
+@@ -696,7 +693,7 @@ static int mmp_tdma_probe(struct platform_device *pdev)
+ 	dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	platform_set_drvdata(pdev, tdev);
+ 
+-	ret = dma_async_device_register(&tdev->device);
++	ret = dmaenginem_async_device_register(&tdev->device);
+ 	if (ret) {
+ 		dev_err(tdev->device.dev, "unable to register\n");
+ 		return ret;
+@@ -708,7 +705,7 @@ static int mmp_tdma_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(tdev->device.dev,
+ 				"failed to register controller\n");
+-			dma_async_device_unregister(&tdev->device);
++			return ret;
+ 		}
+ 	}
  
 -- 
 2.17.1
