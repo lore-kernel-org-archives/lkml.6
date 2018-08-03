@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52913C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5784C28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1711021774
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1711021774
+	by mail.kernel.org (Postfix) with ESMTP id 931C321774
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 16:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931C321774
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeHCS3z (ORCPT
+        id S1728282AbeHCSbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 14:29:55 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.212]:39188 "EHLO
+        Fri, 3 Aug 2018 14:31:00 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.212]:28641 "EHLO
         gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727433AbeHCS3z (ORCPT
+        by vger.kernel.org with ESMTP id S1727356AbeHCSbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 14:29:55 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id F19B9400DECAD
-        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:32:53 -0500 (CDT)
+        Fri, 3 Aug 2018 14:31:00 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id C8901400CBFA8
+        for <linux-kernel@vger.kernel.org>; Fri,  3 Aug 2018 11:33:58 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id ld0XfEhLVPvAdld0XfGoWn; Fri, 03 Aug 2018 11:32:53 -0500
+        id ld1aff61DRPojld1af9zr5; Fri, 03 Aug 2018 11:33:58 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.50.82] (port=51080 helo=embeddedor)
+Received: from [189.250.50.82] (port=51084 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1fld0X-003FqW-7f; Fri, 03 Aug 2018 11:32:53 -0500
-Date:   Fri, 3 Aug 2018 11:32:52 -0500
+        id 1fld1a-003GJQ-5r; Fri, 03 Aug 2018 11:33:58 -0500
+Date:   Fri, 3 Aug 2018 11:33:57 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-kernel@vger.kernel.org
 Cc:     alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 5/7] ASoC: omap-mcpdm: Mark expected switch fall-throughs
-Message-ID: <720fbf880f4edfb57379278056f45fc639775ad3.1533312229.git.gustavo@embeddedor.com>
+Subject: [PATCH 6/7] ASoC: samsung: i2s: Mark expected switch fall-through
+Message-ID: <6be766c659c7c31362c018b75970a0755ac756eb.1533312229.git.gustavo@embeddedor.com>
 References: <cover.1533312229.git.gustavo@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -60,13 +61,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.50.82
 X-Source-L: No
-X-Exim-ID: 1fld0X-003FqW-7f
+X-Exim-ID: 1fld1a-003GJQ-5r
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.50.82]:51080
+X-Source-Sender: (embeddedor) [189.250.50.82]:51084
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 56
+X-Email-Count: 65
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,38 +78,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1369526 ("Missing break in switch")
-Addresses-Coverity-ID: 1369529 ("Missing break in switch")
-Addresses-Coverity-ID: 1451415 ("Missing break in switch")
-Addresses-Coverity-ID: 115103 ("Missing break in switch")
+Addresses-Coverity-ID: 1381093 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/soc/omap/omap-mcpdm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/samsung/i2s.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 0e97360..4c1be36 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -310,15 +310,19 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
- 			/* up to 3 channels for capture */
- 			return -EINVAL;
- 		link_mask |= 1 << 4;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index f914ed4..d6c62aa 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -710,6 +710,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_channels(params)) {
+ 	case 6:
+ 		val |= MOD_DC2_EN;
 +		/* fall through */
  	case 4:
- 		if (stream == SNDRV_PCM_STREAM_CAPTURE)
- 			/* up to 3 channels for capture */
- 			return -EINVAL;
- 		link_mask |= 1 << 3;
-+		/* fall through */
- 	case 3:
- 		link_mask |= 1 << 2;
-+		/* fall through */
- 	case 2:
- 		link_mask |= 1 << 1;
-+		/* fall through */
- 	case 1:
- 		link_mask |= 1 << 0;
+ 		val |= MOD_DC1_EN;
  		break;
 -- 
 2.7.4
