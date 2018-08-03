@@ -2,80 +2,73 @@ Return-Path: <SRS0=+aXO=KS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42501C28CF6
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B43EC28CF6
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F05952174D
-	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F05952174D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id DAC392175D
+	for <linux-kernel@archiver.kernel.org>; Fri,  3 Aug 2018 11:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAC392175D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbeHCNKV (ORCPT
+        id S1727355AbeHCNOl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 3 Aug 2018 09:10:21 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33294 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbeHCNKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 3 Aug 2018 09:10:21 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so4643090ljj.0;
-        Fri, 03 Aug 2018 04:14:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IKcmQ5jhzG5BePvd9htVgvCZQQGR8S/oNlAZby8oEMc=;
-        b=ibiaFc7LR4YDniD1btJq7TKXX4vzn5AVBCouQtOyTRf0bpbxEfwrWSXT0NdTodOCVA
-         f+TebQ93Eb9WbE/IXGYyWVoXqR+s8H72247POHVNXqfM3KsO5ZhRISj0HeJXOYt0Ob5o
-         RO46gpyRX6UoJ0Gz214Aezxb9sql8OSogGM03Zk7e1PL6mh5lDJDbN2OYNWFl+uhjUeU
-         nRxJKh7XoSIapfNVB2WAbf2nSIwk+BX8Dlmy08tcynlZA28db3/7dnjJMpRX+EWfXcVb
-         djU4Js+UIOQ5M4FLX1VGkdcCRIEcShnqWo/OpL7KUIzmuAZf8OVHZIX8ue2Dub3V6Iv6
-         KABg==
-X-Gm-Message-State: AOUpUlHqzQ8dV+NxaQCNzmVL+ODZv464dqApueFEE9Jk0FI2h1H52JTr
-        d0dIGTidY+h+Nk+2uhq5dYk=
-X-Google-Smtp-Source: AAOMgpc0h7EH4WyapbMnUANwwhh2qTkWkqtBHBryF3HgIO2k0ah1sW/2oWYbszou2Xq3rlejDsBa9w==
-X-Received: by 2002:a2e:9c4d:: with SMTP id t13-v6mr4965022ljj.153.1533294868475;
-        Fri, 03 Aug 2018 04:14:28 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id d24-v6sm682849lfl.53.2018.08.03.04.14.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 03 Aug 2018 04:14:27 -0700 (PDT)
-Date:   Fri, 3 Aug 2018 14:14:25 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        eballetbo@gmail.com, linus.walleij@linaro.org,
-        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v12 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180803111425.GD20907@localhost.localdomain>
-References: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
- <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+        Fri, 3 Aug 2018 09:14:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55000 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726910AbeHCNOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 3 Aug 2018 09:14:40 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D89A340287F7;
+        Fri,  3 Aug 2018 11:18:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 35A9A2026D65;
+        Fri,  3 Aug 2018 11:18:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <8347.1533292272@warthog.procyon.org.uk>
+References: <8347.1533292272@warthog.procyon.org.uk> <47c34fad-5d11-53b0-4386-61be890163c5@virtuozzo.com> <153320759911.18959.8842396230157677671.stgit@localhost.localdomain> <20180802134723.ecdd540c7c9338f98ee1a2c6@linux-foundation.org>
+Cc:     dhowells@redhat.com, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
+        mhocko@suse.com, aryabinin@virtuozzo.com, ying.huang@intel.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, willy@infradead.org,
+        shakeelb@google.com, jbacik@fb.com, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Move check for SHRINKER_NUMA_AWARE to do_shrink_slab()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <12713.1533295125.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 03 Aug 2018 12:18:45 +0100
+Message-ID: <12714.1533295125@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 11:18:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 03 Aug 2018 11:18:49 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2018 at 02:09:12PM +0300, Matti Vaittinen wrote:
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
+David Howells <dhowells@redhat.com> wrote:
 
-I kept the Reviewed-by and Acked-by as this patch is unchanged once
-again... Sorry for the spam.
+> But!  I'm not sure why the reproducer works at all because the umount2() call
+> is *after* the chroot, so should fail on ENOENT before it even gets that
+> far.
+
+No, it shouldn't.  It did chroot() not chdir().
+
+> In fact, umount2() can be called multiple times, apparently successfully, and
+> doesn't actually unmount anything.
+
+Okay, because it chroot'd into the directory.  Should it return EBUSY though?
+
+David
